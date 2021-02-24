@@ -134,7 +134,7 @@ class ConfigController extends Controller {
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
 
 		// anyway, reset state
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'oauth_state', '');
+		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state', '');
 
 		if ($clientID && $clientSecret && $configState !== '' && $configState === $state) {
 			$redirect_uri = $this->config->getUserValue($this->userId, Application::APP_ID, 'redirect_uri', '');
