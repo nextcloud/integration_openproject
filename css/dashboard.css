@@ -1,0 +1,7 @@
+.icon-openproject {
+    background-image: url(./../img/app-dark.svg);
+}
+
+body.theme--dark .icon-openproject {
+    background-image: url(./../img/app.svg);
+}
