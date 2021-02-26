@@ -56,7 +56,7 @@ export default {
 
 	computed: {
 		showMoreUrl() {
-			return this.openprojectUrl + '/#dashboard'
+			return this.openprojectUrl + '/projects'
 		},
 		items() {
 			return this.notifications.map((n) => {
@@ -73,7 +73,7 @@ export default {
 		},
 		lastDate() {
 			const nbNotif = this.notifications.length
-			return (nbNotif > 0) ? this.notifications[0].updated_at : null
+			return (nbNotif > 0) ? this.notifications[0].updatedAt : null
 		},
 		lastMoment() {
 			return moment(this.lastDate)
@@ -149,7 +149,7 @@ export default {
 			if (this.lastDate) {
 				// just add those which are more recent than our most recent one
 				let i = 0
-				while (i < newNotifications.length && this.lastMoment.isBefore(newNotifications[i].updated_at)) {
+				while (i < newNotifications.length && this.lastMoment.isBefore(newNotifications[i].updatedAt)) {
 					i++
 				}
 				if (i > 0) {
@@ -165,25 +165,34 @@ export default {
 			return notifications
 		},
 		getNotificationTarget(n) {
-			return this.openprojectUrl + '/#ticket/zoom/' + n.o_id
+			const projectId = n._links?.project?.href
+				? n._links.project.href.replace(/.*\//, '')
+				: null
+			return projectId
+				? this.openprojectUrl + '/projects/' + projectId + '/work_packages/' + n.id
+				: ''
 		},
 		getUniqueKey(n) {
-			return n.id + ':' + n.updated_at
+			return n.id + ':' + n.updatedAt
 		},
 		getAuthorShortName(n) {
-			if (!n.firstname && !n.lastname) {
-				return '?'
-			} else {
-				return (n.firstname ? n.firstname[0] : '')
-					+ (n.lastname ? n.lastname[0] : '')
-			}
+			return n._links?.assignee?.title
+				? n._links.assignee.title
+				: n._links?.author?.title
+					? n._links.author.title
+					: undefined
 		},
 		getAuthorFullName(n) {
 			return n.firstname + ' ' + n.lastname
 		},
 		getAuthorAvatarUrl(n) {
-			return (n.image)
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('imageId') + '=' + encodeURIComponent(n.image)
+			const userId = n._links?.assignee?.href
+				? n._links.assignee.href.replace(/.*\//, '')
+				: n._links?.author?.href
+					? n._links.author.href.replace(/.*\//, '')
+					: null
+			return userId
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId
 				: ''
 		},
 		getNotificationProjectName(n) {
@@ -193,21 +202,19 @@ export default {
 			return ''
 		},
 		getNotificationTypeImage(n) {
-			if (n.type_lookup_id === 2 || n.type === 'update') {
-				return generateUrl('/svg/integration_openproject/rename?color=ffffff')
-			} else if (n.type_lookup_id === 3 || n.type === 'create') {
-				return generateUrl('/svg/integration_openproject/add?color=ffffff')
-			}
 			return generateUrl('/svg/core/actions/sound?color=' + this.themingColor)
 		},
 		getSubline(n) {
-			return this.getAuthorFullName(n) + ' #' + n.o_id
+			const description = n.description?.raw
+				? n.description.raw
+				: ''
+			const status = n._links?.status?.title
+				? '[' + n._links.status.title + '] '
+				: ''
+			return status + description
 		},
 		getTargetTitle(n) {
-			return n.title
-		},
-		getTargetIdentifier(n) {
-			return n.o_id
+			return n.subject
 		},
 		getFormattedDate(n) {
 			return moment(n.updated_at).format('LLL')

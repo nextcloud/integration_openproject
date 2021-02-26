@@ -238,21 +238,27 @@ class OpenProjectAPIService {
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
-	 * @param string $imageId
+	 * @param string $userId
 	 * @return string
 	 */
 	public function getOpenProjectAvatar(string $url,
 									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
-									string $imageId): string {
-		$url = $url . '/api/v1/users/image/' . $imageId;
-		$authHeader = ($authType === 'access') ? 'Token token=' : 'Bearer ';
+									string $userId): array {
+		$url = $url . '/users/' . $userId . '/avatar';
+		$authHeader = ($authType === 'access')
+			? 'Basic ' . base64_encode('apikey:' . $accessToken)
+			: 'Bearer ' . $accessToken;
 		$options = [
 			'headers' => [
-				'Authorization'  => $authHeader . $accessToken,
+				'Authorization'  => $authHeader,
 				'User-Agent' => 'Nextcloud OpenProject integration',
 			]
 		];
-		return $this->client->get($url, $options)->getBody();
+		try {
+			return ['avatar' => $this->client->get($url, $options)->getBody()];
+		} catch (ServerException | ClientException | ConnectException $e) {
+			return ['error' => 'Avatar not found'];
+		}
 	}
 
 	/**
