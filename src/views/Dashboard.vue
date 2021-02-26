@@ -64,7 +64,7 @@ export default {
 					id: this.getUniqueKey(n),
 					targetUrl: this.getNotificationTarget(n),
 					avatarUrl: this.getAuthorAvatarUrl(n),
-					avatarUsername: this.getAuthorShortName(n),
+					avatarUsername: this.getAuthorShortName(n) + 'z',
 					overlayIconUrl: this.getNotificationTypeImage(n),
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
@@ -191,8 +191,13 @@ export default {
 				: n._links?.author?.href
 					? n._links.author.href.replace(/.*\//, '')
 					: null
+			const userName = n._links?.assignee?.title
+				? n._links.assignee.title
+				: n._links?.author?.title
+					? n._links.author.title
+					: null
 			return userId
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
 				: ''
 		},
 		getNotificationProjectName(n) {

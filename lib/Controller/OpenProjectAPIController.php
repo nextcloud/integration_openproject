@@ -85,9 +85,10 @@ class OpenProjectAPIController extends Controller {
 	 * @param string $imageId
 	 * @return DataDisplayResponse
 	 */
-	public function getOpenProjectAvatar(string $userId = ''): DataDisplayResponse {
+	public function getOpenProjectAvatar(string $userId = '', string $userName = ''): DataDisplayResponse {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
-			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken, $this->clientID, $this->clientSecret, $userId
+			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken,
+			$this->clientID, $this->clientSecret, $userId, $userName
 		);
 		if (isset($result['error'])) {
 			$response = new DataDisplayResponse($result['error'], 404);

@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\IUser;
+use OCP\IAvatarManager;
 use OCP\Http\Client\IClientService;
 use OCP\Notification\IManager as INotificationManager;
 use GuzzleHttp\Exception\ClientException;
@@ -33,6 +34,7 @@ class OpenProjectAPIService {
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct (IUserManager $userManager,
+								IAvatarManager $avatarManager,
 								string $appName,
 								LoggerInterface $logger,
 								IL10N $l10n,
@@ -44,6 +46,7 @@ class OpenProjectAPIService {
 		$this->logger = $logger;
 		$this->config = $config;
 		$this->userManager = $userManager;
+		$this->avatarManager = $avatarManager;
 		$this->clientService = $clientService;
 		$this->notificationManager = $notificationManager;
 		$this->client = $clientService->newClient();
@@ -243,7 +246,7 @@ class OpenProjectAPIService {
 	 */
 	public function getOpenProjectAvatar(string $url,
 									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
-									string $userId): array {
+									string $userId, string $userName): array {
 		$url = $url . '/users/' . $userId . '/avatar';
 		$authHeader = ($authType === 'access')
 			? 'Basic ' . base64_encode('apikey:' . $accessToken)
@@ -257,7 +260,9 @@ class OpenProjectAPIService {
 		try {
 			return ['avatar' => $this->client->get($url, $options)->getBody()];
 		} catch (ServerException | ClientException | ConnectException $e) {
-			return ['error' => 'Avatar not found'];
+			$avatar = $this->avatarManager->getGuestAvatar($userName);
+			$avatarContent = $avatar->getFile(64)->getContent();
+			return ['avatar' => $avatarContent];
 		}
 	}
 
