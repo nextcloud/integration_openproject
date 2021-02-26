@@ -122,7 +122,7 @@ class OpenProjectSearchProvider implements IProvider {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		$searchResults = $this->service->search($openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $user->getUID(), $term);
+		$searchResults = $this->service->searchWorkPackage($openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $user->getUID(), $term);
 		$searchResults = array_slice($searchResults, $offset, $limit);
 
 		if (isset($searchResults['error'])) {
@@ -131,12 +131,12 @@ class OpenProjectSearchProvider implements IProvider {
 
 		$formattedResults = \array_map(function (array $entry) use ($thumbnailUrl, $openprojectUrl): OpenProjectSearchResultEntry {
 			return new OpenProjectSearchResultEntry(
-				$this->getThumbnailUrl($entry, $thumbnailUrl),
+				$thumbnailUrl,
 				$this->getMainText($entry),
 				$this->getSubline($entry),
 				$this->getLinkToOpenProject($entry, $openprojectUrl),
 				'',
-				true
+				false
 			);
 		}, $searchResults);
 
@@ -152,7 +152,7 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getMainText(array $entry): string {
-		return $entry['title'];
+		return $entry['subject'];
 	}
 
 	/**
@@ -160,13 +160,13 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getSubline(array $entry): string {
-		$priorityName = $entry['priority_name']
-			? $entry['priority_name']
-			: $entry['priority_id'];
-		$prefix = $entry['state_name']
-			? '[' . $this->truncate($entry['state_name'], 10) . '/' . $priorityName . '] '
-			: '[' . $priorityName . '] ';
-		return $prefix . $entry['u_firstname'] . ' ' . $entry['u_lastname'];
+		$description = isset($entry['description'], $entry['description']['raw'])
+			? $entry['description']['raw']
+			: '';
+		$status = isset($entry['_links'], $entry['_links']['status'], $entry['_links']['status']['title'])
+			? '[' . $entry['_links']['status']['title'] . '] '
+			: '';
+		return $status . $description;
 	}
 
 	/**
@@ -186,7 +186,12 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getLinkToOpenProject(array $entry, string $url): string {
-		return $url . '/#ticket/zoom/' . $entry['id'];
+		$projectId = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['href'])
+			? preg_replace('/.*\//', '', $entry['_links']['project']['href'])
+			: '';
+		return ($projectId !== '')
+			? $url . '/projects/' . $projectId . '/work_packages/' . $entry['id'] . '/activity'
+			: '';
 	}
 
 	/**
@@ -195,14 +200,6 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getThumbnailUrl(array $entry, string $thumbnailUrl): string {
-		$initials = null;
-		if ($entry['u_firstname'] && $entry['u_lastname']) {
-			$initials = $entry['u_firstname'][0] . $entry['u_lastname'][0];
-		}
-		return isset($entry['u_image'])
-			? $this->urlGenerator->linkToRoute('integration_openproject.openprojectAPI.getOpenProjectAvatar', []) . '?imageId=' . urlencode($entry['u_image'])
-			: ($initials
-				? $this->urlGenerator->linkToRouteAbsolute('core.GuestAvatar.getAvatar', ['guestName' => $initials, 'size' => 64])
-				: $thumbnailUrl);
+		return '';
 	}
 }

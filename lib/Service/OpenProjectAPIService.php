@@ -146,73 +146,36 @@ class OpenProjectAPIService {
 	public function getNotifications(string $url, string $accessToken, string $authType,
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
 									?string $since = null, ?int $limit = null): array {
+		$filter = null;
+		if ($since) {
+			$now = (new \Datetime())->format('Ymd\THis\Z');
+			$filter = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $now . '"]}},{"status":{"operator":"!","values":["14"]}}]';
+		} else {
+			$filter = '[{"status":{"operator":"!","values":["14"]}}]';
+		}
 		$params = [
-			'state' => 'pending',
+			// 'filters' => '[%7B%22dueDate%22:%7B%22operator%22:%22=d%22,%22values%22:[%222021-01-03%22,%222021-05-03%22]%7D%7D]',
+			// 'filters' => '[{"dueDate":{"operator":"<>d","values":["2021-01-03","2021-05-03"]}}]',
+			// 'filters' => '[{"dueDate":{"operator":"=d","values":["2021-04-03"]}}]',
+			// 'filters' => '[{"subject":{"operator":"~","values":["conference"]}}]',
+			// 'filters' => '[{"description":{"operator":"~","values":["coucou"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'sortBy' => '[["updatedAt", "desc"]]',
+			// 'limit' => $limit,
 		];
 		$result = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'online_notifications', $params
+			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 		if (isset($result['error'])) {
 			return $result;
+		} elseif (!isset($result['_embedded']['elements'])) {
+			return ['error' => 'Malformed response'];
 		}
-		// filter seen ones
-		$result = array_filter($result, function($elem) {
-			return !$elem['seen'];
-		});
-		// filter results by date
-		if (!is_null($since)) {
-			$sinceDate = new \DateTime($since);
-			$sinceTimestamp = $sinceDate->getTimestamp();
-			$result = array_filter($result, function($elem) use ($sinceTimestamp) {
-				$date = new \Datetime($elem['updated_at']);
-				$ts = $date->getTimestamp();
-				return $ts > $sinceTimestamp;
-			});
-		}
+
+		$result = $result['_embedded']['elements'];
 		if ($limit) {
 			$result = array_slice($result, 0, $limit);
 		}
 		$result = array_values($result);
-		// get details
-		foreach ($result as $k => $v) {
-			$details = $this->request(
-				$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'tickets/' . $v['o_id']
-			);
-			if (!isset($details['error'])) {
-				$result[$k]['title'] = $details['title'];
-				$result[$k]['note'] = $details['note'];
-				$result[$k]['state_id'] = $details['state_id'];
-				$result[$k]['owner_id'] = $details['owner_id'];
-				$result[$k]['type'] = $details['type'];
-			}
-		}
-		// get user details
-		$userIds = [];
-		foreach ($result as $k => $v) {
-			if (!in_array($v['updated_by_id'], $userIds)) {
-				array_push($userIds, $v['updated_by_id']);
-			}
-		}
-		$userDetails = [];
-		foreach ($userIds as $uid) {
-			$user = $this->request(
-				$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'users/' . $uid
-			);
-			$userDetails[$uid] = [
-				'firstname' => $user['firstname'],
-				'lastname' => $user['lastname'],
-				'organization_id' => $user['organization_id'],
-				'image' => $user['image'],
-			];
-		}
-		foreach ($result as $k => $v) {
-			$user = $userDetails[$v['updated_by_id']];
-			$result[$k]['firstname'] = $user['firstname'];
-			$result[$k]['lastname'] = $user['lastname'];
-			$result[$k]['organization_id'] = $user['organization_id'];
-			$result[$k]['image'] = $user['image'];
-		}
-
 		return $result;
 	}
 
@@ -227,93 +190,43 @@ class OpenProjectAPIService {
 	 * @param string $query
 	 * @return array
 	 */
-	public function search(string $url, string $accessToken, string $authType,
+	public function searchWorkPackage(string $url, string $accessToken, string $authType,
 							string $refreshToken, string $clientID, string $clientSecret, string $userId,
-							string $query): array {
+							string $query, int $offset = 0, int $limit = 5): array {
+		$resultsById = [];
+
+		// search by description
 		$params = [
-			'query' => $query,
-			'limit' => 20,
+			'filters' => '[{"description":{"operator":"~","values":["' . $query . '"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'sortBy' => '[["updatedAt", "desc"]]',
+			// 'limit' => $limit,
 		];
-		$searchResult = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'tickets/search', $params
+		$searchDescResult = $this->request(
+			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 
-		$result = [];
-		if (isset($searchResult['assets']) && isset($searchResult['assets']['Ticket'])) {
-			foreach ($searchResult['assets']['Ticket'] as $id => $t) {
-				array_push($result, $t);
+		if (isset($searchDescResult['_embedded'], $searchDescResult['_embedded']['elements'])) {
+			foreach ($searchDescResult['_embedded']['elements'] as $wp) {
+				$resultsById[$wp['id']] = $wp;
 			}
 		}
-		// get ticket state names
-		$states = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'ticket_states'
+		// search by subject
+		$params = [
+			'filters' => '[{"subject":{"operator":"~","values":["' . $query . '"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'sortBy' => '[["updatedAt", "desc"]]',
+			// 'limit' => $limit,
+		];
+		$searchSubjectResult = $this->request(
+			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
-		$statesById = [];
-		if (!isset($states['error'])) {
-			foreach ($states as $state) {
-				$id = $state['id'];
-				$name = $state['name'];
-				if ($id && $name) {
-					$statesById[$id] = $name;
-				}
+
+		if (isset($searchSubjectResult['_embedded'], $searchSubjectResult['_embedded']['elements'])) {
+			foreach ($searchSubjectResult['_embedded']['elements'] as $wp) {
+				$resultsById[$wp['id']] = $wp;
 			}
 		}
-		foreach ($result as $k => $v) {
-			if (array_key_exists($v['state_id'], $statesById)) {
-				$result[$k]['state_name'] = $statesById[$v['state_id']];
-			}
-		}
-		// get ticket priority names
-		$prios = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'ticket_priorities'
-		);
-		$priosById = [];
-		if (!isset($prios['error'])) {
-			foreach ($prios as $prio) {
-				$id = $prio['id'];
-				$name = $prio['name'];
-				if ($id && $name) {
-					$priosById[$id] = $name;
-				}
-			}
-		}
-		foreach ($result as $k => $v) {
-			if (array_key_exists($v['priority_id'], $priosById)) {
-				$result[$k]['priority_name'] = $priosById[$v['priority_id']];
-			}
-		}
-		// add owner information
-		$userIds = [];
-		$field = 'customer_id';
-		foreach ($result as $k => $v) {
-			if (!in_array($v[$field], $userIds)) {
-				array_push($userIds, $v[$field]);
-			}
-		}
-		$userDetails = [];
-		foreach ($userIds as $uid) {
-			$user = $this->request(
-				$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'users/' . $uid
-			);
-			if (!isset($user['error'])) {
-				$userDetails[$uid] = [
-					'firstname' => $user['firstname'],
-					'lastname' => $user['lastname'],
-					'organization_id' => $user['organization_id'],
-					'image' => $user['image'],
-				];
-			}
-		}
-		foreach ($result as $k => $v) {
-			if (array_key_exists($v[$field], $userDetails)) {
-				$user = $userDetails[$v[$field]];
-				$result[$k]['u_firstname'] = $user['firstname'];
-				$result[$k]['u_lastname'] = $user['lastname'];
-				$result[$k]['u_organization_id'] = $user['organization_id'];
-				$result[$k]['u_image'] = $user['image'];
-			}
-		}
-		return $result;
+
+		return array_values($resultsById);
 	}
 
 	/**
