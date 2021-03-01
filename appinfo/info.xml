@@ -24,7 +24,7 @@
 		<nextcloud min-version="21" max-version="22"/>
 	</dependencies>
 	<background-jobs>
-		<job>OCA\OpenProject\BackgroundJob\CheckOpenTickets</job>
+		<job>OCA\OpenProject\BackgroundJob\CheckNotifications</job>
 	</background-jobs>
 	<settings>
 		<admin>OCA\OpenProject\Settings\Admin</admin>

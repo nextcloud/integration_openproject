@@ -30,11 +30,11 @@ use Psr\Log\LoggerInterface;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 
 /**
- * Class CheckOpenTickets
+ * Class CheckNotifications
  *
  * @package OCA\OpenProject\BackgroundJob
  */
-class CheckOpenTickets extends TimedJob {
+class CheckNotifications extends TimedJob {
 
 	/** @var OpenProjectAPIService */
 	protected $openprojectAPIService;
@@ -54,7 +54,7 @@ class CheckOpenTickets extends TimedJob {
 	}
 
 	protected function run($argument): void {
-		$this->openprojectAPIService->checkOpenTickets();
-		$this->logger->info('Checked if users have open OpenProject tickets.');
+		$this->openprojectAPIService->checkNotifications();
+		$this->logger->info('Checked if users have open OpenProject notifications.');
 	}
 }

@@ -79,7 +79,7 @@
 					class="checkbox"
 					:checked="state.notification_enabled"
 					@input="onNotificationChange">
-				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for open tickets') }}</label>
+				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}</label>
 			</div>
 		</div>
 	</div>

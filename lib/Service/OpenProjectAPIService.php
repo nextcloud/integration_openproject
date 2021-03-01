@@ -58,9 +58,9 @@ class OpenProjectAPIService {
 	 *
 	 * @return void
 	 */
-	public function checkOpenTickets(): void {
+	public function checkNotifications(): void {
 		$this->userManager->callForAllUsers(function (IUser $user) {
-			$this->checkOpenTicketsForUser($user->getUID());
+			$this->checkNotificationsForUser($user->getUID());
 		});
 	}
 
@@ -68,7 +68,7 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @return void
 	 */
-	private function checkOpenTicketsForUser(string $userId): void {
+	private function checkNotificationsForUser(string $userId): void {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
@@ -78,34 +78,29 @@ class OpenProjectAPIService {
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
 			$openprojectUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', '');
 			if ($clientID && $clientSecret && $openprojectUrl) {
-				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_open_check', '');
+				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check', '');
 				$lastNotificationCheck = $lastNotificationCheck === '' ? null : $lastNotificationCheck;
 				// get the openproject user ID
-				$me = $this->request(
-					$openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $userId, 'users/me'
-				);
-				if (isset($me['id'])) {
-					$my_user_id = $me['id'];
-
+				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id', '');
+				if ($myOPUserId !== '') {
+					$myOPUserId = (int) $myOPUserId;
 					$notifications = $this->getNotifications(
 						$openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $userId, $lastNotificationCheck
 					);
 					if (!isset($notifications['error']) && count($notifications) > 0) {
-						$lastNotificationCheck = $notifications[0]['updated_at'];
-						$this->config->setUserValue($userId, Application::APP_ID, 'last_open_check', $lastNotificationCheck);
-						$nbOpen = 0;
+						$newLastNotificationCheck = $notifications[0]['updatedAt'];
+						$this->config->setUserValue($userId, Application::APP_ID, 'last_notification_check', $newLastNotificationCheck);
+						$nbRelevantNotifications = 0;
 						foreach ($notifications as $n) {
-							$user_id = $n['user_id'];
-							$state_id = $n['state_id'];
-							$owner_id = $n['owner_id'];
-							// if ($state_id === 1) {
-							if ($owner_id === $my_user_id && $state_id === 1) {
-								$nbOpen++;
+							$wpUserId = $this->getWPAssigneeOrAuthorId($n);
+							// we avoid the ones with updatedAt === lastNotificationCheck because the request filter is inclusive
+							if ($wpUserId === $myOPUserId && $n['updatedAt'] !== $lastNotificationCheck) {
+								$nbRelevantNotifications++;
 							}
 						}
-						if ($nbOpen > 0) {
+						if ($nbRelevantNotifications > 0) {
 							$this->sendNCNotification($userId, 'new_open_tickets', [
-								'nbOpen' => $nbOpen,
+								'nbNotifications' => $nbRelevantNotifications,
 								'link' => $openprojectUrl
 							]);
 						}
@@ -113,6 +108,20 @@ class OpenProjectAPIService {
 				}
 			}
 		}
+	}
+
+	private function getWPStatusId(array $workPackage): ?int {
+		return isset($workPackage['_links'], $workPackage['_links']['status'], $workPackage['_links']['status']['href'])
+			? (int) preg_replace('/.*\//', '', $workPackage['_links']['status']['href'])
+			: null;
+	}
+
+	private function getWPAssigneeOrAuthorId(array $workPackage): ?int {
+		return isset($workPackage['_links'], $workPackage['_links']['assignee'], $workPackage['_links']['assignee']['href'])
+			? (int) preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
+			: (isset($workPackage['_links'], $workPackage['_links']['author'], $workPackage['_links']['author']['href'])
+				? (int) preg_replace('/.*\//', '', $workPackage['_links']['author']['href'])
+				: null);
 	}
 
 	/**
@@ -149,12 +158,16 @@ class OpenProjectAPIService {
 	public function getNotifications(string $url, string $accessToken, string $authType,
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
 									?string $since = null, ?int $limit = null): array {
-		$filter = null;
+		$filters = null;
 		if ($since) {
-			$now = (new \Datetime())->format('Ymd\THis\Z');
-			$filter = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $now . '"]}},{"status":{"operator":"!","values":["14"]}}]';
+			date_default_timezone_set('UTC');
+			$utcTimezone = new \DateTimeZone('-0000');
+			$nowDt = new \Datetime();
+			$nowDt->setTimezone($utcTimezone);
+			$now = $nowDt->format('Y-m-d\TH:i:s\Z');
+			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $now . '"]}},{"status":{"operator":"!","values":["14"]}}]';
 		} else {
-			$filter = '[{"status":{"operator":"!","values":["14"]}}]';
+			$filters = '[{"status":{"operator":"!","values":["14"]}}]';
 		}
 		$params = [
 			// 'filters' => '[%7B%22dueDate%22:%7B%22operator%22:%22=d%22,%22values%22:[%222021-01-03%22,%222021-05-03%22]%7D%7D]',
@@ -162,6 +175,7 @@ class OpenProjectAPIService {
 			// 'filters' => '[{"dueDate":{"operator":"=d","values":["2021-04-03"]}}]',
 			// 'filters' => '[{"subject":{"operator":"~","values":["conference"]}}]',
 			// 'filters' => '[{"description":{"operator":"~","values":["coucou"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'filters' => $filters,
 			'sortBy' => '[["updatedAt", "desc"]]',
 			// 'limit' => $limit,
 		];

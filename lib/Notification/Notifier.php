@@ -87,18 +87,12 @@ class Notifier implements INotifier {
 		switch ($notification->getSubject()) {
 		case 'new_open_tickets':
 			$p = $notification->getSubjectParameters();
-			$nbOpen = (int) ($p['nbOpen'] ?? 0);
-			$content = $l->n('You have %s open ticket in OpenProject.', 'You have %s open tickets in OpenProject.', $nbOpen, [$nbOpen]);
-
-			//$theme = $this->config->getUserValue($userId, 'accessibility', 'theme', '');
-			//$iconUrl = ($theme === 'dark')
-			//	? $this->url->imagePath(Application::APP_ID, 'app.svg')
-			//	: $this->url->imagePath(Application::APP_ID, 'app-dark.svg');
+			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
+			$content = $l->n('You have %s notification in OpenProject.', 'You have %s notification in OpenProject.', $nbNotifications, [$nbNotifications]);
 
 			$notification->setParsedSubject($content)
 				->setLink($p['link'] ?? '')
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
-				//->setIcon($this->url->getAbsoluteURL($iconUrl));
 			return $notification;
 
 		default:
