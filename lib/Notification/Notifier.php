@@ -88,7 +88,7 @@ class Notifier implements INotifier {
 		case 'new_open_tickets':
 			$p = $notification->getSubjectParameters();
 			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
-			$content = $l->n('You have %s notification in OpenProject.', 'You have %s notification in OpenProject.', $nbNotifications, [$nbNotifications]);
+			$content = $l->n('You have %s notification in OpenProject.', 'You have %s notifications in OpenProject.', $nbNotifications, [$nbNotifications]);
 
 			$notification->setParsedSubject($content)
 				->setLink($p['link'] ?? '')

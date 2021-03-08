@@ -17,6 +17,7 @@
 	<website>https://github.com/eneiluj/integration_openproject</website>
 	<bugs>https://github.com/eneiluj/integration_openproject/issues</bugs>
 	<screenshot>https://github.com/eneiluj/integration_openproject/raw/master/img/screenshot1.jpg</screenshot>
+	<screenshot>https://github.com/eneiluj/integration_openproject/raw/master/img/screenshot2.jpg</screenshot>
 	<dependencies>
 		<database min-version="9.4">pgsql</database>
 		<database>sqlite</database>
