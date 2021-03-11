@@ -4,7 +4,7 @@
 	<name>OpenProject integration</name>
 	<summary>Integration of OpenProject project management tool</summary>
 	<description><![CDATA[OpenProject integration provides a dashboard widget displaying your important notifications,
-	a search provider for ...]]></description>
+	a search provider for work packages and notifications for changes in active work packages.]]></description>
 	<version>0.0.1</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
