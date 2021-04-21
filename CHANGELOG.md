@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.1 – 2021-04-21
+### Changed
+- Support NC 20
+- bump js libs
+
 ## 1.0.0 – 2021-03-19
 ### Added
 * the app
