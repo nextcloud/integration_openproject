@@ -272,8 +272,14 @@ class OpenProjectAPIService {
 			]
 		];
 		try {
-			return ['avatar' => $this->client->get($url, $options)->getBody()];
+			$response = $this->client->get($url, $options);
+			$headers = $response->getHeaders();
+			return [
+				'avatar' => $response->getBody(),
+				'type' => implode(',', $headers['Content-Type']),
+			];
 		} catch (ServerException | ClientException | ConnectException $e) {
+			$this->logger->warning('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($userName);
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];

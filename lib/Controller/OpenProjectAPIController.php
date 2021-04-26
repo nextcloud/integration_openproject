@@ -14,6 +14,7 @@ namespace OCA\OpenProject\Controller;
 use OCP\App\IAppManager;
 use OCP\Files\IAppData;
 use OCP\AppFramework\Http\DataDisplayResponse;
+use OCP\AppFramework\Http\DataDownloadResponse;
 
 use OCP\IURLGenerator;
 use OCP\IConfig;
@@ -83,9 +84,9 @@ class OpenProjectAPIController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @param string $imageId
-	 * @return DataDisplayResponse
+	 * @return DataDisplayResponse|DataDownloadResponse
 	 */
-	public function getOpenProjectAvatar(string $userId = '', string $userName = ''): DataDisplayResponse {
+	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
 			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken,
 			$this->clientID, $this->clientSecret, $userId, $userName
@@ -93,7 +94,7 @@ class OpenProjectAPIController extends Controller {
 		if (isset($result['error'])) {
 			$response = new DataDisplayResponse($result['error'], 404);
 		} else {
-			$response = new DataDisplayResponse($result['avatar']);
+			$response = new DataDownloadResponse($result['avatar'], 'avatar', $result['type'] ?? '');
 			$response->cacheFor(60*60*24);
 		}
 		return $response;
