@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.2 – 2021-04-26
+### Changed
+- cleaner avatar image response
+[#1](https://github.com/eneiluj/integration_openproject/issues/1) @birthe
+
 ## 1.0.1 – 2021-04-21
 ### Changed
 - Support NC 20
