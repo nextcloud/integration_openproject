@@ -261,7 +261,7 @@ class OpenProjectAPIService {
 	public function getOpenProjectAvatar(string $url,
 									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
 									string $userId, string $userName): array {
-		$url = $url . '/users/' . $userId . '/avatar';
+		$url = $url . '/api/v3/users/' . $userId . '/avatar';
 		$authHeader = ($authType === 'access')
 			? 'Basic ' . base64_encode('apikey:' . $accessToken)
 			: 'Bearer ' . $accessToken;
