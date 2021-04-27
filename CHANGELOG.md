@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.3 – 2021-04-27
+### Changed
+- improve activity notifications
+- bump js libs
+
 ## 1.0.2 – 2021-04-26
 ### Changed
 - cleaner avatar image response
