@@ -88,10 +88,24 @@ class Notifier implements INotifier {
 		case 'new_open_tickets':
 			$p = $notification->getSubjectParameters();
 			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
-			$content = $l->n('You have %s notification in OpenProject.', 'You have %s notifications in OpenProject.', $nbNotifications, [$nbNotifications]);
+			$content = $l->t('OpenProject activity');
+			$richSubjectInstance = [
+				'type' => 'file',
+				'id' => 0,
+				'name' => $p['link'],
+				'path' => '',
+				'link' => $p['link'],
+			];
 
 			$notification->setParsedSubject($content)
+				->setParsedMessage('--')
 				->setLink($p['link'] ?? '')
+				->setRichMessage(
+					$l->n('You have %s notification in {instance}', 'You have %s notifications in {instance}', $nbNotifications, [$nbNotifications]),
+					[
+						'instance' => $richSubjectInstance,
+					]
+				)
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 			return $notification;
 
