@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.4 – 2021-04-27
+### Fixed
+- Avatar API URL
+
 ## 1.0.3 – 2021-04-27
 ### Changed
 - improve activity notifications
