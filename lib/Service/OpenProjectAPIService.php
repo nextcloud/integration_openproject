@@ -412,7 +412,12 @@ class OpenProjectAPIService {
 					);
 				}
 			}
+			// try to get the error in the response
 			$this->logger->warning('OpenProject API error : '.$e->getMessage(), ['app' => $this->appName]);
+			$decodedBody = json_decode($body, true);
+			if ($decodedBody && isset($decodedBody['message'])) {
+				$this->logger->warning('OpenProject API error : '.$decodedBody['message'], ['app' => $this->appName]);
+			}
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => $e->getResponse()->getStatusCode(),
