@@ -11,6 +11,9 @@
 
 namespace OCA\OpenProject\Service;
 
+use DateTime;
+use DateTimeZone;
+use Exception;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
@@ -27,8 +30,38 @@ use OCA\OpenProject\AppInfo\Application;
 
 class OpenProjectAPIService {
 
-	private $l10n;
+	/**
+	 * @var \OCP\Http\Client\IClient
+	 */
+	private $client;
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
+	/**
+	 * @var IAvatarManager
+	 */
+	private $avatarManager;
+	/**
+	 * @var string
+	 */
+	private $appName;
+	/**
+	 * @var LoggerInterface
+	 */
 	private $logger;
+	/**
+	 * @var IL10N
+	 */
+	private $l10n;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+	/**
+	 * @var INotificationManager
+	 */
+	private $notificationManager;
 
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
@@ -41,15 +74,14 @@ class OpenProjectAPIService {
 								IConfig $config,
 								INotificationManager $notificationManager,
 								IClientService $clientService) {
-		$this->appName = $appName;
-		$this->l10n = $l10n;
-		$this->logger = $logger;
-		$this->config = $config;
+		$this->client = $clientService->newClient();
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
-		$this->clientService = $clientService;
+		$this->appName = $appName;
+		$this->logger = $logger;
+		$this->l10n = $l10n;
+		$this->config = $config;
 		$this->notificationManager = $notificationManager;
-		$this->client = $clientService->newClient();
 	}
 
 	/**
@@ -69,19 +101,19 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	private function checkNotificationsForUser(string $userId): void {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
-			$tokenType = $this->config->getUserValue($userId, Application::APP_ID, 'token_type', '');
-			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token', '');
-			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id', '');
-			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
-			$openprojectUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', '');
+			$tokenType = $this->config->getUserValue($userId, Application::APP_ID, 'token_type');
+			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
+			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+			$openprojectUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url');
 			if ($clientID && $clientSecret && $openprojectUrl) {
-				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check', '');
+				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
 				$lastNotificationCheck = $lastNotificationCheck === '' ? null : $lastNotificationCheck;
 				// get the openproject user ID
-				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id', '');
+				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
 				if ($myOPUserId !== '') {
 					$myOPUserId = (int) $myOPUserId;
 					$notifications = $this->getNotifications(
@@ -127,7 +159,7 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 * @param string $subject
-	 * @param string $params
+	 * @param array $params
 	 * @return void
 	 */
 	private function sendNCNotification(string $userId, string $subject, array $params): void {
@@ -136,7 +168,7 @@ class OpenProjectAPIService {
 
 		$notification->setApp(Application::APP_ID)
 			->setUser($userId)
-			->setDateTime(new \DateTime())
+			->setDateTime(new DateTime())
 			->setObject('dum', 'dum')
 			->setSubject($subject, $params);
 
@@ -158,11 +190,10 @@ class OpenProjectAPIService {
 	public function getNotifications(string $url, string $accessToken, string $authType,
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
 									?string $since = null, ?int $limit = null): array {
-		$filters = null;
 		if ($since) {
 			date_default_timezone_set('UTC');
-			$utcTimezone = new \DateTimeZone('-0000');
-			$nowDt = new \Datetime();
+			$utcTimezone = new DateTimeZone('-0000');
+			$nowDt = new Datetime();
 			$nowDt->setTimezone($utcTimezone);
 			$now = $nowDt->format('Y-m-d\TH:i:s\Z');
 			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $now . '"]}},{"status":{"operator":"!","values":["14"]}}]';
@@ -192,8 +223,7 @@ class OpenProjectAPIService {
 		if ($limit) {
 			$result = array_slice($result, 0, $limit);
 		}
-		$result = array_values($result);
-		return $result;
+		return array_values($result);
 	}
 
 	/**
@@ -205,6 +235,8 @@ class OpenProjectAPIService {
 	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $query
+	 * @param int $offset
+	 * @param int $limit
 	 * @return array
 	 */
 	public function searchWorkPackage(string $url, string $accessToken, string $authType,
@@ -256,7 +288,11 @@ class OpenProjectAPIService {
 	 * @param string $clientID
 	 * @param string $clientSecret
 	 * @param string $userId
-	 * @return string
+	 * @param string $userName
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OCP\Lock\LockedException
 	 */
 	public function getOpenProjectAvatar(string $url,
 									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
@@ -278,7 +314,7 @@ class OpenProjectAPIService {
 				'avatar' => $response->getBody(),
 				'type' => implode(',', $headers['Content-Type']),
 			];
-		} catch (ServerException | ClientException | ConnectException $e) {
+		} catch (ServerException | ClientException | ConnectException | Exception $e) {
 			$this->logger->warning('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($userName);
 			$avatarContent = $avatar->getFile(64)->getContent();
@@ -293,10 +329,12 @@ class OpenProjectAPIService {
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
+	 * @param string $userId
 	 * @param string $endPoint
 	 * @param array $params
 	 * @param string $method
 	 * @return array
+	 * @throws \OCP\PreConditionNotMetException
 	 */
 	public function request(string $openprojectUrl, string $accessToken, string $authType, string $refreshToken,
 							string $clientID, string $clientSecret, string $userId,
@@ -340,6 +378,8 @@ class OpenProjectAPIService {
 				$response = $this->client->put($url, $options);
 			} else if ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
+			} else {
+				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
 			$body = $response->getBody();
 			$respCode = $response->getStatusCode();
@@ -377,7 +417,7 @@ class OpenProjectAPIService {
 				'error' => $e->getMessage(),
 				'statusCode' => $e->getResponse()->getStatusCode(),
 			];
-		} catch (ConnectException $e) {
+		} catch (ConnectException | Exception $e) {
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => 404,
@@ -417,6 +457,8 @@ class OpenProjectAPIService {
 				$response = $this->client->put($url, $options);
 			} else if ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
+			} else {
+				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
 			$body = $response->getBody();
 			$respCode = $response->getStatusCode();
@@ -426,7 +468,7 @@ class OpenProjectAPIService {
 			} else {
 				return json_decode($body, true);
 			}
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->logger->warning('OpenProject OAuth error : '.$e->getMessage(), ['app' => $this->appName]);
 			return ['error' => $e->getMessage()];
 		}
