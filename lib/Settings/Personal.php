@@ -2,35 +2,31 @@
 namespace OCA\OpenProject\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IRequest;
-use OCP\IL10N;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
-use OCP\Util;
-use OCP\IURLGenerator;
-use OCP\IInitialStateService;
 
 use OCA\OpenProject\AppInfo\Application;
 
 class Personal implements ISettings {
 
-	private $request;
+	/**
+	 * @var IConfig
+	 */
 	private $config;
-	private $dataDirPath;
-	private $urlGenerator;
-	private $l;
+	/**
+	 * @var IInitialState
+	 */
+	private $initialStateService;
+	/**
+	 * @var string|null
+	 */
+	private $userId;
 
-	public function __construct(string $appName,
-								IL10N $l,
-								IRequest $request,
+	public function __construct(
 								IConfig $config,
-								IURLGenerator $urlGenerator,
-								IInitialStateService $initialStateService,
-								$userId) {
-		$this->appName = $appName;
-		$this->urlGenerator = $urlGenerator;
-		$this->request = $request;
-		$this->l = $l;
+								IInitialState $initialStateService,
+								?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
@@ -40,19 +36,19 @@ class Personal implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$login = $this->config->getUserValue($this->userId, Application::APP_ID, 'login', '');
-		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token', '');
-		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name', '');
-		$url = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', '');
+		$login = $this->config->getUserValue($this->userId, Application::APP_ID, 'login');
+		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
+		$url = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
 		$searchEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'search_enabled', '0');
 		$notificationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'notification_enabled', '0');
 		$navigationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'navigation_enabled', '0');
 
 		// for OAuth
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id', '');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		// don't expose the client secret to users
-		$clientSecret = ($this->config->getAppValue(Application::APP_ID, 'client_secret', '') !== '');
-		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
+		$clientSecret = ($this->config->getAppValue(Application::APP_ID, 'client_secret') !== '');
+		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 
 		$userConfig = [
 			'login' => $login,
@@ -66,7 +62,7 @@ class Personal implements ISettings {
 			'navigation_enabled' => ($navigationEnabled === '1'),
 			'user_name' => $userName,
 		];
-		$this->initialStateService->provideInitialState($this->appName, 'user-config', $userConfig);
+		$this->initialStateService->provideInitialState('user-config', $userConfig);
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
 	}
 

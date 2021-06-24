@@ -29,11 +29,10 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\OpenProject\AppInfo\Application;
 
 class OpenProjectAPIService {
-
 	/**
-	 * @var \OCP\Http\Client\IClient
+	 * @var string
 	 */
-	private $client;
+	private $appName;
 	/**
 	 * @var IUserManager
 	 */
@@ -42,10 +41,6 @@ class OpenProjectAPIService {
 	 * @var IAvatarManager
 	 */
 	private $avatarManager;
-	/**
-	 * @var string
-	 */
-	private $appName;
 	/**
 	 * @var LoggerInterface
 	 */
@@ -62,26 +57,31 @@ class OpenProjectAPIService {
 	 * @var INotificationManager
 	 */
 	private $notificationManager;
+	/**
+	 * @var \OCP\Http\Client\IClient
+	 */
+	private $client;
 
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
-	public function __construct (IUserManager $userManager,
-								IAvatarManager $avatarManager,
+	public function __construct (
 								string $appName,
+								IUserManager $userManager,
+								IAvatarManager $avatarManager,
 								LoggerInterface $logger,
 								IL10N $l10n,
 								IConfig $config,
 								INotificationManager $notificationManager,
 								IClientService $clientService) {
-		$this->client = $clientService->newClient();
+		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
-		$this->appName = $appName;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->notificationManager = $notificationManager;
+		$this->client = $clientService->newClient();
 	}
 
 	/**

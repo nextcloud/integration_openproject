@@ -11,22 +11,9 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OCP\App\IAppManager;
-use OCP\Files\IAppData;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
-
-use OCP\IURLGenerator;
 use OCP\IConfig;
-use OCP\IServerContainer;
-use OCP\IL10N;
-
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\RedirectResponse;
-
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-
-use Psr\Log\LoggerInterface;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
@@ -36,36 +23,53 @@ use OCA\OpenProject\AppInfo\Application;
 
 class OpenProjectAPIController extends Controller {
 
-
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openprojectAPIService;
+	/**
+	 * @var string|null
+	 */
 	private $userId;
-	private $config;
-	private $dbconnection;
-	private $dbtype;
+	/**
+	 * @var string
+	 */
+	private $accessToken;
+	/**
+	 * @var string
+	 */
+	private $tokenType;
+	/**
+	 * @var string
+	 */
+	private $refreshToken;
+	/**
+	 * @var string
+	 */
+	private $clientID;
+	/**
+	 * @var string
+	 */
+	private $clientSecret;
+	/**
+	 * @var string
+	 */
+	private $openprojectUrl;
 
-	public function __construct($AppName,
+	public function __construct(string $appName,
 								IRequest $request,
-								IServerContainer $serverContainer,
 								IConfig $config,
-								IL10N $l10n,
-								IAppManager $appManager,
-								IAppData $appData,
-								LoggerInterface $logger,
 								OpenProjectAPIService $openprojectAPIService,
-								$userId) {
-		parent::__construct($AppName, $request);
-		$this->userId = $userId;
-		$this->l10n = $l10n;
-		$this->appData = $appData;
-		$this->serverContainer = $serverContainer;
-		$this->config = $config;
-		$this->logger = $logger;
+								?string $userId) {
+		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
-		$this->accessToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'token', '');
-		$this->tokenType = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_type', '');
-		$this->refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token', '');
-		$this->clientID = $this->config->getAppValue(Application::APP_ID, 'client_id', '');
-		$this->clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
-		$this->openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', '');
+		$this->userId = $userId;
+		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
+		$this->tokenType = $config->getUserValue($userId, Application::APP_ID, 'token_type');
+		$this->refreshToken = $config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
+		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
+		$this->openprojectUrl = $config->getUserValue($userId, Application::APP_ID, 'url');
 	}
 
 	/**
@@ -83,8 +87,12 @@ class OpenProjectAPIController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
-	 * @param string $imageId
+	 * @param string $userId
+	 * @param string $userName
 	 * @return DataDisplayResponse|DataDownloadResponse
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OCP\Lock\LockedException
 	 */
 	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(

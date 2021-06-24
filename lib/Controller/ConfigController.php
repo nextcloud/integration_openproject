@@ -11,62 +11,53 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OCP\App\IAppManager;
-use OCP\Files\IAppData;
-use OCP\AppFramework\Http\DataDisplayResponse;
-
 use OCP\IURLGenerator;
 use OCP\IConfig;
-use OCP\IServerContainer;
 use OCP\IL10N;
-use Psr\Log\LoggerInterface;
-
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\RedirectResponse;
-
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-
 use OCP\IRequest;
-use OCP\IDBConnection;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCP\Http\Client\IClientService;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 
 class ConfigController extends Controller {
 
-
-	private $userId;
+	/**
+	 * @var IConfig
+	 */
 	private $config;
-	private $dbconnection;
-	private $dbtype;
+	/**
+	 * @var IURLGenerator
+	 */
+	private $urlGenerator;
+	/**
+	 * @var IL10N
+	 */
+	private $l;
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openprojectAPIService;
+	/**
+	 * @var string|null
+	 */
+	private $userId;
 
-	public function __construct($AppName,
+	public function __construct(string $appName,
 								IRequest $request,
-								IServerContainer $serverContainer,
 								IConfig $config,
-								IAppManager $appManager,
-								IAppData $appData,
-								IDBConnection $dbconnection,
 								IURLGenerator $urlGenerator,
 								IL10N $l,
-								LoggerInterface $logger,
-								IClientService $clientService,
 								OpenProjectAPIService $openprojectAPIService,
-								$userId) {
-		parent::__construct($AppName, $request);
-		$this->l = $l;
-		$this->userId = $userId;
-		$this->appData = $appData;
-		$this->serverContainer = $serverContainer;
+								?string $userId) {
+		parent::__construct($appName, $request);
 		$this->config = $config;
-		$this->dbconnection = $dbconnection;
 		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
-		$this->clientService = $clientService;
+		$this->l = $l;
 		$this->openprojectAPIService = $openprojectAPIService;
+		$this->userId = $userId;
 	}
 
 	/**
@@ -115,8 +106,7 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, $value);
 		}
-		$response = new DataResponse(1);
-		return $response;
+		return new DataResponse(1);
 	}
 
 	/**
@@ -129,16 +119,16 @@ class ConfigController extends Controller {
 	 * @return RedirectResponse
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
-		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state', '');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id', '');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
+		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 
 		// anyway, reset state
-		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state', '');
+		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state');
 
 		if ($clientID && $clientSecret && $configState !== '' && $configState === $state) {
-			$redirect_uri = $this->config->getUserValue($this->userId, Application::APP_ID, 'redirect_uri', '');
-			$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', '');
+			$redirect_uri = $this->config->getUserValue($this->userId, Application::APP_ID, 'redirect_uri');
+			$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -174,11 +164,11 @@ class ConfigController extends Controller {
 	 * @return array
 	 */
 	private function storeUserInfo(string $accessToken): array {
-		$tokenType = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_type', '');
-		$refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token', '');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id', '');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret', '');
-		$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', '');
+		$tokenType = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_type');
+		$refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
 
 		if (!$openprojectUrl || !preg_match('/^(https?:\/\/)?[^.]+\.[^.].*/', $openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid'];
@@ -191,8 +181,8 @@ class ConfigController extends Controller {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $fullName);
 			return ['user_name' => $fullName];
 		} else {
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id', '');
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name', '');
+			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
+			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
 			if (isset($info['statusCode']) && $info['statusCode'] === 404) {
 				$info['errorMessage'] = 'Not found';
 			} else {
