@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.5 – 2021-06-28
+### Changed
+- stop polling widget content when document is hidden
+- bump js libs
+- get rid of all deprecated stuff
+- bump min NC version to 22
+- cleanup backend code
+
 ## 1.0.4 – 2021-04-27
 ### Fixed
 - Avatar API URL
