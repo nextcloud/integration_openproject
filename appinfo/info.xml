@@ -5,7 +5,7 @@
 	<summary>Integration of OpenProject project management tool</summary>
 	<description><![CDATA[OpenProject integration provides a dashboard widget displaying your important notifications,
 	a search provider for work packages and notifications for changes in active work packages.]]></description>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
 	<namespace>OpenProject</namespace>
@@ -19,10 +19,7 @@
 	<screenshot>https://github.com/eneiluj/integration_openproject/raw/master/img/screenshot1.jpg</screenshot>
 	<screenshot>https://github.com/eneiluj/integration_openproject/raw/master/img/screenshot2.jpg</screenshot>
 	<dependencies>
-		<database min-version="9.4">pgsql</database>
-		<database>sqlite</database>
-		<database min-version="5.5">mysql</database>
-		<nextcloud min-version="22" max-version="23"/>
+		<nextcloud min-version="22" max-version="24"/>
 	</dependencies>
 	<background-jobs>
 		<job>OCA\OpenProject\BackgroundJob\CheckNotifications</job>

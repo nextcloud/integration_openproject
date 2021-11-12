@@ -12,10 +12,13 @@ jobs:
       APP_ID: integration_openproject
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node 12
-        uses: actions/setup-node@v1
+      - name: Use Node 14
+        uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
+
+      - name: Set up npm
+        run: npm i -g npm
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -96,12 +99,23 @@ jobs:
           asset_content_type: application/gzip
 
       - name: Publish to appstore
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
+        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
         id: publish
         run: |
           SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
           VERSION=${{ steps.build_release.outputs.version }}
           DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
           curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'"}'
+        env:
+          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
+
+      - name: Publish nightly release to appstore
+        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
+        id: nightly
+        run: |
+          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
+          VERSION=${{ steps.build_release.outputs.version }}
+          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
+          curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'", "nightly": true}'
         env:
           APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
