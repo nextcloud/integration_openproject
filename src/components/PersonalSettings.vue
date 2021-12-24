@@ -18,6 +18,10 @@
 				<label for="openproject-link">{{ t('integration_openproject', 'Enable navigation link') }}</label>
 			</div>
 			<br><br>
+			<p v-if="isInsecureUrl" class="settings-hint">
+				<span class="icon icon-alert-outline" />
+				{{ t('integration_openproject', 'Warning, connecting to your OpenProject instance via http is insecure.') }}
+			</p>
 			<div class="openproject-grid-form">
 				<label for="openproject-url">
 					<a class="icon icon-link" />
@@ -111,6 +115,9 @@ export default {
 	},
 
 	computed: {
+		isInsecureUrl() {
+			return !this.state.url.startsWith('https://')
+		},
 		showOAuth() {
 			return this.state.url === this.state.oauth_instance_url
 				&& this.state.client_id
@@ -154,16 +161,11 @@ export default {
 		},
 		onInput() {
 			this.loading = true
-			if (this.state.url !== '' && !this.state.url.startsWith('https://')) {
-				if (this.state.url.startsWith('http://')) {
-					this.state.url = this.state.url.replace('http://', 'https://')
-				} else {
+			delay(() => {
+				if (!this.state.url.startsWith('https://') && !this.state.url.startsWith('http://')) {
 					this.state.url = 'https://' + this.state.url
 				}
-			}
-			delay(() => {
-				// check the domain name has at least one dot
-				const pattern = /^(https?:\/\/)?[^.]+\.[^.].*/
+				const pattern = /^https?:\/\/[^ "]+$/
 				if (pattern.test(this.state.url)) {
 					this.saveOptions({
 						url: this.state.url,
