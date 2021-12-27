@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 bootstrap="bootstrap.php"
+		 verbose="true" backupGlobals="false" timeoutForSmallTests="900"
+		 timeoutForMediumTests="900" timeoutForLargeTests="900"
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+	<coverage>
+		<report>
+			<text outputFile="php://stdout" showUncoveredFiles="true"/>
+		</report>
+	</coverage>
+	<testsuite name="OpenProject">
+		<directory suffix=".php">tests/lib/</directory>
+	</testsuite>
+	<logging/>
+</phpunit>

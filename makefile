@@ -55,9 +55,14 @@ npm-dev:
 	$(npm) ci
 	$(npm) run dev
 
+.PHONY: test
+test:
+	vendor/phpunit/phpunit/phpunit
+
 clean:
 	sudo rm -rf $(build_dir)
 	sudo rm -rf $(sign_dir)
+	rm -rf vendor
 
 appstore: clean
 	mkdir -p $(sign_dir)
