@@ -116,7 +116,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(?string $since = null): DataResponse {
-		if ($this->accessToken === '' || !preg_match('/^(https?:\/\/)?[^.]+\.[^.].*/', $this->openprojectUrl)) {
+		if ($this->accessToken === '' || !Application::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', 400);
 		}
 		$result = $this->openprojectAPIService->getNotifications(

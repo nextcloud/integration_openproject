@@ -96,5 +96,10 @@ class Application extends App implements IBootstrap {
 			}
 		}
 	}
+
+	public static function validateOpenProjectURL(string $openprojectUrl): bool {
+		return filter_var($openprojectUrl, FILTER_VALIDATE_URL) &&
+			preg_match('/^https?/', $openprojectUrl);
+	}
 }
 
