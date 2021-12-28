@@ -3,8 +3,7 @@
 		id="project-search"
 		v-model="search"
 		:placeholder="placeholder"
-		type="text"
-	>
+		type="text">
 </template>
 
 <script>

@@ -6,8 +6,8 @@ const isDev = buildMode === 'development'
 webpackConfig.devtool = isDev ? 'cheap-source-map' : 'source-map'
 
 webpackConfig.stats = {
-    colors: true,
-    modules: false,
+	colors: true,
+	modules: false,
 }
 
 webpackConfig.entry = {

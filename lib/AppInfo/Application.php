@@ -59,6 +59,8 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerDashboardWidget(OpenProjectWidget::class);
 		$context->registerSearchProvider(OpenProjectSearchProvider::class);
+
+		// register sidebar tab
 		$context->registerEventListener(
 			LoadSidebar::class,
 			LoadSidebarScript::class
