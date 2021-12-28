@@ -1,12 +1,14 @@
 import Vue from 'vue'
-
-import './bootstrap'
-import ProjectsTab from './components/ProjectsTab'
+import { translate, translatePlural } from '@nextcloud/l10n'
+import ProjectsTab from './views/ProjectsTab'
 
 // Init OpenProject Tab Service
 if (!window.OCA.OpenProject) {
 	window.OCA.OpenProject = {}
 }
+
+Vue.prototype.t = translate
+Vue.prototype.n = translatePlural
 
 const View = Vue.extend(ProjectsTab)
 let TabInstance = null
