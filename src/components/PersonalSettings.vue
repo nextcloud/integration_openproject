@@ -119,7 +119,7 @@ export default {
 			return !this.state.url.startsWith('https://')
 		},
 		showOAuth() {
-			return this.state.url === this.state.oauth_instance_url
+			return this.state.url.replace(/\/+$/, '') === this.state.oauth_instance_url.replace(/\/+$/, '')
 				&& this.state.client_id
 				&& this.state.client_secret
 		},

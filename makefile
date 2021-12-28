@@ -55,9 +55,14 @@ npm-dev:
 	$(npm) ci
 	$(npm) run dev
 
+.PHONY: test
+test:
+	npm run test:unit
+
 clean:
 	sudo rm -rf $(build_dir)
 	sudo rm -rf $(sign_dir)
+	rm -rf node_modules
 
 appstore: clean
 	mkdir -p $(sign_dir)
