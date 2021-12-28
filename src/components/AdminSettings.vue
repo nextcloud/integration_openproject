@@ -5,10 +5,10 @@
 			{{ t('integration_openproject', 'OpenProject integration') }}
 		</h2>
 		<p class="settings-hint">
-			{{ t('integration_openproject', 'If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the application ID (AppId) and secret below.') }}
+			{{ t('integration_openproject', 'If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below.') }}
 			<br><br>
 			<span class="icon icon-details" />
-			{{ t('integration_openproject', 'Make sure you set the "Callback URL" to') }}
+			{{ t('integration_openproject', 'Make sure you set the "Redirect URI" to') }}
 			<b> {{ redirect_uri }} </b>
 		</p>
 		<div class="grid-form">
@@ -23,24 +23,24 @@
 				@input="onInput">
 			<label for="openproject-client-id">
 				<a class="icon icon-category-auth" />
-				{{ t('integration_openproject', 'Application ID') }}
+				{{ t('integration_openproject', 'Client ID') }}
 			</label>
 			<input id="openproject-client-id"
 				v-model="state.client_id"
 				type="password"
 				:readonly="readonly"
-				:placeholder="t('integration_openproject', 'ID of your application')"
+				:placeholder="t('integration_openproject', 'Client ID of the OAuth app in OpenProject')"
 				@focus="readonly = false"
 				@input="onInput">
 			<label for="openproject-client-secret">
 				<a class="icon icon-category-auth" />
-				{{ t('integration_openproject', 'Application secret') }}
+				{{ t('integration_openproject', 'Client secret') }}
 			</label>
 			<input id="openproject-client-secret"
 				v-model="state.client_secret"
 				type="password"
 				:readonly="readonly"
-				:placeholder="t('integration_openproject', 'Client secret of your application')"
+				:placeholder="t('integration_openproject', 'Client secret of the OAuth app in OpenProject')"
 				@focus="readonly = false"
 				@input="onInput">
 		</div>
