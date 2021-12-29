@@ -104,7 +104,7 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, $value);
+			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		return new DataResponse(1);
 	}
