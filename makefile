@@ -57,11 +57,13 @@ npm-dev:
 
 .PHONY: test
 test:
+	npm run test:unit
 	vendor/phpunit/phpunit/phpunit
 
 clean:
 	sudo rm -rf $(build_dir)
 	sudo rm -rf $(sign_dir)
+	rm -rf node_modules
 	rm -rf vendor
 
 appstore: clean
