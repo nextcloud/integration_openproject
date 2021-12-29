@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2019 Kiran Parajuli <kiran@jankaritech.com>
+ * @copyright Copyright (c) 2021 Kiran Parajuli <kiran@jankaritech.com>
  *
  * @author Kiran Parajuli <kiran@jankaritech.com>
  *
