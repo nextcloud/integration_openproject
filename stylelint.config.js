@@ -29,4 +29,5 @@ module.exports = {
 		],
 	},
 	plugins: ['stylelint-scss'],
+	ignoreFiles: ['**/*.js'],
 }
