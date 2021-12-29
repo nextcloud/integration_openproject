@@ -170,7 +170,7 @@ class ConfigController extends Controller {
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 		$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
 
-		if (!$openprojectUrl || !preg_match('/^(https?:\/\/)?[^.]+\.[^.].*/', $openprojectUrl)) {
+		if (!$openprojectUrl || !OpenProjectAPIService::validateOpenProjectURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid'];
 		}
 
