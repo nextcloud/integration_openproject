@@ -13,7 +13,25 @@ A link to the "Connected accounts" user settings section will be displayed in th
 
 ### Admin settings
 
-There also is a "Connected accounts" **admin** settings section if you want to allow your Nextcloud users to use OAuth to authenticate to a specific OpenProject instance. An admin can create an OAuth app (and get a client ID and a client secret) on OpenProject side in Administration -> Authentication -> OAuth applications.
+There also is a "Connected accounts" **admin** settings section if you want to allow your Nextcloud users to use OAuth to authenticate to a specific OpenProject instance.
+
+1. As an OpenProject admin create an OAuth app 
+   1. in OpenProject go to Administration -> Authentication -> OAuth applications
+   2. use a name of your choice
+   3. as `Redirect URI` use `<nextcloud-uri>/index.php/apps/integration_openproject/oauth-redirect`
+   4. note down the Client ID and the Client Secret
+2. As an NextCloud admin configure the OpenProject integration
+   1. in NextCloud go to Settings -> Administration -> Connected accounts
+   2. provide the OpenProject address, the Client ID and the Client Secret
+3. As an NextCloud user connect to OpenProject
+   1. in NextCloud go to Settings -> Personal -> Connected accounts
+   2. provide the OpenProject address (it has to be exactly the same as provided by the administrator in step 2)
+   3. a new button `Connect to OpenProject` should be visible
+   4. click `Connect to OpenProject`
+   5. you will be redirected to OpenProject
+   6. log-in to OpenProject if you haven't already
+   7. Authorize the NextCloud App
+   8. you will be redirected back to OpenProject
 
 #### Background jobs
 
