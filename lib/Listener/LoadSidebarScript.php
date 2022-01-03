@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2021 Kiran Parajuli <kiran@jankaritech.com>
+ * @copyright Copyright (c) 2022 Kiran Parajuli <kiran@jankaritech.com>
  *
  * @author Kiran Parajuli <kiran@jankaritech.com>
  *

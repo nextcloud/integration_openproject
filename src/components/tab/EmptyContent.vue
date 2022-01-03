@@ -6,9 +6,6 @@
 		<div class="title text-center">
 			{{ t('integration_openproject', "No OpenProject links yet") }}
 		</div>
-		<div class="subtitle text-center">
-			{{ t('integration_openproject', "To add a link, use the search bar above to find the desired work package.") }}
-		</div>
 	</div>
 </template>
 

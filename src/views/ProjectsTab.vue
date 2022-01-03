@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2021 Kiran Parajuli <kiran@jankaritech.com>
+  - @copyright Copyright (c) 2022 Kiran Parajuli <kiran@jankaritech.com>
   -
   - @author Kiran Parajuli <kiran@jankaritech.com>
   -
@@ -22,20 +22,17 @@
 
 <template>
 	<div class="projects">
-		<SearchInput />
 		<EmptyContent />
 	</div>
 </template>
 
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
-import SearchInput from '../components/tab/SearchInput'
 
 export default {
 	name: 'ProjectsTab',
 	components: {
 		EmptyContent,
-		SearchInput,
 	},
 	data: () => ({
 		error: '',
