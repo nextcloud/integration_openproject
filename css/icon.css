@@ -4,3 +4,7 @@ span.icon-open-project {
 	min-width: 44px !important;
 	min-height: 16px !important;
 }
+
+body.theme--dark span.icon-open-project {
+	background: url('../img/tab-logo-white.svg') no-repeat center;
+}
