@@ -22,12 +22,16 @@
 
 <template>
 	<div class="projects">
-		<EmptyContent />
+		<div :class="{ 'icon-loading': state === 'loading' }">
+			<EmptyContent v-if="state !== 'loading'" id="openproject-empty-content" :state="state" />
+		</div>
 	</div>
 </template>
 
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'ProjectsTab',
@@ -36,8 +40,8 @@ export default {
 	},
 	data: () => ({
 		error: '',
-		loading: false,
 		fileInfo: null,
+		state: 'loading',
 	}),
 	computed: {},
 	created() {},
@@ -49,13 +53,33 @@ export default {
 		 */
 		async update(fileInfo) {
 			this.fileInfo = fileInfo
+			await this.fetchWorkpackages(this.fileInfo.id)
 		},
 		/**
 		 * Reset the current view to its default state
 		 */
 		resetState() {
-			this.loading = false
 			this.error = ''
+			this.state = 'loading'
+		},
+
+		async fetchWorkpackages(fileId) {
+			const req = {}
+			const url = generateUrl('/apps/integration_openproject/workpackages/' + fileId)
+			try {
+				const response = await axios.get(url, req)
+				if (!Array.isArray(response.data)) {
+					this.state = 'error'
+				} else {
+					this.state = 'ok'
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 401) {
+					this.state = 'no-token'
+				} else {
+					this.state = 'error'
+				}
+			}
 		},
 	},
 }
