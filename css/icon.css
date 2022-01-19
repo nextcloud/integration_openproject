@@ -1,0 +1,6 @@
+span.icon-open-project {
+	padding: 0 !important;
+	background: url('../img/tab-logo.svg') no-repeat center;
+	min-width: 44px !important;
+	min-height: 16px !important;
+}
