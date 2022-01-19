@@ -36,7 +36,7 @@ let TabInstance = null
 const projectTab = new OCA.Files.Sidebar.Tab({
 	id: 'open-project',
 	name: t('integration_openproject', 'OpenProject'),
-	icon: 'icon-projects',
+	icon: 'icon-open-project',
 
 	async mount(el, fileInfo, context) {
 		if (TabInstance) {
