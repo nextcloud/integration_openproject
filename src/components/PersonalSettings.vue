@@ -4,7 +4,7 @@
 			<a class="icon icon-openproject" />
 			{{ t('integration_openproject', 'OpenProject integration') }}
 		</h2>
-		<p v-if="!showOAuth && !connected" class="settings-hint">
+		<p v-if="!showOAuth && !connected && state.allow_individual_connection" class="settings-hint">
 			{{ t('integration_openproject', 'To get your API access token yourself, go to the "Access token" section of your OpenProject account settings page.') }}
 		</p>
 		<div id="openproject-content">
@@ -17,34 +17,36 @@
 					@input="onNavigationChange">
 				<label for="openproject-link">{{ t('integration_openproject', 'Enable navigation link') }}</label>
 			</div>
-			<br><br>
-			<p v-if="isInsecureUrl" class="settings-hint">
-				<span class="icon icon-alert-outline" />
-				{{ t('integration_openproject', 'Warning, connecting to your OpenProject instance via http is insecure.') }}
-			</p>
-			<div class="openproject-grid-form">
-				<label for="openproject-url">
-					<a class="icon icon-link" />
-					{{ t('integration_openproject', 'OpenProject instance address') }}
-				</label>
-				<input id="openproject-url"
-					v-model="state.url"
-					type="text"
-					:disabled="connected === true"
-					:placeholder="t('integration_openproject', 'https://my.openproject.org')"
-					@input="onInput">
-				<label v-show="!showOAuth"
-					for="openproject-token">
-					<a class="icon icon-category-auth" />
-					{{ t('integration_openproject', 'Access token') }}
-				</label>
-				<input v-show="!showOAuth"
-					id="openproject-token"
-					v-model="state.token"
-					type="password"
-					:disabled="connected === true"
-					:placeholder="t('integration_openproject', 'OpenProject access token')"
-					@input="onInput">
+			<div v-if="state.allow_individual_connection" id="individual_connection">
+				<br><br>
+				<p v-if="isInsecureUrl" class="settings-hint">
+					<span class="icon icon-alert-outline" />
+					{{ t('integration_openproject', 'Warning, connecting to your OpenProject instance via http is insecure.') }}
+				</p>
+				<div class="openproject-grid-form">
+					<label for="openproject-url">
+						<a class="icon icon-link" />
+						{{ t('integration_openproject', 'OpenProject instance address') }}
+					</label>
+					<input id="openproject-url"
+						v-model="state.url"
+						type="text"
+						:disabled="connected === true"
+						:placeholder="t('integration_openproject', 'https://my.openproject.org')"
+						@input="onInput">
+					<label v-show="!showOAuth"
+						for="openproject-token">
+						<a class="icon icon-category-auth" />
+						{{ t('integration_openproject', 'Access token') }}
+					</label>
+					<input v-show="!showOAuth"
+						id="openproject-token"
+						v-model="state.token"
+						type="password"
+						:disabled="connected === true"
+						:placeholder="t('integration_openproject', 'OpenProject access token')"
+						@input="onInput">
+				</div>
 			</div>
 			<button v-if="showOAuth && !connected"
 				id="openproject-oauth"
@@ -119,6 +121,9 @@ export default {
 			return !this.state.url.startsWith('https://')
 		},
 		showOAuth() {
+			if (this.state.allow_individual_connection === false) {
+				return true
+			}
 			return this.state.url.replace(/\/+$/, '') === this.state.oauth_instance_url.replace(/\/+$/, '')
 				&& this.state.client_id
 				&& this.state.client_secret

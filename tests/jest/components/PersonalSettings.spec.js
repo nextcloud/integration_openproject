@@ -3,27 +3,27 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import PersonalSettings from '../../../src/components/PersonalSettings.vue'
 
+import * as initialState from '@nextcloud/initial-state'
 const localVue = createLocalVue()
 
 describe('PersonalSettings.vue Test', () => {
+	const oAuthSelector = '#openproject-oauth'
+	const individualConnectionSelector = '#individual_connection'
 	describe('oAuth', () => {
-		const oAuthSelector = '#openproject-oauth'
 		let wrapper
 		beforeEach(() => {
-			jest.mock('@nextcloud/initial-state')
-			jest.mock('@nextcloud/router')
-
-			wrapper = shallowMount(PersonalSettings, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
+			// eslint-disable-next-line no-import-assign
+			initialState.loadState = jest.fn(function() {
+				return {
+					url: 'https://localhost',
+					oauth_instance_url: 'https://localhost',
+					client_id: '123',
+					client_secret: '123',
+					allow_individual_connection: true,
+				}
 			})
+			wrapper = createWrapper()
 		})
-
 		it('oAuth is used when url === oauth_instance_url and client_id & client_secret are set', () => {
 			expect(wrapper.find(oAuthSelector).exists()).toBeTruthy()
 		})
@@ -79,4 +79,38 @@ describe('PersonalSettings.vue Test', () => {
 			expect(wrapper.find(oAuthSelector).exists()).toBeFalsy()
 		})
 	})
+	describe('individual connections forbidden', () => {
+		let wrapper
+		beforeEach(() => {
+			// eslint-disable-next-line no-import-assign
+			initialState.loadState = jest.fn(function() {
+				return {
+					url: 'https://localhost',
+					oauth_instance_url: 'https://different',
+					client_id: '123',
+					client_secret: '123',
+					allow_individual_connection: false,
+				}
+			})
+			wrapper = createWrapper()
+		})
+		it('oAuth is used when url and oauth_instance_url are different', () => {
+			expect(wrapper.find(oAuthSelector).exists()).toBeTruthy()
+		})
+		it('no settings for individual connections are displayed', () => {
+			expect(wrapper.find(individualConnectionSelector).exists()).toBeFalsy()
+		})
+	})
 })
+
+function createWrapper() {
+	return shallowMount(PersonalSettings, {
+		localVue,
+		mocks: {
+			t: (msg) => msg,
+			generateUrl() {
+				return '/'
+			},
+		},
+	})
+}

@@ -44,6 +44,15 @@
 				@focus="readonly = false"
 				@input="onInput">
 		</div>
+		<div>
+			<input
+				id="openproject-allow_individual_connection"
+				v-model="state.allow_individual_connection"
+				type="checkbox"
+				class="checkbox"
+				@input="onInput">
+			<label for="openproject-allow_individual_connection">{{ t('integration_openproject', 'Allow users to have individual connections with OpenProject servers of their choice') }}</label>
+		</div>
 	</div>
 </template>
 
@@ -91,6 +100,7 @@ export default {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
 					oauth_instance_url: this.state.oauth_instance_url,
+					allow_individual_connection: this.state.allow_individual_connection,
 				},
 			}
 			const url = generateUrl('/apps/integration_openproject/admin-config')

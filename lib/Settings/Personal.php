@@ -49,7 +49,14 @@ class Personal implements ISettings {
 		// don't expose the client secret to users
 		$clientSecret = ($this->config->getAppValue(Application::APP_ID, 'client_secret') !== '');
 		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$allowIndividualConnection = $this->config->getAppValue(
+			Application::APP_ID, 'allow_individual_connection',
+			true
+		);
 
+		if ($allowIndividualConnection !== '1') {
+			$url = $oauthUrl;
+		}
 		$userConfig = [
 			'login' => $login,
 			'token' => $token,
@@ -61,6 +68,7 @@ class Personal implements ISettings {
 			'notification_enabled' => ($notificationEnabled === '1'),
 			'navigation_enabled' => ($navigationEnabled === '1'),
 			'user_name' => $userName,
+			'allow_individual_connection' => ($allowIndividualConnection === '1'),
 		];
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
