@@ -32,6 +32,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	 */
 	private $service;
 
+	private $mockServerBaseUri;
 	private $clientId = 'U3V9_l262pNSENBnsqD2Uwylv5hQWCQ8lFPjCvGPbQc';
 	private $clientSecret = 'P5eu43P8YFFM9jeZKWcrpbskAUgHUBGYFQKB_8aeBtU';
 	private $workPackagesPath = '/api/v3/work_packages';
@@ -40,7 +41,9 @@ class OpenProjectAPIServiceTest extends TestCase
 	 * @before
 	 */
 	function setupMockServer(): void {
-		$this->builder = new InteractionBuilder(new MockServerEnvConfig());
+		$config = new MockServerEnvConfig();
+		$this->builder = new InteractionBuilder($config);
+		$this->mockServerBaseUri = $config->getBaseUri()->__toString();
 	}
 
 	/**
@@ -126,7 +129,16 @@ class OpenProjectAPIServiceTest extends TestCase
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $this->service->request('http://localhost:7200', '1234567890', 'oauth', '', $this->clientId, $this->clientSecret, 'admin', 'work_packages');
+		$result = $this->service->request(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			'admin',
+			'work_packages'
+		);
 		$this->assertSame(["_embedded" => ["elements" => []]], $result);
 
 	}
@@ -151,7 +163,11 @@ class OpenProjectAPIServiceTest extends TestCase
 		$refreshTokenRequest
 			->setMethod('POST')
 			->setPath('/oauth/token')
-			->setBody('client_id=' . $this->clientId . '&client_secret=' . $this->clientSecret . '&grant_type=refresh_token&refresh_token=myRefreshToken');
+			->setBody(
+				'client_id=' . $this->clientId .
+				'&client_secret=' . $this->clientSecret .
+				'&grant_type=refresh_token&refresh_token=myRefreshToken'
+			);
 
 		$refreshTokenResponse = new ProviderResponse();
 		$refreshTokenResponse
@@ -179,7 +195,16 @@ class OpenProjectAPIServiceTest extends TestCase
 			->with($consumerRequestNewOAuthToken)
 			->willRespondWith($providerResponseNewOAuthToken);
 
-		$result = $this->service->request('http://localhost:7200', 'invalid', 'oauth', 'myRefreshToken',  $this->clientId, $this->clientSecret, 'admin', 'work_packages');
+		$result = $this->service->request(
+			$this->mockServerBaseUri,
+			'invalid',
+			'oauth',
+			'myRefreshToken',
+			$this->clientId,
+			$this->clientSecret,
+			'admin',
+			'work_packages'
+		);
 		$this->assertSame(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]], $result);
 	}
 }
