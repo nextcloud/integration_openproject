@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchInput.vue tests work packages avatar and name should be displayed if assignee is present 1`] = `
+<div class="filter-assignee">
+  <div class="filter-assignee__avatar">
+    <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+  </div>
+  <div class="filter-assignee__assignee">
+    test
+  </div>
+</div>
+`;
+
+exports[`SearchInput.vue tests work packages should be displayed if the length of words in searchbar is more than three 1`] = `
+<div class="search-list">
+  <div class="workPackage-item">
+    <div class="wp-info">
+      <div class="wp-info__filter-wp">
+        <div class="filter-project-type-status">
+          <div class="filter-project-type-status__project">
+            test
+          </div>
+          <div class="filter-project-type-status__type" style="color: red;">
+            task
+          </div>
+          <div class="filter-project-type-status__status" style="background-color: blue;">
+            in-progress
+          </div>
+        </div>
+        <div class="filter-assignee">
+          <div class="filter-assignee__avatar">
+            <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="filter-assignee__assignee">
+            test
+          </div>
+        </div>
+      </div>
+      <div class="filter-wp-subject">
+        <div class="filter-wp-subject__subject">
+          Organize work-packages
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="create-new-wp">
+    integration_openproject
+  </div>
+</div>
+`;

@@ -203,14 +203,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('request')
 			->withConsecutive(
 				[
-					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				],
 				[
-					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
@@ -272,6 +272,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[["embedded" => ['elements']]],
 		];
 	}
+
 	/**
 	 * @dataProvider malformedResponsesDataProvider
 	 * @param array<mixed> $response
@@ -467,7 +468,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame('dataOfTheImage', $result['avatar']);
 		$this->assertSame('image/jpeg', $result['type']);
 	}
-
+	
+	
 	/**
 	 * @return void
 	 */
@@ -501,5 +503,70 @@ class OpenProjectAPIServiceTest extends TestCase {
 		//make sure its an image, if something else is returned it will throw an exception
 		// @phpstan-ignore-next-line
 		imagecreatefromstring($result['avatar']);
+	}
+
+	public function testGetOpenProjectWorkPackageStatusRequest(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/statuses/7')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(200)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(["_type" => "Status", "id" => 7, "name" => "In progress",
+				"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7]);
+
+		$this->builder
+			->uponReceiving('a GET request to /statuses ')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->getOpenProjectWorkPackageStatus(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			'admin',
+			'7'
+		);
+		$this->assertSame(["_type" => "Status", "id" => 7, "name" => "In progress",
+			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7], $result);
+	}
+	
+	public function testGetOpenProjectWorkPackageTypeRequest(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/types/3')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(200)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(["_type" => "Type", "id" => 3, "name" => "Phase",
+				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"]);
+
+		$this->builder
+			->uponReceiving('a GET request to /type ')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->getOpenProjectWorkPackageType(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			'admin',
+			'3'
+		);
+
+		$this->assertSame(["_type" => "Type", "id" => 3, "name" => "Phase",
+			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $result);
 	}
 }
