@@ -48,7 +48,7 @@ export default {
 			} else if (this.state === 'error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'ok') {
-				return t('integration_openproject', 'No workspaces linked yet')
+				return t('integration_openproject', 'No workspaces linked yet, search for workpackage to add!')
 			}
 			return 'invalid state'
 		},
@@ -63,6 +63,7 @@ export default {
 	}
 	.empty-icon {
 		padding: 1vh 0;
+
 		.icon img {
 			height: 50px;
 			width: 50px;

@@ -11,15 +11,16 @@
 
 namespace OCA\OpenProject\Controller;
 
+use Exception;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCP\PreConditionNotMetException;
 
 class OpenProjectAPIController extends Controller {
 
@@ -55,6 +56,11 @@ class OpenProjectAPIController extends Controller {
 	 * @var string
 	 */
 	private $openprojectUrl;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -129,4 +135,81 @@ class OpenProjectAPIController extends Controller {
 		}
 		return $response;
 	}
+
+	/**
+	 * get searched work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param ?string $searchQuery
+	 *
+	 * @return DataResponse
+	 * @throws PreConditionNotMetException
+	 */
+	public function getSearchedWorkPackages(?string $searchQuery = null): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->searchWorkPackage(
+			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
+
+	/**
+	 * get status of work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 *
+	 * @return DataResponse
+	 * @throws Exception
+	 */
+	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
+			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
+
+	/**
+	 * get type work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 *
+	 * @return DataResponse
+	 * @throws Exception
+	 */
+	public function getOpenProjectWorkPackageType(string $id): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
+			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
+
+
 }
