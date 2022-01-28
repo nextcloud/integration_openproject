@@ -111,6 +111,100 @@ class OpenProjectAPIServiceTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	public function testGetNotificationsRequest() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath($this->workPackagesPath)
+			->setHeaders(["Authorization" =>  "Bearer 1234567890"])
+			->addQueryParameter('filters', '[{"status":{"operator":"!","values":["14"]}}]')
+			->addQueryParameter('sortBy', '[["updatedAt", "desc"]]');
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(200)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(["_embedded" => ["elements" => [['some' =>'data']]]]);
+
+		$this->builder
+			->uponReceiving('a GET request to /work_packages with filter and sorting')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->getNotifications(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			'admin'
+		);
+		$this->assertSame([['some' =>'data']], $result);
+	}
+
+	public function malformedResponsesDataProvider() {
+		return [
+			[["_embedded" => []]],
+			[["_embedded" => ['element']]],
+			[["embedded" => ['elements']]],
+		];
+	}
+	/**
+	 * @dataProvider malformedResponsesDataProvider
+	 */
+	public function testGetNotificationsMalformedResponse($response) {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['request'])
+			->getMock();
+		$service->method('request')
+			->willReturn($response);
+		$result = $service->getNotifications('', '', '', '', '', '', '');
+		$this->assertSame(["error" => "Malformed response"], $result);
+	}
+
+	public function testGetNotificationsErrorResponse() {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['request'])
+			->getMock();
+		$service->method('request')
+			->willReturn(['error' => 'my error']);
+		$result = $service->getNotifications('', '', '', '', '', '', '');
+		$this->assertSame(["error" => "my error"], $result);
+	}
+
+	public function testGetNotificationsFilters() {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['request', 'now'])
+			->getMock();
+		$service->method('now')
+			->willReturn("2022-01-27T08:15:48Z");
+		$service->expects($this->once())
+			->method('request')
+			->with(
+				'url','token', 'type', 'refresh', 'id', 'secret','user', 'work_packages',
+				[
+					'filters' => '[{"updatedAt":{"operator":"<>d","values":["2022-01-01T12:01:01Z","2022-01-27T08:15:48Z"]}},{"status":{"operator":"!","values":["14"]}}]',
+					'sortBy' => '[["updatedAt", "desc"]]'
+			]);
+
+		$service->getNotifications('url','token', 'type', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
+	}
+
+	public function testGetNotificationsLimit() {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['request'])
+			->getMock();
+		$service->method('request')
+			->willReturn(["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]);
+		$result = $service->getNotifications('', '', '', '', '', '', '','',2);
+		$this->assertSame([['id' => 1], ['id' => 2]], $result);
+	}
+
 	public function testRequestUsingOAuthToken() {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest

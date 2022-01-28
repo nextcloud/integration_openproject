@@ -176,6 +176,19 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * returns the current date and time with the correct format for OpenProject API
+	 *
+	 * @return string
+	 */
+	public function now(): string {
+		date_default_timezone_set('UTC');
+		$utcTimezone = new DateTimeZone('-0000');
+		$nowDt = new Datetime();
+		$nowDt->setTimezone($utcTimezone);
+		return $nowDt->format('Y-m-d\TH:i:s\Z');
+	}
+
+	/**
 	 * @param string $url
 	 * @param string $accessToken
 	 * @param string $authType
@@ -191,12 +204,7 @@ class OpenProjectAPIService {
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
 									?string $since = null, ?int $limit = null): array {
 		if ($since) {
-			date_default_timezone_set('UTC');
-			$utcTimezone = new DateTimeZone('-0000');
-			$nowDt = new Datetime();
-			$nowDt->setTimezone($utcTimezone);
-			$now = $nowDt->format('Y-m-d\TH:i:s\Z');
-			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $now . '"]}},{"status":{"operator":"!","values":["14"]}}]';
+			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $this->now() . '"]}},{"status":{"operator":"!","values":["14"]}}]';
 		} else {
 			$filters = '[{"status":{"operator":"!","values":["14"]}}]';
 		}
