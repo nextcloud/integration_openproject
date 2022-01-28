@@ -136,20 +136,30 @@ class ConfigController extends Controller {
 				'redirect_uri' => $redirect_uri,
 				'grant_type' => 'authorization_code'
 			], 'POST');
-			if (isset($result['access_token'])) {
+			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				$accessToken = $result['access_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $accessToken);
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'token_type', 'oauth');
 				$refreshToken = $result['refresh_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'refresh_token', $refreshToken);
 				// get user info
+				// ToDo check response for errors
 				$this->storeUserInfo($accessToken);
 				return new RedirectResponse(
 					$this->urlGenerator->linkToRoute('settings.PersonalSettings.index', ['section' => 'connected-accounts']) .
 					'?openprojectToken=success'
 				);
 			}
-			$result = $this->l->t('Error getting OAuth access token.') . ' ' . $result['error'];
+			$error = '';
+			if (!isset($result['access_token'])) {
+				$error = $this->l->t('Error getting OAuth access token.');
+			} elseif (!isset($result['refresh_token'])) {
+				$error = $this->l->t('Error getting OAuth refresh token.');
+			}
+			if (isset($result['error'])) {
+				$error = $error . ' ' . $result['error'];
+			}
+			$result =  $error;
 		} else {
 			$result = $this->l->t('Error during OAuth exchanges');
 		}
