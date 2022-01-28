@@ -80,6 +80,17 @@ class OpenProjectAPIServiceTest extends TestCase
 		);
 	}
 
+	/**
+	 * @param array $onlyMethods
+	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private function getServiceMock(array $onlyMethods = ['request']): OpenProjectAPIService {
+		return $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods($onlyMethods)
+			->getMock();
+	}
+
 	public function urlsDataProvider(): array {
 		return [
 			['http://127.0.0.1', true],
@@ -109,6 +120,69 @@ class OpenProjectAPIServiceTest extends TestCase
 	public function testValidateOpenProjectURL(string $url, bool $expected) {
 		$result = OpenProjectAPIService::validateOpenProjectURL($url);
 		$this->assertSame($expected, $result);
+	}
+
+	public function searchWorkPackageDataProvider() {
+		return [
+			[   // description and subject search, both return a result
+				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
+				["_embedded" => ["elements" => [['id' => 3], ['id' => 4], ['id' => 5]]]],
+				[['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]
+			],
+			[   // only subject search returns a result
+				[],
+				["_embedded" => ["elements" => [['id' => 3], ['id' => 4], ['id' => 5]]]],
+				[['id' => 3], ['id' => 4], ['id' => 5]]
+			],
+			[   // only description search returns a result
+				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
+				[],
+				[['id' => 1], ['id' => 2], ['id' => 3]]
+			],
+			[   // no search result returned
+				[],
+				[],
+				[]
+			]
+		];
+	}
+
+	/**
+	 * @param array $descriptionResponse
+	 * @param array $subjectResponse
+	 * @param array $expectedResult
+	 * @return void
+	 * @dataProvider searchWorkPackageDataProvider
+	 */
+	public function testSearchWorkPackageDescAndSubjectResponse(
+		array $descriptionResponse, array $subjectResponse, array $expectedResult
+	) {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->withConsecutive(
+				[
+					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					[
+						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				],
+				[
+					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					[
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				$descriptionResponse,
+				$subjectResponse
+			);
+		$result = $service->searchWorkPackage(
+			'url','token', 'type', 'refresh', 'id', 'secret', 'user','search query'
+		);
+		$this->assertSame($expectedResult, $result);
 	}
 
 	public function testGetNotificationsRequest() {
@@ -154,10 +228,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	 * @dataProvider malformedResponsesDataProvider
 	 */
 	public function testGetNotificationsMalformedResponse($response) {
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->onlyMethods(['request'])
-			->getMock();
+		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$result = $service->getNotifications('', '', '', '', '', '', '');
@@ -165,10 +236,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	}
 
 	public function testGetNotificationsErrorResponse() {
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->onlyMethods(['request'])
-			->getMock();
+		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'my error']);
 		$result = $service->getNotifications('', '', '', '', '', '', '');
@@ -176,10 +244,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	}
 
 	public function testGetNotificationsFilters() {
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->onlyMethods(['request', 'now'])
-			->getMock();
+		$service = $this->getServiceMock(['request', 'now']);
 		$service->method('now')
 			->willReturn("2022-01-27T08:15:48Z");
 		$service->expects($this->once())
@@ -195,10 +260,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	}
 
 	public function testGetNotificationsLimit() {
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->onlyMethods(['request'])
-			->getMock();
+		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]);
 		$result = $service->getNotifications('', '', '', '', '', '', '','',2);
