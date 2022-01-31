@@ -22,9 +22,8 @@
 
 <template>
 	<div class="projects">
-		<div :class="{ 'icon-loading': state === 'loading' }">
-			<EmptyContent v-if="state !== 'loading'" id="openproject-empty-content" :state="state" />
-		</div>
+		<div v-if="isLoading" class="icon-loading" />
+		<EmptyContent v-else id="openproject-empty-content" :state="state" />
 	</div>
 </template>
 
@@ -43,8 +42,13 @@ export default {
 		fileInfo: null,
 		state: 'loading',
 	}),
-	computed: {},
-	created() {},
+	computed: {
+		isLoading() {
+			return this.state === 'loading'
+		},
+	},
+	created() {
+	},
 	methods: {
 		/**
 		 * updates current resource
@@ -89,11 +93,19 @@ export default {
 .projects {
 	height: 100% !important;
 	text-align: center;
+
+	.center-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.title {
-		font-size:  2rem;
+		font-size: 2rem;
 		font-weight: 600;
 		padding-bottom: 0;
 	}
+
 	.subtitle {
 		padding-top: 0;
 		font-size: 1.2rem;

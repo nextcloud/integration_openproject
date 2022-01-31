@@ -38,6 +38,6 @@ class LoadSidebarScript implements IEventListener {
 			return;
 		}
 		Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');
-		Util::addStyle(Application::APP_ID, 'icon');
+		Util::addStyle(Application::APP_ID, 'tab');
 	}
 }
