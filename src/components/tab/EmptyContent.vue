@@ -83,4 +83,8 @@ export default {
 		padding: 8px 0;
 	}
 }
+
+.fill-height {
+	height: 100%;
+}
 </style>
