@@ -20,7 +20,7 @@
 			<br><br>
 			<p v-if="isInsecureUrl" class="settings-hint">
 				<span class="icon icon-alert-outline" />
-				{{ t('integration_openproject', 'Warning, connection to your OpenProject instance via HTTP is insecure.') }}
+				{{ t('integration_openproject', 'Warning, connecting to your OpenProject instance via HTTP is insecure.') }}
 			</p>
 			<div class="openproject-grid-form">
 				<label for="openproject-url">
