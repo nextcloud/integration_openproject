@@ -1,16 +1,18 @@
 <template>
-	<div class="empty-projects">
-		<div class="empty-icon">
-			<img :src="flowSvg" alt="flow">
-		</div>
-		<div class="title text-center">
-			{{ emptyContentMessage }}
-		</div>
-		<br>
-		<div v-if="showConnectButton" class="connect-button">
-			<a class="button" :href="settingsUrl">
-				{{ t('integration_openproject', 'Connect to OpenProject') }}
-			</a>
+	<div class="fill-height center-content">
+		<div class="empty-projects">
+			<div class="empty-icon center-content">
+				<img :src="flowSvg" alt="flow">
+			</div>
+			<div class="title text-center">
+				{{ emptyContentMessage }}
+			</div>
+			<br>
+			<div v-if="showConnectButton" class="connect-button">
+				<a class="button" :href="settingsUrl">
+					{{ t('integration_openproject', 'Connect to OpenProject') }}
+				</a>
+			</div>
 		</div>
 	</div>
 </template>
@@ -60,11 +62,7 @@ export default {
 		text-align: center;
 	}
 	.empty-icon {
-		padding-top: 10vh;
-		padding-bottom: 1vh;
-		display: flex;
-		align-content: center;
-		justify-content: center;
+		padding: 1vh 0;
 		.icon img {
 			height: 50px;
 			width: 50px;

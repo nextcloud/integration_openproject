@@ -8,3 +8,13 @@ span.icon-open-project {
 body.theme--dark span.icon-open-project {
 	background: url('../img/tab-logo-white.svg') no-repeat center;
 }
+
+#tab-open-project, .fill-height {
+	height: 100%;
+}
+
+.center-content {
+	display: flex;
+	align-content: center;
+	justify-content: center;
+}
