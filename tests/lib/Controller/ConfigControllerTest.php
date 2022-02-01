@@ -113,11 +113,11 @@ class ConfigControllerTest extends TestCase
 			],
 			[
 				[],
-				'?openprojectToken=error&message=Error+getting+OAuth+access+token.'
+				'?openprojectToken=error&message=Error+getting+OAuth+access+token'
 			],
 			[   // access token given but no refresh token
 				['access_token' => '123'],
-				'?openprojectToken=error&message=Error+getting+OAuth+refresh+token.'
+				'?openprojectToken=error&message=Error+getting+OAuth+refresh+token'
 			],
 			[   // access token & error given but no refresh token
 				['access_token' => '123', 'error' => 'issue'],
@@ -125,7 +125,7 @@ class ConfigControllerTest extends TestCase
 			],
 			[   //refresh token given but no access token
 				['refresh_token' => '123'],
-				'?openprojectToken=error&message=Error+getting+OAuth+access+token.'
+				'?openprojectToken=error&message=Error+getting+OAuth+access+token'
 			],
 			[   //refresh token & error given but no access token
 				['refresh_token' => '123', 'error' => 'issue'],

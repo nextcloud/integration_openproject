@@ -157,7 +157,7 @@ class ConfigController extends Controller {
 				$error = $this->l->t('Error getting OAuth refresh token');
 			}
 			if (isset($result['error'])) {
-				$error = $error . ' ' . $result['error'];
+				$error = $error . '. ' . $result['error'];
 			}
 			$result =  $error;
 		} else {
