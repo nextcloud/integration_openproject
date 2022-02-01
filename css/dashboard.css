@@ -1,7 +1,8 @@
 .icon-openproject {
-	background-image: url(./../img/app-dark.svg);
+	background-image: url(./../img/app.svg);
+	filter: contrast(0) brightness(0);
 }
 
 body.theme--dark .icon-openproject {
-	background-image: url(./../img/app.svg);
+	filter: none
 }

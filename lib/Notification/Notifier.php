@@ -107,7 +107,7 @@ class Notifier implements INotifier {
 						'instance' => $richSubjectInstance,
 					]
 				)
-				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
+				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app.svg')));
 			return $notification;
 
 		default:

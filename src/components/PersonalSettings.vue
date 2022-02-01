@@ -1,9 +1,6 @@
 <template>
 	<div id="openproject_prefs" class="section">
-		<h2>
-			<a class="icon icon-openproject" />
-			{{ t('integration_openproject', 'OpenProject integration') }}
-		</h2>
+		<SettingsTitle />
 		<p v-if="!showOAuth && !connected" class="settings-hint">
 			{{ t('integration_openproject', 'To get your API access token yourself, go to the "Access token" section of your OpenProject account settings page.') }}
 		</p>
@@ -96,11 +93,13 @@ import axios from '@nextcloud/axios'
 import { delay } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
+import SettingsTitle from '../components/settings/SettingsTitle'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
+		SettingsTitle,
 	},
 
 	props: [],
@@ -275,17 +274,6 @@ export default {
 	margin-bottom: -3px;
 }
 
-.icon-openproject {
-	background-image: url(./../../img/app-dark.svg);
-	background-size: 23px 23px;
-	height: 23px;
-	margin-bottom: -4px;
-}
-
-body.theme--dark .icon-openproject {
-	background-image: url(./../../img/app.svg);
-}
-
 #openproject-content {
 	margin-left: 40px;
 }
@@ -293,5 +281,4 @@ body.theme--dark .icon-openproject {
 #openproject-search-block .icon {
 	width: 22px;
 }
-
 </style>
