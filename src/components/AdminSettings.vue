@@ -1,9 +1,6 @@
 <template>
 	<div id="openproject_prefs" class="section">
-		<h2>
-			<a class="icon icon-openproject" />
-			{{ t('integration_openproject', 'OpenProject integration') }}
-		</h2>
+		<SettingsTitle />
 		<p class="settings-hint">
 			{{ t('integration_openproject', 'If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below.') }}
 			<br><br>
@@ -54,11 +51,13 @@ import axios from '@nextcloud/axios'
 import { delay } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
+import SettingsTitle from '../components/settings/SettingsTitle'
 
 export default {
 	name: 'AdminSettings',
 
 	components: {
+		SettingsTitle,
 	},
 
 	props: [],
@@ -135,16 +134,4 @@ export default {
 #openproject_prefs .grid-form .icon {
 	margin-bottom: -3px;
 }
-
-.icon-openproject {
-	background-image: url(./../../img/app-dark.svg);
-	background-size: 23px 23px;
-	height: 23px;
-	margin-bottom: -4px;
-}
-
-body.theme--dark .icon-openproject {
-	background-image: url(./../../img/app.svg);
-}
-
 </style>

@@ -1,12 +1,13 @@
-span.icon-open-project {
+span.icon-openproject {
 	padding: 0 !important;
 	background: url('../img/tab-logo.svg') no-repeat center;
 	min-width: 44px !important;
 	min-height: 16px !important;
+	filter: contrast(0) brightness(0);
 }
 
-body.theme--dark span.icon-open-project {
-	background: url('../img/tab-logo-white.svg') no-repeat center;
+body.theme--dark span.icon-openproject {
+	filter: none;
 }
 
 #tab-open-project {
