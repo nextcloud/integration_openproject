@@ -2,8 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Error getting OAuth access token." : "獲取 OAuth 存取權杖時發生錯誤。",
-    "Error getting OAuth refresh token." : "獲取 OAuth 更新權杖時發生錯誤。",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",
@@ -27,6 +25,7 @@ OC.L10N.register(
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "To get your API access token yourself, go to the \"Access token\" section of your OpenProject account settings page." : "要自己獲取 API 存取權杖，請轉到 OpenProject 帳戶設置頁面的“存取權杖”部分。",
     "Enable navigation link" : "啟用導覽連結",
+    "Warning, connecting to your OpenProject instance via HTTP is insecure." : "警告，通過 HTTP 連接到您的 OpenProject 實例是不安全的。",
     "https://my.openproject.org" : "https://my.openproject.org",
     "Access token" : "存取權杖",
     "OpenProject access token" : "OpenProject 存取權杖",

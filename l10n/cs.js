@@ -2,8 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Error getting OAuth access token." : "Chyba při získávání OAuth přístupového tokenu.",
-    "Error getting OAuth refresh token." : "Chyba při získávání obnovovacího OAuth tokenu.",
     "Error during OAuth exchanges" : "Chyba při OAuth výměnách",
     "OpenProject notifications" : "Upozorňování z OpenProject",
     "OpenProject activity" : "Aktivita v OpenProject",
@@ -27,6 +25,7 @@ OC.L10N.register(
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "To get your API access token yourself, go to the \"Access token\" section of your OpenProject account settings page." : "Pokud chcete získat přístupový token k aplikačnímu program. rozhraní (API) svépomocí, jděte do sekce „Přístupový token“ na stránce nastavení vašeho účtu v OpenProject",
     "Enable navigation link" : "Zapnout navigační odkaz",
+    "Warning, connecting to your OpenProject instance via HTTP is insecure." : "Varování: připojování k vámi používané instanci OpenProject prostřednictvím nešifrovaného HTTP není bezpečné!",
     "https://my.openproject.org" : "https://muj.openproject.org",
     "Access token" : "Přístupový token",
     "OpenProject access token" : "Přístupový token k OpenProject",
