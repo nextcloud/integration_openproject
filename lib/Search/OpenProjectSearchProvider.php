@@ -115,10 +115,14 @@ class OpenProjectSearchProvider implements IProvider {
 		$offset = $offset ? intval($offset) : 0;
 
 		$theme = $this->config->getUserValue($user->getUID(), 'accessibility', 'theme');
-//		$thumbnailUrl = ($theme === 'dark')
-//			? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
-//			: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
-		$thumbnailUrl = $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg');
+		$svgUrl = $this->urlGenerator->linkToRoute('core.Svg.getSvgFromApp', [
+			'app' => Application::APP_ID,
+			'fileName' => 'app',
+		]);
+		$thumbnailUrl = ($theme === 'dark')
+			? $svgUrl . '?color=ffffff'
+			: $svgUrl . '?color=000000';
+
 		$openprojectUrl = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 		$tokenType = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token_type');
