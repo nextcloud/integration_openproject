@@ -3,6 +3,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
+import * as initialState from '@nextcloud/initial-state'
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
 
@@ -11,6 +12,8 @@ describe('ProjectsTab.vue Test', () => {
 	const loadingIndicatorSelector = '.icon-loading'
 	const emptyContentSelector = '#openproject-empty-content'
 	beforeEach(() => {
+		// eslint-disable-next-line no-import-assign
+		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
 		wrapper = shallowMount(ProjectsTab, { localVue })
 	})
 	describe('loading icon', () => {

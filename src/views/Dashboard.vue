@@ -10,9 +10,7 @@
 				<template #desc>
 					{{ emptyContentMessage }}
 					<div v-if="state === 'no-token' || state === 'error'" class="connect-button">
-						<a class="button" :href="settingsUrl">
-							{{ t('integration_openproject', 'Connect to OpenProject') }}
-						</a>
+						<OAuthConnectButton :request-url="requestUrl" />
 					</div>
 				</template>
 			</EmptyContent>
@@ -28,12 +26,14 @@ import { showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
+import { loadState } from '@nextcloud/initial-state'
+import OAuthConnectButton from '../components/OAuthConnectButton'
 
 export default {
 	name: 'Dashboard',
 
 	components: {
-		DashboardWidget, EmptyContent,
+		DashboardWidget, EmptyContent, OAuthConnectButton,
 	},
 
 	props: {
@@ -49,6 +49,7 @@ export default {
 			notifications: [],
 			loop: null,
 			state: 'loading',
+			requestUrl: loadState('integration_openproject', 'request-url'),
 			settingsUrl: generateUrl('/settings/user/connected-accounts'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -100,7 +101,6 @@ export default {
 			return 'icon-checkmark'
 		},
 	},
-
 	watch: {
 		windowVisibility(newValue) {
 			if (newValue) {

@@ -1,17 +1,12 @@
 /* jshint esversion: 8 */
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import EmptyContent from '../../../../src/components/tab/EmptyContent'
-
-jest.mock('@nextcloud/l10n', () => ({
-	translate: jest.fn((app, msg) => msg),
-}))
-
 const localVue = createLocalVue()
 
 describe('EmptyContent.vue Test', () => {
 	let wrapper
 	const emptyContentMessageSelector = '.title'
-	const connectButtonSelector = 'a.button'
+	const connectButtonSelector = 'oauthconnectbutton-stub'
 
 	it.each([{
 		state: 'ok',
@@ -30,6 +25,7 @@ describe('EmptyContent.vue Test', () => {
 			},
 			propsData: {
 				state: cases.state,
+				requestUrl: 'http://openproject/oauth/',
 			},
 		})
 		expect(wrapper.find(connectButtonSelector).exists()).toBe(cases.viewed)
@@ -54,6 +50,7 @@ describe('EmptyContent.vue Test', () => {
 			},
 			propsData: {
 				state: cases.state,
+				requestUrl: 'http://openproject/oauth/',
 			},
 		})
 		expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()

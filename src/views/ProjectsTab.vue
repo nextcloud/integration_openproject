@@ -24,7 +24,10 @@
 	<div class="projects">
 		<SearchInput />
 		<div v-if="isLoading" class="icon-loading" />
-		<EmptyContent v-else id="openproject-empty-content" :state="state" />
+		<EmptyContent v-else
+			id="openproject-empty-content"
+			:state="state"
+			:request-url="requestUrl" />
 	</div>
 </template>
 
@@ -33,6 +36,7 @@ import EmptyContent from '../components/tab/EmptyContent'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'ProjectsTab',
@@ -44,6 +48,7 @@ export default {
 		error: '',
 		fileInfo: null,
 		state: 'loading',
+		requestUrl: loadState('integration_openproject', 'request-url'),
 	}),
 	computed: {
 		isLoading() {

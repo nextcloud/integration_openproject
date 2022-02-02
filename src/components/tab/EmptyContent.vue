@@ -9,9 +9,7 @@
 			</div>
 			<br>
 			<div v-if="showConnectButton" class="connect-button">
-				<a class="button" :href="settingsUrl">
-					{{ t('integration_openproject', 'Connect to OpenProject') }}
-				</a>
+				<OAuthConnectButton :request-url="requestUrl" />
 			</div>
 		</div>
 	</div>
@@ -20,14 +18,20 @@
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
+import OAuthConnectButton from '../OAuthConnectButton'
 
 export default {
 	name: 'EmptyContent',
+	components: { OAuthConnectButton },
 	props: {
 		state: {
 			type: String,
 			required: true,
 			default: 'ok',
+		},
+		requestUrl: {
+			type: String,
+			required: true,
 		},
 	},
 	data() {

@@ -14,12 +14,12 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @var IL10N
 	 */
-	private IL10N $l;
+	private $l;
 
 	/**
 	 * @var IConfig
 	 */
-	private IConfig $configMock;
+	private $configMock;
 
 	/**
 	 * @var ConfigController

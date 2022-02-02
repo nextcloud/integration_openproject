@@ -15,6 +15,7 @@ use OC\Http\Client\Client;
 use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\ILogger;
+use OCP\IURLGenerator;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
@@ -467,7 +468,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame('dataOfTheImage', $result['avatar']);
 		$this->assertSame('image/jpeg', $result['type']);
 	}
-	
+
 	/**
 	 * @return void
 	 */
@@ -624,5 +625,32 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(['error' => 'Malformed response']);
 		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
 		$this->assertSame(['error' => 'Malformed response'], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectOauthURL() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls('clientID', 'https://openproject');
+
+		$url = $this->createMock(IURLGenerator::class);
+		$url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('integration_openproject.config.oauthRedirect')
+			->willReturn('http://nextcloud.org/index.php/oauth-redirect');
+		$result = $this->service::getOpenProjectOauthURL($configMock, $url);
+		$this->assertSame(
+			'https://openproject/oauth/authorize?' .
+			'client_id=clientID&' .
+			'redirect_uri=' . urlencode('http://nextcloud.org/index.php/oauth-redirect') .
+			'&response_type=code',
+			$result
+		);
 	}
 }

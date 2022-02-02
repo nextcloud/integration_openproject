@@ -2,21 +2,28 @@
 
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import PersonalSettings from '../../../src/components/PersonalSettings.vue'
+import * as initialState from '@nextcloud/initial-state'
 
 const localVue = createLocalVue()
 
 describe('PersonalSettings.vue Test', () => {
 	describe('oAuth', () => {
-		const oAuthSelector = '#openproject-oauth'
+		const oAuthButtonSelector = 'oauthconnectbutton-stub'
+		const oAuthDisconnectButtonSelector = '#openproject-rm-cred'
+		const connectedAsLabenSelector = '.openproject-connected'
+		const searchBlockSelector = '#openproject-search-block'
 		let wrapper
 		beforeEach(() => {
-			jest.mock('@nextcloud/initial-state')
-			jest.mock('@nextcloud/router')
-
+			// eslint-disable-next-line no-import-assign
+			initialState.loadState = jest.fn(function() {
+				return {
+					request_url: 'https://localhost',
+				}
+			})
 			wrapper = shallowMount(PersonalSettings, {
 				localVue,
 				mocks: {
-					t: (msg) => msg,
+					t: (app, msg) => msg,
 					generateUrl() {
 						return '/'
 					},
@@ -24,59 +31,50 @@ describe('PersonalSettings.vue Test', () => {
 			})
 		})
 
-		it('oAuth is used when url === oauth_instance_url and client_id & client_secret are set', () => {
-			expect(wrapper.find(oAuthSelector).exists()).toBeTruthy()
-		})
-		it.each([
-			{ url: 'https://localhost/', oauth_instance_url: 'https://localhost' },
-			{ url: 'https://localhost:3000/', oauth_instance_url: 'https://localhost:3000' },
-			{ url: 'https://localhost//', oauth_instance_url: 'https://localhost' },
-			{ url: 'https://localhost//', oauth_instance_url: 'https://localhost/' },
-			{ url: 'https://localhost', oauth_instance_url: 'https://localhost/' },
-			{ url: 'https://localhost', oauth_instance_url: 'https://localhost//' },
-			{ url: 'https://localhost/', oauth_instance_url: 'https://localhost//' },
-			{ url: 'http://server.np/openproject', oauth_instance_url: 'http://server.np/openproject/' },
-		])('oAuth is used when url and oauth_instance_url are different in an insignificant way', async (
-			cases) => {
-			await wrapper.setData({
-				state: {
-					url: cases.url,
-					oauth_instance_url: cases.oauth_instance_url,
-				},
+		describe.each([
+			{ user_name: 'test', token: '' },
+			{ user_name: 'test', token: null },
+			{ user_name: 'test', token: undefined },
+			{ user_name: '', token: '123' },
+			{ user_name: null, token: '123' },
+			{ user_name: undefined, token: '123' },
+			{ user_name: '', token: '' },
+			{ user_name: null, token: '' },
+			{ user_name: '', token: null },
+		])('when username or token not given', (cases) => {
+			beforeEach(async () => {
+				await wrapper.setData({
+					state: cases,
+				})
 			})
-			expect(wrapper.find(oAuthSelector).exists()).toBeTruthy()
-		})
-		it.each([
-			{ url: 'https://differnt', oauth_instance_url: 'https://localhost' },
-			{ url: 'http://localhost', oauth_instance_url: 'https://localhost' },
-			{ url: 'http://openproject.it', oauth_instance_url: 'https://openproject.de' },
-			{ url: 'https://openproject.it:8081', oauth_instance_url: 'https://openproject.de:8080' },
-			{ url: 'http://server.np/OpenProject', oauth_instance_url: 'http://server.np/openproject' },
-		])('oAuth is not used when url and oauth_instance_url are different', async (
-			cases) => {
-			await wrapper.setData({
-				state: {
-					url: cases.url,
-					oauth_instance_url: cases.oauth_instance_url,
-				},
+			it('oAuth connect button is displayed', () => {
+				expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
 			})
-			expect(wrapper.find(oAuthSelector).exists()).toBeFalsy()
-		})
-		it.each(['', null, undefined, 0, false])('oAuth is not used when client_id is not set', async (clientId) => {
-			await wrapper.setData({
-				state: {
-					client_id: clientId,
-				},
+			it('search settings are not displayed', () => {
+				expect(wrapper.find(searchBlockSelector).exists()).toBeFalsy()
 			})
-			expect(wrapper.find(oAuthSelector).exists()).toBeFalsy()
-		})
-		it.each(['', null, undefined, 0, false])('oAuth is not used when client_secret is not set', async (clientSecret) => {
-			await wrapper.setData({
-				state: {
-					client_secret: clientSecret,
-				},
+			it('oAuth disconnect button is not displayed', () => {
+				expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeFalsy()
 			})
-			expect(wrapper.find(oAuthSelector).exists()).toBeFalsy()
+		})
+		describe('when username and token are given', () => {
+			beforeEach(async () => {
+				await wrapper.setData({
+					state: { user_name: 'test', token: '123' },
+				})
+			})
+			it('oAuth connect button is not displayed', () => {
+				expect(wrapper.find(oAuthButtonSelector).exists()).toBeFalsy()
+			})
+			it('oAuth disconnect button is displayed', () => {
+				expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeTruthy()
+			})
+			it('connected as label is displayed', () => {
+				expect(wrapper.find(connectedAsLabenSelector).text()).toBe('Connected as {user}')
+			})
+			it('oAuth search settings are displayed', () => {
+				expect(wrapper.find(searchBlockSelector).exists()).toBeTruthy()
+			})
 		})
 	})
 })
