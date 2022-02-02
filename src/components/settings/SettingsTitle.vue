@@ -12,7 +12,7 @@ export default {
 	computed: {
 		title() {
 			return t('integration_openproject', 'OpenProject integration')
-		}
+		},
 	},
 }
 </script>
