@@ -1,5 +1,7 @@
 { "translations": {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "擷取 OAuth 存取權杖時發生錯誤",
+    "Error getting OAuth refresh token" : "獲取 OAuth 更新權杖時發生錯誤。",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",

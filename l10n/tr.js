@@ -2,6 +2,8 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "OAuth erişim kodu alınırken sorun çıktı",
+    "Error getting OAuth refresh token" : "OAuth yenileme kodu alınırken sorun çıktı.",
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
     "OpenProject notifications" : "OpenProject bildirimleri",
     "OpenProject activity" : "OpenProject işlemleri",

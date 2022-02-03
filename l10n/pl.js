@@ -2,6 +2,8 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Błąd podczas pobierania tokena dostępu OAuth",
+    "Error getting OAuth refresh token" : "Błąd podczas pobierania tokena odświeżania OAuth",
     "Error during OAuth exchanges" : "Błąd podczas zamiany OAuth",
     "OpenProject notifications" : "Powiadomienia OpenProject",
     "OpenProject activity" : "Aktywność OpenProject",
