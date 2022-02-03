@@ -17,7 +17,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../../css/dashboard.css";
+@import '../../../css/dashboard.css';
 
 .icon-openproject {
 	background-size: cover;
