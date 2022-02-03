@@ -15,6 +15,6 @@ module.exports = {
 		},
 	},
 	coverageDirectory: '<rootDir>/coverage/jest/',
-	coverageReporters: ['cobertura', 'html']
+	coverageReporters: ['lcov', 'html', 'text']
 
 }
