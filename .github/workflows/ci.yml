@@ -45,10 +45,7 @@ jobs:
       - name: Style Lint
         run: npm run stylelint
 
-      - name: Vue Unit Tests
-        run: npm run test:unit
-
-      - name: PHP Unit Tests
+      - name: PHP & Vue Unit Tests
         run: |
           git clone --depth 1 https://github.com/nextcloud/server.git -b v23.0.0
           make test
