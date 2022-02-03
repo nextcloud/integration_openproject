@@ -25,7 +25,7 @@
 						</div>
 						<div class="filter-assignee">
 							<div class="filter-assignee__avatar">
-								<img class="userImage" src="{{ wp.picture }}" alt="Avatar">
+								<img class="userImage" :src="wp.picture" alt="Avatar">
 							</div>
 							<div class="filter-assignee__assignee">
 								{{ wp.assignee }}
