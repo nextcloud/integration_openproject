@@ -83,3 +83,15 @@ jobs:
           lcov-file: ./coverage/php/lcov.info
           delete-old-comments: true
           title: "PHP Code Coverage"
+
+      - name: JS coverage check
+        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+        with:
+          min_coverage: '24'
+          path: './coverage/jest/lcov.info'
+
+      - name: PHP coverage check
+        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+        with:
+          min_coverage: '36'
+          path: './coverage/php/lcov.info'
