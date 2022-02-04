@@ -3,10 +3,14 @@
 		"phpunit/phpunit": "^9.5",
 		"pact-foundation/pact-php": "^7.1",
 		"friendsofphp/php-cs-fixer": "^3.5",
-		"nextcloud/coding-standard": "^1.0"
+		"nextcloud/coding-standard": "^1.0",
+		"phpstan/phpstan": "^1.4",
+		"phpstan/phpstan-phpunit": "^1.0",
+		"phpstan/extension-installer": "^1.1"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
-		"cs:check": "php-cs-fixer fix --dry-run --diff"
+		"cs:check": "php-cs-fixer fix --dry-run --diff",
+		"phpstan": "phpstan analyse"
 	}
 }

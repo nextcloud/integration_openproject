@@ -55,6 +55,10 @@ npm-dev:
 	$(npm) ci
 	$(npm) run dev
 
+.PHONY: phpstan
+phpstan:
+	composer run phpstan
+
 .PHONY: test
 test:
 	npm run test:unit
