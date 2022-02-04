@@ -159,7 +159,7 @@ class ConfigController extends Controller {
 			if (isset($result['error'])) {
 				$error = $error . '. ' . $result['error'];
 			}
-			$result =  $error;
+			$result = $error;
 		} else {
 			$result = $this->l->t('Error during OAuth exchanges');
 		}

@@ -34,7 +34,6 @@ use OCA\OpenProject\Notification\Notifier;
  * @package OCA\OpenProject\AppInfo
  */
 class Application extends App implements IBootstrap {
-
 	public const APP_ID = 'integration_openproject';
 	/**
 	 * @var mixed
@@ -105,4 +104,3 @@ class Application extends App implements IBootstrap {
 		}
 	}
 }
-

@@ -65,7 +65,7 @@ class OpenProjectAPIService {
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
-	public function __construct (
+	public function __construct(
 								string $appName,
 								IUserManager $userManager,
 								IAvatarManager $avatarManager,
@@ -311,7 +311,7 @@ class OpenProjectAPIService {
 			: 'Bearer ' . $accessToken;
 		$options = [
 			'headers' => [
-				'Authorization'  => $authHeader,
+				'Authorization' => $authHeader,
 				'User-Agent' => 'Nextcloud OpenProject integration',
 			]
 		];
@@ -354,7 +354,7 @@ class OpenProjectAPIService {
 				: 'Bearer ' . $accessToken;
 			$options = [
 				'headers' => [
-					'Authorization'  => $authHeader,
+					'Authorization' => $authHeader,
 					'User-Agent' => 'Nextcloud OpenProject integration',
 				]
 			];
@@ -380,11 +380,11 @@ class OpenProjectAPIService {
 
 			if ($method === 'GET') {
 				$response = $this->client->get($url, $options);
-			} else if ($method === 'POST') {
+			} elseif ($method === 'POST') {
 				$response = $this->client->post($url, $options);
-			} else if ($method === 'PUT') {
+			} elseif ($method === 'PUT') {
 				$response = $this->client->put($url, $options);
-			} else if ($method === 'DELETE') {
+			} elseif ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
@@ -449,7 +449,7 @@ class OpenProjectAPIService {
 			$url = $url . '/oauth/token';
 			$options = [
 				'headers' => [
-					'User-Agent'  => 'Nextcloud OpenProject integration',
+					'User-Agent' => 'Nextcloud OpenProject integration',
 				]
 			];
 
@@ -464,11 +464,11 @@ class OpenProjectAPIService {
 
 			if ($method === 'GET') {
 				$response = $this->client->get($url, $options);
-			} else if ($method === 'POST') {
+			} elseif ($method === 'POST') {
 				$response = $this->client->post($url, $options);
-			} else if ($method === 'PUT') {
+			} elseif ($method === 'PUT') {
 				$response = $this->client->put($url, $options);
-			} else if ($method === 'DELETE') {
+			} elseif ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];

@@ -1,4 +1,5 @@
 <?php
+
 namespace OCA\OpenProject\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
