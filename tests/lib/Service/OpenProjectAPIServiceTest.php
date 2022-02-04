@@ -31,9 +31,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	private $service;
 
+	/**
+	 * @var string
+	 */
 	private $mockServerBaseUri;
+
+	/**
+	 * @var string
+	 */
 	private $clientId = 'U3V9_l262pNSENBnsqD2Uwylv5hQWCQ8lFPjCvGPbQc';
+
+	/**
+	 * @var string
+	 */
 	private $clientSecret = 'P5eu43P8YFFM9jeZKWcrpbskAUgHUBGYFQKB_8aeBtU';
+
+
+	/**
+	 * @var string
+	 */
 	private $workPackagesPath = '/api/v3/work_packages';
 	/**
 	 * @return void
@@ -54,6 +70,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$config = $this->createMock(IConfig::class);
 		/** @var ICertificateManager $certificateManager */
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
+		// @phpstan-ignore-next-line
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
 		$logger = $this->createMock(ILogger::class);
 
@@ -80,7 +97,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @param array $onlyMethods
+	 * @param array<string> $onlyMethods
 	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private function getServiceMock(array $onlyMethods = ['request']): OpenProjectAPIService {
@@ -90,6 +107,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->getMock();
 	}
 
+	/**
+	 * @return array<int, array<int, string|bool>>
+	 */
 	public function urlsDataProvider(): array {
 		return [
 			['http://127.0.0.1', true],
@@ -115,12 +135,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider urlsDataProvider
+	 * @return void
 	 */
 	public function testValidateOpenProjectURL(string $url, bool $expected) {
 		$result = OpenProjectAPIService::validateOpenProjectURL($url);
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function searchWorkPackageDataProvider() {
 		return [
 			[   // description and subject search, both return a result
@@ -147,9 +171,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @param array $descriptionResponse
-	 * @param array $subjectResponse
-	 * @param array $expectedResult
+	 * @param array<mixed> $descriptionResponse
+	 * @param array<mixed> $subjectResponse
+	 * @param array<mixed> $expectedResult
 	 * @return void
 	 * @dataProvider searchWorkPackageDataProvider
 	 */
@@ -184,6 +208,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedResult, $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsRequest() {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -216,6 +243,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame([['some' => 'data']], $result);
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function malformedResponsesDataProvider() {
 		return [
 			[["_embedded" => []]],
@@ -225,6 +255,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 	/**
 	 * @dataProvider malformedResponsesDataProvider
+	 * @param array<mixed> $response
+	 * @return void
 	 */
 	public function testGetNotificationsMalformedResponse($response) {
 		$service = $this->getServiceMock();
@@ -234,6 +266,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(["error" => "Malformed response"], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsErrorResponse() {
 		$service = $this->getServiceMock();
 		$service->method('request')
@@ -242,6 +277,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(["error" => "my error"], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsFilters() {
 		$service = $this->getServiceMock(['request', 'now']);
 		$service->method('now')
@@ -258,6 +296,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->getNotifications('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsLimit() {
 		$service = $this->getServiceMock();
 		$service->method('request')
@@ -266,6 +307,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame([['id' => 1], ['id' => 2]], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testRequestUsingOAuthToken() {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -296,6 +340,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$this->assertSame(["_embedded" => ["elements" => []]], $result);
 	}
+
+	/**
+	 * @return void
+	 */
 	public function testRequestRefreshOAuthToken() {
 		$consumerRequestInvalidOAuthToken = new ConsumerRequest();
 		$consumerRequestInvalidOAuthToken

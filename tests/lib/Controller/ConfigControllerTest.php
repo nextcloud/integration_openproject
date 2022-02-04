@@ -22,6 +22,10 @@ class ConfigControllerTest extends TestCase {
 	private IConfig $configMock;
 
 	/**
+	 * @var ConfigController
+	 */
+	private $configController;
+	/**
 	 * @return void
 	 * @before
 	 */
@@ -94,16 +98,25 @@ class ConfigControllerTest extends TestCase {
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testOauthRedirect() {
 		$result = $this->configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('?openprojectToken=success', $result->getRedirectURL());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testOauthRedirectWrongState() {
 		$result = $this->configController->oauthRedirect('code', 'stateNotSameAsSaved');
 		$this->assertSame('?openprojectToken=error&message=Error+during+OAuth+exchanges', $result->getRedirectURL());
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function badOAuthResponseDataProvider() {
 		return [
 			[
@@ -135,6 +148,8 @@ class ConfigControllerTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @param array<string> $oauthResponse
+	 * @param string $expectedRedirect
 	 * @dataProvider badOAuthResponseDataProvider
 	 */
 	public function testOauthNoAccessTokenInResponse($oauthResponse, $expectedRedirect) {
@@ -146,6 +161,9 @@ class ConfigControllerTest extends TestCase {
 			->method('requestOAuthAccessToken')
 			->willReturn($oauthResponse);
 
+		/**
+		 * @var ConfigController
+		 */
 		$configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),

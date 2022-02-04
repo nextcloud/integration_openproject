@@ -53,6 +53,10 @@ class CheckNotifications extends TimedJob {
 		$this->logger = $logger;
 	}
 
+	/**
+	 * @param mixed $argument
+	 * @return void
+	 */
 	protected function run($argument): void {
 		$this->openprojectAPIService->checkNotifications();
 		$this->logger->info('Checked if users have open OpenProject notifications.');

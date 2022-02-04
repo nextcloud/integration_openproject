@@ -1,7 +1,8 @@
 parameters:
-    level: 5
+    level: 6
     paths:
         - lib
         - tests
     bootstrapFiles:
         - bootstrap.php
+    checkGenericClassInNonGenericObjectType: false

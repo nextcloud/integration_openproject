@@ -36,7 +36,12 @@ class OpenProjectAPIControllerTest extends TestCase {
 			)->willReturnOnConsecutiveCalls('cliendID', 'clientSecret');
 	}
 
+	/**
+	 * @param string $token
+	 * @return void
+	 */
 	public function getUserValueMock($token = '123') {
+		// @phpstan-ignore-next-line
 		$this->configMock
 			->method('getUserValue')
 			->withConsecutive(
@@ -47,6 +52,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken', 'http://openproject.org');
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotifications() {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
@@ -65,6 +73,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(['some' => 'data'], $response->getData());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsNoAccessToken() {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
@@ -75,6 +86,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(400, $response->getStatus());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetNotificationsErrorResponse() {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
