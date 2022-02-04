@@ -6,9 +6,15 @@
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
 	<coverage>
 		<report>
-			<text outputFile="php://stdout" showUncoveredFiles="true"/>
+			<cobertura outputFile="coverage/php/cobertura.xml"/>
+			<html outputDirectory="coverage/php/" lowUpperBound="50" highLowerBound="90"/>
+			<text outputFile="php://stdout" showUncoveredFiles="false" showOnlySummary="true"/>
 		</report>
+		<include>
+			<directory suffix=".php">lib</directory>
+		</include>
 	</coverage>
+
 	<testsuites>
 		<testsuite name="OpenProject">
 			<directory suffix=".php">tests/lib/</directory>
