@@ -1,6 +1,12 @@
 {
 	"require-dev": {
 		"phpunit/phpunit": "^9.5",
-		"pact-foundation/pact-php": "^7.1"
+		"pact-foundation/pact-php": "^7.1",
+		"friendsofphp/php-cs-fixer": "^3.5",
+		"nextcloud/coding-standard": "^1.0"
+	},
+	"scripts": {
+		"cs:fix": "php-cs-fixer fix",
+		"cs:check": "php-cs-fixer fix --dry-run --diff"
 	}
 }

@@ -36,10 +36,13 @@ jobs:
       - name: Install PHP Dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
+      - name: PHP code style
+        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+
       - name: Install NPM Dependencies
         run: npm install
 
-      - name: Lint
+      - name: JS Lint
         run: npm run lint
 
       - name: Style Lint
