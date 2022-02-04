@@ -3,6 +3,24 @@
 	filter: contrast(0) brightness(0);
 }
 
-body.theme--dark .icon-openproject {
-	filter: none
+.icon-open-project {
+	position: relative;
+}
+
+.panel--header .icon-open-project::after {
+	left: 20px; top: 22%;
+}
+
+.icon-open-project::after {
+	content: '';
+	position: absolute;
+	top: 10%; left: 40%;
+	height: 30px; width: 30px;
+	background-size: 30px 30px;
+	filter: contrast(0) brightness(0);
+	background-image: url(./../img/app.svg);
+}
+
+body.theme--dark .icon-openproject, body.theme--dark .icon-open-project::after {
+	filter: none;
 }
