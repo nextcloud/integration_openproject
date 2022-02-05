@@ -1,0 +1,24 @@
+{ "translations": {
+    "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Chyba pri získavaní prístupového tokenu OAuth",
+    "Error getting OAuth refresh token" : "Chyba pri získavaní obnovovacieho tokenu OAuth",
+    "Error during OAuth exchanges" : "Chyba počas výmeny OAuth",
+    "OpenProject notifications" : "Notifikácie OpenProject",
+    "OpenProject activity" : "OpenProject aktivity",
+    "Bad HTTP method" : "Zlá metóda HTTP",
+    "Bad credentials" : "Nesprávne prihlasovacie údaje",
+    "OAuth access token refused" : "Prístupový token OAuth bol zamietnutý",
+    "Connected accounts" : "Prepojené účty",
+    "OpenProject integration" : "OpenProject integrácia",
+    "Access token" : "Prístupový token",
+    "OpenProject access token" : "Prístupovy token OpenProject",
+    "Connect to OpenProject" : "Pripojiť k OpenProject",
+    "Connected as {user}" : "Pripojený ako {user}",
+    "Disconnect from OpenProject" : "Odpojiť od OpenProject",
+    "Incorrect access token" : "Nesprávny prístupový token",
+    "Invalid token" : "Neplatný token",
+    "OpenProject instance not found" : "Inštancia OpenProject nebola nájdená",
+    "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
+    "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu"
+},"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
+}
