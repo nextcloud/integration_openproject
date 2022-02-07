@@ -14,8 +14,7 @@ use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 
-class OpenProjectAPIControllerTest extends TestCase
-{
+class OpenProjectAPIControllerTest extends TestCase {
 	/** @var IConfig $configMock */
 	private $configMock;
 
@@ -26,7 +25,7 @@ class OpenProjectAPIControllerTest extends TestCase
 	 * @return void
 	 * @before
 	 */
-	function setUpMocks(): void {
+	public function setUpMocks(): void {
 		$this->requestMock = $this->createMock(IRequest::class);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
@@ -45,7 +44,7 @@ class OpenProjectAPIControllerTest extends TestCase
 				['test','integration_openproject', 'token_type'],
 				['test','integration_openproject', 'refresh_token'],
 				['test','integration_openproject', 'url'],
-			)->willReturnOnConsecutiveCalls($token,'oauth', 'refreshToken','http://openproject.org');
+			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken', 'http://openproject.org');
 	}
 
 	public function testGetNotifications() {
@@ -92,5 +91,4 @@ class OpenProjectAPIControllerTest extends TestCase
 		$this->assertSame(401, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
-
 }

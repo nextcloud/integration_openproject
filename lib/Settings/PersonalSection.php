@@ -1,4 +1,5 @@
 <?php
+
 namespace OCA\OpenProject\Settings;
 
 use OCP\IURLGenerator;
@@ -53,5 +54,4 @@ class PersonalSection implements IIconSection {
 	public function getIcon(): ?string {
 		return $this->urlGenerator->imagePath('core', 'categories/integration.svg');
 	}
-
 }

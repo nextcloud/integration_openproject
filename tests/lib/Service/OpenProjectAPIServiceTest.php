@@ -20,8 +20,7 @@ use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
 
-class OpenProjectAPIServiceTest extends TestCase
-{
+class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @var InteractionBuilder
 	 */
@@ -40,7 +39,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	 * @return void
 	 * @before
 	 */
-	function setupMockServer(): void {
+	public function setupMockServer(): void {
 		$config = new MockServerEnvConfig();
 		$this->builder = new InteractionBuilder($config);
 		$this->mockServerBaseUri = $config->getBaseUri()->__toString();
@@ -50,7 +49,7 @@ class OpenProjectAPIServiceTest extends TestCase
 	 * @return void
 	 * @before
 	 */
-	function setUpMocks(): void {
+	public function setUpMocks(): void {
 		/** @var IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		/** @var ICertificateManager $certificateManager */
@@ -180,7 +179,7 @@ class OpenProjectAPIServiceTest extends TestCase
 				$subjectResponse
 			);
 		$result = $service->searchWorkPackage(
-			'url','token', 'type', 'refresh', 'id', 'secret', 'user','search query'
+			'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'search query'
 		);
 		$this->assertSame($expectedResult, $result);
 	}
@@ -190,7 +189,7 @@ class OpenProjectAPIServiceTest extends TestCase
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->workPackagesPath)
-			->setHeaders(["Authorization" =>  "Bearer 1234567890"])
+			->setHeaders(["Authorization" => "Bearer 1234567890"])
 			->addQueryParameter('filters', '[{"status":{"operator":"!","values":["14"]}}]')
 			->addQueryParameter('sortBy', '[["updatedAt", "desc"]]');
 
@@ -198,7 +197,7 @@ class OpenProjectAPIServiceTest extends TestCase
 		$providerResponse
 			->setStatus(200)
 			->addHeader('Content-Type', 'application/json')
-			->setBody(["_embedded" => ["elements" => [['some' =>'data']]]]);
+			->setBody(["_embedded" => ["elements" => [['some' => 'data']]]]);
 
 		$this->builder
 			->uponReceiving('a GET request to /work_packages with filter and sorting')
@@ -214,7 +213,7 @@ class OpenProjectAPIServiceTest extends TestCase
 			$this->clientSecret,
 			'admin'
 		);
-		$this->assertSame([['some' =>'data']], $result);
+		$this->assertSame([['some' => 'data']], $result);
 	}
 
 	public function malformedResponsesDataProvider() {
@@ -250,20 +249,20 @@ class OpenProjectAPIServiceTest extends TestCase
 		$service->expects($this->once())
 			->method('request')
 			->with(
-				'url','token', 'type', 'refresh', 'id', 'secret','user', 'work_packages',
+				'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
 				[
 					'filters' => '[{"updatedAt":{"operator":"<>d","values":["2022-01-01T12:01:01Z","2022-01-27T08:15:48Z"]}},{"status":{"operator":"!","values":["14"]}}]',
 					'sortBy' => '[["updatedAt", "desc"]]'
-			]);
+				]);
 
-		$service->getNotifications('url','token', 'type', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
+		$service->getNotifications('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
 	}
 
 	public function testGetNotificationsLimit() {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]);
-		$result = $service->getNotifications('', '', '', '', '', '', '','',2);
+		$result = $service->getNotifications('', '', '', '', '', '', '', '', 2);
 		$this->assertSame([['id' => 1], ['id' => 2]], $result);
 	}
 
@@ -272,7 +271,7 @@ class OpenProjectAPIServiceTest extends TestCase
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->workPackagesPath)
-			->setHeaders(["Authorization" =>  "Bearer 1234567890"]);
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
@@ -296,14 +295,13 @@ class OpenProjectAPIServiceTest extends TestCase
 			'work_packages'
 		);
 		$this->assertSame(["_embedded" => ["elements" => []]], $result);
-
 	}
 	public function testRequestRefreshOAuthToken() {
 		$consumerRequestInvalidOAuthToken = new ConsumerRequest();
 		$consumerRequestInvalidOAuthToken
 			->setMethod('GET')
 			->setPath($this->workPackagesPath)
-			->setHeaders(["Authorization" =>  "Bearer invalid"]);
+			->setHeaders(["Authorization" => "Bearer invalid"]);
 
 		$providerResponseInvalidOAuthToken = new ProviderResponse();
 		$providerResponseInvalidOAuthToken
@@ -338,7 +336,7 @@ class OpenProjectAPIServiceTest extends TestCase
 		$consumerRequestNewOAuthToken
 			->setMethod('GET')
 			->setPath($this->workPackagesPath)
-			->setHeaders(["Authorization" =>  "Bearer new-Token"]);
+			->setHeaders(["Authorization" => "Bearer new-Token"]);
 
 		$providerResponseNewOAuthToken = new ProviderResponse();
 		$providerResponseNewOAuthToken

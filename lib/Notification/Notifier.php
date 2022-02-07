@@ -11,7 +11,6 @@
 
 namespace OCA\OpenProject\Notification;
 
-
 use InvalidArgumentException;
 use OCP\IURLGenerator;
 use OCP\IUserManager;

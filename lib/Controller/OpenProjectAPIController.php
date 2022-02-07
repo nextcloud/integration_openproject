@@ -103,7 +103,7 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataDisplayResponse($result['error'], 404);
 		} else {
 			$response = new DataDownloadResponse($result['avatar'], 'avatar', $result['type'] ?? '');
-			$response->cacheFor(60*60*24);
+			$response->cacheFor(60 * 60 * 24);
 		}
 		return $response;
 	}
@@ -129,5 +129,4 @@ class OpenProjectAPIController extends Controller {
 		}
 		return $response;
 	}
-
 }

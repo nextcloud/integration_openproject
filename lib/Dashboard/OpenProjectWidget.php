@@ -57,7 +57,7 @@ class OpenProjectWidget implements IWidget {
 	 */
 	public function getTitle(): string {
 		return $this->l10n->t('OpenProject notifications');
-		}
+	}
 
 	/**
 	 * @inheritDoc

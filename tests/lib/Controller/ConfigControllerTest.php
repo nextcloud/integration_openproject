@@ -9,8 +9,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 
-class ConfigControllerTest extends TestCase
-{
+class ConfigControllerTest extends TestCase {
 
 	/**
 	 * @var IL10N
@@ -26,7 +25,7 @@ class ConfigControllerTest extends TestCase
 	 * @return void
 	 * @before
 	 */
-	function setUpMocks(): void {
+	public function setUpMocks(): void {
 		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -96,12 +95,12 @@ class ConfigControllerTest extends TestCase
 	}
 
 	public function testOauthRedirect() {
-		$result = $this->configController->oauthRedirect('code','randomString');
+		$result = $this->configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('?openprojectToken=success', $result->getRedirectURL());
 	}
 
 	public function testOauthRedirectWrongState() {
-		$result = $this->configController->oauthRedirect('code','stateNotSameAsSaved');
+		$result = $this->configController->oauthRedirect('code', 'stateNotSameAsSaved');
 		$this->assertSame('?openprojectToken=error&message=Error+during+OAuth+exchanges', $result->getRedirectURL());
 	}
 
@@ -156,7 +155,7 @@ class ConfigControllerTest extends TestCase
 			$apiServiceMock,
 			'testUser'
 		);
-		$result = $configController->oauthRedirect('code','randomString');
+		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame($expectedRedirect, $result->getRedirectURL());
 	}
 }
