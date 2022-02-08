@@ -2,6 +2,8 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Fehler beim Abrufen des OAuth-Zugriffstokens",
+    "Error getting OAuth refresh token" : "Fehler beim Abrufen des OAuth-Aktualisierungstokens",
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
     "OpenProject notifications" : "OpenProject-Benachrichtigungen",
     "OpenProject activity" : "OpenProject-Aktivitäten",
@@ -25,6 +27,7 @@ OC.L10N.register(
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
     "To get your API access token yourself, go to the \"Access token\" section of your OpenProject account settings page." : "Um Dein API-Zugangs-Token selbst zu erhalten, gehe zum Abschnitt \"Zugangs-Token\" auf Deiner OpenProject-Konto-Einstellungsseite.",
     "Enable navigation link" : "Navigations-Link aktivieren",
+    "Warning, connecting to your OpenProject instance via HTTP is insecure." : "Achtung, die Verbindung zu Deiner OpenProject-Instanz über HTTP ist unsicher",
     "https://my.openproject.org" : "https://my.openproject.org",
     "Access token" : "Zugriffstoken",
     "OpenProject access token" : "OpenProject-Zugriffstoken",
