@@ -1,10 +1,7 @@
 Feature: list work-packages in the side bar
   As a Nextcloud user
   I want see all work packages on OpenProject that are linked to a file
-  So that I can
-  - know the status of the file in workflows
-  - know which work packages refer to the file and where/how it is used
-  - can easily locate and navigate to connected information in OpenProject
+  So that I can link the work-packages with a file
 
   Background:
     Given user "Alice" has been created
@@ -21,13 +18,10 @@ Feature: list work-packages in the side bar
   Scenario: link multiple work packages to a file
     Given the user has opened "openProject" section of file "/file.txt" using the webUI
     When the user searches for work package with name "This is a work package" using the searchbar
-    And the work package "This is a work package" is displayed in the drop down menu on the webUI
     And the user adds the work package "This is a work package" using the webUI
     And the user searches for work package with name "This is second work package" using the searchbar
-    And the work package "This is second work package" is displayed in the drop down menu on the webUI
     And the user adds the work package "This is second work package" using the webUI
     And the user searches for work package with name "This is third work package" using the searchbar
-    And the work package "This is third work package" is displayed in the drop down menu on the webUI
     And the user adds the work package "This is third work package" using the webUI
     Then the following work packages should be listed on the webUI:
       | work-packages               |

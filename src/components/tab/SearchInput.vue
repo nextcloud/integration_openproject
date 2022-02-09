@@ -9,42 +9,51 @@
 				@keyup="makeSearchRequest">
 		</div>
 		<div v-if="searchResults.length>0" class="search-list">
-			<div v-for="wp in searchResults" :key="wp" class="workPackage-item">
+			<div v-for="workPackage in searchResults" :key="workPackage.id" class="workPackage-item">
 				<div class="wp-info">
 					<div class="wp-info__filter-wp">
 						<div class="filter-project-type-status">
 							<div class="filter-project-type-status__project">
-								{{ wp.project }}
+								{{ workPackage.project }}
 							</div>
-							<div class="filter-project-type-status__type" :style="{'color':wp.typeCol}">
-								{{ wp.typeTitle }}
+							<div class="filter-project-type-status__type" :style="{'color':workPackage.typeCol}">
+								{{ workPackage.typeTitle }}
 							</div>
-							<div class="filter-project-type-status__status" :style="{'background-color':wp.statusCol}">
-								{{ wp.statusTitle }}
+							<div class="filter-project-type-status__status" :style="{'background-color':workPackage.statusCol}">
+								{{ workPackage.statusTitle }}
 							</div>
 						</div>
 						<div class="filter-assignee">
 							<div class="filter-assignee__avatar">
-								<img class="userImage" :src="wp.picture" alt="Avatar">
+								<Avatar
+									class="item-avatar"
+									:size="25"
+									:url="workPackage.picture"
+									:user="workPackage.assignee"
+									:display-name="workPackage.assignee" />
 							</div>
 							<div class="filter-assignee__assignee">
-								{{ wp.assignee }}
+								{{ workPackage.assignee }}
 							</div>
 						</div>
 					</div>
 					<div class="filter-wp-subject">
 						<div class="filter-wp-subject__subject">
-							{{ wp.subject }}
+							{{ workPackage.subject }}
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="create-new-wp">
-				{{ "+ New work package in OpenProject" }}
+				{{ t('integration_openproject', '+ New work package in OpenProject') }}
 			</div>
 		</div>
-		<div v-if="state === 'error'" class="title text-center">
+		<div v-if="state === 'loading'" class="icon-loading" />
+		<div v-if="state === 'error'" class="error text-center">
 			{{ t('integration_openproject', "Error connecting to OpenProject") }}
+		</div>
+		<div v-if="state === 'no-token'" class="noToken text-center">
+			{{ t('integration_openproject', "No OpenProject account connected") }}
 		</div>
 	</div>
 </template>
@@ -53,12 +62,17 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
 export default {
 	name: 'SearchInput',
+	components: {
+		Avatar,
+	},
 	data: () => ({
 		search: null,
-		state: 'loading',
+		state: 'ok',
 		searchResults: [],
 	}),
 	computed: {
@@ -68,8 +82,10 @@ export default {
 	},
 	watch: {
 		search(value, oldValue) {
-			if (value.length < 3) {
-				this.searchResults.length = 0
+			if (oldValue !== null) {
+				if (value.length < oldValue.length && value.length <= 3) {
+					this.searchResults = []
+				}
 			}
 		},
 	},
@@ -77,7 +93,7 @@ export default {
 		async makeSearchRequest(e) {
 			const url = generateUrl('/apps/integration_openproject/work_packages')
 
-			if (this.search.length >= 3) {
+			if (this.search.length > 3) {
 				const req = {}
 				req.params = {
 					searchQuery: this.search,
@@ -87,33 +103,35 @@ export default {
 					this.processWorkPackages(response.data)
 					this.state = 'ok'
 				}
-				if (response.status === 400) {
+				if (response.status === 401) {
 					this.state = 'no-token'
-				} else if (response.status === 401) {
+				} else if (response.status === 400) {
 					showError(t('integration_openproject', 'Failed to get OpenProject work packages'))
 					this.state = 'error'
 				} else {
-					// there was an error in work package processing
-					// eslint-disable-next-line
-					console.debug('error')
+					this.state = 'error'
 				}
 
 			}
 		},
-		async processWorkPackages(workPackages) {
-
-			for (let i = 0; i < workPackages.length; i++) {
-				const statusId = workPackages[i]._links.status.href
-					? workPackages[i]._links.status.href.replace(/.*\//, '')
-					: null
-				const typeId = workPackages[i]._links.type.href
-					? workPackages[i]._links.type.href.replace(/.*\//, '')
-					: null
-				const userId = workPackages[i]._links?.assignee?.href
-					? workPackages[i]._links.assignee.href.replace(/.*\//, '')
-					: workPackages[i]._links?.author?.href
-						? workPackages[i]._links.author.href.replace(/.*\//, '')
+		replaceHrefToGetId(href, href2 = null) {
+			if (href2 !== null) {
+				return href
+					? href.replace(/.*\//, '')
+					: href2
+						? href2.replace(/.*\//, '')
 						: null
+			}
+			return href
+				? href.replace(/.*\//, '')
+				: null
+		},
+		async processWorkPackages(workPackages) {
+			this.state = 'loading'
+			for (let i = 0; i < workPackages.length; i++) {
+				const statusId = this.replaceHrefToGetId(workPackages[i]._links.status.href)
+				const typeId = this.replaceHrefToGetId(workPackages[i]._links.type.href)
+				const userId = this.replaceHrefToGetId(workPackages[i]._links?.assignee?.href, workPackages[i]._links?.author?.href)
 				const userName = workPackages[i]._links?.assignee?.title
 					? workPackages[i]._links.assignee.title
 					: workPackages[i]._links?.author?.title
@@ -146,15 +164,13 @@ export default {
 				this.state = 'ok'
 				return response.data.color
 			}
-			if (response.status === 400) {
+			if (response.status === 401) {
 				this.state = 'no-token'
-			} else if (response.status === 401) {
+			} else if (response.status === 400) {
 				showError(t('integration_openproject', 'Failed to fetch status of work packages'))
 				this.state = 'error'
 			} else {
-				// there was an error in work package processing
-				// eslint-disable-next-line
-				console.debug('error')
+				this.state = 'error'
 			}
 			return ''
 		},
@@ -166,37 +182,20 @@ export default {
 				this.state = 'ok'
 				return response.data.color
 			}
-			if (response.status === 400) {
+			if (response.status === 401) {
 				this.state = 'no-token'
-			} else if (response.status === 401) {
+			} else if (response.status === 400) {
 				showError(t('integration_openproject', 'Failed to fetch type of work packages'))
 				this.state = 'error'
 			} else {
-				// there was an error in work package processing
-				// eslint-disable-next-line
-				console.debug('error')
+				this.state = 'error'
 			}
 			return ''
 		},
 		async getUserAvatar(userId, userName) {
-			const url = generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
-			const req = {}
-			const response = await axios.get(url, req)
-			if (response.status === 200) {
-				this.state = 'ok'
-				return response.data
-			}
-			if (response.status === 400) {
-				this.state = 'no-token'
-			} else if (response.status === 401) {
-				showError(t('integration_openproject', 'Failed to fetch user avatar'))
-				this.state = 'error'
-			} else {
-				// there was an error in work package processing
-				// eslint-disable-next-line
-				console.debug('error')
-			}
-			return ''
+			const url = generateUrl('/apps/integration_openproject/avatar?')
+					+ encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
+			return url
 		},
 	},
 
@@ -237,6 +236,7 @@ export default {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 
 		.filter-project-type-status {
 			display: flex;
@@ -257,6 +257,7 @@ export default {
 			&__status {
 				margin: 6px;
 				width: 90px;
+				height: 25px;
 				text-align: center;
 				font-size: 12px;
 				border-radius: 3px;
@@ -269,15 +270,15 @@ export default {
 			justify-content: space-between;
 			flex-wrap: wrap;
 
-			.userImage {
+			&__avatar {
 				padding: 6px;
-				border-radius: 50%;
 			}
 
 			&__assignee {
 				padding: 6px;
-				font-size: 14px;
+				font-size: 13px;
 				color: #0096FF;
+				text-align: center;
 			}
 		}
 	}

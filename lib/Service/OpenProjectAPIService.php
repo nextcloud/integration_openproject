@@ -14,10 +14,7 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
 use OCP\IL10N;
-use OCP\Lock\LockedException;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
@@ -509,14 +506,16 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param string $statusId
 	 * @return string[]
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
-	 * @throws LockedException
-	 * @throws Exception
 	 */
-	public function getOpenProjectWorkPackageStatus(string $url, string $accessToken, string $authType, string $refreshToken, string $clientID,
-													string $clientSecret, string $userId, string $statusId): array
-	{
+	public function getOpenProjectWorkPackageStatus(
+		string $url,
+		string $accessToken,
+		string $authType,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		string $userId,
+		string $statusId): array {
 		$result = $this->request(
 			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
 		if (isset($result['error'])) {
@@ -539,16 +538,19 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param string $typeId
 	 * @return string[]
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
-	 * @throws LockedException
-	 * @throws Exception
 	 */
-	public function getOpenProjectWorkPackageType(string $url, string $accessToken, string $authType, string $refreshToken, string $clientID,
-												  string $clientSecret, string $userId, string $typeId): array
-	{
+	public function getOpenProjectWorkPackageType(
+		string $url,
+		string $accessToken,
+		string $oauth,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		string $userId,
+		string $typeId
+	): array {
 		$result = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
+			$url, $accessToken, $oauth, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
 		if (isset($result['error'])) {
 			return $result;
 		} elseif (!isset($result['id'])) {
@@ -556,6 +558,5 @@ class OpenProjectAPIService {
 		}
 
 		return $result;
-
 	}
 }

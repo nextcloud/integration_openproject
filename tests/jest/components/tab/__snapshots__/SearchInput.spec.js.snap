@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test search input work packages should be displayed if the length of words in searchbar is more than three 1`] = `
+<div id="search-bar">
+  <div class="input-field"><input id="workpackages-search" placeholder="Search for a work package to create a relation" type="text"></div>
+  <div class="search-list">
+    <div class="workPackage-item">
+      <div class="wp-info">
+        <div class="wp-info__filter-wp">
+          <div class="filter-project-type-status">
+            <div class="filter-project-type-status__project">
+              test
+            </div>
+            <div class="filter-project-type-status__type" style="color: rgb(0, 0, 255);">
+              task
+            </div>
+            <div class="filter-project-type-status__status" style="background-color: rgb(0, 0, 255);">
+              in-progress
+            </div>
+          </div>
+          <div class="filter-assignee">
+            <div class="filter-assignee__avatar">
+              <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="filter-assignee__assignee">
+              test
+            </div>
+          </div>
+        </div>
+        <div class="filter-wp-subject">
+          <div class="filter-wp-subject__subject">
+            Organize work-packages
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="create-new-wp">
+      integration_openproject
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;
