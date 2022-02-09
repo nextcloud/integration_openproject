@@ -20,7 +20,7 @@ exports[`test search input work packages should be displayed if the length of wo
           </div>
           <div class="filter-assignee">
             <div class="filter-assignee__avatar">
-              <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+              <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
             </div>
             <div class="filter-assignee__assignee">
               test

@@ -12,17 +12,21 @@ Feature: list work-packages in the side bar
     Given the user has opened "openProject" section of file "/file.txt" using the webUI
     When the user searches for work package with name "This is a " using the searchbar
     Then all the the work packages with subject "This is a " should be displayed on the webUI
-    When the user adds the work package "This is a work package" using the webUI
-    Then the work package "This is a work package" should be listed on the webUI
+
+  Scenario: link a work package to a file  
+   Given the user has opened "openProject" section of file "/file.txt" using the webUI
+   And the user has searched for work package with name "This is a " using the searchbar
+   when the user links the work package "This is a work package" using the webUI
+   Then the work package "This is a work package" should be listed on the webUI
 
   Scenario: link multiple work packages to a file
     Given the user has opened "openProject" section of file "/file.txt" using the webUI
     When the user searches for work package with name "This is a work package" using the searchbar
-    And the user adds the work package "This is a work package" using the webUI
+    And the user links the work package "This is a work package" using the webUI
     And the user searches for work package with name "This is second work package" using the searchbar
-    And the user adds the work package "This is second work package" using the webUI
+    And the user links the work package "This is second work package" using the webUI
     And the user searches for work package with name "This is third work package" using the searchbar
-    And the user adds the work package "This is third work package" using the webUI
+    And the user links the work package "This is third work package" using the webUI
     Then the following work packages should be listed on the webUI:
       | work-packages               |
       | This is a work package      |
