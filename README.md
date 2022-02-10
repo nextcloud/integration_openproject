@@ -57,3 +57,70 @@ The account configuration happens in the "Connected accounts" user settings sect
 #### Background jobs
 
 To be able to periodically check activity in OpenProject (when "notifications for activity in my work packages" is enabled), you need to choose the "Cron" background job method and set a system cron task calling cron.php as explained in the [documentation](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron).
+
+## Development
+Develop using docker compose
+
+Requirements:
+- Node.js
+- Docker, Docker Compose
+- OpenProject server instance running in the host machine
+- OpenProject Integration app
+
+### Environments
+- **APP_DIR**
+  - description: location where the `integration_openproject` repository is cloned 
+  - default: `./../integration_openproject`
+
+### Start compose
+**Note:** If your host has running apache or nginx, you need to stop it before starting the `docker-compose`.
+
+```shell
+APP_DIR='/path/to/app' docker-compose up -d
+```
+
+After this, you should be able to access nextcloud server at [http://localhost](http://localhost).
+
+### Setup NC server
+
+> **Note:** These steps will only be necessary for the first setup.
+
+#### Fix permissions
+User `www-data` should have _write_ permission to modify `apps` & `custom_apps` directories inside the server directory.
+
+```shell
+# "integration_openproject_nc" is the name of our nc server container
+docker exec integration_openproject_nc chown www-data custom_apps/ -R
+```
+
+#### Create admin
+For the database, **PostgreSQL** is used with the following credentials:
+- **Database:** `nextcloud`
+- **User:** `nextcloud`
+- **Password:** `nextcloud`
+
+1. browse to [http://localhost](http://localhost)
+2. create admin user
+3. get an installed NC server
+
+#### Enable integration app 
+You can browse as admin to the apps center and enable it using the webUI. Or, you can just use the terminal as:
+
+```shell
+docker exec --user www-data integration_openproject_nc php occ a:e integration_openproject
+```
+
+If you want to allow local remote servers: 
+
+```shell
+docker exec --user www-data integration_openproject_nc php occ config:system:set allow_local_remote_servers --value 1
+```
+
+### Start Developing
+Now you can watch for the app code changes using:
+
+```shell
+npm run watch
+```
+
+... and start developing.
