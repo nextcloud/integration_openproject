@@ -14,13 +14,6 @@ services:
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=nextcloud
 
-  redis:
-    image: redis:alpine
-    container_name: integration_openproject_redis
-    restart: always
-    ports:
-      - "6379:6379"
-
   nextcloud:
     image: nextcloud:apache
     container_name: integration_openproject_nc
@@ -28,16 +21,14 @@ services:
     network_mode: "host"
     volumes:
       - nextcloud:/var/www/html
-      - ${APP_DIR:-./../integration_openproject}:/var/www/html/custom_apps/integration_openproject
+      - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
     environment:
       - POSTGRES_HOST=localhost:5433
-      - REDIS_HOST=localhost
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=nextcloud
     depends_on:
       - db
-      - redis
 
   cron:
     image: nextcloud:apache
@@ -48,7 +39,6 @@ services:
     entrypoint: /cron.sh
     depends_on:
       - db
-      - redis
 
 volumes:
   db:

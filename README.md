@@ -67,16 +67,28 @@ Requirements:
 - OpenProject server instance running in the host machine
 - OpenProject Integration app
 
+### Setup
+```shell
+# the app needs to be cloned inside the "custom_apps" dir anywhere in the host
+mkdir /dev/custom_apps
+git clone https://github.com/nextcloud/integration_openproject.git
+# installation & building
+npm ci
+npm run build
+# provide ownership of "custom_apps" to the user "www-data"
+sudo chown www-data custom_apps -R
+```
+
 ### Environments
 - **APP_DIR**
   - description: location where the `integration_openproject` repository is cloned 
-  - default: `./../integration_openproject`
+  - default: `./../../custom_apps`
 
 ### Start compose
-**Note:** If your host has running apache or nginx, you need to stop it before starting the `docker-compose`.
+**Note:** If your host machine has anything up on port `80`, please kill it before starting. 
 
 ```shell
-APP_DIR='/path/to/app' docker-compose up -d
+docker-compose up -d
 ```
 
 After this, you should be able to access nextcloud server at [http://localhost](http://localhost).
@@ -84,14 +96,6 @@ After this, you should be able to access nextcloud server at [http://localhost](
 ### Setup NC server
 
 > **Note:** These steps will only be necessary for the first setup.
-
-#### Fix permissions
-User `www-data` should have _write_ permission to modify `apps` & `custom_apps` directories inside the server directory.
-
-```shell
-# "integration_openproject_nc" is the name of our nc server container
-docker exec integration_openproject_nc chown www-data custom_apps/ -R
-```
 
 #### Create admin
 For the database, **PostgreSQL** is used with the following credentials:
@@ -110,17 +114,16 @@ You can browse as admin to the apps center and enable it using the webUI. Or, yo
 docker exec --user www-data integration_openproject_nc php occ a:e integration_openproject
 ```
 
-If you want to allow local remote servers: 
+#### Allow local remote servers: 
 
 ```shell
 docker exec --user www-data integration_openproject_nc php occ config:system:set allow_local_remote_servers --value 1
 ```
 
 ### Start Developing
-Now you can watch for the app code changes using:
+Now you can watch for the app code changes using the following command and start developing.
 
 ```shell
+cd /dev/custom_apps/integration_openproject
 npm run watch
 ```
-
-... and start developing.
