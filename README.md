@@ -69,14 +69,16 @@ Requirements:
 
 ### Setup
 ```shell
-# the app needs to be cloned inside the "custom_apps" dir anywhere in the host
-mkdir /dev/custom_apps
+# the app needs to be cloned inside the "custom_apps" dir
+mkdir $HOME/development/custom_apps -p
+cd $HOME/development/custom_apps
 git clone https://github.com/nextcloud/integration_openproject.git
 # installation & building
 npm ci
 npm run build
-# provide ownership of "custom_apps" to the user "www-data"
-sudo chown www-data custom_apps -R
+# provide group ownership of "custom_apps" to the user "www-data"
+sudo chgrp www-data $HOME/development/custom_apps -R
+sudo chmod g+w $HOME/development/custom_apps -R
 ```
 
 ### Environments
@@ -98,14 +100,14 @@ After this, you should be able to access nextcloud server at [http://localhost](
 > **Note:** These steps will only be necessary for the first setup.
 
 #### Create admin
+1. browse to [http://localhost](http://localhost)
+2. create admin user
+3. get an installed NC server
+
 For the database, **PostgreSQL** is used with the following credentials:
 - **Database:** `nextcloud`
 - **User:** `nextcloud`
 - **Password:** `nextcloud`
-
-1. browse to [http://localhost](http://localhost)
-2. create admin user
-3. get an installed NC server
 
 #### Enable integration app 
 You can browse as admin to the apps center and enable it using the webUI. Or, you can just use the terminal as:
@@ -124,6 +126,6 @@ docker exec --user www-data integration_openproject_nc php occ config:system:set
 Now you can watch for the app code changes using the following command and start developing.
 
 ```shell
-cd /dev/custom_apps/integration_openproject
+cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
