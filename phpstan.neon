@@ -6,3 +6,4 @@ parameters:
     bootstrapFiles:
         - bootstrap.php
     checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: false
