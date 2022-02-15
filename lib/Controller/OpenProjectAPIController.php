@@ -55,11 +55,11 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
-	public function __construct(string $appName,
-								IRequest $request,
-								IConfig $config,
+	public function __construct(string                $appName,
+								IRequest              $request,
+								IConfig               $config,
 								OpenProjectAPIService $openprojectAPIService,
-								?string $userId) {
+								?string               $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;

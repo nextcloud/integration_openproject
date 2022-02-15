@@ -569,4 +569,34 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(["_type" => "Type", "id" => 3, "name" => "Phase",
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $result);
 	}
+
+	public function testGetOpenProjectWorkPackageTypeResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				"_type" => "Type", "id" => 3, "name" => "Phase",
+				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"
+			]);
+		$result = $service->getOpenProjectWorkPackageType('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 3);
+		$this->assertSame([
+			"_type" => "Type", "id" => 3, "name" => "Phase",
+			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"
+		], $result);
+	}
+
+	public function testGetOpenProjectWorkPackageTypeMalFormedResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'Malformed response']);
+		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
+		$this->assertSame(['error' => 'Malformed response'], $result);
+	}
+
+	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'some error']);
+		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
+		$this->assertSame(['error' => 'some error'], $result);
+	}
 }

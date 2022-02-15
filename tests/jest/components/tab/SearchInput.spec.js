@@ -88,6 +88,31 @@ describe('SearchInput.vue tests', () => {
 			expect(searchList).toMatchSnapshot()
 		})
 
+		it('should not be displayed if the length of words in searchbar decreases from more than 3 to less', async () => {
+			const wrapper = shallowMount(SearchInput, {
+				mocks: {
+					t: (msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+			})
+			let textInput = wrapper.find(inputSelector)
+			await textInput.setValue('orga')
+			await wrapper.setData({
+				searchResults: workPackagesSearchResponse,
+			})
+			let searchList = wrapper.find(searchListSelector)
+			expect(searchList.exists()).toBeTruthy()
+			textInput = wrapper.find(inputSelector)
+			await textInput.setValue('org')
+			await wrapper.setData({
+				searchResults: [],
+			})
+			searchList = wrapper.find(searchListSelector)
+			expect(searchList.exists()).toBeFalsy()
+		})
+
 		it('should display correct background color and text for workpackage status and type', async () => {
 			const wrapper = shallowMount(SearchInput, {
 				mocks: {

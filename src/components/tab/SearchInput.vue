@@ -91,6 +91,7 @@ export default {
 	},
 	watch: {
 		search(value, oldValue) {
+			// if the value in the search input field changes we need to reset the searchResults
 			if (oldValue !== null) {
 				if (value.length < oldValue.length && value.length <= 3) {
 					this.searchResults = []
@@ -118,9 +119,6 @@ export default {
 				this.state = 'ok'
 			}
 		},
-		resetState() {
-			this.state = 'ok'
-		},
 		checkStatusCode(statusCode) {
 			if (statusCode === 401) {
 				this.state = 'no-token'
@@ -143,8 +141,6 @@ export default {
 				: null
 		},
 		async processWorkPackages(workPackages) {
-			// eslint-disable-next-line
-			console.log(workPackages.length)
 			if (workPackages.length === 0) {
 				this.state = 'empty'
 				return
