@@ -1,5 +1,6 @@
 <?php
 
+define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 
 include_once __DIR__.'/vendor/autoload.php';
@@ -9,6 +10,7 @@ if (file_exists(__DIR__ . '/server')) {
 	$serverPath = __DIR__ . '/../..';
 }
 include_once $serverPath.'/3rdparty/autoload.php';
+require_once $serverPath. '/lib/base.php';
 
 $classLoader = new ClassLoader();
 $classLoader->addPsr4("OCA\\OpenProject\\Service\\", __DIR__ . '/lib/Service', true);
