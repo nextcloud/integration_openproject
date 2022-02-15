@@ -185,17 +185,6 @@ class OpenProjectSearchProvider implements IProvider {
 	}
 
 	/**
-	 * @param string $s
-	 * @param int $len
-	 * @return string
-	 */
-	private function truncate(string $s, int $len): string {
-		return strlen($s) > $len
-			? substr($s, 0, $len) . '…'
-			: $s;
-	}
-
-	/**
 	 * @param array<mixed> $entry
 	 * @param string $url
 	 * @return string

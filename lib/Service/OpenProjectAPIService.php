@@ -146,16 +146,6 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $workPackage
 	 * @return int|null
 	 */
-	private function getWPStatusId(array $workPackage): ?int {
-		return isset($workPackage['_links'], $workPackage['_links']['status'], $workPackage['_links']['status']['href'])
-			? (int) preg_replace('/.*\//', '', $workPackage['_links']['status']['href'])
-			: null;
-	}
-
-	/**
-	 * @param array<mixed> $workPackage
-	 * @return int|null
-	 */
 	private function getWPAssigneeOrAuthorId(array $workPackage): ?int {
 		return isset($workPackage['_links'], $workPackage['_links']['assignee'], $workPackage['_links']['assignee']['href'])
 			? (int) preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
