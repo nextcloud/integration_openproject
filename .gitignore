@@ -6,4 +6,9 @@ js/
 .vscode-upload.json
 .*.sw*
 node_modules
+.phpunit.result.cache
 coverage/
+example/
+log/
+vendor/
+
