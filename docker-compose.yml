@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: integration_openproject_db
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+
+  nextcloud:
+    image: nextcloud:apache
+    container_name: integration_openproject_nc
+    restart: always
+    network_mode: "host"
+    volumes:
+      - nextcloud:/var/www/html
+      - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
+    environment:
+      - POSTGRES_HOST=localhost:5433
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+    depends_on:
+      - db
+
+  cron:
+    image: nextcloud:apache
+    container_name: integration_openproject_cron
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+
+volumes:
+  db:
+  nextcloud:
