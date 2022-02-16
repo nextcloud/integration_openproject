@@ -570,6 +570,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetOpenProjectWorkPackageTypeResponse(): void {
 		$service = $this->getServiceMock();
 		$service->method('request')
@@ -584,6 +587,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetOpenProjectWorkPackageTypeMalFormedResponse(): void {
 		$service = $this->getServiceMock();
 		$service->method('request')
@@ -592,6 +598,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(['error' => 'Malformed response'], $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
 		$service = $this->getServiceMock();
 		$service->method('request')

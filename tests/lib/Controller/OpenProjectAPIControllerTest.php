@@ -193,7 +193,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]], $response->getData());
 	}
 
-	public function testGetSearchedWorkPackagesErrorResponse() {
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackagesErrorResponse(): void {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -203,7 +206,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(400, $response->getStatus());
 	}
 
-	public function testGetSearchedWorkPackagesNoAccessToken() {
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackagesNoAccessToken(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -220,7 +226,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 
-	public function testGetOpenProjectWorkPackageStatus() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatus(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -244,7 +253,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		], $response->getData());
 	}
 
-	public function testGetOpenProjectWorkPackageStatusErrorResponse() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusErrorResponse(): void {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -254,7 +266,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(400, $response->getStatus());
 	}
 
-	public function testGetOpenProjectWorkPackageStatusNoAccessToken() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusNoAccessToken(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -271,7 +286,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 
-	public function testGetOpenProjectWorkPackageType() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageType(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -291,7 +309,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $response->getData());
 	}
 
-	public function testGetOpenProjectWorkPackageTypeErrorResponse() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -301,7 +322,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(400, $response->getStatus());
 	}
 
-	public function testGetOpenProjectWorkPackageTypeNoAccessToken() {
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageTypeNoAccessToken(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
