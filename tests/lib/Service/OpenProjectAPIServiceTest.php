@@ -53,7 +53,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @var string
 	 */
 	private $workPackagesPath = '/api/v3/work_packages';
-
 	/**
 	 * @var \OCP\IAvatarManager|MockObject
 	 */
@@ -203,14 +202,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('request')
 			->withConsecutive(
 				[
-					'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				],
 				[
-					'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
@@ -272,7 +271,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[["embedded" => ['elements']]],
 		];
 	}
-
 	/**
 	 * @dataProvider malformedResponsesDataProvider
 	 * @param array<mixed> $response

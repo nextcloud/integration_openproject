@@ -489,8 +489,8 @@ class OpenProjectAPIService {
 		return filter_var($openprojectUrl, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $openprojectUrl);
 	}
-
-	/**
+	
+		/**
 	 * authenticated request to get status of a work package
 	 *
 	 * @param string $url

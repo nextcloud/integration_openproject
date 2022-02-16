@@ -49,7 +49,7 @@
 				{{ t('integration_openproject', '+ New work package in OpenProject') }}
 			</div>
 		</div>
-		<div v-if="state === 'no-token' || state === 'error' || state === 'loading' || state === 'empty'"
+		<div v-if="state !== 'ok'"
 			class="stateMsg text-center">
 			{{ stateMessages }}
 		</div>
@@ -120,7 +120,9 @@ export default {
 			}
 		},
 		checkStatusCode(statusCode) {
-			if (statusCode === 401) {
+			if (statusCode === 200) {
+				this.state = 'ok'
+			} else if (statusCode === 401) {
 				this.state = 'no-token'
 			} else if (statusCode === 400) {
 				this.state = 'error'
@@ -129,6 +131,7 @@ export default {
 			}
 		},
 		replaceHrefToGetId(href, href2 = null) {
+			// this is a helper method replaces the string like this "/api/v3/types/3" to get id
 			if (href2 !== null) {
 				return href
 					? href.replace(/.*\//, '')

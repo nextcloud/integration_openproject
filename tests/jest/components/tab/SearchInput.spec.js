@@ -1,5 +1,5 @@
 /* jshint esversion: 8 */
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
@@ -12,6 +12,18 @@ jest.mock('@nextcloud/l10n', () => ({
 const localVue = createLocalVue()
 
 describe('SearchInput.vue tests', () => {
+	let wrapper
+	beforeEach(() => {
+		wrapper = shallowMount(SearchInput, {
+			localVue,
+			mocks: {
+				t: (msg) => msg,
+				generateUrl() {
+					return '/'
+				},
+			},
+		})
+	})
 	describe('state messages', () => {
 		it.each([{
 			state: 'no-token',
@@ -26,15 +38,6 @@ describe('SearchInput.vue tests', () => {
 			state: 'empty',
 			message: 'Cannot find the work-package you are searching for',
 		}])('should be displayed depending upon the state', async (cases) => {
-			const wrapper = mount(SearchInput, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			const stateSelector = '.stateMsg'
 			await wrapper.setData({
 				state: cases.state,
@@ -50,17 +53,7 @@ describe('SearchInput.vue tests', () => {
 		const statusSelector = '.filter-project-type-status__status'
 		const typeSelector = '.filter-project-type-status__type'
 		const assigneeSelector = '.filter-assignee'
-
-		it('should not be displayed if the length of words in searchbar is less than three', async () => {
-			const wrapper = mount(SearchInput, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
+		it('should not be displayed if the length of words in searchbar is less than or equal to three', async () => {
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('org')
 			await wrapper.setData({
@@ -70,14 +63,6 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should be displayed if the length of words in searchbar is more than three', async () => {
-			const wrapper = shallowMount(SearchInput, {
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -89,14 +74,6 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should not be displayed if the length of words in searchbar decreases from more than 3 to less', async () => {
-			const wrapper = shallowMount(SearchInput, {
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			let textInput = wrapper.find(inputSelector)
 			await textInput.setValue('orga')
 			await wrapper.setData({
@@ -114,14 +91,6 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should display correct background color and text for workpackage status and type', async () => {
-			const wrapper = shallowMount(SearchInput, {
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -137,14 +106,6 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('avatar and name should be displayed if assignee is present', async () => {
-			const wrapper = shallowMount(SearchInput, {
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -156,14 +117,6 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('avatar and name not should be displayed if assignee is not present', async () => {
-			const wrapper = shallowMount(SearchInput, {
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({

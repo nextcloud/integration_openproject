@@ -45,10 +45,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->configMock
 			->method('getUserValue')
 			->withConsecutive(
-				['test', 'integration_openproject', 'token'],
-				['test', 'integration_openproject', 'token_type'],
-				['test', 'integration_openproject', 'refresh_token'],
-				['test', 'integration_openproject', 'url'],
+				['test','integration_openproject', 'token'],
+				['test','integration_openproject', 'token_type'],
+				['test','integration_openproject', 'refresh_token'],
+				['test','integration_openproject', 'url'],
 			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken', 'http://openproject.org');
 	}
 
