@@ -4,6 +4,7 @@ span.icon-openproject {
 	padding: 0 !important;
 	min-width: 44px !important;
 	min-height: 16px !important;
+	background-size: 16px 16px;
 }
 
 #tab-open-project {
