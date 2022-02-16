@@ -295,7 +295,7 @@ class OpenProjectAPIService {
 	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $userName
-	 * @return array{avatar: mixed, type?: string}
+	 * @return array{avatar: string, type?: string}
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException

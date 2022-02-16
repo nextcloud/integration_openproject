@@ -105,4 +105,73 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(401, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatar() {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service->expects($this->once())
+			->method('getOpenProjectAvatar')
+			->with($this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				'id', 'name'
+			)
+			->willReturn(['avatar' => 'some image data', 'type' => 'image/png']);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			'test'
+		);
+		$response = $controller->getOpenProjectAvatar('id', 'name');
+		$this->assertSame('some image data', $response->render());
+		$this->assertSame(
+			"attachment; filename=\"avatar\"",
+			$response->getHeaders()["Content-Disposition"]
+		);
+		$this->assertSame(
+			"image/png",
+			$response->getHeaders()["Content-Type"]
+		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatarNoType() {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service->expects($this->once())
+			->method('getOpenProjectAvatar')
+			->with($this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				'id', 'name'
+			)
+			->willReturn(['avatar' => 'some image data']);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectAvatar('id', 'name');
+		$this->assertSame('some image data', $response->render());
+		$this->assertSame(
+			"attachment; filename=\"avatar\"",
+			$response->getHeaders()["Content-Disposition"]
+		);
+		$this->assertEmpty($response->getHeaders()["Content-Type"]);
+	}
 }

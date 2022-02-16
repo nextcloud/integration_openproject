@@ -99,14 +99,10 @@ class OpenProjectAPIController extends Controller {
 			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken,
 			$this->clientID, $this->clientSecret, $userId, $userName
 		);
-		// TODO this will never happen, because `getOpenProjectAvatar` does not return ever an error result
-		// @phpstan-ignore-next-line
-		if (isset($result['error'])) {
-			$response = new DataDisplayResponse($result['error'], 404);
-		} else {
-			$response = new DataDownloadResponse($result['avatar'], 'avatar', $result['type'] ?? '');
-			$response->cacheFor(60 * 60 * 24);
-		}
+		$response = new DataDownloadResponse(
+			$result['avatar'], 'avatar', $result['type'] ?? ''
+		);
+		$response->cacheFor(60 * 60 * 24);
 		return $response;
 	}
 

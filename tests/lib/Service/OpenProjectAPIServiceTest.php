@@ -10,6 +10,7 @@
 namespace OCA\OpenProject\Service;
 
 use GuzzleHttp\Client as GuzzleClient;
+use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OCP\ICertificateManager;
 use OCP\IConfig;
@@ -18,6 +19,7 @@ use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class OpenProjectAPIServiceTest extends TestCase {
@@ -51,6 +53,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @var string
 	 */
 	private $workPackagesPath = '/api/v3/work_packages';
+
+	/**
+	 * @var \OCP\IAvatarManager|MockObject
+	 */
+	private $avatarManagerMock;
+
 	/**
 	 * @return void
 	 * @before
@@ -84,10 +92,21 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);
+
+		$this->avatarManagerMock = $this->getMockBuilder('\OCP\IAvatarManager')
+			->getMock();
+		$this->avatarManagerMock
+			->method('getGuestAvatar')
+			->willReturn(
+				new GuestAvatar(
+					'test',
+					$this->createMock(\Psr\Log\LoggerInterface::class)
+				)
+			);
 		$this->service = new OpenProjectAPIService(
 			'integration_openproject',
 			$this->createMock(\OCP\IUserManager::class),
-			$this->createMock(\OCP\IAvatarManager::class),
+			$this->avatarManagerMock,
 			$this->createMock(\Psr\Log\LoggerInterface::class),
 			$this->createMock(\OCP\IL10N::class),
 			$this->createMock(\OCP\IConfig::class),
@@ -408,5 +427,79 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'work_packages'
 		);
 		$this->assertSame(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatar() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/users/userWithAvatar/avatar')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(200)
+			->setHeaders(['Content-Type' => 'image/jpeg'])
+			//setBody() expects iterable but we want to have raw data here and it seems to work fine
+			// @phpstan-ignore-next-line
+			->setBody('dataOfTheImage');
+
+		$this->builder
+			->uponReceiving('a request to get the avatar of a user')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->getOpenProjectAvatar(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'myRefreshToken',
+			$this->clientId,
+			$this->clientSecret,
+			'userWithAvatar',
+			'Me'
+		);
+		$this->assertArrayHasKey('avatar', $result);
+		$this->assertArrayHasKey('type', $result);
+		$this->assertSame('dataOfTheImage', $result['avatar']);
+		$this->assertSame('image/jpeg', $result['type']);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatarNoAvatar() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/users/userWithoutAvatar/avatar')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(404);
+
+		$this->builder
+			->uponReceiving('a request to get the avatar of a user that does not have one')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->getOpenProjectAvatar(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'oauth',
+			'myRefreshToken',
+			$this->clientId,
+			$this->clientSecret,
+			'userWithoutAvatar',
+			'Me'
+		);
+		$this->assertArrayHasKey('avatar', $result);
+		//make sure its an image, if something else is returned it will throw an exception
+		// @phpstan-ignore-next-line
+		imagecreatefromstring($result['avatar']);
 	}
 }
