@@ -76,15 +76,12 @@ class ConfigControllerTest extends TestCase {
 			->withConsecutive(
 				['testUser', 'integration_openproject', 'oauth_state'],
 				['testUser', 'integration_openproject', 'redirect_uri'],
-				['testUser', 'integration_openproject', 'token_type'],
 				['testUser', 'integration_openproject', 'refresh_token'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'randomString',
 				'http://redirect.back.to.here/some/url',
-				'oauth',
 				'oAuthRefreshToken',
-
 			);
 
 		$this->configController = new ConfigController(

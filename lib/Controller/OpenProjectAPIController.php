@@ -38,10 +38,6 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * @var string
 	 */
-	private $tokenType;
-	/**
-	 * @var string
-	 */
 	private $refreshToken;
 	/**
 	 * @var string
@@ -65,7 +61,6 @@ class OpenProjectAPIController extends Controller {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
 		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
-		$this->tokenType = $config->getUserValue($userId, Application::APP_ID, 'token_type');
 		$this->refreshToken = $config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
@@ -96,7 +91,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
-			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken,
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken,
 			$this->clientID, $this->clientSecret, $userId, $userName
 		);
 		$response = new DataDownloadResponse(
@@ -118,7 +113,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', 400);
 		}
 		$result = $this->openprojectAPIService->getNotifications(
-			$this->openprojectUrl, $this->accessToken, $this->tokenType, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $since, 7
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $since, 7
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
@@ -141,7 +136,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', 400);
 		}
 		$result = $this->openprojectAPIService->searchWorkPackage(
-			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
@@ -165,7 +160,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', 400);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
-			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
@@ -189,7 +184,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', 400);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
-			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);

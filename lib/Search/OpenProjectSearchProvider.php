@@ -126,7 +126,6 @@ class OpenProjectSearchProvider implements IProvider {
 
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
-		$tokenType = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token_type');
 		$refreshToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'refresh_token');
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
@@ -136,7 +135,7 @@ class OpenProjectSearchProvider implements IProvider {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		$searchResults = $this->service->searchWorkPackage($openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $user->getUID(), $term);
+		$searchResults = $this->service->searchWorkPackage($openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $user->getUID(), $term);
 		$searchResults = array_slice($searchResults, $offset, $limit);
 
 		if (isset($searchResults['error'])) {

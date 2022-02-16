@@ -83,7 +83,6 @@ class ConfigController extends Controller {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'refresh_token');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'last_notification_check');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token_type');
 				$result = [
 					'user_name' => '',
 				];
@@ -139,7 +138,6 @@ class ConfigController extends Controller {
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				$accessToken = $result['access_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $accessToken);
-				$this->config->setUserValue($this->userId, Application::APP_ID, 'token_type', 'oauth');
 				$refreshToken = $result['refresh_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'refresh_token', $refreshToken);
 				// get user info
@@ -174,7 +172,6 @@ class ConfigController extends Controller {
 	 * @return array{error?: string, user_name?: string, errorMesssage?: string}
 	 */
 	private function storeUserInfo(string $accessToken): array {
-		$tokenType = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_type');
 		$refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token');
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
@@ -184,7 +181,7 @@ class ConfigController extends Controller {
 			return ['error' => 'OpenProject URL is invalid'];
 		}
 
-		$info = $this->openprojectAPIService->request($openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $this->userId, 'users/me');
+		$info = $this->openprojectAPIService->request($openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $this->userId, 'users/me');
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);

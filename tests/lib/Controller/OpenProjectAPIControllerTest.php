@@ -47,9 +47,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getUserValue')
 			->withConsecutive(
 				['test','integration_openproject', 'token'],
-				['test','integration_openproject', 'token_type'],
 				['test','integration_openproject', 'refresh_token'],
-			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken');
+			)->willReturnOnConsecutiveCalls($token, 'refreshToken');
 	}
 
 	/**
@@ -116,7 +115,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
-			->with($this->anything(),
+			->with(
 				$this->anything(),
 				$this->anything(),
 				$this->anything(),
@@ -154,7 +153,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
-			->with($this->anything(),
+			->with(
 				$this->anything(),
 				$this->anything(),
 				$this->anything(),
