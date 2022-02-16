@@ -53,6 +53,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @var string
 	 */
 	private $workPackagesPath = '/api/v3/work_packages';
+
 	/**
 	 * @var \OCP\IAvatarManager|MockObject
 	 */
@@ -467,7 +468,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame('image/jpeg', $result['type']);
 	}
 	
-	
 	/**
 	 * @return void
 	 */
@@ -503,6 +503,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		imagecreatefromstring($result['avatar']);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testGetOpenProjectWorkPackageStatusRequest(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -534,7 +537,34 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(["_type" => "Status", "id" => 7, "name" => "In progress",
 			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7], $result);
 	}
-	
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(["_type" => "Status", "id" => 7, "name" => "In progress",
+				"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7]);
+		$result = $service->getOpenProjectWorkPackageStatus('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'statusId');
+		$this->assertSame(["_type" => "Status", "id" => 7, "name" => "In progress",
+			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusMalFormedResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'Malformed response']);
+		$result = $service->getOpenProjectWorkPackageStatus('', '', '', '', '', '', '', '');
+		$this->assertSame(['error' => 'Malformed response'], $result);
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testGetOpenProjectWorkPackageTypeRequest(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -594,16 +624,5 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(['error' => 'Malformed response']);
 		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
 		$this->assertSame(['error' => 'Malformed response'], $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
-		$service = $this->getServiceMock();
-		$service->method('request')
-			->willReturn(['error' => 'some error']);
-		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
-		$this->assertSame(['error' => 'some error'], $result);
 	}
 }

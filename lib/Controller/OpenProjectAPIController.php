@@ -17,6 +17,7 @@ use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
+
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 
@@ -55,11 +56,11 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
-	public function __construct(string                $appName,
-								IRequest              $request,
-								IConfig               $config,
+	public function __construct(string $appName,
+								IRequest $request,
+								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
-								?string               $userId) {
+								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
@@ -126,7 +127,6 @@ class OpenProjectAPIController extends Controller {
 		}
 		return $response;
 	}
-
 	/**
 	 * get searched work packages
 	 *

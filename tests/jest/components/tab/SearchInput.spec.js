@@ -1,5 +1,5 @@
 /* jshint esversion: 8 */
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
@@ -11,19 +11,22 @@ jest.mock('@nextcloud/l10n', () => ({
 
 const localVue = createLocalVue()
 
-describe('SearchInput.vue tests', () => {
-	let wrapper
-	beforeEach(() => {
-		wrapper = shallowMount(SearchInput, {
-			localVue,
-			mocks: {
-				t: (msg) => msg,
-				generateUrl() {
-					return '/'
-				},
+function mountSearchInput() {
+	return mount(SearchInput, {
+		localVue,
+		mocks: {
+			t: (msg) => msg,
+			generateUrl() {
+				return '/'
 			},
-		})
+		},
+		stubs: {
+			Avatar: true,
+		},
 	})
+}
+
+describe('SearchInput.vue tests', () => {
 	describe('state messages', () => {
 		it.each([{
 			state: 'no-token',
@@ -34,11 +37,17 @@ describe('SearchInput.vue tests', () => {
 		}, {
 			state: 'loading',
 			message: 'Wait while we fetch workpackages',
-		}, {
-			state: 'empty',
-			message: 'Cannot find the work-package you are searching for',
 		}])('should be displayed depending upon the state', async (cases) => {
 			const stateSelector = '.stateMsg'
+			const wrapper = shallowMount(SearchInput, {
+				localVue,
+				mocks: {
+					t: (msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+			})
 			await wrapper.setData({
 				state: cases.state,
 			})
@@ -48,12 +57,13 @@ describe('SearchInput.vue tests', () => {
 	})
 
 	describe('work packages', () => {
-		const searchListSelector = '.search-list'
-		const inputSelector = '#workpackages-search'
-		const statusSelector = '.filter-project-type-status__status'
-		const typeSelector = '.filter-project-type-status__type'
-		const assigneeSelector = '.filter-assignee'
+		const searchListSelector = '.searchList'
+		const inputSelector = '.multiselect__input'
+		const statusSelector = '.filterProjectTypeStatus__status'
+		const typeSelector = '.filterProjectTypeStatus__type'
+		const assigneeSelector = '.filterAssignee'
 		it('should not be displayed if the length of words in searchbar is less than or equal to three', async () => {
+			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('org')
 			await wrapper.setData({
@@ -63,6 +73,8 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should be displayed if the length of words in searchbar is more than three', async () => {
+			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
+			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -74,6 +86,8 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should not be displayed if the length of words in searchbar decreases from more than 3 to less', async () => {
+			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
+			const wrapper = mountSearchInput()
 			let textInput = wrapper.find(inputSelector)
 			await textInput.setValue('orga')
 			await wrapper.setData({
@@ -91,6 +105,8 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('should display correct background color and text for workpackage status and type', async () => {
+			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
+			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -106,6 +122,8 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('avatar and name should be displayed if assignee is present', async () => {
+			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
+			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({
@@ -117,6 +135,8 @@ describe('SearchInput.vue tests', () => {
 		})
 
 		it('avatar and name not should be displayed if assignee is not present', async () => {
+			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
+			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
 			await textInput.setValue('organ')
 			await wrapper.setData({

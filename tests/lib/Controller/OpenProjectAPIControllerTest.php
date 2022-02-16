@@ -175,7 +175,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertEmpty($response->getHeaders()["Content-Type"]);
 	}
 	
-	public function testGetSearchedWorkPackages() {
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackages():void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()

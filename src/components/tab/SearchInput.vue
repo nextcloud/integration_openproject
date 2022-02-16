@@ -1,54 +1,58 @@
 <template>
 	<div id="search-bar">
-		<div class="input-field">
-			<input
-				id="workpackages-search"
-				v-model="search"
-				:placeholder="placeholder"
-				type="text"
-				@keyup="makeSearchRequest">
-		</div>
-		<div v-if="searchResults.length>0" class="search-list">
-			<div v-for="workPackage in searchResults" :key="workPackage.id" class="workPackage-item">
-				<div class="wp-info">
-					<div class="wp-info__filter-wp">
-						<div class="filter-project-type-status">
-							<div class="filter-project-type-status__project">
-								{{ workPackage.project }}
+		<Multiselect
+			v-model="search"
+			class="searchInput"
+			:placeholder="placeholder"
+			:options="searchResults"
+			:user-select="true"
+			label="displayName"
+			track-by="multiselectKey"
+			:internal-search="false"
+			open-direction="below"
+			@search-change="makeSearchRequest">
+			<template #option="{option}">
+				<div class="searchList">
+					<div class="searchList__filterWorkPackage">
+						<div class="filterProjectTypeStatus">
+							<div class="filterProjectTypeStatus__project">
+								{{ option.project }}
 							</div>
-							<div class="filter-project-type-status__type" :style="{'color':workPackage.typeCol}">
-								{{ workPackage.typeTitle }}
+							<div class="filterProjectTypeStatus__type" :style="{'color':option.typeCol}">
+								{{ option.typeTitle }}
 							</div>
-							<div class="filter-project-type-status__status"
-								:style="{'background-color':workPackage.statusCol}">
-								{{ workPackage.statusTitle }}
+							<div class="filterProjectTypeStatus__status"
+								:style="{'background-color':option.statusCol}">
+								<div class="filterProjectTypeStatus__status__title">
+									{{ option.statusTitle }}
+								</div>
 							</div>
 						</div>
-						<div v-if="workPackage.assignee" class="filter-assignee">
-							<div class="filter-assignee__avatar">
+						<div v-if="option.assignee" class="filterAssignee">
+							<div class="filterAssignee__avatar">
 								<Avatar
 									class="item-avatar"
 									:size="25"
-									:url="workPackage.picture"
-									:user="workPackage.assignee"
-									:display-name="workPackage.assignee" />
+									:url="option.picture"
+									:user="option.assignee"
+									:display-name="option.assignee" />
 							</div>
-							<div class="filter-assignee__assignee">
-								{{ workPackage.assignee }}
+							<div class="filterAssignee__assignee">
+								{{ option.assignee }}
 							</div>
 						</div>
 					</div>
-					<div class="filter-wp-subject">
-						<div class="filter-wp-subject__subject">
-							{{ workPackage.subject }}
+					<div class="filterWorkpackageSubject">
+						<div class="filterWorkpackageSubject__subject">
+							{{ option.subject }}
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="create-new-wp">
-				{{ t('integration_openproject', '+ New work package in OpenProject') }}
-			</div>
-		</div>
+			</template>
+			<template #noOptions>
+				{{ t('integration_openproject', 'Start typing to search') }}
+			</template>
+		</Multiselect>
 		<div v-if="state !== 'ok'"
 			class="stateMsg text-center">
 			{{ stateMessages }}
@@ -61,11 +65,13 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 export default {
 	name: 'SearchInput',
 	components: {
 		Avatar,
+		Multiselect,
 	},
 	data: () => ({
 		search: null,
@@ -83,8 +89,6 @@ export default {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'loading') {
 				return t('integration_openproject', 'Wait while we fetch workpackages')
-			} else if (this.state === 'empty') {
-				return t('integration_openproject', 'Cannot find the work-package you are searching for, type something else')
 			}
 			return ''
 		},
@@ -101,17 +105,28 @@ export default {
 		},
 	},
 	methods: {
-		async makeSearchRequest(e) {
+		async makeSearchRequest(search) {
+			this.search = search
+			if (search <= 3) {
+				this.searchResults = []
+				return
+			}
 			const url = generateUrl('/apps/integration_openproject/work_packages')
 			if (this.search.length > 3) {
 				const req = {}
 				req.params = {
 					searchQuery: this.search,
 				}
+				this.state = 'loading'
 				const response = await axios.get(url, req)
 				if (response.status === 200) {
-					this.state = 'loading'
-					this.processWorkPackages(response.data)
+					this.state = 'ok'
+					if (response.data.length === 0) {
+						this.searchResults = []
+
+					} else {
+						this.processWorkPackages(response.data)
+					}
 				} else {
 					this.checkStatusCode(response.status)
 				}
@@ -130,36 +145,21 @@ export default {
 				this.state = 'error'
 			}
 		},
-		replaceHrefToGetId(href, href2 = null) {
+		replaceHrefToGetId(href) {
 			// this is a helper method replaces the string like this "/api/v3/types/3" to get id
-			if (href2 !== null) {
-				return href
-					? href.replace(/.*\//, '')
-					: href2
-						? href2.replace(/.*\//, '')
-						: null
-			}
 			return href
 				? href.replace(/.*\//, '')
 				: null
 		},
 		async processWorkPackages(workPackages) {
-			if (workPackages.length === 0) {
-				this.state = 'empty'
-				return
-			}
 			for (let i = 0; i < workPackages.length; i++) {
 				const statusId = this.replaceHrefToGetId(workPackages[i]._links.status.href)
 				const typeId = this.replaceHrefToGetId(workPackages[i]._links.type.href)
-				const userId = this.replaceHrefToGetId(workPackages[i]._links?.assignee?.href, workPackages[i]._links?.author?.href)
-				const userName = workPackages[i]._links?.assignee?.title
-					? workPackages[i]._links.assignee.title
-					: workPackages[i]._links?.author?.title
-						? workPackages[i]._links.author.title
-						: null
+				const userId = this.replaceHrefToGetId(workPackages[i]._links.assignee.href)
+				const userName = workPackages[i]._links.assignee.title
 				const avatar = await this.getUserAvatar(userId, userName)
-				const statusColor = await this.processWPStatus(statusId)
-				const typeColor = await this.processWPType(typeId)
+				const statusColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/statuses/', statusId)
+				const typeColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/types/', typeId)
 				const found = this.searchResults.some(el => el.id === workPackages[i].id)
 				if (!found) {
 					this.searchResults.push({
@@ -168,7 +168,7 @@ export default {
 						project: workPackages[i]._links.project.title,
 						statusTitle: workPackages[i]._links.status.title,
 						typeTitle: workPackages[i]._links.type.title,
-						assignee: workPackages[i]._links.assignee.title,
+						assignee: userName,
 						statusCol: statusColor,
 						typeCol: typeColor,
 						picture: avatar,
@@ -176,23 +176,11 @@ export default {
 				}
 			}
 		},
-		async processWPStatus(id) {
-			const url = generateUrl('/apps/integration_openproject/statuses/' + id)
+		async getWorkPackageColorAttributes(path, id) {
+			const url = generateUrl(path + id)
 			const req = {}
-			const response = await axios.get(url, req)
 			this.state = 'loading'
-			if (response.status === 200) {
-				this.state = 'ok'
-				return response.data.color
-			}
-			this.checkStatusCode(response.status)
-			return ''
-		},
-		async processWPType(id) {
-			const url = generateUrl('/apps/integration_openproject/types/' + id)
-			const req = {}
 			const response = await axios.get(url, req)
-			this.state = 'loading'
 			if (response.status === 200) {
 				this.state = 'ok'
 				return response.data.color
@@ -209,48 +197,29 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-#workpackages-search {
-	font-size: 0.87rem;
+.searchInput {
 	width: 100%;
-	border-radius: 3px 3px 0px 0px;
-	margin: 0;
-}
-
-.workPackage-item {
-	border: 1px solid var(--color-border-dark);
-	border-top-style: none;
-	width: 100%;
-}
-
-.create-new-wp {
-	border: 1px solid var(--color-border-dark);
-	border-top-style: none;
-	width: 100%;
-	height: 50px;
-	color: #6d6d6d;
-	line-height: 50px;
-	text-align: center;
 }
 
 .stateMsg {
-	padding: 10px;
+	padding: 30px;
 	text-align: center;
 	color: #6d6d6d;
 }
 
-.wp-info {
+.searchList {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 
-	&__filter-wp {
+	&__filterWorkPackage {
 		margin-top: 8px;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 
-		.filter-project-type-status {
+		.filterProjectTypeStatus {
 			display: flex;
 			justify-content: space-between;
 
@@ -273,14 +242,20 @@ export default {
 				text-align: center;
 				font-size: 0.75rem;
 				border-radius: 3px;
+
+				&__title {
+					mix-blend-mode: multiply;
+				}
 			}
 		}
 
-		.filter-assignee {
+		.filterAssignee {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
 			flex-wrap: wrap;
+			position: absolute;
+			right: 0px;
 
 			&__avatar {
 				padding: 6px;
@@ -288,6 +263,7 @@ export default {
 
 			&__assignee {
 				padding: 6px;
+				padding-right: 12px;
 				font-size: 0.81rem;
 				color: #0096FF;
 				text-align: center;
@@ -295,7 +271,7 @@ export default {
 		}
 	}
 
-	.filter-wp-subject {
+	.filterWorkpackageSubject {
 		margin: 12px;
 		text-align: justify;
 

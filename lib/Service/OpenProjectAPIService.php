@@ -489,8 +489,8 @@ class OpenProjectAPIService {
 		return filter_var($openprojectUrl, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $openprojectUrl);
 	}
-	
-		/**
+
+	/**
 	 * authenticated request to get status of a work package
 	 *
 	 * @param string $url
@@ -514,9 +514,7 @@ class OpenProjectAPIService {
 		string $statusId): array {
 		$result = $this->request(
 			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
-		if (isset($result['error'])) {
-			return $result;
-		} elseif (!isset($result['id'])) {
+		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
 		return $result;
@@ -547,9 +545,7 @@ class OpenProjectAPIService {
 	): array {
 		$result = $this->request(
 			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
-		if (isset($result['error'])) {
-			return $result;
-		} elseif (!isset($result['id'])) {
+		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
 
