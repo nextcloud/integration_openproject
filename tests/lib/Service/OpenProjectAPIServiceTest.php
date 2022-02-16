@@ -580,7 +580,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				"_type" => "Type", "id" => 3, "name" => "Phase",
 				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"
 			]);
-		$result = $service->getOpenProjectWorkPackageType('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 3);
+		$result = $service->getOpenProjectWorkPackageType('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'typeId');
 		$this->assertSame([
 			"_type" => "Type", "id" => 3, "name" => "Phase",
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"

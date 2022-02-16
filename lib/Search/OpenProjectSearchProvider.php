@@ -31,7 +31,6 @@ use OCP\IL10N;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUser;
-use OCP\PreConditionNotMetException;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
@@ -105,7 +104,6 @@ class OpenProjectSearchProvider implements IProvider {
 
 	/**
 	 * @inheritDoc
-	 * @throws PreConditionNotMetException
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		if (!$this->appManager->isEnabledForUser(Application::APP_ID, $user)) {

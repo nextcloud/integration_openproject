@@ -66,14 +66,14 @@ class OpenProjectAPIService {
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct(
-		string               $appName,
-		IUserManager         $userManager,
-		IAvatarManager       $avatarManager,
-		LoggerInterface      $logger,
-		IL10N                $l10n,
-		IConfig              $config,
-		INotificationManager $notificationManager,
-		IClientService       $clientService) {
+								string $appName,
+								IUserManager $userManager,
+								IAvatarManager $avatarManager,
+								LoggerInterface $logger,
+								IL10N $l10n,
+								IConfig $config,
+								INotificationManager $notificationManager,
+								IClientService $clientService) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -115,7 +115,7 @@ class OpenProjectAPIService {
 				// get the openproject user ID
 				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
 				if ($myOPUserId !== '') {
-					$myOPUserId = (int)$myOPUserId;
+					$myOPUserId = (int) $myOPUserId;
 					$notifications = $this->getNotifications(
 						$openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $userId, $lastNotificationCheck
 					);
@@ -148,9 +148,9 @@ class OpenProjectAPIService {
 	 */
 	private function getWPAssigneeOrAuthorId(array $workPackage): ?int {
 		return isset($workPackage['_links'], $workPackage['_links']['assignee'], $workPackage['_links']['assignee']['href'])
-			? (int)preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
+			? (int) preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
 			: (isset($workPackage['_links'], $workPackage['_links']['author'], $workPackage['_links']['author']['href'])
-				? (int)preg_replace('/.*\//', '', $workPackage['_links']['author']['href'])
+				? (int) preg_replace('/.*\//', '', $workPackage['_links']['author']['href'])
 				: null);
 	}
 
@@ -198,9 +198,9 @@ class OpenProjectAPIService {
 	 * @param ?int $limit
 	 * @return array<mixed>
 	 */
-	public function getNotifications(string  $url, string $accessToken, string $authType,
-									 string  $refreshToken, string $clientID, string $clientSecret, string $userId,
-									 ?string $since = null, ?int $limit = null): array {
+	public function getNotifications(string $url, string $accessToken, string $authType,
+									string $refreshToken, string $clientID, string $clientSecret, string $userId,
+									?string $since = null, ?int $limit = null): array {
 		if ($since) {
 			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $this->now() . '"]}},{"status":{"operator":"!","values":["14"]}}]';
 		} else {
@@ -246,8 +246,8 @@ class OpenProjectAPIService {
 	 * @return array<string>
 	 */
 	public function searchWorkPackage(string $url, string $accessToken, string $authType,
-									  string $refreshToken, string $clientID, string $clientSecret, string $userId,
-									  string $query, int $offset = 0, int $limit = 5): array {
+							string $refreshToken, string $clientID, string $clientSecret, string $userId,
+							string $query, int $offset = 0, int $limit = 5): array {
 		$resultsById = [];
 
 		// search by description
@@ -301,8 +301,8 @@ class OpenProjectAPIService {
 	 * @throws \OCP\Lock\LockedException
 	 */
 	public function getOpenProjectAvatar(string $url,
-										 string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
-										 string $userId, string $userName): array {
+									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
+									string $userId, string $userName): array {
 		$url = $url . '/api/v3/users/' . $userId . '/avatar';
 		$authHeader = ($authType === 'access')
 			? 'Basic ' . base64_encode('apikey:' . $accessToken)
@@ -320,7 +320,7 @@ class OpenProjectAPIService {
 				'avatar' => $response->getBody(),
 				'type' => implode(',', $headers['Content-Type']),
 			];
-		} catch (ServerException|ClientException|ConnectException|Exception $e) {
+		} catch (ServerException | ClientException | ConnectException | Exception $e) {
 			$this->logger->warning('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($userName);
 			$avatarContent = $avatar->getFile(64)->getContent();
@@ -395,9 +395,9 @@ class OpenProjectAPIService {
 			} else {
 				return json_decode($body, true);
 			}
-		} catch (ServerException|ClientException $e) {
+		} catch (ServerException | ClientException $e) {
 			$response = $e->getResponse();
-			$body = (string)$response->getBody();
+			$body = (string) $response->getBody();
 			// refresh token if it's invalid and we are using oauth
 			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
 			if ($response->getStatusCode() === 401 && $authType === 'oauth') {
@@ -419,16 +419,16 @@ class OpenProjectAPIService {
 				}
 			}
 			// try to get the error in the response
-			$this->logger->warning('OpenProject API error : ' . $e->getMessage(), ['app' => $this->appName]);
+			$this->logger->warning('OpenProject API error : '.$e->getMessage(), ['app' => $this->appName]);
 			$decodedBody = json_decode($body, true);
 			if ($decodedBody && isset($decodedBody['message'])) {
-				$this->logger->warning('OpenProject API error : ' . $decodedBody['message'], ['app' => $this->appName]);
+				$this->logger->warning('OpenProject API error : '.$decodedBody['message'], ['app' => $this->appName]);
 			}
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => $e->getResponse()->getStatusCode(),
 			];
-		} catch (ConnectException|Exception $e) {
+		} catch (ConnectException | Exception $e) {
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => 404,
@@ -480,7 +480,7 @@ class OpenProjectAPIService {
 				return json_decode($body, true);
 			}
 		} catch (Exception $e) {
-			$this->logger->warning('OpenProject OAuth error : ' . $e->getMessage(), ['app' => $this->appName]);
+			$this->logger->warning('OpenProject OAuth error : '.$e->getMessage(), ['app' => $this->appName]);
 			return ['error' => $e->getMessage()];
 		}
 	}

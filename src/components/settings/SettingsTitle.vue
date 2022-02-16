@@ -28,7 +28,6 @@ export default {
 h2 {
 	display: flex;
 	align-items: center;
-
 	span {
 		padding-left: 10px;
 	}

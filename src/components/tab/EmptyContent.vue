@@ -63,7 +63,6 @@ export default {
 	}
 	.empty-icon {
 		padding: 1vh 0;
-
 		.icon img {
 			height: 50px;
 			width: 50px;
