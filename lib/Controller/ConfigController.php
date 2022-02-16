@@ -64,7 +64,7 @@ class ConfigController extends Controller {
 	 * set config values
 	 * @NoAdminRequired
 	 *
-	 * @param array $values
+	 * @param array<string, string> $values
 	 * @return DataResponse
 	 */
 	public function setConfig(array $values): DataResponse {
@@ -99,7 +99,7 @@ class ConfigController extends Controller {
 	/**
 	 * set admin config values
 	 *
-	 * @param array $values
+	 * @param array<string, string> $values
 	 * @return DataResponse
 	 */
 	public function setAdminConfig(array $values): DataResponse {
@@ -171,7 +171,7 @@ class ConfigController extends Controller {
 
 	/**
 	 * @param string $accessToken
-	 * @return array
+	 * @return array{error?: string, user_name?: string, errorMesssage?: string}
 	 */
 	private function storeUserInfo(string $accessToken): array {
 		$tokenType = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_type');

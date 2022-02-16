@@ -142,12 +142,10 @@ class OpenProjectAPIService {
 		}
 	}
 
-	private function getWPStatusId(array $workPackage): ?int {
-		return isset($workPackage['_links'], $workPackage['_links']['status'], $workPackage['_links']['status']['href'])
-			? (int) preg_replace('/.*\//', '', $workPackage['_links']['status']['href'])
-			: null;
-	}
-
+	/**
+	 * @param array<mixed> $workPackage
+	 * @return int|null
+	 */
 	private function getWPAssigneeOrAuthorId(array $workPackage): ?int {
 		return isset($workPackage['_links'], $workPackage['_links']['assignee'], $workPackage['_links']['assignee']['href'])
 			? (int) preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
@@ -159,7 +157,7 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 * @param string $subject
-	 * @param array $params
+	 * @param array<mixed> $params
 	 * @return void
 	 */
 	private function sendNCNotification(string $userId, string $subject, array $params): void {
@@ -198,7 +196,7 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param ?string $since
 	 * @param ?int $limit
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function getNotifications(string $url, string $accessToken, string $authType,
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
@@ -245,7 +243,7 @@ class OpenProjectAPIService {
 	 * @param string $query
 	 * @param int $offset
 	 * @param int $limit
-	 * @return array
+	 * @return array<string>
 	 */
 	public function searchWorkPackage(string $url, string $accessToken, string $authType,
 							string $refreshToken, string $clientID, string $clientSecret, string $userId,
@@ -297,7 +295,7 @@ class OpenProjectAPIService {
 	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $userName
-	 * @return array
+	 * @return array{avatar: mixed, type?: string}
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
@@ -339,9 +337,9 @@ class OpenProjectAPIService {
 	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $endPoint
-	 * @param array $params
+	 * @param array<mixed> $params
 	 * @param string $method
-	 * @return array
+	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 */
 	public function request(string $openprojectUrl, string $accessToken, string $authType, string $refreshToken,
@@ -440,9 +438,9 @@ class OpenProjectAPIService {
 
 	/**
 	 * @param string $url
-	 * @param array $params
+	 * @param array<mixed> $params passed to `http_build_query` for GET requests, else send as body
 	 * @param string $method
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function requestOAuthAccessToken(string $url, array $params = [], string $method = 'GET'): array {
 		try {

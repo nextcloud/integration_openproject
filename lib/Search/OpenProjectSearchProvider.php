@@ -91,6 +91,7 @@ class OpenProjectSearchProvider implements IProvider {
 
 	/**
 	 * @inheritDoc
+	 * @param array<mixed> $routeParameters (unused)
 	 */
 	public function getOrder(string $route, array $routeParameters): int {
 		if (strpos($route, Application::APP_ID . '.') === 0) {
@@ -142,6 +143,7 @@ class OpenProjectSearchProvider implements IProvider {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
+		// @phpstan-ignore-next-line array_map supports also lambda functions
 		$formattedResults = array_map(function (array $entry) use ($thumbnailUrl, $openprojectUrl): OpenProjectSearchResultEntry {
 			return new OpenProjectSearchResultEntry(
 				$thumbnailUrl,
@@ -161,7 +163,7 @@ class OpenProjectSearchProvider implements IProvider {
 	}
 
 	/**
-	 * @param array $entry
+	 * @param array<mixed> $entry
 	 * @return string
 	 */
 	protected function getMainText(array $entry): string {
@@ -169,7 +171,7 @@ class OpenProjectSearchProvider implements IProvider {
 	}
 
 	/**
-	 * @param array $entry
+	 * @param array<mixed> $entry
 	 * @return string
 	 */
 	protected function getSubline(array $entry): string {
@@ -183,18 +185,7 @@ class OpenProjectSearchProvider implements IProvider {
 	}
 
 	/**
-	 * @param string $s
-	 * @param int $len
-	 * @return string
-	 */
-	private function truncate(string $s, int $len): string {
-		return strlen($s) > $len
-			? substr($s, 0, $len) . '…'
-			: $s;
-	}
-
-	/**
-	 * @param array $entry
+	 * @param array<mixed> $entry
 	 * @param string $url
 	 * @return string
 	 */
@@ -208,7 +199,7 @@ class OpenProjectSearchProvider implements IProvider {
 	}
 
 	/**
-	 * @param array $entry
+	 * @param array<mixed> $entry
 	 * @param string $thumbnailUrl
 	 * @return string
 	 */

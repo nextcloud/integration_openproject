@@ -5,6 +5,9 @@ name: CI
 jobs:
   build:
     name: CI
+    strategy:
+      matrix:
+        nextcloudVersion: [ v23.0.0, master ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,7 +37,14 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install PHP Dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: |
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
+          cd server && git submodule update --init
+          ./occ maintenance:install --admin-pass=admin
+
+      - name: PHP stan
+        run: make phpstan
 
       - name: PHP code style
         run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
@@ -49,12 +59,10 @@ jobs:
         run: npm run stylelint
 
       - name: PHP & Vue Unit Tests
-        run: |
-          git clone --depth 1 https://github.com/nextcloud/server.git -b v23.0.0
-          make test
+        run: make test
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +71,7 @@ jobs:
           title: "JS Code Coverage"
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.0.3
         with:
           reports: './coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -82,7 +90,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -91,14 +99,14 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '24'
           path: './coverage/jest/lcov.info'
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '36'

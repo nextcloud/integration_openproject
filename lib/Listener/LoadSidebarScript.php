@@ -37,7 +37,14 @@ class LoadSidebarScript implements IEventListener {
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}
-		Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');
+		$currentVersion = implode('.', Util::getVersion());
+		//changed from nextcloud 24
+		if (version_compare($currentVersion, '24') >= 0) {
+			// @phpstan-ignore-next-line
+			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');
+		} else {
+			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab');
+		}
 		Util::addStyle(Application::APP_ID, 'tab');
 	}
 }
