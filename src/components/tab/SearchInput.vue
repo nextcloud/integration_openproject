@@ -139,8 +139,6 @@ export default {
 				this.state = 'ok'
 			} else if (statusCode === 401) {
 				this.state = 'no-token'
-			} else if (statusCode === 400) {
-				this.state = 'error'
 			} else {
 				this.state = 'error'
 			}
