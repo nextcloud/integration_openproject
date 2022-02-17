@@ -176,9 +176,24 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 * @return void
+	 * @return array<mixed>
 	 */
-	public function testGetSearchedWorkPackages():void {
+	public function searchWorkPackagesDataProvider() {
+		return [
+			['test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			['test', 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
+		];
+	}
+
+	/**
+	 * @param string|null $searchQuery
+	 * @param int|null $fileId
+	 * @param array<mixed> $expectedResponse
+	 * @return void
+	 * @dataProvider searchWorkPackagesDataProvider
+	 */
+	public function testGetSearchedWorkPackages($searchQuery, $fileId, array $expectedResponse):void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -186,33 +201,44 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service->expects($this->once())
 			->method('searchWorkPackage')
-			->willReturn([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]);
+			->with(
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$this->anything(),
+				$searchQuery,
+				$fileId
+			)
+			->willReturn($expectedResponse);
 
 		$controller = new OpenProjectAPIController(
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
-		$response = $controller->getSearchedWorkPackages('test');
+		$response = $controller->getSearchedWorkPackages($searchQuery, $fileId);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
-		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]], $response->getData());
+		$this->assertSame($expectedResponse, $response->getData());
 	}
+
 
 	/**
 	 * @return void
 	 */
-	public function testGetSearchedWorkPackagesErrorResponse(): void {
+	public function testGetSearchedWorkPackagesNoAccessToken(): void {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
-		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testGetSearchedWorkPackagesNoAccessToken(): void {
+	public function testGetSearchedWorkPackagesErrorResponse(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -225,7 +251,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
-		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 

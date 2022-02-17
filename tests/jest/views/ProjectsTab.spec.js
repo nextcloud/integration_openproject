@@ -45,23 +45,10 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('fetchWorkpackages', () => {
 		it.each([
-			{ responseData: [], AppState: 'ok' },
-			{ responseData: 'string', AppState: 'error' },
-			{ responseData: null, AppState: 'error' },
-			{ responseData: undefined, AppState: 'error' },
-		])('sets states according to response content in case of success', async (cases) => {
-			axios.get.mockImplementationOnce(() =>
-				Promise.resolve({
-					data: cases.responseData,
-				}),
-			)
-			await wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe(cases.AppState)
-		})
-		it.each([
-			{ HTTPStatus: 400, AppState: 'error' },
+			{ HTTPStatus: 400, AppState: 'failed-fetching-workpackages' },
 			{ HTTPStatus: 401, AppState: 'no-token' },
-			{ HTTPStatus: 404, AppState: 'error' },
+			{ HTTPStatus: 402, AppState: 'failed-fetching-workpackages' },
+			{ HTTPStatus: 404, AppState: 'connection-error' },
 			{ HTTPStatus: 500, AppState: 'error' },
 		])('sets states according to HTTP error codes', async (cases) => {
 			const err = new Error()
