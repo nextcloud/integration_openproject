@@ -10,6 +10,8 @@ module.exports = {
 	collectCoverage: true,
 	collectCoverageFrom: ['./src/**'],
 	coverageDirectory: '<rootDir>/coverage/jest/',
-	coverageReporters: ['lcov', 'html', 'text']
-
+	coverageReporters: ['lcov', 'html', 'text'],
+	transformIgnorePatterns: [
+		"node_modules/(?!vue-material-design-icons)"
+	  ],
 }

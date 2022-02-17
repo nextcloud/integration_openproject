@@ -174,4 +174,174 @@ class OpenProjectAPIControllerTest extends TestCase {
 		);
 		$this->assertEmpty($response->getHeaders()["Content-Type"]);
 	}
+	
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackages():void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['searchWorkPackage'])
+			->getMock();
+		$service->expects($this->once())
+			->method('searchWorkPackage')
+			->willReturn([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getSearchedWorkPackages('test');
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackagesErrorResponse(): void {
+		$this->getUserValueMock('');
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getSearchedWorkPackages('test');
+		$this->assertSame(400, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetSearchedWorkPackagesNoAccessToken(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('searchWorkPackage')
+			->willReturn(['error' => 'something went wrong']);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getSearchedWorkPackages('test');
+		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(['error' => 'something went wrong'], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatus(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageStatus'])
+			->getMock();
+		$service->expects($this->once())
+			->method('getOpenProjectWorkPackageStatus')
+			->willReturn([
+				"_type" => "Status", "id" => 7, "name" => "In progress",
+				"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7
+			]);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageStatus('7');
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame([
+			"_type" => "Status", "id" => 7, "name" => "In progress",
+			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7
+		], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusErrorResponse(): void {
+		$this->getUserValueMock('');
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageStatus('7');
+		$this->assertSame(400, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusNoAccessToken(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('getOpenProjectWorkPackageStatus')
+			->willReturn(['error' => 'something went wrong']);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageStatus('7');
+		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(['error' => 'something went wrong'], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageType(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageType'])
+			->getMock();
+		$service->expects($this->once())
+			->method('getOpenProjectWorkPackageType')
+			->willReturn(["_type" => "Type", "id" => 3, "name" => "Phase",
+				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"]);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageType('3');
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(["_type" => "Type", "id" => 3, "name" => "Phase",
+			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
+		$this->getUserValueMock('');
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageType('3');
+		$this->assertSame(400, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageTypeNoAccessToken(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('getOpenProjectWorkPackageType')
+			->willReturn(['error' => 'something went wrong']);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageType('3');
+		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(['error' => 'something went wrong'], $response->getData());
+	}
 }

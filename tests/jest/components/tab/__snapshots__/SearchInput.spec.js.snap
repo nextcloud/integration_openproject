@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchInput.vue tests work packages avatar and name should be displayed if assignee is present 1`] = `
+<div class="filterAssignee">
+  <div class="filterAssignee__avatar">
+    <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+  </div>
+  <div class="filterAssignee__assignee">
+    test
+  </div>
+</div>
+`;
+
+exports[`SearchInput.vue tests work packages should be displayed if the length of words in searchbar is more than three 1`] = `
+<div class="searchList">
+  <div class="searchList__filterWorkPackage">
+    <div class="filterProjectTypeStatus">
+      <div class="filterProjectTypeStatus__project">
+        test
+      </div>
+      <div class="filterProjectTypeStatus__type" style="color: red;">
+        task
+      </div>
+      <div class="filterProjectTypeStatus__status" style="background-color: blue;">
+        <div class="filterProjectTypeStatus__status__title">
+          in-progress
+        </div>
+      </div>
+    </div>
+    <div class="filterAssignee">
+      <div class="filterAssignee__avatar">
+        <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+      </div>
+      <div class="filterAssignee__assignee">
+        test
+      </div>
+    </div>
+  </div>
+  <div class="filterWorkpackageSubject">
+    <div class="filterWorkpackageSubject__subject">
+      Organize work-packages
+    </div>
+  </div>
+</div>
+`;

@@ -127,4 +127,75 @@ class OpenProjectAPIController extends Controller {
 		}
 		return $response;
 	}
+	/**
+	 * get searched work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param ?string $searchQuery
+	 *
+	 * @return DataResponse
+	 */
+	public function getSearchedWorkPackages(?string $searchQuery = null): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->searchWorkPackage(
+			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
+
+	/**
+	 * get status of work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 *
+	 * @return DataResponse
+	 */
+	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
+			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
+
+	/**
+	 * get type work packages
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 *
+	 * @return DataResponse
+	 */
+	public function getOpenProjectWorkPackageType(string $id): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', 400);
+		}
+		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
+			$this->openprojectUrl, $this->accessToken, 'oauth', $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+		);
+		if (!isset($result['error'])) {
+			$response = new DataResponse($result);
+		} else {
+			$response = new DataResponse($result, 401);
+		}
+		return $response;
+	}
 }

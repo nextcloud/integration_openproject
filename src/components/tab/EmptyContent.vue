@@ -48,7 +48,7 @@ export default {
 			} else if (this.state === 'error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'ok') {
-				return t('integration_openproject', 'No workspaces linked yet')
+				return t('integration_openproject', 'No workspaces linked yet, search for workpackage to add!')
 			}
 			return 'invalid state'
 		},

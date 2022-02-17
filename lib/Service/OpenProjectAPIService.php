@@ -489,4 +489,66 @@ class OpenProjectAPIService {
 		return filter_var($openprojectUrl, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $openprojectUrl);
 	}
+
+	/**
+	 * authenticated request to get status of a work package
+	 *
+	 * @param string $url
+	 * @param string $accessToken
+	 * @param string $authType
+	 * @param string $refreshToken
+	 * @param string $clientID
+	 * @param string $clientSecret
+	 * @param string $userId
+	 * @param string $statusId
+	 * @return string[]
+	 */
+	public function getOpenProjectWorkPackageStatus(
+		string $url,
+		string $accessToken,
+		string $authType,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		string $userId,
+		string $statusId): array {
+		$result = $this->request(
+			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
+		if (!isset($result['id'])) {
+			return ['error' => 'Malformed response'];
+		}
+		return $result;
+	}
+
+	/**
+	 * authenticated request to get status of a work package
+	 *
+	 * @param string $url
+	 * @param string $accessToken
+	 * @param string $authType
+	 * @param string $refreshToken
+	 * @param string $clientID
+	 * @param string $clientSecret
+	 * @param string $userId
+	 * @param string $typeId
+	 * @return string[]
+	 */
+	public function getOpenProjectWorkPackageType(
+		string $url,
+		string $accessToken,
+		string $authType,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		string $userId,
+		string $typeId
+	): array {
+		$result = $this->request(
+			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
+		if (!isset($result['id'])) {
+			return ['error' => 'Malformed response'];
+		}
+
+		return $result;
+	}
 }

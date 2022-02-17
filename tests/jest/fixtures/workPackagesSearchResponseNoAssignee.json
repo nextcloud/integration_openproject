@@ -1,0 +1,13 @@
+[
+	{
+		"id": "1",
+		"subject": "Organize work-packages",
+		"project": "test",
+		"statusTitle": "in-progress",
+		"typeTitle": "task",
+		"assignee": "",
+		"statusCol": "blue",
+		"typeCol": "red",
+		"picture": "/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+	}
+]

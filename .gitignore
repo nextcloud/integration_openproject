@@ -11,4 +11,5 @@ coverage/
 example/
 log/
 vendor/
+.php-cs-fixer.cache
 
