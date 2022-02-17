@@ -244,6 +244,7 @@ class OpenProjectAPIService {
 	 * @param int $offset
 	 * @param int $limit
 	 * @return array<string>
+	 * @throws \Safe\Exceptions\JsonException
 	 */
 	public function searchWorkPackage(string $url, string $accessToken, string $authType,
 							string $refreshToken, string $clientID, string $clientSecret, string $userId,
@@ -251,8 +252,12 @@ class OpenProjectAPIService {
 		$resultsById = [];
 
 		// search by description
+		$filters = [
+			["description" => ["operator" => "~", "values" => [$query]]],
+			["status" => ["operator" => "!", "values" => ["14"]]]
+		];
 		$params = [
-			'filters' => '[{"description":{"operator":"~","values":["' . $query . '"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'filters' => \Safe\json_encode($filters),
 			'sortBy' => '[["updatedAt", "desc"]]',
 			// 'limit' => $limit,
 		];
@@ -266,8 +271,12 @@ class OpenProjectAPIService {
 			}
 		}
 		// search by subject
+		$filters = [
+			["subject" => ["operator" => "~", "values" => [$query]]],
+			["status" => ["operator" => "!", "values" => ["14"]]]
+		];
 		$params = [
-			'filters' => '[{"subject":{"operator":"~","values":["' . $query . '"]}},{"status":{"operator":"!","values":["14"]}}]',
+			'filters' => \Safe\json_encode($filters),
 			'sortBy' => '[["updatedAt", "desc"]]',
 			// 'limit' => $limit,
 		];
