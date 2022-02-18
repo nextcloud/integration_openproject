@@ -22,6 +22,7 @@ use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
 
@@ -41,6 +42,12 @@ class ConfigController extends Controller {
 	 * @var OpenProjectAPIService
 	 */
 	private $openprojectAPIService;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	/**
 	 * @var string|null
 	 */
@@ -52,12 +59,14 @@ class ConfigController extends Controller {
 								IURLGenerator $urlGenerator,
 								IL10N $l,
 								OpenProjectAPIService $openprojectAPIService,
+								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->l = $l;
 		$this->openprojectAPIService = $openprojectAPIService;
+		$this->logger = $logger;
 		$this->userId = $userId;
 	}
 
@@ -122,11 +131,24 @@ class ConfigController extends Controller {
 		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$codeVerifier = $this->config->getUserValue(
+			$this->userId, Application::APP_ID, 'code_verifier', false
+		);
 
 		// anyway, reset state
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state');
 
-		if ($clientID && $clientSecret && $configState !== '' && $configState === $state) {
+		$validCodeVerifier = false;
+		if (is_string($codeVerifier)) {
+			$validCodeVerifier = (\Safe\preg_match('/^[A-Za-z0-9\-._~]{128}$/', $codeVerifier) === 1);
+		}
+
+		$validClientSecret = false;
+		if (is_string($clientSecret)) {
+			$validClientSecret = (\Safe\preg_match('/^.{10,}$/', $clientSecret) === 1);
+		}
+
+		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
 			$redirect_uri = $this->urlGenerator->linkToRouteAbsolute(
 				Application::APP_ID . '.config.oauthRedirect'
 			);
@@ -136,7 +158,8 @@ class ConfigController extends Controller {
 				'client_secret' => $clientSecret,
 				'code' => $code,
 				'redirect_uri' => $redirect_uri,
-				'grant_type' => 'authorization_code'
+				'grant_type' => 'authorization_code',
+				'code_verifier' => $codeVerifier
 			], 'POST');
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				$accessToken = $result['access_token'];
@@ -162,6 +185,12 @@ class ConfigController extends Controller {
 			}
 			$result = $error;
 		} else {
+			if (!$validCodeVerifier) {
+				$this->logger->error('invalid OAuth code verifier', ['app' => $this->appName]);
+			}
+			if (!$validClientSecret) {
+				$this->logger->error('invalid OAuth client secret', ['app' => $this->appName]);
+			}
 			$result = $this->l->t('Error during OAuth exchanges');
 		}
 		return new RedirectResponse(
