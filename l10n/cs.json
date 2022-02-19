@@ -45,7 +45,6 @@
     "Failed to save OpenProject OAuth state" : "Nepodařilo se uložit OAuth stav pro OpenProject",
     "No OpenProject account connected" : "Nepřipojen žádný OpenProject účet",
     "Error connecting to OpenProject" : "Chyba při připojování se k OpenProject",
-    "No workspaces linked yet" : "Zatím nepřipojeny žádné pracovní prostory",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"

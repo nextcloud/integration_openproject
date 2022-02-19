@@ -47,7 +47,6 @@ OC.L10N.register(
     "Failed to save OpenProject OAuth state" : "Nepodařilo se uložit OAuth stav pro OpenProject",
     "No OpenProject account connected" : "Nepřipojen žádný OpenProject účet",
     "Error connecting to OpenProject" : "Chyba při připojování se k OpenProject",
-    "No workspaces linked yet" : "Zatím nepřipojeny žádné pracovní prostory",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject"
 },
