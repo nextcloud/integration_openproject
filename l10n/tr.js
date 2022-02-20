@@ -47,6 +47,10 @@ OC.L10N.register(
     "Failed to save OpenProject OAuth state" : "OpenProject OAuth durumu kaydedilemedi",
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
     "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
+    "No workspaces linked yet, search for workpackage to add!" : "Henüz bir çalışma alanı ile bağlantı kurulmamış. Eklenecek bir çalışma paketi arayın! ",
+    "Start typing to search" : "Aramak için yazmaya başlayın",
+    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi arayın",
+    "Wait while we fetch workpackages" : "Çalışma paketleri alınırken bekleyin",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı"
 },
