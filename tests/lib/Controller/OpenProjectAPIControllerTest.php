@@ -33,7 +33,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
-			)->willReturnOnConsecutiveCalls('cliendID', 'clientSecret');
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls('cliendID', 'clientSecret', 'http://openproject.org');
 	}
 
 	/**
@@ -48,8 +49,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 				['test','integration_openproject', 'token'],
 				['test','integration_openproject', 'token_type'],
 				['test','integration_openproject', 'refresh_token'],
-				['test','integration_openproject', 'url'],
-			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken', 'http://openproject.org');
+			)->willReturnOnConsecutiveCalls($token, 'oauth', 'refreshToken');
 	}
 
 	/**
@@ -174,7 +174,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		);
 		$this->assertEmpty($response->getHeaders()["Content-Type"]);
 	}
-	
+
 	/**
 	 * @return void
 	 */

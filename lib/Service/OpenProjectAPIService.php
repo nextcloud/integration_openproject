@@ -109,7 +109,7 @@ class OpenProjectAPIService {
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-			$openprojectUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			if ($clientID && $clientSecret && $openprojectUrl) {
 				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
 				$lastNotificationCheck = $lastNotificationCheck === '' ? null : $lastNotificationCheck;
