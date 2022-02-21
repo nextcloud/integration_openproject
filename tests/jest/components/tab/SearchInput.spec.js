@@ -36,7 +36,7 @@ describe('SearchInput.vue tests', () => {
 			message: 'Error connecting to OpenProject',
 		}, {
 			state: 'loading',
-			message: 'Wait while we fetch workpackages',
+			message: 'Wait while we fetch work packages',
 		}])('should be displayed depending upon the state', async (cases) => {
 			const stateSelector = '.stateMsg'
 			const wrapper = shallowMount(SearchInput, {
