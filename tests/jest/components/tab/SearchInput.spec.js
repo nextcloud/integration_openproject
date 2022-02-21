@@ -3,7 +3,10 @@ import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
+import searchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
+import axios from '@nextcloud/axios'
 
+jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -34,9 +37,6 @@ describe('SearchInput.vue tests', () => {
 		}, {
 			state: 'error',
 			message: 'Error connecting to OpenProject',
-		}, {
-			state: 'loading',
-			message: 'Wait while we fetch work packages',
 		}])('should be displayed depending upon the state', async (cases) => {
 			const stateSelector = '.stateMsg'
 			const wrapper = shallowMount(SearchInput, {
@@ -62,6 +62,7 @@ describe('SearchInput.vue tests', () => {
 		const statusSelector = '.filterProjectTypeStatus__status'
 		const typeSelector = '.filterProjectTypeStatus__type'
 		const assigneeSelector = '.filterAssignee'
+		const loadingIconSelector = '.icon-loading-small'
 		it('should not be displayed if the length of words in searchbar is less than or equal to three', async () => {
 			const wrapper = mountSearchInput()
 			const textInput = wrapper.find(inputSelector)
@@ -144,6 +145,55 @@ describe('SearchInput.vue tests', () => {
 			})
 			const assignee = wrapper.find(assigneeSelector)
 			expect(assignee.exists()).toBeFalsy()
+		})
+
+		it('should display a loading button when the work package is being fetched', async () => {
+			const wrapper = mountSearchInput()
+			let loadingIcon = wrapper.find(loadingIconSelector)
+			expect(loadingIcon.exists()).toBeFalsy()
+			await wrapper.setData({
+				state: 'loading',
+			})
+			loadingIcon = wrapper.find(loadingIconSelector)
+			expect(loadingIcon.exists()).toBeTruthy()
+		})
+	})
+
+	describe('getWorkPackageColorAttributes', () => {
+		it.each([
+			{
+				status: 200,
+				state: 'ok',
+			},
+			{
+				status: 401,
+				state: 'no-token',
+			},
+			{
+				status: 400,
+				state: 'error',
+			},
+			{
+				status: 500,
+				state: 'error',
+			},
+			{
+				status: 404,
+				state: 'error',
+			},
+		])('sets states according to status', async (cases) => {
+			axios.get.mockImplementation(() =>
+				Promise.resolve({
+					data: {
+						color: 'red',
+					},
+					status: cases.status,
+				},
+				),
+			)
+			const wrapper = mountSearchInput()
+			await wrapper.vm.processWorkPackages(searchReqResponse)
+			expect(wrapper.vm.state).toBe(cases.state)
 		})
 	})
 })
