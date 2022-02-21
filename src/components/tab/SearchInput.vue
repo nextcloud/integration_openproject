@@ -88,7 +88,7 @@ export default {
 			} else if (this.state === 'error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'loading') {
-				return t('integration_openproject', 'Wait while we fetch workpackages')
+				return t('integration_openproject', 'Wait while we fetch work packages')
 			}
 			return ''
 		},
