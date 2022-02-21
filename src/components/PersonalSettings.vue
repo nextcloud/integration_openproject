@@ -1,9 +1,6 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<SettingsTitle />
-		<p v-if="!showOAuth && !connected" class="settings-hint">
-			{{ t('integration_openproject', 'To get your API access token yourself, go to the "Access token" section of your OpenProject account settings page.') }}
-		</p>
 		<div id="openproject-content">
 			<div id="toggle-openproject-navigation-link">
 				<input
@@ -15,47 +12,11 @@
 				<label for="openproject-link">{{ t('integration_openproject', 'Enable navigation link') }}</label>
 			</div>
 			<br><br>
-			<p v-if="isInsecureUrl" class="settings-hint">
-				<span class="icon icon-alert-outline" />
-				{{ t('integration_openproject', 'Warning, connecting to your OpenProject instance via HTTP is insecure.') }}
-			</p>
-			<div class="openproject-grid-form">
-				<label for="openproject-url">
-					<a class="icon icon-link" />
-					{{ t('integration_openproject', 'OpenProject instance address') }}
-				</label>
-				<input id="openproject-url"
-					v-model="state.url"
-					type="text"
-					:disabled="connected === true"
-					:placeholder="t('integration_openproject', 'https://my.openproject.org')"
-					@input="onInput">
-				<label v-show="!showOAuth"
-					for="openproject-token">
-					<a class="icon icon-category-auth" />
-					{{ t('integration_openproject', 'Access token') }}
-				</label>
-				<input v-show="!showOAuth"
-					id="openproject-token"
-					v-model="state.token"
-					type="password"
-					:disabled="connected === true"
-					:placeholder="t('integration_openproject', 'OpenProject access token')"
-					@input="onInput">
-			</div>
-			<button v-if="showOAuth && !connected"
-				id="openproject-oauth"
-				:disabled="loading === true"
-				:class="{ loading }"
-				@click="onOAuthClick">
-				<span class="icon icon-external" />
-				{{ t('integration_openproject', 'Connect to OpenProject') }}
-			</button>
 			<div v-if="connected" class="openproject-grid-form">
 				<label class="openproject-connected">
 					<a class="icon icon-checkmark-color" />
 					{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
-				</label>
+				</label><br>
 				<button id="openproject-rm-cred" @click="onLogoutClick">
 					<span class="icon icon-close" />
 					{{ t('integration_openproject', 'Disconnect from OpenProject') }}
@@ -82,6 +43,7 @@
 					@input="onNotificationChange">
 				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}</label>
 			</div>
+			<OAuthConnectButton v-else :request-url="requestUrl" />
 		</div>
 	</div>
 </template>
@@ -90,16 +52,16 @@
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { delay } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
+import OAuthConnectButton from './OAuthConnectButton'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle,
+		SettingsTitle, OAuthConnectButton,
 	},
 
 	props: [],
@@ -107,24 +69,14 @@ export default {
 	data() {
 		return {
 			state: loadState('integration_openproject', 'user-config'),
-			initialToken: loadState('integration_openproject', 'user-config').token,
+			requestUrl: loadState('integration_openproject', 'user-config').request_url,
 			loading: false,
-			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
 	},
 
 	computed: {
-		isInsecureUrl() {
-			return !this.state.url.startsWith('https://')
-		},
-		showOAuth() {
-			return this.state.url.replace(/\/+$/, '') === this.state.oauth_instance_url.replace(/\/+$/, '')
-				&& this.state.client_id
-				&& this.state.client_secret
-		},
 		connected() {
 			return this.state.token && this.state.token !== ''
-				&& this.state.url && this.state.url !== ''
 				&& this.state.user_name && this.state.user_name !== ''
 		},
 	},
@@ -158,28 +110,6 @@ export default {
 			this.state.navigation_enabled = e.target.checked
 			this.saveOptions({ navigation_enabled: this.state.navigation_enabled ? '1' : '0' })
 		},
-		onInput() {
-			this.loading = true
-			delay(() => {
-				if (!this.state.url.startsWith('https://') && !this.state.url.startsWith('http://')) {
-					this.state.url = 'https://' + this.state.url
-				}
-				const pattern = /^https?:\/\/[^ "]+$/
-				if (pattern.test(this.state.url)) {
-					this.saveOptions({
-						url: this.state.url,
-						token: this.state.token,
-						token_type: this.showOAuth ? 'oauth' : 'access',
-					})
-				} else {
-					this.saveOptions({
-						url: '',
-						token: this.state.token,
-						token_type: this.showOAuth ? 'oauth' : 'access',
-					})
-				}
-			}, 2000)()
-		},
 		saveOptions(values) {
 			const req = {
 				values,
@@ -209,34 +139,6 @@ export default {
 				})
 				.then(() => {
 					this.loading = false
-				})
-		},
-		onOAuthClick() {
-			const oauthState = Math.random().toString(36).substring(3)
-			const requestUrl = this.state.url + '/oauth/authorize'
-				+ '?client_id=' + encodeURIComponent(this.state.client_id)
-				+ '&redirect_uri=' + encodeURIComponent(this.redirect_uri)
-				+ '&response_type=code'
-				+ '&state=' + encodeURIComponent(oauthState)
-
-			const req = {
-				values: {
-					oauth_state: oauthState,
-					redirect_uri: this.redirect_uri,
-				},
-			}
-			const url = generateUrl('/apps/integration_openproject/config')
-			axios.put(url, req)
-				.then((response) => {
-					window.location.replace(requestUrl)
-				})
-				.catch((error) => {
-					showError(
-						t('integration_openproject', 'Failed to save OpenProject OAuth state')
-						+ ': ' + error.response.request.responseText
-					)
-				})
-				.then(() => {
 				})
 		},
 	},

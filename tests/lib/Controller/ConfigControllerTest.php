@@ -14,12 +14,12 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @var IL10N
 	 */
-	private IL10N $l;
+	private $l;
 
 	/**
 	 * @var IConfig
 	 */
-	private IConfig $configMock;
+	private $configMock;
 
 	/**
 	 * @var ConfigController
@@ -65,26 +65,26 @@ class ConfigControllerTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
-			)->willReturnOnConsecutiveCalls('clientID', 'clientSecret', 'clientID', 'clientSecret');
+			)->willReturnOnConsecutiveCalls(
+				'clientID', 'clientSecret', 'http://openproject.org', 'clientID', 'clientSecret',
+				);
 		$this->configMock
 			->method('getUserValue')
 			->withConsecutive(
 				['testUser', 'integration_openproject', 'oauth_state'],
 				['testUser', 'integration_openproject', 'redirect_uri'],
-				['testUser', 'integration_openproject', 'url'],
 				['testUser', 'integration_openproject', 'token_type'],
 				['testUser', 'integration_openproject', 'refresh_token'],
-				['testUser', 'integration_openproject', 'url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'randomString',
 				'http://redirect.back.to.here/some/url',
-				'http://openproject.org',
 				'oauth',
 				'oAuthRefreshToken',
-				'http://openproject.org'
+
 			);
 
 		$this->configController = new ConfigController(

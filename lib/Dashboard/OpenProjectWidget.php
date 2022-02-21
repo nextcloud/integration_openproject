@@ -23,7 +23,10 @@
 
 namespace OCA\OpenProject\Dashboard;
 
+use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Dashboard\IWidget;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
@@ -32,17 +35,33 @@ use OCA\OpenProject\AppInfo\Application;
 
 class OpenProjectWidget implements IWidget {
 
-	/** @var IL10N */
+	/**
+	 * @var IL10N
+	 */
 	private $l10n;
 	/**
 	 * @var IURLGenerator
 	 */
 	private $url;
+	/**
+	 * @var IInitialState
+	 */
+	private $initialStateService;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
 
-	public function __construct(IL10N $l10n,
-								IURLGenerator $url) {
+	public function __construct(
+		IL10N $l10n,
+		IInitialState $initialStateService,
+		IURLGenerator $url,
+		IConfig $config
+	) {
+		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
+		$this->config = $config;
 	}
 
 	/**
@@ -86,5 +105,7 @@ class OpenProjectWidget implements IWidget {
 	public function load(): void {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
+		$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
+		$this->initialStateService->provideInitialState('request-url', $requestUrl);
 	}
 }

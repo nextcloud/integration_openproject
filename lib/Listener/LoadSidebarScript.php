@@ -28,11 +28,39 @@ namespace OCA\OpenProject\Listener;
 
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
+use OCP\IURLGenerator;
 use OCP\Util;
 
 class LoadSidebarScript implements IEventListener {
+
+	/**
+	 * @var IURLGenerator
+	 */
+	private $url;
+	/**
+	 * @var IInitialState
+	 */
+	private $initialStateService;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
+	public function __construct(
+		IInitialState $initialStateService,
+		IURLGenerator $url,
+		IConfig $config
+	) {
+		$this->initialStateService = $initialStateService;
+		$this->config = $config;
+		$this->url = $url;
+	}
+
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadSidebar)) {
 			return;
@@ -46,5 +74,7 @@ class LoadSidebarScript implements IEventListener {
 			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab');
 		}
 		Util::addStyle(Application::APP_ID, 'tab');
+		$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
+		$this->initialStateService->provideInitialState('request-url', $requestUrl);
 	}
 }

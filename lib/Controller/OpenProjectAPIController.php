@@ -69,7 +69,7 @@ class OpenProjectAPIController extends Controller {
 		$this->refreshToken = $config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
-		$this->openprojectUrl = $config->getUserValue($userId, Application::APP_ID, 'url');
+		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 	}
 
 	/**

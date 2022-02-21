@@ -128,7 +128,7 @@ class ConfigController extends Controller {
 
 		if ($clientID && $clientSecret && $configState !== '' && $configState === $state) {
 			$redirect_uri = $this->config->getUserValue($this->userId, Application::APP_ID, 'redirect_uri');
-			$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -178,7 +178,7 @@ class ConfigController extends Controller {
 		$refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token');
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$openprojectUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 
 		if (!$openprojectUrl || !OpenProjectAPIService::validateOpenProjectURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid'];

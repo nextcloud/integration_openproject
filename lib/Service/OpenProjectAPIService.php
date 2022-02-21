@@ -15,6 +15,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 use OCP\IUserManager;
@@ -108,7 +109,7 @@ class OpenProjectAPIService {
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-			$openprojectUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			if ($clientID && $clientSecret && $openprojectUrl) {
 				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
 				$lastNotificationCheck = $lastNotificationCheck === '' ? null : $lastNotificationCheck;
@@ -559,5 +560,24 @@ class OpenProjectAPIService {
 		}
 
 		return $result;
+	}
+
+	/*
+	 * @param IConfig $config
+	 * @param IURLGenerator $urlGenerator
+	 * @return string
+	 * generates an oauth url to OpenProject containing client_id & redirect_uri as parameter
+	 * please note that the state parameter is still missing, that needs to be generated dynamically
+	 * and saved to the DB before calling the OAuth URI
+	 */
+	public static function getOpenProjectOauthURL(IConfig $config, IURLGenerator $urlGenerator): string {
+		$clientID = $config->getAppValue(Application::APP_ID, 'client_id');
+		$oauthUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$redirectUri = $urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.config.oauthRedirect');
+		return $oauthUrl .
+			'/oauth/authorize' .
+			'?client_id=' . $clientID .
+			'&redirect_uri=' . urlencode($redirectUri) .
+			'&response_type=code';
 	}
 }
