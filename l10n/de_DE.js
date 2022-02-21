@@ -50,7 +50,7 @@ OC.L10N.register(
     "No workspaces linked yet, search for workpackage to add!" : "Noch keine Arbeitsbereiche verknüpft, bitte nach dem hinzuzufügenden Arbeitspaket suchen! ",
     "Start typing to search" : "Um zu Suchen, mit der Eingabe beginnen",
     "Search for a work package to create a relation" : "Suche nach einem Arbeitspaket, um eine Beziehung zu erstellen",
-    "Wait while we fetch workpackages" : "Bitte warten, während wir Arbeitspakete abrufen",
+    "Wait while we fetch workpackages" : "Bitte warten, Arbeitspakete werden abgerufen",
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen"
 },
