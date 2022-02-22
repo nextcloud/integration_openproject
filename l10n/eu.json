@@ -13,13 +13,19 @@
     "Integration of OpenProject project management tool" : "OpenProject proiektuak kudeatzeko tresnaren integrazioa",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject integrazioak zure jakinarazpen garrantzitsuak erakusten dituen paneleko widget bat eskaintzen du,\nlan-paketeen bilaketa-hornitzailea eta lan-pakete aktiboetan aldaketen jakinarazpenak.",
     "Make sure you set the \"Redirect URI\" to" : "Ziurtatu \"Birbideratze URLa\" ezartzen duzula hona:",
+    "OpenProject instance address" : "OpenProject instantzia helbidea",
+    "OpenProject address" : "OpenProject helbidea",
     "Client ID" : "Bezeroaren IDa",
     "Client secret" : "Bezeroaren sekretua",
+    "Connect to OpenProject" : "Konektatu OpenProject-era",
     "Enable navigation link" : "Gaitu nabigazio esteka",
-    "Access token" : "Sarbide tokena",
     "Connected as {user}" : "{user} gisa konektatuta",
+    "Disconnect from OpenProject" : "Deskonektatu OpenProject-etik",
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua ticketentzako",
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
-    "Incorrect access token" : "Sarbide token okerra"
+    "Incorrect access token" : "Sarbide token okerra",
+    "Start typing to search" : "Hasi idazten bilatzeko",
+    "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
+    "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
