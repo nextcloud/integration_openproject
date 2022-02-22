@@ -204,14 +204,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('request')
 			->withConsecutive(
 				[
-					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url','token', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				],
 				[
-					'url','token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					'url','token', 'refresh', 'id', 'secret', 'user', 'work_packages',
 					[
 						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
@@ -223,7 +223,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$subjectResponse
 			);
 		$result = $service->searchWorkPackage(
-			'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'search query'
+			'url', 'token', 'refresh', 'id', 'secret', 'user', 'search query'
 		);
 		$this->assertSame($expectedResult, $result);
 	}
@@ -254,7 +254,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getNotifications(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'',
 			$this->clientId,
 			$this->clientSecret,
@@ -282,7 +281,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn($response);
-		$result = $service->getNotifications('', '', '', '', '', '', '');
+		$result = $service->getNotifications('', '', '', '', '', '');
 		$this->assertSame(["error" => "Malformed response"], $result);
 	}
 
@@ -307,13 +306,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->expects($this->once())
 			->method('request')
 			->with(
-				'url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'work_packages',
+				'url', 'token', 'refresh', 'id', 'secret', 'user', 'work_packages',
 				[
 					'filters' => '[{"updatedAt":{"operator":"<>d","values":["2022-01-01T12:01:01Z","2022-01-27T08:15:48Z"]}},{"status":{"operator":"!","values":["14"]}}]',
 					'sortBy' => '[["updatedAt", "desc"]]'
 				]);
 
-		$service->getNotifications('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
+		$service->getNotifications('url', 'token', 'refresh', 'id', 'secret', 'user', '2022-01-01T12:01:01Z');
 	}
 
 	/**
@@ -323,7 +322,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]);
-		$result = $service->getNotifications('', '', '', '', '', '', '', '', 2);
+		$result = $service->getNotifications('', '', '', '', '', '', '', 2);
 		$this->assertSame([['id' => 1], ['id' => 2]], $result);
 	}
 
@@ -351,7 +350,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->request(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'',
 			$this->clientId,
 			$this->clientSecret,
@@ -420,7 +418,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->request(
 			$this->mockServerBaseUri,
 			'invalid',
-			'oauth',
 			'myRefreshToken',
 			$this->clientId,
 			$this->clientSecret,
@@ -456,7 +453,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getOpenProjectAvatar(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'myRefreshToken',
 			$this->clientId,
 			$this->clientSecret,
@@ -491,7 +487,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getOpenProjectAvatar(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'myRefreshToken',
 			$this->clientId,
 			$this->clientSecret,
@@ -528,7 +523,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getOpenProjectWorkPackageStatus(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'',
 			$this->clientId,
 			$this->clientSecret,
@@ -547,7 +541,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('request')
 			->willReturn(["_type" => "Status", "id" => 7, "name" => "In progress",
 				"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7]);
-		$result = $service->getOpenProjectWorkPackageStatus('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'statusId');
+		$result = $service->getOpenProjectWorkPackageStatus('url', 'token', 'refresh', 'id', 'secret', 'user', 'statusId');
 		$this->assertSame(["_type" => "Status", "id" => 7, "name" => "In progress",
 			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7], $result);
 	}
@@ -559,7 +553,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'Malformed response']);
-		$result = $service->getOpenProjectWorkPackageStatus('', '', '', '', '', '', '', '');
+		$result = $service->getOpenProjectWorkPackageStatus('', '', '', '', '', '', '');
 		$this->assertSame(['error' => 'Malformed response'], $result);
 	}
 
@@ -587,7 +581,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getOpenProjectWorkPackageType(
 			$this->mockServerBaseUri,
 			'1234567890',
-			'oauth',
 			'',
 			$this->clientId,
 			$this->clientSecret,
@@ -609,7 +602,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				"_type" => "Type", "id" => 3, "name" => "Phase",
 				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"
 			]);
-		$result = $service->getOpenProjectWorkPackageType('url', 'token', 'type', 'refresh', 'id', 'secret', 'user', 'typeId');
+		$result = $service->getOpenProjectWorkPackageType('url', 'token', 'refresh', 'id', 'secret', 'user', 'typeId');
 		$this->assertSame([
 			"_type" => "Type", "id" => 3, "name" => "Phase",
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"
@@ -623,7 +616,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'Malformed response']);
-		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '', '');
+		$result = $service->getOpenProjectWorkPackageType('', '', '', '', '', '', '');
 		$this->assertSame(['error' => 'Malformed response'], $result);
 	}
 

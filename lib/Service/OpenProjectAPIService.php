@@ -105,7 +105,6 @@ class OpenProjectAPIService {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
-			$tokenType = $this->config->getUserValue($userId, Application::APP_ID, 'token_type');
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
@@ -118,7 +117,7 @@ class OpenProjectAPIService {
 				if ($myOPUserId !== '') {
 					$myOPUserId = (int) $myOPUserId;
 					$notifications = $this->getNotifications(
-						$openprojectUrl, $accessToken, $tokenType, $refreshToken, $clientID, $clientSecret, $userId, $lastNotificationCheck
+						$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, $lastNotificationCheck
 					);
 					if (!isset($notifications['error']) && count($notifications) > 0) {
 						$newLastNotificationCheck = $notifications[0]['updatedAt'];
@@ -190,7 +189,6 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $url
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -199,7 +197,7 @@ class OpenProjectAPIService {
 	 * @param ?int $limit
 	 * @return array<mixed>
 	 */
-	public function getNotifications(string $url, string $accessToken, string $authType,
+	public function getNotifications(string $url, string $accessToken,
 									string $refreshToken, string $clientID, string $clientSecret, string $userId,
 									?string $since = null, ?int $limit = null): array {
 		if ($since) {
@@ -218,7 +216,7 @@ class OpenProjectAPIService {
 			// 'limit' => $limit,
 		];
 		$result = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 		if (isset($result['error'])) {
 			return $result;
@@ -236,7 +234,6 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $url
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -247,7 +244,7 @@ class OpenProjectAPIService {
 	 * @return array<string>
 	 * @throws \Safe\Exceptions\JsonException
 	 */
-	public function searchWorkPackage(string $url, string $accessToken, string $authType,
+	public function searchWorkPackage(string $url, string $accessToken,
 							string $refreshToken, string $clientID, string $clientSecret, string $userId,
 							string $query, int $offset = 0, int $limit = 5): array {
 		$resultsById = [];
@@ -263,7 +260,7 @@ class OpenProjectAPIService {
 			// 'limit' => $limit,
 		];
 		$searchDescResult = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 
 		if (isset($searchDescResult['_embedded'], $searchDescResult['_embedded']['elements'])) {
@@ -282,7 +279,7 @@ class OpenProjectAPIService {
 			// 'limit' => $limit,
 		];
 		$searchSubjectResult = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 
 		if (isset($searchSubjectResult['_embedded'], $searchSubjectResult['_embedded']['elements'])) {
@@ -299,7 +296,6 @@ class OpenProjectAPIService {
 	 *
 	 * @param string $url
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -311,15 +307,12 @@ class OpenProjectAPIService {
 	 * @throws \OCP\Lock\LockedException
 	 */
 	public function getOpenProjectAvatar(string $url,
-									string $accessToken, string $authType, string $refreshToken, string $clientID, string $clientSecret,
+									string $accessToken, string $refreshToken, string $clientID, string $clientSecret,
 									string $userId, string $userName): array {
 		$url = $url . '/api/v3/users/' . $userId . '/avatar';
-		$authHeader = ($authType === 'access')
-			? 'Basic ' . base64_encode('apikey:' . $accessToken)
-			: 'Bearer ' . $accessToken;
 		$options = [
 			'headers' => [
-				'Authorization' => $authHeader,
+				'Authorization' => 'Bearer ' . $accessToken,
 				'User-Agent' => 'Nextcloud OpenProject integration',
 			]
 		];
@@ -341,7 +334,6 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $openprojectUrl
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -352,17 +344,14 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	public function request(string $openprojectUrl, string $accessToken, string $authType, string $refreshToken,
+	public function request(string $openprojectUrl, string $accessToken, string $refreshToken,
 							string $clientID, string $clientSecret, string $userId,
 							string $endPoint, array $params = [], string $method = 'GET'): array {
 		try {
 			$url = $openprojectUrl . '/api/v3/' . $endPoint;
-			$authHeader = ($authType === 'access')
-				? 'Basic ' . base64_encode('apikey:' . $accessToken)
-				: 'Bearer ' . $accessToken;
 			$options = [
 				'headers' => [
-					'Authorization' => $authHeader,
+					'Authorization' => 'Bearer ' . $accessToken,
 					'User-Agent' => 'Nextcloud OpenProject integration',
 				]
 			];
@@ -410,7 +399,7 @@ class OpenProjectAPIService {
 			$body = (string) $response->getBody();
 			// refresh token if it's invalid and we are using oauth
 			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
-			if ($response->getStatusCode() === 401 && $authType === 'oauth') {
+			if ($response->getStatusCode() === 401) {
 				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
 				// try to refresh the token
 				$result = $this->requestOAuthAccessToken($openprojectUrl, [
@@ -424,7 +413,7 @@ class OpenProjectAPIService {
 					$this->config->setUserValue($userId, Application::APP_ID, 'token', $accessToken);
 					// retry the request with new access token
 					return $this->request(
-						$openprojectUrl, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, $endPoint, $params, $method
+						$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, $endPoint, $params, $method
 					);
 				}
 			}
@@ -505,7 +494,6 @@ class OpenProjectAPIService {
 	 *
 	 * @param string $url
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -516,14 +504,13 @@ class OpenProjectAPIService {
 	public function getOpenProjectWorkPackageStatus(
 		string $url,
 		string $accessToken,
-		string $authType,
 		string $refreshToken,
 		string $clientID,
 		string $clientSecret,
 		string $userId,
 		string $statusId): array {
 		$result = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
@@ -535,7 +522,6 @@ class OpenProjectAPIService {
 	 *
 	 * @param string $url
 	 * @param string $accessToken
-	 * @param string $authType
 	 * @param string $refreshToken
 	 * @param string $clientID
 	 * @param string $clientSecret
@@ -546,7 +532,6 @@ class OpenProjectAPIService {
 	public function getOpenProjectWorkPackageType(
 		string $url,
 		string $accessToken,
-		string $authType,
 		string $refreshToken,
 		string $clientID,
 		string $clientSecret,
@@ -554,7 +539,7 @@ class OpenProjectAPIService {
 		string $typeId
 	): array {
 		$result = $this->request(
-			$url, $accessToken, $authType, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
