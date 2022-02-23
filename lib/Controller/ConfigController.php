@@ -14,9 +14,10 @@ namespace OCA\OpenProject\Controller;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\AppFramework\Http\RedirectResponse;
 use OCP\IRequest;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
@@ -89,7 +90,7 @@ class ConfigController extends Controller {
 			}
 		}
 		if (isset($result['error'])) {
-			return new DataResponse($result, 401);
+			return new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		} else {
 			return new DataResponse($result);
 		}
