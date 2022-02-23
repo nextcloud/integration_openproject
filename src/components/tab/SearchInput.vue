@@ -111,7 +111,7 @@ export default {
 				this.searchResults = []
 				return
 			}
-			const url = generateUrl('/apps/integration_openproject/work_packages')
+			const url = generateUrl('/apps/integration_openproject/work-packages')
 			if (this.search.length > 3) {
 				const req = {}
 				req.params = {
