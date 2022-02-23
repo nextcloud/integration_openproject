@@ -15,7 +15,7 @@ To access data in OpenProject on behalf of the user this app needs to authentica
 	3. as `Redirect URI` use `<nextcloud-uri>/index.php/apps/integration_openproject/oauth-redirect`
 	4. note down the Client ID and the Client Secret
 2. As an NextCloud admin configure the OpenProject integration
-	1. in NextCloud go to "Settings" -> "Personal" -> "Connected accounts"
+	1. in NextCloud go to "Settings" -> "Administration" -> "Connected accounts"
 	2. provide the OpenProject address, the Client ID and the Client Secret
 3. As an NextCloud user connect to OpenProject
     1. click the `Connect to OpenProject` button that you can find on:
