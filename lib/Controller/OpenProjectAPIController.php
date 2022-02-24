@@ -15,6 +15,7 @@ use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\IConfig;
 use OCP\IRequest;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 
@@ -110,7 +111,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getNotifications(?string $since = null): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', 400);
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getNotifications(
 			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $since, 7
@@ -118,7 +119,7 @@ class OpenProjectAPIController extends Controller {
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, 401);
+			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
 	}
@@ -133,7 +134,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getSearchedWorkPackages(?string $searchQuery = null): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', 400);
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->searchWorkPackage(
 			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
@@ -141,7 +142,7 @@ class OpenProjectAPIController extends Controller {
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, 401);
+			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
 	}
@@ -157,7 +158,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', 400);
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
 			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
@@ -165,7 +166,7 @@ class OpenProjectAPIController extends Controller {
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, 401);
+			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
 	}
@@ -181,7 +182,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', 400);
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
 			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
@@ -189,7 +190,7 @@ class OpenProjectAPIController extends Controller {
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, 401);
+			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
 	}

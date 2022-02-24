@@ -12,6 +12,7 @@ namespace OCA\OpenProject\Controller;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
 use OCP\IRequest;
+use OCP\AppFramework\Http;
 use PHPUnit\Framework\TestCase;
 
 class OpenProjectAPIControllerTest extends TestCase {
@@ -68,7 +69,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame(['some' => 'data'], $response->getData());
 	}
 
@@ -82,7 +83,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -101,7 +102,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
-		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 
@@ -191,7 +192,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]], $response->getData());
 	}
 
@@ -205,7 +206,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -224,7 +225,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
-		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 
@@ -248,7 +249,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame([
 			"_type" => "Status", "id" => 7, "name" => "In progress",
 			"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7
@@ -265,7 +266,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -284,7 +285,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
-		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 
@@ -306,7 +307,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame(["_type" => "Type", "id" => 3, "name" => "Phase",
 			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $response->getData());
 	}
@@ -321,7 +322,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -340,7 +341,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
-		$this->assertSame(401, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
 }

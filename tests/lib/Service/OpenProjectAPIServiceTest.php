@@ -22,6 +22,7 @@ use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use OCP\AppFramework\Http;
 
 class OpenProjectAPIServiceTest extends TestCase {
 	/**
@@ -242,7 +243,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_embedded" => ["elements" => [['some' => 'data']]]]);
 
@@ -338,7 +339,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_embedded" => ["elements" => []]]);
 
@@ -371,7 +372,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponseInvalidOAuthToken = new ProviderResponse();
 		$providerResponseInvalidOAuthToken
-			->setStatus(401)
+			->setStatus(Http::STATUS_UNAUTHORIZED)
 			->addHeader('Content-Type', 'application/json');
 
 		$this->builder
@@ -391,7 +392,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$refreshTokenResponse = new ProviderResponse();
 		$refreshTokenResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->setBody(["access_token" => "new-Token"]);
 
 		$this->builder->uponReceiving('a POST request to renew token')
@@ -406,7 +407,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponseNewOAuthToken = new ProviderResponse();
 		$providerResponseNewOAuthToken
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]]);
 
@@ -439,7 +440,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->setHeaders(['Content-Type' => 'image/jpeg'])
 			//setBody() expects iterable but we want to have raw data here and it seems to work fine
 			// @phpstan-ignore-next-line
@@ -477,7 +478,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(404);
+			->setStatus(Http::STATUS_NOT_FOUND);
 
 		$this->builder
 			->uponReceiving('a request to get the avatar of a user that does not have one')
@@ -510,7 +511,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_type" => "Status", "id" => 7, "name" => "In progress",
 				"isClosed" => false, "color" => "#CC5DE8", "isDefault" => false, "isReadonly" => false, "defaultDoneRatio" => null, "position" => 7]);
@@ -568,7 +569,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 		$providerResponse = new ProviderResponse();
 		$providerResponse
-			->setStatus(200)
+			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_type" => "Type", "id" => 3, "name" => "Phase",
 				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"]);
