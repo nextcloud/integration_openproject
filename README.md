@@ -66,6 +66,11 @@ sudo chmod g+w $HOME/development/custom_apps -R
 docker-compose up -d
 ```
 
+It is highly recommended to regularly update the included containers.
+```shell
+docker-compose pull
+```
+
 After this, you should be able to access nextcloud server at [http://localhost](http://localhost).
 
 ### Setup NC server
