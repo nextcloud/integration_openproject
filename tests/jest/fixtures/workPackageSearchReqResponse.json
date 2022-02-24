@@ -1,0 +1,203 @@
+[{
+	"derivedStartDate": "2022-01-15",
+	"derivedDueDate": "2022-03-08",
+	"_type": "WorkPackage",
+	"id": 2,
+	"lockVersion": 0,
+	"subject": "Organize open source conference",
+	"description": {
+		"format": "markdown",
+		"raw": null,
+		"html": ""
+	},
+	"scheduleManually": false,
+	"startDate": "2022-01-15",
+	"dueDate": "2022-03-26",
+	"estimatedTime": null,
+	"derivedEstimatedTime": null,
+	"percentageDone": 0,
+	"createdAt": "2022-01-12T08:53:29Z",
+	"updatedAt": "2022-01-12T08:53:29Z",
+	"_links": {
+		"attachments": {
+			"href": "/api/v3/work_packages/2/attachments"
+		},
+		"addAttachment": {
+			"href": "/api/v3/work_packages/2/attachments",
+			"method": "post"
+		},
+		"self": {
+			"href": "/api/v3/work_packages/2",
+			"title": "Organize open source conference"
+		},
+		"update": {
+			"href": "/api/v3/work_packages/2/form",
+			"method": "post"
+		},
+		"schema": {
+			"href": "/api/v3/work_packages/schemas/1-3"
+		},
+		"updateImmediately": {
+			"href": "/api/v3/work_packages/2",
+			"method": "patch"
+		},
+		"delete": {
+			"href": "/api/v3/work_packages/2",
+			"method": "delete"
+		},
+		"move": {
+			"href": "/work_packages/2/move/new",
+			"type": "text/html",
+			"title": "Move Organize open source conference"
+		},
+		"copy": {
+			"href": "/work_packages/2/copy",
+			"title": "Copy Organize open source conference"
+		},
+		"pdf": {
+			"href": "/work_packages/2.pdf",
+			"type": "application/pdf",
+			"title": "Export as PDF"
+		},
+		"atom": {
+			"href": "/work_packages/2.atom",
+			"type": "application/rss+xml",
+			"title": "Atom feed"
+		},
+		"availableRelationCandidates": {
+			"href": "/api/v3/work_packages/2/available_relation_candidates",
+			"title": "Potential work packages to relate to"
+		},
+		"customFields": {
+			"href": "/projects/demo-project/settings/custom_fields",
+			"type": "text/html",
+			"title": "Custom fields"
+		},
+		"configureForm": {
+			"href": "/types/3/edit?tab=form_configuration",
+			"type": "text/html",
+			"title": "Configure form"
+		},
+		"activities": {
+			"href": "/api/v3/work_packages/2/activities"
+		},
+		"availableWatchers": {
+			"href": "/api/v3/work_packages/2/available_watchers"
+		},
+		"relations": {
+			"href": "/api/v3/work_packages/2/relations"
+		},
+		"revisions": {
+			"href": "/api/v3/work_packages/2/revisions"
+		},
+		"watchers": {
+			"href": "/api/v3/work_packages/2/watchers"
+		},
+		"addWatcher": {
+			"href": "/api/v3/work_packages/2/watchers",
+			"method": "post",
+			"payload": {
+				"user": {
+					"href": "/api/v3/users/{user_id}"
+				}
+			},
+			"templated": true
+		},
+		"removeWatcher": {
+			"href": "/api/v3/work_packages/2/watchers/{user_id}",
+			"method": "delete",
+			"templated": true
+		},
+		"addRelation": {
+			"href": "/api/v3/work_packages/2/relations",
+			"method": "post",
+			"title": "Add relation"
+		},
+		"addChild": {
+			"href": "/api/v3/projects/demo-project/work_packages",
+			"method": "post",
+			"title": "Add child of Organize open source conference"
+		},
+		"changeParent": {
+			"href": "/api/v3/work_packages/2",
+			"method": "patch",
+			"title": "Change parent of Organize open source conference"
+		},
+		"addComment": {
+			"href": "/api/v3/work_packages/2/activities",
+			"method": "post",
+			"title": "Add comment"
+		},
+		"previewMarkup": {
+			"href": "/api/v3/render/markdown?context=/api/v3/work_packages/2",
+			"method": "post"
+		},
+		"category": {
+			"href": null
+		},
+		"type": {
+			"href": "/api/v3/types/3",
+			"title": "Phase"
+		},
+		"priority": {
+			"href": "/api/v3/priorities/8",
+			"title": "Normal"
+		},
+		"project": {
+			"href": "/api/v3/projects/1",
+			"title": "Demo project"
+		},
+		"status": {
+			"href": "/api/v3/statuses/7",
+			"title": "In progress"
+		},
+		"author": {
+			"href": "/api/v3/users/1"
+		},
+		"responsible": {
+			"href": null
+		},
+		"assignee": {
+			"href": "/api/v3/users/1",
+			"title": "System"
+		},
+		"version": {
+			"href": null
+		},
+		"github_pull_requests": {
+			"href": "/api/v3/work_packages/2/github_pull_requests",
+			"title": "GitHub pull requests"
+		},
+		"watch": {
+			"href": "/api/v3/work_packages/2/watchers",
+			"method": "post",
+			"payload": {
+				"user": {
+					"href": "/api/v3/users/3"
+				}
+			}
+		},
+		"children": [
+			{
+				"href": "/api/v3/work_packages/3",
+				"title": "Set date and location of conference"
+			},
+			{
+				"href": "/api/v3/work_packages/4",
+				"title": "Setup conference website"
+			},
+			{
+				"href": "/api/v3/work_packages/5",
+				"title": "Invite attendees to conference"
+			}
+		],
+		"ancestors": [],
+		"parent": {
+			"href": null,
+			"title": null
+		},
+		"customActions": []
+	}
+}
+	
+]

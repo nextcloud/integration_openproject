@@ -10,6 +10,9 @@
 			track-by="multiselectKey"
 			:internal-search="false"
 			open-direction="below"
+			:loading="state === 'loading'"
+			:preselect-first="true"
+			:preserve-search="true"
 			@search-change="makeSearchRequest">
 			<template #option="{option}">
 				<div class="searchList">
@@ -87,8 +90,6 @@ export default {
 				return t('integration_openproject', 'No OpenProject account connected')
 			} else if (this.state === 'error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
-			} else if (this.state === 'loading') {
-				return t('integration_openproject', 'Wait while we fetch work packages')
 			}
 			return ''
 		},
@@ -113,11 +114,11 @@ export default {
 			}
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			if (this.search.length > 3) {
+				this.state = 'loading'
 				const req = {}
 				req.params = {
 					searchQuery: this.search,
 				}
-				this.state = 'loading'
 				const response = await axios.get(url, req)
 				if (response.status === 200) {
 					this.state = 'ok'
