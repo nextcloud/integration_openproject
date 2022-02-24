@@ -127,7 +127,9 @@ class ConfigController extends Controller {
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state');
 
 		if ($clientID && $clientSecret && $configState !== '' && $configState === $state) {
-			$redirect_uri = $this->config->getUserValue($this->userId, Application::APP_ID, 'redirect_uri');
+			$redirect_uri = $this->urlGenerator->linkToRouteAbsolute(
+				Application::APP_ID . '.config.oauthRedirect'
+			);
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
