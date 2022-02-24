@@ -47,7 +47,7 @@ describe('OAuthConnectButton.vue Test', () => {
 			wrapper.find('button').trigger('click')
 			await localVue.nextTick()
 			expect(window.location.replace).toHaveBeenCalledWith(
-				expect.stringMatching(/http:\/\/openproject\/oauth\/&state=[a-z0-9]{9}/),
+				expect.stringMatching(/http:\/\/openproject\/oauth\/&state=[a-z0-9]{8}/),
 			)
 		})
 	})
