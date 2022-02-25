@@ -22,8 +22,16 @@
 
 <template>
 	<div class="projects">
-		<SearchInput />
+		<SearchInput
+			:file-info="fileInfo"
+			v-on:saved="saved" />
 		<div v-if="isLoading" class="icon-loading" />
+		<div v-if="workpackages.length > 0" id="openproject-linked-workpackages">
+			<WorkPackage
+				v-for="workpackage in workpackages"
+				v-bind:key="workpackage.id"
+				:workpackage="workpackage" />
+		</div>
 		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
@@ -33,6 +41,7 @@
 
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
+import WorkPackage from '../components/tab/WorkPackage'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
@@ -43,11 +52,13 @@ export default {
 	components: {
 		EmptyContent,
 		SearchInput,
+		WorkPackage,
 	},
 	data: () => ({
 		error: '',
 		fileInfo: null,
 		state: 'loading',
+		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
 	}),
 	computed: {
@@ -65,6 +76,7 @@ export default {
 		 */
 		async update(fileInfo) {
 			this.fileInfo = fileInfo
+			this.workpackages = []
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
 		/**
@@ -74,7 +86,10 @@ export default {
 			this.error = ''
 			this.state = 'loading'
 		},
-
+		saved(data) {
+			this.workpackages.push(data)
+			console.log(data)
+		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
 			const url = generateUrl('/apps/integration_openproject/work_packages?fileId=' + fileId)

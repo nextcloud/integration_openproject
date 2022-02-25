@@ -164,6 +164,16 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 * @param $workpackageId
+	 * @param $fileId
+	 * @return DataResponse
+	 */
+	public function linkWorkPackageToFile($workpackageId, $fileId) {
+		return new DataResponse("ALL IZ WELL");
+	}
+
+	/**
 	 * get status of work packages
 	 *
 	 * @NoAdminRequired

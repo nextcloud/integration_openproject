@@ -6,13 +6,14 @@
 			:options="searchResults"
 			:user-select="true"
 			label="displayName"
-			track-by="multiselectKey"
+			track-by="id"
 			:internal-search="false"
 			open-direction="below"
 			:loading="isStateLoading"
 			:preselect-first="true"
 			:preserve-search="true"
-			@search-change="makeSearchRequest">
+			@search-change="makeSearchRequest"
+			@change="linkWorkPackageToFile">
 			<template #option="{option}">
 				<div class="searchList">
 					<div class="searchList__filterWorkPackage">
@@ -68,6 +69,7 @@ import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import { showError } from '@nextcloud/dialogs'
 
 const STATE_OK = 'ok'
 const STATE_ERROR = 'error'
@@ -80,6 +82,12 @@ export default {
 	components: {
 		Avatar,
 		Multiselect,
+	},
+	props: {
+		fileInfo: {
+			type: Object,
+			required: true,
+		},
 	},
 	data: () => ({
 		state: STATE_OK,
@@ -125,6 +133,26 @@ export default {
 			return href
 				? href.replace(/.*\//, '')
 				: null
+		},
+		async linkWorkPackageToFile(selectedOption) {
+			console.log(selectedOption.id)
+			const req = {
+				values: {
+					workpackageId: selectedOption.id,
+					fileId: this.fileInfo.id,
+				},
+			}
+			const url = generateUrl('/apps/integration_openproject/work-packages')
+
+			try {
+				const response = await axios.post(url, req)
+				this.$emit('saved', selectedOption)
+				console.log("update the view")
+			} catch (e) {
+				showError(
+					t('integration_openproject', 'Failed to link file to work-package')
+				)
+			}
 		},
 		async makeSearchRequest(search) {
 			if (search.length <= SEARCH_CHAR_LIMIT) {
