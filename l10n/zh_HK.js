@@ -45,7 +45,6 @@ OC.L10N.register(
     "No workspaces linked yet, search for work package to add!" : "尚未連結工作區，搜索要添加的工作包！",
     "Start typing to search" : "輸入文字以檢索",
     "Search for a work package to create a relation" : "搜索工作包以創建關係",
-    "Wait while we fetch work packages" : "請稍候，我們正在擷取工作包",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告"
 },

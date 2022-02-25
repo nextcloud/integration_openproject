@@ -45,7 +45,6 @@ OC.L10N.register(
     "No workspaces linked yet, search for work package to add!" : "Zatiaľ neprepojené žiadne pracovné priestory, pridajte nejaký pracovný balík jeho vyhľadaním!",
     "Start typing to search" : "Začnite písať pre vyhľadanie",
     "Search for a work package to create a relation" : "Ak chcete vytvoriť súvislosť, vyhľadajte pracovný balík",
-    "Wait while we fetch work packages" : "Počkajte, kým vyzdvihneme pracovné balíky",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject"
 },
