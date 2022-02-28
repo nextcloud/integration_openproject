@@ -125,8 +125,9 @@ class ConfigControllerTest extends TestCase {
 			[null, false],
 			['', false],
 			[false, false],
-			[str_repeat('A', 127), false], // too short
-			[str_repeat('A', 128), true], // correct length
+			[str_repeat('A', 42), false], // too short
+			[str_repeat('A', 43), true], // min length
+			[str_repeat('A', 128), true], // max length
 			[str_repeat('A', 129), false], // too long
 			[str_repeat('A', 127) . '*', false], //invalid char
 		];

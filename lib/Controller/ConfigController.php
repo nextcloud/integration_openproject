@@ -140,7 +140,7 @@ class ConfigController extends Controller {
 
 		$validCodeVerifier = false;
 		if (is_string($codeVerifier)) {
-			$validCodeVerifier = (\Safe\preg_match('/^[A-Za-z0-9\-._~]{128}$/', $codeVerifier) === 1);
+			$validCodeVerifier = (\Safe\preg_match('/^[A-Za-z0-9\-._~]{43,128}$/', $codeVerifier) === 1);
 		}
 
 		$validClientSecret = false;
