@@ -57,7 +57,7 @@ describe('SearchInput.vue tests', () => {
 				{ search: 'orga', expectedCallCount: 1 },
 			])('should send search request only if the search text is greater than search threshold', async ({ search, expectedCallCount }) => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({ status: 200 }))
+					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
@@ -66,7 +66,7 @@ describe('SearchInput.vue tests', () => {
 			it('should include the search text in the search payload', async () => {
 				const axiosSpy = jest
 					.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({ status: 200 }))
+					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')

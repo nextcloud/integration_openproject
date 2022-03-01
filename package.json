@@ -14,7 +14,8 @@
 		"lint:fix": "eslint --ext .js,.vue src tests --fix",
 		"stylelint": "stylelint css src",
 		"stylelint:fix": "stylelint css src --fix",
-		"test:unit": "jest --silent"
+		"test:unit": "jest --silent",
+		"test:unit:watch": "jest --watch"
 	},
 	"repository": {
 		"type": "git",

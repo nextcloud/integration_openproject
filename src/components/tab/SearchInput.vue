@@ -144,7 +144,7 @@ export default {
 				response = e.response
 			}
 			this.checkForErrorCode(response.status)
-			if (this.isStateOk) await this.processWorkPackages(response.data)
+			if (response.status === 200) await this.processWorkPackages(response.data)
 			if (this.isStateLoading) this.state = STATE_OK
 		},
 		async processWorkPackages(workPackages) {
