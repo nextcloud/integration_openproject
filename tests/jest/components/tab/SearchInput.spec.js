@@ -1,10 +1,10 @@
 /* jshint esversion: 8 */
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import axios from '@nextcloud/axios'
+import { createLocalVue, mount } from '@vue/test-utils'
+
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
-import searchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
-import axios from '@nextcloud/axios'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -13,6 +13,119 @@ jest.mock('@nextcloud/l10n', () => ({
 }))
 
 const localVue = createLocalVue()
+
+describe('SearchInput.vue tests', () => {
+	let wrapper
+
+	const stateSelector = '.stateMsg'
+	const searchListSelector = '.searchList'
+	const inputSelector = '.multiselect__input'
+	const assigneeSelector = '.filterAssignee'
+	const loadingIconSelector = '.icon-loading-small'
+
+	afterEach(() => {
+		wrapper.destroy()
+		jest.clearAllMocks()
+		jest.restoreAllMocks()
+	})
+
+	describe('state messages', () => {
+		it.each(['no-token', 'error', 'any'])('%s: should display the correct state message', async (state) => {
+			wrapper = mountSearchInput()
+			await wrapper.setData({ state })
+			expect(wrapper.find(stateSelector)).toMatchSnapshot()
+		})
+	})
+
+	describe('work packages multiselect', () => {
+		describe('search input', () => {
+			it('should reset the state if search value length becomes lesser than search char limit', async () => {
+				wrapper = mountSearchInput()
+				const inputField = wrapper.find(inputSelector)
+				await wrapper.setData({
+					searchResults: ['someData'],
+				})
+
+				await inputField.setValue('org')
+
+				expect(wrapper.vm.searchResults).toMatchObject([])
+			})
+			it.each([
+				{ search: 'o', expectedCallCount: 0 },
+				{ search: 'or', expectedCallCount: 0 },
+				{ search: 'org', expectedCallCount: 0 },
+				{ search: 'orga', expectedCallCount: 1 },
+			])('should send search request only if the search text is greater than search threshold', async ({ search, expectedCallCount }) => {
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({ status: 200 }))
+				wrapper = mountSearchInput()
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(search)
+				expect(axiosSpy).toHaveBeenCalledTimes(expectedCallCount)
+			})
+			it('should include the search text in the search payload', async () => {
+				const axiosSpy = jest
+					.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({ status: 200 }))
+				wrapper = mountSearchInput()
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('orga')
+
+				expect(axiosSpy).toHaveBeenCalledTimes(1)
+				expect(axiosSpy).toHaveBeenCalledWith(
+					expect.stringContaining('work-packages'),
+					{
+						params: {
+							searchQuery: 'orga',
+						},
+					}
+				)
+			})
+		})
+
+		describe('search list', () => {
+			beforeEach(() => {
+				wrapper = mountSearchInput()
+			})
+			it('should not be displayed if the search results is empty', async () => {
+				await wrapper.setData({
+					searchResults: [],
+				})
+				const searchList = wrapper.find(searchListSelector)
+				expect(searchList.exists()).toBeFalsy()
+			})
+			it('should display correct options list of search results', async () => {
+				await wrapper.setData({
+					searchResults: workPackagesSearchResponse,
+				})
+				const searchList = wrapper.find(searchListSelector)
+
+				expect(searchList.exists()).toBeTruthy()
+				expect(searchList).toMatchSnapshot()
+			})
+			it('should not display the "avatar" and "name" if the "assignee" is not present in a work package', async () => {
+				await wrapper.setData({
+					searchResults: workPackagesSearchResponseNoAssignee,
+				})
+				const assignee = wrapper.find(assigneeSelector)
+				expect(assignee.exists()).toBeFalsy()
+			})
+		})
+
+		describe('loading icon', () => {
+			it('should be displayed when the wrapper is in "loading" state', async () => {
+				wrapper = mountSearchInput()
+				let loadingIcon = wrapper.find(loadingIconSelector)
+				expect(loadingIcon.exists()).toBeFalsy()
+				await wrapper.setData({
+					state: 'loading',
+				})
+				loadingIcon = wrapper.find(loadingIconSelector)
+				expect(loadingIcon.exists()).toBeTruthy()
+			})
+		})
+	})
+})
 
 function mountSearchInput() {
 	return mount(SearchInput, {
@@ -28,172 +141,3 @@ function mountSearchInput() {
 		},
 	})
 }
-
-describe('SearchInput.vue tests', () => {
-	describe('state messages', () => {
-		it.each([{
-			state: 'no-token',
-			message: 'No OpenProject account connected',
-		}, {
-			state: 'error',
-			message: 'Error connecting to OpenProject',
-		}])('should be displayed depending upon the state', async (cases) => {
-			const stateSelector = '.stateMsg'
-			const wrapper = shallowMount(SearchInput, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-			})
-			await wrapper.setData({
-				state: cases.state,
-			})
-			expect(wrapper.find(stateSelector).exists()).toBeTruthy()
-			expect(wrapper.find(stateSelector).text()).toMatch(cases.message)
-		})
-	})
-
-	describe('work packages', () => {
-		const searchListSelector = '.searchList'
-		const inputSelector = '.multiselect__input'
-		const statusSelector = '.filterProjectTypeStatus__status'
-		const typeSelector = '.filterProjectTypeStatus__type'
-		const assigneeSelector = '.filterAssignee'
-		const loadingIconSelector = '.icon-loading-small'
-		it('should not be displayed if the length of words in searchbar is less than or equal to three', async () => {
-			const wrapper = mountSearchInput()
-			const textInput = wrapper.find(inputSelector)
-			await textInput.setValue('org')
-			await wrapper.setData({
-				searchResults: [],
-			})
-			expect(wrapper.find(searchListSelector).exists()).toBeFalsy()
-		})
-
-		it('should be displayed if the length of words in searchbar is more than three', async () => {
-			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
-			const wrapper = mountSearchInput()
-			const textInput = wrapper.find(inputSelector)
-			await textInput.setValue('organ')
-			await wrapper.setData({
-				searchResults: workPackagesSearchResponse,
-			})
-			const searchList = wrapper.find(searchListSelector)
-			expect(searchList.exists()).toBeTruthy()
-			expect(searchList).toMatchSnapshot()
-		})
-
-		it('should not be displayed if the length of words in searchbar decreases from more than 3 to less', async () => {
-			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
-			const wrapper = mountSearchInput()
-			let textInput = wrapper.find(inputSelector)
-			await textInput.setValue('orga')
-			await wrapper.setData({
-				searchResults: workPackagesSearchResponse,
-			})
-			let searchList = wrapper.find(searchListSelector)
-			expect(searchList.exists()).toBeTruthy()
-			textInput = wrapper.find(inputSelector)
-			await textInput.setValue('org')
-			await wrapper.setData({
-				searchResults: [],
-			})
-			searchList = wrapper.find(searchListSelector)
-			expect(searchList.exists()).toBeFalsy()
-		})
-
-		it('should display correct background color and text for workpackage status and type', async () => {
-			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
-			const wrapper = mountSearchInput()
-			const textInput = wrapper.find(inputSelector)
-			await textInput.setValue('organ')
-			await wrapper.setData({
-				searchResults: workPackagesSearchResponse,
-			})
-			const searchList = wrapper.find(searchListSelector)
-			const typeCol = wrapper.find(typeSelector)
-			const statusCol = wrapper.find(statusSelector)
-			expect(searchList.exists()).toBeTruthy()
-			expect(typeCol.element.style.color).toBe('red')
-			expect(statusCol.element.style.backgroundColor).toBe('blue')
-
-		})
-
-		it('avatar and name should be displayed if assignee is present', async () => {
-			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
-			const wrapper = mountSearchInput()
-			const textInput = wrapper.find(inputSelector)
-			await textInput.setValue('organ')
-			await wrapper.setData({
-				searchResults: workPackagesSearchResponse,
-			})
-			const assignee = wrapper.find(assigneeSelector)
-			expect(assignee.exists()).toBeTruthy()
-			expect(assignee).toMatchSnapshot()
-		})
-
-		it('avatar and name not should be displayed if assignee is not present', async () => {
-			jest.spyOn(SearchInput.methods, 'makeSearchRequest').mockImplementation()
-			const wrapper = mountSearchInput()
-			const textInput = wrapper.find(inputSelector)
-			await textInput.setValue('organ')
-			await wrapper.setData({
-				searchResults: workPackagesSearchResponseNoAssignee,
-			})
-			const assignee = wrapper.find(assigneeSelector)
-			expect(assignee.exists()).toBeFalsy()
-		})
-
-		it('should display a loading button when the work package is being fetched', async () => {
-			const wrapper = mountSearchInput()
-			let loadingIcon = wrapper.find(loadingIconSelector)
-			expect(loadingIcon.exists()).toBeFalsy()
-			await wrapper.setData({
-				state: 'loading',
-			})
-			loadingIcon = wrapper.find(loadingIconSelector)
-			expect(loadingIcon.exists()).toBeTruthy()
-		})
-	})
-
-	describe('getWorkPackageColorAttributes', () => {
-		it.each([
-			{
-				status: 200,
-				state: 'ok',
-			},
-			{
-				status: 401,
-				state: 'no-token',
-			},
-			{
-				status: 400,
-				state: 'error',
-			},
-			{
-				status: 500,
-				state: 'error',
-			},
-			{
-				status: 404,
-				state: 'error',
-			},
-		])('sets states according to status', async (cases) => {
-			axios.get.mockImplementation(() =>
-				Promise.resolve({
-					data: {
-						color: 'red',
-					},
-					status: cases.status,
-				},
-				),
-			)
-			const wrapper = mountSearchInput()
-			await wrapper.vm.processWorkPackages(searchReqResponse)
-			expect(wrapper.vm.state).toBe(cases.state)
-		})
-	})
-})
