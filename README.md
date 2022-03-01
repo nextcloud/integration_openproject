@@ -3,7 +3,7 @@
 OpenProject integration provides a dashboard widget displaying your important notifications,
 a search provider for work packages and notifications for changes in active work packages.
 
-## 🔧 Configuration
+## :wrench: Configuration
 
 ### :lock: Authentication
 
@@ -31,7 +31,7 @@ To access data in OpenProject on behalf of the user this app needs to authentica
 
 To be able to periodically check activity in OpenProject (when "notifications for activity in my work packages" is enabled), you need to choose the "Cron" background job method and set a system cron task calling cron.php as explained in the [documentation](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron).
 
-## Development
+## :computer: Development
 Develop using docker compose
 
 Requirements:
