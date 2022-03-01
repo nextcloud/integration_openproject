@@ -1,17 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SearchInput.vue tests work packages avatar and name should be displayed if assignee is present 1`] = `
-<div class="filterAssignee">
-  <div class="filterAssignee__avatar">
-    <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="25" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
-  </div>
-  <div class="filterAssignee__assignee">
-    test
-  </div>
+exports[`SearchInput.vue tests state messages any: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+
 </div>
 `;
 
-exports[`SearchInput.vue tests work packages should be displayed if the length of words in searchbar is more than three 1`] = `
+exports[`SearchInput.vue tests state messages error: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+  Error connecting to OpenProject
+</div>
+`;
+
+exports[`SearchInput.vue tests state messages no-token: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+  No OpenProject account connected
+</div>
+`;
+
+exports[`SearchInput.vue tests work packages multiselect search list should display correct options list of search results 1`] = `
 <div class="searchList">
   <div class="searchList__filterWorkPackage">
     <div class="filterProjectTypeStatus">

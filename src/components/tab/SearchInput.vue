@@ -1,7 +1,6 @@
 <template>
-	<div id="search-bar">
+	<div id="searchBar">
 		<Multiselect
-			v-model="search"
 			class="searchInput"
 			:placeholder="placeholder"
 			:options="searchResults"
@@ -10,7 +9,7 @@
 			track-by="multiselectKey"
 			:internal-search="false"
 			open-direction="below"
-			:loading="state === 'loading'"
+			:loading="isStateLoading"
 			:preselect-first="true"
 			:preserve-search="true"
 			@search-change="makeSearchRequest">
@@ -53,7 +52,7 @@
 				</div>
 			</template>
 			<template #noOptions>
-				{{ t('integration_openproject', 'Start typing to search') }}
+				{{ translate('Start typing to search') }}
 			</template>
 		</Multiselect>
 		<div v-if="state !== 'ok'"
@@ -70,6 +69,12 @@ import { translate as t } from '@nextcloud/l10n'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
+const STATE_OK = 'ok'
+const STATE_ERROR = 'error'
+const STATE_NO_TOKEN = 'no-token'
+const STATE_LOADING = 'loading'
+const SEARCH_CHAR_LIMIT = 3
+
 export default {
 	name: 'SearchInput',
 	components: {
@@ -77,71 +82,42 @@ export default {
 		Multiselect,
 	},
 	data: () => ({
-		search: null,
-		state: 'ok',
+		state: STATE_OK,
 		searchResults: [],
 	}),
 	computed: {
+		isStateOk() {
+			return this.state === STATE_OK
+		},
+		isStateLoading() {
+			return this.state === STATE_LOADING
+		},
 		placeholder() {
-			return t('integration_openproject', 'Search for a work package to create a relation')
+			return this.translate('Search for a work package to create a relation')
 		},
 		stateMessages() {
-			if (this.state === 'no-token') {
-				return t('integration_openproject', 'No OpenProject account connected')
-			} else if (this.state === 'error') {
-				return t('integration_openproject', 'Error connecting to OpenProject')
+			if (this.state === STATE_NO_TOKEN) {
+				return this.translate('No OpenProject account connected')
+			} else if (this.state === STATE_ERROR) {
+				return this.translate('Error connecting to OpenProject')
 			}
 			return ''
 		},
 	},
-	watch: {
-		search(value, oldValue) {
-			// if the value in the search input field changes we need to reset the searchResults
-			if (oldValue !== null) {
-				if (value.length < oldValue.length && value.length <= 3) {
-					this.searchResults = []
-					this.state = 'ok'
-				}
-			}
-		},
-	},
 	methods: {
-		async makeSearchRequest(search) {
-			this.search = search
-			if (search <= 3) {
-				this.searchResults = []
-				return
-			}
-			const url = generateUrl('/apps/integration_openproject/work-packages')
-			if (this.search.length > 3) {
-				this.state = 'loading'
-				const req = {}
-				req.params = {
-					searchQuery: this.search,
-				}
-				const response = await axios.get(url, req)
-				if (response.status === 200) {
-					this.state = 'ok'
-					if (response.data.length === 0) {
-						this.searchResults = []
-
-					} else {
-						this.processWorkPackages(response.data)
-					}
-				} else {
-					this.checkStatusCode(response.status)
-				}
-			} else {
-				this.state = 'ok'
-			}
+		resetState() {
+			this.searchResults = []
+			this.state = STATE_OK
 		},
-		checkStatusCode(statusCode) {
-			if (statusCode === 200) {
-				this.state = 'ok'
-			} else if (statusCode === 401) {
-				this.state = 'no-token'
+		translate(key) {
+			return t('integration_openproject', key)
+		},
+		checkForErrorCode(statusCode) {
+			if (statusCode === 200) return
+			if (statusCode === 401) {
+				this.state = STATE_NO_TOKEN
 			} else {
-				this.state = 'error'
+				this.state = STATE_ERROR
 			}
 		},
 		replaceHrefToGetId(href) {
@@ -150,47 +126,65 @@ export default {
 				? href.replace(/.*\//, '')
 				: null
 		},
+		async makeSearchRequest(search) {
+			if (search.length <= SEARCH_CHAR_LIMIT) {
+				this.resetState()
+				return
+			}
+			this.state = STATE_LOADING
+			const url = generateUrl('/apps/integration_openproject/work-packages')
+			const req = {}
+			req.params = {
+				searchQuery: search,
+			}
+			let response
+			try {
+				response = await axios.get(url, req)
+			} catch (e) {
+				response = e.response
+			}
+			this.checkForErrorCode(response.status)
+			if (response.status === 200) await this.processWorkPackages(response.data)
+			if (this.isStateLoading) this.state = STATE_OK
+		},
 		async processWorkPackages(workPackages) {
-			for (let i = 0; i < workPackages.length; i++) {
-				const statusId = this.replaceHrefToGetId(workPackages[i]._links.status.href)
-				const typeId = this.replaceHrefToGetId(workPackages[i]._links.type.href)
-				const userId = this.replaceHrefToGetId(workPackages[i]._links.assignee.href)
-				const userName = workPackages[i]._links.assignee.title
-				const avatar = await this.getUserAvatar(userId, userName)
+			for (const workPackage of workPackages) {
+				const statusId = this.replaceHrefToGetId(workPackage._links.status.href)
+				const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
+				const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
+				const userName = workPackage._links.assignee.title
+				const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
+					+ encodeURIComponent('userId')
+					+ '=' + userId
+					+ '&' + encodeURIComponent('userName')
+					+ '=' + userName
 				const statusColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/statuses/', statusId)
 				const typeColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/types/', typeId)
-				const found = this.searchResults.some(el => el.id === workPackages[i].id)
-				if (!found) {
-					this.searchResults.push({
-						id: workPackages[i].id,
-						subject: workPackages[i].subject,
-						project: workPackages[i]._links.project.title,
-						statusTitle: workPackages[i]._links.status.title,
-						typeTitle: workPackages[i]._links.type.title,
-						assignee: userName,
-						statusCol: statusColor,
-						typeCol: typeColor,
-						picture: avatar,
-					})
-				}
+				this.searchResults.push({
+					id: workPackage.id,
+					subject: workPackage.subject,
+					project: workPackage._links.project.title,
+					statusTitle: workPackage._links.status.title,
+					typeTitle: workPackage._links.type.title,
+					assignee: userName,
+					statusCol: statusColor,
+					typeCol: typeColor,
+					picture: avatarUrl,
+				})
 			}
 		},
 		async getWorkPackageColorAttributes(path, id) {
 			const url = generateUrl(path + id)
-			const req = {}
-			this.state = 'loading'
-			const response = await axios.get(url, req)
-			if (response.status === 200) {
-				this.state = 'ok'
-				return response.data.color
+			let response
+			try {
+				response = await axios.get(url)
+			} catch (e) {
+				response = e.response
 			}
-			this.checkStatusCode(response.status)
-			return ''
-		},
-		async getUserAvatar(userId, userName) {
-			const url = generateUrl('/apps/integration_openproject/avatar?')
-				+ encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
-			return url
+			this.checkForErrorCode(response.status)
+			return (response.status === 200 && response.data?.color)
+				? response.data.color
+				: ''
 		},
 	},
 }
@@ -254,15 +248,14 @@ export default {
 			justify-content: space-between;
 			flex-wrap: wrap;
 			position: absolute;
-			right: 0px;
+			right: 0;
 
 			&__avatar {
 				padding: 6px;
 			}
 
 			&__assignee {
-				padding: 6px;
-				padding-right: 12px;
+				padding: 6px 12px 6px 6px;
 				font-size: 0.81rem;
 				color: #0096FF;
 				text-align: center;
