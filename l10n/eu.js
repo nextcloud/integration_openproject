@@ -26,7 +26,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua ticketentzako",
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
     "Incorrect access token" : "Sarbide token okerra",
-    "Start typing to search" : "Hasi idazten bilatzeko",
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
     "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan"
 },

@@ -43,8 +43,6 @@ OC.L10N.register(
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
     "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
     "No workspaces linked yet, search for work package to add!" : "Henüz bir çalışma alanı bağlanmamış. Ekleyebileceğiniz bir çalışma paketi bulun!",
-    "Start typing to search" : "Aramak için yazmaya başlayın",
-    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi arayın",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı"
 },

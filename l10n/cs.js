@@ -43,8 +43,6 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nepřipojen žádný OpenProject účet",
     "Error connecting to OpenProject" : "Chyba při připojování se k OpenProject",
     "No workspaces linked yet, search for work package to add!" : "Zatím nepropojeny žádné pracovní prostory – přidejte nějaký balíček práce jeho vyhledáním!",
-    "Start typing to search" : "Hledejte psaním",
-    "Search for a work package to create a relation" : "Pokud chcete vytvořit souvislost, vyhledejte balíček práce",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject"
 },

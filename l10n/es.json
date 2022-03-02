@@ -40,8 +40,6 @@
     "Failed to save OpenProject options" : "Fallo al guardar las opciones de OpenProject",
     "No OpenProject account connected" : "No hay ninguna cuenta de OpenProject conectada",
     "Error connecting to OpenProject" : "Error al conectar con OpenProject",
-    "Start typing to search" : "Empieza a escribir para buscar",
-    "Search for a work package to create a relation" : "Busca un paquete de trabajo para crear una relación",
     "No OpenProject notifications!" : "No hay notificaciones de OpenProject.",
     "Failed to get OpenProject notifications" : "Fallo al obtener las notificaciones de OpenProject"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
