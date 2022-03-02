@@ -13,11 +13,6 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
-use OCP\IURLGenerator;
-use PhpPact\Consumer\InteractionBuilder;
-use PhpPact\Consumer\Model\ConsumerRequest;
-use PhpPact\Consumer\Model\ProviderResponse;
-use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
 
 class OpenProjectAPIControllerTest extends TestCase {
@@ -26,40 +21,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 	/** @var IRequest $requestMock */
 	private $requestMock;
-
-	/**
-	 * @var IURLGenerator
-	 */
-	private $urlGeneratorMock;
-	/**
-	 * @var InteractionBuilder
-	 */
-	private $builder;
-
-	/**
-	 * @var string
-	 */
-	private $workPackagesPath = '/api/v3/work_packages';
-
-	/**
-	 * @var OpenProjectAPIService
-	 */
-	private $service;
-
-	/**
-	 * @var string
-	 */
-	private $mockServerBaseUri;
-
-	/**
-	 * @var string
-	 */
-	private $clientId = 'U3V9_l262pNSENBnsqD2Uwylv5hQWCQ8lFPjCvGPbQc';
-
-	/**
-	 * @var string
-	 */
-	private $clientSecret = 'P5eu43P8YFFM9jeZKWcrpbskAUgHUBGYFQKB_8aeBtU';
 
 	/**
 	 * @return void
@@ -75,7 +36,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url'],
 			)->willReturnOnConsecutiveCalls('cliendID', 'clientSecret', 'http://openproject.org');
-		$this->urlGeneratorMock = $this->createMock(IURLGenerator::class);
 	}
 
 	/**
@@ -106,7 +66,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['some' => 'data']);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock, 'test',
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -120,7 +80,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -139,7 +99,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['error' => 'something went wrong']);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service,$this->urlGeneratorMock, 'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -170,7 +130,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->requestMock,
 			$this->configMock,
 			$service,
-			$this->urlGeneratorMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
@@ -205,7 +164,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			)
 			->willReturn(['avatar' => 'some image data']);
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
 		$this->assertSame('some image data', $response->render());
@@ -255,7 +214,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn($expectedResponse);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages($searchQuery, $fileId);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -270,7 +229,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -289,7 +248,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['error' => 'something went wrong']);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -313,7 +272,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			]);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -330,7 +289,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -349,7 +308,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['error' => 'something went wrong']);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -371,7 +330,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"]);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -386,7 +345,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service,$this->urlGeneratorMock, 'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -405,51 +364,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['error' => 'something went wrong']);
 
 		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
-	}
-
-	/**
-	 * @return void
-	 * @before
-	 */
-	public function setupMockServer(): void {
-		$config = new MockServerEnvConfig();
-		$this->builder = new InteractionBuilder($config);
-		$this->mockServerBaseUri = $config->getBaseUri()->__toString();
-	}
-
-	public function testLinkWorkPackageToFile() {
-		$consumerRequest = new ConsumerRequest();
-		$consumerRequest
-			->setMethod('POST')
-			->setPath($this->workPackagesPath . '/123/file_links')
-			->setHeaders(["Authorization" => "Bearer 1234567890"]);
-
-		$providerResponse = new ProviderResponse();
-		$providerResponse
-			->setStatus(Http::STATUS_OK)
-			->addHeader('Content-Type', 'application/json')
-			->setBody(["_embedded" => ["elements" => [['id' => 1337, '_type' => 'FileLink']]]]);
-
-		$this->builder
-			->uponReceiving('a POST request to /work_packages')
-			->with($consumerRequest)
-			->willRespondWith($providerResponse);
-
-		$this->getUserValueMock();
-
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$controller = new OpenProjectAPIController(
-			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock,'test'
-		);
-		$result = $controller->linkWorkPackageToFile(123,1337);
-		$this->assertSame([['some' => 'data']], $result);
 	}
 }

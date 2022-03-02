@@ -21,7 +21,6 @@ use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
-use OCP\IURLGenerator;
 
 class OpenProjectAPIController extends Controller {
 
@@ -54,17 +53,11 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
-	/**
-	 * @var IURLGenerator
-	 */
-	private $urlGenerator;
-
-	public function __construct(string                $appName,
-								IRequest              $request,
-								IConfig               $config,
+	public function __construct(string $appName,
+								IRequest $request,
+								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
-								IURLGenerator         $urlGenerator,
-								?string               $userId) {
+								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
@@ -73,7 +66,6 @@ class OpenProjectAPIController extends Controller {
 		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -173,36 +165,12 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $workpackageId
-	 * @param int $fileId
+	 * @param $workpackageId
+	 * @param $fileId
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile($workpackageId, $fileId) {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
-		$storageUrl = $this->urlGenerator->getBaseUrl();
-		$params = ['_type' => 'Collection', '_embedded' => ['elements' =>
-			['originData' => ['id' => $fileId],
-				'_links' => ['storageUrl' => ['href' => $storageUrl]]]
-		]];
-
-		$result = $this->openprojectAPIService->request(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, 'work_packages/' . $workpackageId. '/file_links/', $params
-		);
-		if (isset($result['error'])) {
-			return new DataResponse($result['error'], $result['statusCode']);
-		}
-		if (
-			$result['type'] !== 'Collection' ||
-			!isset($result['_embedded']) ||
-			!isset($result['_embedded']['elements']) ||
-			!isset($result['_embedded']['elements'][0]) ||
-			!isset($result['_embedded']['elements'][0]['id'])
-		) {
-			return new DataResponse('Malformed response', Http::STATUS_INTERNAL_SERVER_ERROR);
-		}
-		return new DataResponse($result['_embedded']['elements'][0]['id']);
+		return new DataResponse("ALL IZ WELL");
 	}
 
 	/**
