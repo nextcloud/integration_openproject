@@ -18,11 +18,7 @@ describe('SearchInput.vue tests', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'
-<<<<<<< HEAD
-	const searchListSelector = '.searchList'
-=======
 	const searchListSelector = '.workpackage__workPackage'
->>>>>>> UI redesign for WorkPackages
 	const inputSelector = '.multiselect__input'
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.icon-loading-small'
@@ -47,13 +43,9 @@ describe('SearchInput.vue tests', () => {
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await wrapper.setData({
-<<<<<<< HEAD
-					searchResults: ['someData'],
-=======
 					searchResults: [{
 						someData: 'someData',
 					}],
->>>>>>> UI redesign for WorkPackages
 				})
 
 				await inputField.setValue('org')
@@ -61,7 +53,6 @@ describe('SearchInput.vue tests', () => {
 				expect(wrapper.vm.searchResults).toMatchObject([])
 			})
 			it.each([
-<<<<<<< HEAD
 				{ search: 'o', expectedCallCount: 0 },
 				{ search: 'or', expectedCallCount: 0 },
 				{ search: 'org', expectedCallCount: 0 },
@@ -69,33 +60,6 @@ describe('SearchInput.vue tests', () => {
 			])('should send search request only if the search text is greater than search threshold', async ({ search, expectedCallCount }) => {
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
-=======
-				{
-					search: 'o',
-					expectedCallCount: 0,
-				},
-				{
-					search: 'or',
-					expectedCallCount: 0,
-				},
-				{
-					search: 'org',
-					expectedCallCount: 0,
-				},
-				{
-					search: 'orga',
-					expectedCallCount: 1,
-				},
-			])('should send search request only if the search text is greater than search threshold', async ({
-				search,
-				expectedCallCount,
-			}) => {
-				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
->>>>>>> UI redesign for WorkPackages
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
@@ -104,14 +68,7 @@ describe('SearchInput.vue tests', () => {
 			it('should include the search text in the search payload', async () => {
 				const axiosSpy = jest
 					.spyOn(axios, 'get')
-<<<<<<< HEAD
 					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
-=======
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
->>>>>>> UI redesign for WorkPackages
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -123,11 +80,7 @@ describe('SearchInput.vue tests', () => {
 						params: {
 							searchQuery: 'orga',
 						},
-<<<<<<< HEAD
 					}
-=======
-					},
->>>>>>> UI redesign for WorkPackages
 				)
 			})
 		})
@@ -183,13 +136,6 @@ function mountSearchInput() {
 			t: (msg) => msg,
 			generateUrl() {
 				return '/'
-<<<<<<< HEAD
-			},
-		},
-		stubs: {
-			Avatar: true,
-		},
-=======
 			},
 		},
 		stubs: {
@@ -201,6 +147,5 @@ function mountSearchInput() {
 				required: true,
 			},
 		},
->>>>>>> UI redesign for WorkPackages
 	})
 }
