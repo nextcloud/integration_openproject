@@ -165,12 +165,12 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param $workpackageId
-	 * @param $fileId
+	 * @param int $workpackageId
+	 * @param int $fileId
 	 * @return DataResponse
 	 */
-	public function linkWorkPackageToFile($workpackageId, $fileId) {
-		return new DataResponse("ALL IZ WELL");
+	public function linkWorkPackageToFile(int $workpackageId, int $fileId) {
+		return new DataResponse("Fake result, to make UI happy");
 	}
 
 	/**
