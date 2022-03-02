@@ -24,12 +24,15 @@
 	<div class="projects">
 		<SearchInput
 			:file-info="fileInfo"
-			v-on:saved="saved" />
+			@saved="saved" />
 		<div v-if="isLoading" class="icon-loading" />
 		<div v-if="workpackages.length > 0" id="openproject-linked-workpackages">
+			<div class="existing-relations">
+				{{ t('integration_openproject', 'Existing relations:') }}
+			</div>
 			<WorkPackage
 				v-for="workpackage in workpackages"
-				v-bind:key="workpackage.id"
+				:key="workpackage.id"
 				:workpackage="workpackage" />
 		</div>
 		<EmptyContent v-else
@@ -88,6 +91,7 @@ export default {
 		},
 		saved(data) {
 			this.workpackages.push(data)
+			// eslint-disable-next-line
 			console.log(data)
 		},
 		async fetchWorkpackages(fileId) {
@@ -119,7 +123,15 @@ export default {
 <style scoped lang="scss">
 .projects {
 	height: 100% !important;
+	width: 100%;
 	text-align: center;
+
+	.existing-relations {
+		display: flex;
+		font-weight: bold;
+		font-size: 0.8rem;
+		padding: 12px;
+	}
 
 	.center-content {
 		display: flex;

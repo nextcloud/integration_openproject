@@ -15,42 +15,9 @@
 			@search-change="makeSearchRequest"
 			@change="linkWorkPackageToFile">
 			<template #option="{option}">
-				<div class="searchList">
-					<div class="searchList__filterWorkPackage">
-						<div class="filterProjectTypeStatus">
-							<div class="filterProjectTypeStatus__project">
-								{{ option.project }}
-							</div>
-							<div class="filterProjectTypeStatus__type" :style="{'color':option.typeCol}">
-								{{ option.typeTitle }}
-							</div>
-							<div class="filterProjectTypeStatus__status"
-								:style="{'background-color':option.statusCol}">
-								<div class="filterProjectTypeStatus__status__title">
-									{{ option.statusTitle }}
-								</div>
-							</div>
-						</div>
-						<div v-if="option.assignee" class="filterAssignee">
-							<div class="filterAssignee__avatar">
-								<Avatar
-									class="item-avatar"
-									:size="25"
-									:url="option.picture"
-									:user="option.assignee"
-									:display-name="option.assignee" />
-							</div>
-							<div class="filterAssignee__assignee">
-								{{ option.assignee }}
-							</div>
-						</div>
-					</div>
-					<div class="filterWorkpackageSubject">
-						<div class="filterWorkpackageSubject__subject">
-							{{ option.subject }}
-						</div>
-					</div>
-				</div>
+				<WorkPackage
+					:key="option.id"
+					:workpackage="option" />
 			</template>
 			<template #noOptions>
 				{{ translate('Start typing to search') }}
@@ -67,8 +34,8 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import WorkPackage from './WorkPackage'
 import { showError } from '@nextcloud/dialogs'
 
 const STATE_OK = 'ok'
@@ -80,8 +47,8 @@ const SEARCH_CHAR_LIMIT = 3
 export default {
 	name: 'SearchInput',
 	components: {
-		Avatar,
 		Multiselect,
+		WorkPackage,
 	},
 	props: {
 		fileInfo: {
@@ -135,7 +102,6 @@ export default {
 				: null
 		},
 		async linkWorkPackageToFile(selectedOption) {
-			console.log(selectedOption.id)
 			const req = {
 				values: {
 					workpackageId: selectedOption.id,
@@ -145,9 +111,9 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 
 			try {
+				// eslint-disable-next-line
 				const response = await axios.post(url, req)
 				this.$emit('saved', selectedOption)
-				console.log("update the view")
 			} catch (e) {
 				showError(
 					t('integration_openproject', 'Failed to link file to work-package')
@@ -228,80 +194,4 @@ export default {
 	color: #6d6d6d;
 }
 
-.searchList {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-
-	&__filterWorkPackage {
-		margin-top: 8px;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-
-		.filterProjectTypeStatus {
-			display: flex;
-			justify-content: space-between;
-
-			&__project {
-				padding: 6px 6px 6px 12px;
-				color: #6d6d6d;
-				font-size: 0.87rem;
-			}
-
-			&__type {
-				padding: 6px;
-				text-transform: uppercase;
-				font-size: 0.87rem;
-			}
-
-			&__status {
-				margin: 6px;
-				width: 90px;
-				height: 25px;
-				text-align: center;
-				font-size: 0.75rem;
-				border-radius: 3px;
-
-				&__title {
-					mix-blend-mode: multiply;
-				}
-			}
-		}
-
-		.filterAssignee {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			flex-wrap: wrap;
-			position: absolute;
-			right: 0;
-
-			&__avatar {
-				padding: 6px;
-			}
-
-			&__assignee {
-				padding: 6px 12px 6px 6px;
-				font-size: 0.81rem;
-				color: #0096FF;
-				text-align: center;
-			}
-		}
-	}
-
-	.filterWorkpackageSubject {
-		margin: 12px;
-		text-align: justify;
-
-		&__subject {
-			font-weight: bold;
-			font-size: 14px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-	}
-}
 </style>
