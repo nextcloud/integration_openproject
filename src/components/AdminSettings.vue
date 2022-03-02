@@ -60,8 +60,6 @@ export default {
 		SettingsTitle,
 	},
 
-	props: [],
-
 	data() {
 		return {
 			state: loadState('integration_openproject', 'admin-config'),
@@ -69,12 +67,6 @@ export default {
 			readonly: true,
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
-	},
-
-	watch: {
-	},
-
-	mounted() {
 	},
 
 	methods: {
@@ -102,8 +94,6 @@ export default {
 						t('integration_openproject', 'Failed to save OpenProject admin options')
 						+ ': ' + error.response.request.responseText
 					)
-				})
-				.then(() => {
 				})
 		},
 	},
