@@ -19,7 +19,7 @@ exports[`SearchInput.vue tests state messages no-token: should display the corre
 `;
 
 exports[`SearchInput.vue tests work packages multiselect search list should display correct options list of search results 1`] = `
-<div class="workpackage__workPackage">
+<div class="workpackage">
   <div class="row">
     <div class="row__status" style="background-color: blue;">
       <div class="row__status__title">
@@ -35,8 +35,8 @@ exports[`SearchInput.vue tests work packages multiselect search list should disp
   </div>
   <div class="row">
     <div class="row__subject"><span class="row__subject__type" style="color: red;">
-					task
-				</span>
+				task
+			</span>
       Organize work-packages
     </div>
   </div>

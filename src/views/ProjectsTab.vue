@@ -24,9 +24,9 @@
 	<div class="projects">
 		<SearchInput
 			:file-info="fileInfo"
-			@saved="saved" />
+			@saved="onSaved" />
 		<div v-if="isLoading" class="icon-loading" />
-		<div v-if="workpackages.length > 0" id="openproject-linked-workpackages">
+		<div v-else-if="workpackages.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
 			</div>
@@ -35,7 +35,7 @@
 				:key="workpackage.id"
 				:workpackage="workpackage" />
 		</div>
-		<EmptyContent v-if="state !== 'loading'"
+		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
 			:request-url="requestUrl" />
@@ -89,7 +89,7 @@ export default {
 			this.error = ''
 			this.state = 'loading'
 		},
-		saved(data) {
+		onSaved(data) {
 			this.workpackages.push(data)
 		},
 		async fetchWorkpackages(fileId) {
@@ -122,10 +122,9 @@ export default {
 .projects {
 	height: 100% !important;
 	width: 100%;
-	text-align: center;
 
 	.existing-relations {
-		display: flex;
+		text-align: left;
 		font-weight: bold;
 		font-size: 0.8rem;
 		padding: 12px;

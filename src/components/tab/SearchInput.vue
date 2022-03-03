@@ -112,17 +112,14 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 
 			try {
-				// eslint-disable-next-line
-				const response = await axios.post(url, req)
+				await axios.post(url, req)
 				this.$emit('saved', selectedOption)
 				this.selectedId.push({
 					id: selectedOption.id,
 				})
-				// eslint-disable-next-line
-				console.log(this.selectedId)
 			} catch (e) {
 				showError(
-					t('integration_openproject', 'Failed to link file to work-package')
+					this.translate('Failed to link file to work-package')
 				)
 			}
 		},
@@ -160,8 +157,9 @@ export default {
 					+ '=' + userName
 				const statusColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/statuses/', statusId)
 				const typeColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/types/', typeId)
-				const found = this.selectedId.some(el => el.id === workPackage.id)
-				if (!found) {
+				const selectedIdFound = this.selectedId.some(el => el.id === workPackage.id)
+				const workpackageIdFound = this.searchResults.some(el => el.id === workPackage.id)
+				if (!workpackageIdFound && !selectedIdFound) {
 					this.searchResults.push({
 						id: workPackage.id,
 						subject: workPackage.subject,
