@@ -21,5 +21,8 @@ return [
 		['name' => 'openProjectAPI#linkWorkPackageToFile', 'url' => '/work-packages', 'verb' => 'POST'],
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageStatus', 'url' => '/statuses/{id}', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageType', 'url' => '/types/{id}', 'verb' => 'GET'],
-	]
+	],
+	'ocs' => [
+		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],
+	],
 ];
