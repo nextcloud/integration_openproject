@@ -59,6 +59,7 @@ export default {
 	data: () => ({
 		state: STATE_OK,
 		searchResults: [],
+		selectedId: [],
 	}),
 	computed: {
 		isStateOk() {
@@ -114,6 +115,11 @@ export default {
 				// eslint-disable-next-line
 				const response = await axios.post(url, req)
 				this.$emit('saved', selectedOption)
+				this.selectedId.push({
+					id: selectedOption.id,
+				})
+				// eslint-disable-next-line
+				console.log(this.selectedId)
 			} catch (e) {
 				showError(
 					t('integration_openproject', 'Failed to link file to work-package')
@@ -154,17 +160,20 @@ export default {
 					+ '=' + userName
 				const statusColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/statuses/', statusId)
 				const typeColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/types/', typeId)
-				this.searchResults.push({
-					id: workPackage.id,
-					subject: workPackage.subject,
-					project: workPackage._links.project.title,
-					statusTitle: workPackage._links.status.title,
-					typeTitle: workPackage._links.type.title,
-					assignee: userName,
-					statusCol: statusColor,
-					typeCol: typeColor,
-					picture: avatarUrl,
-				})
+				const found = this.selectedId.some(el => el.id === workPackage.id)
+				if (!found) {
+					this.searchResults.push({
+						id: workPackage.id,
+						subject: workPackage.subject,
+						project: workPackage._links.project.title,
+						statusTitle: workPackage._links.status.title,
+						typeTitle: workPackage._links.type.title,
+						assignee: userName,
+						statusCol: statusColor,
+						typeCol: typeColor,
+						picture: avatarUrl,
+					})
+				}
 			}
 		},
 		async getWorkPackageColorAttributes(path, id) {

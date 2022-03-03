@@ -4,6 +4,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
+
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
 
@@ -27,7 +28,7 @@ describe('ProjectsTab.vue Test', () => {
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeFalsy()
 		})
-		it.each(['ok', 'error'])('shows the loading icon disappears on state change', async (state) => {
+		it.each(['ok', 'error'])('makes the loading icon disappear on state change', async (state) => {
 			wrapper.setData({ state: 'loading' })
 			await localVue.nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()

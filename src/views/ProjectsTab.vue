@@ -35,7 +35,7 @@
 				:key="workpackage.id"
 				:workpackage="workpackage" />
 		</div>
-		<EmptyContent v-else
+		<EmptyContent v-if="state !== 'loading'"
 			id="openproject-empty-content"
 			:state="state"
 			:request-url="requestUrl" />
@@ -91,8 +91,6 @@ export default {
 		},
 		saved(data) {
 			this.workpackages.push(data)
-			// eslint-disable-next-line
-			console.log(data)
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
