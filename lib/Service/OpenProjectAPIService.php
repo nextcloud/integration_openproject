@@ -238,22 +238,28 @@ class OpenProjectAPIService {
 	 * @param string $clientID
 	 * @param string $clientSecret
 	 * @param string $userId
-	 * @param string $query
+	 * @param string|null $query
+	 * @param int|null $fileId
 	 * @param int $offset
 	 * @param int $limit
-	 * @return array<string>
+	 * @return array<mixed>
+	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
 	 */
 	public function searchWorkPackage(string $url, string $accessToken,
 							string $refreshToken, string $clientID, string $clientSecret, string $userId,
-							string $query, int $offset = 0, int $limit = 5): array {
+							string $query = null, int $fileId = null, int $offset = 0, int $limit = 5): array {
 		$resultsById = [];
+		$filters = [];
 
 		// search by description
-		$filters = [
-			["description" => ["operator" => "~", "values" => [$query]]],
-			["status" => ["operator" => "!", "values" => ["14"]]]
-		];
+		if ($fileId !== null) {
+			$filters[] = ['file_link_origin_id' => ['operator' => '=', 'values' => [(string)$fileId]]];
+		}
+		if ($query !== null) {
+			$filters[] = ['description' => ['operator' => '~', 'values' => [$query]]];
+			$filters[] = ['status' => ['operator' => '!', 'values' => ['14']]];
+		}
 		$params = [
 			'filters' => \Safe\json_encode($filters),
 			'sortBy' => '[["updatedAt", "desc"]]',
@@ -263,28 +269,38 @@ class OpenProjectAPIService {
 			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 
+		if (isset($searchDescResult['error'])) {
+			return $searchDescResult;
+		}
+
 		if (isset($searchDescResult['_embedded'], $searchDescResult['_embedded']['elements'])) {
 			foreach ($searchDescResult['_embedded']['elements'] as $wp) {
 				$resultsById[$wp['id']] = $wp;
 			}
 		}
 		// search by subject
-		$filters = [
-			["subject" => ["operator" => "~", "values" => [$query]]],
-			["status" => ["operator" => "!", "values" => ["14"]]]
-		];
-		$params = [
-			'filters' => \Safe\json_encode($filters),
-			'sortBy' => '[["updatedAt", "desc"]]',
-			// 'limit' => $limit,
-		];
-		$searchSubjectResult = $this->request(
+		if ($query !== null) {
+			$filters = [
+				['subject' => ['operator' => '~', 'values' => [$query]]],
+				['status' => ['operator' => '!', 'values' => ['14']]]
+			];
+			$params = [
+				'filters' => \Safe\json_encode($filters),
+				'sortBy' => '[["updatedAt", "desc"]]',
+				// 'limit' => $limit,
+			];
+			$searchSubjectResult = $this->request(
 			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
 		);
 
-		if (isset($searchSubjectResult['_embedded'], $searchSubjectResult['_embedded']['elements'])) {
-			foreach ($searchSubjectResult['_embedded']['elements'] as $wp) {
-				$resultsById[$wp['id']] = $wp;
+			if (isset($searchSubjectResult['error'])) {
+				return $searchSubjectResult;
+			}
+
+			if (isset($searchSubjectResult['_embedded'], $searchSubjectResult['_embedded']['elements'])) {
+				foreach ($searchSubjectResult['_embedded']['elements'] as $wp) {
+					$resultsById[$wp['id']] = $wp;
+				}
 			}
 		}
 
@@ -386,14 +402,7 @@ class OpenProjectAPIService {
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
-			$body = $response->getBody();
-			$respCode = $response->getStatusCode();
-
-			if ($respCode >= 400) {
-				return ['error' => $this->l10n->t('Bad credentials')];
-			} else {
-				return json_decode($body, true);
-			}
+			return json_decode($response->getBody(), true);
 		} catch (ServerException | ClientException $e) {
 			$response = $e->getResponse();
 			$body = (string) $response->getBody();
@@ -425,12 +434,19 @@ class OpenProjectAPIService {
 			}
 			return [
 				'error' => $e->getMessage(),
-				'statusCode' => $e->getResponse()->getStatusCode(),
+				'statusCode' => $response->getStatusCode(),
 			];
-		} catch (ConnectException | Exception $e) {
+		} catch (ConnectException $e) {
+			$this->logger->warning('OpenProject connection error : '.$e->getMessage(), ['app' => $this->appName]);
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => 404,
+			];
+		} catch (Exception $e) {
+			$this->logger->critical('OpenProject error : '.$e->getMessage(), ['app' => $this->appName]);
+			return [
+				'error' => $e->getMessage(),
+				'statusCode' => 500,
 			];
 		}
 	}

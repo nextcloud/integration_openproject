@@ -3,6 +3,15 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import EmptyContent from '../../../../src/components/tab/EmptyContent'
 const localVue = createLocalVue()
 
+function getWrapper(propsData = {}) {
+	return shallowMount(EmptyContent, {
+		localVue,
+		mocks: {
+			t: (msg) => msg,
+		},
+		propsData,
+	})
+}
 describe('EmptyContent.vue Test', () => {
 	let wrapper
 	const emptyContentMessageSelector = '.title'
@@ -28,6 +37,7 @@ describe('EmptyContent.vue Test', () => {
 				requestUrl: 'http://openproject/oauth/',
 			},
 		})
+		wrapper = getWrapper({ state: cases.state })
 		expect(wrapper.find(connectButtonSelector).exists()).toBe(cases.viewed)
 	})
 	it.each([{
@@ -35,7 +45,13 @@ describe('EmptyContent.vue Test', () => {
 		message: 'No OpenProject account connected',
 	}, {
 		state: 'error',
+		message: 'Unexpected Error',
+	}, {
+		state: 'connection-error',
 		message: 'Error connecting to OpenProject',
+	}, {
+		state: 'failed-fetching-workpackages',
+		message: 'Could not fetch work packages from OpenProject',
 	}, {
 		state: 'ok',
 		message: 'No workspaces linked yet',
@@ -53,6 +69,7 @@ describe('EmptyContent.vue Test', () => {
 				requestUrl: 'http://openproject/oauth/',
 			},
 		})
+		wrapper = getWrapper({ state: cases.state })
 		expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
 		expect(wrapper.find(emptyContentMessageSelector).text()).toMatch(cases.message)
 	})

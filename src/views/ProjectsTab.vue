@@ -77,19 +77,23 @@ export default {
 
 		async fetchWorkpackages(fileId) {
 			const req = {}
-			const url = generateUrl('/apps/integration_openproject/workpackages/' + fileId)
+			const url = generateUrl('/apps/integration_openproject/work_packages?fileId=' + fileId)
 			try {
 				const response = await axios.get(url, req)
 				if (!Array.isArray(response.data)) {
-					this.state = 'error'
+					this.state = 'failed-fetching-workpackages'
 				} else {
 					this.state = 'ok'
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
 					this.state = 'no-token'
-				} else {
+				} else if (error.response.status === 404) {
+					this.state = 'connection-error'
+				} else if (error.response.status === 500) {
 					this.state = 'error'
+				} else {
+					this.state = 'failed-fetching-workpackages'
 				}
 			}
 		},

@@ -10,6 +10,10 @@
 namespace OCA\OpenProject\Service;
 
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OCP\ICertificateManager;
@@ -198,7 +202,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 * @dataProvider searchWorkPackageDataProvider
 	 */
-	public function testSearchWorkPackageDescAndSubjectResponse(
+	public function testSearchWorkPackageOnlyQueryDescAndSubjectResponse(
 		array $descriptionResponse, array $subjectResponse, array $expectedResult
 	) {
 		$service = $this->getServiceMock();
@@ -227,6 +231,92 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'url', 'token', 'refresh', 'id', 'secret', 'user', 'search query'
 		);
 		$this->assertSame($expectedResult, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSearchWorkPackageByFileIdOnlyFileId() {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->withConsecutive(
+				[
+					'url','token', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					[
+						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}}]',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				],
+			)
+			->willReturnOnConsecutiveCalls(
+				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]
+			);
+		$result = $service->searchWorkPackage(
+			'url', 'token', 'refresh', 'id', 'secret', 'user', null, 123
+		);
+		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSearchWorkPackageByFileIdQueryAndFileId() {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->withConsecutive(
+				[
+					'url','token', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					[
+						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				],
+				[
+					'url','token', 'refresh', 'id', 'secret', 'user', 'work_packages',
+					[
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
+				["_embedded" => ["elements" => [['id' => 4], ['id' => 5], ['id' => 6]]]]
+			);
+		$result = $service->searchWorkPackage(
+			'url', 'token', 'refresh', 'id', 'secret', 'user', 'search query', 123
+		);
+		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5], ['id' => 6]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSearchWorkPackageRequestProblem() {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'some issue', 'statusCode' => 404 ]);
+		$result = $service->searchWorkPackage(
+			'url', 'token', 'refresh', 'id', 'secret', 'user', 'search query', 123
+		);
+		$this->assertSame(['error' => 'some issue', 'statusCode' => 404 ], $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testSearchWorkPackageSecondRequestProblem() {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturnOnConsecutiveCalls(
+				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
+				['error' => 'some issue', 'statusCode' => 404 ]
+			);
+		$result = $service->searchWorkPackage(
+			'url', 'token', 'refresh', 'id', 'secret', 'user', 'search query', 123
+		);
+		$this->assertSame(['error' => 'some issue', 'statusCode' => 404 ], $result);
 	}
 
 	/**
@@ -426,6 +516,40 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'work_packages'
 		);
 		$this->assertSame(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testRequestToNotExistingPath() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/not_existing');
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(404);
+
+		$this->builder
+			->uponReceiving('an GET request to /api/v3/not_existing')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$result = $this->service->request(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			'admin',
+			'not_existing'
+		);
+		$this->assertSame([
+			'error' => 'Client error: `GET http://localhost:7200/api/v3/not_existing` ' .
+						'resulted in a `404 Not Found` response',
+			'statusCode' => 404
+		], $result);
 	}
 
 	/**
@@ -646,5 +770,89 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'&response_type=code',
 			$result
 		);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function connectExpectionDataProvider() {
+		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
+		$responseMock402 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock402->method('getStatusCode')->willReturn(402);
+		$responseMock403 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock403->method('getStatusCode')->willReturn(403);
+		$responseMock500 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock500->method('getStatusCode')->willReturn(500);
+		$responseMock501 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock501->method('getStatusCode')->willReturn(501);
+
+		return [
+			[
+				new ConnectException('a connection problem', $requestMock),
+				404,
+				'a connection problem'
+			],
+			[
+				new ClientException('some client problem', $requestMock, $responseMock403),
+				403,
+				'some client problem'
+			],
+			[
+				new ClientException('some client problem', $requestMock, $responseMock402),
+				402,
+				'some client problem'
+			],
+			[
+				new ServerException('some server issue', $requestMock, $responseMock501),
+				501,
+				'some server issue'
+			],
+			[
+				new BadResponseException('some issue', $requestMock, $responseMock500),
+				500,
+				'some issue'
+			],
+			[
+				new \Exception('some issue'),
+				500,
+				'some issue'
+			],
+
+		];
+	}
+
+	/**
+	 * @return void
+	 * @param \Exception $exception
+	 * @param int $expectedHttpStatusCode
+	 * @param string $expectedError
+	 * @dataProvider connectExpectionDataProvider
+	 *
+	 */
+	public function testRequestException(
+		$exception, $expectedHttpStatusCode, $expectedError
+	) {
+		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
+		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
+
+		$ocClient = $this->getMockBuilder('\OCP\Http\Client\IClient')->getMock();
+		$ocClient->method('get')->willThrowException($exception);
+		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
+		$clientService->method('newClient')->willReturn($ocClient);
+
+		$service = new OpenProjectAPIService(
+			'integration_openproject',
+			$this->createMock(\OCP\IUserManager::class),
+			$this->createMock(\OCP\IAvatarManager::class),
+			$this->createMock(\Psr\Log\LoggerInterface::class),
+			$this->createMock(\OCP\IL10N::class),
+			$this->createMock(\OCP\IConfig::class),
+			$this->createMock(\OCP\Notification\IManager::class),
+			$clientService
+		);
+
+		$response = $service->request('', '', '', '', '', '', '', []);
+		$this->assertSame($expectedError, $response['error']);
+		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
 }

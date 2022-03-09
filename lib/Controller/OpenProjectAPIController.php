@@ -129,20 +129,36 @@ class OpenProjectAPIController extends Controller {
 	 * @NoAdminRequired
 	 *
 	 * @param ?string $searchQuery
+	 * @param ?int $fileId
 	 *
 	 * @return DataResponse
 	 */
-	public function getSearchedWorkPackages(?string $searchQuery = null): DataResponse {
+	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+			return new DataResponse(
+				'invalid open project configuration', Http::STATUS_UNAUTHORIZED
+			);
 		}
 		$result = $this->openprojectAPIService->searchWorkPackage(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $searchQuery
+			$this->openprojectUrl,
+			$this->accessToken,
+			$this->refreshToken,
+			$this->clientID,
+			$this->clientSecret,
+			$this->userId,
+			$searchQuery,
+			$fileId
 		);
+
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
+			if (isset($result['statusCode'])) {
+				$statusCode = $result['statusCode'];
+			} else {
+				$statusCode = Http::STATUS_BAD_REQUEST;
+			}
+			$response = new DataResponse($result, $statusCode);
 		}
 		return $response;
 	}

@@ -33,6 +33,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		errorMessage: {
+			type: String,
+			default: '',
+		},
 	},
 	data() {
 		return {
@@ -49,8 +53,12 @@ export default {
 		emptyContentMessage() {
 			if (this.state === 'no-token') {
 				return t('integration_openproject', 'No OpenProject account connected')
-			} else if (this.state === 'error') {
+			} else if (this.state === 'connection-error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
+			} else if (this.state === 'failed-fetching-workpackages') {
+				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
+			} else if (this.state === 'error') {
+				return t('integration_openproject', 'Unexpected Error')
 			} else if (this.state === 'ok') {
 				return t('integration_openproject', 'No workspaces linked yet, search for work package to add!')
 			}
