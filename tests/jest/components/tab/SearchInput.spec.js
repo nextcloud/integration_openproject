@@ -149,7 +149,7 @@ describe('SearchInput.vue tests', () => {
 			})
 		})
 
-		describe('workpackage click', () => {
+		describe('workpackage option', () => {
 			it('should emit an action when clicked on an item', async () => {
 				wrapper = mountSearchInput({ id: 1 })
 				const inputField = wrapper.find(inputSelector)
