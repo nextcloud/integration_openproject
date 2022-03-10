@@ -35,10 +35,11 @@ To be able to periodically check activity in OpenProject (when "notifications fo
 Develop using docker compose
 
 Requirements:
-- Node.js
+- Node.js (>=14.0.0)
+- NPM (>=v7.0.0)
 - Docker, Docker Compose
 - OpenProject server instance running in the host machine
-- OpenProject Integration app
+- OpenProject integration app
 
 ### Setup
 ```shell
@@ -46,9 +47,12 @@ Requirements:
 mkdir $HOME/development/custom_apps -p
 cd $HOME/development/custom_apps
 git clone https://github.com/nextcloud/integration_openproject.git
+
 # installation & building
+cd integration_openproject
 npm ci
 npm run build
+
 # provide group ownership of "custom_apps" to the user "www-data"
 sudo chgrp www-data $HOME/development/custom_apps -R
 sudo chmod g+w $HOME/development/custom_apps -R
