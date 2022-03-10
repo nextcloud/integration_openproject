@@ -9,7 +9,6 @@ OC.L10N.register(
     "OpenProject activity" : "OpenProject işlemleri",
     "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["{instance} için %s bildiriminiz var","{instance} için %s bildiriminiz var"],
     "Bad HTTP method" : "HTTP yöntemi hatalı",
-    "Bad credentials" : "Kimlik doğrulama bilgileri hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "Connected accounts" : "Bağlı hesaplar",
     "OpenProject integration" : "OpenProject bütünleştirmesi",

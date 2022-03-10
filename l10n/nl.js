@@ -4,7 +4,6 @@ OC.L10N.register(
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Fout bij ophalen OAuth access token",
     "OpenProject notifications" : "OpenProject meldingen",
-    "Bad credentials" : "Foute inloggegevens",
     "OpenProject integration" : "OpenProject integratie",
     "Connected as {user}" : "Verbonden als {user}",
     "Invalid token" : "Ongeldig token"

@@ -9,7 +9,6 @@ OC.L10N.register(
     "OpenProject activity" : "Aktivita v OpenProject",
     "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Máte %s upozornění v {instance}","Máte %s upozornění v {instance}","Máte %s upozornění v {instance}","Máte %s upozornění v {instance}"],
     "Bad HTTP method" : "Nesprávná HTTP metoda",
-    "Bad credentials" : "Nesprávné přihlašovací údaje",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "Connected accounts" : "Propojené účty",
     "OpenProject integration" : "Napojení na OpenProject",

@@ -7,7 +7,6 @@
     "OpenProject activity" : "Attività OpenProject",
     "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Hai %s notifica in {instance}","Hai %s notifiche in {instance}"],
     "Bad HTTP method" : "Metodo HTTP non corretto",
-    "Bad credentials" : "Credenziali non valide",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Connected accounts" : "Account connessi",
     "OpenProject integration" : "Integrazione OpenProject",

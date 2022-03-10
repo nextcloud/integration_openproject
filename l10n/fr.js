@@ -7,7 +7,6 @@ OC.L10N.register(
     "OpenProject activity" : "Activité d'OpenProject",
     "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Vous avez %s notification dans {instance}","Vous avez %s notifications dans {instance}"],
     "Bad HTTP method" : "Mauvaise méthode HTTP",
-    "Bad credentials" : "Identifiants incorrects",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
     "Connected accounts" : "Comptes connectés",
     "OpenProject integration" : "Intégration d'OpenProject",
