@@ -24,5 +24,6 @@ return [
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],
+		['name' => 'files#getFilesInfo', 'url' => '/filesinfo', 'verb' => 'POST'],
 	],
 ];

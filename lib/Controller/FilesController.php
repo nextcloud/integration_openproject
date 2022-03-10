@@ -63,4 +63,33 @@ class FilesController extends OCSController {
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
 	}
+
+	/**
+	 * get file info from file IDs
+	 * @NoAdminRequired
+	 *
+	 */
+	public function getFilesInfo(array $fileIds): DataResponse {
+		$userFolder = $this->rootFolder->getUserFolder($this->userId);
+		$result = [];
+		foreach ($fileIds as $fileId) {
+			$files = $userFolder->getById($fileId);
+			if (is_array($files) && count($files) > 0) {
+				$file = $files[0];
+				$owner = $file->getOwner();
+				$result[$fileId] = [
+					'id' => $fileId,
+					'name' => $file->getName(),
+					'mtime' => $file->getMTime(),
+					'ctime' => $file->getCreationTime(),
+					'mimetype' => $file->getMimetype(),
+					'path' => preg_replace('/^files\//', '/', $file->getInternalPath()),
+					'size' => $file->getSize(),
+					'owner_name' => $owner->getDisplayName(),
+					'owner_id' => $owner->getUID(),
+				];
+			}
+		}
+		return new DataResponse($result);
+	}
 }
