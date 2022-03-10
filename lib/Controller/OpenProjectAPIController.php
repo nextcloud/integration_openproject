@@ -123,6 +123,7 @@ class OpenProjectAPIController extends Controller {
 		}
 		return $response;
 	}
+
 	/**
 	 * get searched work packages
 	 *
@@ -161,6 +162,16 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataResponse($result, $statusCode);
 		}
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $workpackageId
+	 * @param int $fileId
+	 * @return DataResponse
+	 */
+	public function linkWorkPackageToFile(int $workpackageId = 0, int $fileId = 0): DataResponse {
+		return new DataResponse("Fake result, to make UI happy");
 	}
 
 	/**

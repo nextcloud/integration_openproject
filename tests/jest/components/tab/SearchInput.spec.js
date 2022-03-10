@@ -18,10 +18,11 @@ describe('SearchInput.vue tests', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'
-	const searchListSelector = '.searchList'
+	const searchListSelector = '.workpackage'
 	const inputSelector = '.multiselect__input'
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.icon-loading-small'
+	const multiSelectItemSelector = '.multiselect__option'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -43,7 +44,9 @@ describe('SearchInput.vue tests', () => {
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await wrapper.setData({
-					searchResults: ['someData'],
+					searchResults: [{
+						someData: 'someData',
+					}],
 				})
 
 				await inputField.setValue('org')
@@ -51,13 +54,31 @@ describe('SearchInput.vue tests', () => {
 				expect(wrapper.vm.searchResults).toMatchObject([])
 			})
 			it.each([
-				{ search: 'o', expectedCallCount: 0 },
-				{ search: 'or', expectedCallCount: 0 },
-				{ search: 'org', expectedCallCount: 0 },
-				{ search: 'orga', expectedCallCount: 1 },
-			])('should send search request only if the search text is greater than search threshold', async ({ search, expectedCallCount }) => {
+				{
+					search: 'o',
+					expectedCallCount: 0,
+				},
+				{
+					search: 'or',
+					expectedCallCount: 0,
+				},
+				{
+					search: 'org',
+					expectedCallCount: 0,
+				},
+				{
+					search: 'orga',
+					expectedCallCount: 1,
+				},
+			])('should send search request only if the search text is greater than search threshold', async ({
+				search,
+				expectedCallCount,
+			}) => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
@@ -66,7 +87,10 @@ describe('SearchInput.vue tests', () => {
 			it('should include the search text in the search payload', async () => {
 				const axiosSpy = jest
 					.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -78,7 +102,7 @@ describe('SearchInput.vue tests', () => {
 						params: {
 							searchQuery: 'orga',
 						},
-					}
+					},
 				)
 			})
 		})
@@ -124,10 +148,28 @@ describe('SearchInput.vue tests', () => {
 				expect(loadingIcon.exists()).toBeTruthy()
 			})
 		})
+
+		describe('workpackage option', () => {
+			it('should emit an action when clicked on an item', async () => {
+				wrapper = mountSearchInput({ id: 1 })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('orga')
+				await wrapper.setData({
+					searchResults: [{
+						id: 1,
+					}],
+				})
+				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				await multiselectItem.trigger('click')
+				const savedEvent = wrapper.emitted('saved')
+				expect(savedEvent).toHaveLength(1)
+				expect(savedEvent[0]).toEqual([{ id: 1 }])
+			})
+		})
 	})
 })
 
-function mountSearchInput() {
+function mountSearchInput(fileInfo = null) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
@@ -138,6 +180,9 @@ function mountSearchInput() {
 		},
 		stubs: {
 			Avatar: true,
+		},
+		propsData: {
+			fileInfo,
 		},
 	})
 }

@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked work packages  1`] = `
+<div id="openproject-linked-workpackages">
+  <div class="existing-relations">
+    integration_openproject
+  </div>
+  <div class="workpackage">
+    <div class="row">
+      <div class="row__status" style="background-color: blue;">
+        <div class="row__status__title">
+          in-progress
+        </div>
+      </div>
+      <div class="row__id">
+        #1 -
+      </div>
+      <div class="row__project">
+        test
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__subject"><span class="row__subject__type" style="color: red;">
+				task
+			</span>
+        Organize work-packages
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__assignee">
+        <div class="row__assignee__avatar">
+          <avatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></avatar-stub>
+        </div>
+        <div class="row__assignee__assignee">
+          test
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

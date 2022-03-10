@@ -1,9 +1,11 @@
 /* jshint esversion: 8 */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
+import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
+
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
 
@@ -11,6 +13,9 @@ describe('ProjectsTab.vue Test', () => {
 	let wrapper
 	const loadingIndicatorSelector = '.icon-loading'
 	const emptyContentSelector = '#openproject-empty-content'
+	const workPackagesSelector = '#openproject-linked-workpackages'
+	const existingRelationSelector = '.existing-relations'
+
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
 		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
@@ -27,7 +32,7 @@ describe('ProjectsTab.vue Test', () => {
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeFalsy()
 		})
-		it.each(['ok', 'error'])('shows the loading icon disappears on state change', async (state) => {
+		it.each(['ok', 'error'])('makes the loading icon disappear on state change', async (state) => {
 			wrapper.setData({ state: 'loading' })
 			await localVue.nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
@@ -56,6 +61,34 @@ describe('ProjectsTab.vue Test', () => {
 			axios.get.mockRejectedValueOnce(err)
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(cases.AppState)
+		})
+		it('shows the linked work packages ', async () => {
+			wrapper = mount(ProjectsTab, {
+				localVue,
+				mocks: {
+					t: (msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+				stubs: {
+					SearchInput: true,
+					Avatar: true,
+				},
+				data: () => ({
+					error: '',
+					state: 'ok',
+					fileInfo: {},
+					workpackages: [],
+					requestUrl: 'something',
+				}),
+			})
+			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
+			const workPackages = wrapper.find(workPackagesSelector)
+			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
+			expect(workPackages.exists()).toBeTruthy()
+			expect(workPackages).toMatchSnapshot()
+
 		})
 	})
 })
