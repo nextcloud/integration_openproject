@@ -11,8 +11,12 @@
 
 namespace OCA\OpenProject\Controller;
 
+use Exception;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -21,6 +25,7 @@ use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCP\IURLGenerator;
 
 class OpenProjectAPIController extends Controller {
 
@@ -53,10 +58,16 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
+	/**
+	 * @var IURLGenerator
+	 */
+	private $urlGenerator;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
+								IURLGenerator         $urlGenerator,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
@@ -66,6 +77,7 @@ class OpenProjectAPIController extends Controller {
 		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -168,10 +180,37 @@ class OpenProjectAPIController extends Controller {
 	 * @NoAdminRequired
 	 * @param int $workpackageId
 	 * @param int $fileId
+	 * @param string $fileName
 	 * @return DataResponse
 	 */
-	public function linkWorkPackageToFile(int $workpackageId = 0, int $fileId = 0): DataResponse {
-		return new DataResponse("Fake result, to make UI happy");
+	public function linkWorkPackageToFile(int $workpackageId, int $fileId, string $fileName) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+
+		$storageUrl = $this->urlGenerator->getBaseUrl();
+
+		try {
+			$result = $this->openprojectAPIService->linkWorkPackageToFile(
+				$this->openprojectUrl,
+				$this->accessToken,
+				$this->refreshToken,
+				$this->clientID,
+				$this->clientSecret,
+				$workpackageId,
+				$fileId,
+				$fileName,
+				$storageUrl,
+				$this->userId,
+			);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (NotPermittedException | NotFoundException $e) {
+			return new DataResponse('fileid not found', Http::STATUS_NOT_FOUND);
+		} catch (Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
 	}
 
 	/**

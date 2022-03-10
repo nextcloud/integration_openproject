@@ -12,4 +12,5 @@ example/
 log/
 vendor/
 .php-cs-fixer.cache
+tests/pact/
 

@@ -19,6 +19,7 @@ $classLoader->addPsr4("OC\\", $serverPath . '/lib/private', true);
 $classLoader->addPsr4("OCA\\Files\\Event\\", $serverPath . '/apps/files/lib/Event', true);
 $classLoader->addPsr4("OCA\\OpenProject\\AppInfo\\", __DIR__ . '/lib/AppInfo', true);
 $classLoader->addPsr4("OCA\\OpenProject\\Controller\\", __DIR__ . '/lib/Controller', true);
+$classLoader->addPsr4("OCA\\OpenProject\\Exception\\", __DIR__ . '/lib/Exception', true);
 $classLoader->register();
 
 set_include_path(get_include_path() . PATH_SEPARATOR . '/usr/share/php');

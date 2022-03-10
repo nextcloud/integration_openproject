@@ -14,6 +14,11 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCP\Files\File;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -23,9 +28,11 @@ use OCP\IUser;
 use OCP\IAvatarManager;
 use OCP\Http\Client\IClientService;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Files\NotPermittedException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
+
 
 use OCA\OpenProject\AppInfo\Application;
 
@@ -63,6 +70,8 @@ class OpenProjectAPIService {
 	 */
 	private $client;
 
+	/** @var IRootFolder */
+	private $storage;
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -74,7 +83,8 @@ class OpenProjectAPIService {
 								IL10N $l10n,
 								IConfig $config,
 								INotificationManager $notificationManager,
-								IClientService $clientService) {
+								IClientService $clientService,
+								IRootFolder $storage) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -83,6 +93,7 @@ class OpenProjectAPIService {
 		$this->config = $config;
 		$this->notificationManager = $notificationManager;
 		$this->client = $clientService->newClient();
+		$this->storage = $storage;
 	}
 
 	/**
@@ -387,7 +398,8 @@ class OpenProjectAPIService {
 					$paramsContent .= http_build_query($params);
 					$url .= '?' . $paramsContent;
 				} else {
-					$options['body'] = $params;
+					$options['body'] = $params['body'];
+					$options['headers']['Content-Type'] = 'application/json';
 				}
 			}
 
@@ -580,5 +592,95 @@ class OpenProjectAPIService {
 			'?client_id=' . $clientID .
 			'&redirect_uri=' . urlencode($redirectUri) .
 			'&response_type=code';
+	}
+
+	/**
+	 * @param string $userId
+	 * @param int $fileId
+	 * @return \OCP\Files\Node|null
+	 * @throws NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+	public function getFile($userId, $fileId) {
+		$userFolder = $this->storage->getUserFolder($userId);
+
+		$file = $userFolder->getById($fileId);
+		return $file[0];
+	}
+
+	/**
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws NotFoundException
+	 * @throws \OCP\PreConditionNotMetException
+	 * @throws NotPermittedException
+	 * @throws OpenprojectErrorException
+	 * @throws \OC\User\NoUserException
+	 * @throws OpenprojectResponseException
+	 * @return int
+	 */
+	public function linkWorkPackageToFile(
+		string $openprojectUrl,
+		string $accessToken,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		int $workpackageId,
+		int $fileId,
+		string $fileName,
+		string $storageUrl,
+		string $userId
+	) {
+		$file = $this->getFile($userId, $fileId);
+		if ($file instanceof File) {
+			if (!$file->isReadable()) {
+				throw new NotPermittedException();
+			}
+		} else {
+			throw new NotFoundException();
+		}
+
+		$body = [
+			'_type' => 'Collection',
+			'_embedded' => [
+				'elements' => [
+					[
+						'originData' => [
+							'id' => $fileId,
+							'name' => $fileName,
+							'mimeType' => $file->getMimeType(),
+							'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getCreationTime()),
+							'lastModifiedAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getMTime()),
+							'createdByName' => '',
+							'lastModifiedByName' => ''
+						],
+						'_links' => [
+							'storageUrl' => [
+								'href' => $storageUrl
+							]
+						]
+					]
+				]
+			]
+		];
+
+		$params['body'] = \Safe\json_encode($body);
+		$result = $this->request(
+			$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages/' . $workpackageId. '/file_links', $params, 'POST'
+		);
+
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Collection' ||
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['elements']) ||
+			!isset($result['_embedded']['elements'][0]) ||
+			!isset($result['_embedded']['elements'][0]['id'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result['_embedded']['elements'][0]['id'];
 	}
 }

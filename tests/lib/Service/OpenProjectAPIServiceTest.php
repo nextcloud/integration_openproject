@@ -16,7 +16,8 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
-use OCP\ICertificateManager;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IURLGenerator;
@@ -24,7 +25,6 @@ use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 
@@ -61,10 +61,31 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private $workPackagesPath = '/api/v3/work_packages';
 
 	/**
-	 * @var \OCP\IAvatarManager|MockObject
+	 * @var array<mixed>
 	 */
-	private $avatarManagerMock;
-
+	private $validFileLinkRequestBody = [
+		'_type' => 'Collection',
+		'_embedded' => [
+			'elements' => [
+				[
+					'originData' => [
+						'id' => 5503,
+						'name' => 'logo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'http://nextcloud.org'
+						]
+					]
+				]
+			]
+		]
+	];
 	/**
 	 * @return void
 	 * @before
@@ -80,11 +101,44 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @before
 	 */
 	public function setUpMocks(): void {
-		/** @var IConfig $config */
+		$this->service = $this->getOpenProjectAPIService();
+	}
+
+	/**
+	 * @return \OCP\Files\File
+	 */
+	private function getFileMock() {
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$fileMock->method('isReadable')->willReturn(true);
+
+		$fileMock->method('getName')->willReturn('logo.png');
+		$fileMock->method('getMimeType')->willReturn('image/png');
+		$fileMock->method('getCreationTime')->willReturn(1639906930);
+		$fileMock->method('getMTime')->willReturn(1640008813);
+		return $fileMock;
+	}
+
+	/**
+	 * @return IRootFolder
+	 */
+	private function getStorageMock() {
+		$fileMock = $this->getFileMock();
+
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([$fileMock]);
+
+		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock->method('getUserFolder')->willReturn($folderMock);
+		return $storageMock;
+	}
+
+	/**
+	 * @param IRootFolder|null $storageMock
+	 * @return OpenProjectAPIService
+	 */
+	private function getOpenProjectAPIService($storageMock = null) {
 		$config = $this->createMock(IConfig::class);
-		/** @var ICertificateManager $certificateManager */
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
-		// @phpstan-ignore-next-line
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
 		$logger = $this->createMock(ILogger::class);
 
@@ -99,9 +153,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);
 
-		$this->avatarManagerMock = $this->getMockBuilder('\OCP\IAvatarManager')
+		$avatarManagerMock = $this->getMockBuilder('\OCP\IAvatarManager')
 			->getMock();
-		$this->avatarManagerMock
+		$avatarManagerMock
 			->method('getGuestAvatar')
 			->willReturn(
 				new GuestAvatar(
@@ -109,15 +163,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(\Psr\Log\LoggerInterface::class)
 				)
 			);
-		$this->service = new OpenProjectAPIService(
+		if ($storageMock === null) {
+			$storageMock = $this->createMock(\OCP\Files\IRootFolder::class);
+		}
+
+		return new OpenProjectAPIService(
 			'integration_openproject',
 			$this->createMock(\OCP\IUserManager::class),
-			$this->avatarManagerMock,
+			$avatarManagerMock,
 			$this->createMock(\Psr\Log\LoggerInterface::class),
 			$this->createMock(\OCP\IL10N::class),
 			$this->createMock(\OCP\IConfig::class),
 			$this->createMock(\OCP\Notification\IManager::class),
-			$clientService
+			$clientService,
+			$storageMock
 		);
 	}
 
@@ -823,6 +882,31 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @return void
+	 */
+	public function testLinkWorkPackageToFileRequest(): void {
+		$service = $this->getServiceMock(['request', 'getFile']);
+
+		$service->method('getFile')
+			->willReturn($this->getFileMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456]]]]);
+
+		$service->expects($this->once())
+			->method('request')
+			->with(
+				'url', 'token', 'refresh', 'id', 'secret', 'user', 'work_packages/123/file_links',
+				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
+			);
+
+		$result = $service->linkWorkPackageToFile(
+			'url', 'token', 'refresh', 'id', 'secret',
+			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+		);
+		$this->assertSame(2456, $result);
+	}
+
+	/**
+	 * @return void
 	 * @param \Exception $exception
 	 * @param int $expectedHttpStatusCode
 	 * @param string $expectedError
@@ -848,11 +932,250 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(\OCP\IL10N::class),
 			$this->createMock(\OCP\IConfig::class),
 			$this->createMock(\OCP\Notification\IManager::class),
-			$clientService
+			$clientService,
+			$this->createMock(\OCP\Files\IRootFolder::class),
 		);
 
 		$response = $service->request('', '', '', '', '', '', '', []);
 		$this->assertSame($expectedError, $response['error']);
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
+	}
+
+	public function testLinkWorkPackageToFilePact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody($this->validFileLinkRequestBody);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 1337]]]]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$result = $service->linkWorkPackageToFile(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			123,
+			5503,
+			'logo.png',
+			'http://nextcloud.org',
+			'admin'
+		);
+
+		$this->assertSame(1337, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileEmptyStorageUrlPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'originData' => $this->validFileLinkRequestBody['_embedded']['elements'][0]['originData'],
+							'_links' => [
+								'storageUrl' => [
+									'href' => ''
+								]
+							]
+						]
+					]
+				]
+			]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_BAD_REQUEST)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:InvalidRequestBody',
+				'message' => 'The request body was invalid.'
+			]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages with empty storage URL')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$this->expectException(OpenprojectErrorException::class);
+		$service->linkWorkPackageToFile(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			123,
+			5503,
+			'logo.png',
+			'',
+			'admin'
+		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileNotAvailableStorageUrlPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'originData' => $this->validFileLinkRequestBody['_embedded']['elements'][0]['originData'],
+							'_links' => [
+								'storageUrl' => [
+									'href' => 'http://not-existing'
+								]
+							]
+						]
+					]
+				]
+			]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_UNPROCESSABLE_ENTITY)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:PropertyConstraintViolation',
+				'message' => 'The request was invalid. File Link logo.png - Storage was invalid.'
+			]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages with a not available storage URL')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$this->expectException(OpenprojectErrorException::class);
+		$service->linkWorkPackageToFile(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			123,
+			5503,
+			'logo.png',
+			'http://not-existing',
+			'admin'
+		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileMissingPermissionPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer MissingPermission'])
+			->setBody($this->validFileLinkRequestBody);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_FORBIDDEN)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:MissingPermission',
+				'message' => 'You are not authorized to access this resource.'
+			]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages but missing permission')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$this->expectException(OpenprojectErrorException::class);
+		$service->linkWorkPackageToFile(
+			$this->mockServerBaseUri,
+			'MissingPermission',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			123,
+			5503,
+			'logo.png',
+			'http://nextcloud.org',
+			'admin'
+		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileNotFoundPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/999999/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody($this->validFileLinkRequestBody);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_NOT_FOUND)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:NotFound',
+				'message' => 'The requested resource could not be found.'
+			]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages but not existing workpackage')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$this->expectException(OpenprojectErrorException::class);
+		$service->linkWorkPackageToFile(
+			$this->mockServerBaseUri,
+			'1234567890',
+			'',
+			$this->clientId,
+			$this->clientSecret,
+			999999,
+			5503,
+			'logo.png',
+			'http://nextcloud.org',
+			'admin'
+		);
 	}
 }
