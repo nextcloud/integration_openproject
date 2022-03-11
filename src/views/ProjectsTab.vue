@@ -94,7 +94,7 @@ export default {
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
-			const url = generateUrl('/apps/integration_openproject/work_packages?fileId=' + fileId)
+			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
 			try {
 				const response = await axios.get(url, req)
 				if (!Array.isArray(response.data)) {
