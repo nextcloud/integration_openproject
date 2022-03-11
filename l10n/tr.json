@@ -39,6 +39,8 @@
     "Failed to save OpenProject options" : "OpenProject ayarları kaydedilemedi",
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
     "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
+    "Could not fetch work packages from OpenProject" : "OpenProject üzerinden çalışma paketleri alınamadı",
+    "Unexpected Error" : "Beklenmeyen bir sorun çıktı",
     "No workspaces linked yet, search for work package to add!" : "Henüz bir çalışma alanı bağlanmamış. Ekleyebileceğiniz bir çalışma paketi bulun!",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı"

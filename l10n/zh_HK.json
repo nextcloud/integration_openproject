@@ -39,6 +39,8 @@
     "Failed to save OpenProject options" : "儲存 OpenProject 選項失敗",
     "No OpenProject account connected" : "未連線至 OpenProject 帳號",
     "Error connecting to OpenProject" : "連線至 OpenProject 時發生錯誤",
+    "Could not fetch work packages from OpenProject" : "無法從 OpenProject 獲取工作包",
+    "Unexpected Error" : "發生意外錯誤",
     "No workspaces linked yet, search for work package to add!" : "尚未連結工作區，搜索要添加的工作包！",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告"

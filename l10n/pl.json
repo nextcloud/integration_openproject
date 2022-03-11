@@ -39,6 +39,8 @@
     "Failed to save OpenProject options" : "Nie udało się zapisać opcji OpenProject",
     "No OpenProject account connected" : "Brak połączonego konta OpenProject",
     "Error connecting to OpenProject" : "Błąd podczas łączenia z OpenProject",
+    "Could not fetch work packages from OpenProject" : "Nie można pobrać pakietów roboczych z OpenProject",
+    "Unexpected Error" : "Nieoczekiwany błąd",
     "No workspaces linked yet, search for work package to add!" : "Brak połączonych obszarów roboczych, wyszukaj pakiet roboczy do dodania!",
     "No OpenProject notifications!" : "Brak powiadomień OpenProject!",
     "Failed to get OpenProject notifications" : "Nie udało się pobrać powiadomień OpenProject"
