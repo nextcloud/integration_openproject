@@ -35,10 +35,14 @@ To be able to periodically check activity in OpenProject (when "notifications fo
 Develop using docker compose
 
 Requirements:
-- Node.js
-- Docker, Docker Compose
+- Node.js (>=v14.0.0)
+- NPM (>=v7.0.0)
+- Docker (>=v19.03.0)
+- Docker Compose
+  - for v1, minimum version required is v1.29.0 (our guide is for v1)
+  - for v2, make sure to use `docker compose` instead of `docker-compose`
 - OpenProject server instance running in the host machine
-- OpenProject Integration app
+- OpenProject integration app
 
 ### Setup
 ```shell
@@ -46,9 +50,12 @@ Requirements:
 mkdir $HOME/development/custom_apps -p
 cd $HOME/development/custom_apps
 git clone https://github.com/nextcloud/integration_openproject.git
+
 # installation & building
+cd integration_openproject
 npm ci
 npm run build
+
 # provide group ownership of "custom_apps" to the user "www-data"
 sudo chgrp www-data $HOME/development/custom_apps -R
 sudo chmod g+w $HOME/development/custom_apps -R
@@ -63,7 +70,7 @@ sudo chmod g+w $HOME/development/custom_apps -R
 **Note:** If your host machine has anything up on port `80`, please kill it before starting. 
 
 ```shell
-docker-compose up -d
+docker-compose up
 ```
 
 It is highly recommended to regularly update the included containers.
@@ -79,7 +86,7 @@ After this, you should be able to access nextcloud server at [http://localhost](
 
 #### Create admin
 1. browse to [http://localhost](http://localhost)
-2. create admin user
+2. create an admin user
 3. get an installed NC server
 
 For the database, **PostgreSQL** is used with the following credentials:
