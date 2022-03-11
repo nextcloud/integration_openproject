@@ -35,9 +35,12 @@ To be able to periodically check activity in OpenProject (when "notifications fo
 Develop using docker compose
 
 Requirements:
-- Node.js (>=14.0.0)
+- Node.js (>=v14.0.0)
 - NPM (>=v7.0.0)
-- Docker, Docker Compose
+- Docker (>=v19.03.0)
+- Docker Compose
+  - for v1, minimum version required is v1.29.0 (our guide is for v1)
+  - for v2, make sure to use `docker compose` instead of `docker-compose`
 - OpenProject server instance running in the host machine
 - OpenProject integration app
 
@@ -67,7 +70,7 @@ sudo chmod g+w $HOME/development/custom_apps -R
 **Note:** If your host machine has anything up on port `80`, please kill it before starting. 
 
 ```shell
-docker-compose up -d
+docker-compose up
 ```
 
 It is highly recommended to regularly update the included containers.
@@ -83,7 +86,7 @@ After this, you should be able to access nextcloud server at [http://localhost](
 
 #### Create admin
 1. browse to [http://localhost](http://localhost)
-2. create admin user
+2. create an admin user
 3. get an installed NC server
 
 For the database, **PostgreSQL** is used with the following credentials:
