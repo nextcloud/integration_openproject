@@ -45,6 +45,7 @@ OC.L10N.register(
     "Unexpected Error" : "Neočekávaná chyba",
     "No workspaces linked yet, search for work package to add!" : "Zatím nepropojeny žádné pracovní prostory – přidejte nějaký balíček práce jeho vyhledáním!",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
-    "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject"
+    "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
+    "Existing relations:" : "Existující souvislosti:"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

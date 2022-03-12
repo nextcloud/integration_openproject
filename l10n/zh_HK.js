@@ -45,6 +45,7 @@ OC.L10N.register(
     "Unexpected Error" : "發生意外錯誤",
     "No workspaces linked yet, search for work package to add!" : "尚未連結工作區，搜索要添加的工作包！",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
-    "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告"
+    "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
+    "Existing relations:" : "現有關係："
 },
 "nplurals=1; plural=0;");

@@ -45,6 +45,7 @@ OC.L10N.register(
     "Unexpected Error" : "Beklenmeyen bir sorun çıktı",
     "No workspaces linked yet, search for work package to add!" : "Henüz bir çalışma alanı bağlanmamış. Ekleyebileceğiniz bir çalışma paketi bulun!",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
-    "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı"
+    "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı",
+    "Existing relations:" : "Var olan ilişkiler:"
 },
 "nplurals=2; plural=(n > 1);");

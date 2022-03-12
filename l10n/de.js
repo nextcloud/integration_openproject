@@ -44,6 +44,7 @@ OC.L10N.register(
     "Unexpected Error" : "Unerwarteter Fehler",
     "No workspaces linked yet, search for work package to add!" : "Noch keine Arbeitsbereiche verknüpft, bitte nach dem hinzuzufügenden Arbeitspaket suchen! ",
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
-    "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen"
+    "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
+    "Existing relations:" : "Bestehende Verbindungen:"
 },
 "nplurals=2; plural=(n != 1);");
