@@ -1,14 +1,13 @@
 <template>
-	<div class="fill-height center-content">
-		<div class="empty-projects">
-			<div class="empty-icon center-content">
+	<div class="empty-content">
+		<div class="empty-content--wrapper">
+			<div class="empty-content--icon">
 				<img :src="flowSvg" alt="flow">
 			</div>
-			<div class="title text-center">
+			<div class="empty-content--title">
 				{{ emptyContentMessage }}
 			</div>
-			<br>
-			<div v-if="showConnectButton" class="connect-button">
+			<div v-if="showConnectButton" class="empty-content--connect-button">
 				<OAuthConnectButton :request-url="requestUrl" />
 			</div>
 		</div>
@@ -69,34 +68,44 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.empty-projects {
-	.text-center {
-		text-align: center;
-	}
-	.empty-icon {
-		padding: 1vh 0;
-		.icon img {
-			height: 50px;
-			width: 50px;
-		}
-	}
-	.title {
-		font-size: 1.2rem;
-		line-height: 1.4rem;
-		font-weight: 600;
-		padding-top: 4px;
-		color: #333333;
-	}
-	.subtitle {
-		font-size: .875rem;
-		font-weight: 400;
-		color: #6d6d6d;
-		line-height: 1rem;
-		padding: 8px 0;
-	}
-}
-
-.fill-height {
-	height: 100%;
+.empty-content {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &--wrapper {
+    height: fit-content;
+  }
+  &--icon {
+    padding: 1vh 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      height: 50px;
+      width: 50px;
+    }
+  }
+  &--title {
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+    font-weight: 600;
+    padding-top: 4px;
+    color: #333333;
+  }
+  &--subtitle {
+    font-size: .875rem;
+    font-weight: 400;
+    color: #6d6d6d;
+    line-height: 1rem;
+    padding: 8px 0;
+  }
+  &--connect-button {
+    padding: 1vh 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>
