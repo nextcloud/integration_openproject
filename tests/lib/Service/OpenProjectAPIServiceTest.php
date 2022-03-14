@@ -1279,7 +1279,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return array
+	 * @return array[]
 	 */
 	public function adminConfigStatusProvider(): array {
 		return [

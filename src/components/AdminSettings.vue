@@ -68,10 +68,6 @@ export default {
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
 	},
-	created() {
-		// eslint-disable-next-line no-console
-		console.log(this.state)
-	},
 	methods: {
 		onInput() {
 			const that = this
