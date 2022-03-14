@@ -575,7 +575,7 @@ class OpenProjectAPIService {
 		return $result;
 	}
 
-	/*
+	/**
 	 * @param IConfig $config
 	 * @param IURLGenerator $urlGenerator
 	 * @return string
@@ -685,9 +685,10 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * checks for every admin config variables if they are set
+	 *
 	 * @param IConfig $config
 	 * @return bool
-	 * checks for every admin config variables if they are set
 	 */
 	public static function isAdminConfigOk(IConfig $config):bool {
 		return !!($config->getAppValue(Application::APP_ID, 'client_id'))
