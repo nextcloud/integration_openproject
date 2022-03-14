@@ -14,9 +14,9 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
-use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
@@ -597,15 +597,19 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 * @param int $fileId
-	 * @return \OCP\Files\Node|null
+	 * @return \OCP\Files\Node
 	 * @throws NotPermittedException
 	 * @throws \OC\User\NoUserException
+	 * @throws NotFoundException
 	 */
-	public function getFile($userId, $fileId) {
+	public function getNode($userId, $fileId) {
 		$userFolder = $this->storage->getUserFolder($userId);
 
 		$file = $userFolder->getById($fileId);
-		return $file[0];
+		if (isset($file[0]) && $file[0] instanceof Node) {
+			return $file[0];
+		}
+		throw new NotFoundException();
 	}
 
 	/**
@@ -630,13 +634,9 @@ class OpenProjectAPIService {
 		string $storageUrl,
 		string $userId
 	) {
-		$file = $this->getFile($userId, $fileId);
-		if ($file instanceof File) {
-			if (!$file->isReadable()) {
-				throw new NotPermittedException();
-			}
-		} else {
-			throw new NotFoundException();
+		$file = $this->getNode($userId, $fileId);
+		if (!$file->isReadable()) {
+			throw new NotPermittedException();
 		}
 
 		$body = [

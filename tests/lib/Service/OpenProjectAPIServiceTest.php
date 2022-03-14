@@ -18,6 +18,8 @@ use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IURLGenerator;
@@ -105,27 +107,33 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return \OCP\Files\File
+	 * @param string $nodeClassName \OCP\Files\Node|\OCP\Files\File|\OCP\Files\Folder
+	 * @return \OCP\Files\Node
 	 */
-	private function getFileMock() {
-		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+	private function getNodeMock($nodeClassName = null) {
+		if ($nodeClassName === null) {
+			$nodeClassName = '\OCP\Files\Node';
+		}
+		// @phpstan-ignore-next-line
+		$fileMock = $this->createMock($nodeClassName);
 		$fileMock->method('isReadable')->willReturn(true);
-
 		$fileMock->method('getName')->willReturn('logo.png');
 		$fileMock->method('getMimeType')->willReturn('image/png');
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
+		// @phpstan-ignore-next-line
 		return $fileMock;
 	}
 
 	/**
+	 * @param string $nodeClassName \OCP\Files\Node|\OCP\Files\File|\OCP\Files\Folder
 	 * @return IRootFolder
 	 */
-	private function getStorageMock() {
-		$fileMock = $this->getFileMock();
+	private function getStorageMock($nodeClassName = null) {
+		$nodeMock = $this->getNodeMock($nodeClassName);
 
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([$fileMock]);
+		$folderMock->method('getById')->willReturn([$nodeMock]);
 
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -881,13 +889,60 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @return array<array<array<string>>>
+	 */
+	public function getNodeNotFoundExceptionDataProvider() {
+		return [
+			[[]],
+			[['string']],
+		];
+	}
+
+	/**
+	 * @dataProvider getNodeNotFoundExceptionDataProvider
+	 * @param array<array<array<string>>> $expectedReturn
+	 * @return void
+	 */
+	public function testGetNodeNotFoundException($expectedReturn) {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn($expectedReturn);
+		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock->method('getUserFolder')->willReturn($folderMock);
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$this->expectException(NotFoundException::class);
+		$service->getNode('me', 1234);
+	}
+
+	/**
+	 * @return array<array<string>>
+	 */
+	public function getNodeDataProvider() {
+		return [
+			['\OCP\Files\File'],
+			['\OCP\Files\Folder'],
+		];
+	}
+
+	/**
+	 * @dataProvider getNodeDataProvider
+	 * @param string $nodeClassName
+	 * @return void
+	 */
+	public function testGetNode($nodeClassName) {
+		$storageMock = $this->getStorageMock($nodeClassName);
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$result = $service->getNode('me', 1234);
+		$this->assertTrue($result instanceof \OCP\Files\Node);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileRequest(): void {
-		$service = $this->getServiceMock(['request', 'getFile']);
+		$service = $this->getServiceMock(['request', 'getNode']);
 
-		$service->method('getFile')
-			->willReturn($this->getFileMock());
+		$service->method('getNode')
+			->willReturn($this->getNodeMock());
 		$service->method('request')
 			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456]]]]);
 
@@ -905,6 +960,50 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(2456, $result);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileNotReadable(): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$fileMock->method('isReadable')->willReturn(false);
+
+		$service->method('getNode')
+			->willReturn($fileMock);
+
+		$service->expects($this->never())
+			->method('request');
+
+		$this->expectException(NotPermittedException::class);
+		$service->linkWorkPackageToFile(
+			'url', 'token', 'refresh', 'id', 'secret',
+			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileNotFound(): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$fileMock->method('isReadable')
+			->willThrowException(new NotFoundException());
+
+		$service->method('getNode')
+			->willReturn($fileMock);
+
+		$service->expects($this->never())
+			->method('request');
+
+		$this->expectException(NotFoundException::class);
+		$result = $service->linkWorkPackageToFile(
+			'url', 'token', 'refresh', 'id', 'secret',
+			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+		);
+	}
 	/**
 	 * @return void
 	 * @param \Exception $exception
