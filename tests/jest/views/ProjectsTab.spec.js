@@ -40,6 +40,15 @@ describe('ProjectsTab.vue Test', () => {
 			await localVue.nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeFalsy()
 		})
+		it('sets the state to "loading" on update', async () => {
+			const err = new Error()
+			err.response = { status: 404 }
+			axios.get.mockRejectedValueOnce(err)
+			wrapper.setData({ state: 'ok' })
+			expect(wrapper.vm.state).toBe('ok')
+			wrapper.vm.update({ id: 123 })
+			expect(wrapper.vm.state).toBe('loading')
+		})
 	})
 	describe('empty message', () => {
 		it.each(['no-token', 'ok', 'error'])('shows the empty message when state is other than loading', async (state) => {
@@ -50,11 +59,26 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('fetchWorkpackages', () => {
 		it.each([
-			{ HTTPStatus: 400, AppState: 'failed-fetching-workpackages' },
-			{ HTTPStatus: 401, AppState: 'no-token' },
-			{ HTTPStatus: 402, AppState: 'failed-fetching-workpackages' },
-			{ HTTPStatus: 404, AppState: 'connection-error' },
-			{ HTTPStatus: 500, AppState: 'error' },
+			{
+				HTTPStatus: 400,
+				AppState: 'failed-fetching-workpackages',
+			},
+			{
+				HTTPStatus: 401,
+				AppState: 'no-token',
+			},
+			{
+				HTTPStatus: 402,
+				AppState: 'failed-fetching-workpackages',
+			},
+			{
+				HTTPStatus: 404,
+				AppState: 'connection-error',
+			},
+			{
+				HTTPStatus: 500,
+				AppState: 'error',
+			},
 		])('sets states according to HTTP error codes', async (cases) => {
 			const err = new Error()
 			err.response = { status: cases.HTTPStatus }
@@ -62,7 +86,66 @@ describe('ProjectsTab.vue Test', () => {
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(cases.AppState)
 		})
-		it('shows the linked work packages ', async () => {
+		it.each([
+			[],
+			[{ id: 123, otherData: 'missing' }],
+			null,
+			'string',
+			undefined,
+		])('sets "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
+			axios.get
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: testCase,
+				}))
+			await wrapper.vm.update({ id: 123 })
+			expect(wrapper.vm.state).toBe('failed-fetching-workpackages')
+		})
+		it('shows the linked workpackages', async () => {
+			const axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
+							},
+							type: {
+								href: '/api/v3/types/6',
+								type: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+
+						},
+					}],
+				}))
+				.mockImplementation(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			await wrapper.vm.update({ id: 789 })
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
+				{}
+			)
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/statuses/12',
+			)
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/types/6',
+			)
+
+			expect(wrapper.vm.state).toBe('ok')
+		})
+	})
+	describe('onSave', () => {
+		it('shows the just linked workpackage', async () => {
 			wrapper = mount(ProjectsTab, {
 				localVue,
 				mocks: {
@@ -88,7 +171,6 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages).toMatchSnapshot()
-
 		})
 	})
 })

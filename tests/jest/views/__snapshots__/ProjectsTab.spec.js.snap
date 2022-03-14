@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked work packages  1`] = `
+exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
     integration_openproject
