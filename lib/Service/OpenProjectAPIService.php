@@ -683,4 +683,15 @@ class OpenProjectAPIService {
 		}
 		return $result['_embedded']['elements'][0]['id'];
 	}
+
+	/**
+	 * @param IConfig $config
+	 * @return bool
+	 * checks for every admin config variables if they are set
+	 */
+	public static function isAdminConfigOk(IConfig $config):bool {
+		return !!($config->getAppValue(Application::APP_ID, 'client_id'))
+			&& !!($config->getAppValue(Application::APP_ID, 'client_secret'))
+			&& !!($config->getAppValue(Application::APP_ID, 'oauth_instance_url'));
+	}
 }

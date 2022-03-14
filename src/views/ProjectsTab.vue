@@ -38,7 +38,8 @@
 		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
-			:request-url="requestUrl" />
+			:request-url="requestUrl"
+			:show-oauth="adminConfigStatus" />
 	</div>
 </template>
 
@@ -63,13 +64,12 @@ export default {
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
+		adminConfigStatus: loadState('integration_openproject', 'admin-config-status'),
 	}),
 	computed: {
 		isLoading() {
 			return this.state === 'loading'
 		},
-	},
-	created() {
 	},
 	methods: {
 		/**

@@ -43,7 +43,7 @@
 					@input="onNotificationChange">
 				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}</label>
 			</div>
-			<OAuthConnectButton v-else :request-url="requestUrl" />
+			<OAuthConnectButton v-else-if="adminConfigStatus" :request-url="requestUrl" />
 		</div>
 	</div>
 </template>
@@ -68,9 +68,10 @@ export default {
 
 	data() {
 		return {
+			loading: false,
 			state: loadState('integration_openproject', 'user-config'),
 			requestUrl: loadState('integration_openproject', 'user-config').request_url,
-			loading: false,
+			adminConfigStatus: loadState('integration_openproject', 'admin-config-status'),
 		}
 	},
 

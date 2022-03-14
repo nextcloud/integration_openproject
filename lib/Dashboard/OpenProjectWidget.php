@@ -105,7 +105,11 @@ class OpenProjectWidget implements IWidget {
 	public function load(): void {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
+
 		$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
+		$isAdminConfigOk = OpenProjectAPIService::isAdminConfigOk($this->config);
+
 		$this->initialStateService->provideInitialState('request-url', $requestUrl);
+		$this->initialStateService->provideInitialState('admin-config-status', $isAdminConfigOk);
 	}
 }

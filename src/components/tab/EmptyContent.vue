@@ -7,7 +7,8 @@
 			<div class="empty-content--title">
 				{{ emptyContentMessage }}
 			</div>
-			<div v-if="showConnectButton" class="empty-content--connect-button">
+			<br>
+			<div v-if="showOauth && showConnectButton" class="connect-button">
 				<OAuthConnectButton :request-url="requestUrl" />
 			</div>
 		</div>
@@ -18,6 +19,7 @@
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'EmptyContent',
@@ -35,6 +37,10 @@ export default {
 		errorMessage: {
 			type: String,
 			default: '',
+		},
+		showOauth: {
+			type: Boolean,
+			required: true,
 		},
 	},
 	data() {
@@ -62,6 +68,9 @@ export default {
 				return t('integration_openproject', 'No workspaces linked yet, search for work package to add!')
 			}
 			return 'invalid state'
+		},
+		adminConfig() {
+			return loadState('integration_openproject', 'admin-config')
 		},
 	},
 }
