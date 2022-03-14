@@ -103,16 +103,19 @@ export default {
 				: null
 		},
 		async linkWorkPackageToFile(selectedOption) {
-			const req = {
-				values: {
-					workpackageId: selectedOption.id,
-					fileId: this.fileInfo.id,
+			const params = new URLSearchParams()
+			params.append('workpackageId', selectedOption.id)
+			params.append('fileId', this.fileInfo.id)
+			params.append('fileName', this.fileInfo.name)
+			const config = {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
 				},
 			}
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 
 			try {
-				await axios.post(url, req)
+				await axios.post(url, params, config)
 				this.$emit('saved', selectedOption)
 				this.selectedId.push({
 					id: selectedOption.id,

@@ -1,12 +1,14 @@
 /* jshint esversion: 8 */
 import axios from '@nextcloud/axios'
 import { createLocalVue, mount } from '@vue/test-utils'
+import * as dialogs from '@nextcloud/dialogs'
 
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 
 jest.mock('@nextcloud/axios')
+jest.mock('@nextcloud/dialogs')
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -83,10 +85,10 @@ describe('SearchInput.vue tests', () => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
 				expect(axiosSpy).toHaveBeenCalledTimes(expectedCallCount)
+				axiosSpy.mockRestore()
 			})
 			it('should include the search text in the search payload', async () => {
-				const axiosSpy = jest
-					.spyOn(axios, 'get')
+				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
 						data: [],
@@ -104,6 +106,7 @@ describe('SearchInput.vue tests', () => {
 						},
 					},
 				)
+				axiosSpy.mockRestore()
 			})
 		})
 
@@ -149,21 +152,61 @@ describe('SearchInput.vue tests', () => {
 			})
 		})
 
-		describe('workpackage option', () => {
-			it('should emit an action when clicked on an item', async () => {
-				wrapper = mountSearchInput({ id: 1 })
+		describe('click on a workpackage option', () => {
+			let axiosGetSpy
+			beforeEach(async () => {
+				axiosGetSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
 				await wrapper.setData({
 					searchResults: [{
-						id: 1,
+						id: 999,
 					}],
 				})
+			})
+			afterEach(() => {
+				axiosGetSpy.mockRestore()
+			})
+			it('should emit an action', async () => {
 				const multiselectItem = wrapper.find(multiSelectItemSelector)
 				await multiselectItem.trigger('click')
 				const savedEvent = wrapper.emitted('saved')
 				expect(savedEvent).toHaveLength(1)
-				expect(savedEvent[0]).toEqual([{ id: 1 }])
+				expect(savedEvent[0]).toEqual([{ id: 999 }])
+			})
+			it('should send a request to link file to workpackage', async () => {
+				const postSpy = jest.spyOn(axios, 'post')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+					}))
+				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				await multiselectItem.trigger('click')
+				const expectedParams = new URLSearchParams()
+				expectedParams.append('workpackageId', 999)
+				expectedParams.append('fileId', 111)
+				expectedParams.append('fileName', 'file.txt')
+				expect(postSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/work-packages',
+					expectedParams,
+					{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+				)
+				postSpy.mockRestore()
+			})
+			it('should show an error when linking failed', async () => {
+				const err = new Error()
+				err.response = { status: 422 }
+				axios.post.mockRejectedValueOnce(err)
+				const showErrorSpy = jest.spyOn(dialogs, 'showError')
+				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				await multiselectItem.trigger('click')
+				await localVue.nextTick()
+				expect(showErrorSpy).toBeCalledTimes(1)
+				showErrorSpy.mockRestore()
 			})
 		})
 	})
