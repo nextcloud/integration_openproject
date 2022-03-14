@@ -14,7 +14,7 @@ function getWrapper(propsData = {}) {
 }
 describe('EmptyContent.vue Test', () => {
 	let wrapper
-	const emptyContentMessageSelector = '.title'
+	const emptyContentMessageSelector = '.empty-content--title'
 	const connectButtonSelector = 'oauthconnectbutton-stub'
 
 	it.each([{
