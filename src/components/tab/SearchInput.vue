@@ -37,6 +37,7 @@ import { translate as t } from '@nextcloud/l10n'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
 import { showError } from '@nextcloud/dialogs'
+import { workpackageHelper } from '../../utils/workpackageHelper'
 
 const STATE_OK = 'ok'
 const STATE_ERROR = 'error'
@@ -96,12 +97,6 @@ export default {
 				this.state = STATE_ERROR
 			}
 		},
-		replaceHrefToGetId(href) {
-			// this is a helper method replaces the string like this "/api/v3/types/3" to get id
-			return href
-				? href.replace(/.*\//, '')
-				: null
-		},
 		async linkWorkPackageToFile(selectedOption) {
 			const params = new URLSearchParams()
 			params.append('workpackageId', selectedOption.id)
@@ -148,47 +143,14 @@ export default {
 			if (this.isStateLoading) this.state = STATE_OK
 		},
 		async processWorkPackages(workPackages) {
-			for (const workPackage of workPackages) {
-				const statusId = this.replaceHrefToGetId(workPackage._links.status.href)
-				const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
-				const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
-				const userName = workPackage._links.assignee.title
-				const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
-					+ encodeURIComponent('userId')
-					+ '=' + userId
-					+ '&' + encodeURIComponent('userName')
-					+ '=' + userName
-				const statusColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/statuses/', statusId)
-				const typeColor = await this.getWorkPackageColorAttributes('/apps/integration_openproject/types/', typeId)
+			for (let workPackage of workPackages) {
+				workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 				const selectedIdFound = this.selectedId.some(el => el.id === workPackage.id)
 				const workpackageIdFound = this.searchResults.some(el => el.id === workPackage.id)
 				if (!workpackageIdFound && !selectedIdFound) {
-					this.searchResults.push({
-						id: workPackage.id,
-						subject: workPackage.subject,
-						project: workPackage._links.project.title,
-						statusTitle: workPackage._links.status.title,
-						typeTitle: workPackage._links.type.title,
-						assignee: userName,
-						statusCol: statusColor,
-						typeCol: typeColor,
-						picture: avatarUrl,
-					})
+					this.searchResults.push(workPackage)
 				}
 			}
-		},
-		async getWorkPackageColorAttributes(path, id) {
-			const url = generateUrl(path + id)
-			let response
-			try {
-				response = await axios.get(url)
-			} catch (e) {
-				response = e.response
-			}
-			this.checkForErrorCode(response.status)
-			return (response.status === 200 && response.data?.color)
-				? response.data.color
-				: ''
 		},
 	},
 }

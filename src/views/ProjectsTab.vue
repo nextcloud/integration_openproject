@@ -50,6 +50,7 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
+import { workpackageHelper } from '../utils/workpackageHelper'
 
 export default {
 	name: 'ProjectsTab',
@@ -80,6 +81,7 @@ export default {
 		async update(fileInfo) {
 			this.fileInfo = fileInfo
 			this.workpackages = []
+			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
 		/**
@@ -100,6 +102,10 @@ export default {
 				if (!Array.isArray(response.data)) {
 					this.state = 'failed-fetching-workpackages'
 				} else {
+					for (let workPackage of response.data) {
+						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+						this.workpackages.push(workPackage)
+					}
 					this.state = 'ok'
 				}
 			} catch (error) {
