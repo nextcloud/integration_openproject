@@ -206,7 +206,7 @@ class OpenProjectAPIController extends Controller {
 		} catch (OpenprojectErrorException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotPermittedException | NotFoundException $e) {
-			return new DataResponse('fileid not found', Http::STATUS_NOT_FOUND);
+			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
 		} catch (Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
