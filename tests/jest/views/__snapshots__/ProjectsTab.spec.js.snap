@@ -7,6 +7,78 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
   </div>
   <div class="workpackage">
     <div class="row">
+      <div class="row__status" style="background-color: rgb(165, 216, 255);">
+        <div class="row__status__title">
+          open
+        </div>
+      </div>
+      <div class="row__id">
+        #123 -
+      </div>
+      <div class="row__project">
+        a big project
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__subject"><span class="row__subject__type" style="color: rgb(0, 176, 240);">
+				Task
+			</span>
+        my task
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__assignee">
+        <div class="row__assignee__avatar">
+          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+        </div>
+        <div class="row__assignee__assignee">
+          Bal Bahadur Pun
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="workpackage">
+    <div class="row">
+      <div class="row__status">
+        <div class="row__status__title">
+          प्रगति हुदैछ
+        </div>
+      </div>
+      <div class="row__id">
+        #589 -
+      </div>
+      <div class="row__project">
+        नेपालको विकास गर्ने
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__subject"><span class="row__subject__type">
+				Epic
+			</span>
+        नेपालमा IT उद्योग बनाउने
+      </div>
+    </div>
+    <div class="row">
+      <div class="row__assignee">
+        <div class="row__assignee__avatar">
+          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
+        </div>
+        <div class="row__assignee__assignee">
+          कुमारी नेपाली
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`] = `
+<div class="" id="openproject-linked-workpackages">
+  <div class="existing-relations">
+    integration_openproject
+  </div>
+  <div class="workpackage">
+    <div class="row">
       <div class="row__status">
         <div class="row__status__title">
           open

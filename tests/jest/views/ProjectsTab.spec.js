@@ -174,33 +174,16 @@ describe('ProjectsTab.vue Test', () => {
 					status: 200,
 					data: testCase,
 				}))
-				// mock for color requests
+				// mock for color requests, it should not fail because of the missing mock
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe('failed-fetching-workpackages')
 		})
-		it('shows the linked workpackages', async () => {
-			wrapper = mount(ProjectsTab, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-				stubs: {
-					SearchInput: true,
-					Avatar: true,
-				},
-				data: () => ({
-					error: '',
-					state: 'ok',
-					fileInfo: {},
-					workpackages: [],
-					requestUrl: 'something',
-				}),
-			})
-
+		it.each([
+			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
+			{ statusColor: { }, typeColor: { } },
+		])('shows the linked workpackages', async (testCase) => {
+			wrapper = mountWrapper()
 			const axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
@@ -244,7 +227,12 @@ describe('ProjectsTab.vue Test', () => {
 					}],
 				}))
 				// mock for color requests
-				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				.mockImplementationOnce(() => Promise.resolve(
+					{ status: 200, data: testCase.statusColor })
+				)
+				.mockImplementationOnce(() => Promise.resolve(
+					{ status: 200, data: testCase.typeColor })
+				)
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
@@ -256,7 +244,6 @@ describe('ProjectsTab.vue Test', () => {
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/types/6',
 			)
-			await localVue.nextTick()
 			expect(wrapper.vm.state).toBe('ok')
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
@@ -266,26 +253,7 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('onSave', () => {
 		it('shows the just linked workpackage', async () => {
-			wrapper = mount(ProjectsTab, {
-				localVue,
-				mocks: {
-					t: (msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-				stubs: {
-					SearchInput: true,
-					Avatar: true,
-				},
-				data: () => ({
-					error: '',
-					state: 'ok',
-					fileInfo: {},
-					workpackages: [],
-					requestUrl: 'something',
-				}),
-			})
+			wrapper = mountWrapper()
 			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
@@ -294,3 +262,26 @@ describe('ProjectsTab.vue Test', () => {
 		})
 	})
 })
+
+function mountWrapper() {
+	return mount(ProjectsTab, {
+		localVue,
+		mocks: {
+			t: (msg) => msg,
+			generateUrl() {
+				return '/'
+			},
+		},
+		stubs: {
+			SearchInput: true,
+			Avatar: true,
+		},
+		data: () => ({
+			error: '',
+			state: 'ok',
+			fileInfo: {},
+			workpackages: [],
+			requestUrl: 'something',
+		}),
+	})
+}
