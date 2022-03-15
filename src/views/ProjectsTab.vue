@@ -99,12 +99,15 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
 			try {
 				const response = await axios.get(url, req)
-				if (!Array.isArray(response.data) || response.data.length < 1) {
+				if (!Array.isArray(response.data)) {
 					this.state = 'failed-fetching-workpackages'
 				} else {
-					for (let workPackage of response.data) {
-						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-						this.workpackages.push(workPackage)
+					// empty data means there are no workpackages linked
+					if (response.data.length > 0) {
+						for (let workPackage of response.data) {
+							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							this.workpackages.push(workPackage)
+						}
 					}
 					this.state = 'ok'
 				}

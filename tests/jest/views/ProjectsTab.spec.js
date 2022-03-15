@@ -72,7 +72,6 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.vm.state).toBe(cases.AppState)
 		})
 		it.each([
-			[],
 			null,
 			'string',
 			undefined,
@@ -168,7 +167,7 @@ describe('ProjectsTab.vue Test', () => {
 					project: { },
 				},
 			}],
-		])('sets "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
+		])('sets the "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
 			axios.get
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
@@ -178,6 +177,12 @@ describe('ProjectsTab.vue Test', () => {
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe('failed-fetching-workpackages')
+		})
+		it('sets the "ok" state on empty response', async () => {
+			axios.get
+				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+			await wrapper.vm.update({ id: 123 })
+			expect(wrapper.vm.state).toBe('ok')
 		})
 		it.each([
 			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
