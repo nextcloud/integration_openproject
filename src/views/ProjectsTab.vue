@@ -39,7 +39,7 @@
 			id="openproject-empty-content"
 			:state="state"
 			:request-url="requestUrl"
-			:show-connect="adminConfigStatus" />
+			:admin-config-status="adminConfigStatus" />
 	</div>
 </template>
 

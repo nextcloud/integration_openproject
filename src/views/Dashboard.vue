@@ -8,9 +8,11 @@
 				v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
-					{{ emptyContentMessage }}
+					<div v-if="adminConfigStatus">
+						{{ emptyContentMessage }}
+					</div>
 					<div v-if="showOauthConnect" class="connect-button">
-						<OAuthConnectButton :request-url="requestUrl" />
+						<OAuthConnectButton :request-url="requestUrl" :admin-config-status="adminConfigStatus" />
 					</div>
 				</template>
 			</EmptyContent>
@@ -102,7 +104,6 @@ export default {
 			return 'icon-checkmark'
 		},
 		showOauthConnect() {
-			if (!this.adminConfigStatus) return false
 			return ['no-token', 'error'].includes(this.state)
 		},
 	},

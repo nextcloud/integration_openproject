@@ -4,12 +4,11 @@
 			<div class="empty-content--icon">
 				<img :src="flowSvg" alt="flow">
 			</div>
-			<div class="empty-content--title">
+			<div v-if="adminConfigStatus" class="empty-content--title">
 				{{ emptyContentMessage }}
 			</div>
-			<br>
-			<div v-if="showConnect && showConnectButton" class="connect-button">
-				<OAuthConnectButton :request-url="requestUrl" />
+			<div v-if="showConnectButton" class="empty-content--connect-button">
+				<OAuthConnectButton :request-url="requestUrl" :admin-config-status="adminConfigStatus" />
 			</div>
 		</div>
 	</div>
@@ -37,7 +36,7 @@ export default {
 			type: String,
 			default: '',
 		},
-		showConnect: {
+		adminConfigStatus: {
 			type: Boolean,
 			required: true,
 		},

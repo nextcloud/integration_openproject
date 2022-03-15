@@ -1,10 +1,14 @@
 <template>
 	<button
-		class="openproject-oauth"
+		v-if="adminConfigStatus"
+		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<span class="icon icon-external" />
 		{{ t('integration_openproject', 'Connect to OpenProject') }}
 	</button>
+	<div v-else-if="!adminConfigStatus" class="oauth-connect--message">
+		{{ adminConfigNotOkMessage }}
+	</div>
 </template>
 <script>
 import axios from '@nextcloud/axios'
@@ -20,7 +24,18 @@ export default {
 			type: String,
 			required: true,
 		},
+		adminConfigStatus: {
+			type: Boolean,
+			default: false,
+		},
 	},
+
+	computed: {
+		adminConfigNotOkMessage() {
+			return t('integration_openproject', 'Failed to establish connection. Please contact your administrator.')
+		},
+	},
+
 	methods: {
 		generateRandomString(length) {
 			let text = ''
@@ -70,3 +85,12 @@ export default {
 	},
 }
 </script>
+<style lang="scss" scoped>
+.oauth-connect {
+  &--message {
+    font-size: .875rem;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+</style>
