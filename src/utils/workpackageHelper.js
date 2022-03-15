@@ -21,6 +21,22 @@ export const workpackageHelper = {
 			: null
 	},
 	async getAdditionalMetaData(workPackage) {
+		if (typeof workPackage._links.status.href !== 'string'
+			|| workPackage._links.status.href === ''
+			|| typeof workPackage._links.type.href !== 'string'
+			|| workPackage._links.type.href === ''
+			|| typeof workPackage.id !== 'number'
+			|| typeof workPackage.subject !== 'string'
+			|| workPackage.subject === ''
+			|| typeof workPackage._links.project.title !== 'string'
+			|| workPackage._links.project.title === ''
+			|| typeof workPackage._links.status.title !== 'string'
+			|| workPackage._links.status.title === ''
+			|| typeof workPackage._links.type.title !== 'string'
+			|| workPackage._links.type.title === ''
+		) {
+			throw new Error('missing data in workpackage object')
+		}
 		const statusId = this.replaceHrefToGetId(workPackage._links.status.href)
 		const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)

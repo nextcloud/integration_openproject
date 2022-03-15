@@ -59,26 +59,11 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('fetchWorkpackages', () => {
 		it.each([
-			{
-				HTTPStatus: 400,
-				AppState: 'failed-fetching-workpackages',
-			},
-			{
-				HTTPStatus: 401,
-				AppState: 'no-token',
-			},
-			{
-				HTTPStatus: 402,
-				AppState: 'failed-fetching-workpackages',
-			},
-			{
-				HTTPStatus: 404,
-				AppState: 'connection-error',
-			},
-			{
-				HTTPStatus: 500,
-				AppState: 'error',
-			},
+			{ HTTPStatus: 400, AppState: 'failed-fetching-workpackages' },
+			{ HTTPStatus: 401, AppState: 'no-token' },
+			{ HTTPStatus: 402, AppState: 'failed-fetching-workpackages' },
+			{ HTTPStatus: 404, AppState: 'connection-error' },
+			{ HTTPStatus: 500, AppState: 'error' },
 		])('sets states according to HTTP error codes', async (cases) => {
 			const err = new Error()
 			err.response = { status: cases.HTTPStatus }
@@ -88,24 +73,139 @@ describe('ProjectsTab.vue Test', () => {
 		})
 		it.each([
 			[],
-			[{ id: 123, otherData: 'missing' }],
 			null,
 			'string',
 			undefined,
+			[{ // missing id
+				subject: 'subject',
+				_links: {
+					status: {
+						href: '/api/v3/statuses/12',
+						title: 'open',
+					},
+					type: {
+						href: '/api/v3/types/6',
+						title: 'Task',
+					},
+					assignee: {
+						href: '/api/v3/users/1',
+						title: 'Bal Bahadur Pun',
+					},
+					project: { title: 'a big project' },
+				},
+			}],
+			[{ // empty subject
+				id: 123,
+				subject: '',
+				_links: {
+					status: {
+						href: '/api/v3/statuses/12',
+						title: 'open',
+					},
+					type: {
+						href: '/api/v3/types/6',
+						title: 'Task',
+					},
+					assignee: {
+						href: '/api/v3/users/1',
+						title: 'Bal Bahadur Pun',
+					},
+					project: { title: 'a big project' },
+				},
+			}],
+			[{ // missing subject
+				id: 123,
+				_links: {
+					status: {
+						href: '/api/v3/statuses/12',
+						title: 'open',
+					},
+					type: {
+						href: '/api/v3/types/6',
+						title: 'Task',
+					},
+					assignee: {
+						href: '/api/v3/users/1',
+						title: 'Bal Bahadur Pun',
+					},
+					project: { title: 'a big project' },
+				},
+			}],
+			[{ // missing _links.status.title
+				id: 123,
+				subject: 'my task',
+				_links: {
+					status: {
+						href: '/api/v3/statuses/12',
+					},
+					type: {
+						href: '/api/v3/types/6',
+						title: 'Task',
+					},
+					assignee: {
+						href: '/api/v3/users/1',
+						title: 'Bal Bahadur Pun',
+					},
+					project: { title: 'a big project' },
+				},
+			}],
+			[{ // missing project.title
+				id: 123,
+				subject: 'my task',
+				_links: {
+					status: {
+						href: '/api/v3/statuses/12',
+						title: 'open',
+					},
+					type: {
+						href: '/api/v3/types/6',
+						title: 'Task',
+					},
+					assignee: {
+						href: '/api/v3/users/1',
+						title: 'Bal Bahadur Pun',
+					},
+					project: { },
+				},
+			}],
 		])('sets "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
 			axios.get
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
 					data: testCase,
 				}))
+				// mock for color requests
+				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe('failed-fetching-workpackages')
 		})
 		it('shows the linked workpackages', async () => {
+			wrapper = mount(ProjectsTab, {
+				localVue,
+				mocks: {
+					t: (msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+				stubs: {
+					SearchInput: true,
+					Avatar: true,
+				},
+				data: () => ({
+					error: '',
+					state: 'ok',
+					fileInfo: {},
+					workpackages: [],
+					requestUrl: 'something',
+				}),
+			})
+
 			const axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
 					data: [{
+						id: 123,
 						subject: 'my task',
 						_links: {
 							status: {
@@ -114,21 +214,37 @@ describe('ProjectsTab.vue Test', () => {
 							},
 							type: {
 								href: '/api/v3/types/6',
-								type: 'Task',
+								title: 'Task',
 							},
 							assignee: {
 								href: '/api/v3/users/1',
 								title: 'Bal Bahadur Pun',
 							},
 							project: { title: 'a big project' },
-
+						},
+					},
+					{
+						id: 589,
+						subject: 'नेपालमा IT उद्योग बनाउने',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/2',
+								title: 'प्रगति हुदैछ',
+							},
+							type: {
+								href: '/api/v3/types/16',
+								title: 'Epic',
+							},
+							assignee: {
+								href: '/api/v3/users/13',
+								title: 'कुमारी नेपाली',
+							},
+							project: { title: 'नेपालको विकास गर्ने' },
 						},
 					}],
 				}))
-				.mockImplementation(() => Promise.resolve({
-					status: 200,
-					data: [],
-				}))
+				// mock for color requests
+				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
@@ -140,8 +256,12 @@ describe('ProjectsTab.vue Test', () => {
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/types/6',
 			)
-
+			await localVue.nextTick()
 			expect(wrapper.vm.state).toBe('ok')
+			const workPackages = wrapper.find(workPackagesSelector)
+			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
+			expect(workPackages.exists()).toBeTruthy()
+			expect(workPackages).toMatchSnapshot()
 		})
 	})
 	describe('onSave', () => {
