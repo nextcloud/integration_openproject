@@ -6,7 +6,7 @@
 		<span class="icon icon-external" />
 		{{ t('integration_openproject', 'Connect to OpenProject') }}
 	</button>
-	<div v-else-if="!adminConfigStatus" class="oauth-connect--message">
+	<div v-else class="oauth-connect--message">
 		{{ adminConfigNotOkMessage }}
 	</div>
 </template>

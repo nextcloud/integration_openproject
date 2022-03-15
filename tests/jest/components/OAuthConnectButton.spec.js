@@ -21,7 +21,6 @@ describe('OAuthConnectButton.vue Test', () => {
 	describe('when admin config status is not ok', () => {
 		it('should show message', async () => {
 			wrapper = getWrapper({ adminConfigStatus: false })
-			await wrapper.setProps({ adminConfigStatus: false })
 			expect(wrapper).toMatchSnapshot()
 		})
 	})

@@ -1279,7 +1279,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return array[]
+	 * @return array<mixed>
 	 */
 	public function adminConfigStatusProvider(): array {
 		return [
@@ -1304,7 +1304,31 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'client_id' => 'clientID',
 				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'openproject.com',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
 				'oauth_instance_url' => 'https://openproject',
+				'expected' => true,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://openproject.com/',
+				'expected' => true,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://openproject.com',
 				'expected' => true,
 			],
 		];
@@ -1314,7 +1338,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider adminConfigStatusProvider
 	 * @return void
 	 */
-	public function testIsAdminConfigOkNoClientId(
+	public function testIsAdminConfigOk(
 		string $client_id, string $client_secret, string $oauth_instance_url, bool $expected
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();

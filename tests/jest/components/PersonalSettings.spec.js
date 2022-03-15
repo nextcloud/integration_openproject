@@ -6,6 +6,15 @@ import * as initialState from '@nextcloud/initial-state'
 
 const localVue = createLocalVue()
 
+// eslint-disable-next-line no-import-assign
+initialState.loadState = jest.fn((key, value) => {
+	if (value === 'user-config') {
+		return {
+			request_url: 'https://nextcloud.com/',
+		}
+	} else if (value === 'admin-config-status') return false
+})
+
 describe('PersonalSettings.vue Test', () => {
 	describe('oAuth', () => {
 		const oAuthButtonSelector = 'oauthconnectbutton-stub'
@@ -14,14 +23,6 @@ describe('PersonalSettings.vue Test', () => {
 		const searchBlockSelector = '#openproject-search-block'
 		let wrapper
 		beforeEach(() => {
-			// eslint-disable-next-line no-import-assign
-			initialState.loadState = jest.fn((key, value) => {
-				if (value === 'user-config') {
-					return {
-						request_url: 'https://nextcloud.com/',
-					}
-				} else if (value === 'admin-config-status') return false
-			})
 			wrapper = shallowMount(PersonalSettings, {
 				localVue,
 				mocks: {
