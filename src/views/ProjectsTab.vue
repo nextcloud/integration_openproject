@@ -152,5 +152,9 @@ export default {
 		padding-top: 0;
 		font-size: 1.2rem;
 	}
+
+	.icon-loading:after {
+		top: 140%;
+	}
 }
 </style>
