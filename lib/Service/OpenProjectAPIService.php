@@ -685,14 +685,21 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * checks for every admin config variables if they are set
+	 * checks if every admin config variables are set
+	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
 	 */
 	public static function isAdminConfigOk(IConfig $config):bool {
-		return !!($config->getAppValue(Application::APP_ID, 'client_id'))
-			&& !!($config->getAppValue(Application::APP_ID, 'client_secret'))
-			&& !!($config->getAppValue(Application::APP_ID, 'oauth_instance_url'));
+		$clientId = $config->getAppValue(Application::APP_ID, 'client_id');
+		$clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($oauthInstanceUrl);
+		if (!$checkIfConfigIsSet) {
+			return false;
+		} else {
+			return self::validateOpenProjectURL($oauthInstanceUrl);
+		}
 	}
 }
