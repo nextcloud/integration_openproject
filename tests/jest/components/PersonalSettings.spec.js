@@ -33,7 +33,7 @@ describe('PersonalSettings.vue Test', () => {
 			})
 		})
 
-		describe('when admin config status is truthy', () => {
+		describe('when admin config status is ok', () => {
 			describe.each([
 				{ user_name: 'test', token: '' },
 				{ user_name: 'test', token: null },
@@ -82,15 +82,19 @@ describe('PersonalSettings.vue Test', () => {
 				})
 			})
 		})
-		describe('when admin config status is falsy', () => {
+		describe('when admin config status is not ok', () => {
 			beforeEach(async () => {
 				await wrapper.setData({
 					adminConfigStatus: false,
 					state: { user_name: 'test', token: '123' },
 				})
 			})
-			it('should not show the oauth connect button', () => {
-				expect(wrapper.find(oAuthButtonSelector).exists()).toBeFalsy()
+			it('should set proper props to the oauth connect component', () => {
+				expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
+				expect(wrapper.find(oAuthButtonSelector).props()).toMatchObject({
+					requestUrl: 'https://nextcloud.com/',
+					adminConfigStatus: false,
+				})
 			})
 		})
 	})
