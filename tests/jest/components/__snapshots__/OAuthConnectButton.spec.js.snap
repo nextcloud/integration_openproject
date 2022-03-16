@@ -2,6 +2,6 @@
 
 exports[`OAuthConnectButton.vue Test when admin config status is not ok should show message 1`] = `
 <div class="oauth-connect--message">
-  Failed to establish connection. Please contact your administrator.
+  Settings of the OpenProject integration app are not complete. Please contact your NextCloud administrator.
 </div>
 `;
