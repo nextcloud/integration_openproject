@@ -51,6 +51,8 @@ import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 
+const POLLING_INTERVAL = 30
+
 export default {
 	name: 'ProjectsTab',
 	components: {
@@ -70,6 +72,10 @@ export default {
 		isLoading() {
 			return this.state === 'loading'
 		},
+	},
+	beforeMount() {
+		this.refreshOauthToken()
+		setInterval(this.refreshOauthToken, POLLING_INTERVAL * 1000)
 	},
 	methods: {
 		/**
@@ -91,6 +97,10 @@ export default {
 		},
 		onSaved(data) {
 			this.workpackages.push(data)
+		},
+		async refreshOauthToken() {
+			const url = generateUrl('/apps/integration_openproject/oauth-token')
+			await axios.get(url)
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}

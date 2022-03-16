@@ -63,6 +63,11 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $urlGenerator;
 
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
@@ -78,6 +83,7 @@ class OpenProjectAPIController extends Controller {
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$this->urlGenerator = $urlGenerator;
+		$this->config = $config;
 	}
 
 	/**
@@ -259,5 +265,48 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+	public function getOpenProjectOauthTokenStatus(): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		$result = $this->openprojectAPIService->isOpenProjectOauthTokenValid(
+			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId
+		);
+		if (!$result) {
+			// try to refresh the token
+			$result = $this->openprojectAPIService->requestOAuthAccessToken(
+				$this->openprojectUrl,
+				[
+					'client_id' => $this->clientID,
+					'client_secret' => $this->clientSecret,
+					'grant_type' => 'refresh_token',
+					'refresh_token' => $this->refreshToken,
+				],
+				'POST');
+			if (isset($result['access_token']) && isset($result['refresh_token'])) {
+				$this->config->setUserValue(
+					$this->userId, Application::APP_ID, 'token', $result['access_token']
+				);
+				$this->config->setUserValue(
+					$this->userId, Application::APP_ID, 'refresh_token', $result['refresh_token']
+				);
+				return new DataResponse('token refreshed');
+			} else {
+				$this->config->deleteUserValue(
+					$this->userId, Application::APP_ID, 'token'
+				);
+				$this->config->deleteUserValue(
+					$this->userId, Application::APP_ID, 'refresh_token'
+				);
+				return new DataResponse('could not refresh token', Http::STATUS_FORBIDDEN);
+			}
+		}
+		return new DataResponse('token still valid');
 	}
 }

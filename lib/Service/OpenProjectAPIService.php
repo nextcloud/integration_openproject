@@ -685,6 +685,33 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * authenticated request to get status of a work package
+	 *
+	 * @param string $url
+	 * @param string $accessToken
+	 * @param string $refreshToken
+	 * @param string $clientID
+	 * @param string $clientSecret
+	 * @param string $userId
+	 * @param string $typeId
+	 * @return bool
+	 */
+	public function isOpenProjectOauthTokenValid(
+		string $url,
+		string $accessToken,
+		string $refreshToken,
+		string $clientID,
+		string $clientSecret,
+		string $userId
+	): bool {
+		$result = $this->request(
+			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'users/me');
+
+
+		return (isset($result['login']) && $result['login'] !== '');
+	}
+
+	/**
 	 * checks if every admin config variables are set
 	 * checks if the oauth instance url is valid
 	 *
