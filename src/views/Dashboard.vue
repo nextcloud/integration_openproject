@@ -8,9 +8,11 @@
 				v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
-					{{ emptyContentMessage }}
-					<div v-if="state === 'no-token' || state === 'error'" class="connect-button">
-						<OAuthConnectButton :request-url="requestUrl" />
+					<div v-if="adminConfigStatus">
+						{{ emptyContentMessage }}
+					</div>
+					<div v-if="showOauthConnect" class="connect-button">
+						<OAuthConnectButton :request-url="requestUrl" :admin-config-status="adminConfigStatus" />
 					</div>
 				</template>
 			</EmptyContent>
@@ -50,6 +52,7 @@ export default {
 			loop: null,
 			state: 'loading',
 			requestUrl: loadState('integration_openproject', 'request-url'),
+			adminConfigStatus: loadState('integration_openproject', 'admin-config-status'),
 			settingsUrl: generateUrl('/settings/user/connected-accounts'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -99,6 +102,9 @@ export default {
 				return 'icon-checkmark'
 			}
 			return 'icon-checkmark'
+		},
+		showOauthConnect() {
+			return ['no-token', 'error'].includes(this.state)
 		},
 	},
 	watch: {

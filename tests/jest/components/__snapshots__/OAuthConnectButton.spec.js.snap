@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OAuthConnectButton.vue Test when admin config status is not ok should show message 1`] = `
+<div class="oauth-connect--message">
+  Settings of the OpenProject integration app are not complete. Please contact your NextCloud administrator.
+</div>
+`;

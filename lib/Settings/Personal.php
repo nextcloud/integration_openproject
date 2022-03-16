@@ -51,6 +51,8 @@ class Personal implements ISettings {
 		$notificationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'notification_enabled', '0');
 		$navigationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'navigation_enabled', '0');
 
+		$isAdminConfigOk = OpenProjectAPIService::isAdminConfigOk($this->config);
+
 		// for OAuth
 		$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
 
@@ -63,6 +65,7 @@ class Personal implements ISettings {
 			'request_url' => $requestUrl,
 		];
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
+		$this->initialStateService->provideInitialState('admin-config-status', $isAdminConfigOk);
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
 	}
 

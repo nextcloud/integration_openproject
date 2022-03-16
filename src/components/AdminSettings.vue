@@ -68,7 +68,6 @@ export default {
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
 	},
-
 	methods: {
 		onInput() {
 			const that = this

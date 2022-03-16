@@ -575,7 +575,7 @@ class OpenProjectAPIService {
 		return $result;
 	}
 
-	/*
+	/**
 	 * @param IConfig $config
 	 * @param IURLGenerator $urlGenerator
 	 * @return string
@@ -682,5 +682,24 @@ class OpenProjectAPIService {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		return $result['_embedded']['elements'][0]['id'];
+	}
+
+	/**
+	 * checks if every admin config variables are set
+	 * checks if the oauth instance url is valid
+	 *
+	 * @param IConfig $config
+	 * @return bool
+	 */
+	public static function isAdminConfigOk(IConfig $config):bool {
+		$clientId = $config->getAppValue(Application::APP_ID, 'client_id');
+		$clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($oauthInstanceUrl);
+		if (!$checkIfConfigIsSet) {
+			return false;
+		} else {
+			return self::validateOpenProjectURL($oauthInstanceUrl);
+		}
 	}
 }

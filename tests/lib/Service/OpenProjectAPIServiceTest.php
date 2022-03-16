@@ -1277,4 +1277,79 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'admin'
 		);
 	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function adminConfigStatusProvider(): array {
+		return [
+			[
+				'client_id' => '',
+				'client_secret' => '',
+				'oauth_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => '',
+				'oauth_instance_url' => 'https://openproject',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'openproject.com',
+				'expected' => false,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://openproject',
+				'expected' => true,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://openproject.com/',
+				'expected' => true,
+			],
+			[
+				'client_id' => 'clientID',
+				'client_secret' => 'clientSecret',
+				'oauth_instance_url' => 'https://openproject.com',
+				'expected' => true,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider adminConfigStatusProvider
+	 * @return void
+	 */
+	public function testIsAdminConfigOk(
+		string $client_id, string $client_secret, string $oauth_instance_url, bool $expected
+	) {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
+
+		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
+	}
 }
