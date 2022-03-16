@@ -20,12 +20,8 @@ export default {
 
 	props: {
 		requestUrl: {
-			type: String,
+			type: [String, Boolean],
 			required: true,
-		},
-		adminConfigStatus: {
-			type: Boolean,
-			default: false,
 		},
 	},
 

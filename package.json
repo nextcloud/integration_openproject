@@ -15,7 +15,7 @@
 		"stylelint": "stylelint css src",
 		"stylelint:fix": "stylelint css src --fix",
 		"test:unit": "jest --silent",
-		"test:unit:watch": "jest --watch"
+		"test:unit:watch": "jest --watch --no-coverage"
 	},
 	"repository": {
 		"type": "git",

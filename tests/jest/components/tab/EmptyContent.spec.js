@@ -19,13 +19,13 @@ describe('EmptyContent.vue Test', () => {
 			state: 'error',
 			viewed: true,
 		}])('should be displayed depending on the state', (cases) => {
-			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
+			wrapper = getWrapper({ state: cases.state })
 			expect(wrapper.find(connectButtonSelector).exists()).toBe(cases.viewed)
 		})
 	})
 	describe('content title', () => {
-		it('should not be displayed if the admin config status is not ok', () => {
-			wrapper = getWrapper({ adminConfigStatus: false })
+		it('should not be displayed if the request url is not valid', () => {
+			wrapper = getWrapper({ requestUrl: false })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBe(false)
 		})
 		it.each([{
@@ -46,7 +46,7 @@ describe('EmptyContent.vue Test', () => {
 		}, {
 			state: 'something else',
 			message: 'invalid state',
-		}])('shows the correct empty message depending on states if admin config status is ok', async (cases) => {
+		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
 			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
 			expect(wrapper.find(emptyContentMessageSelector).text()).toMatch(cases.message)
@@ -63,7 +63,6 @@ function getWrapper(propsData = {}) {
 		propsData: {
 			state: 'ok',
 			requestUrl: 'http://openproject/',
-			adminConfigStatus: false,
 			...propsData,
 		},
 	})

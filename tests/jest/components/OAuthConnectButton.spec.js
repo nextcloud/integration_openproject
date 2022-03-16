@@ -18,13 +18,13 @@ describe('OAuthConnectButton.vue Test', () => {
 		window.location = location
 		jest.clearAllMocks()
 	})
-	describe('when admin config status is not ok', () => {
+	describe('when the request url is not valid', () => {
 		it('should show message', async () => {
-			wrapper = getWrapper({ adminConfigStatus: false })
+			wrapper = getWrapper({ requestUrl: false })
 			expect(wrapper).toMatchSnapshot()
 		})
 	})
-	describe('when admin config status is ok', () => {
+	describe('when the request url is valid', () => {
 		beforeEach(() => {
 			delete window.location
 			window.location = { replace: jest.fn() }
@@ -34,7 +34,7 @@ describe('OAuthConnectButton.vue Test', () => {
 			generateCodeChallengeSpy = jest.spyOn(
 				OAuthConnectButton.methods, 'generateCodeChallenge'
 			)
-			wrapper = getWrapper({ adminConfigStatus: true })
+			wrapper = getWrapper()
 		})
 		describe('on successful saving of the state & challenge', () => {
 			beforeEach(() => {
@@ -103,7 +103,6 @@ function getWrapper(props = {}) {
 		},
 		propsData: {
 			requestUrl: 'http://openproject/oauth/',
-			adminConfigStatus: false,
 			...props,
 		},
 	})

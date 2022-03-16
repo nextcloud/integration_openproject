@@ -60,6 +60,10 @@ phpstan:
 	composer run phpstan
 
 .PHONY: test
+phpunit:
+	vendor/phpunit/phpunit/phpunit
+
+.PHONY: test
 test:
 	npm run test:unit
 	vendor/phpunit/phpunit/phpunit

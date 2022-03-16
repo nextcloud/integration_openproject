@@ -821,8 +821,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url'],
-			)->willReturnOnConsecutiveCalls('clientID', 'https://openproject');
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', 'https://openproject', 'clientID', 'https://openproject');
 
 		$url = $this->createMock(IURLGenerator::class);
 		$url->expects($this->once())
@@ -837,6 +840,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'&response_type=code',
 			$result
 		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectOauthURLWithInvalidAdminConfig() {
+		$url = $this->createMock(IURLGenerator::class);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls('clientid', 'clientsecret', 'Openproject');
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage('OpenProject admin config is not valid!');
+		$this->service::getOpenProjectOauthURL($configMock, $url);
 	}
 
 	/**

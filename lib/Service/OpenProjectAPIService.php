@@ -582,8 +582,12 @@ class OpenProjectAPIService {
 	 * generates an oauth url to OpenProject containing client_id & redirect_uri as parameter
 	 * please note that the state parameter is still missing, that needs to be generated dynamically
 	 * and saved to the DB before calling the OAuth URI
+	 * @throws Exception
 	 */
 	public static function getOpenProjectOauthURL(IConfig $config, IURLGenerator $urlGenerator): string {
+		if (!self::isAdminConfigOk($config)) {
+			throw new \Exception('OpenProject admin config is not valid!');
+		}
 		$clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$oauthUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$redirectUri = $urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.config.oauthRedirect');
