@@ -125,7 +125,7 @@ export default {
 		text-align: left;
 		font-weight: bold;
 		font-size: 0.8rem;
-		  padding: 12px;
+		padding: 12px;
 	}
 
 	.center-content {

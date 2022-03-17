@@ -46,7 +46,7 @@ jobs:
         id: versions
         with:
           fallbackNode: '^14'
-          fallbackNpm: '^6'
+          fallbackNpm: '^7'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
         uses: actions/setup-node@v2
