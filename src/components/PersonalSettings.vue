@@ -3,8 +3,7 @@
 		<SettingsTitle />
 		<div id="openproject-content">
 			<div id="toggle-openproject-navigation-link">
-				<input
-					id="openproject-link"
+				<input id="openproject-link"
 					type="checkbox"
 					class="checkbox"
 					:checked="state.navigation_enabled"
@@ -23,8 +22,7 @@
 				</button>
 			</div>
 			<div v-if="connected" id="openproject-search-block">
-				<input
-					id="search-openproject"
+				<input id="search-openproject"
 					type="checkbox"
 					class="checkbox"
 					:checked="state.search_enabled"
@@ -35,8 +33,7 @@
 					<span class="icon icon-details" />
 					{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
 				</p>
-				<input
-					id="notification-openproject"
+				<input id="notification-openproject"
 					type="checkbox"
 					class="checkbox"
 					:checked="state.notification_enabled"
@@ -187,6 +184,6 @@ export default {
 }
 
 #openproject-content .oauth-connect--message {
-  text-align: left !important;
+	text-align: left !important;
 }
 </style>

@@ -4,8 +4,7 @@
 		:show-more-text="title"
 		:loading="state === 'loading'">
 		<template #empty-content>
-			<EmptyContent
-				v-if="emptyContentMessage"
+			<EmptyContent v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
 					<div v-if="adminConfigStatus">

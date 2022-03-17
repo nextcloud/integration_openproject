@@ -25,8 +25,7 @@
 		<div class="row">
 			<div v-if="workpackage.assignee" class="row__assignee">
 				<div class="row__assignee__avatar">
-					<Avatar
-						class="item-avatar"
+					<Avatar class="item-avatar"
 						:size="23"
 						:url="workpackage.picture"
 						:user="workpackage.assignee"

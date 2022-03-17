@@ -1,7 +1,6 @@
 <template>
 	<div id="searchBar">
-		<Multiselect
-			class="searchInput"
+		<Multiselect class="searchInput"
 			:placeholder="placeholder"
 			:options="searchResults"
 			:user-select="true"
@@ -15,8 +14,7 @@
 			@search-change="makeSearchRequest"
 			@change="linkWorkPackageToFile">
 			<template #option="{option}">
-				<WorkPackage
-					:key="option.id"
+				<WorkPackage :key="option.id"
 					:workpackage="option" />
 			</template>
 			<template #noOptions>
