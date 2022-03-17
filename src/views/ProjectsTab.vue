@@ -50,6 +50,7 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
+import { workpackageHelper } from '../utils/workpackageHelper'
 
 export default {
 	name: 'ProjectsTab',
@@ -60,7 +61,7 @@ export default {
 	},
 	data: () => ({
 		error: '',
-		fileInfo: null,
+		fileInfo: { },
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
@@ -80,6 +81,7 @@ export default {
 		async update(fileInfo) {
 			this.fileInfo = fileInfo
 			this.workpackages = []
+			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
 		/**
@@ -100,14 +102,21 @@ export default {
 				if (!Array.isArray(response.data)) {
 					this.state = 'failed-fetching-workpackages'
 				} else {
+					// empty data means there are no workpackages linked
+					if (response.data.length > 0) {
+						for (let workPackage of response.data) {
+							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							this.workpackages.push(workPackage)
+						}
+					}
 					this.state = 'ok'
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
 					this.state = 'no-token'
-				} else if (error.response.status === 404) {
+				} else if (error.response && error.response.status === 404) {
 					this.state = 'connection-error'
-				} else if (error.response.status === 500) {
+				} else if (error.response && error.response.status === 500) {
 					this.state = 'error'
 				} else {
 					this.state = 'failed-fetching-workpackages'
@@ -145,6 +154,10 @@ export default {
 	.subtitle {
 		padding-top: 0;
 		font-size: 1.2rem;
+	}
+
+	.icon-loading:after {
+		top: 140%;
 	}
 }
 </style>
