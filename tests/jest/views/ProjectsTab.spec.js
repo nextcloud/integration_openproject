@@ -19,12 +19,7 @@ describe('ProjectsTab.vue Test', () => {
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
 		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
-		wrapper = shallowMount(ProjectsTab, {
-			localVue,
-			data: () => ({
-				fileInfo: {},
-			}),
-		})
+		wrapper = shallowMount(ProjectsTab, { localVue })
 	})
 	describe('loading icon', () => {
 		it('shows the loading icon during "loading" state', async () => {

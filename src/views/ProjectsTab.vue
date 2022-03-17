@@ -61,7 +61,7 @@ export default {
 	},
 	data: () => ({
 		error: '',
-		fileInfo: null,
+		fileInfo: { },
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
