@@ -144,12 +144,17 @@ export default {
 		},
 		async processWorkPackages(workPackages) {
 			for (let workPackage of workPackages) {
-				workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-				const selectedIdFound = this.selectedId.some(el => el.id === workPackage.id)
-				const workpackageIdFound = this.searchResults.some(el => el.id === workPackage.id)
-				if (!workpackageIdFound && !selectedIdFound) {
-					this.searchResults.push(workPackage)
+				try {
+					workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+					const selectedIdFound = this.selectedId.some(el => el.id === workPackage.id)
+					const workpackageIdFound = this.searchResults.some(el => el.id === workPackage.id)
+					if (!workpackageIdFound && !selectedIdFound) {
+						this.searchResults.push(workPackage)
+					}
+				} catch (e) {
+					console.error('could not process workpackage data')
 				}
+
 			}
 		},
 	},

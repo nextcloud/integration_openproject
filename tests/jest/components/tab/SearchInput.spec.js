@@ -108,6 +108,24 @@ describe('SearchInput.vue tests', () => {
 				)
 				axiosSpy.mockRestore()
 			})
+			it('should log an error on invalid payload', async () => {
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [{
+							id: 123,
+						}],
+					}))
+				const consoleMock = jest.spyOn(console, 'error')
+					.mockImplementationOnce(() => {})
+				wrapper = mountSearchInput()
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('orga')
+				await localVue.nextTick()
+				expect(consoleMock).toHaveBeenCalledWith('could not process workpackage data')
+				consoleMock.mockRestore()
+				axiosSpy.mockRestore()
+			})
 		})
 
 		describe('search list', () => {
@@ -212,7 +230,7 @@ describe('SearchInput.vue tests', () => {
 	})
 })
 
-function mountSearchInput(fileInfo = null) {
+function mountSearchInput(fileInfo = { }) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
