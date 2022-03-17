@@ -24,6 +24,7 @@
 	<div class="projects">
 		<SearchInput v-if="!!requestUrl"
 			:file-info="fileInfo"
+			:linked-work-packages="workpackages"
 			@saved="onSaved" />
 		<div v-if="isLoading" class="icon-loading" />
 		<div v-else-if="workpackages.length > 0" id="openproject-linked-workpackages">
