@@ -32,7 +32,7 @@ export default {
 
 	computed: {
 		adminConfigNotOkMessage() {
-			return t('integration_openproject', 'Settings of the OpenProject integration app are not complete. Please contact your NextCloud administrator.')
+			return t('integration_openproject', 'Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator.')
 		},
 	},
 
