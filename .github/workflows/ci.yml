@@ -30,12 +30,6 @@ jobs:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
-
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -46,6 +40,22 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
+
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@v1.1
+        id: versions
+        with:
+          fallbackNode: '^14'
+          fallbackNpm: '^7'
+
+      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          cache: 'npm'
+
+      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
       - name: Install PHP Dependencies
         run: |

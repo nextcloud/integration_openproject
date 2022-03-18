@@ -22,16 +22,14 @@
 
 <template>
 	<div class="projects">
-		<SearchInput
-			:file-info="fileInfo"
+		<SearchInput :file-info="fileInfo"
 			@saved="onSaved" />
 		<div v-if="isLoading" class="icon-loading" />
 		<div v-else-if="workpackages.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
 			</div>
-			<WorkPackage
-				v-for="workpackage in workpackages"
+			<WorkPackage v-for="workpackage in workpackages"
 				:key="workpackage.id"
 				:workpackage="workpackage" />
 		</div>

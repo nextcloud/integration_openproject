@@ -1,6 +1,5 @@
 <template>
-	<button
-		v-if="adminConfigStatus"
+	<button v-if="adminConfigStatus"
 		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<span class="icon icon-external" />
@@ -87,10 +86,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .oauth-connect {
-  &--message {
-    font-size: .875rem;
-    text-align: center;
-    font-weight: 500;
-  }
+	&--message {
+		font-size: .875rem;
+		text-align: center;
+		font-weight: 500;
+	}
 }
 </style>

@@ -73,43 +73,43 @@ export default {
 
 <style scoped lang="scss">
 .empty-content {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  &--wrapper {
-    height: fit-content;
-  }
-  &--icon {
-    padding: 1vh 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    img {
-      height: 50px;
-      width: 50px;
-    }
-  }
-  &--title {
-    text-align: center;
-    font-size: 1.2rem;
-    line-height: 1.4rem;
-    font-weight: 600;
-    padding-top: 4px;
-    color: #333333;
-  }
-  &--subtitle {
-    font-size: .875rem;
-    font-weight: 400;
-    color: #6d6d6d;
-    line-height: 1rem;
-    padding: 8px 0;
-  }
-  &--connect-button {
-    padding: 1vh 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	&--wrapper {
+		height: fit-content;
+	}
+	&--icon {
+		padding: 1vh 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		img {
+			height: 50px;
+			width: 50px;
+		}
+	}
+	&--title {
+		text-align: center;
+		font-size: 1.2rem;
+		line-height: 1.4rem;
+		font-weight: 600;
+		padding-top: 4px;
+		color: #333333;
+	}
+	&--subtitle {
+		font-size: .875rem;
+		font-weight: 400;
+		color: #6d6d6d;
+		line-height: 1rem;
+		padding: 8px 0;
+	}
+	&--connect-button {
+		padding: 1vh 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 </style>
