@@ -126,16 +126,13 @@ class OpenProjectSearchProvider implements IProvider {
 
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
-		$refreshToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'refresh_token');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 
 		$searchEnabled = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'search_enabled', '0') === '1';
 		if ($accessToken === '' || !$searchEnabled) {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		$searchResults = $this->service->searchWorkPackage($openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $user->getUID(), $term);
+		$searchResults = $this->service->searchWorkPackage($user->getUID(), $term);
 		$searchResults = array_slice($searchResults, $offset, $limit);
 
 		if (isset($searchResults['error'])) {

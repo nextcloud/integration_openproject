@@ -85,7 +85,7 @@ class ConfigController extends Controller {
 
 		if (isset($values['token'])) {
 			if ($values['token'] && $values['token'] !== '') {
-				$result = $this->storeUserInfo($values['token']);
+				$result = $this->storeUserInfo();
 			} else {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
@@ -168,7 +168,7 @@ class ConfigController extends Controller {
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'refresh_token', $refreshToken);
 				// get user info
 				// ToDo check response for errors
-				$this->storeUserInfo($accessToken);
+				$this->storeUserInfo();
 				return new RedirectResponse(
 					$this->urlGenerator->linkToRoute('settings.PersonalSettings.index', ['section' => 'connected-accounts']) .
 					'?openprojectToken=success'
@@ -200,20 +200,10 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * @param string $accessToken
-	 * @return array{error?: string, user_name?: string, errorMesssage?: string}
+	 * @return array{error?: string, user_name?: string, statusCode?: int}
 	 */
-	private function storeUserInfo(string $accessToken): array {
-		$refreshToken = $this->config->getUserValue($this->userId, Application::APP_ID, 'refresh_token');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-
-		if (!$openprojectUrl || !OpenProjectAPIService::validateOpenProjectURL($openprojectUrl)) {
-			return ['error' => 'OpenProject URL is invalid'];
-		}
-
-		$info = $this->openprojectAPIService->request($openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $this->userId, 'users/me');
+	private function storeUserInfo(): array {
+		$info = $this->openprojectAPIService->request($this->userId, 'users/me');
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
@@ -223,9 +213,11 @@ class ConfigController extends Controller {
 			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
 			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
 			if (isset($info['statusCode']) && $info['statusCode'] === 404) {
-				$info['errorMessage'] = 'Not found';
+				$info['error'] = 'Not found';
 			} else {
-				$info['errorMessage'] = 'Invalid token';
+				if (!isset($info['error'])) {
+					$info['error'] = 'Invalid token';
+				}
 			}
 			return $info;
 		}
