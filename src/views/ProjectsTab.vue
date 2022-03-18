@@ -22,7 +22,8 @@
 
 <template>
 	<div class="projects">
-		<SearchInput :file-info="fileInfo"
+		<SearchInput v-if="!!requestUrl"
+			:file-info="fileInfo"
 			@saved="onSaved" />
 		<div v-if="isLoading" class="icon-loading" />
 		<div v-else-if="workpackages.length > 0" id="openproject-linked-workpackages">
@@ -36,8 +37,7 @@
 		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
-			:request-url="requestUrl"
-			:admin-config-status="adminConfigStatus" />
+			:request-url="requestUrl" />
 	</div>
 </template>
 
@@ -59,11 +59,10 @@ export default {
 	},
 	data: () => ({
 		error: '',
-		fileInfo: { },
+		fileInfo: {},
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
-		adminConfigStatus: loadState('integration_openproject', 'admin-config-status'),
 	}),
 	computed: {
 		isLoading() {

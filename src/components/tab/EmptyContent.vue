@@ -2,13 +2,14 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img :src="flowSvg" alt="flow">
+				<img v-if="!!requestUrl" :src="flowSvg" alt="flow">
+				<div v-else class="icon-error" />
 			</div>
-			<div v-if="adminConfigStatus" class="empty-content--title">
+			<div v-if="!!requestUrl" class="empty-content--title">
 				{{ emptyContentMessage }}
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :request-url="requestUrl" :admin-config-status="adminConfigStatus" />
+				<OAuthConnectButton :request-url="requestUrl" />
 			</div>
 		</div>
 	</div>
@@ -29,16 +30,12 @@ export default {
 			default: 'ok',
 		},
 		requestUrl: {
-			type: String,
+			type: [String, Boolean],
 			required: true,
 		},
 		errorMessage: {
 			type: String,
 			default: '',
-		},
-		adminConfigStatus: {
-			type: Boolean,
-			required: true,
 		},
 	},
 	data() {
@@ -73,7 +70,7 @@ export default {
 
 <style scoped lang="scss">
 .empty-content {
-	height: 100%;
+  height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -85,9 +82,12 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		img {
+		img, .icon-error {
 			height: 50px;
 			width: 50px;
+		}
+		.icon-error {
+			background-size: 50px;
 		}
 	}
 	&--title {

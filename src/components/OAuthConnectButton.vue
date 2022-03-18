@@ -1,5 +1,5 @@
 <template>
-	<button v-if="adminConfigStatus"
+	<button v-if="!!requestUrl"
 		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<span class="icon icon-external" />
@@ -20,12 +20,8 @@ export default {
 
 	props: {
 		requestUrl: {
-			type: String,
+			type: [String, Boolean],
 			required: true,
-		},
-		adminConfigStatus: {
-			type: Boolean,
-			default: false,
 		},
 	},
 
