@@ -2,7 +2,8 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img :src="flowSvg" alt="flow">
+				<img v-if="!!requestUrl" :src="flowSvg" alt="flow">
+				<div v-else class="icon-error" />
 			</div>
 			<div v-if="!!requestUrl" class="empty-content--title">
 				{{ emptyContentMessage }}
@@ -69,7 +70,7 @@ export default {
 
 <style scoped lang="scss">
 .empty-content {
-	height: 100%;
+  height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -81,9 +82,12 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		img {
+		img, .icon-error {
 			height: 50px;
 			width: 50px;
+		}
+		.icon-error {
+			background-size: 50px;
 		}
 	}
 	&--title {

@@ -92,7 +92,9 @@ export default {
 			return ''
 		},
 		emptyContentIcon() {
-			if (this.state === 'no-token') {
+			if (!this.requestUrl) {
+				return 'icon-error'
+			} else if (this.state === 'no-token') {
 				return 'icon-openproject'
 			} else if (this.state === 'error') {
 				return 'icon-close'
