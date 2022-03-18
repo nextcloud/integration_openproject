@@ -1,5 +1,5 @@
 <template>
-	<button v-if="adminConfigStatus"
+	<button v-if="!!requestUrl"
 		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<span class="icon icon-external" />

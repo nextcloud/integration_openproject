@@ -15,11 +15,26 @@ describe('ProjectsTab.vue Test', () => {
 	const emptyContentSelector = '#openproject-empty-content'
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
+	const searchInputStubSelector = 'searchinput-stub'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
 		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
 		wrapper = shallowMount(ProjectsTab, { localVue })
+	})
+	describe('search input existence', () => {
+		it('should not exist if the request url is not valid', async () => {
+			await wrapper.setData({
+				requestUrl: false,
+			})
+			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
+		})
+		it('should exist if the request url is valid', async () => {
+			await wrapper.setData({
+				requestUrl: 'https://open.project/',
+			})
+			expect(wrapper.find(searchInputStubSelector).exists()).toBeTruthy()
+		})
 	})
 	describe('loading icon', () => {
 		it('shows the loading icon during "loading" state', async () => {
