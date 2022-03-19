@@ -23,6 +23,7 @@
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "Connect to OpenProject" : "Připojeno k OpenProject",
+    "Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator." : "Nastavení aplikace pro napojení na OpenProject nejsou dokončena. Obraťte se na správce vámi využívané instance Nextcloud.",
     "Failed to save OpenProject OAuth state" : "Nepodařilo se uložit OAuth stav pro OpenProject",
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Connected as {user}" : "Připojeni jako {user}",

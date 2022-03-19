@@ -23,6 +23,7 @@
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "Connect to OpenProject" : "連接到 OpenProject",
+    "Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator." : "OpenProject 整合應用程式的設置不完整。請聯絡您的 Nextcloud 管理員。",
     "Failed to save OpenProject OAuth state" : "儲存 OpenProject OAuth 狀態失敗",
     "Enable navigation link" : "啟用導覽連結",
     "Connected as {user}" : "以 {user} 身份連線",

@@ -23,6 +23,7 @@
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
     "Connect to OpenProject" : "OpenProject bağlantısı kur",
+    "Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator." : "OpenProject bütünleştirme uygulamasının ayarları tamamlanmamış. Lütfen Nextcloud yöneticinizle görüşün.",
     "Failed to save OpenProject OAuth state" : "OpenProject OAuth durumu kaydedilemedi",
     "Enable navigation link" : "Gezinme bağlantısı kullanılsın",
     "Connected as {user}" : "{user} olarak bağlantı kuruldu",

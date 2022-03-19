@@ -25,6 +25,7 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Zapisano opcje administratora OpenProject",
     "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",
     "Connect to OpenProject" : "Połącz się z OpenProject",
+    "Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator." : "Ustawienia aplikacji integracyjnej OpenProject nie są kompletne. Skontaktuj się z administratorem Nextcloud.",
     "Failed to save OpenProject OAuth state" : "Nie udało się zapisać statusu OAuth OpenProject",
     "Enable navigation link" : "Włącz link nawigacyjny",
     "Connected as {user}" : "Połączono jako {user}",

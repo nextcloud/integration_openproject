@@ -23,6 +23,7 @@
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
     "Connect to OpenProject" : "Mit OpenProject verbinden",
+    "Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator." : "Die Einstellungen der OpenProject-Integrations-App sind nicht vollständig. Bitte wenden Sie sich an Ihren NextCloud-Administrator.",
     "Failed to save OpenProject OAuth state" : "Fehler beim Speichern des OpenProject OAuth-Status",
     "Enable navigation link" : "Navigations-Link aktivieren",
     "Connected as {user}" : "Verbunden als {user}",
