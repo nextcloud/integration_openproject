@@ -351,7 +351,7 @@ class OpenProjectAPIService {
 				'type' => implode(',', $headers['Content-Type']),
 			];
 		} catch (ServerException | ClientException | ConnectException | Exception $e) {
-			$this->logger->warning('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
+			$this->logger->debug('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($userName);
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];
