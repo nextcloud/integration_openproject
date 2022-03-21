@@ -26,11 +26,8 @@ exports[`SearchInput.vue tests work packages multiselect search list should disp
         in-progress
       </div>
     </div>
-    <div class="row__id">
-      #1 -
-    </div>
-    <div class="row__project">
-      test
+    <div class="row__workpackage">
+      #1 - test
     </div>
   </div>
   <div class="row">

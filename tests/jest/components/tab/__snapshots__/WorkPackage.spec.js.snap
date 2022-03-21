@@ -8,11 +8,8 @@ exports[`ProjectsTab.vue Test shows work packages information 1`] = `
         in-progress
       </div>
     </div>
-    <div class="row__id">
-      #1 -
-    </div>
-    <div class="row__project">
-      test
+    <div class="row__workpackage">
+      #1 - test
     </div>
   </div>
   <div class="row">

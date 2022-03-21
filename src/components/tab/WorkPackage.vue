@@ -60,7 +60,6 @@ export default {
 
 	.row {
 		display: flex;
-		align-items: center;
 		padding: 3px;
 		flex-wrap: wrap;
 
