@@ -845,9 +845,41 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return void
+	 * @return array<mixed>
 	 */
-	public function testGetOpenProjectOauthURLWithInvalidAdminConfig() {
+	public function getOpenProjectOauthURLDataProvider() {
+		return [
+			[
+				'clientId',
+				'clientSecret',
+				'openproject', // invalid oauth instance url
+			],
+			[
+				'clientId',
+				'clientSecret',
+				'', // empty oauth instance url
+			],
+			[
+				'clientId',
+				'', // empty client secret
+				'https://openproject',
+			],
+			[
+				'', // empty client id
+				'clientSecret',
+				'https://openproject',
+			],
+		];
+	}
+
+	/**
+	 * @return void
+	 *
+	 * @dataProvider getOpenProjectOauthURLDataProvider
+	 */
+	public function testGetOpenProjectOauthURLWithInvalidAdminConfig(
+		string $clientId, string $clientSecret, string $oauthInstanceUrl
+	) {
 		$url = $this->createMock(IURLGenerator::class);
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -855,8 +887,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-			)->willReturnOnConsecutiveCalls('clientid', 'clientsecret', 'Openproject');
+				['integration_openproject', 'oauth_instance_url']
+			)->willReturnOnConsecutiveCalls($clientId, $clientSecret, $oauthInstanceUrl);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('OpenProject admin config is not valid!');
