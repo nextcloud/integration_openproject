@@ -67,8 +67,8 @@ export default {
 		flex-wrap: wrap;
 
 		&__status {
-			padding: 5px;
-			width: 98px;
+			padding: 5px 10px;
+			width: fit-content;
 			height: 20px;
 			justify-content: center;
 			display: flex;
