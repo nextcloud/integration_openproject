@@ -1,6 +1,7 @@
 <template>
 	<div id="searchBar">
-		<Multiselect class="searchInput"
+		<Multiselect id="search-input"
+			class="searchInput"
 			:placeholder="placeholder"
 			:options="searchResults"
 			:user-select="true"
@@ -79,6 +80,15 @@ export default {
 			return ''
 		},
 	},
+	watch: {
+		fileInfo(oldFile, newFile) {
+			if (oldFile.id !== newFile.id) {
+				this.selectedId = []
+				this.resetState()
+				document.getElementById('search-input').value = ''
+			}
+		},
+	},
 	methods: {
 		resetState() {
 			this.searchResults = []
@@ -152,7 +162,6 @@ export default {
 				} catch (e) {
 					console.error('could not process workpackage data')
 				}
-
 			}
 		},
 	},

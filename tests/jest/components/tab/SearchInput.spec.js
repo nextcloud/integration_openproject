@@ -21,7 +21,7 @@ describe('SearchInput.vue tests', () => {
 
 	const stateSelector = '.stateMsg'
 	const searchListSelector = '.workpackage'
-	const inputSelector = '.multiselect__input'
+	const inputSelector = '#search-input'
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.icon-loading-small'
 	const multiSelectItemSelector = '.multiselect__option'
@@ -227,10 +227,34 @@ describe('SearchInput.vue tests', () => {
 				showErrorSpy.mockRestore()
 			})
 		})
+
+		describe('fileInfo prop', () => {
+			it('should reset the input state when the prop is changed', async () => {
+				jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('orga')
+				const spyDocument = jest.spyOn(document, 'getElementById')
+					.mockImplementationOnce(() => ({
+						value: 'orga',
+					}))
+				await wrapper.setProps({
+					fileInfo: { id: 222, name: 'file2.txt' },
+				})
+				expect(spyDocument).toBeCalledWith('search-input')
+				expect(wrapper.vm.selectedId).toMatchObject([])
+				expect(wrapper.vm.searchResults).toMatchObject([])
+				expect(wrapper.vm.state).toBe('ok')
+			})
+		})
 	})
 })
 
-function mountSearchInput(fileInfo = { }) {
+function mountSearchInput(fileInfo = {}) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
