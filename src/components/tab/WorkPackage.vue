@@ -7,11 +7,8 @@
 					{{ workpackage.statusTitle }}
 				</div>
 			</div>
-			<div class="row__id">
-				#{{ workpackage.id }} -
-			</div>
-			<div class="row__project">
-				{{ workpackage.project }}
+			<div class="row__workpackage">
+				#{{ workpackage.id }} - {{ workpackage.project }}
 			</div>
 		</div>
 		<div class="row">
@@ -76,6 +73,7 @@ export default {
 			text-align: center;
 			font-size: 0.75rem;
 			border-radius: 2px;
+			margin-right: 4px;
 
 			&__title {
 				mix-blend-mode: multiply;
@@ -85,20 +83,11 @@ export default {
 			}
 		}
 
-		&__id {
-			padding: 5px;
+		&__workpackage {
 			color: #878787;
 			font-size: 0.8rem;
 			height: 20px;
-			line-height: 14px;
-		}
-
-		&__project {
-			padding: 5px 5px 5px 1px;
-			color: #878787;
-			height: 20px;
-			line-height: 14px;
-			font-size: 0.8rem;
+			line-height: 20px;
 		}
 
 		&__subject {
@@ -116,6 +105,7 @@ export default {
 				font-size: 0.75rem;
 				font-weight: bold;
 				text-transform: uppercase;
+				margin-right: 4px;
 			}
 		}
 

@@ -12,11 +12,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
           open
         </div>
       </div>
-      <div class="row__id">
-        #123 -
-      </div>
-      <div class="row__project">
-        a big project
+      <div class="row__workpackage">
+        #123 - a big project
       </div>
     </div>
     <div class="row">
@@ -44,11 +41,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
           प्रगति हुदैछ
         </div>
       </div>
-      <div class="row__id">
-        #589 -
-      </div>
-      <div class="row__project">
-        नेपालको विकास गर्ने
+      <div class="row__workpackage">
+        #589 - नेपालको विकास गर्ने
       </div>
     </div>
     <div class="row">
@@ -84,11 +78,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
           open
         </div>
       </div>
-      <div class="row__id">
-        #123 -
-      </div>
-      <div class="row__project">
-        a big project
+      <div class="row__workpackage">
+        #123 - a big project
       </div>
     </div>
     <div class="row">
@@ -116,11 +107,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
           प्रगति हुदैछ
         </div>
       </div>
-      <div class="row__id">
-        #589 -
-      </div>
-      <div class="row__project">
-        नेपालको विकास गर्ने
+      <div class="row__workpackage">
+        #589 - नेपालको विकास गर्ने
       </div>
     </div>
     <div class="row">
@@ -156,11 +144,8 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
           in-progress
         </div>
       </div>
-      <div class="row__id">
-        #1 -
-      </div>
-      <div class="row__project">
-        test
+      <div class="row__workpackage">
+        #1 - test
       </div>
     </div>
     <div class="row">
