@@ -116,7 +116,6 @@ class OpenProjectAPIService {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
-			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
@@ -127,9 +126,7 @@ class OpenProjectAPIService {
 				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
 				if ($myOPUserId !== '') {
 					$myOPUserId = (int) $myOPUserId;
-					$notifications = $this->getNotifications(
-						$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, $lastNotificationCheck
-					);
+					$notifications = $this->getNotifications($userId, $lastNotificationCheck);
 					if (!isset($notifications['error']) && count($notifications) > 0) {
 						$newLastNotificationCheck = $notifications[0]['updatedAt'];
 						$this->config->setUserValue($userId, Application::APP_ID, 'last_notification_check', $newLastNotificationCheck);
@@ -198,19 +195,14 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param string $url
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param ?string $since
 	 * @param ?int $limit
 	 * @return array<mixed>
 	 */
-	public function getNotifications(string $url, string $accessToken,
-									string $refreshToken, string $clientID, string $clientSecret, string $userId,
-									?string $since = null, ?int $limit = null): array {
+	public function getNotifications(
+		string $userId, ?string $since = null, ?int $limit = null
+	): array {
 		if ($since) {
 			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $this->now() . '"]}},{"status":{"operator":"!","values":["14"]}}]';
 		} else {
@@ -226,9 +218,7 @@ class OpenProjectAPIService {
 			'sortBy' => '[["updatedAt", "desc"]]',
 			// 'limit' => $limit,
 		];
-		$result = $this->request(
-			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
-		);
+		$result = $this->request($userId, 'work_packages', $params);
 		if (isset($result['error'])) {
 			return $result;
 		} elseif (!isset($result['_embedded']['elements'])) {
@@ -243,11 +233,6 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param string $url
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string|null $query
 	 * @param int|null $fileId
@@ -257,9 +242,9 @@ class OpenProjectAPIService {
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
 	 */
-	public function searchWorkPackage(string $url, string $accessToken,
-							string $refreshToken, string $clientID, string $clientSecret, string $userId,
-							string $query = null, int $fileId = null, int $offset = 0, int $limit = 5): array {
+	public function searchWorkPackage(
+		string $userId, string $query = null, int $fileId = null, int $offset = 0, int $limit = 5
+	): array {
 		$resultsById = [];
 		$filters = [];
 
@@ -276,9 +261,7 @@ class OpenProjectAPIService {
 			'sortBy' => '[["updatedAt", "desc"]]',
 			// 'limit' => $limit,
 		];
-		$searchDescResult = $this->request(
-			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
-		);
+		$searchDescResult = $this->request($userId, 'work_packages', $params);
 
 		if (isset($searchDescResult['error'])) {
 			return $searchDescResult;
@@ -300,9 +283,7 @@ class OpenProjectAPIService {
 				'sortBy' => '[["updatedAt", "desc"]]',
 				// 'limit' => $limit,
 			];
-			$searchSubjectResult = $this->request(
-			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages', $params
-		);
+			$searchSubjectResult = $this->request($userId, 'work_packages', $params);
 
 			if (isset($searchSubjectResult['error'])) {
 				return $searchSubjectResult;
@@ -359,11 +340,6 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param string $openprojectUrl
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $endPoint
 	 * @param array<mixed> $params
@@ -371,9 +347,16 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	public function request(string $openprojectUrl, string $accessToken, string $refreshToken,
-							string $clientID, string $clientSecret, string $userId,
+	public function request(string $userId,
 							string $endPoint, array $params = [], string $method = 'GET'): array {
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		if (!$openprojectUrl || !OpenProjectAPIService::validateOpenProjectURL($openprojectUrl)) {
+			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
+		}
 		try {
 			$url = $openprojectUrl . '/api/v3/' . $endPoint;
 			$options = [
@@ -433,9 +416,7 @@ class OpenProjectAPIService {
 					$accessToken = $result['access_token'];
 					$this->config->setUserValue($userId, Application::APP_ID, 'token', $accessToken);
 					// retry the request with new access token
-					return $this->request(
-						$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, $endPoint, $params, $method
-					);
+					return $this->request($userId, $endPoint, $params, $method);
 				}
 			}
 			// try to get the error in the response
@@ -520,25 +501,12 @@ class OpenProjectAPIService {
 	/**
 	 * authenticated request to get status of a work package
 	 *
-	 * @param string $url
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $statusId
 	 * @return string[]
 	 */
-	public function getOpenProjectWorkPackageStatus(
-		string $url,
-		string $accessToken,
-		string $refreshToken,
-		string $clientID,
-		string $clientSecret,
-		string $userId,
-		string $statusId): array {
-		$result = $this->request(
-			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'statuses/' . $statusId);
+	public function getOpenProjectWorkPackageStatus(string $userId, string $statusId): array {
+		$result = $this->request($userId, 'statuses/' . $statusId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
@@ -548,26 +516,12 @@ class OpenProjectAPIService {
 	/**
 	 * authenticated request to get status of a work package
 	 *
-	 * @param string $url
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $typeId
 	 * @return string[]
 	 */
-	public function getOpenProjectWorkPackageType(
-		string $url,
-		string $accessToken,
-		string $refreshToken,
-		string $clientID,
-		string $clientSecret,
-		string $userId,
-		string $typeId
-	): array {
-		$result = $this->request(
-			$url, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'types/' . $typeId);
+	public function getOpenProjectWorkPackageType(string $userId, string $typeId): array {
+		$result = $this->request($userId, 'types/' . $typeId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
@@ -627,11 +581,6 @@ class OpenProjectAPIService {
 	 * @return int
 	 */
 	public function linkWorkPackageToFile(
-		string $openprojectUrl,
-		string $accessToken,
-		string $refreshToken,
-		string $clientID,
-		string $clientSecret,
 		int $workpackageId,
 		int $fileId,
 		string $fileName,
@@ -669,7 +618,7 @@ class OpenProjectAPIService {
 
 		$params['body'] = \Safe\json_encode($body);
 		$result = $this->request(
-			$openprojectUrl, $accessToken, $refreshToken, $clientID, $clientSecret, $userId, 'work_packages/' . $workpackageId. '/file_links', $params, 'POST'
+			$userId, 'work_packages/' . $workpackageId. '/file_links', $params, 'POST'
 		);
 
 		if (isset($result['error'])) {

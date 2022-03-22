@@ -125,9 +125,7 @@ class OpenProjectAPIController extends Controller {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
-		$result = $this->openprojectAPIService->getNotifications(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $since, 7
-		);
+		$result = $this->openprojectAPIService->getNotifications($this->userId, $since, 7);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
@@ -153,11 +151,6 @@ class OpenProjectAPIController extends Controller {
 			);
 		}
 		$result = $this->openprojectAPIService->searchWorkPackage(
-			$this->openprojectUrl,
-			$this->accessToken,
-			$this->refreshToken,
-			$this->clientID,
-			$this->clientSecret,
 			$this->userId,
 			$searchQuery,
 			$fileId
@@ -192,11 +185,6 @@ class OpenProjectAPIController extends Controller {
 
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
-				$this->openprojectUrl,
-				$this->accessToken,
-				$this->refreshToken,
-				$this->clientID,
-				$this->clientSecret,
 				$workpackageId,
 				$fileId,
 				$fileName,
@@ -227,7 +215,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+			$this->userId, $id
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
@@ -251,7 +239,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken, $this->clientID, $this->clientSecret, $this->userId, $id
+			$this->userId, $id
 		);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);

@@ -67,12 +67,6 @@ class ConfigControllerTest extends TestCase {
 		$apiServiceMock
 			->method('request')
 			->with(
-				'http://openproject.org',
-				'oAuthAccessToken',
-				'oauth',
-				'oAuthRefreshToken',
-				'clientID',
-				'clientSecret',
 				'testUser',
 				'users/me'
 			)

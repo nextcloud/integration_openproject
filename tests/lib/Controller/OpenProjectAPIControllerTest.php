@@ -214,11 +214,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('searchWorkPackage')
 			->with(
 				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
 				$searchQuery,
 				$fileId
 			)
