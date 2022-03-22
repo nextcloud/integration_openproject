@@ -153,7 +153,8 @@ class OpenProjectAPIController extends Controller {
 		$result = $this->openprojectAPIService->searchWorkPackage(
 			$this->userId,
 			$searchQuery,
-			$fileId
+			$fileId,
+			$this->urlGenerator->getBaseUrl()
 		);
 
 		if (!isset($result['error'])) {

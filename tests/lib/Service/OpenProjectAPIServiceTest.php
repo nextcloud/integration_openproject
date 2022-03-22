@@ -333,14 +333,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				]
@@ -353,6 +353,55 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedResult, $result);
 	}
 
+	/**
+	 * @param array<mixed> $descriptionResponse
+	 * @param array<mixed> $subjectResponse
+	 * @param array<mixed> $expectedResult
+	 * @return void
+	 * @dataProvider searchWorkPackageDataProvider
+	 */
+	public function testSearchWorkPackageQueryAndStorage(
+		array $descriptionResponse, array $subjectResponse, array $expectedResult
+	) {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->withConsecutive(
+				[
+					'user', 'work_packages',
+					[
+						'filters' => '[' .
+										'{"description":' .
+											'{"operator":"~","values":["search query"]}'.
+										'},'.
+										'{"status":{"operator":"o","values":[]}},'.
+										'{"linkable_to_storage_url":'.
+											'{"operator":"=","values":["https:\/\/nc.my-server.org"]}}'.
+									']',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				],
+				[
+					'user', 'work_packages',
+					[
+						'filters' => '[' .
+										'{"subject":' .
+											'{"operator":"~","values":["search query"]}'.
+										'},'.
+										'{"status":{"operator":"o","values":[]}},'.
+										'{"linkable_to_storage_url":'.
+											'{"operator":"=","values":["https:\/\/nc.my-server.org"]}}'.
+									']',
+						'sortBy' => '[["updatedAt", "desc"]]',
+					]
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				$descriptionResponse,
+				$subjectResponse
+			);
+		$result = $service->searchWorkPackage('user', 'search query', null, 'https://nc.my-server.org');
+		$this->assertSame($expectedResult, $result);
+	}
 	/**
 	 * @return void
 	 */
@@ -385,14 +434,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"!","values":["14"]}}]',
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
 				]

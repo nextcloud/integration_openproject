@@ -236,6 +236,7 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param string|null $query
 	 * @param int|null $fileId
+	 * @param string|null $storageUrl
 	 * @param int $offset
 	 * @param int $limit
 	 * @return array<mixed>
@@ -243,8 +244,18 @@ class OpenProjectAPIService {
 	 * @throws \Safe\Exceptions\JsonException
 	 */
 	public function searchWorkPackage(
-		string $userId, string $query = null, int $fileId = null, int $offset = 0, int $limit = 5
+		string $userId,
+		string $query = null,
+		int $fileId = null,
+		string $storageUrl = null,
+		int $offset = 0,
+		int $limit = 5
 	): array {
+		$linkableStorageFilter = [
+			'linkable_to_storage_url' =>
+				['operator' => '=', 'values' => [$storageUrl]]
+		];
+		$openStatusFilter = ['status' => ['operator' => 'o', 'values' => []]];
 		$resultsById = [];
 		$filters = [];
 
@@ -254,7 +265,10 @@ class OpenProjectAPIService {
 		}
 		if ($query !== null) {
 			$filters[] = ['description' => ['operator' => '~', 'values' => [$query]]];
-			$filters[] = ['status' => ['operator' => '!', 'values' => ['14']]];
+			$filters[] = $openStatusFilter;
+			if ($storageUrl !== null) {
+				$filters[] = $linkableStorageFilter;
+			}
 		}
 		$params = [
 			'filters' => \Safe\json_encode($filters),
@@ -276,8 +290,11 @@ class OpenProjectAPIService {
 		if ($query !== null) {
 			$filters = [
 				['subject' => ['operator' => '~', 'values' => [$query]]],
-				['status' => ['operator' => '!', 'values' => ['14']]]
+				$openStatusFilter
 			];
+			if ($storageUrl !== null) {
+				$filters[] = $linkableStorageFilter;
+			}
 			$params = [
 				'filters' => \Safe\json_encode($filters),
 				'sortBy' => '[["updatedAt", "desc"]]',
