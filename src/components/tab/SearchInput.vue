@@ -12,7 +12,7 @@
 			:loading="isStateLoading"
 			:preselect-first="true"
 			:preserve-search="true"
-			@search-change="makeSearchRequest"
+			@search-change="asyncFind"
 			@change="linkWorkPackageToFile">
 			<template #option="{option}">
 				<WorkPackage :key="option.id"
@@ -37,6 +37,8 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
 import { showError } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper'
+
+const _ = require('lodash')
 
 const STATE_OK = 'ok'
 const STATE_ERROR = 'error'
@@ -110,6 +112,23 @@ export default {
 				this.state = STATE_ERROR
 			}
 		},
+		async asyncFind(query) {
+			// save current query to check if we display
+			// recommendations or search results
+			console.log(query)
+			query = query.trim()
+			if (query) {
+				this.resetState()
+				if (query.length <= SEARCH_CHAR_LIMIT) return
+				await this.debounceGetWorkPackages(query)
+			}
+		},
+		/**
+		 * debounce get work packages to avoid too many requests
+		 */
+		debounceGetWorkPackages: _.debounce(function(...args) {
+			return this.makeSearchRequest(...args)
+		}, 500),
 		async linkWorkPackageToFile(selectedOption) {
 			const params = new URLSearchParams()
 			params.append('workpackageId', selectedOption.id)
@@ -132,8 +151,6 @@ export default {
 			}
 		},
 		async makeSearchRequest(search) {
-			this.resetState()
-			if (search.length <= SEARCH_CHAR_LIMIT) return
 			this.state = STATE_LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}

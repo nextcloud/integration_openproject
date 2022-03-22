@@ -41,13 +41,16 @@ export const workpackageHelper = {
 		const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
 		const userName = workPackage._links.assignee.title
+
 		const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
 			+ encodeURIComponent('userId')
 			+ '=' + userId
 			+ '&' + encodeURIComponent('userName')
 			+ '=' + userName
 		const statusColor = await this.getColorAttributes('/apps/integration_openproject/statuses/', statusId)
+		console.log(statusColor)
 		const typeColor = await this.getColorAttributes('/apps/integration_openproject/types/', typeId)
+
 		return {
 			id: workPackage.id,
 			subject: workPackage.subject,
