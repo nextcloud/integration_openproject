@@ -1,6 +1,6 @@
 <template>
 	<div id="searchBar">
-		<Multiselect id="search-input"
+		<Multiselect ref="workPackageMultiSelect"
 			class="searchInput"
 			:placeholder="placeholder"
 			:options="searchResults"
@@ -85,7 +85,10 @@ export default {
 			if (oldFile.id !== newFile.id) {
 				this.selectedId = []
 				this.resetState()
-				document.getElementById('search-input').value = ''
+				// FIXME: https://github.com/shentao/vue-multiselect/issues/633
+				if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
+					this.$refs.workPackageMultiSelect.$refs.VueMultiselect.search = ''
+				}
 			}
 		},
 	},
