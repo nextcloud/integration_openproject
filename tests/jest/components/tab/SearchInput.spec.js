@@ -227,10 +227,31 @@ describe('SearchInput.vue tests', () => {
 				showErrorSpy.mockRestore()
 			})
 		})
+
+		describe('fileInfo prop', () => {
+			it('should reset the input state when the prop is changed', async () => {
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				await wrapper.find(inputSelector).setValue('org')
+				await wrapper.setData({
+					searchResults: [{
+						id: 999,
+					}],
+					selectedId: ['999'],
+					state: 'pending',
+				})
+				await wrapper.setProps({
+					fileInfo: { id: 222, name: 'file2.txt' },
+				})
+				const inputField = wrapper.find(inputSelector)
+				expect(inputField.element.value).toBe('')
+				expect(wrapper.vm.selectedId).toMatchObject([])
+				expect(wrapper.vm.searchResults).toMatchObject([])
+				expect(wrapper.vm.state).toBe('ok')
+			})
+		})
 	})
 })
-
-function mountSearchInput(fileInfo = { }) {
+function mountSearchInput(fileInfo = {}) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {

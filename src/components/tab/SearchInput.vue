@@ -1,6 +1,7 @@
 <template>
 	<div id="searchBar">
-		<Multiselect class="searchInput"
+		<Multiselect ref="workPackageMultiSelect"
+			class="searchInput"
 			:placeholder="placeholder"
 			:options="searchResults"
 			:user-select="true"
@@ -79,6 +80,18 @@ export default {
 			return ''
 		},
 	},
+	watch: {
+		fileInfo(oldFile, newFile) {
+			if (oldFile.id !== newFile.id) {
+				this.selectedId = []
+				this.resetState()
+				// FIXME: https://github.com/shentao/vue-multiselect/issues/633
+				if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
+					this.$refs.workPackageMultiSelect.$refs.VueMultiselect.search = ''
+				}
+			}
+		},
+	},
 	methods: {
 		resetState() {
 			this.searchResults = []
@@ -152,7 +165,6 @@ export default {
 				} catch (e) {
 					console.error('could not process workpackage data')
 				}
-
 			}
 		},
 	},
