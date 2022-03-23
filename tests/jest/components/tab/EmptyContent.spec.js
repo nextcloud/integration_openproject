@@ -30,7 +30,7 @@ describe('EmptyContent.vue Test', () => {
 		})
 		it.each([{
 			state: 'no-token',
-			message: 'No OpenProject account connected',
+			message: 'No connection with OpenProject',
 		}, {
 			state: 'error',
 			message: 'Unexpected Error',
@@ -42,7 +42,7 @@ describe('EmptyContent.vue Test', () => {
 			message: 'Could not fetch work packages from OpenProject',
 		}, {
 			state: 'ok',
-			message: 'No workspaces linked yet',
+			message: 'No OpenProject links yet To add a link, use the search bar above to find the desired work package',
 		}, {
 			state: 'something else',
 			message: 'invalid state',
