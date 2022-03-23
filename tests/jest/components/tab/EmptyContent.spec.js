@@ -5,7 +5,7 @@ const localVue = createLocalVue()
 
 describe('EmptyContent.vue Test', () => {
 	let wrapper
-	const emptyContentMessageSelector = '.empty-content--title'
+	const emptyContentMessageSelector = '.empty-content--message'
 	const connectButtonSelector = 'oauthconnectbutton-stub'
 
 	describe('connect button', () => {
@@ -49,7 +49,7 @@ describe('EmptyContent.vue Test', () => {
 		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
 			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
-			expect(wrapper.find(emptyContentMessageSelector).text()).toMatch(cases.message)
+			expect(wrapper.find(emptyContentMessageSelector).text().replace(/[\t\n\r]/gm, '')).toMatch(cases.message)
 		})
 	})
 })

@@ -6,7 +6,14 @@
 				<img v-else-if="!!requestUrl && state === 'ok'" :src="addLinkSvg" alt="add work package">
 				<img v-else :src="noConnectionSvg" alt="error">
 			</div>
-			<div v-if="!!requestUrl" class="empty-content--title" v-html="emptyContentMessage" />
+			<div v-if="!!requestUrl" class="empty-content--message">
+				<div class="empty-content--message--title">
+					{{ emptyContentTitleMessage }}
+				</div>
+				<div v-if="emptyContentSubTitleMessage !== ''" class="empty-content--message--sub-title">
+					{{ emptyContentSubTitleMessage }}
+				</div>
+			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
 				<OAuthConnectButton :request-url="requestUrl" />
 			</div>
@@ -16,6 +23,7 @@
 
 <script>
 import { generateUrl } from '@nextcloud/router'
+import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton'
 
 export default {
@@ -51,24 +59,25 @@ export default {
 		showConnectButton() {
 			return ['error', 'no-token'].includes(this.state)
 		},
-		emptyContentMessage() {
+		emptyContentTitleMessage() {
 			if (this.state === 'no-token') {
-				return '<div>No connection with OpenProject</div>'
+				return t('integration_openproject', 'No connection with OpenProject')
 			} else if (this.state === 'connection-error') {
-				return '<div>Error connecting to OpenProject</div>'
+				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'failed-fetching-workpackages') {
-				return '<div>Could not fetch work packages from OpenProject</div>'
+				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
 			} else if (this.state === 'error') {
-				return '<div>Unexpected Error</div>'
+				return t('integration_openproject', 'Unexpected Error')
 			} else if (this.state === 'ok') {
-				return '<div>'
-						+ '<div style="font-weight: 600; padding-bottom: 10px;">No OpenProject links yet </div>'
-						+ '<div style="font-weight: 400; font-size: 1rem; color: #878787; padding: 0px 18px 0px 18px;">'
-						+ 'To add a link, use the search bar above to find the desired work package'
-					    + '</div>'
-					    + '</div>'
+				return t('integration_openproject', 'No OpenProject links yet')
 			}
 			return 'invalid state'
+		},
+		emptyContentSubTitleMessage() {
+			if (this.state === 'ok') {
+				return t('integration_openproject', 'To add a link, use the search bar above to find the desired work package')
+			}
+			return ''
 		},
 	},
 }
@@ -93,20 +102,22 @@ export default {
 			width: 50px;
 		}
 	}
-	&--title {
+	&--message {
 		text-align: center;
-		font-size: 1.2rem;
-		line-height: 1.4rem;
-		font-weight: 600;
-		padding: 4px 12px 12px 12px;
-		color: #333333;
-	}
-	&--subtitle {
-		font-size: .875rem;
-		font-weight: 400;
-		color: #6d6d6d;
-		line-height: 1rem;
-		padding: 8px 0;
+		&--title {
+			font-size: 1.2rem;
+			line-height: 1.4rem;
+			font-weight: 600;
+			padding: 4px 12px 12px 12px;
+			color: #333333;
+		}
+		&--sub-title{
+			font-size: 1rem;
+			text-align: center;
+			font-weight: 400;
+			color: #878787;
+			padding: 0px 18px 0px 18px;
+		}
 	}
 	&--connect-button {
 		padding: 1vh 0;
