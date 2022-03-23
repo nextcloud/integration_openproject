@@ -133,10 +133,8 @@ export default {
 			}
 		},
 		async makeSearchRequest(search) {
-			if (search.length <= SEARCH_CHAR_LIMIT) {
-				this.resetState()
-				return
-			}
+			this.resetState()
+			if (search.length <= SEARCH_CHAR_LIMIT) return
 			this.state = STATE_LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}

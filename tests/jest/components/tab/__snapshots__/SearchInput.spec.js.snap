@@ -49,3 +49,19 @@ exports[`SearchInput.vue tests work packages multiselect search list should disp
   </div>
 </div>
 `;
+
+exports[`SearchInput.vue tests work packages multiselect search list should only use the options from the latest search response 1`] = `
+Object {
+  "workpackage": Object {
+    "assignee": "some assignee",
+    "id": 1,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=&userName=some assignee",
+    "project": "some project",
+    "statusCol": "",
+    "statusTitle": "some status",
+    "subject": "some subject",
+    "typeCol": "",
+    "typeTitle": "some type",
+  },
+}
+`;

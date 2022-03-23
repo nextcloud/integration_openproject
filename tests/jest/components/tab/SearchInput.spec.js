@@ -5,6 +5,7 @@ import * as dialogs from '@nextcloud/dialogs'
 
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
+import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 
 jest.mock('@nextcloud/axios')
@@ -15,6 +16,28 @@ jest.mock('@nextcloud/l10n', () => ({
 }))
 
 const localVue = createLocalVue()
+const simpleWorkPackageSearchResponse = [{
+	id: 1,
+	subject: 'some subject',
+	_links: {
+		assignee: {
+			title: 'some assignee',
+			href: 'http://href/0/',
+		},
+		status: {
+			title: 'some status',
+			href: 'http://href/1/',
+		},
+		type: {
+			title: 'some type',
+			href: 'http://href/2/',
+		},
+		project: {
+			title: 'some project',
+			href: 'http://href/3/',
+		},
+	},
+}]
 
 describe('SearchInput.vue tests', () => {
 	let wrapper
@@ -155,6 +178,28 @@ describe('SearchInput.vue tests', () => {
 				const assignee = wrapper.find(assigneeSelector)
 				expect(assignee.exists()).toBeFalsy()
 			})
+			it.only('should only use the options from the latest search response', async () => {
+				await wrapper.setData({
+					searchResults: workPackageSearchReqResponse,
+				})
+				expect(wrapper.findAll('workpackage-stub').length).toBe(1)
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: simpleWorkPackageSearchResponse,
+					}))
+					.mockImplementation(() => Promise.resolve({
+						data: [], status: 200,
+					}))
+				await wrapper.find(inputSelector).setValue('orga')
+				for (let i = 0; i <= 10; i++) {
+					await wrapper.vm.$nextTick()
+				}
+				const workPackages = wrapper.findAll('workpackage-stub')
+				expect(workPackages.length).toBe(simpleWorkPackageSearchResponse.length)
+				expect(workPackages.at(0).props()).toMatchSnapshot()
+				axiosSpy.mockRestore()
+			})
 		})
 
 		describe('loading icon', () => {
@@ -262,6 +307,7 @@ function mountSearchInput(fileInfo = {}) {
 		},
 		stubs: {
 			Avatar: true,
+			WorkPackage: true,
 		},
 		propsData: {
 			fileInfo,
