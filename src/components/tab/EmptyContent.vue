@@ -10,7 +10,7 @@
 				<div class="empty-content--message--title">
 					{{ emptyContentTitleMessage }}
 				</div>
-				<div v-if="emptyContentSubTitleMessage !== ''" class="empty-content--message--sub-title">
+				<div v-if="!!emptyContentSubTitleMessage" class="empty-content--message--sub-title">
 					{{ emptyContentSubTitleMessage }}
 				</div>
 			</div>
@@ -113,10 +113,11 @@ export default {
 		}
 		&--sub-title{
 			font-size: 1rem;
+			line-height: 1.4rem;
 			text-align: center;
 			font-weight: 400;
 			color: #878787;
-			padding: 0px 18px 0px 18px;
+			padding: 0px 18px;
 		}
 	}
 	&--connect-button {

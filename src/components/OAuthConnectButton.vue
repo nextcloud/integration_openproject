@@ -88,7 +88,8 @@ export default {
 		text-align: center;
 		font-weight: 400;
 		color: #878787;
-		padding: 0px 18px 0px 18px;
+		padding: 0px 18px;
+		line-height: 1.4rem;
 	}
 }
 </style>
