@@ -16,6 +16,7 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
+	const linkedWPActionMenuSelector = '.linked-workpackages--menu'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -281,6 +282,17 @@ describe('ProjectsTab.vue Test', () => {
 			expect(workPackages).toMatchSnapshot()
 		})
 	})
+
+	describe('action menu', () => {
+		it('should display the action menu in linked work packages', async () => {
+			wrapper = mountWrapper()
+			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
+			const linkedWPActionMenu = wrapper.find(linkedWPActionMenuSelector)
+			await linkedWPActionMenu.trigger('click')
+			expect(linkedWPActionMenu.exists()).toBeTruthy()
+			expect(linkedWPActionMenu).toMatchSnapshot()
+		})
+	})
 })
 
 function mountWrapper() {
@@ -295,6 +307,8 @@ function mountWrapper() {
 		stubs: {
 			SearchInput: true,
 			Avatar: true,
+			Actions: true,
+			ActionButton: true,
 		},
 		data: () => ({
 			error: '',

@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ProjectsTab.vue Test action menu should display the action menu in linked work packages 1`] = `
+<actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+  <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+    Open in OpenProject
+  </actionbutton-stub>
+  <actionbutton-stub icon="icon-delete" title="" arialabel="">
+    Delete link
+  </actionbutton-stub>
+</actions-stub>
+`;
+
 exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`] = `
 <div class="" id="openproject-linked-workpackages">
   <div class="existing-relations">
@@ -35,13 +46,14 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
         </div>
       </div>
     </div>
-    <div data-v-eff40d78="" class="action-item" menu-align="right">
-      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
-        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-bbwbe" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
-
-          </button></div>
-      </div>
-    </div>
+    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+        Open in OpenProject
+      </actionbutton-stub>
+      <actionbutton-stub icon="icon-delete" title="" arialabel="">
+        Delete link
+      </actionbutton-stub>
+    </actions-stub>
   </div>
   <div class="linked-workpackages">
     <div class="workpackage">
@@ -73,13 +85,14 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
         </div>
       </div>
     </div>
-    <div data-v-eff40d78="" class="action-item" menu-align="right">
-      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
-        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-frplv" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
-
-          </button></div>
-      </div>
-    </div>
+    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+        Open in OpenProject
+      </actionbutton-stub>
+      <actionbutton-stub icon="icon-delete" title="" arialabel="">
+        Delete link
+      </actionbutton-stub>
+    </actions-stub>
   </div>
 </div>
 `;
@@ -119,13 +132,14 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
         </div>
       </div>
     </div>
-    <div data-v-eff40d78="" class="action-item" menu-align="right">
-      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
-        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-linln" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
-
-          </button></div>
-      </div>
-    </div>
+    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+        Open in OpenProject
+      </actionbutton-stub>
+      <actionbutton-stub icon="icon-delete" title="" arialabel="">
+        Delete link
+      </actionbutton-stub>
+    </actions-stub>
   </div>
   <div class="linked-workpackages">
     <div class="workpackage">
@@ -157,13 +171,14 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
         </div>
       </div>
     </div>
-    <div data-v-eff40d78="" class="action-item" menu-align="right">
-      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
-        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-tkcff" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
-
-          </button></div>
-      </div>
-    </div>
+    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+        Open in OpenProject
+      </actionbutton-stub>
+      <actionbutton-stub icon="icon-delete" title="" arialabel="">
+        Delete link
+      </actionbutton-stub>
+    </actions-stub>
   </div>
 </div>
 `;
@@ -203,13 +218,14 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
         </div>
       </div>
     </div>
-    <div data-v-eff40d78="" class="action-item" menu-align="right">
-      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
-        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-nquxd" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
-
-          </button></div>
-      </div>
-    </div>
+    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
+      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
+        Open in OpenProject
+      </actionbutton-stub>
+      <actionbutton-stub icon="icon-delete" title="" arialabel="">
+        Delete link
+      </actionbutton-stub>
+    </actions-stub>
   </div>
 </div>
 `;

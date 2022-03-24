@@ -37,7 +37,7 @@
 				<WorkPackage
 					:workpackage="workpackage" 
 					:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
-				<Actions menu-align="right">
+				<Actions class="linked-workpackages--menu" menu-align="right">
 					<ActionButton icon="icon-openproject">
 						Open in OpenProject
 					</ActionButton>
