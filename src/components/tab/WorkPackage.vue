@@ -2,7 +2,7 @@
 	<div class="workpackage">
 		<div class="row">
 			<div class="row__status"
-				 :style="{'background-color':workpackage.statusCol}">
+				:style="{'background-color':workpackage.statusCol}">
 				<div class="row__status__title">
 					{{ workpackage.statusTitle }}
 				</div>
@@ -23,18 +23,16 @@
 			<div v-if="workpackage.assignee" class="row__assignee">
 				<div class="row__assignee__avatar">
 					<Avatar class="item-avatar"
-							:size="23"
-							:url="workpackage.picture"
-							:user="workpackage.assignee"
-							:display-name="workpackage.assignee"/>
+						:size="23"
+						:url="workpackage.picture"
+						:user="workpackage.assignee"
+						:display-name="workpackage.assignee" />
 				</div>
 				<div class="row__assignee__assignee">
 					{{ workpackage.assignee }}
 				</div>
 			</div>
 		</div>
-		<slot name="settings">
-		</slot>
 	</div>
 </template>
 

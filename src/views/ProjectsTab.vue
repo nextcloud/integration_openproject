@@ -31,32 +31,26 @@
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
 			</div>
-			<WorkPackage
-				v-for="(workpackage, index) in workpackages"
+			<div v-for="(workpackage, index) in workpackages"
 				:key="workpackage.id"
-				:class="{ 'workpackage-seperator': index !== workpackages.length-1 }"
-				:workpackage="workpackage"
-				v-on:click.native="getClickedWPId(workpackage.id)">
-				<template #settings>
-					<div v-if="displaySettings && clickedWPId === workpackage.id" class="settings">
-						<div class="settings__openproject">
-									<span class="settings__openproject__openlink">
-									<img class="logo" :src="appSvg" alt="app">
-									{{ t('integration_openproject', 'Open in OpenProject') }}</span>
-						</div>
-						<div class="settings__delete">
-									<span class="settings__delete__link">
-									<img class="bin" :src="binSvg" alt="bin">
-									{{ t('integration_openproject', 'Delete link') }}</span>
-						</div>
-					</div>
-				</template>
-			</WorkPackage>
+				class="linked-workpackages">
+				<WorkPackage
+					:workpackage="workpackage" 
+					:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
+				<Actions menu-align="right">
+					<ActionButton icon="icon-openproject">
+						Open in OpenProject
+					</ActionButton>
+					<ActionButton icon="icon-delete">
+						Delete link
+					</ActionButton>
+				</Actions>
+			</div>
 		</div>
 		<EmptyContent v-else
-					  id="openproject-empty-content"
-					  :state="state"
-					  :request-url="requestUrl"/>
+			id="openproject-empty-content"
+			:state="state"
+			:request-url="requestUrl" />
 	</div>
 </template>
 
@@ -69,6 +63,8 @@ import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 export default {
 	name: 'ProjectsTab',
@@ -76,6 +72,8 @@ export default {
 		EmptyContent,
 		SearchInput,
 		WorkPackage,
+		Actions,
+		ActionButton,
 	},
 	data: () => ({
 		error: '',
@@ -89,19 +87,6 @@ export default {
 	computed: {
 		isLoading() {
 			return this.state === 'loading'
-		},
-		appSvg() {
-			return require('../../img/logo.svg')
-		},
-		binSvg() {
-			return require('../../img/bin.svg')
-		},
-		displaySettings() {
-			if (this.count % 2 == 0) {
-				return false
-			} else {
-				return true
-			}
 		},
 	},
 	methods: {
@@ -126,14 +111,6 @@ export default {
 		},
 		onSaved(data) {
 			this.workpackages.push(data)
-		},
-		getClickedWPId(id) {
-			if (id !== 0) {
-				this.clickedWPId = id
-				this.count = this.count + 1
-			} else if (id === this.clickedWPId) {
-				this.count = this.count + 1
-			}
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
@@ -208,33 +185,9 @@ export default {
 		position: relative;
 	}
 
-	.settings {
-		width: 250px;
-		top: 0;
-		height: fit-content;
-		box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
-		background: #FFFFFF;
-		border-radius: 3px;
-		position: absolute;
-		left: 150px;
-		//z-index: 2;
-
-		& __openproject {
-			padding: 12px;
-			padding-bottom: 0;
-
-			.logo {
-				padding-right: 8px;
-			}
-		}
-
-		&__delete {
-			padding: 12px;
-
-			.bin {
-				padding-right: 8px;
-			}
-		}
+	.linked-workpackages{
+		display: flex;
+		direction: row;
 	}
 }
 </style>
