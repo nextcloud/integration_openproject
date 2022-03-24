@@ -39,6 +39,10 @@ class FilesController extends OCSController {
 
 	/**
 	 * get file info from file ID
+	 *
+	 * This can be tested with
+	 * curl -H "Accept: application/json" -H "OCS-APIRequest: true" -u USER:PASSWD
+	 * 		http://my.nc.org/ocs/v1.php/apps/integration_openproject/fileinfo/FILE_ID
 	 * @NoAdminRequired
 	 *
 	 */
@@ -66,6 +70,12 @@ class FilesController extends OCSController {
 
 	/**
 	 * get file info from file IDs
+	 *
+	 * This can be tested with:
+	 * curl -H "Accept: application/json" -H "Content-Type:application/json" -H "OCS-APIRequest: true"
+	 * 		-u USER:PASSWD http://my.nc.org/ocs/v1.php/apps/integration_openproject/filesinfo
+	 * 		-X POST -d '{"fileIds":[FILE_ID_1,FILE_ID_2,...]}'
+	 *
 	 * @NoAdminRequired
 	 *
 	 */
@@ -88,6 +98,8 @@ class FilesController extends OCSController {
 					'owner_name' => $owner->getDisplayName(),
 					'owner_id' => $owner->getUID(),
 				];
+			} else {
+				$result[$fileId] = null;
 			}
 		}
 		return new DataResponse($result);
