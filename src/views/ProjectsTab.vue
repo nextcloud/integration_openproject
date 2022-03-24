@@ -80,8 +80,6 @@ export default {
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
-		count: 0,
-		clickedWPId: 0,
 	}),
 	computed: {
 		isLoading() {
@@ -99,7 +97,6 @@ export default {
 			this.workpackages = []
 			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
-			this.count = 0
 		},
 		/**
 		 * Reset the current view to its default state
@@ -186,7 +183,6 @@ export default {
 
 	.linked-workpackages{
 		display: flex;
-		direction: row;
 	}
 }
 </style>

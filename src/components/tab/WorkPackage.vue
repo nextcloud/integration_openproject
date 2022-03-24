@@ -76,7 +76,7 @@ export default {
 			margin-right: 4px;
 
 			&__title {
-				mix-blend-mode: multiply;
+				mix-blend-mode: difference;
 				font-size: 0.75rem;
 				line-height: 14px;
 				text-align: center;
