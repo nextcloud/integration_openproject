@@ -30,26 +30,20 @@ describe('EmptyContent.vue Test', () => {
 		})
 		it.each([{
 			state: 'no-token',
-			message: 'No connection with OpenProject',
 		}, {
 			state: 'error',
-			message: 'Unexpected Error',
 		}, {
 			state: 'connection-error',
-			message: 'Error connecting to OpenProject',
 		}, {
 			state: 'failed-fetching-workpackages',
-			message: 'Could not fetch work packages from OpenProject',
 		}, {
 			state: 'ok',
-			message: 'No OpenProject links yet To add a link, use the search bar above to find the desired work package',
 		}, {
 			state: 'something else',
-			message: 'invalid state',
 		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
 			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
-			expect(wrapper.find(emptyContentMessageSelector).text().replace(/[\t\n\r]/gm, '')).toMatch(cases.message)
+			expect(wrapper.find(emptyContentMessageSelector)).toMatchSnapshot()
 		})
 	})
 })
