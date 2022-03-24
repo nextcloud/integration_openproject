@@ -5,6 +5,7 @@ exports[`ProjectsTab.vue Test action menu should display the action menu in link
   <actionbutton-stub icon="icon-openproject" title="" arialabel="">
     Open in OpenProject
   </actionbutton-stub>
+  <actionseparator-stub></actionseparator-stub>
   <actionbutton-stub icon="icon-delete" title="" arialabel="">
     Delete link
   </actionbutton-stub>
@@ -50,6 +51,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
       <actionbutton-stub icon="icon-openproject" title="" arialabel="">
         Open in OpenProject
       </actionbutton-stub>
+      <actionseparator-stub></actionseparator-stub>
       <actionbutton-stub icon="icon-delete" title="" arialabel="">
         Delete link
       </actionbutton-stub>
@@ -89,6 +91,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
       <actionbutton-stub icon="icon-openproject" title="" arialabel="">
         Open in OpenProject
       </actionbutton-stub>
+      <actionseparator-stub></actionseparator-stub>
       <actionbutton-stub icon="icon-delete" title="" arialabel="">
         Delete link
       </actionbutton-stub>
@@ -136,6 +139,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
       <actionbutton-stub icon="icon-openproject" title="" arialabel="">
         Open in OpenProject
       </actionbutton-stub>
+      <actionseparator-stub></actionseparator-stub>
       <actionbutton-stub icon="icon-delete" title="" arialabel="">
         Delete link
       </actionbutton-stub>
@@ -175,6 +179,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
       <actionbutton-stub icon="icon-openproject" title="" arialabel="">
         Open in OpenProject
       </actionbutton-stub>
+      <actionseparator-stub></actionseparator-stub>
       <actionbutton-stub icon="icon-delete" title="" arialabel="">
         Delete link
       </actionbutton-stub>
@@ -222,6 +227,7 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
       <actionbutton-stub icon="icon-openproject" title="" arialabel="">
         Open in OpenProject
       </actionbutton-stub>
+      <actionseparator-stub></actionseparator-stub>
       <actionbutton-stub icon="icon-delete" title="" arialabel="">
         Delete link
       </actionbutton-stub>

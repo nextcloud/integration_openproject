@@ -309,6 +309,7 @@ function mountWrapper() {
 			Avatar: true,
 			Actions: true,
 			ActionButton: true,
+			ActionSeparator: true,
 		},
 		data: () => ({
 			error: '',

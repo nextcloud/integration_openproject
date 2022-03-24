@@ -41,6 +41,7 @@
 					<ActionButton icon="icon-openproject">
 						Open in OpenProject
 					</ActionButton>
+					<ActionSeparator />
 					<ActionButton icon="icon-delete">
 						Delete link
 					</ActionButton>
@@ -57,13 +58,14 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 export default {
 	name: 'ProjectsTab',
@@ -73,6 +75,7 @@ export default {
 		WorkPackage,
 		Actions,
 		ActionButton,
+		ActionSeparator,
 	},
 	data: () => ({
 		error: '',
