@@ -5,61 +5,79 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
   <div class="existing-relations">
     integration_openproject
   </div>
-  <div class="workpackage workpackage-seperator">
-    <div class="row">
-      <div class="row__status" style="background-color: rgb(165, 216, 255);">
-        <div class="row__status__title">
-          open
+  <div class="linked-workpackages">
+    <div class="workpackage">
+      <div class="row">
+        <div class="row__status" style="background-color: rgb(165, 216, 255);">
+          <div class="row__status__title">
+            open
+          </div>
+        </div>
+        <div class="row__workpackage">
+          #123 - a big project
         </div>
       </div>
-      <div class="row__workpackage">
-        #123 - a big project
-      </div>
-    </div>
-    <div class="row">
-      <div class="row__subject"><span class="row__subject__type" style="color: rgb(0, 176, 240);">
+      <div class="row">
+        <div class="row__subject"><span class="row__subject__type" style="color: rgb(0, 176, 240);">
 				Task
 			</span>
-        my task
+          my task
+        </div>
+      </div>
+      <div class="row">
+        <div class="row__assignee">
+          <div class="row__assignee__avatar">
+            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="row__assignee__assignee">
+            Bal Bahadur Pun
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="row__assignee">
-        <div class="row__assignee__avatar">
-          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
-        </div>
-        <div class="row__assignee__assignee">
-          Bal Bahadur Pun
-        </div>
+    <div data-v-eff40d78="" class="action-item" menu-align="right">
+      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
+        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-bbwbe" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
+
+          </button></div>
       </div>
     </div>
   </div>
-  <div class="workpackage">
-    <div class="row">
-      <div class="row__status">
-        <div class="row__status__title">
-          प्रगति हुदैछ
+  <div class="linked-workpackages">
+    <div class="workpackage">
+      <div class="row">
+        <div class="row__status">
+          <div class="row__status__title">
+            प्रगति हुदैछ
+          </div>
+        </div>
+        <div class="row__workpackage">
+          #589 - नेपालको विकास गर्ने
         </div>
       </div>
-      <div class="row__workpackage">
-        #589 - नेपालको विकास गर्ने
-      </div>
-    </div>
-    <div class="row">
-      <div class="row__subject"><span class="row__subject__type">
+      <div class="row">
+        <div class="row__subject"><span class="row__subject__type">
 				Epic
 			</span>
-        नेपालमा IT उद्योग बनाउने
+          नेपालमा IT उद्योग बनाउने
+        </div>
+      </div>
+      <div class="row">
+        <div class="row__assignee">
+          <div class="row__assignee__avatar">
+            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="row__assignee__assignee">
+            कुमारी नेपाली
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="row__assignee">
-        <div class="row__assignee__avatar">
-          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
-        </div>
-        <div class="row__assignee__assignee">
-          कुमारी नेपाली
-        </div>
+    <div data-v-eff40d78="" class="action-item" menu-align="right">
+      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
+        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-frplv" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
+
+          </button></div>
       </div>
     </div>
   </div>
@@ -71,61 +89,79 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
   <div class="existing-relations">
     integration_openproject
   </div>
-  <div class="workpackage workpackage-seperator">
-    <div class="row">
-      <div class="row__status">
-        <div class="row__status__title">
-          open
+  <div class="linked-workpackages">
+    <div class="workpackage">
+      <div class="row">
+        <div class="row__status">
+          <div class="row__status__title">
+            open
+          </div>
+        </div>
+        <div class="row__workpackage">
+          #123 - a big project
         </div>
       </div>
-      <div class="row__workpackage">
-        #123 - a big project
-      </div>
-    </div>
-    <div class="row">
-      <div class="row__subject"><span class="row__subject__type">
+      <div class="row">
+        <div class="row__subject"><span class="row__subject__type">
 				Task
 			</span>
-        my task
+          my task
+        </div>
+      </div>
+      <div class="row">
+        <div class="row__assignee">
+          <div class="row__assignee__avatar">
+            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="row__assignee__assignee">
+            Bal Bahadur Pun
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="row__assignee">
-        <div class="row__assignee__avatar">
-          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
-        </div>
-        <div class="row__assignee__assignee">
-          Bal Bahadur Pun
-        </div>
+    <div data-v-eff40d78="" class="action-item" menu-align="right">
+      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
+        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-linln" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
+
+          </button></div>
       </div>
     </div>
   </div>
-  <div class="workpackage">
-    <div class="row">
-      <div class="row__status">
-        <div class="row__status__title">
-          प्रगति हुदैछ
+  <div class="linked-workpackages">
+    <div class="workpackage">
+      <div class="row">
+        <div class="row__status">
+          <div class="row__status__title">
+            प्रगति हुदैछ
+          </div>
+        </div>
+        <div class="row__workpackage">
+          #589 - नेपालको विकास गर्ने
         </div>
       </div>
-      <div class="row__workpackage">
-        #589 - नेपालको विकास गर्ने
-      </div>
-    </div>
-    <div class="row">
-      <div class="row__subject"><span class="row__subject__type">
+      <div class="row">
+        <div class="row__subject"><span class="row__subject__type">
 				Epic
 			</span>
-        नेपालमा IT उद्योग बनाउने
+          नेपालमा IT उद्योग बनाउने
+        </div>
+      </div>
+      <div class="row">
+        <div class="row__assignee">
+          <div class="row__assignee__avatar">
+            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="row__assignee__assignee">
+            कुमारी नेपाली
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="row__assignee">
-        <div class="row__assignee__avatar">
-          <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
-        </div>
-        <div class="row__assignee__assignee">
-          कुमारी नेपाली
-        </div>
+    <div data-v-eff40d78="" class="action-item" menu-align="right">
+      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
+        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-tkcff" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
+
+          </button></div>
       </div>
     </div>
   </div>
@@ -137,32 +173,41 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
   <div class="existing-relations">
     integration_openproject
   </div>
-  <div class="workpackage">
-    <div class="row">
-      <div class="row__status" style="background-color: blue;">
-        <div class="row__status__title">
-          in-progress
+  <div class="linked-workpackages">
+    <div class="workpackage">
+      <div class="row">
+        <div class="row__status" style="background-color: blue;">
+          <div class="row__status__title">
+            in-progress
+          </div>
+        </div>
+        <div class="row__workpackage">
+          #1 - test
         </div>
       </div>
-      <div class="row__workpackage">
-        #1 - test
-      </div>
-    </div>
-    <div class="row">
-      <div class="row__subject"><span class="row__subject__type" style="color: red;">
+      <div class="row">
+        <div class="row__subject"><span class="row__subject__type" style="color: red;">
 				task
 			</span>
-        Organize work-packages
+          Organize work-packages
+        </div>
+      </div>
+      <div class="row">
+        <div class="row__assignee">
+          <div class="row__assignee__avatar">
+            <avatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></avatar-stub>
+          </div>
+          <div class="row__assignee__assignee">
+            test
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="row__assignee">
-        <div class="row__assignee__avatar">
-          <avatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></avatar-stub>
-        </div>
-        <div class="row__assignee__assignee">
-          test
-        </div>
+    <div data-v-eff40d78="" class="action-item" menu-align="right">
+      <div data-v-eff40d78="" class="v-popover" delay="0" handle-resize="true" placement="bottom" boundaries-element="[object HTMLBodyElement]" container="body">
+        <div class="trigger" style="display: inline-block;"><button data-v-eff40d78="" aria-haspopup="true" aria-label="Actions" aria-controls="menu-nquxd" aria-expanded="false" test-attr="1" type="button" class="icon action-item__menutoggle action-item__menutoggle--default-icon"><span data-v-eff40d78="" aria-hidden="true" aria-label="Dots Horizontal icon" role="img" class="material-design-icon dots-horizontal-icon"><svg data-v-eff40d78="" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path data-v-eff40d78="" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z"><!----></path></svg></span>
+
+          </button></div>
       </div>
     </div>
   </div>
