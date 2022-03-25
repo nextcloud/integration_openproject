@@ -38,12 +38,12 @@
 					:workpackage="workpackage" 
 					:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 				<Actions class="linked-workpackages--menu" menu-align="right">
-					<ActionButton icon="icon-openproject">
-						Open in OpenProject
+					<ActionButton class="linked-workpackages--menu--open" icon="icon-openproject">
+						{{ openLink }}
 					</ActionButton>
 					<ActionSeparator />
-					<ActionButton icon="icon-delete">
-						Delete link
+					<ActionButton class="linked-workpackages--menu--delete" icon="icon-delete">
+						{{ deleteLink }}
 					</ActionButton>
 				</Actions>
 			</div>
@@ -62,6 +62,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import axios from '@nextcloud/axios'
+import { translate as t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
@@ -87,6 +88,12 @@ export default {
 	computed: {
 		isLoading() {
 			return this.state === 'loading'
+		},
+		deleteLink() {
+			return t('integration_openproject', 'Delete Link')
+		},
+		openLink() {
+			return t('integration_openproject', 'Open in OpenProject')
 		},
 	},
 	methods: {

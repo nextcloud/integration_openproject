@@ -16,7 +16,10 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
-	const linkedWPActionMenuSelector = '.linked-workpackages--menu'
+	const toggleMenuSelector = '.action-item__menutoggle'
+	const toggleMenuOpenSelector = '.action-item--open'
+	const openWorkpackageSelector = '.linked-workpackages--menu--open'
+	const deleteWorkpackageSelector = '.linked-workpackages--menu--delete'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -284,18 +287,23 @@ describe('ProjectsTab.vue Test', () => {
 	})
 
 	describe('action menu', () => {
-		it('should display the action menu in linked work packages', async () => {
-			wrapper = mountWrapper()
-			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
-			const linkedWPActionMenu = wrapper.find(linkedWPActionMenuSelector)
-			await linkedWPActionMenu.trigger('click')
-			expect(linkedWPActionMenu.exists()).toBeTruthy()
-			expect(linkedWPActionMenu).toMatchSnapshot()
+		it('should display the action menu for linked work packages', async () => {
+			wrapper = mountWrapper(false)
+			await wrapper.setData({
+				workpackages: workPackagesSearchResponse,
+			})
+			await localVue.nextTick()
+			expect(wrapper.find(toggleMenuOpenSelector).exists()).toBeFalsy()
+			await wrapper.find(toggleMenuSelector).trigger('click')
+			const toggleMenuOpen = wrapper.find(toggleMenuOpenSelector)
+			expect(toggleMenuOpen.exists()).toBeTruthy()
+			expect(wrapper.find(openWorkpackageSelector).text()).toBe('Open in OpenProject')
+			expect(wrapper.find(deleteWorkpackageSelector).text()).toBe('Delete Link')
 		})
 	})
 })
 
-function mountWrapper() {
+function mountWrapper(stub = true) {
 	return mount(ProjectsTab, {
 		localVue,
 		mocks: {
@@ -307,9 +315,7 @@ function mountWrapper() {
 		stubs: {
 			SearchInput: true,
 			Avatar: true,
-			Actions: true,
-			ActionButton: true,
-			ActionSeparator: true,
+			Actions: stub,
 		},
 		data: () => ({
 			error: '',

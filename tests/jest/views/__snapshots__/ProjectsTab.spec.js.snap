@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProjectsTab.vue Test action menu should display the action menu in linked work packages 1`] = `
-<actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-  <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-    Open in OpenProject
-  </actionbutton-stub>
-  <actionseparator-stub></actionseparator-stub>
-  <actionbutton-stub icon="icon-delete" title="" arialabel="">
-    Delete link
-  </actionbutton-stub>
-</actions-stub>
-`;
-
 exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`] = `
 <div class="" id="openproject-linked-workpackages">
   <div class="existing-relations">
@@ -48,13 +36,13 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
       </div>
     </div>
     <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-        Open in OpenProject
-      </actionbutton-stub>
-      <actionseparator-stub></actionseparator-stub>
-      <actionbutton-stub icon="icon-delete" title="" arialabel="">
-        Delete link
-      </actionbutton-stub>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
+          <!---->
+        </button></li>
+      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
+          <!---->
+        </button></li>
     </actions-stub>
   </div>
   <div class="linked-workpackages">
@@ -88,13 +76,13 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
       </div>
     </div>
     <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-        Open in OpenProject
-      </actionbutton-stub>
-      <actionseparator-stub></actionseparator-stub>
-      <actionbutton-stub icon="icon-delete" title="" arialabel="">
-        Delete link
-      </actionbutton-stub>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
+          <!---->
+        </button></li>
+      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
+          <!---->
+        </button></li>
     </actions-stub>
   </div>
 </div>
@@ -136,13 +124,13 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
       </div>
     </div>
     <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-        Open in OpenProject
-      </actionbutton-stub>
-      <actionseparator-stub></actionseparator-stub>
-      <actionbutton-stub icon="icon-delete" title="" arialabel="">
-        Delete link
-      </actionbutton-stub>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
+          <!---->
+        </button></li>
+      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
+          <!---->
+        </button></li>
     </actions-stub>
   </div>
   <div class="linked-workpackages">
@@ -176,13 +164,13 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
       </div>
     </div>
     <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-        Open in OpenProject
-      </actionbutton-stub>
-      <actionseparator-stub></actionseparator-stub>
-      <actionbutton-stub icon="icon-delete" title="" arialabel="">
-        Delete link
-      </actionbutton-stub>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
+          <!---->
+        </button></li>
+      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
+          <!---->
+        </button></li>
     </actions-stub>
   </div>
 </div>
@@ -224,13 +212,13 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
       </div>
     </div>
     <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <actionbutton-stub icon="icon-openproject" title="" arialabel="">
-        Open in OpenProject
-      </actionbutton-stub>
-      <actionseparator-stub></actionseparator-stub>
-      <actionbutton-stub icon="icon-delete" title="" arialabel="">
-        Delete link
-      </actionbutton-stub>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
+          <!---->
+        </button></li>
+      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
+      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
+          <!---->
+        </button></li>
     </actions-stub>
   </div>
 </div>
