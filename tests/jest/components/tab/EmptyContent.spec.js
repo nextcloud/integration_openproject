@@ -38,8 +38,6 @@ describe('EmptyContent.vue Test', () => {
 			state: 'failed-fetching-workpackages',
 		}, {
 			state: 'ok',
-		}, {
-			state: 'something else',
 		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
 			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()

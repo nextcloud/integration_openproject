@@ -66,12 +66,10 @@ export default {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'failed-fetching-workpackages') {
 				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
-			} else if (this.state === 'error') {
-				return t('integration_openproject', 'Unexpected Error')
 			} else if (this.state === 'ok') {
 				return t('integration_openproject', 'No OpenProject links yet')
 			}
-			return 'invalid state'
+			return t('integration_openproject', 'Unexpected Error')
 		},
 		emptyContentSubTitleMessage() {
 			if (this.state === 'ok') {
