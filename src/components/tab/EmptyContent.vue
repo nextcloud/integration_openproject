@@ -2,11 +2,17 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img v-if="!!requestUrl" :src="flowSvg" alt="flow">
-				<div v-else class="icon-error" />
+				<img v-if="!!requestUrl && state !== 'ok'" :src="noConnectionSvg" alt="no connection">
+				<img v-else-if="!!requestUrl && state === 'ok'" :src="addLinkSvg" alt="add work package">
+				<img v-else :src="noConnectionSvg" alt="error">
 			</div>
-			<div v-if="!!requestUrl" class="empty-content--title">
-				{{ emptyContentMessage }}
+			<div v-if="!!requestUrl" class="empty-content--message">
+				<div class="empty-content--message--title">
+					{{ emptyContentTitleMessage }}
+				</div>
+				<div v-if="!!emptyContentSubTitleMessage" class="empty-content--message--sub-title">
+					{{ emptyContentSubTitleMessage }}
+				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
 				<OAuthConnectButton :request-url="requestUrl" />
@@ -44,25 +50,32 @@ export default {
 		}
 	},
 	computed: {
-		flowSvg() {
-			return require('../../../img/flow.svg')
+		noConnectionSvg() {
+			return require('../../../img/noConnection.svg')
+		},
+		addLinkSvg() {
+			return require('../../../img/addLink.svg')
 		},
 		showConnectButton() {
 			return ['error', 'no-token'].includes(this.state)
 		},
-		emptyContentMessage() {
+		emptyContentTitleMessage() {
 			if (this.state === 'no-token') {
-				return t('integration_openproject', 'No OpenProject account connected')
+				return t('integration_openproject', 'No connection with OpenProject')
 			} else if (this.state === 'connection-error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'failed-fetching-workpackages') {
 				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
-			} else if (this.state === 'error') {
-				return t('integration_openproject', 'Unexpected Error')
 			} else if (this.state === 'ok') {
-				return t('integration_openproject', 'No workspaces linked yet, search for work package to add!')
+				return t('integration_openproject', 'No OpenProject links yet')
 			}
-			return 'invalid state'
+			return t('integration_openproject', 'Unexpected Error')
+		},
+		emptyContentSubTitleMessage() {
+			if (this.state === 'ok') {
+				return t('integration_openproject', 'To add a link, use the search bar above to find the desired work package')
+			}
+			return ''
 		},
 	},
 }
@@ -82,28 +95,28 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		img, .icon-error {
+		img{
 			height: 50px;
 			width: 50px;
 		}
-		.icon-error {
-			background-size: 50px;
-		}
 	}
-	&--title {
+	&--message {
 		text-align: center;
-		font-size: 1.2rem;
-		line-height: 1.4rem;
-		font-weight: 600;
-		padding-top: 4px;
-		color: #333333;
-	}
-	&--subtitle {
-		font-size: .875rem;
-		font-weight: 400;
-		color: #6d6d6d;
-		line-height: 1rem;
-		padding: 8px 0;
+		&--title {
+			font-size: 1.2rem;
+			line-height: 1.4rem;
+			font-weight: 600;
+			padding: 4px 12px 12px 12px;
+			color: #333333;
+		}
+		&--sub-title{
+			font-size: 1rem;
+			line-height: 1.4rem;
+			text-align: center;
+			font-weight: 400;
+			color: #878787;
+			padding: 0px 18px;
+		}
 	}
 	&--connect-button {
 		padding: 1vh 0;

@@ -83,7 +83,7 @@ export default {
 		},
 		emptyContentMessage() {
 			if (this.state === 'no-token') {
-				return t('integration_openproject', 'No OpenProject account connected')
+				return t('integration_openproject', 'No connection with OpenProject')
 			} else if (this.state === 'error') {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === 'ok') {
@@ -93,9 +93,9 @@ export default {
 		},
 		emptyContentIcon() {
 			if (!this.requestUrl) {
-				return 'icon-error'
+				return 'icon-noConnection'
 			} else if (this.state === 'no-token') {
-				return 'icon-openproject'
+				return 'icon-noConnection'
 			} else if (this.state === 'error') {
 				return 'icon-close'
 			} else if (this.state === 'ok') {

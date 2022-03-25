@@ -3,6 +3,11 @@
 	filter: contrast(0) brightness(0);
 }
 
+.icon-noConnection {
+	background-image: url(./../img/noConnection.svg);
+	filter: contrast(0) brightness(0);
+}
+
 .icon-open-project {
 	position: relative;
 }
@@ -21,6 +26,6 @@
 	background-image: url(./../img/app.svg);
 }
 
-body.theme--dark .icon-openproject, body.theme--dark .icon-open-project::after {
+body.theme--dark .icon-openproject .icon-noConnection, body.theme--dark .icon-open-project::after {
 	filter: none;
 }

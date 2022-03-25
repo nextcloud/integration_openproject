@@ -5,7 +5,7 @@ const localVue = createLocalVue()
 
 describe('EmptyContent.vue Test', () => {
 	let wrapper
-	const emptyContentMessageSelector = '.empty-content--title'
+	const emptyContentMessageSelector = '.empty-content--message'
 	const connectButtonSelector = 'oauthconnectbutton-stub'
 
 	describe('connect button', () => {
@@ -30,26 +30,18 @@ describe('EmptyContent.vue Test', () => {
 		})
 		it.each([{
 			state: 'no-token',
-			message: 'No OpenProject account connected',
 		}, {
 			state: 'error',
-			message: 'Unexpected Error',
 		}, {
 			state: 'connection-error',
-			message: 'Error connecting to OpenProject',
 		}, {
 			state: 'failed-fetching-workpackages',
-			message: 'Could not fetch work packages from OpenProject',
 		}, {
 			state: 'ok',
-			message: 'No workspaces linked yet',
-		}, {
-			state: 'something else',
-			message: 'invalid state',
 		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
 			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
-			expect(wrapper.find(emptyContentMessageSelector).text()).toMatch(cases.message)
+			expect(wrapper.find(emptyContentMessageSelector)).toMatchSnapshot()
 		})
 	})
 })

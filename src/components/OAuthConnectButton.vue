@@ -27,7 +27,8 @@ export default {
 
 	computed: {
 		adminConfigNotOkMessage() {
-			return t('integration_openproject', 'Settings of the OpenProject integration app are not complete. Please contact your Nextcloud administrator.')
+			return t('integration_openproject', 'Some OpenProject integration application settings are not working.'
+				+ ' Please contact your Nextcloud administrator.')
 		},
 	},
 
@@ -83,9 +84,12 @@ export default {
 <style lang="scss" scoped>
 .oauth-connect {
 	&--message {
-		font-size: .875rem;
+		font-size: 1rem;
 		text-align: center;
-		font-weight: 500;
+		font-weight: 400;
+		color: #878787;
+		padding: 0px 18px;
+		line-height: 1.4rem;
 	}
 }
 </style>
