@@ -39,11 +39,9 @@ OC.L10N.register(
     "Invalid token" : "Neplatný token",
     "OpenProject instance not found" : "Inštancia OpenProject nebola nájdená",
     "Failed to save OpenProject options" : "Nepodarilo sa uložiť nastavenia OpenProjectu",
-    "No OpenProject account connected" : "Nie je pripojený žiadny OpenProject účet",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
     "Unexpected Error" : "Neočakávaná chyba",
-    "No workspaces linked yet, search for work package to add!" : "Zatiaľ neprepojené žiadne pracovné priestory, pridajte nejaký pracovný balík jeho vyhľadaním!",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
     "Existing relations:" : "Existujúce vzťahy:"

@@ -39,9 +39,7 @@ OC.L10N.register(
     "Invalid token" : "Token non valido",
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
-    "No OpenProject account connected" : "Nessun account OpenProject connesso",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
-    "No workspaces linked yet, search for work package to add!" : "Non è stata collegata nessuna area di lavoro, cerca il pacchetto di lavoro da aggiungere!",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject"
 },

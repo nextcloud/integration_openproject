@@ -37,7 +37,6 @@ OC.L10N.register(
     "Invalid token" : "Jeton non valide",
     "OpenProject instance not found" : "Instance OpenProject introuvable",
     "Failed to save OpenProject options" : "Impossible d'enregistrer les options OpenProject",
-    "No OpenProject account connected" : "Aucun compte OpenProject connecté",
     "Error connecting to OpenProject" : "Erreur de connexion à OpenProject",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
     "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject"
