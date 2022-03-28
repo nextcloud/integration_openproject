@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
@@ -50,19 +51,7 @@ class FilesController extends OCSController {
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
-			$file = $files[0];
-			$owner = $file->getOwner();
-			$fileInfo = [
-				'id' => $fileId,
-				'name' => $file->getName(),
-				'mtime' => $file->getMTime(),
-				'ctime' => $file->getCreationTime(),
-				'mimetype' => $file->getMimetype(),
-				'path' => preg_replace('/^files\//', '/', $file->getInternalPath()),
-				'size' => $file->getSize(),
-				'owner_name' => $owner->getDisplayName(),
-				'owner_id' => $owner->getUID(),
-			];
+			$fileInfo = $this->compileFileInfo($files[0]);
 			return new DataResponse($fileInfo);
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -86,23 +75,33 @@ class FilesController extends OCSController {
 		foreach ($fileIds as $fileId) {
 			$files = $userFolder->getById($fileId);
 			if (is_array($files) && count($files) > 0) {
-				$file = $files[0];
-				$owner = $file->getOwner();
-				$result[$fileId] = [
-					'id' => $fileId,
-					'name' => $file->getName(),
-					'mtime' => $file->getMTime(),
-					'ctime' => $file->getCreationTime(),
-					'mimetype' => $file->getMimetype(),
-					'path' => preg_replace('/^files\//', '/', $file->getInternalPath()),
-					'size' => $file->getSize(),
-					'owner_name' => $owner->getDisplayName(),
-					'owner_id' => $owner->getUID(),
-				];
+				$result[$fileId] = $this->compileFileInfo($files[0]);
 			} else {
 				$result[$fileId] = null;
 			}
 		}
 		return new DataResponse($result);
+	}
+
+	/**
+	 * @param Node $file
+	 * @return array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
+	 *               'mimetype': string, 'path': string, 'size': int,
+	 *               'owner_name': string, 'owner_id': string}
+	 */
+	private function compileFileInfo($file) {
+		$owner = $file->getOwner();
+
+		return [
+			'id' => $file->getId(),
+			'name' => $file->getName(),
+			'mtime' => $file->getMTime(),
+			'ctime' => $file->getCreationTime(),
+			'mimetype' => $file->getMimetype(),
+			'path' => preg_replace('/^files\//', '/', $file->getInternalPath()),
+			'size' => $file->getSize(),
+			'owner_name' => $owner->getDisplayName(),
+			'owner_id' => $owner->getUID(),
+		];
 	}
 }
