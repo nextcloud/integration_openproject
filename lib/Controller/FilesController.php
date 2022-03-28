@@ -76,6 +76,7 @@ class FilesController extends OCSController {
 	 * 		-u USER:PASSWD http://my.nc.org/ocs/v1.php/apps/integration_openproject/filesinfo
 	 * 		-X POST -d '{"fileIds":[FILE_ID_1,FILE_ID_2,...]}'
 	 *
+	 * @param array<int> $fileIds
 	 * @NoAdminRequired
 	 *
 	 */
