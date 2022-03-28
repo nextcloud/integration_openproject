@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
@@ -38,13 +39,12 @@ import WorkPackage from './WorkPackage'
 import { showError } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper'
 
-const _ = require('lodash')
-
 const STATE_OK = 'ok'
 const STATE_ERROR = 'error'
 const STATE_NO_TOKEN = 'no-token'
 const STATE_LOADING = 'loading'
 const SEARCH_CHAR_LIMIT = 3
+const DEBOUNCE_THRESHOLD = 500
 
 export default {
 	name: 'SearchInput',
@@ -113,22 +113,15 @@ export default {
 			}
 		},
 		async asyncFind(query) {
-			// save current query to check if we display
-			// recommendations or search results
-			console.log(query)
-			query = query.trim()
 			if (query) {
 				this.resetState()
 				if (query.length <= SEARCH_CHAR_LIMIT) return
-				await this.debounceGetWorkPackages(query)
+				await this.debounceMakeSearchRequest(query)
 			}
 		},
-		/**
-		 * debounce get work packages to avoid too many requests
-		 */
-		debounceGetWorkPackages: _.debounce(function(...args) {
+		debounceMakeSearchRequest: debounce(function(...args) {
 			return this.makeSearchRequest(...args)
-		}, 500),
+		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
 			const params = new URLSearchParams()
 			params.append('workpackageId', selectedOption.id)
