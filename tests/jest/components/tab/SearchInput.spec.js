@@ -5,8 +5,8 @@ import * as dialogs from '@nextcloud/dialogs'
 
 import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
-import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
+import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -182,14 +182,15 @@ describe('SearchInput.vue tests', () => {
 				await wrapper.setData({
 					searchResults: workPackageSearchReqResponse,
 				})
-				expect(wrapper.findAll('workpackage-stub').length).toBe(1)
+				expect(wrapper.findAll('workpackage-stub').length).toBe(3)
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
 						data: simpleWorkPackageSearchResponse,
 					}))
 					.mockImplementation(() => Promise.resolve({
-						data: [], status: 200,
+						data: [],
+						status: 200,
 					}))
 				await wrapper.find(inputSelector).setValue('orga')
 				for (let i = 0; i <= 10; i++) {
@@ -198,6 +199,122 @@ describe('SearchInput.vue tests', () => {
 				const workPackages = wrapper.findAll('workpackage-stub')
 				expect(workPackages.length).toBe(simpleWorkPackageSearchResponse.length)
 				expect(workPackages.at(0).props()).toMatchSnapshot()
+				axiosSpy.mockRestore()
+			})
+			it('should not display work packages that are already linked', async () => {
+				wrapper = mountSearchInput({},
+					[
+						{
+							id: 1,
+							subject: 'One',
+						},
+						{
+							id: 13,
+							subject: 'Write a software',
+						},
+					])
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: workPackageSearchReqResponse,
+					}))
+					// any other requests e.g. for types and statuses
+					.mockImplementation(() => Promise.resolve(
+						{ status: 200, data: [] })
+					)
+
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('anything longer than 3 char')
+				for (let i = 0; i < 9; i++) {
+					await localVue.nextTick()
+				}
+
+				// id no 13 is already in workpackages and also in the response
+				// so it should not be visible in the search results
+				expect(wrapper.vm.searchResults).toMatchObject(
+					[
+						{
+							assignee: 'System',
+							id: 2,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Organize open source conference',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+						{
+							assignee: 'System',
+							id: 5,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Create a website',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+					],
+				)
+				axiosSpy.mockRestore()
+			})
+
+			it('should not display work packages that are already in the search results', async () => {
+				// this case can happen if multiple search are running in parallel and returning its results
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: workPackageSearchReqResponse,
+					}))
+					.mockImplementation(() => Promise.resolve(
+						{ status: 200, data: [] })
+					)
+				await wrapper.setData({
+					searchResults: [{
+						id: 2,
+						subject: 'Organize open source conference',
+					}],
+				})
+				wrapper.vm.$parent.workpackages = []
+
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue('anything longer than 3 char')
+				for (let i = 0; i < 8; i++) {
+					await localVue.nextTick()
+				}
+
+				expect(wrapper.vm.searchResults).toMatchObject(
+					[
+						{
+							// this comes from the old search results and not from the response
+							id: 2,
+							subject: 'Organize open source conference',
+						},
+						{
+							assignee: 'System',
+							id: 13,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Write a software',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+						{
+							assignee: 'System',
+							id: 5,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Create a website',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+					],
+				)
 				axiosSpy.mockRestore()
 			})
 		})
@@ -289,14 +406,13 @@ describe('SearchInput.vue tests', () => {
 				})
 				const inputField = wrapper.find(inputSelector)
 				expect(inputField.element.value).toBe('')
-				expect(wrapper.vm.selectedId).toMatchObject([])
 				expect(wrapper.vm.searchResults).toMatchObject([])
 				expect(wrapper.vm.state).toBe('ok')
 			})
 		})
 	})
 })
-function mountSearchInput(fileInfo = {}) {
+function mountSearchInput(fileInfo = {}, linkedWorkPackages = []) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
@@ -311,6 +427,7 @@ function mountSearchInput(fileInfo = {}) {
 		},
 		propsData: {
 			fileInfo,
+			linkedWorkPackages
 		},
 	})
 }

@@ -55,11 +55,14 @@ export default {
 			type: Object,
 			required: true,
 		},
+		linkedWorkPackages: {
+			type: Array,
+			required: true,
+		},
 	},
 	data: () => ({
 		state: STATE_OK,
 		searchResults: [],
-		selectedId: [],
 	}),
 	computed: {
 		isStateOk() {
@@ -83,7 +86,6 @@ export default {
 	watch: {
 		fileInfo(oldFile, newFile) {
 			if (oldFile.id !== newFile.id) {
-				this.selectedId = []
 				this.resetState()
 				// FIXME: https://github.com/shentao/vue-multiselect/issues/633
 				if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
@@ -123,9 +125,6 @@ export default {
 			try {
 				await axios.post(url, params, config)
 				this.$emit('saved', selectedOption)
-				this.selectedId.push({
-					id: selectedOption.id,
-				})
 			} catch (e) {
 				showError(
 					this.translate('Failed to link file to work-package')
@@ -155,9 +154,9 @@ export default {
 			for (let workPackage of workPackages) {
 				try {
 					workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-					const selectedIdFound = this.selectedId.some(el => el.id === workPackage.id)
-					const workpackageIdFound = this.searchResults.some(el => el.id === workPackage.id)
-					if (!workpackageIdFound && !selectedIdFound) {
+					const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
+					const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
+					if (!alreadyInSearchResults && !alreadyLinked) {
 						this.searchResults.push(workPackage)
 					}
 				} catch (e) {
