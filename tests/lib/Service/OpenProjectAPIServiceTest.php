@@ -375,7 +375,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 										'},'.
 										'{"status":{"operator":"o","values":[]}},'.
 										'{"linkable_to_storage_url":'.
-											'{"operator":"=","values":["https:\/\/nc.my-server.org"]}}'.
+											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 									']',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
@@ -389,7 +389,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 										'},'.
 										'{"status":{"operator":"o","values":[]}},'.
 										'{"linkable_to_storage_url":'.
-											'{"operator":"=","values":["https:\/\/nc.my-server.org"]}}'.
+											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 									']',
 						'sortBy' => '[["updatedAt", "desc"]]',
 					]
@@ -399,7 +399,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$descriptionResponse,
 				$subjectResponse
 			);
-		$result = $service->searchWorkPackage('user', 'search query', null, 'https://nc.my-server.org');
+		$result = $service->searchWorkPackage(
+			'user', 'search query', null, 'https://nc.my-server.org'
+		);
 		$this->assertSame($expectedResult, $result);
 	}
 	/**

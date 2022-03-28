@@ -253,7 +253,7 @@ class OpenProjectAPIService {
 	): array {
 		$linkableStorageFilter = [
 			'linkable_to_storage_url' =>
-				['operator' => '=', 'values' => [$storageUrl]]
+				['operator' => '=', 'values' => [urlencode($storageUrl)]]
 		];
 		$openStatusFilter = ['status' => ['operator' => 'o', 'values' => []]];
 		$resultsById = [];
