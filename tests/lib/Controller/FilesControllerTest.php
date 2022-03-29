@@ -14,7 +14,7 @@ class FilesControllerTest extends TestCase {
 	public function getFileInfoDataProvider() {
 		return [
 			// getById returns only one result
-			[[$this->getNodeMock('/logo.png')], '/logo.png'],
+			[[$this->getNodeMock('files/logo.png')], '/logo.png'],
 			// getById returns multiple results e.g. if the file was received through multiple path
 			[
 				[
@@ -22,7 +22,7 @@ class FilesControllerTest extends TestCase {
 					$this->getNodeMock('files/receivedAsFileShareAndRenamed.png')
 				],
 				'/receivedAsFolderShare/logo.png'
-			]
+			],
 		];
 	}
 
