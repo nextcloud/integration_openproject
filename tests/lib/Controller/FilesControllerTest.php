@@ -130,6 +130,23 @@ class FilesControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
+	public function testGetFileInfoFileNotFound(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+
+		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock->method('getUserFolder')->willReturn($folderMock);
+
+		$filesController = new FilesController(
+			'integration_openproject',
+			$this->createMock(IRequest::class), $storageMock, 'testUser'
+		);
+
+		$result = $filesController->getFileInfo(123);
+		assertSame([], $result->getData());
+		assertSame(404, $result->getStatus());
+	}
+
 	public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')
