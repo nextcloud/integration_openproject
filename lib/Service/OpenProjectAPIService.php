@@ -255,7 +255,7 @@ class OpenProjectAPIService {
 			'linkable_to_storage_url' =>
 				['operator' => '=', 'values' => [urlencode($storageUrl)]]
 		];
-		$openStatusFilter = ['status' => ['operator' => 'o', 'values' => []]];
+		$sortBy =  [['status', 'asc'],['updatedAt', 'desc']];
 		$resultsById = [];
 		$filters = [];
 
@@ -265,14 +265,13 @@ class OpenProjectAPIService {
 		}
 		if ($query !== null) {
 			$filters[] = ['description' => ['operator' => '~', 'values' => [$query]]];
-			$filters[] = $openStatusFilter;
 			if ($storageUrl !== null) {
 				$filters[] = $linkableStorageFilter;
 			}
 		}
 		$params = [
 			'filters' => \Safe\json_encode($filters),
-			'sortBy' => '[["updatedAt", "desc"]]',
+			'sortBy' => \Safe\json_encode($sortBy),
 			// 'limit' => $limit,
 		];
 		$searchDescResult = $this->request($userId, 'work_packages', $params);
@@ -290,14 +289,13 @@ class OpenProjectAPIService {
 		if ($query !== null) {
 			$filters = [
 				['subject' => ['operator' => '~', 'values' => [$query]]],
-				$openStatusFilter
 			];
 			if ($storageUrl !== null) {
 				$filters[] = $linkableStorageFilter;
 			}
 			$params = [
 				'filters' => \Safe\json_encode($filters),
-				'sortBy' => '[["updatedAt", "desc"]]',
+				'sortBy' => \Safe\json_encode($sortBy),
 				// 'limit' => $limit,
 			];
 			$searchSubjectResult = $this->request($userId, 'work_packages', $params);

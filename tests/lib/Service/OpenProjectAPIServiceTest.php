@@ -333,15 +333,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'filters' => '[{"description":{"operator":"~","values":["search query"]}}]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}}]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				]
 			)
@@ -373,11 +373,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 										'{"description":' .
 											'{"operator":"~","values":["search query"]}'.
 										'},'.
-										'{"status":{"operator":"o","values":[]}},'.
 										'{"linkable_to_storage_url":'.
 											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 									']',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 				[
@@ -387,11 +386,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 										'{"subject":' .
 											'{"operator":"~","values":["search query"]}'.
 										'},'.
-										'{"status":{"operator":"o","values":[]}},'.
 										'{"linkable_to_storage_url":'.
 											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 									']',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				]
 			)
@@ -415,7 +413,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					'user', 'work_packages',
 					[
 						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}}]',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 			)
@@ -436,15 +434,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}}]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}},{"status":{"operator":"o","values":[]}}]',
-						'sortBy' => '[["updatedAt", "desc"]]',
+						'filters' => '[{"subject":{"operator":"~","values":["search query"]}}]',
+						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				]
 			)
