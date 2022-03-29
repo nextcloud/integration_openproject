@@ -2,7 +2,9 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCP\Files\Node;
 use OCP\IRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 
@@ -128,19 +130,245 @@ class FilesControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
+	public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->willReturn(
+				[
+					$this->getNodeMock(
+					'files/logo.png', 'logo.png', 'image/png'
+					)
+				]
+			);
+
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo([123]);
+		assertSame(
+			[
+				123 => $this->logoPngResult,
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoThreeIdsRequestedOneFileExistsReturnsOneResult(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([123], [256], [365])
+			->willReturnOnConsecutiveCalls(
+					[
+						$this->getNodeMock(
+							'files/logo.png', 'logo.png', 'image/png'
+						)
+					],
+					[],
+					[]
+			);
+
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo([123,256,365]);
+		assertSame(
+			[
+				123 => $this->logoPngResult,
+				256 => null,
+				365 => null
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsOneResult(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([123], [365])
+			->willReturnOnConsecutiveCalls(
+				[
+					$this->getNodeMock(
+						'files/logo.png', 'logo.png', 'image/png', 123
+					)
+				],
+				[
+					$this->getNodeMock(
+						'files/inFolder/image.png', 'image.png', 'image/png', 365
+					),
+				]
+			);
+
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo([123,365]);
+		assertSame(
+			[
+				123 => $this->logoPngResult,
+				365 => $this->imagePngResult,
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsMultipleResults(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([123], [365])
+			->willReturnOnConsecutiveCalls(
+				[
+					$this->getNodeMock(
+						'files/logo.png', 'logo.png', 'image/png'
+					),
+					$this->getNodeMock(
+						'files/receivedAsFileShareAndRenamed.png',
+						'receivedAsFileShareAndRenamed.png',
+						'image/png'
+					)
+				],
+				[
+					$this->getNodeMock(
+						'files/inFolder/image.png', 'image.png', 'image/png', 365
+					),
+					$this->getNodeMock(
+						'files/subfolder/receivedAsFileShareAndRenamed.png',
+						'receivedAsFileShareAndRenamed.png',
+						'image/png',
+						365
+					)
+				]
+			);
+
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo([123,365]);
+		assertSame(
+			[
+				123 => $this->logoPngResult,
+				365 => $this->imagePngResult
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoTwoIdsRequestedEachReturnsOneFolder(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([2], [3])
+			->willReturnOnConsecutiveCalls(
+				[
+					$this->getNodeMock(
+						'files/myFolder/a-sub-folder',
+						'a-sub-folder',
+						'httpd/unix-directory',
+						2
+					)
+				],
+				[
+					$this->getNodeMock(
+						'files',
+						'files',
+						'httpd/unix-directory',
+						3
+					)
+				]
+			);
+
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo([2,3]);
+		assertSame(
+			[
+				2 => [
+					'id' => 2,
+					'name' => 'a-sub-folder',
+					'mtime' => 1640008813,
+					'ctime' => 1639906930,
+					'mimetype' => 'httpd/unix-directory',
+					'path' => '/myFolder/a-sub-folder',
+					'size' => 200245,
+					'owner_name' => 'Test User',
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+				],
+				3 => [
+					'id' => 3,
+					'name' => 'files',
+					'mtime' => 1640008813,
+					'ctime' => 1639906930,
+					'mimetype' => 'httpd/unix-directory',
+					'path' => '/',
+					'size' => 200245,
+					'owner_name' => 'Test User',
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+				]
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoInvalidRequest(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$filesController = $this->createFilesController($folderMock);
+
+		$result = $filesController->getFilesInfo(null);
+		assertSame(
+			'invalid request',
+			$result->getData()
+		);
+		assertSame(400, $result->getStatus());
+	}
+
 	/**
-	 * @param string $path
-	 * @param string $name
-	 * @param string $mimeType
-	 * @return \OCP\Files\Node
+	 * @var array<mixed>
 	 */
-	private function getNodeMock($path, $name, $mimeType) {
+	private array $logoPngResult = [
+		'id' => 123,
+		'name' => 'logo.png',
+		'mtime' => 1640008813,
+		'ctime' => 1639906930,
+		'mimetype' => 'image/png',
+		'path' => '/logo.png',
+		'size' => 200245,
+		'owner_name' => 'Test User',
+		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private array $imagePngResult = [
+		'id' => 365,
+		'name' => 'image.png',
+		'mtime' => 1640008813,
+		'ctime' => 1639906930,
+		'mimetype' => 'image/png',
+		'path' => '/inFolder/image.png',
+		'size' => 200245,
+		'owner_name' => 'Test User',
+		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+	];
+
+	private function createFilesController(MockObject $folderMock): FilesController {
+		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
+		$storageMock->method('getUserFolder')->willReturn($folderMock);
+
+		return new FilesController(
+			'integration_openproject',
+			$this->createMock(IRequest::class), $storageMock, 'testUser'
+		);
+	}
+
+	private function getNodeMock(
+		string $path, string $name, string $mimeType, int $id = 123
+	): Node {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 
 		$fileMock = $this->createMock('\OCP\Files\Node');
-		$fileMock->method('getId')->willReturn(123);
+		$fileMock->method('getId')->willReturn($id);
 		$fileMock->method('getOwner')->willReturn($ownerMock);
 		$fileMock->method('getSize')->willReturn(200245);
 		$fileMock->method('getName')->willReturn($name);
