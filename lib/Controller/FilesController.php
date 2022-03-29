@@ -65,14 +65,18 @@ class FilesController extends OCSController {
 	 * 		-u USER:PASSWD http://my.nc.org/ocs/v1.php/apps/integration_openproject/filesinfo
 	 * 		-X POST -d '{"fileIds":[FILE_ID_1,FILE_ID_2,...]}'
 	 *
-	 * @param array<int> $fileIds
+	 * @param array<int>|null $fileIds
 	 * @NoAdminRequired
 	 *
 	 */
-	public function getFilesInfo(array $fileIds): DataResponse {
+	public function getFilesInfo(?array $fileIds): DataResponse {
+		if (!is_array($fileIds)) {
+			return new DataResponse('invalid request', Http::STATUS_BAD_REQUEST);
+		}
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 		$result = [];
 		foreach ($fileIds as $fileId) {
+			$fileId = (int)$fileId;
 			$files = $userFolder->getById($fileId);
 			if (is_array($files) && count($files) > 0) {
 				$result[$fileId] = $this->compileFileInfo($files[0]);
