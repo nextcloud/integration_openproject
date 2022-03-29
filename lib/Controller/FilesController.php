@@ -102,7 +102,7 @@ class FilesController extends OCSController {
 			'mtime' => $file->getMTime(),
 			'ctime' => $file->getCreationTime(),
 			'mimetype' => $file->getMimetype(),
-			'path' => preg_replace('/^files\//', '/', $file->getInternalPath()),
+			'path' => preg_replace('/^files\/?/', '/', $file->getInternalPath()),
 			'size' => $file->getSize(),
 			'owner_name' => $owner->getDisplayName(),
 			'owner_id' => $owner->getUID(),
