@@ -653,6 +653,47 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @param int $workpackageId
+	 * @param string $userId
+	 * @return array
+	 * @throws OpenprojectErrorException
+	 * @throws OpenprojectResponseException
+	 */
+	public function getWorkPackageFileLinks(int $workpackageId, string $userId): array {
+		$result = $this->request(
+			$userId, 'work_packages/' . $workpackageId. '/file_links'
+		);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Collection' ||
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['elements'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result['_embedded']['elements'];
+	}
+
+	/**
+	 * @param int $fileLinkId
+	 * @param string $userId
+	 * @return array
+	 * @throws OpenprojectErrorException
+	 */
+	public function deleteFileLink(int $fileLinkId, string $userId): array {
+		$result = $this->request(
+			$userId, 'file_links/' . $fileLinkId, [], 'DELETE'
+		);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		return $result;
+	}
+
+	/**
 	 * checks if every admin config variables are set
 	 * checks if the oauth instance url is valid
 	 *

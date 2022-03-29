@@ -203,6 +203,56 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 * @param int $workpackageId
+	 * @return DataResponse
+	 */
+	public function getWorkPackageFileLinks(int $workpackageId) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$result = $this->openprojectAPIService->getWorkPackageFileLinks(
+				$workpackageId,
+				$this->userId,
+			);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (NotPermittedException | NotFoundException $e) {
+			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
+		} catch (Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $fileLinkId
+	 * @return DataResponse
+	 */
+	public function deleteFileLink(int $fileLinkId): DataResponse {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$result = $this->openprojectAPIService->deleteFileLink(
+				$fileLinkId,
+				$this->userId,
+			);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (NotPermittedException | NotFoundException $e) {
+			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
+		} catch (Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
 	 * get status of work packages
 	 *
 	 * @NoAdminRequired
