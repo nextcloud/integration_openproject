@@ -684,8 +684,12 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectErrorException
 	 */
 	public function deleteFileLink(int $fileLinkId, string $userId): array {
+		$header = [
+			'Content-Type' => 'application/json'
+		];
+		$params['header'] = \Safe\json_encode($header);
 		$result = $this->request(
-			$userId, 'file_links/' . $fileLinkId, [], 'DELETE'
+			$userId, 'file_links/' . $fileLinkId, $params, 'DELETE'
 		);
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error']);

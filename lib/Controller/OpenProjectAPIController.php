@@ -232,14 +232,14 @@ class OpenProjectAPIController extends Controller {
 	 * @param int $fileLinkId
 	 * @return DataResponse
 	 */
-	public function deleteFileLink(int $fileLinkId): DataResponse {
+	public function deleteFileLink(int $id): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$result = $this->openprojectAPIService->deleteFileLink(
-				$fileLinkId,
+				$id,
 				$this->userId,
 			);
 		} catch (OpenprojectErrorException $e) {

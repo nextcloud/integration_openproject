@@ -131,8 +131,10 @@ export default {
 			let fileLinkId
 			if (response.status === 200) {
 				fileLinkId = this.processLink(response.data, fileId)
+				console.log(typeof fileLinkId)
 			}
-			response = await axios.delete(generateUrl('/apps/integration_openproject/file_links/' + parseInt(fileLinkId)))
+
+			response = await axios.delete(generateUrl('/apps/integration_openproject/file_links/' + fileLinkId))
 			this.checkForErrorCode(response.status)
 			if (response.status === 200) {
 				this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)

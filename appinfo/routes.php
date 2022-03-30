@@ -22,6 +22,6 @@ return [
 		['name' => 'openProjectAPI#getWorkPackageFileLinks', 'url' => '/work_packages/', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageStatus', 'url' => '/statuses/{id}', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageType', 'url' => '/types/{id}', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/file_links/{fileLinkId}', 'verb' => 'DELETE'],
+		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/file_links/{id}', 'verb' => 'DELETE'],
 	]
 ];
