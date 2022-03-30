@@ -255,7 +255,7 @@ class OpenProjectAPIService {
 			'linkable_to_storage_url' =>
 				['operator' => '=', 'values' => [urlencode($storageUrl)]]
 		];
-		$sortBy =  [['status', 'asc'],['updatedAt', 'desc']];
+		$sortBy = [['status', 'asc'],['updatedAt', 'desc']];
 		$resultsById = [];
 		$filters = [];
 
