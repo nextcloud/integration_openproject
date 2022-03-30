@@ -409,7 +409,9 @@ class OpenProjectAPIService {
 				$response = $this->client->put($url, $options);
 			} elseif ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
-				return ['success' => true];
+				if ($response->getStatusCode() === 204) {
+					return ['success' => true];
+				}
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}

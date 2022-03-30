@@ -132,7 +132,7 @@ export default {
 			if (response.status === 200) {
 				id = this.processLink(response.data, fileId)
 			}
-			const url = generateUrl('/apps/integration_openproject/file_links/' + id)
+			const url = generateUrl('/apps/integration_openproject/file-links/' + id)
 			response = await axios.delete(url)
 			this.checkForErrorCode(response.status)
 			if (response.status === 200) {
