@@ -229,7 +229,7 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $fileLinkId
+	 * @param int $id
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {

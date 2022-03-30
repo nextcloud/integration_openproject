@@ -128,14 +128,14 @@ export default {
 		async deleteWorkPackageLink(workpackageId, fileId) {
 			let response = await axios.get(generateUrl('/apps/integration_openproject/work_packages?workpackageId=' + workpackageId))
 			this.checkForErrorCode(response.status)
-			let fileLinkId
+			let id
 			if (response.status === 200) {
-				fileLinkId = this.processLink(response.data, fileId)
+				id = this.processLink(response.data, fileId)
 			}
-			response = await axios.delete(generateUrl('/apps/integration_openproject/file_links/' + fileLinkId))
-			console.log(response)
+			const url = generateUrl('/apps/integration_openproject/file_links/' + id)
+			response = await axios.delete(url)
 			this.checkForErrorCode(response.status)
-			if (response.status === 204) {
+			if (response.status === 200) {
 				this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
 			}
 		},
