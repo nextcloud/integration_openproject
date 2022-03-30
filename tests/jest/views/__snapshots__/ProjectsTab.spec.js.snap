@@ -33,6 +33,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
         </div>
       </div>
     </div>
+    <div class="workpackage-seperator"></div>
   </div>
   <div class="workpackage">
     <div class="row">
@@ -99,6 +100,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
         </div>
       </div>
     </div>
+    <div class="workpackage-seperator"></div>
   </div>
   <div class="workpackage">
     <div class="row">

@@ -33,6 +33,7 @@
 				</div>
 			</div>
 		</div>
+		<slot name = "seperator"/>
 	</div>
 </template>
 
@@ -56,7 +57,7 @@ export default {
 <style scoped lang="scss">
 .workpackage {
 	width: 100%;
-	padding: 8px;
+	padding: 12px 8px;
 
 	.row {
 		display: flex;
