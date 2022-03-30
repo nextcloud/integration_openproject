@@ -95,7 +95,7 @@ export default {
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
 		checkForErrorCode(statusCode) {
-			if (statusCode === 200) return
+			if (statusCode === 200 || statusCode === 204) return
 			if (statusCode === 401) {
 				this.state = STATE_NO_TOKEN
 			} else {
@@ -131,12 +131,11 @@ export default {
 			let fileLinkId
 			if (response.status === 200) {
 				fileLinkId = this.processLink(response.data, fileId)
-				console.log(typeof fileLinkId)
 			}
-
 			response = await axios.delete(generateUrl('/apps/integration_openproject/file_links/' + fileLinkId))
+			console.log(response)
 			this.checkForErrorCode(response.status)
-			if (response.status === 200) {
+			if (response.status === 204) {
 				this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
 			}
 		},
