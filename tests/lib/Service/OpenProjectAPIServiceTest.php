@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
+use OC_Util;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -150,16 +151,29 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-		$logger = $this->createMock(ILogger::class);
 
 		$client = new GuzzleClient();
-		$ocClient = new Client(
-			$this->createMock(IConfig::class),
-			$logger,
-			$certificateManager,
-			$client,
-			$this->createMock(\OC\Http\Client\LocalAddressChecker::class)
-		);
+
+		//changed from nextcloud 24
+		if (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+			// @phpstan-ignore-next-line
+			$ocClient = new Client(
+				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$certificateManager,                                           // @phpstan-ignore-line
+				$client,                                                       // @phpstan-ignore-line
+				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
+			);
+		} else {
+			// @phpstan-ignore-next-line
+			$ocClient = new Client(
+				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$this->createMock(ILogger::class),                             // @phpstan-ignore-line
+				$certificateManager,                                           // @phpstan-ignore-line
+				$client,                                                       // @phpstan-ignore-line
+				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
+			);
+		}
+
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);
 
