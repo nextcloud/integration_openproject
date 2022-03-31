@@ -73,6 +73,7 @@ export default {
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
+		color: null,
 	}),
 	computed: {
 		isLoading() {
@@ -93,6 +94,9 @@ export default {
 			this.workpackages = []
 			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
+		},
+		changeBackground(){
+			this.color = '#F3F3F3'
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200 || statusCode === 204) return
@@ -251,6 +255,9 @@ export default {
 		height: 0;
 		margin: 0px 10px;
 		border-bottom: 1px solid rgb(237 237 237);
+	}
+	.linked-workpackages:hover{
+		background-color: #F3F3F3;
 	}
 }
 
