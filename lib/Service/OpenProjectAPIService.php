@@ -604,7 +604,7 @@ class OpenProjectAPIService {
 		string $fileName,
 		string $storageUrl,
 		string $userId
-	) {
+	): int {
 		$file = $this->getNode($userId, $fileId);
 		if (!$file->isReadable()) {
 			throw new NotPermittedException();

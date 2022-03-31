@@ -207,14 +207,14 @@ class OpenProjectAPIController extends Controller {
 	 * @param int $workpackageId
 	 * @return DataResponse
 	 */
-	public function getWorkPackageFileLinks(int $workpackageId) {
+	public function getWorkPackageFileLinks(int $id) {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$result = $this->openprojectAPIService->getWorkPackageFileLinks(
-				$workpackageId,
+				$id,
 				$this->userId,
 			);
 		} catch (OpenprojectErrorException $e) {

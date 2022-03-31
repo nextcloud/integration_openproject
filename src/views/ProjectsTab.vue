@@ -126,18 +126,26 @@ export default {
 			window.open(workpackageUrl)
 		},
 		async deleteWorkPackageLink(workpackageId, fileId) {
-			let response = await axios.get(generateUrl('/apps/integration_openproject/work_packages?workpackageId=' + workpackageId))
+			let response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
 			this.checkForErrorCode(response.status)
 			let id
 			if (response.status === 200) {
 				id = this.processLink(response.data, fileId)
 			}
+
 			const url = generateUrl('/apps/integration_openproject/file-links/' + id)
-			response = await axios.delete(url)
-			this.checkForErrorCode(response.status)
-			if (response.status === 200) {
-				this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
+
+			try {
+				response = await axios.delete(url)
+				if (response.status === 200) {
+					this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
+				}
+			} catch (e) {
+				showError(
+					t('integration_openproject','Failed to delete file link to work-package')
+				)
 			}
+
 		},
 		processLink(data, fileId) {
 			let linkId
