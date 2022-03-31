@@ -19,7 +19,7 @@ class FilesControllerTest extends TestCase {
 			[
 				[
 					$this->getNodeMock(
-				'files/logo.png', 'logo.png', 'image/png'
+						'files/logo.png', 'logo.png', 'image/png'
 					)
 				],
 				'/logo.png',
