@@ -11,12 +11,15 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\User\User;
+use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\IUserSession;
 
 class FilesController extends OCSController {
 
@@ -29,13 +32,27 @@ class FilesController extends OCSController {
 	 */
 	private $rootFolder;
 
+	/**
+	 * @var ITrashManager
+	 */
+	private $trashManager;
+
+	/**
+	 * @var IUserSession
+	 */
+	private $userSession;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
+								ITrashManager $trashManager,
+								IUserSession $userSession,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
 		$this->rootFolder = $rootFolder;
+		$this->trashManager = $trashManager;
+		$this->userSession = $userSession;
 	}
 
 	/**
@@ -50,9 +67,16 @@ class FilesController extends OCSController {
 	public function getFileInfo(int $fileId): DataResponse {
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 		$files = $userFolder->getById($fileId);
+
 		if (is_array($files) && count($files) > 0) {
 			$fileInfo = $this->compileFileInfo($files[0]);
 			return new DataResponse($fileInfo);
+		} else {
+			$trash = $this->trashManager->getTrashNodeById($this->userSession->getUser(), $fileId);
+			if ($trash !== null) {
+				$fileInfo = $this->compileFileInfo($trash);
+				return new DataResponse($fileInfo);
+			}
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
 	}
@@ -102,7 +126,7 @@ class FilesController extends OCSController {
 			'mtime' => $file->getMTime(),
 			'ctime' => $file->getCreationTime(),
 			'mimetype' => $file->getMimetype(),
-			'path' => preg_replace('/^files\/?/', '/', $file->getInternalPath()),
+			'path' => preg_replace('/(files_trashbin\/)?files\/?/', '/', $file->getInternalPath()),
 			'size' => $file->getSize(),
 			'owner_name' => $owner->getDisplayName(),
 			'owner_id' => $owner->getUID(),
