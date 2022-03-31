@@ -33,11 +33,9 @@
 			</div>
 			<WorkPackage v-for="(workpackage, index) in workpackages"
 				:key="workpackage.id"
-				:workpackage="workpackage">
-				<template #seperator>
-					<div v-if="index !== workpackages.length-1 " class = "workpackage-seperator"/>
-				</template>
-			</WorkPackage>
+				:workpackage="workpackage"
+				:class="{ 'workpackage-seperator': index !== workpackages.length-1 }"
+			/>
 		</div>
 		<EmptyContent v-else
 			id="openproject-empty-content"
@@ -163,8 +161,7 @@ export default {
 	}
 
 	.workpackage-seperator{
-		height: 0;
-		border-bottom: 1px solid #F3F3F3;;
+		border-bottom: 1px solid rgb(237 237 237);
 	}
 }
 </style>
