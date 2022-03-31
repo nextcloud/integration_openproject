@@ -56,7 +56,7 @@ export default {
 <style scoped lang="scss">
 .workpackage {
 	width: 100%;
-	padding: 8px 6px 0 6px;
+	padding: 10px 6px 0 6px;
 
 	.row {
 		display: flex;

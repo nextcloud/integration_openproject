@@ -34,8 +34,7 @@
 			<WorkPackage v-for="(workpackage, index) in workpackages"
 				:key="workpackage.id"
 				:workpackage="workpackage"
-				:class="{ 'workpackage-seperator': index !== workpackages.length-1 }"
-			/>
+				:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 		</div>
 		<EmptyContent v-else
 			id="openproject-empty-content"
