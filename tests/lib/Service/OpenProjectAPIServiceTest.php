@@ -159,8 +159,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
 				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
-				$certificateManager,                                                          // @phpstan-ignore-line
-				$client,                                                                      // @phpstan-ignore-line
+				$certificateManager,                                           // @phpstan-ignore-line
+				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
 			);
 		} else {
@@ -168,8 +168,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$ocClient = new Client(
 				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
 				$this->createMock(ILogger::class),                             // @phpstan-ignore-line
-				$certificateManager,                                                          // @phpstan-ignore-line
-				$client,                                                                      // @phpstan-ignore-line
+				$certificateManager,                                           // @phpstan-ignore-line
+				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
 			);
 		}
