@@ -118,7 +118,8 @@ class FilesControllerTest extends TestCase {
 				"path" => $expectedPath,
 				"size" => 200245,
 				"owner_name" => "Test User",
-				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3"
+				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+				'trashed' => false
 			],
 			$result->getData()
 		);
@@ -203,7 +204,7 @@ class FilesControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
-		public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
+	public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')
 			->willReturn(
@@ -362,7 +363,8 @@ class FilesControllerTest extends TestCase {
 					'path' => '/myFolder/a-sub-folder',
 					'size' => 200245,
 					'owner_name' => 'Test User',
-					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+					'trashed' => false
 				],
 				3 => [
 					'id' => 3,
@@ -373,7 +375,8 @@ class FilesControllerTest extends TestCase {
 					'path' => '/',
 					'size' => 200245,
 					'owner_name' => 'Test User',
-					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+					'trashed' => false
 				]
 			],
 			$result->getData()
@@ -405,7 +408,8 @@ class FilesControllerTest extends TestCase {
 		'path' => '/logo.png',
 		'size' => 200245,
 		'owner_name' => 'Test User',
-		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+		'trashed' => false
 	];
 
 	/**
@@ -420,7 +424,8 @@ class FilesControllerTest extends TestCase {
 		'path' => '/inFolder/image.png',
 		'size' => 200245,
 		'owner_name' => 'Test User',
-		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
+		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+		'trashed' => false
 	];
 
 	/**

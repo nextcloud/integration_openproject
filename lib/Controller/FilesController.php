@@ -14,7 +14,6 @@ namespace OCA\OpenProject\Controller;
 use OC\User\User;
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Files\IRootFolder;
-use OCP\Files\Node;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
@@ -64,20 +63,9 @@ class FilesController extends OCSController {
 	 *
 	 */
 	public function getFileInfo(int $fileId): DataResponse {
-		$userFolder = $this->rootFolder->getUserFolder($this->userId);
-		$files = $userFolder->getById($fileId);
-
-		if (is_array($files) && count($files) > 0) {
-			$fileInfo = $this->compileFileInfo($files[0]);
+		$fileInfo = $this->compileFileInfo($fileId);
+		if ($fileInfo !== null) {
 			return new DataResponse($fileInfo);
-		} else {
-			$trash = $this->trashManager->getTrashNodeById(
-				$this->userSession->getUser(), $fileId
-			);
-			if ($trash !== null) {
-				$fileInfo = $this->compileFileInfo($trash);
-				return new DataResponse($fileInfo);
-			}
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
 	}
@@ -98,39 +86,48 @@ class FilesController extends OCSController {
 		if (!is_array($fileIds)) {
 			return new DataResponse('invalid request', Http::STATUS_BAD_REQUEST);
 		}
-		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 		$result = [];
 		foreach ($fileIds as $fileId) {
-			$fileId = (int)$fileId;
-			$files = $userFolder->getById($fileId);
-			if (is_array($files) && count($files) > 0) {
-				$result[$fileId] = $this->compileFileInfo($files[0]);
-			} else {
-				$result[$fileId] = null;
-			}
+			$result[$fileId] = $this->compileFileInfo($fileId);
 		}
 		return new DataResponse($result);
 	}
 
 	/**
-	 * @param Node $file
-	 * @return array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
+	 * @param int $fileId
+	 * @return null|array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
 	 *               'mimetype': string, 'path': string, 'size': int,
 	 *               'owner_name': string, 'owner_id': string}
 	 */
-	private function compileFileInfo($file) {
-		$owner = $file->getOwner();
+	private function compileFileInfo($fileId) {
+		$userFolder = $this->rootFolder->getUserFolder($this->userId);
+		$files = $userFolder->getById($fileId);
+		if (is_array($files) && count($files) > 0) {
+			$file = $files[0];
+			$trashed = false;
+		} else {
+			$file = $this->trashManager->getTrashNodeById(
+				$this->userSession->getUser(), $fileId
+			);
+			$trashed = true;
+		}
 
-		return [
-			'id' => $file->getId(),
-			'name' => $file->getName(),
-			'mtime' => $file->getMTime(),
-			'ctime' => $file->getCreationTime(),
-			'mimetype' => $file->getMimetype(),
-			'path' => preg_replace('/(files_trashbin\/)?files\/?/', '/', $file->getInternalPath()),
-			'size' => $file->getSize(),
-			'owner_name' => $owner->getDisplayName(),
-			'owner_id' => $owner->getUID(),
-		];
+		if ($file !== null) {
+			$owner = $file->getOwner();
+			return [
+				'id' => $file->getId(),
+				'name' => $file->getName(),
+				'mtime' => $file->getMTime(),
+				'ctime' => $file->getCreationTime(),
+				'mimetype' => $file->getMimetype(),
+				'path' => preg_replace('/(files_trashbin\/)?files\/?/', '/', $file->getInternalPath()),
+				'size' => $file->getSize(),
+				'owner_name' => $owner->getDisplayName(),
+				'owner_id' => $owner->getUID(),
+				'trashed' => $trashed
+			];
+		}
+
+		return null;
 	}
 }
