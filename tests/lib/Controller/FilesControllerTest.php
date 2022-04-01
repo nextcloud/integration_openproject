@@ -146,25 +146,15 @@ class FilesControllerTest extends TestCase {
 			$this->getNodeMock(
 				'files_trashbin/files/welcome.txt.d1648724302',
 				'welcome.txt.d1648724302',
-				'text/plain'
+				'text/plain',
+				759
 			)
 		);
 
 		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
 
-		$result = $filesController->getFileInfo(123);
-		assertSame([
-			"id" => 123,
-			"name" => 'welcome.txt.d1648724302',
-			"mtime" => 1640008813,
-			"ctime" => 1639906930,
-			"mimetype" => 'text/plain',
-			"path" => '/welcome.txt.d1648724302',
-			"size" => 200245,
-			"owner_name" => "Test User",
-			"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-			"trashed" => true
-		], $result->getData());
+		$result = $filesController->getFileInfo(759);
+		assertSame($this->trashedWelcomeTxtResult, $result->getData());
 		assertSame(200, $result->getStatus());
 	}
 
@@ -177,27 +167,58 @@ class FilesControllerTest extends TestCase {
 			$this->getNodeMock(
 				'files_trashbin/files/welcome.txt.d1648724302',
 				'welcome.txt.d1648724302',
-				'text/plain'
+				'text/plain',
+				759
 			)
 		);
 
 		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
 
-		$result = $filesController->getFilesInfo([123]);
+		$result = $filesController->getFilesInfo([759]);
 		assertSame(
 			[
-				123 => [
-					"id" => 123,
-					"name" => 'welcome.txt.d1648724302',
-					"mtime" => 1640008813,
-					"ctime" => 1639906930,
-					"mimetype" => 'text/plain',
-					"path" => '/welcome.txt.d1648724302',
-					"size" => 200245,
-					"owner_name" => "Test User",
-					"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-					"trashed" => true
+				759 => $this->trashedWelcomeTxtResult,
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoThreeIdsRequestedOneExistsOneInTrashOneNotExisiting(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([123], [759], [365])
+			->willReturnOnConsecutiveCalls(
+				[
+					$this->getNodeMock(
+						'files/logo.png', 'logo.png', 'image/png'
+					)
 				],
+				[],
+				[]
+			);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+		$trashManagerMock->method('getTrashNodeById')
+			->withConsecutive([$this->anything(), 759], [$this->anything(), 365])
+			->willReturnOnConsecutiveCalls(
+			$this->getNodeMock(
+				'files_trashbin/files/welcome.txt.d1648724302',
+				'welcome.txt.d1648724302',
+				'text/plain',
+				759
+			),
+				null
+		);
+
+		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
+
+		$result = $filesController->getFilesInfo([123, 759, 365]);
+		assertSame(
+			[
+				123 => $this->logoPngResult,
+				759 => $this->trashedWelcomeTxtResult,
+				365 => null
 			],
 			$result->getData()
 		);
@@ -395,6 +416,22 @@ class FilesControllerTest extends TestCase {
 		);
 		assertSame(400, $result->getStatus());
 	}
+
+	/**
+	 * @var array<mixed>
+	 */
+	private array $trashedWelcomeTxtResult = [
+		"id" => 759,
+		"name" => 'welcome.txt.d1648724302',
+		"mtime" => 1640008813,
+		"ctime" => 1639906930,
+		"mimetype" => 'text/plain',
+		"path" => '/welcome.txt.d1648724302',
+		"size" => 200245,
+		"owner_name" => "Test User",
+		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+		"trashed" => true
+	];
 
 	/**
 	 * @var array<mixed>
