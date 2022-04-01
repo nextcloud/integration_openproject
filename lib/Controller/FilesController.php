@@ -18,14 +18,15 @@ use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\IUser;
 use OCP\IUserSession;
 
 class FilesController extends OCSController {
 
 	/**
-	 * @var string|null
+	 * @var IUser|null
 	 */
-	private $userId;
+	private $user;
 	/**
 	 * @var IRootFolder
 	 */
@@ -36,21 +37,15 @@ class FilesController extends OCSController {
 	 */
 	private $trashManager;
 
-	/**
-	 * @var IUserSession
-	 */
-	private $userSession;
-
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
 								IUserSession $userSession) {
 		parent::__construct($appName, $request);
-		$this->userId = $userSession->getUser()->getUID();
+		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->trashManager = $trashManager;
-		$this->userSession = $userSession;
 	}
 
 	/**
@@ -100,14 +95,14 @@ class FilesController extends OCSController {
 	 *               'owner_name': string, 'owner_id': string}
 	 */
 	private function compileFileInfo($fileId) {
-		$userFolder = $this->rootFolder->getUserFolder($this->userId);
+		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
 			$file = $files[0];
 			$trashed = false;
 		} else {
 			$file = $this->trashManager->getTrashNodeById(
-				$this->userSession->getUser(), $fileId
+				$this->user, $fileId
 			);
 			$trashed = true;
 		}
