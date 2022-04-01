@@ -26,6 +26,6 @@
 	background-image: url(./../img/app.svg);
 }
 
-body.theme--dark .icon-openproject .icon-noConnection, body.theme--dark .icon-open-project::after {
+body.theme--dark .icon-openproject, .icon-noConnection, .icon-open-project::after {
 	filter: none;
 }
