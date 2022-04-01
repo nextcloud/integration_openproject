@@ -2,6 +2,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Files\Node;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -135,7 +136,74 @@ class FilesControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
-	public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
+	public function testGetFileInfoFileInTrash(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+		$trashManagerMock->method('getTrashNodeById')->willReturn(
+			$this->getNodeMock(
+				'files_trashbin/files/welcome.txt.d1648724302',
+				'welcome.txt.d1648724302',
+				'text/plain'
+			)
+		);
+
+		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
+
+		$result = $filesController->getFileInfo(123);
+		assertSame([
+			"id" => 123,
+			"name" => 'welcome.txt.d1648724302',
+			"mtime" => 1640008813,
+			"ctime" => 1639906930,
+			"mimetype" => 'text/plain',
+			"path" => '/welcome.txt.d1648724302',
+			"size" => 200245,
+			"owner_name" => "Test User",
+			"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+			"trashed" => true
+		], $result->getData());
+		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFilesInfoOneIdRequestedFileInTrash(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+		$trashManagerMock->method('getTrashNodeById')->willReturn(
+			$this->getNodeMock(
+				'files_trashbin/files/welcome.txt.d1648724302',
+				'welcome.txt.d1648724302',
+				'text/plain'
+			)
+		);
+
+		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
+
+		$result = $filesController->getFilesInfo([123]);
+		assertSame(
+			[
+				123 => [
+					"id" => 123,
+					"name" => 'welcome.txt.d1648724302',
+					"mtime" => 1640008813,
+					"ctime" => 1639906930,
+					"mimetype" => 'text/plain',
+					"path" => '/welcome.txt.d1648724302',
+					"size" => 200245,
+					"owner_name" => "Test User",
+					"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+					"trashed" => true
+				],
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
+		public function testGetFilesInfoOneIdRequestedFileExistsReturnsOneResult(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')
 			->willReturn(
@@ -355,7 +423,12 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3'
 	];
 
-	private function createFilesController(MockObject $folderMock): FilesController {
+	/**
+	 * @param MockObject $folderMock
+	 * @param MockObject|ITrashManager|null $trashManagerMock
+	 * @return FilesController
+	 */
+	private function createFilesController(MockObject $folderMock, $trashManagerMock = null): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
@@ -364,12 +437,13 @@ class FilesControllerTest extends TestCase {
 
 		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
 		$userSessionMock->method('getUser')->willReturn($userMock);
+		if ($trashManagerMock === null) {
+			$trashManagerMock = $this->createMock(ITrashManager::class);
+		}
 
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')
-			->getMock();
 		return new FilesController(
 			'integration_openproject',
-			$this->createMock(IRequest::class), $storageMock, $trashManagerMock,$userSessionMock
+			$this->createMock(IRequest::class), $storageMock, $trashManagerMock, $userSessionMock
 		);
 	}
 
