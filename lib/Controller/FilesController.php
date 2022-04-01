@@ -46,10 +46,9 @@ class FilesController extends OCSController {
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
-								IUserSession $userSession,
-								?string $userId) {
+								IUserSession $userSession) {
 		parent::__construct($appName, $request);
-		$this->userId = $userId;
+		$this->userId = $userSession->getUser()->getUID();
 		$this->rootFolder = $rootFolder;
 		$this->trashManager = $trashManager;
 		$this->userSession = $userSession;
@@ -72,7 +71,9 @@ class FilesController extends OCSController {
 			$fileInfo = $this->compileFileInfo($files[0]);
 			return new DataResponse($fileInfo);
 		} else {
-			$trash = $this->trashManager->getTrashNodeById($this->userSession->getUser(), $fileId);
+			$trash = $this->trashManager->getTrashNodeById(
+				$this->userSession->getUser(), $fileId
+			);
 			if ($trash !== null) {
 				$fileInfo = $this->compileFileInfo($trash);
 				return new DataResponse($fileInfo);

@@ -359,9 +359,17 @@ class FilesControllerTest extends TestCase {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
+		$userMock = $this->getMockBuilder('\OCP\IUser')->getMock();
+		$userMock->method('getUID')->willReturn('testUser');
+
+		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
+		$userSessionMock->method('getUser')->willReturn($userMock);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')
+			->getMock();
 		return new FilesController(
 			'integration_openproject',
-			$this->createMock(IRequest::class), $storageMock, 'testUser'
+			$this->createMock(IRequest::class), $storageMock, $trashManagerMock,$userSessionMock
 		);
 	}
 
