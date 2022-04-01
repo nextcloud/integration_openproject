@@ -5,7 +5,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
   <div class="existing-relations">
     integration_openproject
   </div>
-  <div class="workpackage">
+  <div class="workpackage workpackage-seperator">
     <div class="row">
       <div class="row__status" style="background-color: rgb(165, 216, 255);">
         <div class="row__status__title">
@@ -71,7 +71,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
   <div class="existing-relations">
     integration_openproject
   </div>
-  <div class="workpackage">
+  <div class="workpackage workpackage-seperator">
     <div class="row">
       <div class="row__status">
         <div class="row__status__title">

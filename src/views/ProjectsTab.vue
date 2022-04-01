@@ -31,9 +31,10 @@
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
 			</div>
-			<WorkPackage v-for="workpackage in workpackages"
+			<WorkPackage v-for="(workpackage, index) in workpackages"
 				:key="workpackage.id"
-				:workpackage="workpackage" />
+				:workpackage="workpackage"
+				:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 		</div>
 		<EmptyContent v-else
 			id="openproject-empty-content"
@@ -156,6 +157,10 @@ export default {
 
 	.icon-loading:after {
 		top: 140%;
+	}
+
+	.workpackage-seperator{
+		border-bottom: 1px solid rgb(237 237 237);
 	}
 }
 </style>
