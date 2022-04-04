@@ -12,7 +12,7 @@
 			:loading="isStateLoading"
 			:preselect-first="true"
 			:preserve-search="true"
-			@search-change="makeSearchRequest"
+			@search-change="asyncFind"
 			@change="linkWorkPackageToFile">
 			<template #option="{option}">
 				<WorkPackage :key="option.id"
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
@@ -43,6 +44,7 @@ const STATE_ERROR = 'error'
 const STATE_NO_TOKEN = 'no-token'
 const STATE_LOADING = 'loading'
 const SEARCH_CHAR_LIMIT = 3
+const DEBOUNCE_THRESHOLD = 500
 
 export default {
 	name: 'SearchInput',
@@ -110,6 +112,16 @@ export default {
 				this.state = STATE_ERROR
 			}
 		},
+		async asyncFind(query) {
+			if (query) {
+				this.resetState()
+				if (query.length <= SEARCH_CHAR_LIMIT) return
+				await this.debounceMakeSearchRequest(query)
+			}
+		},
+		debounceMakeSearchRequest: debounce(function(...args) {
+			return this.makeSearchRequest(...args)
+		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
 			const params = new URLSearchParams()
 			params.append('workpackageId', selectedOption.id)
@@ -132,8 +144,6 @@ export default {
 			}
 		},
 		async makeSearchRequest(search) {
-			this.resetState()
-			if (search.length <= SEARCH_CHAR_LIMIT) return
 			this.state = STATE_LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}
