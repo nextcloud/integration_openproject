@@ -6,84 +6,74 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
     integration_openproject
   </div>
   <div class="linked-workpackages">
-    <div class="workpackage">
-      <div class="row">
-        <div class="row__status" style="background-color: rgb(165, 216, 255);">
-          <div class="row__status__title">
-            open
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage">
+        <div class="row">
+          <div class="row__status" style="background-color: rgb(165, 216, 255);">
+            <div class="row__status__title">
+              open
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #123 - a big project
           </div>
         </div>
-        <div class="row__workpackage">
-          #123 - a big project
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__subject"><span class="row__subject__type" style="color: rgb(0, 176, 240);">
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type" style="color: rgb(0, 176, 240);">
 				Task
 			</span>
-          my task
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__assignee">
-          <div class="row__assignee__avatar">
-            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
-          </div>
-          <div class="row__assignee__assignee">
-            Bal Bahadur Pun
+            my task
           </div>
         </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              Bal Bahadur Pun
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
-    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
-          <!---->
-        </button></li>
-      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
-          <!---->
-        </button></li>
-    </actions-stub>
+    <div class="workpackage-seperator"></div>
   </div>
   <div class="linked-workpackages">
-    <div class="workpackage">
-      <div class="row">
-        <div class="row__status">
-          <div class="row__status__title">
-            प्रगति हुदैछ
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage">
+        <div class="row">
+          <div class="row__status">
+            <div class="row__status__title">
+              प्रगति हुदैछ
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #589 - नेपालको विकास गर्ने
           </div>
         </div>
-        <div class="row__workpackage">
-          #589 - नेपालको विकास गर्ने
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__subject"><span class="row__subject__type">
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type">
 				Epic
 			</span>
-          नेपालमा IT उद्योग बनाउने
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__assignee">
-          <div class="row__assignee__avatar">
-            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
-          </div>
-          <div class="row__assignee__assignee">
-            कुमारी नेपाली
+            नेपालमा IT उद्योग बनाउने
           </div>
         </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              कुमारी नेपाली
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
-    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
-          <!---->
-        </button></li>
-      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
-          <!---->
-        </button></li>
-    </actions-stub>
+    <div class=""></div>
   </div>
 </div>
 `;
@@ -94,84 +84,74 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
     integration_openproject
   </div>
   <div class="linked-workpackages">
-    <div class="workpackage">
-      <div class="row">
-        <div class="row__status">
-          <div class="row__status__title">
-            open
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage">
+        <div class="row">
+          <div class="row__status">
+            <div class="row__status__title">
+              open
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #123 - a big project
           </div>
         </div>
-        <div class="row__workpackage">
-          #123 - a big project
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__subject"><span class="row__subject__type">
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type">
 				Task
 			</span>
-          my task
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__assignee">
-          <div class="row__assignee__avatar">
-            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
-          </div>
-          <div class="row__assignee__assignee">
-            Bal Bahadur Pun
+            my task
           </div>
         </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              Bal Bahadur Pun
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
-    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
-          <!---->
-        </button></li>
-      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
-          <!---->
-        </button></li>
-    </actions-stub>
+    <div class="workpackage-seperator"></div>
   </div>
   <div class="linked-workpackages">
-    <div class="workpackage">
-      <div class="row">
-        <div class="row__status">
-          <div class="row__status__title">
-            प्रगति हुदैछ
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage">
+        <div class="row">
+          <div class="row__status">
+            <div class="row__status__title">
+              प्रगति हुदैछ
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #589 - नेपालको विकास गर्ने
           </div>
         </div>
-        <div class="row__workpackage">
-          #589 - नेपालको विकास गर्ने
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__subject"><span class="row__subject__type">
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type">
 				Epic
 			</span>
-          नेपालमा IT उद्योग बनाउने
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__assignee">
-          <div class="row__assignee__avatar">
-            <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
-          </div>
-          <div class="row__assignee__assignee">
-            कुमारी नेपाली
+            नेपालमा IT उद्योग बनाउने
           </div>
         </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              कुमारी नेपाली
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
-    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
-          <!---->
-        </button></li>
-      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
-          <!---->
-        </button></li>
-    </actions-stub>
+    <div class=""></div>
   </div>
 </div>
 `;
@@ -182,44 +162,39 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
     integration_openproject
   </div>
   <div class="linked-workpackages">
-    <div class="workpackage">
-      <div class="row">
-        <div class="row__status" style="background-color: blue;">
-          <div class="row__status__title">
-            in-progress
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage">
+        <div class="row">
+          <div class="row__status" style="background-color: blue;">
+            <div class="row__status__title">
+              in-progress
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #1 - test
           </div>
         </div>
-        <div class="row__workpackage">
-          #1 - test
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__subject"><span class="row__subject__type" style="color: red;">
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type" style="color: red;">
 				task
 			</span>
-          Organize work-packages
-        </div>
-      </div>
-      <div class="row">
-        <div class="row__assignee">
-          <div class="row__assignee__avatar">
-            <avatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></avatar-stub>
-          </div>
-          <div class="row__assignee__assignee">
-            test
+            Organize work-packages
           </div>
         </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              test
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
-    <actions-stub defaulticon="" arialabel="Actions" placement="bottom" boundarieselement="[object HTMLBodyElement]" container="body" menu-align="right" class="linked-workpackages--menu">
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--open"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-openproject"></span> <span data-v-71ea20d2="" class="action-button__text">Open in OpenProject</span>
-          <!---->
-        </button></li>
-      <li data-v-5339ba06="" class="action action-separator action--disabled"></li>
-      <li data-v-71ea20d2="" class="action linked-workpackages--menu--delete"><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-delete"></span> <span data-v-71ea20d2="" class="action-button__text">Delete Link</span>
-          <!---->
-        </button></li>
-    </actions-stub>
+    <div class=""></div>
   </div>
 </div>
 `;

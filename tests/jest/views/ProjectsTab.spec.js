@@ -16,10 +16,6 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
-	const toggleMenuSelector = '.action-item__menutoggle'
-	const toggleMenuOpenSelector = '.action-item--open'
-	const openWorkpackageSelector = '.linked-workpackages--menu--open'
-	const deleteWorkpackageSelector = '.linked-workpackages--menu--delete'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -285,25 +281,9 @@ describe('ProjectsTab.vue Test', () => {
 			expect(workPackages).toMatchSnapshot()
 		})
 	})
-
-	describe('action menu', () => {
-		it('should display the action menu for linked work packages', async () => {
-			wrapper = mountWrapper(false)
-			await wrapper.setData({
-				workpackages: workPackagesSearchResponse,
-			})
-			await localVue.nextTick()
-			expect(wrapper.find(toggleMenuOpenSelector).exists()).toBeFalsy()
-			await wrapper.find(toggleMenuSelector).trigger('click')
-			const toggleMenuOpen = wrapper.find(toggleMenuOpenSelector)
-			expect(toggleMenuOpen.exists()).toBeTruthy()
-			expect(wrapper.find(openWorkpackageSelector).text()).toBe('Open in OpenProject')
-			expect(wrapper.find(deleteWorkpackageSelector).text()).toBe('Delete Link')
-		})
-	})
 })
 
-function mountWrapper(stub = true) {
+function mountWrapper() {
 	return mount(ProjectsTab, {
 		localVue,
 		mocks: {
@@ -315,7 +295,6 @@ function mountWrapper(stub = true) {
 		stubs: {
 			SearchInput: true,
 			Avatar: true,
-			Actions: stub,
 		},
 		data: () => ({
 			error: '',

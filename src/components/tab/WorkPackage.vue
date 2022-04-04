@@ -56,7 +56,7 @@ export default {
 <style scoped lang="scss">
 .workpackage {
 	width: 100%;
-	padding: 10px 6px 0 6px;
+	padding: 15px 6px 0 10px;
 
 	.row {
 		display: flex;
@@ -76,10 +76,10 @@ export default {
 			margin-right: 4px;
 
 			&__title {
-				mix-blend-mode: difference;
 				font-size: 0.75rem;
 				line-height: 14px;
 				text-align: center;
+				filter: contrast(0) brightness(0);
 			}
 		}
 
@@ -122,5 +122,9 @@ export default {
 			}
 		}
 	}
+}
+
+.workpackage div {
+	cursor: pointer;
 }
 </style>

@@ -34,18 +34,11 @@
 			<div v-for="(workpackage, index) in workpackages"
 				:key="workpackage.id"
 				class="linked-workpackages">
-				<WorkPackage
-					:workpackage="workpackage" 
-					:class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
-				<Actions class="linked-workpackages--menu" menu-align="right">
-					<ActionButton class="linked-workpackages--menu--open" icon="icon-openproject">
-						{{ openLink }}
-					</ActionButton>
-					<ActionSeparator />
-					<ActionButton class="linked-workpackages--menu--delete" icon="icon-delete">
-						{{ deleteLink }}
-					</ActionButton>
-				</Actions>
+				<div class="linked-workpackages--workpackage">
+					<WorkPackage :workpackage="workpackage" />
+					<div class="linked-workpackages--workpackage--unlink icon-noConnection" />
+				</div>
+				<div :class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 			</div>
 		</div>
 		<EmptyContent v-else
@@ -58,11 +51,7 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import axios from '@nextcloud/axios'
-import { translate as t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
@@ -74,9 +63,6 @@ export default {
 		EmptyContent,
 		SearchInput,
 		WorkPackage,
-		Actions,
-		ActionButton,
-		ActionSeparator,
 	},
 	data: () => ({
 		error: '',
@@ -89,11 +75,8 @@ export default {
 		isLoading() {
 			return this.state === 'loading'
 		},
-		deleteLink() {
-			return t('integration_openproject', 'Delete Link')
-		},
-		openLink() {
-			return t('integration_openproject', 'Open in OpenProject')
+		unlinkSvg() {
+			return require('../../img/noConnection.svg')
 		},
 	},
 	methods: {
@@ -184,15 +167,39 @@ export default {
 		top: 140%;
 	}
 
-	.workpackage-seperator{
-		border-bottom: 1px solid rgb(237 237 237);
-	}
-	#openproject-linked-workpackages {
+	.linked-workpackages--workpackage{
+		display: flex;
 		position: relative;
+		width: 100%;
+		&--unlink{
+			position: absolute;
+			top: 12px;
+			right: 14px;
+			height: 15px;
+			width: 18px;
+			align-items: center;
+			filter: contrast(0) brightness(0);
+			visibility: hidden;
+		}
 	}
 
-	.linked-workpackages{
-		display: flex;
+	.linked-workpackages:hover {
+		background-color: var(--color-background-dark);
 	}
+
+	.linked-workpackages:hover .linked-workpackages--workpackage--unlink {
+		visibility: visible;
+		cursor: pointer;
+	}
+
+	.workpackage-seperator {
+		height: 0;
+		margin: 0px 10px;
+		border-bottom: 1px solid rgb(237 237 237);
+	}
+}
+
+body.theme--dark .linked-workpackages--workpackage--unlink{
+	filter: invert(100%);
 }
 </style>
