@@ -25,6 +25,7 @@ Object {
     "id": "1",
     "picture": "/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System",
     "project": "test",
+    "projectId": "15",
     "statusCol": "blue",
     "statusTitle": "in-progress",
     "subject": "Organize work-packages",
