@@ -35,8 +35,10 @@
 				:key="workpackage.id"
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
-					<WorkPackage :workpackage="workpackage" />
-					<div class="linked-workpackages--workpackage--unlink icon-noConnection" />
+					<WorkPackage :workpackage="workpackage"
+								 v-on:click.native="getWorkPackageUrl(workpackage.id, workpackage.projectId)" />
+					<div class="linked-workpackages--workpackage--unlink icon-noConnection" 
+					@click="deleteWorkPackageLink(workpackage.id, fileInfo.id)" />
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 			</div>
@@ -255,9 +257,6 @@ export default {
 		height: 0;
 		margin: 0px 10px;
 		border-bottom: 1px solid rgb(237 237 237);
-	}
-	.linked-workpackages:hover{
-		background-color: #F3F3F3;
 	}
 }
 
