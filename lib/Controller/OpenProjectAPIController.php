@@ -204,10 +204,10 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $workpackageId
+	 * @param int $id
 	 * @return DataResponse
 	 */
-	public function getWorkPackageFileLinks(int $id) {
+	public function getWorkPackageFileLinks(int $id): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
@@ -220,7 +220,7 @@ class OpenProjectAPIController extends Controller {
 		} catch (OpenprojectErrorException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotPermittedException | NotFoundException $e) {
-			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
+			return new DataResponse('work package not found', Http::STATUS_NOT_FOUND);
 		} catch (Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}

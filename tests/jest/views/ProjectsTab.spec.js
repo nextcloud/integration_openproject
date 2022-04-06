@@ -3,8 +3,15 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
+// import * as dialogs from '@nextcloud/dialogs'
 import * as initialState from '@nextcloud/initial-state'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
+
+jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/l10n', () => ({
+	translate: jest.fn((app, msg) => msg),
+	getLanguage: jest.fn(() => ''),
+}))
 
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
@@ -304,18 +311,71 @@ describe('ProjectsTab.vue Test', () => {
 			)
 		})
 	})
-	describe('unlink', () => {
-		it.only('removes the file and work package relation', async () => {
+	describe('onclick unlink', () => {
+		it('a dailog box should be displayed', async () => {
 			wrapper = mountWrapper()
+			global.OC = {
+				dialogs: {
+					confirmDestructive: jest.fn(),
+					YES_NO_BUTTONS: 70,
+				},
+			}
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
 			})
 			await localVue.nextTick()
 			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
-			await wrapper.find(linkedWorkpackageSelector).trigger('mouseover')
+			await wrapper.find('.linked-workpackages--workpackage--unlink').trigger('click')
 			await localVue.nextTick()
-			await wrapper.find(workPackageUnlinkSelector).trigger('click')
-			await expect(wrapper.find('.oc-dialog').exists()).toBeTruthy()
+			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledTimes(1)
+			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledWith(
+				'Are you sure you want to unlink the work package?',
+				'Confirm unlink',
+				{ cancel: 'Cancel', confirm: 'unlink', confirmClasses: 'error', type: 70 },
+				expect.any(Function),
+				true
+			)
+		})
+	})
+
+	describe('unlinkWorkPackage', () => {
+		it('should unlink the work package', async () => {
+			const axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						_type: 'FileLink',
+						id: 66,
+						createdAt: '2022-04-06T05:14:24Z',
+						updatedAt: '2022-04-06T05:14:24Z',
+						originData: {
+							id: '6',
+							name: 'welcome.txt',
+							mimeType: 'text/plain',
+							createdAt: '1970-01-01T00:00:00Z',
+							lastModifiedAt: '2022-03-30T07:39:56Z',
+							createdByName: '',
+							lastModifiedByName: '',
+						},
+						_links: {
+							delete: {
+								href: '/api/v3/file_links/66',
+								method: 'delete',
+							},
+						},
+					}],
+				}))
+			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => Promise.resolve(
+				{ status: 200 })
+			)
+			wrapper = mountWrapper()
+			await wrapper.vm.unlinkWorkPackage(15, 6)
+			expect(axiosGetSpy).toHaveBeenCalledTimes(1)
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/work-packages/15/file-links'
+			)
+			expect(axiosDeleteSpy).toHaveBeenCalledTimes(1)
+			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
 		})
 	})
 })

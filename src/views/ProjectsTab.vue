@@ -131,11 +131,10 @@ export default {
 		},
 		unlink(workpackageId, fileId) {
 			OC.dialogs.confirmDestructive(
-				n('integration_openproject',
-					'Are you sure you want to unlink the work package?',
-					'Are you sure you want to unlink the work package?',
+				t('integration_openproject',
+					'Are you sure you want to unlink the work package?'
 				),
-				t('integration_openproject', 'Confirm deletion'),
+				t('integration_openproject', 'Confirm unlink'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
 					confirm: t('integration_openproject', 'unlink'),
