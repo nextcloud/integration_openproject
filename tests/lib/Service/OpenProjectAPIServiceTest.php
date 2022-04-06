@@ -18,6 +18,7 @@ use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -1458,4 +1459,119 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
 	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'id' => 8,
+							'_type' => "FileLink",
+							'originData' => [
+								'id' => 5
+							],
+						]
+					]
+				]
+			]);
+		$result = $service->getWorkPackageFileLinks(7, 'user');
+		$this->assertSame([[
+			'id' => 8,
+			'_type' => "FileLink",
+			'originData' => [
+				'id' => 5
+			]
+		]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'error' => 'something went wrong',
+			]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getWorkPackageFileLinks(7, 'user');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksMalFormedResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+				->willReturn([
+					'_type' => '',
+				]);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->getWorkPackageFileLinks(7, 'user');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDeleteFileLinkResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'success' => true
+			]);
+		$result = $service->deleteFileLink(7, 'user');
+		$this->assertSame([
+			'success' => true
+		], $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testDeleteFileLinkErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'error' => 'something went wrong',
+			]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->deleteFileLink(7, 'user');
+	}
+
+//	/**
+//	 * @return void
+//	 */
+//	public function testGetWorkPackageFileLinksPact(): void {
+//		$consumerRequest = new ConsumerRequest();
+//		$consumerRequest
+//			->setMethod('GET')
+//			->setPath('/api/v3/work_package/7/3')
+//			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+//		$providerResponse = new ProviderResponse();
+//		$providerResponse
+//			->setStatus(Http::STATUS_OK)
+//			->addHeader('Content-Type', 'application/json')
+//			->setBody(["_type" => "Type", "id" => 3, "name" => "Phase",
+//				"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"]);
+//
+//		$this->builder
+//			->uponReceiving('a GET request to /type ')
+//			->with($consumerRequest)
+//			->willRespondWith($providerResponse);
+//
+//		$result = $this->service->getOpenProjectWorkPackageType(
+//			'testUser',
+//			'3'
+//		);
+//
+//		$this->assertSame(["_type" => "Type", "id" => 3, "name" => "Phase",
+//			"color" => "#CC5DE8", "position" => 4, "isDefault" => true, "isMilestone" => false, "createdAt" => "2022-01-12T08:53:15Z", "updatedAt" => "2022-01-12T08:53:34Z"], $result);
+//	}
 }

@@ -390,14 +390,26 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service->expects($this->once())
 			->method('getWorkPackageFileLinks')
-			->willReturn(["_type" => "FileLink", "id" => 8, "createdAt" => "2022-04-06T05:14:24Z", "updatedAt" => "2022-04-06T05:14:24Z"]);
+			->willReturn([[
+				'id' => 8,
+				'_type' => "FileLink",
+				'originData' => [
+					'id' => 5
+				]
+			]]);
 
 		$controller = new OpenProjectAPIController(
 			'integration_openproject', $this->requestMock, $this->configMock, $service, $this->urlGeneratorMock, 'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
-		$this->assertSame(["_type" => "FileLink", "id" => 8, "createdAt" => "2022-04-06T05:14:24Z", "updatedAt" => "2022-04-06T05:14:24Z"], $response->getData());
+		$this->assertSame([[
+			'id' => 8,
+			'_type' => "FileLink",
+			'originData' => [
+				'id' => 5
+			]
+		]], $response->getData());
 	}
 
 	/**
@@ -454,7 +466,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testdeleteFileLink(): void {
+	public function testDeleteFileLink(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -475,7 +487,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testdeleteFileLinkErrorResponse(): void {
+	public function testDeleteFileLinkErrorResponse(): void {
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -488,7 +500,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testdeleteFileLinkFileNotFound(): void {
+	public function testDeleteFileLinkFileNotFound(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -507,7 +519,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testdeleteFileLinkInternalServerError(): void {
+	public function testDeleteFileLinkInternalServerError(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
