@@ -36,9 +36,9 @@
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
 					<WorkPackage :workpackage="workpackage"
-								 v-on:click.native="getWorkPackageUrl(workpackage.id, workpackage.projectId)" />
-					<div class="linked-workpackages--workpackage--unlink icon-noConnection" 
-					@click="deleteWorkPackageLink(workpackage.id, fileInfo.id)" />
+						@click.native="getWorkPackageUrl(workpackage.id, workpackage.projectId)" />
+					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
+						@click="unlink(workpackage.id, fileInfo.id)" />
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 			</div>
@@ -55,6 +55,7 @@ import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
+import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
@@ -97,9 +98,6 @@ export default {
 			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
-		changeBackground(){
-			this.color = '#F3F3F3'
-		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200 || statusCode === 204) return
 			if (statusCode === 401) {
@@ -131,7 +129,36 @@ export default {
 			const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
 			window.open(workpackageUrl)
 		},
-		async deleteWorkPackageLink(workpackageId, fileId) {
+		unlink(workpackageId, fileId) {
+			OC.dialogs.confirmDestructive(
+				n('integration_openproject',
+					'Are you sure you want to unlink the work package?',
+					'Are you sure you want to unlink the work package?',
+				),
+				t('integration_openproject', 'Confirm deletion'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'unlink'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				(result) => {
+					if (result) {
+						this.unlinkWorkPackage(workpackageId, fileId).then((response) => {
+							this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
+							showSuccess(t('integration_openproject', 'Work package unlinked'))
+						}).catch((error) => {
+							showError(
+								t('integration_openproject', 'Failed to unlink work package')
+							+ ': ' + error.response?.data?.message
+							)
+						})
+					}
+				},
+				true
+			)
+		},
+		async unlinkWorkPackage(workpackageId, fileId) {
 			let response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
 			this.checkForErrorCode(response.status)
 			let id
@@ -140,18 +167,8 @@ export default {
 			}
 
 			const url = generateUrl('/apps/integration_openproject/file-links/' + id)
-
-			try {
-				response = await axios.delete(url)
-				if (response.status === 200) {
-					this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
-				}
-			} catch (e) {
-				showError(
-					t('integration_openproject','Failed to delete file link to work-package')
-				)
-			}
-
+			response = await axios.delete(url)
+			return response
 		},
 		processLink(data, fileId) {
 			let linkId

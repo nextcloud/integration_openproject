@@ -16,6 +16,8 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
+	const linkedWorkpackageSelector = '.workpackage'
+	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlink'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -279,6 +281,41 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages).toMatchSnapshot()
+		})
+	})
+	describe('on clicking the work package', () => {
+		it('opens it in open project', async () => {
+			axios.get
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: 'http://openproject',
+				}))
+			window.open = jest.fn()
+			wrapper = mountWrapper()
+			await wrapper.setData({
+				workpackages: workPackagesSearchResponse,
+			})
+			await localVue.nextTick()
+			await wrapper.find(linkedWorkpackageSelector).trigger('click')
+			await localVue.nextTick()
+			expect(window.open).toHaveBeenCalledTimes(1)
+			expect(window.open).toHaveBeenCalledWith(
+				'http://openproject/projects/15/work_packages/1'
+			)
+		})
+	})
+	describe('unlink', () => {
+		it.only('removes the file and work package relation', async () => {
+			wrapper = mountWrapper()
+			await wrapper.setData({
+				workpackages: workPackagesSearchResponse,
+			})
+			await localVue.nextTick()
+			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
+			await wrapper.find(linkedWorkpackageSelector).trigger('mouseover')
+			await localVue.nextTick()
+			await wrapper.find(workPackageUnlinkSelector).trigger('click')
+			await expect(wrapper.find('.oc-dialog').exists()).toBeTruthy()
 		})
 	})
 })
