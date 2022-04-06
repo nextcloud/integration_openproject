@@ -40,6 +40,8 @@ OC.L10N.register(
     "OpenProject instance not found" : "Instância do OpenProject não encontrada",
     "Failed to save OpenProject options" : "Falha ao salvar as opções do OpenProject",
     "Error connecting to OpenProject" : "Erro ao conectar ao OpenProject",
+    "Could not fetch work packages from OpenProject" : "Não foi possível buscar pacotes de trabalho do OpenProject",
+    "Unexpected Error" : "Erro Inesperado",
     "No OpenProject notifications!" : "Nenhuma notificação do OpenProject!",
     "Failed to get OpenProject notifications" : "Falha ao receber notificações do OpenProject"
 },
