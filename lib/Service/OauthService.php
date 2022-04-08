@@ -11,14 +11,11 @@
 
 namespace OCA\OpenProject\Service;
 
-
 use OCA\OAuth2\Db\AccessTokenMapper;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\Security\ISecureRandom;
-
-use OCA\OpenProject\AppInfo\Application;
 
 class OauthService {
 	/**
@@ -39,11 +36,9 @@ class OauthService {
 	/**
 	 * Service to manipulate Nextcloud oauth clients
 	 */
-	public function __construct(string $appName,
-								ClientMapper $clientMapper,
+	public function __construct(ClientMapper $clientMapper,
 								AccessTokenMapper $accessTokenMapper,
 								ISecureRandom $secureRandom) {
-		$this->appName = $appName;
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
 		$this->accessTokenMapper = $accessTokenMapper;
@@ -52,7 +47,7 @@ class OauthService {
 	/**
 	 * @param string $name
 	 * @param string $redirectUri
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function createNcOauthClient(string $name, string $redirectUri): array {
 		$client = new Client();
@@ -66,10 +61,10 @@ class OauthService {
 	}
 
 	/**
-	 * @param string $id
-	 * @return array|null
+	 * @param int $id
+	 * @return array<mixed>|null
 	 */
-	public function getClientInfo(string $id): ?array {
+	public function getClientInfo(int $id): ?array {
 		try {
 			$client = $this->clientMapper->getByUid($id);
 			return $this->generateClientInfo($client);
@@ -80,7 +75,7 @@ class OauthService {
 
 	/**
 	 * @param Client $client
-	 * @return array
+	 * @return array<mixed>
 	 */
 	private function generateClientInfo(Client $client): array {
 		return [
@@ -97,7 +92,7 @@ class OauthService {
 	 * @return void
 	 */
 	public function deleteClient(int $id): void {
-		try{
+		try {
 			$client = $this->clientMapper->getByUid($id);
 			$this->accessTokenMapper->deleteByClientId($id);
 			$this->clientMapper->delete($client);
