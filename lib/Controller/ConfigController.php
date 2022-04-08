@@ -145,6 +145,11 @@ class ConfigController extends Controller {
 			$this->clearUserInfo($user->getUID());
 		});
 		if (isset($values['oauth_instance_url'])) {
+			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc-oauth-client-id', '');
+			if ($oauthClientInternalId !== '') {
+				$id = (int) $oauthClientInternalId;
+				$this->oauthService->deleteClient($id);
+			}
 			$this->config->deleteAppValue(Application::APP_ID, 'nc-oauth-client-id');
 		}
 		return new DataResponse([
