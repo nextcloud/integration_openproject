@@ -44,7 +44,7 @@ class Admin implements ISettings {
 
 		// get automatically created NC oauth client for OP
 		$clientInfo = null;
-		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc-oauth-client-id', '');
+		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 		if ($oauthClientInternalId !== '') {
 			$id = (int)$oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);

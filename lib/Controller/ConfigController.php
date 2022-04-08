@@ -145,12 +145,12 @@ class ConfigController extends Controller {
 			$this->clearUserInfo($user->getUID());
 		});
 		if (isset($values['oauth_instance_url'])) {
-			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc-oauth-client-id', '');
+			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 			if ($oauthClientInternalId !== '') {
 				$id = (int) $oauthClientInternalId;
 				$this->oauthService->deleteClient($id);
 			}
-			$this->config->deleteAppValue(Application::APP_ID, 'nc-oauth-client-id');
+			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
 		}
 		return new DataResponse([
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
@@ -267,7 +267,7 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc-oauth-client-id', '');
+		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 		if ($oauthClientInternalId !== '') {
 			$id = (int) $oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);
@@ -276,8 +276,9 @@ class ConfigController extends Controller {
 			}
 		}
 
-		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', 'https://to.be.generated');
-		$this->config->setAppValue(Application::APP_ID, 'nc-oauth-client-id', $clientInfo['id']);
+		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
+		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') . '/oauth/redirect');
+		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		return new DataResponse($clientInfo);
 	}
 
