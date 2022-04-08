@@ -49,8 +49,8 @@
 			</label>
 			<input v-if="state.nc_oauth_client !== null"
 				id="openproject-client-id"
-				:value="state.nc_oauth_client.clientId"
 				type="text"
+				:value="ncClientId"
 				:readonly="true">
 			<label v-if="state.nc_oauth_client !== null"
 				for="nextcloud-client-secret">
@@ -59,8 +59,8 @@
 			</label>
 			<input v-if="state.nc_oauth_client !== null"
 				id="openproject-client-secret"
-				:value="state.nc_oauth_client.clientSecret"
 				type="text"
+				:value="ncClientSecret"
 				:readonly="true">
 		</div>
 		<button v-if="!isAdminConfigOk" class="save-config-btn" @click="validateOpenProjectInstance">
@@ -104,6 +104,12 @@ export default {
 	computed: {
 		isLoading() {
 			return this.loadingState === STATE.LOADING
+		},
+		ncClientId() {
+			return this.state.nc_oauth_client?.clientId
+		},
+		ncClientSecret() {
+			return this.state.nc_oauth_client?.clientSecret
 		},
 	},
 	methods: {
