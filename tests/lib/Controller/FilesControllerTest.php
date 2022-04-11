@@ -218,7 +218,7 @@ class FilesControllerTest extends TestCase {
 			[
 				123 => $this->logoPngResult,
 				759 => $this->trashedWelcomeTxtResult,
-				365 => null
+				365 => false
 			],
 			$result->getData()
 		);
@@ -268,8 +268,8 @@ class FilesControllerTest extends TestCase {
 		assertSame(
 			[
 				123 => $this->logoPngResult,
-				256 => null,
-				365 => null
+				256 => false,
+				365 => false
 			],
 			$result->getData()
 		);
@@ -482,10 +482,21 @@ class FilesControllerTest extends TestCase {
 		if ($trashManagerMock === null) {
 			$trashManagerMock = $this->createMock(ITrashManager::class);
 		}
+		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+		$mountCacheMock->method('getMountsForFileId')
+			->willReturn([]);
+		$mountProviderCollectionMock = $this->getMockBuilder(
+			'OCP\Files\Config\IMountProviderCollection'
+		)->getMock();
+		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
 
 		return new FilesController(
 			'integration_openproject',
-			$this->createMock(IRequest::class), $storageMock, $trashManagerMock, $userSessionMock
+			$this->createMock(IRequest::class),
+			$storageMock,
+			$trashManagerMock,
+			$userSessionMock,
+			$mountProviderCollectionMock
 		);
 	}
 

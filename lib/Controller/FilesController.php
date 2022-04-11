@@ -13,6 +13,7 @@ namespace OCA\OpenProject\Controller;
 
 use OC\User\User;
 use OCA\Files_Trashbin\Trash\ITrashManager;
+use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
@@ -37,15 +38,22 @@ class FilesController extends OCSController {
 	 */
 	private $trashManager;
 
+	/**
+	 * @var IMountProviderCollection
+	 */
+	private $mountCollection;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
-								IUserSession $userSession) {
+								IUserSession $userSession,
+								IMountProviderCollection $mountCollection) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->trashManager = $trashManager;
+		$this->mountCollection = $mountCollection;
 	}
 
 	/**
@@ -59,8 +67,11 @@ class FilesController extends OCSController {
 	 */
 	public function getFileInfo(int $fileId): DataResponse {
 		$fileInfo = $this->compileFileInfo($fileId);
-		if ($fileInfo !== null) {
+		if (is_array($fileInfo)) {
 			return new DataResponse($fileInfo);
+		}
+		if ($fileInfo === true) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
 	}
@@ -90,7 +101,7 @@ class FilesController extends OCSController {
 
 	/**
 	 * @param int $fileId
-	 * @return null|array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
+	 * @return bool|array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
 	 *               'mimetype': string, 'path': string, 'size': int,
 	 *               'owner_name': string, 'owner_id': string}
 	 */
@@ -122,7 +133,10 @@ class FilesController extends OCSController {
 				'trashed' => $trashed
 			];
 		}
-
-		return null;
+		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
+		if (is_array($mount) && count($mount) > 0) {
+			return true;
+		}
+		return false;
 	}
 }
