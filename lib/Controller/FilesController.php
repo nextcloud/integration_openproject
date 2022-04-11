@@ -13,15 +13,20 @@ namespace OCA\OpenProject\Controller;
 
 use OC\User\User;
 use OCA\Files_Trashbin\Trash\ITrashManager;
-use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class FilesController extends OCSController {
 
+	/**
+	 * @var IUser|null
+	 */
+	private $user;
 	/**
 	 * @var IRootFolder
 	 */
@@ -32,20 +37,15 @@ class FilesController extends OCSController {
 	 */
 	private $trashManager;
 
-	/**
-	 * @var IMountProviderCollection
-	 */
-	private $mountCollection;
-
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
-								IMountProviderCollection $mountCollection) {
+								IUserSession $userSession) {
 		parent::__construct($appName, $request);
+		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->trashManager = $trashManager;
-		$this->mountCollection = $mountCollection;
 	}
 
 	/**
@@ -95,16 +95,14 @@ class FilesController extends OCSController {
 	 *               'owner_name': string, 'owner_id': string}
 	 */
 	private function compileFileInfo($fileId) {
-		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
-		$userFolder = $this->rootFolder->getUserFolder($mount[0]->getUser()->getUID());
-
+		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
 			$file = $files[0];
 			$trashed = false;
 		} else {
 			$file = $this->trashManager->getTrashNodeById(
-				$mount[0]->getUser(), $fileId
+				$this->user, $fileId
 			);
 			$trashed = true;
 		}

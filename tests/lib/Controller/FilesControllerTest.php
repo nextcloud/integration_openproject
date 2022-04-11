@@ -476,15 +476,6 @@ class FilesControllerTest extends TestCase {
 
 		$userMock = $this->getMockBuilder('\OCP\IUser')->getMock();
 		$userMock->method('getUID')->willReturn('testUser');
-		$mountFileInfoMock = $this->getMockBuilder('\OCP\Files\Config\ICachedMountFileInfo')->getMock();
-		$mountFileInfoMock->method('getUser')->willReturn($userMock);
-		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
-		$mountCacheMock->method('getMountsForFileId')->willReturn([$mountFileInfoMock]);
-		$mountProviderCollectionMock = $this->getMockBuilder(
-			'OCP\Files\Config\IMountProviderCollection'
-		)->getMock();
-		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
-
 
 		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
 		$userSessionMock->method('getUser')->willReturn($userMock);
@@ -494,7 +485,7 @@ class FilesControllerTest extends TestCase {
 
 		return new FilesController(
 			'integration_openproject',
-			$this->createMock(IRequest::class), $storageMock, $trashManagerMock, $mountProviderCollectionMock
+			$this->createMock(IRequest::class), $storageMock, $trashManagerMock, $userSessionMock
 		);
 	}
 
