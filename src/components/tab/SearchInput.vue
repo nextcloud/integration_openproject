@@ -178,6 +178,10 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+#searchBar {
+	padding: 10px;
+}
+
 .searchInput {
 	width: 100%;
 }
