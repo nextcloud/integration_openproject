@@ -67,13 +67,7 @@ class FilesController extends OCSController {
 	 */
 	public function getFileInfo(int $fileId): DataResponse {
 		$fileInfo = $this->compileFileInfo($fileId);
-		if (is_array($fileInfo)) {
-			return new DataResponse($fileInfo);
-		}
-		if ($fileInfo === true) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-		return new DataResponse([], Http::STATUS_NOT_FOUND);
+		return new DataResponse($fileInfo, $fileInfo['statuscode']);
 	}
 
 	/**
@@ -101,9 +95,9 @@ class FilesController extends OCSController {
 
 	/**
 	 * @param int $fileId
-	 * @return bool|array{'id': int, 'name':string, 'mtime': int, 'ctime': int,
-	 *               'mimetype': string, 'path': string, 'size': int,
-	 *               'owner_name': string, 'owner_id': string}
+	 * @return array{'status': string, 'statuscode': int, 'id'?: int, 'name'?:string,
+	 *               'mtime'?: int, 'ctime'?: int, 'mimetype'?: string, 'path'?: string,
+	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
@@ -121,6 +115,8 @@ class FilesController extends OCSController {
 		if ($file !== null) {
 			$owner = $file->getOwner();
 			return [
+				'status' => 'OK',
+				'statuscode' => 200,
 				'id' => $file->getId(),
 				'name' => $file->getName(),
 				'mtime' => $file->getMTime(),
@@ -135,8 +131,14 @@ class FilesController extends OCSController {
 		}
 		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
 		if (is_array($mount) && count($mount) > 0) {
-			return true;
+			return [
+				'status' => 'Forbidden',
+				'statuscode' => 403,
+			];
 		}
-		return false;
+		return [
+			'status' => 'Not Found',
+			'statuscode' => 404,
+		];
 	}
 }

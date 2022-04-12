@@ -3,6 +3,7 @@
 namespace OCA\OpenProject\Controller;
 
 use OCA\Files_Trashbin\Trash\ITrashManager;
+use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Node;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -110,6 +111,8 @@ class FilesControllerTest extends TestCase {
 		$result = $filesController->getFileInfo(123);
 		assertSame(
 			[
+				'status' => 'OK',
+				'statuscode' => 200,
 				"id" => 123,
 				"name" => $expectedName,
 				"mtime" => 1640008813,
@@ -133,7 +136,7 @@ class FilesControllerTest extends TestCase {
 		$filesController = $this->createFilesController($folderMock);
 
 		$result = $filesController->getFileInfo(123);
-		assertSame([], $result->getData());
+		assertSame($this->notFoundResponse, $result->getData());
 		assertSame(404, $result->getStatus());
 	}
 
@@ -156,6 +159,28 @@ class FilesControllerTest extends TestCase {
 		$result = $filesController->getFileInfo(759);
 		assertSame($this->trashedWelcomeTxtResult, $result->getData());
 		assertSame(200, $result->getStatus());
+	}
+
+	public function testGetFileInfoFileExistingButNotReadable(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+		$trashManagerMock->method('getTrashNodeById')->willReturn(null);
+
+		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+		$mountCacheMock->method('getMountsForFileId')
+			->willReturn(
+				[$this->createMock(ICachedMountFileInfo::class)]
+			);
+
+		$filesController = $this->createFilesController(
+			$folderMock, $trashManagerMock, $mountCacheMock
+		);
+
+		$result = $filesController->getFileInfo(759);
+		assertSame($this->forbiddenResponse, $result->getData());
+		assertSame(403, $result->getStatus());
 	}
 
 	public function testGetFilesInfoOneIdRequestedFileInTrash(): void {
@@ -184,10 +209,10 @@ class FilesControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
-	public function testGetFilesInfoThreeIdsRequestedOneExistsOneInTrashOneNotExisiting(): void {
+	public function testGetFilesInfoFourIdsRequestedOneExistsOneInTrashOneNotExisitingOneForbidden(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([123], [759], [365])
+			->withConsecutive([123], [759], [365], [956])
 			->willReturnOnConsecutiveCalls(
 				[
 					$this->getNodeMock(
@@ -200,7 +225,7 @@ class FilesControllerTest extends TestCase {
 
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')
-			->withConsecutive([$this->anything(), 759], [$this->anything(), 365])
+			->withConsecutive([$this->anything(), 759], [$this->anything(), 365], [$this->anything(), 956])
 			->willReturnOnConsecutiveCalls(
 			$this->getNodeMock(
 				'files_trashbin/files/welcome.txt.d1648724302',
@@ -208,17 +233,31 @@ class FilesControllerTest extends TestCase {
 				'text/plain',
 				759
 			),
+				null,
 				null
 		);
 
-		$filesController = $this->createFilesController($folderMock, $trashManagerMock);
+		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+		$mountCacheMock->method('getMountsForFileId')
+			->withConsecutive([365], [956])
+			->willReturnOnConsecutiveCalls(
+				[],
+				[$this->createMock(ICachedMountFileInfo::class)]
+			);
 
-		$result = $filesController->getFilesInfo([123, 759, 365]);
+		$filesController = $this->createFilesController(
+			$folderMock,
+			$trashManagerMock,
+			$mountCacheMock
+		);
+
+		$result = $filesController->getFilesInfo([123, 759, 365, 956]);
 		assertSame(
 			[
 				123 => $this->logoPngResult,
 				759 => $this->trashedWelcomeTxtResult,
-				365 => false
+				365 => $this->notFoundResponse,
+				956 => $this->forbiddenResponse
 			],
 			$result->getData()
 		);
@@ -268,8 +307,8 @@ class FilesControllerTest extends TestCase {
 		assertSame(
 			[
 				123 => $this->logoPngResult,
-				256 => false,
-				365 => false
+				256 => $this->notFoundResponse,
+				365 => $this->notFoundResponse
 			],
 			$result->getData()
 		);
@@ -376,6 +415,8 @@ class FilesControllerTest extends TestCase {
 		assertSame(
 			[
 				2 => [
+					'status' => 'OK',
+					'statuscode' => 200,
 					'id' => 2,
 					'name' => 'a-sub-folder',
 					'mtime' => 1640008813,
@@ -388,6 +429,8 @@ class FilesControllerTest extends TestCase {
 					'trashed' => false
 				],
 				3 => [
+					'status' => 'OK',
+					'statuscode' => 200,
 					'id' => 3,
 					'name' => 'files',
 					'mtime' => 1640008813,
@@ -420,7 +463,25 @@ class FilesControllerTest extends TestCase {
 	/**
 	 * @var array<mixed>
 	 */
+	private array $notFoundResponse = [
+		'status' => 'Not Found',
+		'statuscode' => 404,
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private array $forbiddenResponse = [
+		'status' => 'Forbidden',
+		'statuscode' => 403
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
 	private array $trashedWelcomeTxtResult = [
+		'status' => 'OK',
+		'statuscode' => 200,
 		"id" => 759,
 		"name" => 'welcome.txt.d1648724302',
 		"mtime" => 1640008813,
@@ -437,6 +498,8 @@ class FilesControllerTest extends TestCase {
 	 * @var array<mixed>
 	 */
 	private array $logoPngResult = [
+		'status' => 'OK',
+		'statuscode' => 200,
 		'id' => 123,
 		'name' => 'logo.png',
 		'mtime' => 1640008813,
@@ -453,6 +516,8 @@ class FilesControllerTest extends TestCase {
 	 * @var array<mixed>
 	 */
 	private array $imagePngResult = [
+		'status' => 'OK',
+		'statuscode' => 200,
 		'id' => 365,
 		'name' => 'image.png',
 		'mtime' => 1640008813,
@@ -468,9 +533,12 @@ class FilesControllerTest extends TestCase {
 	/**
 	 * @param MockObject $folderMock
 	 * @param MockObject|ITrashManager|null $trashManagerMock
+	 * @param MockObject $mountCacheMock mock for Files that exist but cannot be accessed by this user
 	 * @return FilesController
 	 */
-	private function createFilesController(MockObject $folderMock, $trashManagerMock = null): FilesController {
+	private function createFilesController(
+		MockObject $folderMock, $trashManagerMock = null, $mountCacheMock = null
+): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
@@ -482,9 +550,12 @@ class FilesControllerTest extends TestCase {
 		if ($trashManagerMock === null) {
 			$trashManagerMock = $this->createMock(ITrashManager::class);
 		}
-		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
-		$mountCacheMock->method('getMountsForFileId')
-			->willReturn([]);
+
+		if ($mountCacheMock === null) {
+			$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+			$mountCacheMock->method('getMountsForFileId')->willReturn([]);
+		}
+
 		$mountProviderCollectionMock = $this->getMockBuilder(
 			'OCP\Files\Config\IMountProviderCollection'
 		)->getMock();
