@@ -193,8 +193,6 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
         </div>
       </div>
       <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
-      </div>
-      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
     </div>
     <div class=""></div>
   </div>

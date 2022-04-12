@@ -660,7 +660,8 @@ class OpenProjectAPIService {
 	/**
 	 * @param int $workpackageId
 	 * @param string $userId
-	 * @return array
+	 * @return array<mixed>
+	 * @throws NotFoundException
 	 * @throws OpenprojectErrorException
 	 * @throws OpenprojectResponseException
 	 */
@@ -685,8 +686,9 @@ class OpenProjectAPIService {
 	/**
 	 * @param int $fileLinkId
 	 * @param string $userId
-	 * @return array
-	 * @throws OpenprojectErrorException
+	 * @return array<mixed>
+	 * @throws NotFoundException
+	 * @throws OpenprojectErrorException|OpenprojectResponseException
 	 */
 	public function deleteFileLink(int $fileLinkId, string $userId): array {
 		$header = [
@@ -698,6 +700,11 @@ class OpenProjectAPIService {
 		);
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error']);
+		}
+		if (
+			!isset($result['success'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
 		}
 		return $result;
 	}
