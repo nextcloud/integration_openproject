@@ -396,7 +396,9 @@ class OpenProjectAPIService {
 					$paramsContent .= http_build_query($params);
 					$url .= '?' . $paramsContent;
 				} else {
-					$options['body'] = $params['body'];
+					if (isset($params['body'])) {
+						$options['body'] = $params['body'];
+					}
 					$options['headers']['Content-Type'] = 'application/json';
 				}
 			}

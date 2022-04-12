@@ -370,11 +370,9 @@ describe('ProjectsTab.vue Test', () => {
 			)
 			wrapper = mountWrapper()
 			await wrapper.vm.unlinkWorkPackage(15, 6)
-			expect(axiosGetSpy).toHaveBeenCalledTimes(1)
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages/15/file-links'
 			)
-			expect(axiosDeleteSpy).toHaveBeenCalledTimes(1)
 			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
 		})
 	})
