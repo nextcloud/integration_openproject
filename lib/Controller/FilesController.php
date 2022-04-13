@@ -112,24 +112,38 @@ class FilesController extends OCSController {
 			$trashed = true;
 		}
 
-		if ($file !== null) {
+		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
+
+		if ($file !== null && is_array($mount) && count($mount) > 0) {
 			$owner = $file->getOwner();
+			$internalPath = $mount[0]->getInternalPath();
+			$path = preg_replace(
+				'/(files_trashbin\/)?files\/?/',
+				'/',
+				$internalPath
+			);
+
+			if ($path === '/') {
+				$name = $internalPath;
+			} else {
+				$name = basename($path);
+			}
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
 				'id' => $file->getId(),
-				'name' => $file->getName(),
+				'name' => $name,
 				'mtime' => $file->getMTime(),
 				'ctime' => $file->getCreationTime(),
 				'mimetype' => $file->getMimetype(),
-				'path' => preg_replace('/(files_trashbin\/)?files\/?/', '/', $file->getInternalPath()),
+				'path' => $path,
 				'size' => $file->getSize(),
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
 				'trashed' => $trashed
 			];
 		}
-		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
+
 		if (is_array($mount) && count($mount) > 0) {
 			return [
 				'status' => 'Forbidden',
