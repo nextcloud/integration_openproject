@@ -3,7 +3,6 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
-// import * as dialogs from '@nextcloud/dialogs'
 import * as initialState from '@nextcloud/initial-state'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 
@@ -12,6 +11,13 @@ jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
 }))
+
+global.OC = {
+	dialogs: {
+		confirmDestructive: jest.fn(),
+		YES_NO_BUTTONS: 70,
+	},
+}
 
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
@@ -290,8 +296,8 @@ describe('ProjectsTab.vue Test', () => {
 			expect(workPackages).toMatchSnapshot()
 		})
 	})
-	describe('on clicking the work package', () => {
-		it('opens it in open project', async () => {
+	describe('when the work package is clicked', () => {
+		it('opens work package in open project', async () => {
 			axios.get
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
@@ -311,27 +317,21 @@ describe('ProjectsTab.vue Test', () => {
 			)
 		})
 	})
-	describe('onclick unlink', () => {
-		it('a dailog box should be displayed', async () => {
+	describe('when workpackage unlink button is clicked', () => {
+		it('should display a confirmation dialog box', async () => {
 			wrapper = mountWrapper()
-			global.OC = {
-				dialogs: {
-					confirmDestructive: jest.fn(),
-					YES_NO_BUTTONS: 70,
-				},
-			}
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
 			})
 			await localVue.nextTick()
 			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
-			await wrapper.find('.linked-workpackages--workpackage--unlink').trigger('click')
+			await wrapper.find(workPackageUnlinkSelector).trigger('click')
 			await localVue.nextTick()
 			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledTimes(1)
 			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledWith(
 				'Are you sure you want to unlink the work package?',
 				'Confirm unlink',
-				{ cancel: 'Cancel', confirm: 'unlink', confirmClasses: 'error', type: 70 },
+				{ cancel: 'Cancel', confirm: 'Unlink', confirmClasses: 'error', type: 70 },
 				expect.any(Function),
 				true
 			)
@@ -374,6 +374,21 @@ describe('ProjectsTab.vue Test', () => {
 				'http://localhost/apps/integration_openproject/work-packages/15/file-links'
 			)
 			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
+			axiosGetSpy.mockRestore()
+			axiosDeleteSpy.mockRestore()
+		})
+
+		it.each([
+			{ HTTPStatus: 401, state: 'no-token' },
+			{ HTTPStatus: 404, state: 'error' },
+			{ HTTPStatus: 500, state: 'error' },
+		])('sets states according to HTTP error codes', async (cases) => {
+			const err = new Error()
+			err.response = { status: cases.HTTPStatus }
+			axios.get.mockRejectedValueOnce(err)
+			wrapper = mountWrapper()
+			await wrapper.vm.unlinkWorkPackage(15, 6)
+			expect(wrapper.vm.state).toBe(cases.state)
 		})
 	})
 })

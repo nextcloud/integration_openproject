@@ -32,7 +32,7 @@ use OCP\Files\NotPermittedException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
-
+use OCP\AppFramework\Http;
 
 use OCA\OpenProject\AppInfo\Application;
 
@@ -401,6 +401,8 @@ class OpenProjectAPIService {
 					}
 					$options['headers']['Content-Type'] = 'application/json';
 				}
+			} elseif ($method === 'DELETE') {
+				$options['headers']['Content-Type'] = 'application/json';
 			}
 
 			if ($method === 'GET') {
@@ -411,7 +413,7 @@ class OpenProjectAPIService {
 				$response = $this->client->put($url, $options);
 			} elseif ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
-				if ($response->getStatusCode() === 204) {
+				if ($response->getStatusCode() === Http::STATUS_NO_CONTENT) {
 					return ['success' => true];
 				}
 			} else {
@@ -691,19 +693,13 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectErrorException|OpenprojectResponseException
 	 */
 	public function deleteFileLink(int $fileLinkId, string $userId): array {
-		$header = [
-			'Content-Type' => 'application/json'
-		];
-		$params['header'] = \Safe\json_encode($header);
 		$result = $this->request(
-			$userId, 'file_links/' . $fileLinkId, $params, 'DELETE'
+			$userId, 'file_links/' . $fileLinkId, [""], 'DELETE'
 		);
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error']);
 		}
-		if (
-			!isset($result['success'])
-		) {
+		if (!isset($result['success'])) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		return $result;

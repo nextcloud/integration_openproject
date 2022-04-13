@@ -36,7 +36,7 @@
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
 					<WorkPackage :workpackage="workpackage"
-						@click.native="getWorkPackageUrl(workpackage.id, workpackage.projectId)" />
+						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
 						@click="unlink(workpackage.id, fileInfo.id)" />
 				</div>
@@ -56,6 +56,7 @@ import WorkPackage from '../components/tab/WorkPackage'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
@@ -116,7 +117,7 @@ export default {
 		onSaved(data) {
 			this.workpackages.push(data)
 		},
-		async getWorkPackageUrl(workpackageId, projectId) {
+		async routeToTheWorkPackage(workpackageId, projectId) {
 			let response
 			let openprojectUrl
 			try {
@@ -125,9 +126,11 @@ export default {
 				response = e.response
 			}
 			this.checkForErrorCode(response.status)
-			if (response.status === 200) { openprojectUrl = response.data.replace(/\/+$/, '') }
-			const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
-			window.open(workpackageUrl)
+			if (response.status === 200) {
+				openprojectUrl = response.data.replace(/\/+$/, '')
+				const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
+				window.open(workpackageUrl)
+			}
 		},
 		unlink(workpackageId, fileId) {
 			OC.dialogs.confirmDestructive(
@@ -137,7 +140,7 @@ export default {
 				t('integration_openproject', 'Confirm unlink'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('integration_openproject', 'unlink'),
+					confirm: t('integration_openproject', 'Unlink'),
 					confirmClasses: 'error',
 					cancel: t('integration_openproject', 'Cancel'),
 				},
@@ -149,8 +152,8 @@ export default {
 						}).catch((error) => {
 							showError(
 								t('integration_openproject', 'Failed to unlink work package')
-							+ ': ' + error.response?.data?.message
 							)
+							this.checkForErrorCode(error.response.status)
 						})
 					}
 				},
@@ -158,22 +161,26 @@ export default {
 			)
 		},
 		async unlinkWorkPackage(workpackageId, fileId) {
-			let response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
-			this.checkForErrorCode(response.status)
-			let id
-			if (response.status === 200) {
-				id = this.processLink(response.data, fileId)
+			let response
+			try {
+				response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
+			} catch (e) {
+				response = e.response
 			}
-
-			const url = generateUrl('/apps/integration_openproject/file-links/' + id)
-			response = await axios.delete(url)
-			return response
+			this.checkForErrorCode(response.status)
+			if (response.status === 200) {
+				const id = this.processLink(response.data, fileId)
+				const url = generateUrl('/apps/integration_openproject/file-links/' + id)
+				response = await axios.delete(url)
+				return response
+			}
 		},
 		processLink(data, fileId) {
 			let linkId
 			for (const element of data) {
 				if (parseInt(element.originData.id) === fileId) {
 					linkId = element.id
+					break
 				}
 			}
 			return linkId
