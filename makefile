@@ -63,6 +63,10 @@ phpstan:
 phpunit:
 	vendor/phpunit/phpunit/phpunit
 
+.PHONY: api-test
+api-test:
+	vendor/bin/behat -c tests/acceptance/config/behat.yml
+
 .PHONY: test
 test:
 	npm run test:unit

@@ -1,0 +1,305 @@
+<?php
+
+use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
+use Helmich\JsonAssert\JsonAssertions;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Defines application features from the specific context.
+ */
+class FeatureContext implements Context {
+	private string $regularUserPassword = '';
+	private string $adminUsername = '';
+	private string $adminPassword = '';
+	private string $baseUrl = '';
+	/**
+	 * @var array<int>
+	 */
+	private array $createdFiles = [];
+	private ?ResponseInterface $response = null;
+
+	public function getAdminUsername(): string {
+		return $this->adminUsername;
+	}
+
+	public function getAdminPassword(): string {
+		return $this->adminPassword;
+	}
+
+	public function getRegularUserPassword(): string {
+		return $this->regularUserPassword;
+	}
+
+	public function getBaseUrl(): string {
+		return $this->baseUrl;
+	}
+
+	public function __construct(
+		string $baseUrl,
+		string $adminUsername,
+		string $adminPassword,
+		string $regularUserPassword
+	) {
+		$this->baseUrl = getenv('NEXTCLOUD_BASE_URL');
+		if ($this->baseUrl === false) {
+			$this->baseUrl = $baseUrl;
+		}
+		$this->baseUrl = self::sanitizeUrl($this->baseUrl, true);
+		$this->adminUsername = $adminUsername;
+		$this->adminPassword = $adminPassword;
+		$this->regularUserPassword = $regularUserPassword;
+	}
+
+	/**
+	 * @Given user :user has been created
+	 */
+	public function userHasBeenCreated(string $user):void {
+		// delete the user if it exists
+		$this->sendOCSRequest(
+			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
+		);
+		$userAttributes['userid'] = $user;
+		$userAttributes['password'] = $this->getRegularUserPassword();
+
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
+	 * @Given user :user has uploaded file with content :content to :destination
+	 */
+	public function userHasUploadedFileWithContentTo(
+		string $user, string $content, string $destination
+	):void {
+		$fileId = $this->uploadFileWithContent($user, $content, $destination);
+		$this->theHTTPStatusCodeShouldBe(
+			["201", "204"],
+			"HTTP status code was not 201 or 204 while trying to upload file '$destination' for user '$user'"
+		);
+
+		$this->createdFiles[] = $fileId;
+	}
+
+	/**
+	 * @When user :user gets the information of last created file
+	 */
+	public function userGetsTheInformationOfLastCreatedFile(string $user): void {
+		$fileId = array_slice($this->createdFiles, -1);
+		$this->response = $this->sendOCSRequest(
+			'/apps/integration_openproject/fileinfo/' . $fileId[0],
+			'GET',
+			$user
+		);
+	}
+
+	/**
+	 * @Then the HTTP status code should be :expectedStatusCode
+	 *
+	 * Check that the status code in the saved response is the expected status
+	 * code, or one of the expected status codes.
+	 *
+	 * @param int|int[]|string|string[] $expectedStatusCode
+	 * @param string|null $message
+	 *
+	 * @return void
+	 */
+	public function theHTTPStatusCodeShouldBe($expectedStatusCode, ?string $message = ""): void {
+		$actualStatusCode = $this->response->getStatusCode();
+		if (\is_array($expectedStatusCode)) {
+			if ($message === "") {
+				$message = "HTTP status code $actualStatusCode is not one of the expected values " .
+						\implode(" or ", $expectedStatusCode);
+			}
+
+			Assert::assertContainsEquals(
+				$actualStatusCode,
+				$expectedStatusCode,
+				$message
+			);
+		} else {
+			if ($message === "") {
+				$message = "HTTP status code $actualStatusCode is not the expected value $expectedStatusCode";
+			}
+
+			Assert::assertEquals(
+				$expectedStatusCode,
+				$actualStatusCode,
+				$message
+			);
+		}
+	}
+
+	/**
+	 * @Then the data of the response should match
+	 */
+	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString): void {
+		$schema = json_decode($schemaString->getRaw());
+		Assert::assertNotNull($schema, 'schema is not valid JSON');
+		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		JsonAssertions::assertJsonDocumentMatchesSchema(
+			$responseAsJson->ocs->data,
+			$schema
+		);
+	}
+
+	public function uploadFileWithContent(
+		string $user,
+		?string $content,
+		string $destination
+	): string {
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"PUT",
+			$destination,
+			[],
+			$content
+		);
+		return $this->response->getHeader('oc-fileid')[0];
+	}
+
+	/**
+	 * @param string $path
+	 * @param string $method
+	 * @param string $user
+	 * @param array<mixed> $body
+	 * @param int $ocsApiVersion
+	 * @return ResponseInterface
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendOCSRequest(
+		string $path, string $method, string $user, array $body = [], int $ocsApiVersion = 2
+	): ResponseInterface {
+		if ($user === $this->getAdminUsername()) {
+			$password = $this->getAdminPassword();
+		} else {
+			$password = $this->getRegularUserPassword();
+		}
+		$fullUrl = $this->getBaseUrl();
+		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
+		$headers['OCS-APIRequest'] = 'true';
+		$headers['Accept'] = 'application/json';
+		return $this->sendHttpRequest(
+			$fullUrl, $user, $password, $method, $headers, $body
+		);
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $user
+	 * @param string $password
+	 * @param string $method
+	 * @param array<mixed>|null $headers
+	 * @param array<mixed>|string|null $body
+	 * @return ResponseInterface
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendHttpRequest(
+		string $url,
+		string $user,
+		string $password,
+		string $method = 'GET',
+		array  $headers = null,
+			   $body = null
+	): ResponseInterface {
+		$options['auth'] = [$user, $password];
+		$client = new Client($options);
+		if ($headers === null) {
+			$headers = [];
+		}
+
+		if (\is_array($body)) {
+			// when creating the client, it is possible to set 'form_params' and
+			// the Client constructor sorts out doing this http_build_query stuff.
+			// But 'new Request' does not have the flexibility to do that.
+			// So we need to do it here.
+			$body = \http_build_query($body, '', '&');
+			$headers['Content-Type'] = 'application/x-www-form-urlencoded';
+		}
+
+		$request = new Request(
+			$method,
+			$url,
+			$headers,
+			$body
+		);
+
+		try {
+			$response = $client->send($request);
+		} catch (RequestException $ex) {
+			$response = $ex->getResponse();
+
+			//if the response was null for some reason do not return it but re-throw
+			if ($response === null) {
+				throw $ex;
+			}
+		}
+		return $response;
+	}
+
+	/**
+	 * @param string|null $user
+	 * @param string|null $password
+	 * @param string|null $method
+	 * @param string|null $path
+	 * @param array<mixed>|null $headers
+	 * @param array<mixed>|string|null $body
+	 * @return ResponseInterface
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function makeDavRequest(
+		?string $user,
+		?string $password,
+		?string $method,
+		?string $path,
+		?array $headers,
+		$body = null
+	): ResponseInterface {
+		$davPath = 'remote.php/dav/files/' . strtolower($user) . '/';
+
+		//replace %, # and ? and in the path, Guzzle will not encode them
+		$urlSpecialChar = [['%', '#', '?'], ['%25', '%23', '%3F']];
+		$path = \str_replace($urlSpecialChar[0], $urlSpecialChar[1], $path);
+
+		$fullUrl = self::sanitizeUrl($this->getBaseUrl() . $davPath . $path);
+
+		if ($headers !== null) {
+			foreach ($headers as $key => $value) {
+				//? and # need to be encoded in the Destination URL
+				if ($key === "Destination") {
+					$headers[$key] = \str_replace(
+						$urlSpecialChar[0],
+						$urlSpecialChar[1],
+						$value
+					);
+					break;
+				}
+			}
+		}
+		return $this->sendHttpRequest(
+			$fullUrl,
+			$user,
+			$password,
+			$method,
+			$headers,
+			$body
+		);
+	}
+
+	public static function sanitizeUrl(?string $url, ?bool $trailingSlash = false): string {
+		if ($trailingSlash === true) {
+			$url = $url . "/";
+		} else {
+			$url = \rtrim($url, "/");
+		}
+		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
+		return $url;
+	}
+}
