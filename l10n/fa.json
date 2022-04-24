@@ -1,0 +1,6 @@
+{ "translations": {
+    "Connected accounts" : "حساب‌های متصل",
+    "Client ID" : "شناسه مشتری",
+    "Client secret" : "رمز مشتری"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}

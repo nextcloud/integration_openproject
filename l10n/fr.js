@@ -2,6 +2,7 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Erreur lors de l'obtention du jeton d'accès OAuth",
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
     "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
