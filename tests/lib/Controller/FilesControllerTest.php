@@ -23,7 +23,6 @@ class FilesControllerTest extends TestCase {
 					$this->getNodeMock('image/png')
 				],
 				'files/logo.png',
-				'/logo.png',
 				'logo.png',
 				'image/png'
 			],
@@ -35,7 +34,6 @@ class FilesControllerTest extends TestCase {
 
 				],
 				'files/receivedAsFolderShare/logo.png',
-				'/receivedAsFolderShare/logo.png',
 				'logo.png',
 				'image/png',
 			],
@@ -45,7 +43,6 @@ class FilesControllerTest extends TestCase {
 					$this->getNodeMock('httpd/unix-directory')
 				],
 				'files/myFolder',
-				'/myFolder',
 				'myFolder',
 				'httpd/unix-directory'
 			],
@@ -55,7 +52,6 @@ class FilesControllerTest extends TestCase {
 					$this->getNodeMock('httpd/unix-directory')
 				],
 				'files/myFolder/a-sub-folder',
-				'/myFolder/a-sub-folder',
 				'a-sub-folder',
 				'httpd/unix-directory'
 			],
@@ -65,7 +61,6 @@ class FilesControllerTest extends TestCase {
 					$this->getNodeMock('httpd/unix-directory')
 				],
 				'files',
-				'/',
 				'files',
 				'httpd/unix-directory'
 			],
@@ -76,7 +71,6 @@ class FilesControllerTest extends TestCase {
 	 * @dataProvider getFileInfoDataProvider
 	 * @param array<mixed> $nodeMocks
 	 * @param string $internalPath
-	 * @param string $expectedPath
 	 * @param string $expectedName
 	 * @param string $expectedMimeType
 	 * @return void
@@ -84,7 +78,6 @@ class FilesControllerTest extends TestCase {
 	public function testGetFileInfo(
 		$nodeMocks,
 		$internalPath,
-		$expectedPath,
 		$expectedName,
 		$expectedMimeType
 	) {
@@ -107,7 +100,6 @@ class FilesControllerTest extends TestCase {
 				"mtime" => 1640008813,
 				"ctime" => 1639906930,
 				"mimetype" => $expectedMimeType,
-				"path" => $expectedPath,
 				"size" => 200245,
 				"owner_name" => "Test User",
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
@@ -460,7 +452,6 @@ class FilesControllerTest extends TestCase {
 					'mtime' => 1640008813,
 					'ctime' => 1639906930,
 					'mimetype' => 'httpd/unix-directory',
-					'path' => '/myFolder/a-sub-folder',
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
@@ -474,7 +465,6 @@ class FilesControllerTest extends TestCase {
 					'mtime' => 1640008813,
 					'ctime' => 1639906930,
 					'mimetype' => 'httpd/unix-directory',
-					'path' => '/',
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
@@ -525,7 +515,6 @@ class FilesControllerTest extends TestCase {
 		"mtime" => 1640008813,
 		"ctime" => 1639906930,
 		"mimetype" => 'text/plain',
-		"path" => '/welcome.txt.d1648724302',
 		"size" => 200245,
 		"owner_name" => "Test User",
 		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
@@ -543,7 +532,6 @@ class FilesControllerTest extends TestCase {
 		'mtime' => 1640008813,
 		'ctime' => 1639906930,
 		'mimetype' => 'image/png',
-		'path' => '/logo.png',
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
@@ -561,7 +549,6 @@ class FilesControllerTest extends TestCase {
 		'mtime' => 1640008813,
 		'ctime' => 1639906930,
 		'mimetype' => 'image/png',
-		'path' => '/inFolder/image.png',
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',

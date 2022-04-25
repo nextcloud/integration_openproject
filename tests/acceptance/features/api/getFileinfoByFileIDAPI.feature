@@ -18,7 +18,6 @@ Feature: retrieve file information using a file ID
         "ctime",
         "name",
         "mimetype",
-        "path",
         "owner_id",
         "owner_name",
         "trashed"
@@ -32,7 +31,6 @@ Feature: retrieve file information using a file ID
           "ctime" : {"type" : "integer", "minimum": 0, "maximum": 0},
           "name": {"type": "string", "pattern": "^file.txt$"},
           "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "path": {"type": "string", "pattern": "^\/file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "trashed": {"type": "boolean"}

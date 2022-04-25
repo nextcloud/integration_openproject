@@ -117,26 +117,15 @@ class FilesController extends OCSController {
 		if ($file !== null && is_array($mount) && count($mount) > 0) {
 			$owner = $file->getOwner();
 			$internalPath = $mount[0]->getInternalPath();
-			$path = preg_replace(
-				'/(files_trashbin\/)?files\/?/',
-				'/',
-				$internalPath
-			);
 
-			if ($path === '/') {
-				$name = $internalPath;
-			} else {
-				$name = basename($path);
-			}
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
 				'id' => $file->getId(),
-				'name' => $name,
+				'name' => basename($internalPath),
 				'mtime' => $file->getMTime(),
 				'ctime' => $file->getCreationTime(),
 				'mimetype' => $file->getMimetype(),
-				'path' => $path,
 				'size' => $file->getSize(),
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
