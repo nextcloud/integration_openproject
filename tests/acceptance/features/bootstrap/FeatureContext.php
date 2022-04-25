@@ -17,6 +17,10 @@ class FeatureContext implements Context {
 	private string $adminUsername = '';
 	private string $adminPassword = '';
 	private string $baseUrl = '';
+	private const SHARE_TYPES = [
+		'user' => 0,
+		'group' => 1,
+	];
 	/**
 	 * @var array<int>
 	 */
@@ -88,12 +92,94 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given user :user has created folder :folder
+	 */
+	public function userHasCreatedFolder(
+		string $user, string $folder
+	):void {
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"MKCOL",
+			$folder
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"201",
+			"HTTP status code was not 201 while trying to create folder '$folder' for user '$user'"
+		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has shared (?:file|folder) "([^"]*)" with (user|group) "([^"]*)"$/
+	 */
+	public function userHasSharedFileWithUser(
+		string $sharer, string $path, string $userOrGroup, string $shareWith): void {
+		$body['path'] = $path;
+		$body['shareType'] = self::SHARE_TYPES[$userOrGroup];
+		$body['shareWith'] = $shareWith;
+		$body['permissions'] = 31;
+
+		$this->response = $this->sendOCSRequest(
+			'/apps/files_sharing/api/v1/shares',
+			'POST',
+			$sharer,
+			$body
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"200",
+			"HTTP status code was not 200 while sharing '$path' with '$shareWith'"
+		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has deleted (?:file|folder) "([^"]*)"$/
+	 */
+	public function userHasDeletedFile(string $user, string $path):void {
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"DELETE",
+			$path
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"204",
+			"HTTP status code was not 204 while deleting '$path' as '$user'"
+		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has renamed (?:file|folder) "([^"]*)" to "([^"]*)"$/
+	 */
+	public function userHasRenamedFile(string $user, string $src, string $dst):void {
+		$davPath = self::getDavPath($user);
+		$fullDstUrl = self::sanitizeUrl($this->getBaseUrl() . $davPath . $dst);
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"MOVE",
+			$src,
+			["Destination" => $fullDstUrl]
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"201",
+			"HTTP status code was not 201 while moving '$src' to '$dst'"
+		);
+	}
+
+	/**
 	 * @When user :user gets the information of last created file
 	 */
 	public function userGetsTheInformationOfLastCreatedFile(string $user): void {
 		$fileId = array_slice($this->createdFiles, -1);
+		$this->userGetsTheInformationOfFile($user, "$fileId[0]");
+	}
+
+	/**
+	 * @When user :user gets the information of the file with the id :id
+	 */
+	public function userGetsTheInformationOfFile(string $user, string $fileId): void {
 		$this->response = $this->sendOCSRequest(
-			'/apps/integration_openproject/fileinfo/' . $fileId[0],
+			'/apps/integration_openproject/fileinfo/' . $fileId,
 			'GET',
 			$user
 		);
@@ -259,10 +345,10 @@ class FeatureContext implements Context {
 		?string $password,
 		?string $method,
 		?string $path,
-		?array $headers,
+		?array $headers = null,
 		$body = null
 	): ResponseInterface {
-		$davPath = 'remote.php/dav/files/' . strtolower($user) . '/';
+		$davPath = self::getDavPath($user);
 
 		//replace %, # and ? and in the path, Guzzle will not encode them
 		$urlSpecialChar = [['%', '#', '?'], ['%25', '%23', '%3F']];
@@ -291,6 +377,10 @@ class FeatureContext implements Context {
 			$headers,
 			$body
 		);
+	}
+
+	private static function getDavPath(string $user): string {
+		return'remote.php/dav/files/' . strtolower($user) . '/';
 	}
 
 	public static function sanitizeUrl(?string $url, ?bool $trailingSlash = false): string {
