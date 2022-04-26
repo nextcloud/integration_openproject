@@ -35,8 +35,10 @@
 				:key="workpackage.id"
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
-					<WorkPackage :workpackage="workpackage" />
-					<div class="linked-workpackages--workpackage--unlink icon-noConnection" />
+					<WorkPackage :workpackage="workpackage"
+						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
+					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
+						@click="unlink(workpackage.id, fileInfo.id)" />
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
 			</div>
@@ -53,9 +55,14 @@ import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
+
+const STATE_ERROR = 'error'
+const STATE_NO_TOKEN = 'no-token'
 
 export default {
 	name: 'ProjectsTab',
@@ -70,6 +77,7 @@ export default {
 		state: 'loading',
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
+		color: null,
 	}),
 	computed: {
 		isLoading() {
@@ -91,6 +99,14 @@ export default {
 			this.state = 'loading'
 			await this.fetchWorkpackages(this.fileInfo.id)
 		},
+		checkForErrorCode(statusCode) {
+			if (statusCode === 200 || statusCode === 204) return
+			if (statusCode === 401) {
+				this.state = STATE_NO_TOKEN
+			} else {
+				this.state = STATE_ERROR
+			}
+		},
 		/**
 		 * Reset the current view to its default state
 		 */
@@ -100,6 +116,74 @@ export default {
 		},
 		onSaved(data) {
 			this.workpackages.push(data)
+		},
+		async routeToTheWorkPackage(workpackageId, projectId) {
+			let response
+			let openprojectUrl
+			try {
+				response = await axios.get(generateUrl('/apps/integration_openproject/url'))
+			} catch (e) {
+				response = e.response
+			}
+			this.checkForErrorCode(response.status)
+			if (response.status === 200) {
+				openprojectUrl = response.data.replace(/\/+$/, '')
+				const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
+				window.open(workpackageUrl)
+			}
+		},
+		unlink(workpackageId, fileId) {
+			OC.dialogs.confirmDestructive(
+				t('integration_openproject',
+					'Are you sure you want to unlink the work package?'
+				),
+				t('integration_openproject', 'Confirm unlink'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'Unlink'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				(result) => {
+					if (result) {
+						this.unlinkWorkPackage(workpackageId, fileId).then((response) => {
+							this.workpackages = this.workpackages.filter(workpackage => workpackage.id !== workpackageId)
+							showSuccess(t('integration_openproject', 'Work package unlinked'))
+						}).catch((error) => {
+							showError(
+								t('integration_openproject', 'Failed to unlink work package')
+							)
+							this.checkForErrorCode(error.response.status)
+						})
+					}
+				},
+				true
+			)
+		},
+		async unlinkWorkPackage(workpackageId, fileId) {
+			let response
+			try {
+				response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
+			} catch (e) {
+				response = e.response
+			}
+			this.checkForErrorCode(response.status)
+			if (response.status === 200) {
+				const id = this.processLink(response.data, fileId)
+				const url = generateUrl('/apps/integration_openproject/file-links/' + id)
+				response = await axios.delete(url)
+				return response
+			}
+		},
+		processLink(data, fileId) {
+			let linkId
+			for (const element of data) {
+				if (parseInt(element.originData.id) === fileId) {
+					linkId = element.id
+					break
+				}
+			}
+			return linkId
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}

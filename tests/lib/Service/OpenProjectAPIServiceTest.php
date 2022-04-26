@@ -18,6 +18,7 @@ use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -62,6 +63,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @var string
 	 */
 	private $workPackagesPath = '/api/v3/work_packages';
+
+	/**
+	 * @var string
+	 */
+	private $fileLinksPath = '/api/v3/file_links';
 
 	/**
 	 * @var array<mixed>
@@ -1457,5 +1463,227 @@ class OpenProjectAPIServiceTest extends TestCase {
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
 		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'id' => 8,
+							'_type' => "FileLink",
+							'originData' => [
+								'id' => 5
+							],
+						]
+					]
+				]
+			]);
+		$result = $service->getWorkPackageFileLinks(7, 'user');
+		$this->assertSame([[
+			'id' => 8,
+			'_type' => "FileLink",
+			'originData' => [
+				'id' => 5
+			]
+		]], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'error' => 'something went wrong',
+			]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getWorkPackageFileLinks(7, 'user');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksMalFormedResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+				->willReturn([
+					'_type' => '',
+				]);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->getWorkPackageFileLinks(7, 'user');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinksPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath($this->workPackagesPath . '/7/file_links')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'id' => 8,
+							'_type' => "FileLink",
+							'originData' => [
+								'id' => 5
+							],
+						]
+					]
+				]
+			]);
+
+		$this->builder
+			->uponReceiving('a GET request to /work_package/{id}/file_links')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$result = $service->getWorkPackageFileLinks(7, 'testUser');
+
+		$this->assertSame([[
+			'id' => 8,
+			'_type' => "FileLink",
+			'originData' => [
+				'id' => 5
+			]
+		]], $result);
+	}
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileLinkNotFoundPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath($this->workPackagesPath . '/100/file_links')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_NOT_FOUND)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:NotFound',
+				'message' => 'The requested resource could not be found.'
+			]);
+
+		$this->builder
+			->uponReceiving('a GET request to /work_package/{id}/file_links to a non-existing work package')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getWorkPackageFileLinks(100, 'testUser');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDeleteFileLinkResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'success' => true
+			]);
+		$result = $service->deleteFileLink(7, 'user');
+		$this->assertSame([
+			'success' => true
+		], $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testDeleteFileLinkErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn([
+				'error' => 'something went wrong',
+			]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->deleteFileLink(7, 'user');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileDeleteLinksPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('DELETE')
+			->setPath($this->fileLinksPath . '/10')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_NO_CONTENT);
+
+		$this->builder
+			->uponReceiving('a DELETE request to /file_links')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$result = $service->deleteFileLink(10, 'testUser');
+
+		$this->assertSame([
+			'success' => true
+		], $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetWorkPackageFileDeleteLinkNotFoundPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('DELETE')
+			->setPath($this->fileLinksPath . '/12345')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_NOT_FOUND)
+			->addHeader('Content-Type', 'application/json')
+			->setBody([
+				'_type' => 'Error',
+				'errorIdentifier' => 'urn:openproject-org:api:v3:errors:NotFound',
+				'message' => 'The requested resource could not be found.'
+			]);
+
+		$this->builder
+			->uponReceiving('a DELETE request to /file_links but not existing file link')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+
+		$this->expectException(OpenprojectErrorException::class);
+		$service->deleteFileLink(12345, 'testUser');
 	}
 }
