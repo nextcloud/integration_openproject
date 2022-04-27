@@ -1,6 +1,7 @@
 { "translations": {
     "Client ID" : "ID client",
     "Connected as {user}" : "Connectat coma {user}",
-    "Invalid token" : "Geton invalid"
+    "Invalid token" : "Geton invalid",
+    "Cancel" : "Anullar"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

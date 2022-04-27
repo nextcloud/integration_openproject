@@ -8,6 +8,7 @@ OC.L10N.register(
     "Client ID" : "מזהה לקו",
     "Client secret" : "סוד לקוח",
     "Enable navigation link" : "הפעלת קישור ניווט",
-    "Incorrect access token" : "אסימון הגישה שגוי"
+    "Incorrect access token" : "אסימון הגישה שגוי",
+    "Cancel" : "ביטול"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

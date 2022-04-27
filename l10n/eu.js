@@ -28,6 +28,7 @@ OC.L10N.register(
     "Incorrect access token" : "Sarbide token okerra",
     "Invalid token" : "Token baliogabea",
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
-    "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan"
+    "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan",
+    "Cancel" : "Utzi"
 },
 "nplurals=2; plural=(n != 1);");

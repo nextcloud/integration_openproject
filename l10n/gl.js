@@ -12,6 +12,7 @@ OC.L10N.register(
     "Connected as {user}" : "Conectado como {user}",
     "Enable unified search for tickets" : "Activar a busca unificada de billetes.",
     "OAuth access token could not be obtained:" : "Non foi posíbel obter o testemuño de acceso OAuth",
-    "Incorrect access token" : "Testemuño de acceso incorrecto"
+    "Incorrect access token" : "Testemuño de acceso incorrecto",
+    "Cancel" : "Cancelar"
 },
 "nplurals=2; plural=(n != 1);");

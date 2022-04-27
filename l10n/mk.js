@@ -8,6 +8,7 @@ OC.L10N.register(
     "Client secret" : "Тајна на клиент",
     "Enable navigation link" : "Овозможи линк за навигација",
     "Connected as {user}" : "Поврзан како {user}",
-    "Incorrect access token" : "Неточен токен за пристап"
+    "Incorrect access token" : "Неточен токен за пристап",
+    "Cancel" : "Откажи"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

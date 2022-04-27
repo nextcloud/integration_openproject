@@ -8,6 +8,7 @@ OC.L10N.register(
     "Client secret" : "Klienthemlighet",
     "Enable navigation link" : "Aktivera navigeringslänk",
     "Connected as {user}" : "Ansluten som {user}",
-    "Incorrect access token" : "Ogiltig åtkomst-token"
+    "Incorrect access token" : "Ogiltig åtkomst-token",
+    "Cancel" : "Avbryt"
 },
 "nplurals=2; plural=(n != 1);");

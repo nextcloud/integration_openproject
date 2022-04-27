@@ -40,6 +40,7 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "Impossible d'enregistrer les options OpenProject",
     "Error connecting to OpenProject" : "Erreur de connexion à OpenProject",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
-    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject"
+    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject",
+    "Cancel" : "Annuler"
 },
 "nplurals=2; plural=(n > 1);");

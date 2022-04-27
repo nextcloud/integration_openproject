@@ -48,6 +48,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "Hivatkozás hozzáadásához használja a fenti keresősávot, hogy megtalálja a kívánt munkacsomagot",
     "No OpenProject notifications!" : "Nincsenek OpenProject értesítések!",
     "Failed to get OpenProject notifications" : "Az OpenProject értesítések lekérése sikertelen",
-    "Existing relations:" : "Meglévő kapcsolatok:"
+    "Existing relations:" : "Meglévő kapcsolatok:",
+    "Cancel" : "Mégse"
 },
 "nplurals=2; plural=(n != 1);");

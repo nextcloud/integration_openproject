@@ -13,6 +13,7 @@ OC.L10N.register(
     "Connected as {user}" : "Povezan kao {user}",
     "Enable unified search for tickets" : "Omogući objedinjeno pretraživanje prijava",
     "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:",
-    "Incorrect access token" : "Pogrešan token za pristup"
+    "Incorrect access token" : "Pogrešan token za pristup",
+    "Cancel" : "Odustani"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

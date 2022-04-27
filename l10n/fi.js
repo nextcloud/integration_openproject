@@ -10,6 +10,7 @@ OC.L10N.register(
     "Client secret" : "Asiakassalasana",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
-    "Incorrect access token" : "Virheellinen käyttöpoletti"
+    "Incorrect access token" : "Virheellinen käyttöpoletti",
+    "Cancel" : "Peruuta"
 },
 "nplurals=2; plural=(n != 1);");

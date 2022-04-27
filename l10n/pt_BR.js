@@ -48,6 +48,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "Para adicionar um link, use a barra de pesquisa acima para encontrar o pacote de trabalho desejado",
     "No OpenProject notifications!" : "Nenhuma notificação do OpenProject!",
     "Failed to get OpenProject notifications" : "Falha ao receber notificações do OpenProject",
-    "Existing relations:" : "Relações existentes:"
+    "Existing relations:" : "Relações existentes:",
+    "Cancel" : "Cancelar"
 },
 "nplurals=2; plural=(n > 1);");

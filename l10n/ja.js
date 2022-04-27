@@ -9,6 +9,7 @@ OC.L10N.register(
     "Client secret" : "クライアントシークレット",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Connected as {user}" : "{user} に接続済み",
-    "Incorrect access token" : "正しくないアクセストークン"
+    "Incorrect access token" : "正しくないアクセストークン",
+    "Cancel" : "キャンセル"
 },
 "nplurals=1; plural=0;");

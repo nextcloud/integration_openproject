@@ -48,6 +48,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "За да добавите връзка, използвайте лентата за търсене по-горе, за да намерите желания работен пакет",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
-    "Existing relations:" : "Съществуващи отношения/връзки/:"
+    "Existing relations:" : "Съществуващи отношения/връзки/:",
+    "Cancel" : "Отказ"
 },
 "nplurals=2; plural=(n != 1);");

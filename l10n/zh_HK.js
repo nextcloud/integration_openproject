@@ -48,6 +48,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "要添加連結，請使用上方的搜索欄查找所需的工作包",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
-    "Existing relations:" : "現有關係："
+    "Existing relations:" : "現有關係：",
+    "Cancel" : "取消"
 },
 "nplurals=1; plural=0;");
