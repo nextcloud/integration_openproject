@@ -389,6 +389,15 @@ describe('SearchInput.vue tests', () => {
 				)
 				postSpy.mockRestore()
 			})
+			it('should reset the state of the search input', async () => {
+				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				expect(wrapper.vm.searchResults.length).toBe(1)
+				expect(wrapper.find('input').element.value).toBe('orga')
+				await multiselectItem.trigger('click')
+				expect(wrapper.vm.searchResults.length).toBe(0)
+				expect(wrapper.find('input').element.value).toBe('')
+
+			})
 			it('should show an error when linking failed', async () => {
 				const err = new Error()
 				err.response = { status: 422 }
