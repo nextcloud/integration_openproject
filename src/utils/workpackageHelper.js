@@ -40,6 +40,7 @@ export const workpackageHelper = {
 		const statusId = this.replaceHrefToGetId(workPackage._links.status.href)
 		const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
+		const projectId = this.replaceHrefToGetId(workPackage._links.project.href)
 		const userName = workPackage._links.assignee.title
 		const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
 			+ encodeURIComponent('userId')
@@ -52,6 +53,7 @@ export const workpackageHelper = {
 			id: workPackage.id,
 			subject: workPackage.subject,
 			project: workPackage._links.project.title,
+			projectId,
 			statusTitle: workPackage._links.status.title,
 			typeTitle: workPackage._links.type.title,
 			assignee: userName,

@@ -14,6 +14,12 @@ jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
 }))
+jest.mock('lodash/debounce', () =>
+	jest.fn(fn => {
+		fn.cancel = jest.fn()
+		return fn
+	})
+)
 
 const localVue = createLocalVue()
 const simpleWorkPackageSearchResponse = [{
@@ -43,7 +49,8 @@ describe('SearchInput.vue tests', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'
-	const searchListSelector = '.workpackage'
+	const multiSelectContentSelector = '.multiselect__content'
+	const workPackageStubSelector = 'workpackage-stub'
 	const inputSelector = '.multiselect__input'
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.icon-loading-small'
@@ -159,17 +166,20 @@ describe('SearchInput.vue tests', () => {
 				await wrapper.setData({
 					searchResults: [],
 				})
-				const searchList = wrapper.find(searchListSelector)
-				expect(searchList.exists()).toBeFalsy()
+				const multiSelectCont = wrapper.find(multiSelectContentSelector)
+				expect(multiSelectCont).toMatchSnapshot()
 			})
 			it('should display correct options list of search results', async () => {
 				await wrapper.setData({
 					searchResults: workPackagesSearchResponse,
 				})
-				const searchList = wrapper.find(searchListSelector)
-
-				expect(searchList.exists()).toBeTruthy()
-				expect(searchList).toMatchSnapshot()
+				const multiSelectContent = wrapper.find(multiSelectContentSelector)
+				expect(multiSelectContent.exists()).toBeTruthy()
+				const workPackages = multiSelectContent.findAll(workPackageStubSelector)
+				expect(workPackages).toHaveLength(workPackagesSearchResponse.length)
+				for (let i = 0; i < workPackagesSearchResponse.length; i++) {
+					expect(workPackages.at(i).props()).toMatchSnapshot()
+				}
 			})
 			it('should not display the "avatar" and "name" if the "assignee" is not present in a work package', async () => {
 				await wrapper.setData({
@@ -178,11 +188,11 @@ describe('SearchInput.vue tests', () => {
 				const assignee = wrapper.find(assigneeSelector)
 				expect(assignee.exists()).toBeFalsy()
 			})
-			it.only('should only use the options from the latest search response', async () => {
+			it('should only use the options from the latest search response', async () => {
 				await wrapper.setData({
 					searchResults: workPackageSearchReqResponse,
 				})
-				expect(wrapper.findAll('workpackage-stub').length).toBe(3)
+				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
@@ -196,9 +206,11 @@ describe('SearchInput.vue tests', () => {
 				for (let i = 0; i <= 10; i++) {
 					await wrapper.vm.$nextTick()
 				}
-				const workPackages = wrapper.findAll('workpackage-stub')
+				const workPackages = wrapper.findAll(workPackageStubSelector)
 				expect(workPackages.length).toBe(simpleWorkPackageSearchResponse.length)
-				expect(workPackages.at(0).props()).toMatchSnapshot()
+				for (let i = 0; i < workPackages.length; i++) {
+					expect(workPackages.at(i).props()).toMatchSnapshot()
+				}
 				axiosSpy.mockRestore()
 			})
 			it('should not display work packages that are already linked', async () => {
@@ -392,9 +404,7 @@ describe('SearchInput.vue tests', () => {
 
 		describe('fileInfo prop', () => {
 			it('should reset the input state when the prop is changed', async () => {
-				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
-				await wrapper.find(inputSelector).setValue('org')
-				await wrapper.setData({
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' }, [], {
 					searchResults: [{
 						id: 999,
 					}],
@@ -412,7 +422,7 @@ describe('SearchInput.vue tests', () => {
 		})
 	})
 })
-function mountSearchInput(fileInfo = {}, linkedWorkPackages = []) {
+function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
@@ -421,13 +431,16 @@ function mountSearchInput(fileInfo = {}, linkedWorkPackages = []) {
 				return '/'
 			},
 		},
+		data: () => ({
+			...data,
+		}),
 		stubs: {
 			Avatar: true,
 			WorkPackage: true,
 		},
 		propsData: {
 			fileInfo,
-			linkedWorkPackages
+			linkedWorkPackages,
 		},
 	})
 }

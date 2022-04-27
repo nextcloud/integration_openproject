@@ -32,7 +32,7 @@ use OCP\Files\NotPermittedException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
-
+use OCP\AppFramework\Http;
 
 use OCA\OpenProject\AppInfo\Application;
 
@@ -396,9 +396,13 @@ class OpenProjectAPIService {
 					$paramsContent .= http_build_query($params);
 					$url .= '?' . $paramsContent;
 				} else {
-					$options['body'] = $params['body'];
+					if (isset($params['body'])) {
+						$options['body'] = $params['body'];
+					}
 					$options['headers']['Content-Type'] = 'application/json';
 				}
+			} elseif ($method === 'DELETE') {
+				$options['headers']['Content-Type'] = 'application/json';
 			}
 
 			if ($method === 'GET') {
@@ -409,6 +413,9 @@ class OpenProjectAPIService {
 				$response = $this->client->put($url, $options);
 			} elseif ($method === 'DELETE') {
 				$response = $this->client->delete($url, $options);
+				if ($response->getStatusCode() === Http::STATUS_NO_CONTENT) {
+					return ['success' => true];
+				}
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
@@ -601,7 +608,7 @@ class OpenProjectAPIService {
 		string $fileName,
 		string $storageUrl,
 		string $userId
-	) {
+	): int {
 		$file = $this->getNode($userId, $fileId);
 		if (!$file->isReadable()) {
 			throw new NotPermittedException();
@@ -650,6 +657,52 @@ class OpenProjectAPIService {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		return $result['_embedded']['elements'][0]['id'];
+	}
+
+	/**
+	 * @param int $workpackageId
+	 * @param string $userId
+	 * @return array<mixed>
+	 * @throws NotFoundException
+	 * @throws OpenprojectErrorException
+	 * @throws OpenprojectResponseException
+	 */
+	public function getWorkPackageFileLinks(int $workpackageId, string $userId): array {
+		$result = $this->request(
+			$userId, 'work_packages/' . $workpackageId. '/file_links'
+		);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Collection' ||
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['elements'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result['_embedded']['elements'];
+	}
+
+	/**
+	 * @param int $fileLinkId
+	 * @param string $userId
+	 * @return array<mixed>
+	 * @throws NotFoundException
+	 * @throws OpenprojectErrorException|OpenprojectResponseException
+	 */
+	public function deleteFileLink(int $fileLinkId, string $userId): array {
+		$result = $this->request(
+			$userId, 'file_links/' . $fileLinkId, [""], 'DELETE'
+		);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		if (!isset($result['success'])) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result;
 	}
 
 	/**

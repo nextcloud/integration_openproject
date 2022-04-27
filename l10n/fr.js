@@ -2,6 +2,7 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Erreur lors de l'obtention du jeton d'accès OAuth",
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
     "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
@@ -39,6 +40,7 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "Impossible d'enregistrer les options OpenProject",
     "Error connecting to OpenProject" : "Erreur de connexion à OpenProject",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
-    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject"
+    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject",
+    "Cancel" : "Annuler"
 },
 "nplurals=2; plural=(n > 1);");

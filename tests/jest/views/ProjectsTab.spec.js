@@ -6,6 +6,19 @@ import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 
+jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/l10n', () => ({
+	translate: jest.fn((app, msg) => msg),
+	getLanguage: jest.fn(() => ''),
+}))
+
+global.OC = {
+	dialogs: {
+		confirmDestructive: jest.fn(),
+		YES_NO_BUTTONS: 70,
+	},
+}
+
 jest.mock('@nextcloud/axios')
 const localVue = createLocalVue()
 
@@ -16,6 +29,8 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
+	const linkedWorkpackageSelector = '.workpackage'
+	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlink'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -279,6 +294,101 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages).toMatchSnapshot()
+		})
+	})
+	describe('when the work package is clicked', () => {
+		it('opens work package in open project', async () => {
+			axios.get
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: 'http://openproject',
+				}))
+			window.open = jest.fn()
+			wrapper = mountWrapper()
+			await wrapper.setData({
+				workpackages: workPackagesSearchResponse,
+			})
+			await localVue.nextTick()
+			await wrapper.find(linkedWorkpackageSelector).trigger('click')
+			await localVue.nextTick()
+			expect(window.open).toHaveBeenCalledTimes(1)
+			expect(window.open).toHaveBeenCalledWith(
+				'http://openproject/projects/15/work_packages/1'
+			)
+		})
+	})
+	describe('when workpackage unlink button is clicked', () => {
+		it('should display a confirmation dialog box', async () => {
+			wrapper = mountWrapper()
+			await wrapper.setData({
+				workpackages: workPackagesSearchResponse,
+			})
+			await localVue.nextTick()
+			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
+			await wrapper.find(workPackageUnlinkSelector).trigger('click')
+			await localVue.nextTick()
+			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledTimes(1)
+			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledWith(
+				'Are you sure you want to unlink the work package?',
+				'Confirm unlink',
+				{ cancel: 'Cancel', confirm: 'Unlink', confirmClasses: 'error', type: 70 },
+				expect.any(Function),
+				true
+			)
+		})
+	})
+
+	describe('unlinkWorkPackage', () => {
+		it('should unlink the work package', async () => {
+			const axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						_type: 'FileLink',
+						id: 66,
+						createdAt: '2022-04-06T05:14:24Z',
+						updatedAt: '2022-04-06T05:14:24Z',
+						originData: {
+							id: '6',
+							name: 'welcome.txt',
+							mimeType: 'text/plain',
+							createdAt: '1970-01-01T00:00:00Z',
+							lastModifiedAt: '2022-03-30T07:39:56Z',
+							createdByName: '',
+							lastModifiedByName: '',
+						},
+						_links: {
+							delete: {
+								href: '/api/v3/file_links/66',
+								method: 'delete',
+							},
+						},
+					}],
+				}))
+			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => Promise.resolve(
+				{ status: 200 })
+			)
+			wrapper = mountWrapper()
+			await wrapper.vm.unlinkWorkPackage(15, 6)
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/work-packages/15/file-links'
+			)
+			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
+			axiosGetSpy.mockRestore()
+			axiosDeleteSpy.mockRestore()
+		})
+
+		it.each([
+			{ HTTPStatus: 401, state: 'no-token' },
+			{ HTTPStatus: 404, state: 'error' },
+			{ HTTPStatus: 500, state: 'error' },
+		])('sets states according to HTTP error codes', async (cases) => {
+			const err = new Error()
+			err.response = { status: cases.HTTPStatus }
+			axios.get.mockRejectedValueOnce(err)
+			wrapper = mountWrapper()
+			await wrapper.vm.unlinkWorkPackage(15, 6)
+			expect(wrapper.vm.state).toBe(cases.state)
 		})
 	})
 })

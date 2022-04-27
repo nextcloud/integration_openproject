@@ -48,6 +48,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "Pokud chcete přidat odkaz, vyhledejte pomocí výše uvedené lišty požadovaný balíček práce",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
-    "Existing relations:" : "Existující souvislosti:"
+    "Existing relations:" : "Existující souvislosti:",
+    "Cancel" : "Storno"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

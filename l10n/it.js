@@ -39,8 +39,11 @@ OC.L10N.register(
     "Invalid token" : "Token non valido",
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
+    "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
+    "Unexpected Error" : "Si è verificato un errore inatteso",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
-    "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject"
+    "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
+    "Existing relations:" : "Relazioni esistenti:"
 },
 "nplurals=2; plural=(n != 1);");

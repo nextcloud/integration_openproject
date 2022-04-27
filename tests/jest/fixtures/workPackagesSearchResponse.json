@@ -3,6 +3,7 @@
         "id" : "1",
         "subject" : "Organize work-packages",
         "project" : "test",
+        "projectId" : "15",
         "statusTitle" :"in-progress",
         "typeTitle" : "task",
         "assignee" : "test",
