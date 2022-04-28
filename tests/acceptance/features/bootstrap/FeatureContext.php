@@ -167,6 +167,25 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given /^user "([^"]*)" has emptied the trash-bin$/
+	 */
+	public function userEmptiedTrashbin(string $user):void {
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"DELETE",
+			"$user",
+			null,
+			null,
+			'trash-bin'
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"204",
+			"HTTP status code was not 204 when emptying the trash-bin"
+		);
+	}
+
+	/**
 	 * @When user :user gets the information of last created file
 	 */
 	public function userGetsTheInformationOfLastCreatedFile(string $user): void {
@@ -182,6 +201,23 @@ class FeatureContext implements Context {
 			'/apps/integration_openproject/fileinfo/' . $fileId,
 			'GET',
 			$user
+		);
+	}
+
+	/**
+	 * @When user :user gets the information of all files created in this scenario
+	 */
+	public function userGetsTheInformationOfAllCreatedFiles(string $user): void {
+		$body = json_encode(["fileIds" => $this->createdFiles]);
+		Assert::assertNotFalse(
+			$body,
+			"could not encode to JSON"
+		);
+		$this->response = $this->sendOCSRequest(
+			'/apps/integration_openproject/filesinfo',
+			'POST',
+			$user,
+			$body
 		);
 	}
 
@@ -226,7 +262,13 @@ class FeatureContext implements Context {
 	 * @Then the data of the response should match
 	 */
 	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString): void {
-		$schema = json_decode($schemaString->getRaw());
+		$schemaRawString = $schemaString->getRaw();
+		for ($i = 0; $i < count($this->createdFiles); $i++) {
+			$schemaRawString = str_replace(
+				"%ids[$i]%", (string)$this->createdFiles[$i], $schemaRawString
+			);
+		}
+		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
@@ -248,6 +290,7 @@ class FeatureContext implements Context {
 			[],
 			$content
 		);
+		$h = $this->response->getHeaders();
 		return $this->response->getHeader('oc-fileid')[0];
 	}
 
@@ -255,13 +298,13 @@ class FeatureContext implements Context {
 	 * @param string $path
 	 * @param string $method
 	 * @param string $user
-	 * @param array<mixed> $body
+	 * @param array<mixed>|string $body
 	 * @param int $ocsApiVersion
 	 * @return ResponseInterface
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	public function sendOCSRequest(
-		string $path, string $method, string $user, array $body = [], int $ocsApiVersion = 2
+		string $path, string $method, string $user, $body = [], int $ocsApiVersion = 2
 	): ResponseInterface {
 		if ($user === $this->getAdminUsername()) {
 			$password = $this->getAdminPassword();
@@ -272,6 +315,7 @@ class FeatureContext implements Context {
 		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
 		$headers['OCS-APIRequest'] = 'true';
 		$headers['Accept'] = 'application/json';
+		$headers['Content-Type'] = 'application/json';
 		return $this->sendHttpRequest(
 			$fullUrl, $user, $password, $method, $headers, $body
 		);
@@ -346,7 +390,8 @@ class FeatureContext implements Context {
 		?string $method,
 		?string $path,
 		?array $headers = null,
-		$body = null
+		$body = null,
+		string $type = 'files'
 	): ResponseInterface {
 		$davPath = self::getDavPath($user);
 
@@ -354,7 +399,13 @@ class FeatureContext implements Context {
 		$urlSpecialChar = [['%', '#', '?'], ['%25', '%23', '%3F']];
 		$path = \str_replace($urlSpecialChar[0], $urlSpecialChar[1], $path);
 
-		$fullUrl = self::sanitizeUrl($this->getBaseUrl() . $davPath . $path);
+		if ($type === "trash-bin") {
+			$fullUrl = self::sanitizeUrl(
+				$this->getBaseUrl() . '/remote.php/dav/trashbin/' . strtolower($user) . '/trash'
+			);
+		} else {
+			$fullUrl = self::sanitizeUrl($this->getBaseUrl() . $davPath . $path);
+		}
 
 		if ($headers !== null) {
 			foreach ($headers as $key => $value) {
@@ -380,7 +431,7 @@ class FeatureContext implements Context {
 	}
 
 	private static function getDavPath(string $user): string {
-		return'remote.php/dav/files/' . strtolower($user) . '/';
+		return 'remote.php/dav/files/' . strtolower($user) . '/';
 	}
 
 	public static function sanitizeUrl(?string $url, ?bool $trailingSlash = false): string {

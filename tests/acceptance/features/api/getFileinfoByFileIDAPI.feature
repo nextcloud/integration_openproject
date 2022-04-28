@@ -1,6 +1,6 @@
-Feature: retrieve file information using a file ID
+Feature: retrieve file information of a single file, using the file ID
 
-  Scenario: get information of a single file
+  Scenario: get information of an existing file
     Given user "Alice" has been created
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     When user "Alice" gets the information of last created file
@@ -38,7 +38,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file in a subfolder
+  Scenario: get information of an existing file in a subfolder
     Given user "Alice" has been created
     And user "Alice" has created folder "/subfolder"
     And user "Alice" has uploaded file with content "some data" to "/subfolder/file.txt"
@@ -77,7 +77,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single trashed file
+  Scenario: get information of a trashed file
     Given user "Alice" has been created
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     And user "Alice" has deleted file "file.txt"
@@ -116,7 +116,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file that is inside of a trashed folder
+  Scenario: get information of a file that is inside of a trashed folder
     Given user "Alice" has been created
     And user "Alice" has created folder "/subfolder"
     And user "Alice" has uploaded file with content "some data" to "/subfolder/file.txt"
@@ -156,7 +156,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file of a different user
+  Scenario: get information of a file owned by an different user
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has uploaded file with content "some data" to "file.txt"
@@ -170,6 +170,19 @@ Feature: retrieve file information using a file ID
         "status",
         "statuscode"
       ],
+      "not": {
+       "required": [
+          "id",
+          "size",
+          "name",
+          "mtime",
+          "ctime",
+          "mimetype",
+          "owner_id",
+          "owner_name",
+          "trashed"
+        ]
+      },
       "properties": {
           "status": {"type": "string", "pattern": "^Forbidden$"},
           "statuscode" : {"type" : "number", "enum": [403]}
@@ -189,6 +202,19 @@ Feature: retrieve file information using a file ID
         "status",
         "statuscode"
       ],
+      "not": {
+       "required": [
+          "id",
+          "size",
+          "name",
+          "mtime",
+          "ctime",
+          "mimetype",
+          "owner_id",
+          "owner_name",
+          "trashed"
+        ]
+      },
       "properties": {
           "status": {"type": "string", "pattern": "^Not Found$"},
           "statuscode" : {"type" : "number", "enum": [404]}
@@ -196,7 +222,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file received as a share
+  Scenario: get information of a file received as a share
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has uploaded file with content "some data" to "/file.txt"
@@ -226,7 +252,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file that is in a folder received as a share
+  Scenario: get information of a file that is in a folder received as a share
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has created folder "/to-share"
@@ -257,7 +283,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file that received through a folder and a file share
+  Scenario: get information of a file that is received through a folder and a file share
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has created folder "/to-share"
@@ -289,7 +315,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file received as a share and renamed
+  Scenario: get information of a file received as a share and renamed
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has uploaded file with content "some data" to "/file.txt"
@@ -320,7 +346,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file received in a folder share and renamed
+  Scenario: get information of a file received in a folder share and renamed
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has created folder "/to-share"
@@ -352,7 +378,7 @@ Feature: retrieve file information using a file ID
     }
    """
 
-  Scenario: get information of a single file received in a folder share and moved out of that share
+  Scenario: get information of a file received in a folder share and moved out of that share
     Given user "Alice" has been created
     And user "Brian" has been created
     And user "Alice" has created folder "/to-share"
@@ -391,6 +417,19 @@ Feature: retrieve file information using a file ID
         "status",
         "statuscode"
       ],
+      "not": {
+       "required": [
+          "id",
+          "size",
+          "name",
+          "mtime",
+          "ctime",
+          "mimetype",
+          "owner_id",
+          "owner_name",
+          "trashed"
+        ]
+      },
       "properties": {
           "status": {"type": "string", "pattern": "^Forbidden$"},
           "statuscode" : {"type" : "number", "enum": [403]}
