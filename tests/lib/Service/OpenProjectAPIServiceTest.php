@@ -710,35 +710,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath('/api/v3/users/userWithAvatar/avatar')
+			->setPath('/api/v3/users/testUser/avatar')
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
 			->setHeaders(['Content-Type' => 'image/jpeg'])
-			//setBody() expects iterable but we want to have raw data here and it seems to work fine
-			// @phpstan-ignore-next-line
-			->setBody('dataOfTheImage');
+			->setBody(['avatar' => 'some image data']);
 
 		$this->builder
 			->uponReceiving('a request to get the avatar of a user')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-
 		$result = $this->service->getOpenProjectAvatar(
-			$this->mockServerBaseUri,
-			'1234567890',
-			'myRefreshToken',
-			$this->clientId,
-			$this->clientSecret,
-			'userWithAvatar',
+			'testUser',
 			'Me'
 		);
 		$this->assertArrayHasKey('avatar', $result);
-		$this->assertArrayHasKey('type', $result);
-		$this->assertSame('dataOfTheImage', $result['avatar']);
-		$this->assertSame('image/jpeg', $result['type']);
+		$this->assertSame(['avatar' => 'some image data'], $result['avatar']);
 	}
 
 	/**
@@ -748,7 +738,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath('/api/v3/users/userWithoutAvatar/avatar')
+			->setPath('/api/v3/users/testUser/avatar')
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -761,14 +751,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$result = $this->service->getOpenProjectAvatar(
-			$this->mockServerBaseUri,
-			'1234567890',
-			'myRefreshToken',
-			$this->clientId,
-			$this->clientSecret,
-			'userWithoutAvatar',
+			'testUser',
 			'Me'
 		);
+		var_dump($result);
 		$this->assertArrayHasKey('avatar', $result);
 		//make sure its an image, if something else is returned it will throw an exception
 		// @phpstan-ignore-next-line

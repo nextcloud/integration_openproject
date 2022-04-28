@@ -119,11 +119,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
 				'id', 'name'
 			)
 			->willReturn(['avatar' => 'some image data', 'type' => 'image/png']);
@@ -157,11 +152,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
 				'id', 'name'
 			)
 			->willReturn(['avatar' => 'some image data']);

@@ -327,11 +327,6 @@ class OpenProjectAPIService {
 	/**
 	 * authenticated request to get an image from openproject
 	 *
-	 * @param string $url
-	 * @param string $accessToken
-	 * @param string $refreshToken
-	 * @param string $clientID
-	 * @param string $clientSecret
 	 * @param string $userId
 	 * @param string $userName
 	 * @return array{avatar: string, type?: string}
@@ -339,22 +334,12 @@ class OpenProjectAPIService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
 	 */
-	public function getOpenProjectAvatar(string $url,
-									string $accessToken, string $refreshToken, string $clientID, string $clientSecret,
-									string $userId, string $userName): array {
-		$url = $url . '/api/v3/users/' . $userId . '/avatar';
-		$options = [
-			'headers' => [
-				'Authorization' => 'Bearer ' . $accessToken,
-				'User-Agent' => 'Nextcloud OpenProject integration',
-			]
-		];
+	public function getOpenProjectAvatar(string $userId, string $userName): array {
 		try {
-			$response = $this->client->get($url, $options);
-			$headers = $response->getHeaders();
+			$response = $this->request($userId, 'users/'.$userId.'/avatar');
+
 			return [
-				'avatar' => $response->getBody(),
-				'type' => implode(',', $headers['Content-Type']),
+				'avatar' => $response,
 			];
 		} catch (ServerException | ClientException | ConnectException | Exception $e) {
 			$this->logger->debug('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);

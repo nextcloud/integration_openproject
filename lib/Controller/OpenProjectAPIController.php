@@ -96,8 +96,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
-			$this->openprojectUrl, $this->accessToken, $this->refreshToken,
-			$this->clientID, $this->clientSecret, $userId, $userName
+			$userId, $userName
 		);
 		$response = new DataDownloadResponse(
 			$result['avatar'], 'avatar', $result['type'] ?? ''
