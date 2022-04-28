@@ -61,9 +61,7 @@ import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
-
-const STATE_ERROR = 'error'
-const STATE_NO_TOKEN = 'no-token'
+import { STATE } from '../utils'
 
 export default {
 	name: 'ProjectsTab',
@@ -82,7 +80,7 @@ export default {
 	}),
 	computed: {
 		isLoading() {
-			return this.state === 'loading'
+			return this.state === STATE.LOADING
 		},
 		unlinkSvg() {
 			return require('../../img/noConnection.svg')
@@ -97,15 +95,20 @@ export default {
 		async update(fileInfo) {
 			this.fileInfo = fileInfo
 			this.workpackages = []
-			this.state = 'loading'
-			await this.fetchWorkpackages(this.fileInfo.id)
+			this.state = STATE.LOADING
+			if (this.requestUrl) {
+				// only fetch if we have a valid request url
+				await this.fetchWorkpackages(this.fileInfo.id)
+			} else {
+				this.state = STATE.CONNECTION_ERROR
+			}
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200 || statusCode === 204) return
 			if (statusCode === 401) {
-				this.state = STATE_NO_TOKEN
+				this.state = STATE.NO_TOKEN
 			} else {
-				this.state = STATE_ERROR
+				this.state = STATE.ERROR
 			}
 		},
 		/**
@@ -113,7 +116,7 @@ export default {
 		 */
 		resetState() {
 			this.error = ''
-			this.state = 'loading'
+			this.state = STATE.LOADING
 		},
 		onSaved(data) {
 			this.workpackages.push(data)
@@ -192,7 +195,7 @@ export default {
 			try {
 				const response = await axios.get(url, req)
 				if (!Array.isArray(response.data)) {
-					this.state = 'failed-fetching-workpackages'
+					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				} else {
 					// empty data means there are no workpackages linked
 					if (response.data.length > 0) {
@@ -201,17 +204,17 @@ export default {
 							this.workpackages.push(workPackage)
 						}
 					}
-					this.state = 'ok'
+					this.state = STATE.OK
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
-					this.state = 'no-token'
+					this.state = STATE.NO_TOKEN
 				} else if (error.response && error.response.status === 404) {
-					this.state = 'connection-error'
+					this.state = STATE.CONNECTION_ERROR
 				} else if (error.response && error.response.status === 500) {
-					this.state = 'error'
+					this.state = STATE.ERROR
 				} else {
-					this.state = 'failed-fetching-workpackages'
+					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				}
 			}
 		},

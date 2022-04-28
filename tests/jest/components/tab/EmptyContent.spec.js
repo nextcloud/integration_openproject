@@ -1,6 +1,7 @@
 /* jshint esversion: 8 */
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import EmptyContent from '../../../../src/components/tab/EmptyContent'
+import { STATE } from '../../../../src/utils'
 const localVue = createLocalVue()
 
 describe('EmptyContent.vue Test', () => {
@@ -10,13 +11,13 @@ describe('EmptyContent.vue Test', () => {
 
 	describe('connect button', () => {
 		it.each([{
-			state: 'ok',
+			state: STATE.OK,
 			viewed: false,
 		}, {
-			state: 'no-token',
+			state: STATE.NO_TOKEN,
 			viewed: true,
 		}, {
-			state: 'error',
+			state: STATE.ERROR,
 			viewed: true,
 		}])('should be displayed depending on the state', (cases) => {
 			wrapper = getWrapper({ state: cases.state })
@@ -28,18 +29,14 @@ describe('EmptyContent.vue Test', () => {
 			wrapper = getWrapper({ requestUrl: false })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBe(false)
 		})
-		it.each([{
-			state: 'no-token',
-		}, {
-			state: 'error',
-		}, {
-			state: 'connection-error',
-		}, {
-			state: 'failed-fetching-workpackages',
-		}, {
-			state: 'ok',
-		}])('shows the correct empty message depending on states if the request url is valid', async (cases) => {
-			wrapper = getWrapper({ state: cases.state, adminConfigStatus: true })
+		it.each([
+			STATE.NO_TOKEN,
+			STATE.ERROR,
+			STATE.CONNECTION_ERROR,
+			STATE.FAILED_FETCHING_WORKPACKAGES,
+			STATE.OK,
+		])('shows the correct empty message depending on states if the request url is valid', async (state) => {
+			wrapper = getWrapper({ state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
 			expect(wrapper.find(emptyContentMessageSelector)).toMatchSnapshot()
 		})

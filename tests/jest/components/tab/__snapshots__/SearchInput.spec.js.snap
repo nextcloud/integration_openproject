@@ -45,6 +45,76 @@ exports[`SearchInput.vue tests work packages multiselect search list should not 
 </ul>
 `;
 
+exports[`SearchInput.vue tests work packages multiselect search list should not display work packages that are already in the search results 1`] = `
+Array [
+  Object {
+    "assignee": "System",
+    "id": 2,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "Demo project",
+    "projectId": "1",
+    "statusCol": "",
+    "statusTitle": "In progress",
+    "subject": "Organize open source conference",
+    "typeCol": "",
+    "typeTitle": "Phase",
+  },
+  Object {
+    "assignee": "System",
+    "id": 13,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "Demo project",
+    "projectId": "1",
+    "statusCol": "",
+    "statusTitle": "In progress",
+    "subject": "Write a software",
+    "typeCol": "",
+    "typeTitle": "Phase",
+  },
+  Object {
+    "assignee": "System",
+    "id": 5,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "Demo project",
+    "projectId": "1",
+    "statusCol": "",
+    "statusTitle": "In progress",
+    "subject": "Create a website",
+    "typeCol": "",
+    "typeTitle": "Phase",
+  },
+]
+`;
+
+exports[`SearchInput.vue tests work packages multiselect search list should not display work packages that are already linked 1`] = `
+Array [
+  Object {
+    "assignee": "System",
+    "id": 2,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "Demo project",
+    "projectId": "1",
+    "statusCol": "",
+    "statusTitle": "In progress",
+    "subject": "Organize open source conference",
+    "typeCol": "",
+    "typeTitle": "Phase",
+  },
+  Object {
+    "assignee": "System",
+    "id": 5,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "Demo project",
+    "projectId": "1",
+    "statusCol": "",
+    "statusTitle": "In progress",
+    "subject": "Create a website",
+    "typeCol": "",
+    "typeTitle": "Phase",
+  },
+]
+`;
+
 exports[`SearchInput.vue tests work packages multiselect search list should only use the options from the latest search response 1`] = `
 Object {
   "workpackage": Object {

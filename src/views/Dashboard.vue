@@ -2,7 +2,7 @@
 	<DashboardWidget :items="items"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
-		:loading="state === 'loading'">
+		:loading="isLoading">
 		<template #empty-content>
 			<EmptyContent v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
@@ -29,6 +29,7 @@ import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton'
+import { STATE } from '../utils'
 
 export default {
 	name: 'Dashboard',
@@ -49,15 +50,24 @@ export default {
 			openprojectUrl: null,
 			notifications: [],
 			loop: null,
-			state: 'loading',
-			requestUrl: loadState('integration_openproject', 'request-url'),
-			settingsUrl: generateUrl('/settings/user/connected-accounts'),
-			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
+			state: STATE.LOADING,
 			windowVisibility: true,
 		}
 	},
 
 	computed: {
+		isLoading() {
+			return this.state === STATE.LOADING
+		},
+		requestUrl() {
+			return loadState('integration_openproject', 'request-url')
+		},
+		settingsUrl() {
+			return generateUrl('/settings/user/connected-accounts')
+		},
+		themingColor() {
+			return OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9'
+		},
 		showMoreUrl() {
 			return this.openprojectUrl + '/projects'
 		},
@@ -82,11 +92,11 @@ export default {
 			return moment(this.lastDate)
 		},
 		emptyContentMessage() {
-			if (this.state === 'no-token') {
+			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
-			} else if (this.state === 'error') {
+			} else if (this.state === STATE.ERROR) {
 				return t('integration_openproject', 'Error connecting to OpenProject')
-			} else if (this.state === 'ok') {
+			} else if (this.state === STATE.OK) {
 				return t('integration_openproject', 'No OpenProject notifications!')
 			}
 			return ''
@@ -94,19 +104,20 @@ export default {
 		emptyContentIcon() {
 			if (!this.requestUrl) {
 				return 'icon-noConnection'
-			} else if (this.state === 'no-token') {
+			} else if (this.state === STATE.CONNECTION_ERROR) {
 				return 'icon-noConnection'
-			} else if (this.state === 'error') {
+			} else if (this.state === STATE.ERROR) {
 				return 'icon-close'
-			} else if (this.state === 'ok') {
+			} else if (this.state === STATE.OK) {
 				return 'icon-checkmark'
 			}
 			return 'icon-checkmark'
 		},
 		showOauthConnect() {
-			return ['no-token', 'error'].includes(this.state)
+			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
 		},
 	},
+
 	watch: {
 		windowVisibility(newValue) {
 			if (newValue) {
@@ -124,9 +135,6 @@ export default {
 	beforeMount() {
 		this.launchLoop()
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
-	},
-
-	mounted() {
 	},
 
 	methods: {
@@ -159,14 +167,14 @@ export default {
 				if (Array.isArray(response.data)) {
 					this.processNotifications(response.data)
 				}
-				this.state = 'ok'
+				this.state = STATE.OK
 			}).catch((error) => {
 				clearInterval(this.loop)
 				if (error.response && error.response.status === 400) {
-					this.state = 'no-token'
+					this.state = STATE.NO_TOKEN
 				} else if (error.response && error.response.status === 401) {
 					showError(t('integration_openproject', 'Failed to get OpenProject notifications'))
-					this.state = 'error'
+					this.state = STATE.ERROR
 				} else {
 					// there was an error in notif processing
 					console.debug(error)
@@ -225,7 +233,11 @@ export default {
 					? n._links.author.title
 					: null
 			return userId
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
+				? generateUrl('/apps/integration_openproject/avatar?')
+					+ encodeURIComponent('userId')
+					+ '=' + userId + '&'
+					+ encodeURIComponent('userName')
+					+ '=' + userName
 				: ''
 		},
 		getNotificationProjectName(n) {

@@ -6,7 +6,7 @@
 			<br><br>
 			<span class="icon icon-details" />
 			{{ t('integration_openproject', 'Make sure you set the "Redirect URI" to') }}
-			<b> {{ redirect_uri }} </b>
+			<b> {{ redirectUri }} </b>
 		</p>
 		<div class="grid-form">
 			<label for="openproject-oauth-instance">
@@ -65,8 +65,14 @@ export default {
 			state: loadState('integration_openproject', 'admin-config'),
 			// to prevent some browsers to fill fields with remembered passwords
 			readonly: true,
-			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
+	},
+	computed: {
+		redirectUri() {
+			return window.location.protocol
+				+ '//' + window.location.host
+				+ generateUrl('/apps/integration_openproject/oauth-redirect')
+		},
 	},
 	methods: {
 		onInput() {

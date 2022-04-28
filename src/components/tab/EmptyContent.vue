@@ -2,8 +2,8 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img v-if="!!requestUrl && state !== 'ok'" :src="noConnectionSvg" alt="no connection">
-				<img v-else-if="!!requestUrl && state === 'ok'" :src="addLinkSvg" alt="add work package">
+				<img v-if="!!requestUrl && !isStateOk" :src="noConnectionSvg" alt="no connection">
+				<img v-else-if="!!requestUrl && isStateOk" :src="addLinkSvg" alt="add work package">
 				<img v-else :src="noConnectionSvg" alt="error">
 			</div>
 			<div v-if="!!requestUrl" class="empty-content--message">
@@ -25,6 +25,7 @@
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton'
+import { STATE } from '../../utils'
 
 export default {
 	name: 'EmptyContent',
@@ -33,7 +34,7 @@ export default {
 		state: {
 			type: String,
 			required: true,
-			default: 'ok',
+			default: STATE.OK,
 		},
 		requestUrl: {
 			type: [String, Boolean],
@@ -44,12 +45,13 @@ export default {
 			default: '',
 		},
 	},
-	data() {
-		return {
-			settingsUrl: generateUrl('/settings/user/connected-accounts'),
-		}
-	},
 	computed: {
+		isStateOk() {
+			return this.state === STATE.OK
+		},
+		settingsUrl() {
+			return generateUrl('/settings/user/connected-accounts')
+		},
 		noConnectionSvg() {
 			return require('../../../img/noConnection.svg')
 		},
@@ -57,22 +59,22 @@ export default {
 			return require('../../../img/addLink.svg')
 		},
 		showConnectButton() {
-			return ['error', 'no-token'].includes(this.state)
+			return [STATE.ERROR, STATE.NO_TOKEN].includes(this.state)
 		},
 		emptyContentTitleMessage() {
-			if (this.state === 'no-token') {
+			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
-			} else if (this.state === 'connection-error') {
+			} else if (this.state === STATE.CONNECTION_ERROR) {
 				return t('integration_openproject', 'Error connecting to OpenProject')
-			} else if (this.state === 'failed-fetching-workpackages') {
+			} else if (this.state === STATE.FAILED_FETCHING_WORKPACKAGES) {
 				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
-			} else if (this.state === 'ok') {
+			} else if (this.isStateOk) {
 				return t('integration_openproject', 'No OpenProject links yet')
 			}
 			return t('integration_openproject', 'Unexpected Error')
 		},
 		emptyContentSubTitleMessage() {
-			if (this.state === 'ok') {
+			if (this.isStateOk) {
 				return t('integration_openproject', 'To add a link, use the search bar above to find the desired work package')
 			}
 			return ''
