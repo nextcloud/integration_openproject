@@ -49,6 +49,11 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Brak powiadomień OpenProject!",
     "Failed to get OpenProject notifications" : "Nie udało się pobrać powiadomień OpenProject",
     "Existing relations:" : "Istniejące relacje:",
-    "Cancel" : "Anuluj"
+    "Are you sure you want to unlink the work package?" : "Czy na pewno chcesz odłączyć pakiet roboczy?",
+    "Confirm unlink" : "Potwierdź odłączenie",
+    "Unlink" : "Odłącz",
+    "Cancel" : "Anuluj",
+    "Work package unlinked" : "Pakiet roboczy odłączony",
+    "Failed to unlink work package" : "Nie udało się odłączyć pakietu roboczego"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

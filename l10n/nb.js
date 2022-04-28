@@ -8,6 +8,7 @@ OC.L10N.register(
     "Client ID" : "Klient-ID",
     "Client secret" : "Klient-hemmelighet",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
-    "Invalid token" : "Ugyldig polett"
+    "Invalid token" : "Ugyldig polett",
+    "Cancel" : "Avbryt"
 },
 "nplurals=2; plural=(n != 1);");

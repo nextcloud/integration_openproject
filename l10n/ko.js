@@ -10,6 +10,7 @@ OC.L10N.register(
     "Client secret" : "클라이언트 비밀 값",
     "Connected as {user}" : "{user}로 연결됨",
     "OAuth access token could not be obtained:" : "OAuth 접근 토큰을 얻을 수 없었습니다: ",
-    "Incorrect access token" : "잘못된 액세스 토큰"
+    "Incorrect access token" : "잘못된 액세스 토큰",
+    "Cancel" : "취소"
 },
 "nplurals=1; plural=0;");

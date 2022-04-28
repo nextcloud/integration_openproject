@@ -13,6 +13,7 @@ OC.L10N.register(
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
-    "Incorrect access token" : "Testimoni d'accés incorrecte"
+    "Incorrect access token" : "Testimoni d'accés incorrecte",
+    "Cancel" : "Cancel·la"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,0 +1,6 @@
+{ "translations": {
+    "Client ID" : "კლიენტის ID",
+    "Client secret" : "კლიენტის საიდუმლო",
+    "Cancel" : "უარყოფა"
+},"pluralForm" :"nplurals=2; plural=(n!=1);"
+}

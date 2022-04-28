@@ -44,6 +44,7 @@ OC.L10N.register(
     "Unexpected Error" : "Neočakávaná chyba",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
-    "Existing relations:" : "Existujúce vzťahy:"
+    "Existing relations:" : "Existujúce vzťahy:",
+    "Cancel" : "Zrušiť"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

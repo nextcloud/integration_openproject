@@ -49,6 +49,11 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
     "Existing relations:" : "Bestehende Beziehungen:",
-    "Cancel" : "Abbrechen"
+    "Are you sure you want to unlink the work package?" : "Möchten Sie die Verknüpfung des Arbeitspakets wirklich aufheben?",
+    "Confirm unlink" : "Bestätigen Sie das Aufheben der Verknüpfung",
+    "Unlink" : "Verknüpfung aufheben",
+    "Cancel" : "Abbrechen",
+    "Work package unlinked" : "Verknüpfung zum Arbeitspaket aufgehoben",
+    "Failed to unlink work package" : "Die Verknüpfung zum Arbeitspaket konnte nicht aufgehoben werden"
 },
 "nplurals=2; plural=(n != 1);");

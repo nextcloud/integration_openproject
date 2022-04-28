@@ -44,6 +44,7 @@ OC.L10N.register(
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
-    "Existing relations:" : "Relazioni esistenti:"
+    "Existing relations:" : "Relazioni esistenti:",
+    "Cancel" : "Annulla"
 },
 "nplurals=2; plural=(n != 1);");

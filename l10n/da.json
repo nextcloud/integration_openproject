@@ -1,0 +1,6 @@
+{ "translations": {
+    "Client ID" : "Klient-ID",
+    "Client secret" : "Klient hemmelighed",
+    "Cancel" : "Annuller"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

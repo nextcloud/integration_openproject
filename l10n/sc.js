@@ -13,6 +13,7 @@ OC.L10N.register(
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
-    "Incorrect access token" : "Token de intrada non bàlidu"
+    "Incorrect access token" : "Token de intrada non bàlidu",
+    "Cancel" : "Annulla"
 },
 "nplurals=2; plural=(n != 1);");

@@ -49,6 +49,11 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı",
     "Existing relations:" : "Var olan ilişkiler:",
-    "Cancel" : "İptal"
+    "Are you sure you want to unlink the work package?" : "Çalışma paketinin bağlantısını kesmek istediğinize emin misiniz?",
+    "Confirm unlink" : "Bağlantı kesmeyi onayla",
+    "Unlink" : "Bağlantıyı kes",
+    "Cancel" : "İptal",
+    "Work package unlinked" : "Çalışma paketinin bağlantısı kesildi",
+    "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi"
 },
 "nplurals=2; plural=(n > 1);");
