@@ -89,14 +89,17 @@ export default {
 		fileInfo(oldFile, newFile) {
 			if (oldFile.id !== newFile.id) {
 				this.resetState()
-				// FIXME: https://github.com/shentao/vue-multiselect/issues/633
-				if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
-					this.$refs.workPackageMultiSelect.$refs.VueMultiselect.search = ''
-				}
+				this.emptySearchInput()
 			}
 		},
 	},
 	methods: {
+		emptySearchInput() {
+			// FIXME: https://github.com/shentao/vue-multiselect/issues/633
+			if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
+				this.$refs.workPackageMultiSelect.$refs.VueMultiselect.search = ''
+			}
+		},
 		resetState() {
 			this.searchResults = []
 			this.state = STATE_OK
@@ -137,6 +140,8 @@ export default {
 			try {
 				await axios.post(url, params, config)
 				this.$emit('saved', selectedOption)
+				this.resetState()
+				this.emptySearchInput()
 			} catch (e) {
 				showError(
 					this.translate('Failed to link file to work-package')
