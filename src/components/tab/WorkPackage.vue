@@ -57,6 +57,7 @@ export default {
 .workpackage {
 	width: 100%;
 	padding: 15px 6px 0 10px;
+	border-bottom: 1px solid rgb(237 237 237);
 
 	.row {
 		display: flex;

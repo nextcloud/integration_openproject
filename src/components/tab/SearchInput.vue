@@ -182,19 +182,27 @@ export default {
 	},
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 #searchBar {
 	padding: 10px;
+	.searchInput {
+		width: 100%;
+	}
+	.stateMsg {
+		padding: 30px;
+		text-align: center;
+		color: #6d6d6d;
+	}
+	.multiselect {
+		.multiselect__content-wrapper{
+			.multiselect__content{
+				.multiselect__element{
+					span{
+						padding: 0 !important;
+					}
+				}
+			}
+		}
+	}
 }
-
-.searchInput {
-	width: 100%;
-}
-
-.stateMsg {
-	padding: 30px;
-	text-align: center;
-	color: #6d6d6d;
-}
-
 </style>
