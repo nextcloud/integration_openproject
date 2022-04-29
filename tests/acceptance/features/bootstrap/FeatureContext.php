@@ -281,7 +281,7 @@ class FeatureContext implements Context {
 		string $user,
 		?string $content,
 		string $destination
-	): string {
+	): int {
 		$this->response = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
@@ -290,8 +290,26 @@ class FeatureContext implements Context {
 			[],
 			$content
 		);
-		$h = $this->response->getHeaders();
-		return $this->response->getHeader('oc-fileid')[0];
+		$propfindResponse = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"PROPFIND",
+			$destination,
+			null,
+			'<?xml version="1.0"?>
+					<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns">
+					  <d:prop>
+						<oc:fileid />
+					  </d:prop>
+					</d:propfind>'
+		);
+		$xmlBody = $propfindResponse->getBody()->getContents();
+		$responseXmlObject = new SimpleXMLElement($xmlBody);
+		$responseXmlObject->registerXPathNamespace(
+			'oc',
+			'http://owncloud.org/ns'
+		);
+		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
 	}
 
 	/**
