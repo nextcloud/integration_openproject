@@ -194,10 +194,10 @@ export default {
 		color: #6d6d6d;
 	}
 	.multiselect {
-		.multiselect__content-wrapper{
-			.multiselect__content{
-				.multiselect__element{
-					span{
+		.multiselect__content-wrapper {
+			.multiselect__content {
+				.multiselect__element {
+					span {
 						padding: 0 !important;
 					}
 				}

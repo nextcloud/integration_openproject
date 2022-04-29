@@ -252,14 +252,14 @@ export default {
 		top: 140%;
 	}
 
-	.linked-workpackages--workpackage{
+	.linked-workpackages--workpackage {
 		display: flex;
 		position: relative;
 		width: 100%;
-		&--item{
+		&--item {
 			border: none;
 		}
-		&--unlink{
+		&--unlink {
 			position: absolute;
 			top: 12px;
 			right: 14px;
@@ -287,7 +287,7 @@ export default {
 	}
 }
 
-body.theme--dark .linked-workpackages--workpackage--unlink{
+body.theme--dark .linked-workpackages--workpackage--unlink {
 	filter: invert(100%);
 }
 </style>
