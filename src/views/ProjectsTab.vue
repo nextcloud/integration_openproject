@@ -36,6 +36,7 @@
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
 					<WorkPackage :workpackage="workpackage"
+						class="linked-workpackages--workpackage--item"
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
 						@click="unlink(workpackage.id, fileInfo.id)" />
@@ -251,11 +252,14 @@ export default {
 		top: 140%;
 	}
 
-	.linked-workpackages--workpackage{
+	.linked-workpackages--workpackage {
 		display: flex;
 		position: relative;
 		width: 100%;
-		&--unlink{
+		&--item {
+			border: none;
+		}
+		&--unlink {
 			position: absolute;
 			top: 12px;
 			right: 14px;
@@ -278,12 +282,12 @@ export default {
 
 	.workpackage-seperator {
 		height: 0;
-		margin: 0px 10px;
+		margin: 0 10px;
 		border-bottom: 1px solid rgb(237 237 237);
 	}
 }
 
-body.theme--dark .linked-workpackages--workpackage--unlink{
+body.theme--dark .linked-workpackages--workpackage--unlink {
 	filter: invert(100%);
 }
 </style>
