@@ -49,6 +49,11 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
     "Existing relations:" : "Existující souvislosti:",
-    "Cancel" : "Storno"
+    "Are you sure you want to unlink the work package?" : "Opravdu chcete balíček práce odpojit?",
+    "Confirm unlink" : "Potvrdit odpojení",
+    "Unlink" : "Odpojit",
+    "Cancel" : "Storno",
+    "Work package unlinked" : "Balíček práce odpojen",
+    "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
