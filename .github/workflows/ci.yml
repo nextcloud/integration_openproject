@@ -92,7 +92,7 @@ jobs:
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
           ./occ a:e integration_openproject
-          php -S localhost:8080 &
+          php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
           make api-test
 
