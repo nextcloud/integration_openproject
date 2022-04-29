@@ -95,7 +95,7 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		img{
+		img {
 			height: 50px;
 			width: 50px;
 		}
@@ -109,7 +109,7 @@ export default {
 			padding: 4px 12px 12px 12px;
 			color: #333333;
 		}
-		&--sub-title{
+		&--sub-title {
 			font-size: 1rem;
 			line-height: 1.4rem;
 			text-align: center;
