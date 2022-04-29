@@ -45,12 +45,14 @@ export default {
 			default: '',
 		},
 	},
+	data() {
+		return {
+			settingsUrl: generateUrl('/settings/user/connected-accounts'),
+		}
+	},
 	computed: {
 		isStateOk() {
 			return this.state === STATE.OK
-		},
-		settingsUrl() {
-			return generateUrl('/settings/user/connected-accounts')
 		},
 		noConnectionSvg() {
 			return require('../../../img/noConnection.svg')

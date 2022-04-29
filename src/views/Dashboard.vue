@@ -51,6 +51,9 @@ export default {
 			notifications: [],
 			loop: null,
 			state: STATE.LOADING,
+			requestUrl: loadState('integration_openproject', 'request-url'),
+			settingsUrl: generateUrl('/settings/user/connected-accounts'),
+			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
 		}
 	},
@@ -58,15 +61,6 @@ export default {
 	computed: {
 		isLoading() {
 			return this.state === STATE.LOADING
-		},
-		requestUrl() {
-			return loadState('integration_openproject', 'request-url')
-		},
-		settingsUrl() {
-			return generateUrl('/settings/user/connected-accounts')
-		},
-		themingColor() {
-			return OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9'
 		},
 		showMoreUrl() {
 			return this.openprojectUrl + '/projects'
@@ -233,11 +227,7 @@ export default {
 					? n._links.author.title
 					: null
 			return userId
-				? generateUrl('/apps/integration_openproject/avatar?')
-					+ encodeURIComponent('userId')
-					+ '=' + userId + '&'
-					+ encodeURIComponent('userName')
-					+ '=' + userName
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
 				: ''
 		},
 		getNotificationProjectName(n) {

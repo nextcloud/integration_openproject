@@ -248,7 +248,32 @@ describe('SearchInput.vue tests', () => {
 
 				// id no 13 is already in workpackages and also in the response
 				// so it should not be visible in the search results
-				expect(wrapper.vm.searchResults).toMatchSnapshot()
+				expect(wrapper.vm.searchResults).toMatchObject(
+					[
+						{
+							assignee: 'System',
+							id: 2,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Organize open source conference',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+						{
+							assignee: 'System',
+							id: 5,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Create a website',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+					],
+				)
 				axiosSpy.mockRestore()
 			})
 
@@ -276,7 +301,37 @@ describe('SearchInput.vue tests', () => {
 					await localVue.nextTick()
 				}
 
-				expect(wrapper.vm.searchResults).toMatchSnapshot()
+				expect(wrapper.vm.searchResults).toMatchObject(
+					[
+						{
+							// this comes from the old search results and not from the response
+							id: 2,
+							subject: 'Organize open source conference',
+						},
+						{
+							assignee: 'System',
+							id: 13,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Write a software',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+						{
+							assignee: 'System',
+							id: 5,
+							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							project: 'Demo project',
+							statusCol: '',
+							statusTitle: 'In progress',
+							subject: 'Create a website',
+							typeCol: '',
+							typeTitle: 'Phase',
+						},
+					],
+				)
 				axiosSpy.mockRestore()
 			})
 		})
