@@ -61,7 +61,7 @@ export default {
 			return require('../../../img/addLink.svg')
 		},
 		showConnectButton() {
-			return [STATE.ERROR, STATE.NO_TOKEN].includes(this.state)
+			return [STATE.ERROR, STATE.NO_TOKEN, STATE.CONNECTION_ERROR].includes(this.state)
 		},
 		emptyContentTitleMessage() {
 			if (this.state === STATE.NO_TOKEN) {

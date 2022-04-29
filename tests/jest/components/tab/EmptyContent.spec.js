@@ -19,6 +19,9 @@ describe('EmptyContent.vue Test', () => {
 		}, {
 			state: STATE.ERROR,
 			viewed: true,
+		}, {
+			state: STATE.CONNECTION_ERROR,
+			viewed: true,
 		}])('should be displayed depending on the state', (cases) => {
 			wrapper = getWrapper({ state: cases.state })
 			expect(wrapper.find(connectButtonSelector).exists()).toBe(cases.viewed)

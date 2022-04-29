@@ -215,6 +215,17 @@ describe('ProjectsTab.vue Test', () => {
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
+		it('sets the "connection-error" state if the request url is not valid', async () => {
+			const wrapper = mountWrapper()
+			axios.get
+				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+			await wrapper.setData({
+				requestUrl: false,
+			})
+			await wrapper.vm.update({ id: 123 })
+			expect(wrapper.vm.state).toBe(STATE.CONNECTION_ERROR)
+			expect(wrapper).toMatchSnapshot()
+		})
 		it.each([
 			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
 			{ statusColor: { }, typeColor: { } },
@@ -405,6 +416,7 @@ function mountWrapper() {
 		stubs: {
 			SearchInput: true,
 			Avatar: true,
+			EmptyContent: false,
 		},
 		data: () => ({
 			error: '',

@@ -96,7 +96,12 @@ export default {
 			this.fileInfo = fileInfo
 			this.workpackages = []
 			this.state = STATE.LOADING
-			await this.fetchWorkpackages(this.fileInfo.id)
+			if (this.requestUrl) {
+				// only fetch if we have a request url
+				await this.fetchWorkpackages(this.fileInfo.id)
+			} else {
+				this.state = STATE.CONNECTION_ERROR
+			}
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200 || statusCode === 204) return
