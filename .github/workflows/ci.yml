@@ -86,13 +86,13 @@ jobs:
 
       - name: API Tests
         env:
-          NEXTCLOUD_BASE_URL: localhost:8080
+          NEXTCLOUD_BASE_URL: http://localhost:8080
         run: |
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
           ./occ a:e integration_openproject
-          php -S $NEXTCLOUD_BASE_URL &
+          php -S localhost:8080 &
           cd apps/integration_openproject
           make api-test
 
