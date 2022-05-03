@@ -12,6 +12,7 @@ Feature: retrieve information of multiple files using the file IDs
     And user "Alice" has deleted file "fully-deleted.txt"
     And user "Alice" has emptied the trash-bin
     And user "Alice" has deleted file "trashed.txt"
+    And user "Alice" has renamed file "/fromBrian.txt" to "/renamedByAlice.txt"
     When user "Alice" gets the information of all files created in this scenario
     Then the HTTP status code should be "200"
     And the data of the response should match
