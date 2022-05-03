@@ -59,14 +59,20 @@ npm-dev:
 phpstan:
 	composer run phpstan
 
-.PHONY: test
+.PHONY: phpunit
 phpunit:
 	vendor/phpunit/phpunit/phpunit
 
-.PHONY: test
-test:
+.PHONY: jsunit
+jsunit:
 	npm run test:unit
-	vendor/phpunit/phpunit/phpunit
+
+.PHONY: api-test
+api-test:
+	vendor/bin/behat -c tests/acceptance/config/behat.yml
+
+.PHONY: test
+test: phpunit  jsunit api-test
 
 clean:
 	sudo rm -rf $(build_dir)

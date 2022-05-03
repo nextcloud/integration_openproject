@@ -80,7 +80,21 @@ jobs:
         run: npm run stylelint
 
       - name: PHP & Vue Unit Tests
-        run: make test
+        run: |
+          make phpunit
+          make jsunit
+
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://localhost:8080
+        run: |
+          mkdir -p server/apps/integration_openproject
+          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
+          cd server
+          ./occ a:e integration_openproject
+          php -S localhost:8080 2> /dev/null &
+          cd apps/integration_openproject
+          make api-test
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}

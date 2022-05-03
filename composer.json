@@ -6,7 +6,9 @@
 		"nextcloud/coding-standard": "^1.0",
 		"phpstan/phpstan": "^1.4",
 		"phpstan/phpstan-phpunit": "^1.0",
-		"phpstan/extension-installer": "^1.1"
+		"phpstan/extension-installer": "^1.1",
+		"behat/behat": "^3.10",
+		"helmich/phpunit-json-assert": "^3.4"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",

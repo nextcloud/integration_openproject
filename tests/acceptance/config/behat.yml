@@ -1,0 +1,13 @@
+default:
+  autoload:
+    '': '%paths.base%/../features/bootstrap'
+  suites:
+    api:
+      paths:
+        - '%paths.base%/../features/api'
+      contexts:
+        - FeatureContext:
+            baseUrl: http://localhost
+            adminUsername: admin
+            adminPassword: admin
+            regularUserPassword: 123456
