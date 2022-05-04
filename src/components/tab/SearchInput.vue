@@ -22,7 +22,7 @@
 				{{ translate('Start typing to search') }}
 			</template>
 		</Multiselect>
-		<div v-if="state !== 'ok'"
+		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
 		</div>
@@ -38,11 +38,8 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
 import { showError } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper'
+import { STATE } from '../../utils'
 
-const STATE_OK = 'ok'
-const STATE_ERROR = 'error'
-const STATE_NO_TOKEN = 'no-token'
-const STATE_LOADING = 'loading'
 const SEARCH_CHAR_LIMIT = 3
 const DEBOUNCE_THRESHOLD = 500
 
@@ -63,23 +60,23 @@ export default {
 		},
 	},
 	data: () => ({
-		state: STATE_OK,
+		state: STATE.OK,
 		searchResults: [],
 	}),
 	computed: {
 		isStateOk() {
-			return this.state === STATE_OK
+			return this.state === STATE.OK
 		},
 		isStateLoading() {
-			return this.state === STATE_LOADING
+			return this.state === STATE.LOADING
 		},
 		placeholder() {
 			return this.translate('Search for a work package to create a relation')
 		},
 		stateMessages() {
-			if (this.state === STATE_NO_TOKEN) {
+			if (this.state === STATE.NO_TOKEN) {
 				return this.translate('No OpenProject account connected')
-			} else if (this.state === STATE_ERROR) {
+			} else if (this.state === STATE.ERROR) {
 				return this.translate('Error connecting to OpenProject')
 			}
 			return ''
@@ -102,7 +99,7 @@ export default {
 		},
 		resetState() {
 			this.searchResults = []
-			this.state = STATE_OK
+			this.state = STATE.OK
 		},
 		translate(key) {
 			return t('integration_openproject', key)
@@ -110,9 +107,9 @@ export default {
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200) return
 			if (statusCode === 401) {
-				this.state = STATE_NO_TOKEN
+				this.state = STATE.NO_TOKEN
 			} else {
-				this.state = STATE_ERROR
+				this.state = STATE.ERROR
 			}
 		},
 		async asyncFind(query) {
@@ -149,7 +146,7 @@ export default {
 			}
 		},
 		async makeSearchRequest(search) {
-			this.state = STATE_LOADING
+			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}
 			req.params = {
@@ -163,7 +160,7 @@ export default {
 			}
 			this.checkForErrorCode(response.status)
 			if (response.status === 200) await this.processWorkPackages(response.data)
-			if (this.isStateLoading) this.state = STATE_OK
+			if (this.isStateLoading) this.state = STATE.OK
 		},
 		async processWorkPackages(workPackages) {
 			for (let workPackage of workPackages) {

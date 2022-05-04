@@ -7,6 +7,7 @@ import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
+import { STATE } from '../../../../src/utils'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -63,7 +64,7 @@ describe('SearchInput.vue tests', () => {
 	})
 
 	describe('state messages', () => {
-		it.each(['no-token', 'error', 'any'])('%s: should display the correct state message', async (state) => {
+		it.each([STATE.NO_TOKEN, STATE.ERROR, 'any'])('%s: should display the correct state message', async (state) => {
 			wrapper = mountSearchInput()
 			await wrapper.setData({ state })
 			expect(wrapper.find(stateSelector)).toMatchSnapshot()
@@ -80,10 +81,14 @@ describe('SearchInput.vue tests', () => {
 						someData: 'someData',
 					}],
 				})
+				await wrapper.setData({
+					state: STATE.LOADING,
+				})
 
 				await inputField.setValue('org')
 
 				expect(wrapper.vm.searchResults).toMatchObject([])
+				expect(wrapper.vm.state).toBe(STATE.OK)
 			})
 			it.each([
 				{
@@ -337,7 +342,7 @@ describe('SearchInput.vue tests', () => {
 				let loadingIcon = wrapper.find(loadingIconSelector)
 				expect(loadingIcon.exists()).toBeFalsy()
 				await wrapper.setData({
-					state: 'loading',
+					state: STATE.LOADING,
 				})
 				loadingIcon = wrapper.find(loadingIconSelector)
 				expect(loadingIcon.exists()).toBeTruthy()
@@ -418,7 +423,7 @@ describe('SearchInput.vue tests', () => {
 						id: 999,
 					}],
 					selectedId: ['999'],
-					state: 'pending',
+					state: STATE.LOADING,
 				})
 				await wrapper.setProps({
 					fileInfo: { id: 222, name: 'file2.txt' },
@@ -426,7 +431,7 @@ describe('SearchInput.vue tests', () => {
 				const inputField = wrapper.find(inputSelector)
 				expect(inputField.element.value).toBe('')
 				expect(wrapper.vm.searchResults).toMatchObject([])
-				expect(wrapper.vm.state).toBe('ok')
+				expect(wrapper.vm.state).toBe(STATE.OK)
 			})
 		})
 	})

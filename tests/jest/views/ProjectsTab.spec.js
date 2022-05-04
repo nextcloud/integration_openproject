@@ -4,6 +4,7 @@ import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab'
 import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
+import { STATE } from '../../../src/utils'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 
 jest.mock('@nextcloud/dialogs')
@@ -53,17 +54,17 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('loading icon', () => {
 		it('shows the loading icon during "loading" state', async () => {
-			wrapper.setData({ state: 'loading' })
+			wrapper.setData({ state: STATE.LOADING })
 			await localVue.nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 		})
 		it('does not show the empty content message during "loading" state', async () => {
-			wrapper.setData({ state: 'loading' })
+			wrapper.setData({ state: STATE.LOADING })
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeFalsy()
 		})
-		it.each(['ok', 'error'])('makes the loading icon disappear on state change', async (state) => {
-			wrapper.setData({ state: 'loading' })
+		it.each([STATE.OK, STATE.ERROR])('makes the loading icon disappear on state change', async (state) => {
+			wrapper.setData({ state: STATE.LOADING })
 			await localVue.nextTick()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 			wrapper.setData({ state })
@@ -74,14 +75,14 @@ describe('ProjectsTab.vue Test', () => {
 			const err = new Error()
 			err.response = { status: 404 }
 			axios.get.mockRejectedValueOnce(err)
-			wrapper.setData({ state: 'ok' })
-			expect(wrapper.vm.state).toBe('ok')
+			wrapper.setData({ state: STATE.OK })
+			expect(wrapper.vm.state).toBe(STATE.OK)
 			wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe('loading')
+			expect(wrapper.vm.state).toBe(STATE.LOADING)
 		})
 	})
 	describe('empty message', () => {
-		it.each(['no-token', 'ok', 'error'])('shows the empty message when state is other than loading', async (state) => {
+		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
 			wrapper.setData({ state })
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
@@ -89,11 +90,11 @@ describe('ProjectsTab.vue Test', () => {
 	})
 	describe('fetchWorkpackages', () => {
 		it.each([
-			{ HTTPStatus: 400, AppState: 'failed-fetching-workpackages' },
-			{ HTTPStatus: 401, AppState: 'no-token' },
-			{ HTTPStatus: 402, AppState: 'failed-fetching-workpackages' },
-			{ HTTPStatus: 404, AppState: 'connection-error' },
-			{ HTTPStatus: 500, AppState: 'error' },
+			{ HTTPStatus: 400, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
+			{ HTTPStatus: 401, AppState: STATE.NO_TOKEN },
+			{ HTTPStatus: 402, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
+			{ HTTPStatus: 404, AppState: STATE.CONNECTION_ERROR },
+			{ HTTPStatus: 500, AppState: STATE.ERROR },
 		])('sets states according to HTTP error codes', async (cases) => {
 			const err = new Error()
 			err.response = { status: cases.HTTPStatus }
@@ -206,13 +207,13 @@ describe('ProjectsTab.vue Test', () => {
 				// mock for color requests, it should not fail because of the missing mock
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe('failed-fetching-workpackages')
+			expect(wrapper.vm.state).toBe(STATE.FAILED_FETCHING_WORKPACKAGES)
 		})
 		it('sets the "ok" state on empty response', async () => {
 			axios.get
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe('ok')
+			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
 		it.each([
 			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
@@ -279,7 +280,7 @@ describe('ProjectsTab.vue Test', () => {
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/types/6',
 			)
-			expect(wrapper.vm.state).toBe('ok')
+			expect(wrapper.vm.state).toBe(STATE.OK)
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
@@ -337,7 +338,6 @@ describe('ProjectsTab.vue Test', () => {
 			)
 		})
 	})
-
 	describe('unlinkWorkPackage', () => {
 		it('should unlink the work package', async () => {
 			const axiosGetSpy = jest.spyOn(axios, 'get')
@@ -408,7 +408,7 @@ function mountWrapper() {
 		},
 		data: () => ({
 			error: '',
-			state: 'ok',
+			state: STATE.OK,
 			fileInfo: {},
 			workpackages: [],
 			requestUrl: 'something',

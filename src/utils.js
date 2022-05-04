@@ -9,3 +9,12 @@ export function delay(callback, ms) {
 		}, ms || 0)
 	}
 }
+
+export const STATE = {
+	OK: 'ok',
+	ERROR: 'error',
+	LOADING: 'loading',
+	NO_TOKEN: 'no-token',
+	CONNECTION_ERROR: 'connection-error',
+	FAILED_FETCHING_WORKPACKAGES: 'failed-fetching-workpackages',
+}
