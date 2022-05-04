@@ -88,7 +88,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					],
 					'_links' => [
 						'storageUrl' => [
-							'href' => 'http://nextcloud.org'
+							'href' => 'https://nc.my-server.org'
 						]
 					]
 				]
@@ -150,10 +150,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @param IRootFolder|null $storageMock
 	 * @param string $oAuthToken
+	 * @param string $baseUrl
 	 * @return OpenProjectAPIService
 	 */
 	private function getOpenProjectAPIService(
-		$storageMock = null, $oAuthToken = '1234567890'
+		$storageMock = null, $oAuthToken = '1234567890', $baseUrl = 'https://nc.my-server.org'
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
@@ -236,6 +237,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$pactMockServerConfig->getBaseUri()->__toString()
 			);
 
+		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
+		$urlGeneratorMock
+			->method('getBaseUrl')
+			->willReturn($baseUrl);
+
 		return new OpenProjectAPIService(
 			'integration_openproject',
 			$this->createMock(\OCP\IUserManager::class),
@@ -245,7 +251,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$configMock,
 			$this->createMock(\OCP\Notification\IManager::class),
 			$clientService,
-			$storageMock
+			$storageMock,
+			$urlGeneratorMock
 		);
 	}
 
@@ -254,10 +261,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private function getServiceMock(array $onlyMethods = ['request']): OpenProjectAPIService {
-		return $this->getMockBuilder(OpenProjectAPIService::class)
+		$onlyMethods[] = 'getBaseUrl';
+		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods($onlyMethods)
 			->getMock();
+		$mock->method('getBaseUrl')->willReturn('https://nc.my-server.org');
+		return $mock;
 	}
 
 	/**
@@ -339,14 +349,26 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"description":{"operator":"~","values":["search query"]}}]',
+						'filters' => '[' .
+							'{"description":' .
+								'{"operator":"~","values":["search query"]}'.
+							'},'.
+							'{"linkable_to_storage_url":'.
+								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
+							']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}}]',
+						'filters' => '[' .
+							'{"subject":' .
+								'{"operator":"~","values":["search query"]}'.
+							'},'.
+							'{"linkable_to_storage_url":'.
+								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
+							']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				]
@@ -360,55 +382,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @param array<mixed> $descriptionResponse
-	 * @param array<mixed> $subjectResponse
-	 * @param array<mixed> $expectedResult
-	 * @return void
-	 * @dataProvider searchWorkPackageDataProvider
-	 */
-	public function testSearchWorkPackageQueryAndStorage(
-		array $descriptionResponse, array $subjectResponse, array $expectedResult
-	) {
-		$service = $this->getServiceMock();
-		$service->method('request')
-			->withConsecutive(
-				[
-					'user', 'work_packages',
-					[
-						'filters' => '[' .
-										'{"description":' .
-											'{"operator":"~","values":["search query"]}'.
-										'},'.
-										'{"linkable_to_storage_url":'.
-											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
-									']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
-					]
-				],
-				[
-					'user', 'work_packages',
-					[
-						'filters' => '[' .
-										'{"subject":' .
-											'{"operator":"~","values":["search query"]}'.
-										'},'.
-										'{"linkable_to_storage_url":'.
-											'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
-									']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
-					]
-				]
-			)
-			->willReturnOnConsecutiveCalls(
-				$descriptionResponse,
-				$subjectResponse
-			);
-		$result = $service->searchWorkPackage(
-			'user', 'search query', null, 'https://nc.my-server.org'
-		);
-		$this->assertSame($expectedResult, $result);
-	}
-	/**
 	 * @return void
 	 */
 	public function testSearchWorkPackageByFileIdOnlyFileId() {
@@ -418,7 +391,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}}]',
+						'filters' => '[' .
+							'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
+							'{"linkable_to_storage_url":'.
+								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
+							']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
@@ -433,21 +410,32 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testSearchWorkPackageByFileIdQueryAndFileId() {
+	public function testSearchWorkPackageByQueryAndFileId() {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->withConsecutive(
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"file_link_origin_id":{"operator":"=","values":["123"]}},{"description":{"operator":"~","values":["search query"]}}]',
+						'filters' => '['.
+							'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
+							'{"description":{"operator":"~","values":["search query"]}},'.
+							'{"linkable_to_storage_url":'.
+								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
+							'}'.
+						']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				],
 				[
 					'user', 'work_packages',
 					[
-						'filters' => '[{"subject":{"operator":"~","values":["search query"]}}]',
+						'filters' => '[' .
+							'{"subject":{"operator":"~","values":["search query"]}},' .
+							'{"linkable_to_storage_url":'.
+								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
+							'}'.
+						']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
 				]
@@ -1079,7 +1067,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 
 		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+			123, 5503, 'logo.png', 'user'
 		);
 		$this->assertSame(2456, $result);
 	}
@@ -1101,7 +1089,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->expectException(NotPermittedException::class);
 		$service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+			123, 5503, 'logo.png', 'user'
 		);
 	}
 
@@ -1123,7 +1111,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->expectException(NotFoundException::class);
 		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'http://nextcloud.org', 'user'
+			123, 5503, 'logo.png', 'user'
 		);
 	}
 	/**
@@ -1170,6 +1158,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(\OCP\Notification\IManager::class),
 			$clientService,
 			$this->createMock(\OCP\Files\IRootFolder::class),
+			$this->createMock(\OCP\IURLGenerator::class),
 		);
 
 		$response = $service->request('', '', []);
@@ -1203,7 +1192,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			123,
 			5503,
 			'logo.png',
-			'http://nextcloud.org',
 			'testUser'
 		);
 
@@ -1250,14 +1238,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService(
+			$storageMock,
+			'1234567890',
+			''
+		);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$service->linkWorkPackageToFile(
 			123,
 			5503,
 			'logo.png',
-			'',
 			'testUser'
 		);
 	}
@@ -1302,14 +1293,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService(
+			$storageMock,
+			'1234567890',
+			'http://not-existing'
+			);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$service->linkWorkPackageToFile(
 			123,
 			5503,
 			'logo.png',
-			'http://not-existing',
 			'testUser'
 		);
 	}
@@ -1347,7 +1341,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			123,
 			5503,
 			'logo.png',
-			'http://nextcloud.org',
 			'testUser'
 		);
 	}
@@ -1385,7 +1378,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			999999,
 			5503,
 			'logo.png',
-			'http://nextcloud.org',
 			'testUser'
 		);
 	}
