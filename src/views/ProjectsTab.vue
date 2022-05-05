@@ -313,4 +313,8 @@ export default {
 body.theme--dark .linked-workpackages--workpackage--unlink {
 	filter: invert(100%);
 }
+
+body[data-theme-dark] .linked-workpackages--workpackage--unlink {
+	filter: invert(100%);
+}
 </style>

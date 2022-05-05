@@ -89,7 +89,7 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		return 'icon-open-project';
+		return 'icon-openproject';
 	}
 
 	/**

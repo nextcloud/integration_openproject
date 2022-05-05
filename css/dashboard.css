@@ -1,31 +1,17 @@
 .icon-openproject {
 	background-image: url(./../img/app.svg);
-	filter: contrast(0) brightness(0);
+	filter: contrast(0) brightness(0) !important;
+	min-width: 32px !important;
 }
 
 .icon-noConnection {
 	background-image: url(./../img/noConnection.svg);
-	filter: contrast(0) brightness(0);
 }
 
-.icon-open-project {
-	position: relative;
+body[data-theme-dark] .icon-openproject {
+	filter: none !important;
 }
 
-.panel--header .icon-open-project::after {
-	left: 20px; top: 22%;
-}
-
-.icon-open-project::after {
-	content: '';
-	position: absolute;
-	top: 10%; left: 40%;
-	height: 30px; width: 30px;
-	background-size: 30px 30px;
-	filter: contrast(0) brightness(0);
-	background-image: url(./../img/app.svg);
-}
-
-body.theme--dark .icon-openproject, .icon-noConnection, .icon-open-project::after {
-	filter: none;
+body[data-theme-dark] .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: var(--background-invert-if-dark) !important;
 }
