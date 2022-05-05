@@ -434,6 +434,12 @@ class OpenProjectAPIService {
 					'grant_type' => 'refresh_token',
 					'refresh_token' => $refreshToken,
 				], 'POST');
+				if (isset($result['refresh_token'])) {
+					$refreshToken = $result['refresh_token'];
+					$this->config->setUserValue(
+						$userId, Application::APP_ID, 'refresh_token', $refreshToken
+					);
+				}
 				if (isset($result['access_token'])) {
 					$accessToken = $result['access_token'];
 					$this->config->setUserValue($userId, Application::APP_ID, 'token', $accessToken);
