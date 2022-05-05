@@ -139,6 +139,10 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
+			if (!this.requestUrl) {
+				this.state = STATE.ERROR
+				return
+			}
 			// get openproject URL first
 			try {
 				const response = await axios.get(generateUrl('/apps/integration_openproject/url'))

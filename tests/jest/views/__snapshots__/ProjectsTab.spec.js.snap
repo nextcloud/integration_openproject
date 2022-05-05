@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ProjectsTab.vue Test fetchWorkpackages sets the "connection-error" state if the request url is not valid 1`] = `
+<div class="projects">
+  <!---->
+  <div class="empty-content" id="openproject-empty-content">
+    <div class="empty-content--wrapper">
+      <div class="empty-content--icon"><img src="" alt="error"></div>
+      <!---->
+      <div class="empty-content--connect-button">
+        <div class="oauth-connect--message">
+          Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`] = `
 <div class="" id="openproject-linked-workpackages">
   <div class="existing-relations">
