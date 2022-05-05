@@ -11,7 +11,7 @@ jobs:
     name: CI
     strategy:
       matrix:
-        nextcloudVersion: [ v23.0.0 ]
+        nextcloudVersion: [ v23.0.4, master ]
         phpVersion: [ 7.4, 8.0 ]
     runs-on: ubuntu-latest
     steps:
