@@ -137,12 +137,12 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
-          min_coverage: '24'
+          min_coverage: '59'
           path: './coverage/jest/lcov.info'
 
       - name: PHP coverage check
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
-          min_coverage: '36'
+          min_coverage: '57'
           path: './coverage/php/lcov.info'
