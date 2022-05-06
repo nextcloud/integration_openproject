@@ -298,25 +298,33 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	public function testSetAdminConfigForCaseAdminConfigStatusNotOk() {
-		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls('$client_id', '', 'http://openproject.com');
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-
-		$apiServiceMock
-			->method('isAdminConfigOk')
-			->willReturn(false);
 		$configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
-			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
+			$configMock,
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(IUserManager::class),
 			$this->l,
-			$apiServiceMock,
+			$apiService,
 			$this->createMock(LoggerInterface::class),
 			'testUser'
 		);
 		$result = $configController->setAdminConfig([]);
-
+		$this->assertSame(
+			1,
+			$result->getData()
+		);
 	}
 }
