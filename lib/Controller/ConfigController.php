@@ -135,6 +135,7 @@ class ConfigController extends Controller {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		$configStatus = $this->openprojectAPIService->isAdminConfigOk($this->config);
+		// if the admin config is not ok, we clear every existing user information
 		if (!$configStatus) {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());

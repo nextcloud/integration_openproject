@@ -6,6 +6,13 @@ import * as initialState from '@nextcloud/initial-state'
 
 const localVue = createLocalVue()
 
+global.OC = {
+	dialogs: {
+		confirmDestructive: jest.fn(),
+		YES_NO_BUTTONS: 70,
+	},
+}
+
 const selectors = {
 	oauthInstance: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
@@ -26,7 +33,7 @@ describe('AdminSettings', () => {
 		it.each([
 			selectors.oauthClientId,
 			selectors.oauthClientSecret,
-		])('should have on readonly attribute after the input is focused', async (inputSelector) => {
+		])('should not have readonly attribute after the input is focused', async (inputSelector) => {
 			const wrapper = getWrapper()
 			const inputField = wrapper.find(inputSelector)
 			expect(inputField.attributes().readonly).toBeTruthy()

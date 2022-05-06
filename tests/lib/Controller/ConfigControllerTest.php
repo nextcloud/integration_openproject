@@ -7,6 +7,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -16,6 +17,11 @@ class ConfigControllerTest extends TestCase {
 	 * @var IL10N
 	 */
 	private $l;
+
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
 
 	/**
 	 * @var ConfigController
@@ -82,12 +88,13 @@ class ConfigControllerTest extends TestCase {
 			->willReturnCallback(function ($string, $args) {
 				return vsprintf($string, $args);
 			});
-
+		$this->userManager = $this->createMock(IUserManager::class);
 		$this->configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->userManager,
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
@@ -147,6 +154,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock($codeVerifier, str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
@@ -202,6 +210,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), $clientSecret),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
@@ -278,6 +287,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
@@ -285,5 +295,28 @@ class ConfigControllerTest extends TestCase {
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame($expectedRedirect, $result->getRedirectURL());
+	}
+
+	public function testSetAdminConfigForCaseAdminConfigStatusNotOk() {
+		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$apiServiceMock
+			->method('isAdminConfigOk')
+			->willReturn(false);
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
+			$this->l,
+			$apiServiceMock,
+			$this->createMock(LoggerInterface::class),
+			'testUser'
+		);
+		$result = $configController->setAdminConfig([]);
+
 	}
 }
