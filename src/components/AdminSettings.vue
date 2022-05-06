@@ -52,6 +52,7 @@ import { delay } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
+import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'AdminSettings',
@@ -72,8 +73,27 @@ export default {
 		onInput() {
 			const that = this
 			delay(() => {
-				that.saveOptions()
-			}, 2000)()
+				OC.dialogs.confirmDestructive(
+					t(
+						'integration_openproject',
+						'Are you sure you want to update the admin settings?'
+								+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
+					),
+					t('integration_openproject', 'Confirm Update'),
+					{
+						type: OC.dialogs.YES_NO_BUTTONS,
+						confirm: t('integration_openproject', 'Update'),
+						confirmClasses: 'error',
+						cancel: t('integration_openproject', 'Cancel'),
+					},
+					(result) => {
+						if (result) {
+							that.saveOptions()
+						}
+					},
+					true
+				)
+			}, 1000)()
 		},
 		saveOptions() {
 			const req = {

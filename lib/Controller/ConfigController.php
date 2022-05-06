@@ -115,7 +115,18 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		return new DataResponse(1);
+		$configStatus = $this->openprojectAPIService->isAdminConfigOk($this->config);
+		if ($configStatus) {
+			return new DataResponse([
+				'status' => true,
+			]);
+		} else {
+			return new DataResponse(
+				[
+					'users' => 'here'
+				]
+			);
+		}
 	}
 
 	/**
