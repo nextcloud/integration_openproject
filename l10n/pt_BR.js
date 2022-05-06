@@ -49,6 +49,11 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Nenhuma notificação do OpenProject!",
     "Failed to get OpenProject notifications" : "Falha ao receber notificações do OpenProject",
     "Existing relations:" : "Relações existentes:",
-    "Cancel" : "Cancelar"
+    "Are you sure you want to unlink the work package?" : "Tem certeza de que deseja desvincular o pacote de trabalho?",
+    "Confirm unlink" : "Confirmar desvinculação",
+    "Unlink" : "Desvincular",
+    "Cancel" : "Cancelar",
+    "Work package unlinked" : "Pacote de trabalho desvinculado",
+    "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho"
 },
 "nplurals=2; plural=(n > 1);");
