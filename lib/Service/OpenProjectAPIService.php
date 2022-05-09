@@ -72,6 +72,12 @@ class OpenProjectAPIService {
 
 	/** @var IRootFolder */
 	private $storage;
+
+	/**
+	 * @var IURLGenerator
+	 */
+	private $urlGenerator;
+
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -84,7 +90,8 @@ class OpenProjectAPIService {
 								IConfig $config,
 								INotificationManager $notificationManager,
 								IClientService $clientService,
-								IRootFolder $storage) {
+								IRootFolder $storage,
+								IURLGenerator $urlGenerator) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -94,6 +101,7 @@ class OpenProjectAPIService {
 		$this->notificationManager = $notificationManager;
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -233,10 +241,15 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * wrapper around IURLGenerator::getBaseUrl() to make it easier to mock in tests
+	 */
+	public function getBaseUrl(): string {
+		return $this->urlGenerator->getBaseUrl();
+	}
+	/**
 	 * @param string $userId
 	 * @param string|null $query
 	 * @param int|null $fileId
-	 * @param string|null $storageUrl
 	 * @param int $offset
 	 * @param int $limit
 	 * @return array<mixed>
@@ -247,15 +260,9 @@ class OpenProjectAPIService {
 		string $userId,
 		string $query = null,
 		int $fileId = null,
-		string $storageUrl = null,
 		int $offset = 0,
 		int $limit = 5
 	): array {
-		$linkableStorageFilter = [
-			'linkable_to_storage_url' =>
-				['operator' => '=', 'values' => [urlencode($storageUrl)]]
-		];
-		$sortBy = [['status', 'asc'],['updatedAt', 'desc']];
 		$resultsById = [];
 		$filters = [];
 
@@ -265,55 +272,58 @@ class OpenProjectAPIService {
 		}
 		if ($query !== null) {
 			$filters[] = ['description' => ['operator' => '~', 'values' => [$query]]];
-			if ($storageUrl !== null) {
-				$filters[] = $linkableStorageFilter;
-			}
 		}
-		$params = [
-			'filters' => \Safe\json_encode($filters),
-			'sortBy' => \Safe\json_encode($sortBy),
-			// 'limit' => $limit,
-		];
-		$searchDescResult = $this->request($userId, 'work_packages', $params);
-
-		if (isset($searchDescResult['error'])) {
-			return $searchDescResult;
-		}
-
-		if (isset($searchDescResult['_embedded'], $searchDescResult['_embedded']['elements'])) {
-			foreach ($searchDescResult['_embedded']['elements'] as $wp) {
-				$resultsById[$wp['id']] = $wp;
-			}
+		$resultsById = $this->searchRequest($userId, $filters);
+		if (isset($resultsById['error'])) {
+			return $resultsById;
 		}
 		// search by subject
 		if ($query !== null) {
 			$filters = [
 				['subject' => ['operator' => '~', 'values' => [$query]]],
 			];
-			if ($storageUrl !== null) {
-				$filters[] = $linkableStorageFilter;
-			}
-			$params = [
-				'filters' => \Safe\json_encode($filters),
-				'sortBy' => \Safe\json_encode($sortBy),
-				// 'limit' => $limit,
-			];
-			$searchSubjectResult = $this->request($userId, 'work_packages', $params);
-
-			if (isset($searchSubjectResult['error'])) {
-				return $searchSubjectResult;
-			}
-
-			if (isset($searchSubjectResult['_embedded'], $searchSubjectResult['_embedded']['elements'])) {
-				foreach ($searchSubjectResult['_embedded']['elements'] as $wp) {
-					$resultsById[$wp['id']] = $wp;
-				}
+			$resultsById = $this->searchRequest($userId, $filters, $resultsById);
+			if (isset($resultsById['error'])) {
+				return $resultsById;
 			}
 		}
 
 		return array_values($resultsById);
 	}
 
+	/**
+	 * @param string $userId
+	 * @param array<mixed> $filters
+	 * @param array<mixed> $resultsById
+	 * @return array<mixed>
+	 * @throws \OCP\PreConditionNotMetException
+	 * @throws \Safe\Exceptions\JsonException
+	 */
+	private function searchRequest(string $userId, array $filters, array $resultsById = []): array {
+		$sortBy = [['status', 'asc'],['updatedAt', 'desc']];
+		$filters[] = [
+			'linkable_to_storage_url' =>
+				['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]
+		];
+
+		$params = [
+			'filters' => \Safe\json_encode($filters),
+			'sortBy' => \Safe\json_encode($sortBy),
+			// 'limit' => $limit,
+		];
+		$searchResult = $this->request($userId, 'work_packages', $params);
+
+		if (isset($searchResult['error'])) {
+			return $searchResult;
+		}
+
+		if (isset($searchResult['_embedded'], $searchResult['_embedded']['elements'])) {
+			foreach ($searchResult['_embedded']['elements'] as $wp) {
+				$resultsById[$wp['id']] = $wp;
+			}
+		}
+		return $resultsById;
+	}
 	/**
 	 * authenticated request to get an image from openproject
 	 *
@@ -612,7 +622,6 @@ class OpenProjectAPIService {
 		int $workpackageId,
 		int $fileId,
 		string $fileName,
-		string $storageUrl,
 		string $userId
 	): int {
 		$file = $this->getNode($userId, $fileId);
@@ -636,7 +645,7 @@ class OpenProjectAPIService {
 						],
 						'_links' => [
 							'storageUrl' => [
-								'href' => $storageUrl
+								'href' => $this->getBaseUrl()
 							]
 						]
 					]

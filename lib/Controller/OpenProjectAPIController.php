@@ -25,7 +25,6 @@ use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
-use OCP\IURLGenerator;
 
 class OpenProjectAPIController extends Controller {
 
@@ -58,16 +57,10 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
-	/**
-	 * @var IURLGenerator
-	 */
-	private $urlGenerator;
-
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
-								IURLGenerator         $urlGenerator,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
@@ -77,7 +70,6 @@ class OpenProjectAPIController extends Controller {
 		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -153,8 +145,7 @@ class OpenProjectAPIController extends Controller {
 		$result = $this->openprojectAPIService->searchWorkPackage(
 			$this->userId,
 			$searchQuery,
-			$fileId,
-			$this->urlGenerator->getBaseUrl()
+			$fileId
 		);
 
 		if (!isset($result['error'])) {
@@ -182,14 +173,11 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
-		$storageUrl = $this->urlGenerator->getBaseUrl();
-
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
 				$workpackageId,
 				$fileId,
 				$fileName,
-				$storageUrl,
 				$this->userId,
 			);
 		} catch (OpenprojectErrorException $e) {
