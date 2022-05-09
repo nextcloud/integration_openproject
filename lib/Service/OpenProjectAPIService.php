@@ -124,36 +124,13 @@ class OpenProjectAPIService {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
-			$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-			if ($clientID && $clientSecret && $openprojectUrl) {
-				$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
-				$lastNotificationCheck = $lastNotificationCheck === '' ? null : $lastNotificationCheck;
-				// get the openproject user ID
-				$myOPUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
-				if ($myOPUserId !== '') {
-					$myOPUserId = (int) $myOPUserId;
-					$notifications = $this->getNotifications($userId, $lastNotificationCheck);
-					if (!isset($notifications['error']) && count($notifications) > 0) {
-						$newLastNotificationCheck = $notifications[0]['updatedAt'];
-						$this->config->setUserValue($userId, Application::APP_ID, 'last_notification_check', $newLastNotificationCheck);
-						$nbRelevantNotifications = 0;
-						foreach ($notifications as $n) {
-							$wpUserId = $this->getWPAssigneeOrAuthorId($n);
-							// we avoid the ones with updatedAt === lastNotificationCheck because the request filter is inclusive
-							if ($wpUserId === $myOPUserId && $n['updatedAt'] !== $lastNotificationCheck) {
-								$nbRelevantNotifications++;
-							}
-						}
-						if ($nbRelevantNotifications > 0) {
-							$this->sendNCNotification($userId, 'new_open_tickets', [
-								'nbNotifications' => $nbRelevantNotifications,
-								'link' => $openprojectUrl
-							]);
-						}
-					}
-				}
+			$notifications = $this->getNotifications($userId);
+			if (!isset($notifications['error']) && count($notifications) > 0) {
+				$this->sendNCNotification($userId, 'new_open_tickets', [
+					'nbNotifications' => count($notifications),
+					'link' => $openprojectUrl
+				]);
 			}
 		}
 	}
@@ -182,9 +159,11 @@ class OpenProjectAPIService {
 
 		$notification->setApp(Application::APP_ID)
 			->setUser($userId)
-			->setDateTime(new DateTime())
 			->setObject('dum', 'dum')
 			->setSubject($subject, $params);
+		$manager->markProcessed($notification);
+
+		$notification->setDateTime(new DateTime());
 
 		$manager->notify($notification);
 	}
@@ -204,29 +183,10 @@ class OpenProjectAPIService {
 
 	/**
 	 * @param string $userId
-	 * @param ?string $since
-	 * @param ?int $limit
 	 * @return array<mixed>
 	 */
-	public function getNotifications(
-		string $userId, ?string $since = null, ?int $limit = null
-	): array {
-		if ($since) {
-			$filters = '[{"updatedAt":{"operator":"<>d","values":["' . $since . '","' . $this->now() . '"]}},{"status":{"operator":"!","values":["14"]}}]';
-		} else {
-			$filters = '[{"status":{"operator":"!","values":["14"]}}]';
-		}
-		$params = [
-			// 'filters' => '[%7B%22dueDate%22:%7B%22operator%22:%22=d%22,%22values%22:[%222021-01-03%22,%222021-05-03%22]%7D%7D]',
-			// 'filters' => '[{"dueDate":{"operator":"<>d","values":["2021-01-03","2021-05-03"]}}]',
-			// 'filters' => '[{"dueDate":{"operator":"=d","values":["2021-04-03"]}}]',
-			// 'filters' => '[{"subject":{"operator":"~","values":["conference"]}}]',
-			// 'filters' => '[{"description":{"operator":"~","values":["coucou"]}},{"status":{"operator":"!","values":["14"]}}]',
-			'filters' => $filters,
-			'sortBy' => '[["updatedAt", "desc"]]',
-			// 'limit' => $limit,
-		];
-		$result = $this->request($userId, 'work_packages', $params);
+	public function getNotifications(string $userId): array {
+		$result = $this->request($userId, 'notifications');
 		if (isset($result['error'])) {
 			return $result;
 		} elseif (!isset($result['_embedded']['elements'])) {
@@ -234,9 +194,6 @@ class OpenProjectAPIService {
 		}
 
 		$result = $result['_embedded']['elements'];
-		if ($limit) {
-			$result = array_slice($result, 0, $limit);
-		}
 		return array_values($result);
 	}
 
