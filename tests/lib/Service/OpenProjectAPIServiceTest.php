@@ -70,6 +70,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private $fileLinksPath = '/api/v3/file_links';
 
 	/**
+	 * @var IConfig|\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $defaultConfigMock;
+	/**
 	 * @var array<mixed>
 	 */
 	private $validFileLinkRequestBody = [
@@ -196,9 +200,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($storageMock === null) {
 			$storageMock = $this->createMock(\OCP\Files\IRootFolder::class);
 		}
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
-		$configMock
+		$this->defaultConfigMock
 			->method('getUserValue')
 			->withConsecutive(
 				['testUser', 'integration_openproject', 'token'],
@@ -213,7 +217,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$pactMockServerConfig = new MockServerEnvConfig();
 
-		$configMock
+		$this->defaultConfigMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
@@ -242,7 +246,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$avatarManagerMock,
 			$this->createMock(\Psr\Log\LoggerInterface::class),
 			$this->createMock(\OCP\IL10N::class),
-			$configMock,
+			$this->defaultConfigMock,
 			$this->createMock(\OCP\Notification\IManager::class),
 			$clientService,
 			$storageMock
@@ -640,7 +644,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$refreshTokenResponse = new ProviderResponse();
 		$refreshTokenResponse
 			->setStatus(Http::STATUS_OK)
-			->setBody(["access_token" => "new-Token"]);
+			->setBody([
+				"access_token" => "new-Token",
+				"refresh_token" => "newRefreshToken"
+			]);
 
 		$this->builder->uponReceiving('a POST request to renew token')
 			->with($refreshTokenRequest)
@@ -664,6 +671,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponseNewOAuthToken);
 
 		$service = $this->getOpenProjectAPIService(null, 'invalid');
+		$this->defaultConfigMock
+			->expects($this->exactly(2))
+			->method('setUserValue')
+			->withConsecutive(
+				['testUser', 'integration_openproject', 'refresh_token', 'newRefreshToken'],
+				['testUser', 'integration_openproject', 'token', 'new-Token']
+			);
+
 		$result = $service->request(
 			'testUser',
 			'work_packages'
