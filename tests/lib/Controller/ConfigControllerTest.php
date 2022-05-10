@@ -8,6 +8,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\IUser;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -89,6 +90,10 @@ class ConfigControllerTest extends TestCase {
 				return vsprintf($string, $args);
 			});
 		$this->userManager = $this->createMock(IUserManager::class);
+
+
+
+
 		$this->configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
@@ -297,16 +302,115 @@ class ConfigControllerTest extends TestCase {
 		$this->assertSame($expectedRedirect, $result->getRedirectURL());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testSetAdminConfigForCaseAdminConfigStatusNotOk() {
+		$manager = \OC::$server->getUserManager();
+		$count = 0;
+		$function = function (IUser $user) use (&$count) {
+			var_dump("-------------------------------");
+			var_dump($user->getUID());
+			var_dump("-------------------------------");
+			$count++;
+		};
+		$manager->callForAllUsers($function, '', true);
+		$countBefore = $count;
+
+		try {
+			$user1 = $manager->createUser('test1', 'test1');
+		} catch (\InvalidArgumentException $e) {
+			echo "\nuser 'test1' already exists.\nwill be deleted and re-created";
+			$user1 = $manager->get('test1');
+			$user1->delete();
+			$user1 = $manager->createUser('test1', 'test1');
+		}
+		// expect only 2 users (admin and our test user)
+		$this->assertSame(2, $countBefore + 1);
+
+
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'oauth_instance_url']
 			)
 			->willReturnOnConsecutiveCalls('$client_id', '', 'http://openproject.com');
+
+		$configMock
+			->expects($this->exactly(12))
+			->method('deleteUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+				['admin', 'integration_openproject', 'last_notification_check'],
+				[$user1->getUID(), 'integration_openproject', 'token'],
+				[$user1->getUID(), 'integration_openproject', 'login'],
+				[$user1->getUID(), 'integration_openproject', 'user_id'],
+				[$user1->getUID(), 'integration_openproject', 'user_name'],
+				[$user1->getUID(), 'integration_openproject', 'refresh_token'],
+				[$user1->getUID(), 'integration_openproject', 'last_notification_check'],
+			);
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$manager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			'test1'
+		);
+		$result = $configController->setAdminConfig([]);
+		$this->assertSame(
+			1,
+			$result->getData()
+		);
+		$user1->delete();
+	}
+
+	public function testSetAdminConfigForCaseAdminConfigStatusOk() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->expects($this->exactly(3))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', '$client_id'],
+				['integration_openproject', 'client_secret', '$client_secret'],
+				['integration_openproject', 'oauth_instance_url', 'http://openproject.com']
+			);
+		$configMock
+			->expects($this->exactly(3))
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url']
+			)
+			->willReturnOnConsecutiveCalls('$client_id', '$client_secret', 'http://openproject.com');
+
+		$manager = \OC::$server->getUserManager();
+		try {
+			$user1 = $manager->createUser('test1', 'test1');
+		} catch (\InvalidArgumentException $e) {
+			echo "'test1' user already exists.\ndeleting and recreating for test...";
+			$user1 = $manager->get('test1');
+			$user1->delete();
+			$user1 = $manager->createUser('test1', 'test1');
+		}
+		$configMock
+			->expects($this->never())
+			->method('deleteUserValue');
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -315,16 +419,21 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$configMock,
 			$this->createMock(IURLGenerator::class),
-			$this->createMock(IUserManager::class),
+			$manager,
 			$this->l,
 			$apiService,
 			$this->createMock(LoggerInterface::class),
-			'testUser'
+			'test1'
 		);
-		$result = $configController->setAdminConfig([]);
+		$result = $configController->setAdminConfig([
+			'client_id' => '$client_id',
+			'client_secret' => '$client_secret',
+			'oauth_instance_url' => 'http://openproject.com',
+		]);
 		$this->assertSame(
 			1,
 			$result->getData()
 		);
+		$user1->delete();
 	}
 }
