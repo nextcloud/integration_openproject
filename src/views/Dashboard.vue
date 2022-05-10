@@ -238,7 +238,7 @@ export default {
 			return generateUrl('/svg/core/actions/sound?color=' + this.themingColor)
 		},
 		getSubline(n) {
-			return n._links.project.title
+			return n._links.project.title + ' - ' + t('integration_openproject', n.reason)
 		},
 		getTargetTitle(n) {
 			return n._links.resource.title
