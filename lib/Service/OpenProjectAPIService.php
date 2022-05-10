@@ -129,7 +129,7 @@ class OpenProjectAPIService {
 			if (!isset($notifications['error']) && count($notifications) > 0) {
 				$this->sendNCNotification($userId, 'new_open_tickets', [
 					'nbNotifications' => count($notifications),
-					'link' => $openprojectUrl
+					'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
 				]);
 			}
 		}
@@ -694,5 +694,20 @@ class OpenProjectAPIService {
 		} else {
 			return self::validateOpenProjectURL($oauthInstanceUrl);
 		}
+	}
+
+	/**
+	 * makes sure the URL has no extra slashes
+	 */
+	public static function sanitizeUrl(
+		string $url, bool $trailingSlash = false
+	): string {
+		if ($trailingSlash === true) {
+			$url = $url . "/";
+		} else {
+			$url = \rtrim($url, "/");
+		}
+		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
+		return $url;
 	}
 }
