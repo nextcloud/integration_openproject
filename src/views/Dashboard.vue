@@ -63,7 +63,7 @@ export default {
 			return this.state === STATE.LOADING
 		},
 		showMoreUrl() {
-			return this.openprojectUrl + '/projects'
+			return this.openprojectUrl + '/notifications'
 		},
 		items() {
 			return this.notifications.map((n) => {
