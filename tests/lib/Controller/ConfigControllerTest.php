@@ -379,6 +379,9 @@ class ConfigControllerTest extends TestCase {
 		$user1->delete();
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testSetAdminConfigForCaseAdminConfigStatusOk() {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
