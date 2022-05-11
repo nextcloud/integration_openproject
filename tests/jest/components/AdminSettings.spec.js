@@ -66,10 +66,53 @@ describe('AdminSettings', () => {
 
 			expect(onInputSpy).toHaveBeenCalledTimes(1)
 		})
+		it('should not asks for confirmation if admin config status is not ok beforehand', async () => {
+			jest.useFakeTimers()
+			const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+			const wrapper = getWrapper({
+				isAdminConfigOk: false,
+			})
+			const inputField = wrapper.find(selectors.oauthClientId)
+			await inputField.setValue('test')
+
+			jest.runAllTimers()
+
+			expect(confirmSpy).toBeCalledTimes(0)
+		})
+		it('should ask for confirmation if admin config status is ok beforehand', async () => {
+			jest.useFakeTimers()
+			const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+			const wrapper = getWrapper({
+				isAdminConfigOk: true,
+			})
+			const inputField = wrapper.find(selectors.oauthClientId)
+			await inputField.setValue('test')
+
+			jest.runAllTimers()
+
+			expect(confirmSpy).toBeCalledTimes(1)
+
+			const expectedDialogMessage = 'Are you sure you want to update the admin settings? After saving, every connected users must need to re-connect to the Openproject instance.'
+			const expectedDialogTitle = 'Confirm Update'
+			const expectedButtonSet = {
+				confirm: 'Update',
+				cancel: 'Cancel',
+				confirmClasses: 'error',
+				type: 70,
+			}
+
+			expect(confirmSpy).toHaveBeenCalledWith(
+				expectedDialogMessage,
+				expectedDialogTitle,
+				expectedButtonSet,
+				expect.any(Function),
+				true
+			)
+		})
 	})
 })
 
-function getWrapper() {
+function getWrapper(data = {}) {
 	return shallowMount(AdminSettings, {
 		localVue,
 		mocks: {
@@ -77,6 +120,11 @@ function getWrapper() {
 			generateUrl() {
 				return '/'
 			},
+		},
+		data() {
+			return {
+				...data,
+			}
 		},
 	})
 }

@@ -140,8 +140,13 @@ class ConfigController extends Controller {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
 			});
+			return new DataResponse([
+				"status" => false
+			]);
 		}
-		return new DataResponse(1);
+		return new DataResponse([
+			"status" => true
+		]);
 	}
 
 	/**

@@ -66,6 +66,7 @@ export default {
 			state: loadState('integration_openproject', 'admin-config'),
 			// to prevent some browsers to fill fields with remembered passwords
 			readonly: true,
+			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 		}
 	},
@@ -73,26 +74,28 @@ export default {
 		onInput() {
 			const that = this
 			delay(() => {
-				OC.dialogs.confirmDestructive(
-					t(
-						'integration_openproject',
-						'Are you sure you want to update the admin settings?'
-								+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
-					),
-					t('integration_openproject', 'Confirm Update'),
-					{
-						type: OC.dialogs.YES_NO_BUTTONS,
-						confirm: t('integration_openproject', 'Update'),
-						confirmClasses: 'error',
-						cancel: t('integration_openproject', 'Cancel'),
-					},
-					(result) => {
-						if (result) {
-							that.saveOptions()
-						}
-					},
-					true
-				)
+				if (that.isAdminConfigOk) {
+					OC.dialogs.confirmDestructive(
+						t(
+							'integration_openproject',
+							'Are you sure you want to update the admin settings?'
+							+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
+						),
+						t('integration_openproject', 'Confirm Update'),
+						{
+							type: OC.dialogs.YES_NO_BUTTONS,
+							confirm: t('integration_openproject', 'Update'),
+							confirmClasses: 'error',
+							cancel: t('integration_openproject', 'Cancel'),
+						},
+						(result) => {
+							if (result) {
+								that.saveOptions()
+							}
+						},
+						true
+					)
+				} else that.saveOptions()
 			}, 1000)()
 		},
 		saveOptions() {
@@ -106,6 +109,8 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			axios.put(url, req)
 				.then((response) => {
+					// after successfully saving the admin credentials, the admin config status needs to be updated
+					this.isAdminConfigOk = response.data.status === true
 					showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				})
 				.catch((error) => {

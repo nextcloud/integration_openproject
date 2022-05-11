@@ -91,9 +91,6 @@ class ConfigControllerTest extends TestCase {
 			});
 		$this->userManager = $this->createMock(IUserManager::class);
 
-
-
-
 		$this->configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
@@ -309,25 +306,11 @@ class ConfigControllerTest extends TestCase {
 		$manager = \OC::$server->getUserManager();
 		$count = 0;
 		$function = function (IUser $user) use (&$count) {
-			var_dump("-------------------------------");
-			var_dump($user->getUID());
-			var_dump("-------------------------------");
 			$count++;
 		};
 		$manager->callForAllUsers($function, '', true);
-		$countBefore = $count;
-
-		try {
-			$user1 = $manager->createUser('test1', 'test1');
-		} catch (\InvalidArgumentException $e) {
-			echo "\nuser 'test1' already exists.\nwill be deleted and re-created";
-			$user1 = $manager->get('test1');
-			$user1->delete();
-			$user1 = $manager->createUser('test1', 'test1');
-		}
-		// expect only 2 users (admin and our test user)
-		$this->assertSame(2, $countBefore + 1);
-
+		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$user1 = $manager->createUser('test11', 'test11');
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -338,6 +321,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'oauth_instance_url']
 			)
 			->willReturnOnConsecutiveCalls('$client_id', '', 'http://openproject.com');
+
 
 		$configMock
 			->expects($this->exactly(12))
@@ -369,11 +353,11 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$apiService,
 			$this->createMock(LoggerInterface::class),
-			'test1'
+			'test11'
 		);
 		$result = $configController->setAdminConfig([]);
 		$this->assertSame(
-			1,
+			["status" => false],
 			$result->getData()
 		);
 		$user1->delete();
@@ -404,12 +388,11 @@ class ConfigControllerTest extends TestCase {
 
 		$manager = \OC::$server->getUserManager();
 		try {
-			$user1 = $manager->createUser('test1', 'test1');
+			$user1 = $manager->createUser('test11', 'test11');
 		} catch (\InvalidArgumentException $e) {
-			echo "'test1' user already exists.\ndeleting and recreating for test...";
-			$user1 = $manager->get('test1');
+			$user1 = $manager->get('test11');
 			$user1->delete();
-			$user1 = $manager->createUser('test1', 'test1');
+			$user1 = $manager->createUser('test11', 'test11');
 		}
 		$configMock
 			->expects($this->never())
@@ -434,7 +417,7 @@ class ConfigControllerTest extends TestCase {
 			'oauth_instance_url' => 'http://openproject.com',
 		]);
 		$this->assertSame(
-			1,
+			["status" => true],
 			$result->getData()
 		);
 		$user1->delete();
