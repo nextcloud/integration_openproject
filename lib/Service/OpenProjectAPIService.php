@@ -335,11 +335,16 @@ class OpenProjectAPIService {
 	 * @throws \OCP\Lock\LockedException
 	 */
 	public function getOpenProjectAvatar(string $userId, string $userName): array {
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$this->config->getAppValue(Application::APP_ID, 'client_id');
+		$this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		try {
-			$response = $this->request($userId, 'users/'.$userId.'/avatar');
-
+			$response = $this->rawRequest($accessToken, $openprojectUrl, 'users/'.$userId.'/avatar');
+			$headers = $response->getHeaders();
 			return [
-				'avatar' => $response,
+				'avatar' => $response->getBody(),
+				'type' => implode(',', $headers['Content-Type']),
 			];
 		} catch (ServerException | ClientException | ConnectException | Exception $e) {
 			$this->logger->debug('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
@@ -347,6 +352,62 @@ class OpenProjectAPIService {
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];
 		}
+	}
+
+	/**
+	 * @param string $accessToken
+	 * @param string $openprojectUrl
+	 * @param string $endPoint
+	 * @param array<mixed> $params
+	 * @param string $method
+	 */
+	// @phpstan-ignore-next-line
+	public function rawRequest(string $accessToken, string $openprojectUrl,
+							   string $endPoint, array $params = [], string $method = 'GET') {
+		$url = $openprojectUrl . '/api/v3/' . $endPoint;
+		$options = [
+			'headers' => [
+				'Authorization' => 'Bearer ' . $accessToken,
+				'User-Agent' => 'Nextcloud OpenProject integration',
+			]
+		];
+
+		if (count($params) > 0) {
+			if ($method === 'GET') {
+				// manage array parameters
+				$paramsContent = '';
+				foreach ($params as $key => $value) {
+					if (is_array($value)) {
+						foreach ($value as $oneArrayValue) {
+							$paramsContent .= $key . '[]=' . urlencode($oneArrayValue) . '&';
+						}
+						unset($params[$key]);
+					}
+				}
+				$paramsContent .= http_build_query($params);
+				$url .= '?' . $paramsContent;
+			} else {
+				if (isset($params['body'])) {
+					$options['body'] = $params['body'];
+				}
+				$options['headers']['Content-Type'] = 'application/json';
+			}
+		} elseif ($method === 'DELETE') {
+			$options['headers']['Content-Type'] = 'application/json';
+		}
+
+		if ($method === 'GET') {
+			$response = $this->client->get($url, $options);
+		} elseif ($method === 'POST') {
+			$response = $this->client->post($url, $options);
+		} elseif ($method === 'PUT') {
+			$response = $this->client->put($url, $options);
+		} elseif ($method === 'DELETE') {
+			$response = $this->client->delete($url, $options);
+		} else {
+			return ['error' => $this->l10n->t('Bad HTTP method')];
+		}
+		return $response;
 	}
 
 	/**
@@ -368,52 +429,11 @@ class OpenProjectAPIService {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
 		try {
-			$url = $openprojectUrl . '/api/v3/' . $endPoint;
-			$options = [
-				'headers' => [
-					'Authorization' => 'Bearer ' . $accessToken,
-					'User-Agent' => 'Nextcloud OpenProject integration',
-				]
-			];
-
-			if (count($params) > 0) {
-				if ($method === 'GET') {
-					// manage array parameters
-					$paramsContent = '';
-					foreach ($params as $key => $value) {
-						if (is_array($value)) {
-							foreach ($value as $oneArrayValue) {
-								$paramsContent .= $key . '[]=' . urlencode($oneArrayValue) . '&';
-							}
-							unset($params[$key]);
-						}
-					}
-					$paramsContent .= http_build_query($params);
-					$url .= '?' . $paramsContent;
-				} else {
-					if (isset($params['body'])) {
-						$options['body'] = $params['body'];
-					}
-					$options['headers']['Content-Type'] = 'application/json';
-				}
-			} elseif ($method === 'DELETE') {
-				$options['headers']['Content-Type'] = 'application/json';
+			$response = $this->rawRequest($accessToken, $openprojectUrl, $endPoint, $params, $method);
+			if ($method === 'DELETE' && $response->getStatusCode() === Http::STATUS_NO_CONTENT) {
+				return ['success' => true];
 			}
 
-			if ($method === 'GET') {
-				$response = $this->client->get($url, $options);
-			} elseif ($method === 'POST') {
-				$response = $this->client->post($url, $options);
-			} elseif ($method === 'PUT') {
-				$response = $this->client->put($url, $options);
-			} elseif ($method === 'DELETE') {
-				$response = $this->client->delete($url, $options);
-				if ($response->getStatusCode() === Http::STATUS_NO_CONTENT) {
-					return ['success' => true];
-				}
-			} else {
-				return ['error' => $this->l10n->t('Bad HTTP method')];
-			}
 			return json_decode($response->getBody(), true);
 		} catch (ServerException | ClientException $e) {
 			$response = $e->getResponse();

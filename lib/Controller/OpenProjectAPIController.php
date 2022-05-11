@@ -40,18 +40,7 @@ class OpenProjectAPIController extends Controller {
 	 * @var string
 	 */
 	private $accessToken;
-	/**
-	 * @var string
-	 */
-	private $refreshToken;
-	/**
-	 * @var string
-	 */
-	private $clientID;
-	/**
-	 * @var string
-	 */
-	private $clientSecret;
+
 	/**
 	 * @var string
 	 */
@@ -66,9 +55,6 @@ class OpenProjectAPIController extends Controller {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
 		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
-		$this->refreshToken = $config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		$this->clientID = $config->getAppValue(Application::APP_ID, 'client_id');
-		$this->clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 	}
 
