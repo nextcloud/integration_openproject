@@ -145,6 +145,7 @@ export default {
 #openproject_prefs .grid-form .icon {
 	margin-bottom: -3px;
 }
+
 .save-config-btn, .update-config-btn {
 	margin-left: 30px;
 }
