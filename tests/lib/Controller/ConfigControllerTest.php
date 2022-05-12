@@ -300,9 +300,35 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigStatusDataProvider() {
+		return [
+			[
+				[
+					'client_id' => '$client_id',
+					'client_secret' => '$client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				true
+			],
+			[
+				[
+					'client_id' => '',
+					'client_secret' => '$client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				], false
+			],
+		];
+	}
+
+	/**
+	 * @param array<string> $credsToUpdate
+	 * @param bool $adminConfigStatus
+	 * @dataProvider setAdminConfigStatusDataProvider
 	 * @return void
 	 */
-	public function testSetAdminConfigForCaseAdminConfigStatusNotOk() {
+	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
 		$manager = \OC::$server->getUserManager();
 		$count = 0;
 		$function = function (IUser $user) use (&$count) {
@@ -310,9 +336,18 @@ class ConfigControllerTest extends TestCase {
 		};
 		$manager->callForAllUsers($function, '', true);
 		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
-		$user1 = $manager->createUser('test11', 'test11');
+		$user1 = $manager->createUser('test101', 'test101');
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->expects($this->exactly(3))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', $credsToUpdate['client_id']],
+				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
+				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']]
+			);
+
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
@@ -320,7 +355,11 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
 			)
-			->willReturnOnConsecutiveCalls('$client_id', '', 'http://openproject.com');
+			->willReturnOnConsecutiveCalls(
+				$credsToUpdate['client_id'],
+				$credsToUpdate['client_secret'],
+				$credsToUpdate['oauth_instance_url']
+			);
 
 
 		$configMock
@@ -353,71 +392,11 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$apiService,
 			$this->createMock(LoggerInterface::class),
-			'test11'
+			'test101'
 		);
-		$result = $configController->setAdminConfig([]);
+		$result = $configController->setAdminConfig($credsToUpdate);
 		$this->assertSame(
-			["status" => false],
-			$result->getData()
-		);
-		$user1->delete();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testSetAdminConfigForCaseAdminConfigStatusOk() {
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock
-			->expects($this->exactly(3))
-			->method('setAppValue')
-			->withConsecutive(
-				['integration_openproject', 'client_id', '$client_id'],
-				['integration_openproject', 'client_secret', '$client_secret'],
-				['integration_openproject', 'oauth_instance_url', 'http://openproject.com']
-			);
-		$configMock
-			->expects($this->exactly(3))
-			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url']
-			)
-			->willReturnOnConsecutiveCalls('$client_id', '$client_secret', 'http://openproject.com');
-
-		$manager = \OC::$server->getUserManager();
-		try {
-			$user1 = $manager->createUser('test11', 'test11');
-		} catch (\InvalidArgumentException $e) {
-			$user1 = $manager->get('test11');
-			$user1->delete();
-			$user1 = $manager->createUser('test11', 'test11');
-		}
-		$configMock
-			->expects($this->never())
-			->method('deleteUserValue');
-		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$manager,
-			$this->l,
-			$apiService,
-			$this->createMock(LoggerInterface::class),
-			'test1'
-		);
-		$result = $configController->setAdminConfig([
-			'client_id' => '$client_id',
-			'client_secret' => '$client_secret',
-			'oauth_instance_url' => 'http://openproject.com',
-		]);
-		$this->assertSame(
-			["status" => true],
+			["status" => $adminConfigStatus],
 			$result->getData()
 		);
 		$user1->delete();
