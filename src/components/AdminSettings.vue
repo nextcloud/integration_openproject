@@ -16,8 +16,7 @@
 			<input id="openproject-oauth-instance"
 				v-model="state.oauth_instance_url"
 				type="text"
-				:placeholder="t('integration_openproject', 'OpenProject address')"
-				@input="onInput">
+				:placeholder="t('integration_openproject', 'OpenProject address')">
 			<label for="openproject-client-id">
 				<a class="icon icon-category-auth" />
 				{{ t('integration_openproject', 'Client ID') }}
@@ -27,8 +26,7 @@
 				type="password"
 				:readonly="readonly"
 				:placeholder="t('integration_openproject', 'Client ID of the OAuth app in OpenProject')"
-				@focus="readonly = false"
-				@input="onInput">
+				@focus="readonly = false">
 			<label for="openproject-client-secret">
 				<a class="icon icon-category-auth" />
 				{{ t('integration_openproject', 'Client secret') }}
@@ -38,9 +36,14 @@
 				type="password"
 				:readonly="readonly"
 				:placeholder="t('integration_openproject', 'Client secret of the OAuth app in OpenProject')"
-				@focus="readonly = false"
-				@input="onInput">
+				@focus="readonly = false">
 		</div>
+		<button v-if="!isAdminConfigOk" class="save-config-btn" @click="saveOptions">
+			Save
+		</button>
+		<button v-else class="update-config-btn" @click="updateForm">
+			Update
+		</button>
 	</div>
 </template>
 
@@ -48,7 +51,6 @@
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { delay } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
@@ -71,34 +73,30 @@ export default {
 		}
 	},
 	methods: {
-		onInput() {
+		updateForm() {
 			const that = this
-			delay(() => {
-				if (that.isAdminConfigOk) {
-					OC.dialogs.confirmDestructive(
-						t(
-							'integration_openproject',
-							'Are you sure you want to update the admin settings?'
-							+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
-						),
-						t('integration_openproject', 'Confirm Update'),
-						{
-							type: OC.dialogs.YES_NO_BUTTONS,
-							confirm: t('integration_openproject', 'Update'),
-							confirmClasses: 'error',
-							cancel: t('integration_openproject', 'Cancel'),
-						},
-						(result) => {
-							if (result) {
-								that.saveOptions()
-							}
-						},
-						true
-					)
-				} else that.saveOptions()
-			}, 1000)()
+			OC.dialogs.confirmDestructive(
+				t(
+					'integration_openproject',
+					'Are you sure you want to update the admin settings?'
+					+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
+				),
+				t('integration_openproject', 'Confirm Update'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'Update'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				async (result) => {
+					if (result) {
+						await that.saveOptions()
+					}
+				},
+				true
+			)
 		},
-		saveOptions() {
+		async saveOptions() {
 			const req = {
 				values: {
 					client_id: this.state.client_id,
@@ -107,18 +105,17 @@ export default {
 				},
 			}
 			const url = generateUrl('/apps/integration_openproject/admin-config')
-			axios.put(url, req)
-				.then((response) => {
-					// after successfully saving the admin credentials, the admin config status needs to be updated
-					this.isAdminConfigOk = response.data.status === true
-					showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
-				})
-				.catch((error) => {
-					showError(
-						t('integration_openproject', 'Failed to save OpenProject admin options')
-						+ ': ' + error.response.request.responseText
-					)
-				})
+			try {
+				const response = await axios.put(url, req)
+				// after successfully saving the admin credentials, the admin config status needs to be updated
+				this.isAdminConfigOk = response?.data?.status === true
+				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
+			} catch (error) {
+				console.debug(error)
+				showError(
+					t('integration_openproject', 'Failed to save OpenProject admin options')
+				)
+			}
 		},
 	},
 }
@@ -147,5 +144,8 @@ export default {
 
 #openproject_prefs .grid-form .icon {
 	margin-bottom: -3px;
+}
+.save-config-btn, .update-config-btn {
+	margin-left: 30px;
 }
 </style>
