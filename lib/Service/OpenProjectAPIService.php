@@ -138,11 +138,10 @@ class OpenProjectAPIService {
 				);
 				$nbRelevantNotifications = 0;
 				foreach ($notifications as $n) {
-					$updatedAt = new DateTime($n['updatedAt']);
+					$updatedAt = new DateTime($n['createdAt']);
 					if ($updatedAt->getTimestamp() > $lastNotificationCheck) {
 						$nbRelevantNotifications++;
 					}
-
 				}
 				if ($nbRelevantNotifications > 0) {
 					$this->sendNCNotification($userId, 'new_open_tickets', [
