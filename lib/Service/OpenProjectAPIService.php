@@ -125,7 +125,7 @@ class OpenProjectAPIService {
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
 			$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
-			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : $lastNotificationCheck;
+			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : (int)$lastNotificationCheck;
 			$newLastNotificationCheck = time();
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
@@ -134,7 +134,7 @@ class OpenProjectAPIService {
 					$userId,
 					Application::APP_ID,
 					'last_notification_check',
-					$newLastNotificationCheck
+					"$newLastNotificationCheck"
 				);
 				$nbRelevantNotifications = 0;
 				foreach ($notifications as $n) {
@@ -204,7 +204,15 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 */
 	public function getNotifications(string $userId): array {
-		$result = $this->request($userId, 'notifications');
+		$filters[] = [
+			'readIAN' =>
+				['operator' => '=', 'values' => ['f']]
+		];
+
+		$params = [
+			'filters' => \Safe\json_encode($filters),
+		];
+		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {
 			return $result;
 		} elseif (!isset($result['_embedded']['elements'])) {
