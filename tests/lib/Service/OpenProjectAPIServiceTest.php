@@ -492,9 +492,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
 			->setQuery("filters=" . \Safe\json_encode([[
-					'readIAN' =>
-						['operator' => '=', 'values' => ['f']]
-				]]))
+				'readIAN' =>
+					['operator' => '=', 'values' => ['f']]
+			]]))
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();

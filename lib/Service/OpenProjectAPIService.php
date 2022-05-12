@@ -149,7 +149,6 @@ class OpenProjectAPIService {
 						'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
 					]);
 				}
-
 			}
 		}
 	}
