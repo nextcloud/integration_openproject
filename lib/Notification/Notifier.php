@@ -101,7 +101,7 @@ class Notifier implements INotifier {
 				->setParsedMessage('--')
 				->setLink($p['link'] ?? '')
 				->setRichMessage(
-					$l->n('You have %s notification in {instance}', 'You have %s notifications in {instance}', $nbNotifications, [$nbNotifications]),
+					$l->n('You have %s new notification in {instance}', 'You have %s new notifications in {instance}', $nbNotifications, [$nbNotifications]),
 					[
 						'instance' => $richSubjectInstance,
 					]

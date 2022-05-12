@@ -124,13 +124,33 @@ class OpenProjectAPIService {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
 		if ($accessToken && $notificationEnabled) {
+			$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
+			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : $lastNotificationCheck;
+			$newLastNotificationCheck = time();
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
 			if (!isset($notifications['error']) && count($notifications) > 0) {
-				$this->sendNCNotification($userId, 'new_open_tickets', [
-					'nbNotifications' => count($notifications),
-					'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
-				]);
+				$this->config->setUserValue(
+					$userId,
+					Application::APP_ID,
+					'last_notification_check',
+					$newLastNotificationCheck
+				);
+				$nbRelevantNotifications = 0;
+				foreach ($notifications as $n) {
+					$updatedAt = new DateTime($n['updatedAt']);
+					if ($updatedAt->getTimestamp() > $lastNotificationCheck) {
+						$nbRelevantNotifications++;
+					}
+
+				}
+				if ($nbRelevantNotifications > 0) {
+					$this->sendNCNotification($userId, 'new_open_tickets', [
+						'nbNotifications' => $nbRelevantNotifications,
+						'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
+					]);
+				}
+
 			}
 		}
 	}
@@ -159,11 +179,9 @@ class OpenProjectAPIService {
 
 		$notification->setApp(Application::APP_ID)
 			->setUser($userId)
+			->setDateTime(new DateTime())
 			->setObject('dum', 'dum')
 			->setSubject($subject, $params);
-		$manager->markProcessed($notification);
-
-		$notification->setDateTime(new DateTime());
 
 		$manager->notify($notification);
 	}
