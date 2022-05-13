@@ -178,8 +178,9 @@ class OpenProjectAPIService {
 		$notification->setApp(Application::APP_ID)
 			->setUser($userId)
 			->setDateTime(new DateTime())
-			->setObject('dum', 'dum')
-			->setSubject($subject, $params);
+			->setObject('dum', 'dum');
+
+		$notification->setSubject($subject, $params);
 
 		$manager->notify($notification);
 	}
