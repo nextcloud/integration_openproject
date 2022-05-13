@@ -24,14 +24,14 @@
 	<div class="projects">
 		<SearchInput v-if="!!requestUrl && !isLoading"
 			:file-info="fileInfo"
-			:linked-work-packages="workpackages"
+			:linked-work-packages="filterWorkpackagesByFileId"
 			@saved="onSaved" />
 		<div v-if="isLoading" class="icon-loading" />
-		<div v-else-if="workpackages.length > 0" id="openproject-linked-workpackages">
+		<div v-else-if="filterWorkpackagesByFileId.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
 			</div>
-			<div v-for="(workpackage, index) in workpackages"
+			<div v-for="(workpackage, index) in filterWorkpackagesByFileId"
 				:key="workpackage.id"
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
@@ -42,7 +42,7 @@
 					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
 						@click="unlink(workpackage.id, fileInfo.id)" />
 				</div>
-				<div :class="{ 'workpackage-seperator': index !== workpackages.length-1 }" />
+				<div :class="{ 'workpackage-seperator': index !== filterWorkpackagesByFileId.length-1 }" />
 			</div>
 		</div>
 		<EmptyContent v-else
@@ -82,6 +82,9 @@ export default {
 	computed: {
 		isLoading() {
 			return this.state === STATE.LOADING
+		},
+		filterWorkpackagesByFileId() {
+			return this.workpackages.filter(wp => wp.fileId === this.fileInfo.id)
 		},
 	},
 	methods: {
@@ -194,6 +197,11 @@ export default {
 			}
 			return linkId
 		},
+		worpackageAlreadyInList(workPackage) {
+			return this.workpackages.some(
+				elem => elem.id === workPackage.id && elem.fileId === workPackage.fileId,
+			)
+		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
 			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
@@ -205,8 +213,17 @@ export default {
 					// empty data means there are no workpackages linked
 					if (response.data.length > 0) {
 						for (let workPackage of response.data) {
-							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-							this.workpackages.push(workPackage)
+							workPackage.fileId = fileId
+							// if the WP is already in the list, because the user switched quickly between files
+							// don't even try to fetch all the additional meta data
+							if (!this.worpackageAlreadyInList(workPackage)) {
+								workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+								// check again, the WP might have been added by an outstanding request
+								// from another file
+								if (!this.worpackageAlreadyInList(workPackage)) {
+									this.workpackages.push(workPackage)
+								}
+							}
 						}
 					}
 					this.state = STATE.OK

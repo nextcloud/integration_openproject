@@ -169,6 +169,7 @@ export default {
 			for (let workPackage of workPackages) {
 				try {
 					if (this.isStateLoading) {
+						workPackage.fileId = this.fileInfo.id
 						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 						const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 						const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)

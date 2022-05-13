@@ -60,6 +60,7 @@ export const workpackageHelper = {
 			statusCol: statusColor,
 			typeCol: typeColor,
 			picture: avatarUrl,
+			fileId: workPackage.fileId,
 		}
 	},
 }

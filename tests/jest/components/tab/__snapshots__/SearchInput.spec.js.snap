@@ -49,6 +49,7 @@ exports[`SearchInput.vue tests work packages multiselect search list should only
 Object {
   "workpackage": Object {
     "assignee": "some assignee",
+    "fileId": undefined,
     "id": 1,
     "picture": "http://localhost/apps/integration_openproject/avatar?userId=&userName=some assignee",
     "project": "some project",
