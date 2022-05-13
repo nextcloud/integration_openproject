@@ -138,8 +138,8 @@ class OpenProjectAPIService {
 				);
 				$nbRelevantNotifications = 0;
 				foreach ($notifications as $n) {
-					$updatedAt = new DateTime($n['createdAt']);
-					if ($updatedAt->getTimestamp() > $lastNotificationCheck) {
+					$createdAt = new DateTime($n['createdAt']);
+					if ($createdAt->getTimestamp() > $lastNotificationCheck) {
 						$nbRelevantNotifications++;
 					}
 				}
