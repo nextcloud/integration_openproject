@@ -84,7 +84,13 @@ export default {
 			return this.state === STATE.LOADING
 		},
 		filterWorkpackagesByFileId() {
-			return this.workpackages.filter(wp => wp.fileId === this.fileInfo.id)
+			return this.workpackages.filter(wp => {
+				if (wp.fileId === undefined || wp.fileId === '') {
+					console.error('work-package data does not contain a fileId')
+					return false
+				}
+				return wp.fileId === this.fileInfo.id
+			})
 		},
 	},
 	methods: {

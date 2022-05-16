@@ -310,6 +310,10 @@ describe('ProjectsTab.vue Test', () => {
 	describe('onSave', () => {
 		it('shows the just linked workpackage', async () => {
 			wrapper = mountWrapper()
+			await wrapper.setData({
+				fileInfo: { id: 1234 },
+			})
+			await localVue.nextTick()
 			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
@@ -328,6 +332,7 @@ describe('ProjectsTab.vue Test', () => {
 			wrapper = mountWrapper()
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
+				fileInfo: { id: 1234 },
 			})
 			await localVue.nextTick()
 			await wrapper.find(linkedWorkpackageSelector).trigger('click')
@@ -343,6 +348,7 @@ describe('ProjectsTab.vue Test', () => {
 			wrapper = mountWrapper()
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
+				fileInfo: { id: 1234 },
 			})
 			await localVue.nextTick()
 			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
