@@ -197,7 +197,7 @@ export default {
 			}
 			return linkId
 		},
-		worpackageAlreadyInList(workPackage) {
+		workpackageAlreadyInList(workPackage) {
 			return this.workpackages.some(
 				elem => elem.id === workPackage.id && elem.fileId === workPackage.fileId,
 			)
@@ -216,11 +216,11 @@ export default {
 							workPackage.fileId = fileId
 							// if the WP is already in the list, because the user switched quickly between files
 							// don't even try to fetch all the additional meta data
-							if (!this.worpackageAlreadyInList(workPackage)) {
+							if (!this.workpackageAlreadyInList(workPackage)) {
 								workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 								// check again, the WP might have been added by an outstanding request
 								// from another file
-								if (!this.worpackageAlreadyInList(workPackage)) {
+								if (!this.workpackageAlreadyInList(workPackage)) {
 									this.workpackages.push(workPackage)
 								}
 							}
