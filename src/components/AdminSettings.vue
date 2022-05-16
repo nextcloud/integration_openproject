@@ -78,8 +78,8 @@ export default {
 			OC.dialogs.confirmDestructive(
 				t(
 					'integration_openproject',
-					'Are you sure you want to update the admin settings?'
-					+ ' After saving, every connected users must need to re-connect to the Openproject instance.'
+					'Are you sure you want to update the Oauth settings for OpenProject?'
+					+ ' After saving, all connected users will have to re-connect to the OpenProject instance.'
 				),
 				t('integration_openproject', 'Confirm Update'),
 				{

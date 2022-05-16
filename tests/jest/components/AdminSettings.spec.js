@@ -65,7 +65,7 @@ describe('AdminSettings', () => {
 		beforeEach(() => {
 			jest.clearAllMocks()
 		})
-		describe('when the admin config status is not ok beforehand', () => {
+		describe('when the admin config is not complete', () => {
 			let wrapper, confirmSpy
 			beforeEach(() => {
 				confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
@@ -85,7 +85,7 @@ describe('AdminSettings', () => {
 				expect(confirmSpy).toBeCalledTimes(0)
 			})
 		})
-		describe('when the admin config status is ok beforehand', () => {
+		describe('when the admin config status is complete', () => {
 			let wrapper, confirmSpy
 			beforeEach(() => {
 				confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
@@ -93,18 +93,18 @@ describe('AdminSettings', () => {
 					isAdminConfigOk: true,
 				})
 			})
-			it('should show the save button', async () => {
+			it('should show the update button', async () => {
 				expect(wrapper.find(selectors.updateConfigButton)).toMatchSnapshot()
 				expect(wrapper.find(selectors.saveConfigButton).exists()).toBeFalsy()
 			})
-			it('should trigger confirm dialog on save', async () => {
+			it('should trigger confirm dialog on update', async () => {
 				const updateConfigButton = wrapper.find(selectors.updateConfigButton)
 				const inputField = wrapper.find(selectors.oauthClientId)
 				await inputField.setValue('test')
 				await updateConfigButton.trigger('click')
 
-				const expectedDialogMessage = 'Are you sure you want to update the admin settings?'
-				  + ' After saving, every connected users must need to re-connect to the Openproject instance.'
+				const expectedDialogMessage = 'Are you sure you want to update the Oauth settings for OpenProject?'
+				  + ' After saving, all connected users will have to re-connect to the OpenProject instance.'
 				const expectedDialogTitle = 'Confirm Update'
 				const expectedButtonSet = {
 					confirm: 'Update',

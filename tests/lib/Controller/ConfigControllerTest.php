@@ -325,19 +325,19 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @param array<string> $credsToUpdate
 	 * @param bool $adminConfigStatus
-	 * @dataProvider setAdminConfigStatusDataProvider
+	 *
 	 * @return void
+	 * @dataProvider setAdminConfigStatusDataProvider
 	 */
 	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
-		$manager = \OC::$server->getUserManager();
+		$userManager = \OC::$server->getUserManager();
 		$count = 0;
 		$function = function (IUser $user) use (&$count) {
 			$count++;
 		};
-		$manager->callForAllUsers($function, '', true);
+		$userManager->callForAllUsers($function, '', true);
 		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
-		$user1 = $manager->createUser('test101', 'test101');
-
+		$user1 = $userManager->createUser('test101', 'test101');
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->expects($this->exactly(3))
@@ -347,7 +347,6 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
 				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']]
 			);
-
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
@@ -360,10 +359,8 @@ class ConfigControllerTest extends TestCase {
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
 			);
-
-
 		$configMock
-			->expects($this->exactly(12))
+			->expects($this->exactly(12)) // 6 times for each user
 			->method('deleteUserValue')
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token'],
@@ -382,19 +379,20 @@ class ConfigControllerTest extends TestCase {
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-
 		$configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
 			$this->createMock(IURLGenerator::class),
-			$manager,
+			$userManager,
 			$this->l,
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			'test101'
 		);
+
 		$result = $configController->setAdminConfig($credsToUpdate);
+
 		$this->assertSame(
 			["status" => $adminConfigStatus],
 			$result->getData()

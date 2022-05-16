@@ -134,7 +134,6 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		// if the admin config is not ok, we clear every existing user information
 		$this->userManager->callForAllUsers(function (IUser $user) {
 			$this->clearUserInfo($user->getUID());
 		});
