@@ -103,11 +103,11 @@ describe('AdminSettings', () => {
 				await inputField.setValue('test')
 				await updateConfigButton.trigger('click')
 
-				const expectedDialogMessage = 'Are you sure you want to update the Oauth settings for OpenProject?'
-				  + ' After saving, all connected users will have to re-connect to the OpenProject instance.'
-				const expectedDialogTitle = 'Confirm Update'
+				const expectedDialogMessage = 'Are you sure you want to replace the OpenProject OAuth client details?'
+				+ ' Every currently connected user will need to re-authorize this Nextcloud instance to have access to their OpenProject account.'
+				const expectedDialogTitle = 'Replace OpenProject OAuth client details'
 				const expectedButtonSet = {
-					confirm: 'Update',
+					confirm: 'Replace',
 					cancel: 'Cancel',
 					confirmClasses: 'error',
 					type: 70,

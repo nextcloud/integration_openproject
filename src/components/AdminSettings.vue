@@ -78,13 +78,13 @@ export default {
 			OC.dialogs.confirmDestructive(
 				t(
 					'integration_openproject',
-					'Are you sure you want to update the Oauth settings for OpenProject?'
-					+ ' After saving, all connected users will have to re-connect to the OpenProject instance.'
+					'Are you sure you want to replace the OpenProject OAuth client details?'
+					+ ' Every currently connected user will need to re-authorize this Nextcloud instance to have access to their OpenProject account.'
 				),
-				t('integration_openproject', 'Confirm Update'),
+				t('integration_openproject', 'Replace OpenProject OAuth client details'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('integration_openproject', 'Update'),
+					confirm: t('integration_openproject', 'Replace'),
 					confirmClasses: 'error',
 					cancel: t('integration_openproject', 'Cancel'),
 				},
