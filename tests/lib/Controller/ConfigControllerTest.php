@@ -7,6 +7,8 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\IUser;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -16,6 +18,11 @@ class ConfigControllerTest extends TestCase {
 	 * @var IL10N
 	 */
 	private $l;
+
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
 
 	/**
 	 * @var ConfigController
@@ -82,12 +89,14 @@ class ConfigControllerTest extends TestCase {
 			->willReturnCallback(function ($string, $args) {
 				return vsprintf($string, $args);
 			});
+		$this->userManager = $this->createMock(IUserManager::class);
 
 		$this->configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->userManager,
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
@@ -147,6 +156,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock($codeVerifier, str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
@@ -202,6 +212,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), $clientSecret),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
@@ -278,6 +289,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50)),
 			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
@@ -285,5 +297,106 @@ class ConfigControllerTest extends TestCase {
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame($expectedRedirect, $result->getRedirectURL());
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigStatusDataProvider() {
+		return [
+			[
+				[
+					'client_id' => '$client_id',
+					'client_secret' => '$client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				true
+			],
+			[
+				[
+					'client_id' => '',
+					'client_secret' => '$client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				], false
+			],
+		];
+	}
+
+	/**
+	 * @param array<string> $credsToUpdate
+	 * @param bool $adminConfigStatus
+	 *
+	 * @return void
+	 * @dataProvider setAdminConfigStatusDataProvider
+	 */
+	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
+		$userManager = \OC::$server->getUserManager();
+		$count = 0;
+		$function = function (IUser $user) use (&$count) {
+			$count++;
+		};
+		$userManager->callForAllUsers($function, '', true);
+		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$user1 = $userManager->createUser('test101', 'test101');
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->expects($this->exactly(3))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', $credsToUpdate['client_id']],
+				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
+				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']]
+			);
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url']
+			)
+			->willReturnOnConsecutiveCalls(
+				$credsToUpdate['client_id'],
+				$credsToUpdate['client_secret'],
+				$credsToUpdate['oauth_instance_url']
+			);
+		$configMock
+			->expects($this->exactly(12)) // 6 times for each user
+			->method('deleteUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+				['admin', 'integration_openproject', 'last_notification_check'],
+				[$user1->getUID(), 'integration_openproject', 'token'],
+				[$user1->getUID(), 'integration_openproject', 'login'],
+				[$user1->getUID(), 'integration_openproject', 'user_id'],
+				[$user1->getUID(), 'integration_openproject', 'user_name'],
+				[$user1->getUID(), 'integration_openproject', 'refresh_token'],
+				[$user1->getUID(), 'integration_openproject', 'last_notification_check'],
+			);
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			'test101'
+		);
+
+		$result = $configController->setAdminConfig($credsToUpdate);
+
+		$this->assertSame(
+			["status" => $adminConfigStatus],
+			$result->getData()
+		);
+		$user1->delete();
 	}
 }

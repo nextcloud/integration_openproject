@@ -7,6 +7,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 
 class Admin implements ISettings {
@@ -39,7 +40,12 @@ class Admin implements ISettings {
 			'client_secret' => $clientSecret,
 			'oauth_instance_url' => $oauthUrl,
 		];
+
+		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
+
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
+		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
+
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
 	}
 

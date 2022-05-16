@@ -15,6 +15,8 @@ use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -34,6 +36,10 @@ class ConfigController extends Controller {
 	 * @var IURLGenerator
 	 */
 	private $urlGenerator;
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
 	/**
 	 * @var IL10N
 	 */
@@ -57,6 +63,7 @@ class ConfigController extends Controller {
 								IRequest $request,
 								IConfig $config,
 								IURLGenerator $urlGenerator,
+								IUserManager $userManager,
 								IL10N $l,
 								OpenProjectAPIService $openprojectAPIService,
 								LoggerInterface $logger,
@@ -64,10 +71,27 @@ class ConfigController extends Controller {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
+		$this->userManager = $userManager;
 		$this->l = $l;
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->logger = $logger;
 		$this->userId = $userId;
+	}
+
+	/**
+	 * @param string|null $userId
+	 * @return void
+	 */
+	public function clearUserInfo(string $userId = null) {
+		if ($userId === null) {
+			$userId = $this->userId;
+		}
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'token');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'last_notification_check');
 	}
 
 	/**
@@ -87,12 +111,7 @@ class ConfigController extends Controller {
 			if ($values['token'] && $values['token'] !== '') {
 				$result = $this->storeUserInfo();
 			} else {
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'refresh_token');
-				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'last_notification_check');
+				$this->clearUserInfo();
 				$result = [
 					'user_name' => '',
 				];
@@ -115,7 +134,12 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		return new DataResponse(1);
+		$this->userManager->callForAllUsers(function (IUser $user) {
+			$this->clearUserInfo($user->getUID());
+		});
+		return new DataResponse([
+			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
+		]);
 	}
 
 	/**
