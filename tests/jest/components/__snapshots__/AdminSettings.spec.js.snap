@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings form submit when the admin config status is not ok beforehand should show the save button 1`] = `<button class="save-config-btn">Save</button>`;
+exports[`AdminSettings form submit when the admin config status is not ok beforehand should show the save button 1`] = `
+<button class="save-config-btn">
+  Save
+</button>
+`;
 
-exports[`AdminSettings form submit when the admin config status is ok beforehand should show the save button 1`] = `<button class="update-config-btn">Update</button>`;
+exports[`AdminSettings form submit when the admin config status is ok beforehand should show the save button 1`] = `
+<button class="update-config-btn">
+  Update
+</button>
+`;
