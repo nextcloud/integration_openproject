@@ -306,6 +306,65 @@ describe('ProjectsTab.vue Test', () => {
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages).toMatchSnapshot()
 		})
+		it('adds every work-package only once', async () => {
+			// this can happen if multiple replies arrive at the same time
+			// when the user switches between files while results still loading
+			wrapper = mountWrapper()
+			const axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						id: 123,
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
+							},
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+						},
+					},
+					{
+						id: 123,
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
+							},
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+						},
+					}],
+				}))
+				.mockImplementation(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			await wrapper.vm.update({ id: 2222 })
+			expect(axiosGetSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/work-packages?fileId=2222',
+				{}
+			)
+			expect(wrapper.vm.state).toBe(STATE.OK)
+			const workPackages = wrapper.find(workPackagesSelector)
+			expect(workPackages).toMatchSnapshot()
+		})
 	})
 	describe('onSave', () => {
 		it('shows the just linked workpackage', async () => {

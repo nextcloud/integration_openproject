@@ -1,5 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only once 1`] = `
+<div class="" id="openproject-linked-workpackages">
+  <div class="existing-relations">
+    integration_openproject
+  </div>
+  <div class="linked-workpackages">
+    <div class="linked-workpackages--workpackage">
+      <div class="workpackage linked-workpackages--workpackage--item">
+        <div class="row">
+          <div class="row__status">
+            <div class="row__status__title">
+              open
+            </div>
+          </div>
+          <div class="row__workpackage">
+            #123 - a big project
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__subject"><span class="row__subject__type">
+				Task
+			</span>
+            my task
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__assignee">
+            <div class="row__assignee__avatar">
+              <avatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></avatar-stub>
+            </div>
+            <div class="row__assignee__assignee">
+              Bal Bahadur Pun
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="linked-workpackages--workpackage--unlink icon-noConnection"></div>
+    </div>
+    <div class=""></div>
+  </div>
+</div>
+`;
+
 exports[`ProjectsTab.vue Test fetchWorkpackages sets the "connection-error" state if the request url is not valid 1`] = `
 <div class="projects">
   <!---->
