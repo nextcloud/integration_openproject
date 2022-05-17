@@ -7,6 +7,7 @@ import SearchInput from '../../../../src/components/tab/SearchInput'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
+import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE } from '../../../../src/utils'
 
 jest.mock('@nextcloud/axios')
@@ -176,6 +177,7 @@ describe('SearchInput.vue tests', () => {
 			})
 			it('should display correct options list of search results', async () => {
 				await wrapper.setData({
+					fileInfo: { id: 1234 },
 					searchResults: workPackagesSearchResponse,
 				})
 				const multiSelectContent = wrapper.find(multiSelectContentSelector)
@@ -195,7 +197,8 @@ describe('SearchInput.vue tests', () => {
 			})
 			it('should only use the options from the latest search response', async () => {
 				await wrapper.setData({
-					searchResults: workPackageSearchReqResponse,
+					fileInfo: { id: 111 },
+					searchResults: workPackageObjectsInSearchResults,
 				})
 				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
 				const axiosSpy = jest.spyOn(axios, 'get')
@@ -219,13 +222,15 @@ describe('SearchInput.vue tests', () => {
 				axiosSpy.mockRestore()
 			})
 			it('should not display work packages that are already linked', async () => {
-				wrapper = mountSearchInput({},
+				wrapper = mountSearchInput({ id: 111 },
 					[
 						{
+							fileId: 111,
 							id: 1,
 							subject: 'One',
 						},
 						{
+							fileId: 111,
 							id: 13,
 							subject: 'Write a software',
 						},
@@ -233,7 +238,7 @@ describe('SearchInput.vue tests', () => {
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
-						data: workPackageSearchReqResponse,
+						data: workPackageObjectsInSearchResults,
 					}))
 					// any other requests e.g. for types and statuses
 					.mockImplementation(() => Promise.resolve(
@@ -288,7 +293,9 @@ describe('SearchInput.vue tests', () => {
 						{ status: 200, data: [] })
 					)
 				await wrapper.setData({
+					fileInfo: { id: 111 },
 					searchResults: [{
+						fileId: 111,
 						id: 2,
 						subject: 'Organize open source conference',
 					}],
@@ -388,6 +395,7 @@ describe('SearchInput.vue tests', () => {
 				await inputField.setValue('orga')
 				await wrapper.setData({
 					searchResults: [{
+						fileId: 111,
 						id: 999,
 					}],
 				})
@@ -400,7 +408,7 @@ describe('SearchInput.vue tests', () => {
 				await multiselectItem.trigger('click')
 				const savedEvent = wrapper.emitted('saved')
 				expect(savedEvent).toHaveLength(1)
-				expect(savedEvent[0]).toEqual([{ id: 999 }])
+				expect(savedEvent[0]).toEqual([{ fileId: 111, id: 999 }])
 			})
 			it('should send a request to link file to workpackage', async () => {
 				const postSpy = jest.spyOn(axios, 'post')

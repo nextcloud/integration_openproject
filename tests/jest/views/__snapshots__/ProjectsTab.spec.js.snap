@@ -7,7 +7,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
-      <div class="workpackage linked-workpackages--workpackage--item">
+      <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-123">
         <div class="row">
           <div class="row__status">
             <div class="row__status__title">
