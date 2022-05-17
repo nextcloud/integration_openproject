@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "Client-ID der OAuth-App in OpenProject",
     "Client secret" : "Geheime Zeichenkette des Clients",
     "Client secret of the OAuth app in OpenProject" : "Client-Geheimnis der OAuth-App in OpenProject",
+    "Replace" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Cancel" : "Abbrechen",
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
     "Connect to OpenProject" : "Mit OpenProject verbinden",
@@ -48,7 +50,6 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "Um einen Link hinzuzufügen, verwende die Suchleiste oben, um das gewünschte Arbeitspaket zu finden",
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
-    "Existing relations:" : "Bestehende Verbindungen:",
-    "Cancel" : "Abbrechen"
+    "Existing relations:" : "Bestehende Verbindungen:"
 },
 "nplurals=2; plural=(n != 1);");

@@ -8,11 +8,12 @@ OC.L10N.register(
     "Make sure you set the \"Redirect URI\" to" : "Asegúrese de estabelecer o «URI de redirección» como",
     "Client ID" : "ID do cliente",
     "Client secret" : "Segredo do cliente",
+    "Replace" : "Substituír",
+    "Cancel" : "Cancelar",
     "Enable navigation link" : "Activar a ligazón de navegación",
     "Connected as {user}" : "Conectado como {user}",
     "Enable unified search for tickets" : "Activar a busca unificada de billetes.",
     "OAuth access token could not be obtained:" : "Non foi posíbel obter o testemuño de acceso OAuth",
-    "Incorrect access token" : "Testemuño de acceso incorrecto",
-    "Cancel" : "Cancelar"
+    "Incorrect access token" : "Testemuño de acceso incorrecto"
 },
 "nplurals=2; plural=(n != 1);");

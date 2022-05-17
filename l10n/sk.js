@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "ClienID OAuth aplikácie v OpenProject",
     "Client secret" : "Heslo klienta",
     "Client secret of the OAuth app in OpenProject" : "Heslo klienta v OAuth aplikácii OpenProjectu",
+    "Replace" : "Nahradiť",
+    "Cancel" : "Zrušiť",
     "OpenProject admin options saved" : "Nastavenia administrátora OpenProjectu boli uložené",
     "Failed to save OpenProject admin options" : "Nepodarilo sa uložiť nastavenia administrátora OpenProjectu",
     "Connect to OpenProject" : "Pripojiť k OpenProject",
@@ -44,7 +46,6 @@ OC.L10N.register(
     "Unexpected Error" : "Neočakávaná chyba",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
-    "Existing relations:" : "Existujúce vzťahy:",
-    "Cancel" : "Zrušiť"
+    "Existing relations:" : "Existujúce vzťahy:"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

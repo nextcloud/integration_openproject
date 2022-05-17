@@ -9,11 +9,12 @@ OC.L10N.register(
     "Make sure you set the \"Redirect URI\" to" : "Segura·ti de impostare \"URI de ri-aderetada\" a ",
     "Client ID" : "ID cliente",
     "Client secret" : "Segretu de su cliente",
+    "Replace" : "Càmbia cun àteru",
+    "Cancel" : "Annulla",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
-    "Incorrect access token" : "Token de intrada non bàlidu",
-    "Cancel" : "Annulla"
+    "Incorrect access token" : "Token de intrada non bàlidu"
 },
 "nplurals=2; plural=(n != 1);");

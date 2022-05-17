@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "Az OAuth alkalmazás kliensazonosítója az OpenProjectben",
     "Client secret" : "Klienstitok",
     "Client secret of the OAuth app in OpenProject" : "Az OAuth alkalmazás klienstitka az OpenProjectben",
+    "Replace" : "Csere",
+    "Cancel" : "Mégse",
     "OpenProject admin options saved" : "Az OpenProject rendszergazdai beállításai mentve",
     "Failed to save OpenProject admin options" : "Az OpenProject rendszergazdai beállításainak mentése sikertelen",
     "Connect to OpenProject" : "Kapcsolódás az OpenProjecthez",
@@ -52,7 +54,6 @@ OC.L10N.register(
     "Are you sure you want to unlink the work package?" : "Biztos, hogy megszünteti a munkacsomag hivatkozását?",
     "Confirm unlink" : "Hivatkozás megszüntetésének megerősítése",
     "Unlink" : "Hivatkozás megszüntetése",
-    "Cancel" : "Mégse",
     "Work package unlinked" : "Munkacsomag hivatkozása megszüntetve",
     "Failed to unlink work package" : "A munkacsomag hivatkozásának megszüntetése sikertelen"
 },

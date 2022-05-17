@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "Идентификатор на клиент на приложението OAuth в OpenProject",
     "Client secret" : "Тайна на клиент",
     "Client secret of the OAuth app in OpenProject" : "Тайна на клиент на приложението OAuth в OpenProject",
+    "Replace" : "Замяна",
+    "Cancel" : "Отказ",
     "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
     "Failed to save OpenProject admin options" : "Неуспешно записване на опциите за администратор на OpenProject",
     "Connect to OpenProject" : "Свързване с OpenProject",
@@ -48,7 +50,6 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "За да добавите връзка, използвайте лентата за търсене по-горе, за да намерите желания работен пакет",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
-    "Existing relations:" : "Съществуващи отношения/връзки/:",
-    "Cancel" : "Отказ"
+    "Existing relations:" : "Съществуващи отношения/връзки/:"
 },
 "nplurals=2; plural=(n != 1);");

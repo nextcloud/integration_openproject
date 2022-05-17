@@ -20,6 +20,8 @@
     "Client ID of the OAuth app in OpenProject" : "OpenProject içindeki OAuth uygulamasının istemci kimliği",
     "Client secret" : "İstemci parolası",
     "Client secret of the OAuth app in OpenProject" : "OpenProject içindeki OAuth uygulamasının istemci parolası",
+    "Replace" : "Değiştir",
+    "Cancel" : "İptal",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
     "Connect to OpenProject" : "OpenProject bağlantısı kur",
@@ -50,7 +52,6 @@
     "Are you sure you want to unlink the work package?" : "Çalışma paketinin bağlantısını kesmek istediğinize emin misiniz?",
     "Confirm unlink" : "Bağlantı kesmeyi onayla",
     "Unlink" : "Bağlantıyı kes",
-    "Cancel" : "İptal",
     "Work package unlinked" : "Çalışma paketinin bağlantısı kesildi",
     "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

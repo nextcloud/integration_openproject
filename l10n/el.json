@@ -7,11 +7,12 @@
     "Make sure you set the \"Redirect URI\" to" : "Βεβαιωθείτε ότι έχετε ορίσει το \"Redirect URI\" σε",
     "Client ID" : "Αναγνωριστικό πελάτη",
     "Client secret" : "Μυστικό πελάτη",
+    "Replace" : "Αντικατάσταση",
+    "Cancel" : "Ακύρωση",
     "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
-    "Incorrect access token" : "Λανθασμένο token πρόσβασης",
-    "Cancel" : "Ακύρωση"
+    "Incorrect access token" : "Λανθασμένο token πρόσβασης"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

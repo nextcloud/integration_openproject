@@ -7,8 +7,9 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth access token ble avslått",
     "Client ID" : "Klient-ID",
     "Client secret" : "Klient-hemmelighet",
+    "Replace" : "Erstatt",
+    "Cancel" : "Avbryt",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
-    "Invalid token" : "Ugyldig polett",
-    "Cancel" : "Avbryt"
+    "Invalid token" : "Ugyldig polett"
 },
 "nplurals=2; plural=(n != 1);");

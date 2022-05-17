@@ -7,9 +7,10 @@ OC.L10N.register(
     "Connected accounts" : "Tengdir aðgangar",
     "Client ID" : "Biðlaraauðkenni",
     "Client secret" : "Leynilykill biðlara",
+    "Replace" : "Skipta út",
+    "Cancel" : "Hætta við",
     "Enable navigation link" : "Virkja flakktengil",
     "Connected as {user}" : "Tengt sem {user}",
-    "Incorrect access token" : "Rangt aðgangsteikn",
-    "Cancel" : "Hætta við"
+    "Incorrect access token" : "Rangt aðgangsteikn"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

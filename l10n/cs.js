@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "Identif. klienta OAuth aplikace v OpenProject",
     "Client secret" : "Klientské tajemství",
     "Client secret of the OAuth app in OpenProject" : "Klientské tajemství OAuth aplikace v OpenProject",
+    "Replace" : "Nahradit",
+    "Cancel" : "Storno",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "Connect to OpenProject" : "Připojeno k OpenProject",
@@ -52,7 +54,6 @@ OC.L10N.register(
     "Are you sure you want to unlink the work package?" : "Opravdu chcete balíček práce odpojit?",
     "Confirm unlink" : "Potvrdit odpojení",
     "Unlink" : "Odpojit",
-    "Cancel" : "Storno",
     "Work package unlinked" : "Balíček práce odpojen",
     "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce"
 },

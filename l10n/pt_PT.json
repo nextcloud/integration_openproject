@@ -1,7 +1,8 @@
 { "translations": {
     "Client ID" : "Id. do Cliente",
     "Client secret" : "Segredo do cliente\\\\",
-    "Invalid token" : "token inválido",
-    "Cancel" : "Cancelar"
+    "Replace" : "Substitua",
+    "Cancel" : "Cancelar",
+    "Invalid token" : "token inválido"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

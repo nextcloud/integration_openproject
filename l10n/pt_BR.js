@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "ID do cliente do aplicativo OAuth no OpenProject",
     "Client secret" : "Segredo do cliente",
     "Client secret of the OAuth app in OpenProject" : "Segredo do cliente do aplicativo OAuth no OpenProject",
+    "Replace" : "Substituir ",
+    "Cancel" : "Cancelar",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
     "Failed to save OpenProject admin options" : "Falha ao salvar as opções de administração do OpenProject",
     "Connect to OpenProject" : "Conecte-se ao OpenProject",
@@ -52,7 +54,6 @@ OC.L10N.register(
     "Are you sure you want to unlink the work package?" : "Tem certeza de que deseja desvincular o pacote de trabalho?",
     "Confirm unlink" : "Confirmar desvinculação",
     "Unlink" : "Desvincular",
-    "Cancel" : "Cancelar",
     "Work package unlinked" : "Pacote de trabalho desvinculado",
     "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho"
 },

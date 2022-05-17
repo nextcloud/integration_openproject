@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "ID client dell'app OAuth in OpenProject",
     "Client secret" : "Segreto del client",
     "Client secret of the OAuth app in OpenProject" : "Segreto del client dell'app OAuth in OpenProject",
+    "Replace" : "Sostituisci",
+    "Cancel" : "Annulla",
     "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Connect to OpenProject" : "Collegati a OpenProject",
@@ -44,7 +46,6 @@ OC.L10N.register(
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
-    "Existing relations:" : "Relazioni esistenti:",
-    "Cancel" : "Annulla"
+    "Existing relations:" : "Relazioni esistenti:"
 },
 "nplurals=2; plural=(n != 1);");

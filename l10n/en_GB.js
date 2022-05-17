@@ -7,7 +7,8 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth access token refused",
     "Client ID" : "Client ID",
     "Client secret" : "Client secret",
-    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
-    "Cancel" : "Cancel"
+    "Replace" : "Replace",
+    "Cancel" : "Cancel",
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },
 "nplurals=2; plural=(n != 1);");

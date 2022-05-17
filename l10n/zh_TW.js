@@ -9,11 +9,12 @@ OC.L10N.register(
     "Make sure you set the \"Redirect URI\" to" : "確保您將「重新導向 URI」設定為",
     "Client ID" : "客戶端 ID",
     "Client secret" : "客戶端密碼",
+    "Replace" : "置換",
+    "Cancel" : "取消",
     "Enable navigation link" : "啟用導覽連結",
     "Connected as {user}" : "以 {user} 身份連線",
     "OAuth access token could not be obtained:" : "無法取得 OAuth 存取權杖：",
     "Incorrect access token" : "不正確的存取權杖",
-    "Invalid token" : "無效的權杖",
-    "Cancel" : "取消"
+    "Invalid token" : "無效的權杖"
 },
 "nplurals=1; plural=0;");

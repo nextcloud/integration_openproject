@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Client ID" : "ID del cliente",
     "Client secret" : "Secreto del cliente",
+    "Replace" : "Reemplazar",
     "Cancel" : "Cancelar"
 },
 "nplurals=2; plural=(n != 1);");

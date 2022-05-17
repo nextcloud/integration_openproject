@@ -4,6 +4,7 @@ OC.L10N.register(
     "Connected accounts" : "حساب‌های متصل",
     "Client ID" : "شناسه مشتری",
     "Client secret" : "رمز مشتری",
+    "Replace" : "جایگزین کردن",
     "Cancel" : "لغو"
 },
 "nplurals=2; plural=(n > 1);");

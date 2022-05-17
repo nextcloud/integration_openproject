@@ -19,6 +19,8 @@ OC.L10N.register(
     "OpenProject address" : "OpenProject helbidea",
     "Client ID" : "Bezeroaren IDa",
     "Client secret" : "Bezeroaren sekretua",
+    "Replace" : "Ordeztu",
+    "Cancel" : "Utzi",
     "Connect to OpenProject" : "Konektatu OpenProject-era",
     "Enable navigation link" : "Gaitu nabigazio esteka",
     "Connected as {user}" : "{user} gisa konektatuta",
@@ -28,7 +30,6 @@ OC.L10N.register(
     "Incorrect access token" : "Sarbide token okerra",
     "Invalid token" : "Token baliogabea",
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
-    "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan",
-    "Cancel" : "Utzi"
+    "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan"
 },
 "nplurals=2; plural=(n != 1);");

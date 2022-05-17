@@ -8,9 +8,10 @@ OC.L10N.register(
     "Connected accounts" : "Yhdistetyt tilit",
     "Client ID" : "Asiakas-ID",
     "Client secret" : "Asiakassalasana",
+    "Replace" : "Korvaa",
+    "Cancel" : "Peruuta",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
-    "Incorrect access token" : "Virheellinen käyttöpoletti",
-    "Cancel" : "Peruuta"
+    "Incorrect access token" : "Virheellinen käyttöpoletti"
 },
 "nplurals=2; plural=(n != 1);");

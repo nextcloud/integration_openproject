@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "OpenProject 中 OAuth 應用程式的客戶端 ID",
     "Client secret" : "客戶端密碼",
     "Client secret of the OAuth app in OpenProject" : "OpenProject 中 OAuth 應用程式的客戶端密碼",
+    "Replace" : "取代",
+    "Cancel" : "取消",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "Connect to OpenProject" : "連接到 OpenProject",
@@ -52,7 +54,6 @@ OC.L10N.register(
     "Are you sure you want to unlink the work package?" : "確定要取消連結工作包嗎？",
     "Confirm unlink" : "確認取消連結",
     "Unlink" : "取消連結",
-    "Cancel" : "取消",
     "Work package unlinked" : "工作包連結已取消",
     "Failed to unlink work package" : "取消工作包連結失敗"
 },
