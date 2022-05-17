@@ -45,9 +45,18 @@ describe('ProjectsTab.vue Test', () => {
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
 		})
-		it('should exist if the request url is valid', async () => {
+		it('should not exist if the wrapper is in "loading" state', async () => {
+			await wrapper.setData({
+				requestUrl: true,
+				state: STATE.LOADING,
+			})
+			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
+		})
+		it('should exist if the request url is valid and wrapper is not "loading"', async () => {
 			await wrapper.setData({
 				requestUrl: 'https://open.project/',
+				state: STATE.OK,
+
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeTruthy()
 		})

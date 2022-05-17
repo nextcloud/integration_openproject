@@ -22,7 +22,7 @@
 
 <template>
 	<div class="projects">
-		<SearchInput v-if="!!requestUrl"
+		<SearchInput v-if="!!requestUrl && !isLoading"
 			:file-info="fileInfo"
 			:linked-work-packages="workpackages"
 			@saved="onSaved" />
@@ -73,7 +73,7 @@ export default {
 	data: () => ({
 		error: '',
 		fileInfo: {},
-		state: 'loading',
+		state: STATE.LOADING,
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
 		color: null,
