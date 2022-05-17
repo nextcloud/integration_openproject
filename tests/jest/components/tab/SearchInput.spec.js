@@ -334,6 +334,32 @@ describe('SearchInput.vue tests', () => {
 				)
 				axiosSpy.mockRestore()
 			})
+			it.each(
+				[STATE.NO_TOKEN, STATE.ERROR, STATE.OK]
+			)(
+				'should only add work packages to the list in loading state',
+				async (state) => {
+					wrapper = mountSearchInput({})
+					const axiosSpy = jest.spyOn(axios, 'get')
+						.mockImplementationOnce(() => Promise.resolve({
+							status: 200,
+							data: workPackageSearchReqResponse,
+						}))
+					// any other requests e.g. for types and statuses
+						.mockImplementation(() => Promise.resolve(
+							{ status: 200, data: [] })
+						)
+
+					const inputField = wrapper.find(inputSelector)
+					await inputField.setValue('anything longer than 3 char')
+					await wrapper.setData({ state })
+					for (let i = 0; i < 9; i++) {
+						await localVue.nextTick()
+					}
+
+					expect(wrapper.vm.searchResults).toMatchObject([])
+					axiosSpy.mockRestore()
+				})
 		})
 
 		describe('loading icon', () => {

@@ -165,11 +165,14 @@ export default {
 		async processWorkPackages(workPackages) {
 			for (let workPackage of workPackages) {
 				try {
-					workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-					const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
-					const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
-					if (!alreadyInSearchResults && !alreadyLinked) {
-						this.searchResults.push(workPackage)
+					if (this.isStateLoading) {
+						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+						const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
+						const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
+						// check the state again, it might have changed in between
+						if (!alreadyInSearchResults && !alreadyLinked && this.isStateLoading) {
+							this.searchResults.push(workPackage)
+						}
 					}
 				} catch (e) {
 					console.error('could not process workpackage data')
