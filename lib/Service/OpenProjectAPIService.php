@@ -361,8 +361,10 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $params
 	 * @param string $method
 	 */
+	// as we are returning the response as it is the
+	// return type of this function can be of different types
 	// @phpstan-ignore-next-line
-	public function rawRequest(string $accessToken, string $openprojectUrl,
+	private function rawRequest(string $accessToken, string $openprojectUrl,
 							   string $endPoint, array $params = [], string $method = 'GET') {
 		$url = $openprojectUrl . '/api/v3/' . $endPoint;
 		$options = [
