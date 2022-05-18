@@ -1,17 +1,53 @@
 .icon-openproject {
 	background-image: url(./../img/app.svg);
-	filter: contrast(0) brightness(0) !important;
+	filter: contrast(0) brightness(0);
 	min-width: 32px !important;
 }
+
+.icon-open-project {
+	position: relative;
+}
+
+.panel--header .icon-open-project::after {
+	left: 20px;
+	top: 22%;
+	height: 30px;
+	width: 30px;
+	background-size: 30px;
+}
+
+.panels li .icon-open-project::after {
+	left: 10%;
+	top: 15%;
+	height: 26px;
+	width: 26px;
+	background-size: 26px;
+}
+
+.icon-open-project::after {
+	content: '';
+	position: absolute;
+	filter: contrast(0) brightness(0);
+	background-image: url(./../img/app.svg);
+}
+
 
 .icon-noConnection {
 	background-image: url(./../img/noConnection.svg);
 }
 
+body.theme--dark .icon-open-project::after {
+	filter: none;
+}
+
 body[data-theme-dark] .icon-openproject {
-	filter: none !important;
+	filter: none;
+}
+
+body.theme--dark .icon-openproject {
+	filter: none;
 }
 
 body[data-theme-dark] .icon-close, .icon-checkmark, .icon-noConnection {
-	filter: var(--background-invert-if-dark) !important;
+	filter: var(--background-invert-if-dark);
 }
