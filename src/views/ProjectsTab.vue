@@ -35,7 +35,8 @@
 				:key="workpackage.id"
 				class="linked-workpackages">
 				<div class="linked-workpackages--workpackage">
-					<WorkPackage :workpackage="workpackage"
+					<WorkPackage :id="'workpackage-'+ workpackage.id"
+						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
@@ -82,9 +83,6 @@ export default {
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
-		unlinkSvg() {
-			return require('../../img/noConnection.svg')
-		},
 	},
 	methods: {
 		/**
@@ -119,7 +117,14 @@ export default {
 			this.state = STATE.LOADING
 		},
 		onSaved(data) {
-			this.workpackages.push(data)
+			this.workpackages.unshift(data)
+			this.$nextTick(() => {
+				const workpackage = document.getElementById('workpackage-' + data.id)
+				workpackage.classList.add('workpackage-transition')
+				setTimeout(() => {
+					workpackage.classList.remove('workpackage-transition')
+				}, 3000)
+			})
 		},
 		async routeToTheWorkPackage(workpackageId, projectId) {
 			let response
@@ -288,6 +293,21 @@ export default {
 		margin: 0 10px;
 		border-bottom: 1px solid rgb(237 237 237);
 	}
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+		background-color: var(--color-background-dark);
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.workpackage-transition {
+	animation: fade-in 3s 1;
 }
 
 body.theme--dark .linked-workpackages--workpackage--unlink {

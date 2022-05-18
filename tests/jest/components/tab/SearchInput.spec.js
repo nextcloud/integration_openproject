@@ -157,7 +157,7 @@ describe('SearchInput.vue tests', () => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
 				await localVue.nextTick()
-				expect(consoleMock).toHaveBeenCalledWith('could not process workpackage data')
+				expect(consoleMock).toHaveBeenCalledWith('could not process work package data')
 				consoleMock.mockRestore()
 				axiosSpy.mockRestore()
 			})
