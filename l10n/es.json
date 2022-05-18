@@ -20,6 +20,7 @@
     "Client ID of the OAuth app in OpenProject" : "ID de cliente de la app de OAuth en OpenProject",
     "Client secret" : "Secreto de cliente",
     "Client secret of the OAuth app in OpenProject" : "Secreto de cliente de la app de OAuth en OpenProject",
+    "Replace" : "Reemplazar",
     "Cancel" : "Cancelar",
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
     "Failed to save OpenProject admin options" : "Fallo al guardar las opciones de administración de OpenProject",

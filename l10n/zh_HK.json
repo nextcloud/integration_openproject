@@ -20,6 +20,8 @@
     "Client ID of the OAuth app in OpenProject" : "OpenProject 中 OAuth 應用程式的客戶端 ID",
     "Client secret" : "客戶端密碼",
     "Client secret of the OAuth app in OpenProject" : "OpenProject 中 OAuth 應用程式的客戶端密碼",
+    "Are you sure you want to replace the OpenProject OAuth client details?" : "您確定要取代 OpenProject OAuth 客戶端細節嗎？",
+    "Replace OpenProject OAuth client details" : "取代 OpenProject OAuth 客戶端細節",
     "Replace" : "取代",
     "Cancel" : "取消",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",

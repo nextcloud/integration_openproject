@@ -20,6 +20,8 @@
     "Client ID of the OAuth app in OpenProject" : "OpenProject içindeki OAuth uygulamasının istemci kimliği",
     "Client secret" : "İstemci parolası",
     "Client secret of the OAuth app in OpenProject" : "OpenProject içindeki OAuth uygulamasının istemci parolası",
+    "Are you sure you want to replace the OpenProject OAuth client details?" : "OpenProject OAuth istemci ayrıntılarını değiştirmek istediğinize emin misiniz?",
+    "Replace OpenProject OAuth client details" : "OpenProject OAuth istemci ayrıntılarını değiştir",
     "Replace" : "Değiştir",
     "Cancel" : "İptal",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",

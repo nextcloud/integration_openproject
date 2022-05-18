@@ -20,6 +20,8 @@
     "Client ID of the OAuth app in OpenProject" : "Client-ID der OAuth-App in OpenProject",
     "Client secret" : "Geheime Zeichenkette des Clients",
     "Client secret of the OAuth app in OpenProject" : "Client-Geheimnis der OAuth-App in OpenProject",
+    "Are you sure you want to replace the OpenProject OAuth client details?" : "Möchten Sie die OpenProject-OAuth-Clientdetails wirklich ersetzen?",
+    "Replace OpenProject OAuth client details" : "Die OpenProject-OAuth-Clientdetails ersetzen",
     "Replace" : "Ersetzen",
     "Cancel" : "Abbrechen",
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",

@@ -7,6 +7,7 @@ OC.L10N.register(
     "Connected accounts" : "חשבונות מקושרים",
     "Client ID" : "מזהה לקו",
     "Client secret" : "סוד לקוח",
+    "Replace" : "החלפה",
     "Cancel" : "ביטול",
     "Enable navigation link" : "הפעלת קישור ניווט",
     "Incorrect access token" : "אסימון הגישה שגוי"
