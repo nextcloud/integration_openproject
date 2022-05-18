@@ -36,7 +36,7 @@ import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper'
 import { STATE } from '../../utils'
 
@@ -137,11 +137,14 @@ export default {
 			try {
 				await axios.post(url, params, config)
 				this.$emit('saved', selectedOption)
+				showSuccess(
+					this.translate('Work package linked successfully!')
+				)
 				this.resetState()
 				this.emptySearchInput()
 			} catch (e) {
 				showError(
-					this.translate('Failed to link file to work-package')
+					this.translate('Failed to link file to work package')
 				)
 			}
 		},
@@ -175,7 +178,7 @@ export default {
 						}
 					}
 				} catch (e) {
-					console.error('could not process workpackage data')
+					console.error('could not process work package data')
 				}
 			}
 		},
