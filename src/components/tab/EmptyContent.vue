@@ -131,9 +131,11 @@ export default {
 	}
 }
 
-body[data-theme-dark] {
-	.empty-content--message--title {
-		color: #cfcfcf;
-	}
+body.theme--dark .empty-content--message--title {
+	color: #cfcfcf;
+}
+
+body[data-theme-dark] .empty-content--message--title {
+	color: #cfcfcf;
 }
 </style>

@@ -30,7 +30,6 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
-use Psr\Log\LoggerInterface;
 
 use OCA\OpenProject\AppInfo\Application;
 
@@ -53,11 +52,6 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $config;
 
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
 	public function __construct(
 		IL10N $l10n,
 		IInitialState $initialStateService,
@@ -69,7 +63,6 @@ class OpenProjectWidget implements IWidget {
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
-		$this->logger = $logger;
 	}
 
 	/**
