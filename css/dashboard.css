@@ -1,6 +1,6 @@
 .icon-openproject {
 	background-image: url(./../img/app.svg);
-	filter: contrast(0) brightness(0);
+	filter: contrast(0) brightness(0) !important;
 	min-width: 32px !important;
 }
 
@@ -31,19 +31,25 @@
 	background-image: url(./../img/app.svg);
 }
 
-
 .icon-noConnection {
 	background-image: url(./../img/noConnection.svg);
 }
 
-body.theme--dark .icon-open-project::after,
-body.theme--dark .icon-openproject,
-body[data-theme-dark] .icon-open-project::after,
-body[data-theme-dark] .icon-openproject
-{
-	filter: none;
+body.theme--dark .icon-open-project::after {
+	filter: none !important;
 }
 
+body.theme--dark .icon-openproject {
+	filter: none !important;
+}
+
+body[data-theme-dark] .icon-open-project::after {
+	filter: none !important;
+}
+
+body[data-theme-dark] .icon-openproject {
+	filter: none !important;
+}
 
 body.theme--dark .icon-close, .icon-checkmark, .icon-noConnection {
 	filter: var(--background-invert-if-dark);

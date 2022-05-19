@@ -99,8 +99,6 @@ class OpenProjectWidget implements IWidget {
 	public function getIconClass(): string {
 		$currentVersion = implode('.', Util::getVersion());
 
-		$this->logger->error('Current version: ' . $currentVersion, ['app' => Application::APP_ID]);
-		
 		return version_compare($currentVersion, '25') >= 0
 			? 'icon-openproject'
 			: 'icon-open-project';
