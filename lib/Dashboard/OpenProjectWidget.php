@@ -93,7 +93,7 @@ class OpenProjectWidget implements IWidget {
 
 		return version_compare($currentVersion, '25') >= 0
 			? 'icon-openproject'
-			: 'icon-open-project';
+			: 'icon-openproject-till-nc-25';
 	}
 
 	/**
