@@ -22,6 +22,8 @@ OC.L10N.register(
     "Client ID of the OAuth app in OpenProject" : "Identif. klienta OAuth aplikace v OpenProject",
     "Client secret" : "Klientské tajemství",
     "Client secret of the OAuth app in OpenProject" : "Klientské tajemství OAuth aplikace v OpenProject",
+    "Are you sure you want to replace the OpenProject OAuth client details?" : "Opravdu chcete nahradit podrobnosti OpenProject OAuth klienta?",
+    "Replace OpenProject OAuth client details" : "Nahradit podrobnosti OpenProject OAuth klienta",
     "Replace" : "Nahradit",
     "Cancel" : "Storno",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
