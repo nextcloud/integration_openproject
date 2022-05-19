@@ -36,16 +36,17 @@
 	background-image: url(./../img/noConnection.svg);
 }
 
-body.theme--dark .icon-open-project::after {
+body.theme--dark .icon-open-project::after,
+body.theme--dark .icon-openproject,
+body[data-theme-dark] .icon-open-project::after,
+body[data-theme-dark] .icon-openproject
+{
 	filter: none;
 }
 
-body[data-theme-dark] .icon-openproject {
-	filter: none;
-}
 
-body.theme--dark .icon-openproject {
-	filter: none;
+body.theme--dark .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: var(--background-invert-if-dark);
 }
 
 body[data-theme-dark] .icon-close, .icon-checkmark, .icon-noConnection {

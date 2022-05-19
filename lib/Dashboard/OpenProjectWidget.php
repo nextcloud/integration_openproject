@@ -30,6 +30,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 use OCA\OpenProject\AppInfo\Application;
 
@@ -52,16 +53,23 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $config;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	public function __construct(
 		IL10N $l10n,
 		IInitialState $initialStateService,
 		IURLGenerator $url,
-		IConfig $config
+		IConfig $config,
+		LoggerInterface $logger
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -89,8 +97,13 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
+		$currentVersion = implode('.', Util::getVersion());
+
+		$this->logger->error('Current version: ' . $currentVersion, ['app' => Application::APP_ID]);
 		
-		return 'icon-open-project';
+		return version_compare($currentVersion, '25') >= 0
+			? 'icon-openproject'
+			: 'icon-open-project';
 	}
 
 	/**
