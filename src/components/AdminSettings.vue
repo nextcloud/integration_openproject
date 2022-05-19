@@ -143,7 +143,7 @@ export default {
 		}
 	}
 	.icon-details, .icon-link, .icon-category-auth {
-		filter: var(--background-invert-if-dark);
+		filter: contrast(0);
 	}
 }
 

@@ -51,10 +51,22 @@ body[data-theme-dark] .icon-openproject {
 	filter: none !important;
 }
 
+body[data-theme-dark-highcontrast] .icon-openproject {
+	filter: none !important;
+}
+
+body[data-theme-dark-highcontrast] .icon-openproject-till-nc-25::after {
+	filter: none !important;
+}
+
 body.theme--dark .icon-close, .icon-checkmark, .icon-noConnection {
-	filter: var(--background-invert-if-dark);
+	filter: contrast(0);
 }
 
 body[data-theme-dark] .icon-close, .icon-checkmark, .icon-noConnection {
-	filter: var(--background-invert-if-dark);
+	filter: contrast(0);
+}
+
+body[data-theme-dark-highcontrast] .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: contrast(0);
 }

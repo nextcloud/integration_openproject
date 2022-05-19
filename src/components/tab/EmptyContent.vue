@@ -131,7 +131,7 @@ export default {
 	}
 }
 
-body.theme--dark, body[data-theme-dark] {
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 	.empty-content--message--title {
 		color: #cfcfcf;
 	}

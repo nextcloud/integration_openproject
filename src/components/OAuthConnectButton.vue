@@ -93,7 +93,7 @@ export default {
 	}
 }
 
-body[data-theme-dark], body.theme--dark {
+body[data-theme-dark], body[data-theme-dark-highcontrast] body.theme--dark {
 	.oauth-connect--message {
 		color: #cfcfcf;
 	}

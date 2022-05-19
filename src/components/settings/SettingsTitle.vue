@@ -30,4 +30,12 @@ export default {
 		padding-left: 10px;
 	}
 }
+
+body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
+	.settings-title {
+		.icon-openproject {
+			filter: none !important;
+		}
+	}
+}
 </style>
