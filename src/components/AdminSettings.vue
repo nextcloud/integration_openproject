@@ -132,22 +132,29 @@ export default {
 		display: grid;
 		grid-template: 1fr / 1fr 1fr;
 		margin-left: 30px;
+
 		label {
 			line-height: 38px;
 		}
+
 		input {
 			width: 100%;
 		}
+
 		.icon {
 			margin-bottom: -3px;
 		}
-	}
-	.icon-details, .icon-link, .icon-category-auth {
-		filter: contrast(0);
 	}
 }
 
 .save-config-btn, .update-config-btn {
 	margin-left: 30px;
 }
+
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
+	.icon-details, .icon-link, .icon-category-auth {
+		filter: contrast(0);
+	}
+}
+
 </style>

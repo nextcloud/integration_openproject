@@ -310,7 +310,7 @@ export default {
 	animation: fade-in 3s 1;
 }
 
-body.theme--dark, body[data-theme-dark] {
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 	.linked-workpackages--workpackage--unlink {
 		filter: invert(100%);
 	}
