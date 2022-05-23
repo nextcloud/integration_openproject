@@ -46,11 +46,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @var string
 	 */
-	private $mockServerBaseUri;
-
-	/**
-	 * @var string
-	 */
 	private $clientId = 'U3V9_l262pNSENBnsqD2Uwylv5hQWCQ8lFPjCvGPbQc';
 
 	/**
@@ -106,7 +101,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function setupMockServer(): void {
 		$config = new MockServerEnvConfig();
 		$this->builder = new InteractionBuilder($config);
-		$this->mockServerBaseUri = $config->getBaseUri()->__toString();
 	}
 
 	/**
@@ -155,10 +149,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IRootFolder|null $storageMock
 	 * @param string $oAuthToken
 	 * @param string $baseUrl
+	 * @param string $userId
 	 * @return OpenProjectAPIService
 	 */
 	private function getOpenProjectAPIService(
-		$storageMock = null, $oAuthToken = '1234567890', $baseUrl = 'https://nc.my-server.org'
+		$storageMock = null, $oAuthToken = '1234567890', $baseUrl = 'https://nc.my-server.org', $userId = 'testUser'
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
@@ -206,9 +201,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->defaultConfigMock
 			->method('getUserValue')
 			->withConsecutive(
-				['testUser', 'integration_openproject', 'token'],
-				['testUser', 'integration_openproject', 'refresh_token'],
-				['testUser', 'integration_openproject', 'token'],
+				[$userId, 'integration_openproject', 'token'],
+				[$userId, 'integration_openproject', 'refresh_token'],
+				[$userId, 'integration_openproject', 'token'],
 			)
 			->willReturnOnConsecutiveCalls(
 				$oAuthToken,
@@ -722,16 +717,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setBody('dataOfTheImage');
 
 		$this->builder
-			->uponReceiving('a request to get the avatar of a user')
+			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-
-		$result = $this->service->getOpenProjectAvatar(
-			$this->mockServerBaseUri,
-			'1234567890',
-			'myRefreshToken',
-			$this->clientId,
-			$this->clientSecret,
+		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'userWithAvatar');
+		$result = $service->getOpenProjectAvatar(
 			'userWithAvatar',
 			'Me'
 		);
@@ -748,7 +738,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath('/api/v3/users/userWithoutAvatar/avatar')
+			->setPath('/api/v3/users/testUser/avatar')
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -761,12 +751,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$result = $this->service->getOpenProjectAvatar(
-			$this->mockServerBaseUri,
-			'1234567890',
-			'myRefreshToken',
-			$this->clientId,
-			$this->clientSecret,
-			'userWithoutAvatar',
+			'testUser',
 			'Me'
 		);
 		$this->assertArrayHasKey('avatar', $result);
@@ -1161,6 +1146,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$this->clientId,
 				$this->clientSecret,
 				'http://openproject.org',
+			);
+		$configMock
+			->method('getUserValue')
+			->withConsecutive(
+				['','integration_openproject', 'token'],
+				['','integration_openproject', 'refresh_token'],
+			)
+			->willReturnOnConsecutiveCalls(
+				'',
+				'',
 			);
 
 		$service = new OpenProjectAPIService(

@@ -34,10 +34,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url'],
-			)->willReturnOnConsecutiveCalls('cliendID', 'clientSecret', 'http://openproject.org');
+			)->willReturnOnConsecutiveCalls('http://openproject.org');
 	}
 
 	/**
@@ -119,11 +117,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
 				'id', 'name'
 			)
 			->willReturn(['avatar' => 'some image data', 'type' => 'image/png']);
@@ -157,11 +150,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
-				$this->anything(),
 				'id', 'name'
 			)
 			->willReturn(['avatar' => 'some image data']);
