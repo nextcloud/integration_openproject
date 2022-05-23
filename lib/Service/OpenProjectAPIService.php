@@ -19,6 +19,7 @@ use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Http\Client\IResponse;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -360,10 +361,8 @@ class OpenProjectAPIService {
 	 * @param string $endPoint
 	 * @param array<mixed> $params
 	 * @param string $method
+	 * @return array{error: string} | IResponse
 	 */
-	// as we are returning the response as it is the
-	// return type of this function can be of different types
-	// @phpstan-ignore-next-line
 	private function rawRequest(string $accessToken, string $openprojectUrl,
 							   string $endPoint, array $params = [], string $method = 'GET') {
 		$url = $openprojectUrl . '/api/v3/' . $endPoint;
