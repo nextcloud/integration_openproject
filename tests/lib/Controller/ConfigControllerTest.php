@@ -334,8 +334,9 @@ class ConfigControllerTest extends TestCase {
 		$count = 0;
 		$function = function (IUser $user) use (&$count) {
 			$count++;
+			return null;
 		};
-		$userManager->callForAllUsers($function, '', true);
+		$userManager->callForAllUsers($function);
 		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
 		$user1 = $userManager->createUser('test101', 'test101');
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
