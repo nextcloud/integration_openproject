@@ -63,7 +63,7 @@ export default {
 			return this.state === STATE.LOADING
 		},
 		showMoreUrl() {
-			return this.openprojectUrl + '/projects'
+			return this.openprojectUrl + '/notifications'
 		},
 		items() {
 			return this.notifications.map((n) => {
@@ -199,37 +199,31 @@ export default {
 			return notifications
 		},
 		getNotificationTarget(n) {
-			const projectId = n._links?.project?.href
-				? n._links.project.href.replace(/.*\//, '')
+			const wpId = n._links?.resource?.href
+				? n._links.resource.href.replace(/.*\//, '')
 				: null
-			return projectId
-				? this.openprojectUrl + '/projects/' + projectId + '/work_packages/' + n.id
+			return wpId
+				? this.openprojectUrl + '/notifications/details/' + wpId + '/activity/'
 				: ''
 		},
 		getUniqueKey(n) {
 			return n.id + ':' + n.updatedAt
 		},
 		getAuthorShortName(n) {
-			return n._links?.assignee?.title
-				? n._links.assignee.title
-				: n._links?.author?.title
-					? n._links.author.title
-					: undefined
+			return n._links?.actor?.title
+				? n._links.actor.title
+				: undefined
 		},
 		getAuthorFullName(n) {
 			return n.firstname + ' ' + n.lastname
 		},
 		getAuthorAvatarUrl(n) {
-			const userId = n._links?.assignee?.href
-				? n._links.assignee.href.replace(/.*\//, '')
-				: n._links?.author?.href
-					? n._links.author.href.replace(/.*\//, '')
-					: null
-			const userName = n._links?.assignee?.title
-				? n._links.assignee.title
-				: n._links?.author?.title
-					? n._links.author.title
-					: null
+			const userId = n._links?.actor?.href
+				? n._links.actor.href.replace(/.*\//, '')
+				: null
+			const userName = n._links?.actor?.title
+				? n._links.actor.title
+				: null
 			return userId
 				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
 				: ''
@@ -244,16 +238,10 @@ export default {
 			return generateUrl('/svg/core/actions/sound?color=' + this.themingColor)
 		},
 		getSubline(n) {
-			const description = n.description?.raw
-				? n.description.raw
-				: ''
-			const status = n._links?.status?.title
-				? '[' + n._links.status.title + '] '
-				: ''
-			return status + description
+			return n._links.project.title + ' - ' + t('integration_openproject', n.reason)
 		},
 		getTargetTitle(n) {
-			return n.subject
+			return n._links.resource.title
 		},
 		getFormattedDate(n) {
 			return moment(n.updated_at).format('LLL')

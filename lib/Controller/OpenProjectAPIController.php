@@ -95,14 +95,13 @@ class OpenProjectAPIController extends Controller {
 	 * get notifications list
 	 * @NoAdminRequired
 	 *
-	 * @param ?string $since
 	 * @return DataResponse
 	 */
-	public function getNotifications(?string $since = null): DataResponse {
+	public function getNotifications(): DataResponse {
 		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
-		$result = $this->openprojectAPIService->getNotifications($this->userId, $since, 7);
+		$result = $this->openprojectAPIService->getNotifications($this->userId);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {

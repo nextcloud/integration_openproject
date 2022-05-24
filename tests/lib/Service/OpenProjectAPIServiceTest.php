@@ -62,6 +62,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @var string
 	 */
+	private $notificationsPath = '/api/v3/notifications';
+
+	/**
+	 * @var string
+	 */
 	private $fileLinksPath = '/api/v3/file_links';
 
 	/**
@@ -480,10 +485,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath($this->workPackagesPath)
-			->setHeaders(["Authorization" => "Bearer 1234567890"])
-			->addQueryParameter('filters', '[{"status":{"operator":"!","values":["14"]}}]')
-			->addQueryParameter('sortBy', '[["updatedAt", "desc"]]');
+			->setPath($this->notificationsPath)
+			->setQuery("filters=" . \Safe\json_encode([[
+				'readIAN' =>
+					['operator' => '=', 'values' => ['f']]
+			]]))
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
 		$providerResponse
@@ -492,7 +499,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setBody(["_embedded" => ["elements" => [['some' => 'data']]]]);
 
 		$this->builder
-			->uponReceiving('a GET request to /work_packages with filter and sorting')
+			->uponReceiving('a GET request to /notifications')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
@@ -521,7 +528,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn($response);
-		$result = $service->getNotifications('', '');
+		$result = $service->getNotifications('');
 		$this->assertSame(["error" => "Malformed response"], $result);
 	}
 
@@ -532,38 +539,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'my error']);
-		$result = $service->getNotifications('', '');
+		$result = $service->getNotifications('');
 		$this->assertSame(["error" => "my error"], $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testGetNotificationsFilters() {
-		$service = $this->getServiceMock(['request', 'now']);
-		$service->method('now')
-			->willReturn("2022-01-27T08:15:48Z");
-		$service->expects($this->once())
-			->method('request')
-			->with(
-				'user', 'work_packages',
-				[
-					'filters' => '[{"updatedAt":{"operator":"<>d","values":["2022-01-01T12:01:01Z","2022-01-27T08:15:48Z"]}},{"status":{"operator":"!","values":["14"]}}]',
-					'sortBy' => '[["updatedAt", "desc"]]'
-				]);
-
-		$service->getNotifications('user', '2022-01-01T12:01:01Z');
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testGetNotificationsLimit() {
-		$service = $this->getServiceMock();
-		$service->method('request')
-			->willReturn(["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]);
-		$result = $service->getNotifications('', '', 2);
-		$this->assertSame([['id' => 1], ['id' => 2]], $result);
 	}
 
 	/**
