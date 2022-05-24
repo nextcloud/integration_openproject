@@ -79,11 +79,15 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 				[$this->anything(), 'integration_openproject', 'token'],
 				[$this->anything(), 'integration_openproject', 'notification_enabled'],
 				[$this->anything(), 'integration_openproject', 'last_notification_check'],
+				[$this->anything(), 'integration_openproject', 'token'],
+				[$this->anything(), 'integration_openproject', 'refresh_token'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'123456',
 				'1',
-				$lastNotificationCheck
+				$lastNotificationCheck,
+				'123456',
+				'refresh-token',
 			);
 
 		$configMock
