@@ -7,7 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Erro durante as trocas OAuth",
     "OpenProject notifications" : "Notificações do OpenProject",
     "OpenProject activity" : "Atividade OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Você tem 1%s notificação em {instance}","Você tem %s notificações em  {instance}"],
+    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Você tem 1%s notificação em {instance}","Você tem %s notificações em  {instance}","Você tem %s notificações em  {instance}"],
     "Bad HTTP method" : "Método HTTP incorreto",
     "OAuth access token refused" : "Token de acesso OAuth recusado",
     "Connected accounts" : "Contas conectadas",
@@ -57,4 +57,4 @@ OC.L10N.register(
     "Work package unlinked" : "Pacote de trabalho desvinculado",
     "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho"
 },
-"nplurals=2; plural=(n > 1);");
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

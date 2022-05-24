@@ -5,7 +5,7 @@
     "Error during OAuth exchanges" : "Errore nello scambio dati OAuth",
     "OpenProject notifications" : "Notifiche OpenProject ",
     "OpenProject activity" : "Attività OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Hai %s notifica in {instance}","Hai %s notifiche in {instance}"],
+    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Hai %s notifica in {instance}","Hai %s notifiche in {instance}","Hai %s notifiche in {instance}"],
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Connected accounts" : "Account connessi",
@@ -45,5 +45,5 @@
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
     "Existing relations:" : "Relazioni esistenti:"
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
+},"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

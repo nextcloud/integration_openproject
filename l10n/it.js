@@ -7,7 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errore nello scambio dati OAuth",
     "OpenProject notifications" : "Notifiche OpenProject ",
     "OpenProject activity" : "Attività OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Hai %s notifica in {instance}","Hai %s notifiche in {instance}"],
+    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Hai %s notifica in {instance}","Hai %s notifiche in {instance}","Hai %s notifiche in {instance}"],
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Connected accounts" : "Account connessi",
@@ -48,4 +48,4 @@ OC.L10N.register(
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
     "Existing relations:" : "Relazioni esistenti:"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

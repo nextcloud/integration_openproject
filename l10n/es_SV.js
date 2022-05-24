@@ -6,4 +6,4 @@ OC.L10N.register(
     "Replace" : "Reemplazar",
     "Cancel" : "Cancelar"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=2; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
