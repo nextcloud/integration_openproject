@@ -22,6 +22,7 @@ exports[`SearchInput.vue tests work packages multiselect search list should disp
 Object {
   "workpackage": Object {
     "assignee": "test",
+    "fileId": 1234,
     "id": "1",
     "picture": "/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System",
     "project": "test",
@@ -49,6 +50,7 @@ exports[`SearchInput.vue tests work packages multiselect search list should only
 Object {
   "workpackage": Object {
     "assignee": "some assignee",
+    "fileId": 111,
     "id": 1,
     "picture": "http://localhost/apps/integration_openproject/avatar?userId=&userName=some assignee",
     "project": "some project",

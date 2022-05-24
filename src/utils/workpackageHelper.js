@@ -34,6 +34,8 @@ export const workpackageHelper = {
 			|| workPackage._links.status.title === ''
 			|| typeof workPackage._links.type.title !== 'string'
 			|| workPackage._links.type.title === ''
+			|| typeof workPackage.fileId !== 'number'
+			|| workPackage.fileId <= 0
 		) {
 			throw new Error('missing data in workpackage object')
 		}
@@ -60,6 +62,7 @@ export const workpackageHelper = {
 			statusCol: statusColor,
 			typeCol: typeColor,
 			picture: avatarUrl,
+			fileId: workPackage.fileId,
 		}
 	},
 }

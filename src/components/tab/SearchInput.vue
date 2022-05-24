@@ -3,7 +3,7 @@
 		<Multiselect ref="workPackageMultiSelect"
 			class="searchInput"
 			:placeholder="placeholder"
-			:options="searchResults"
+			:options="filterSearchResultsByFileId"
 			:user-select="true"
 			label="displayName"
 			track-by="id"
@@ -81,6 +81,15 @@ export default {
 			}
 			return ''
 		},
+		filterSearchResultsByFileId() {
+			return this.searchResults.filter(wp => {
+				if (wp.fileId === undefined || wp.fileId === '') {
+					console.error('work-package data does not contain a fileId')
+					return false
+				}
+				return wp.fileId === this.fileInfo.id
+			})
+		},
 	},
 	watch: {
 		fileInfo(oldFile, newFile) {
@@ -116,7 +125,7 @@ export default {
 			if (query) {
 				this.resetState()
 				if (query.length <= SEARCH_CHAR_LIMIT) return
-				await this.debounceMakeSearchRequest(query)
+				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 			}
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
@@ -148,7 +157,7 @@ export default {
 				)
 			}
 		},
-		async makeSearchRequest(search) {
+		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}
@@ -162,13 +171,14 @@ export default {
 				response = e.response
 			}
 			this.checkForErrorCode(response.status)
-			if (response.status === 200) await this.processWorkPackages(response.data)
+			if (response.status === 200) await this.processWorkPackages(response.data, fileId)
 			if (this.isStateLoading) this.state = STATE.OK
 		},
-		async processWorkPackages(workPackages) {
+		async processWorkPackages(workPackages, fileId) {
 			for (let workPackage of workPackages) {
 				try {
 					if (this.isStateLoading) {
+						workPackage.fileId = fileId
 						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 						const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 						const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
