@@ -74,6 +74,7 @@ export default {
 	},
 	methods: {
 		updateForm() {
+			this.validateOpenProjectInstance()
 			const that = this
 			OC.dialogs.confirmDestructive(
 				t(
@@ -97,6 +98,7 @@ export default {
 			)
 		},
 		async saveOptions() {
+			this.validateOpenProjectInstance()
 			const req = {
 				values: {
 					client_id: this.state.client_id,
@@ -115,6 +117,16 @@ export default {
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
+			}
+		},
+		async validateOpenProjectInstance() {
+			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
+			const response = await axios.post(url, { url: this.state.oauth_instance_url })
+			if (response.data !== true) {
+				showError(
+					t('integration_openproject', 'No OpenProject detected at the URL')
+				)
+				throw Error()
 			}
 		},
 	},
