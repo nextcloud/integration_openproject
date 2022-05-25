@@ -9,7 +9,12 @@
 
 namespace OCA\OpenProject\Controller;
 
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\Http\Client\IResponse;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -510,5 +515,113 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$response = $controller->deleteFileLink(7);
 		$this->assertSame(Http::STATUS_INTERNAL_SERVER_ERROR, $response->getStatus());
 		$this->assertSame('something went wrong', $response->getData());
+	}
+
+	public function isValidOpenProjectInstanceDataProvider() {
+		return [
+			['{"_type":"Root","instanceName":"OpenProject"}', true],
+			['{"_type":"something","instanceName":"OpenProject"}', false],
+			['{"_type":"Root","someData":"whatever"}', false],
+			['<h1>hello world</h1>', false],
+		];
+	}
+
+	/**
+	 * @return void
+	 * @dataProvider isValidOpenProjectInstanceDataProvider
+	 */
+	public function testIsValidOpenProjectInstance(
+		string $body, bool $expectedResult
+	): void {
+		$response = $this->getMockBuilder(IResponse::class)->getMock();
+		$response->method('getBody')->willReturn($body);
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['rawRequest'])
+			->getMock();
+		$service
+			->method('rawRequest')
+			->willReturn($response);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
+		$this->assertSame($expectedResult, $result->getData());
+	}
+
+
+	/**
+	 * @return array<Exception, bool>
+	 */
+	public function isValidOpenProjectInstanceExpectionDataProvider() {
+		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
+		$privateInstance = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$privateInstance->method('getBody')->willReturn(
+			'{"_type":"Error","errorIdentifier":"urn:openproject-org:api:v3:errors:Unauthenticated"}'
+		);
+		$notOP = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$notOP->method('getBody')->willReturn(
+			'Unauthenticated'
+		);
+		$notOPButJSON = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$notOPButJSON->method('getBody')->willReturn(
+			'{"what":"Error","why":"Unauthenticated"}'
+		);
+		$otherResponseMock = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+
+		return [
+			[
+				new ConnectException('a connection problem', $requestMock),
+				false
+			],
+			[
+				new ClientException('valid but private instance', $requestMock, $privateInstance),
+				true
+			],
+			[
+				new ClientException('not a OP instance', $requestMock, $notOP),
+				false
+			],
+			[
+				new ClientException('not a OP instance but return JSON', $requestMock, $notOPButJSON),
+				false
+			],
+			[
+				new ServerException('some server issue', $requestMock, $otherResponseMock),
+				false
+			],
+			[
+				new BadResponseException('some issue', $requestMock, $otherResponseMock),
+				false
+			],
+			[
+				new \Exception('some issue'),
+				false
+			],
+
+		];
+	}
+
+	/**
+	 * @dataProvider isValidOpenProjectInstanceExpectionDataProvider
+	 * @param Exception $thrownException
+	 * @param bool $expectedResult
+	 * @return void
+	 */
+	public function testIsValidOpenProjectInstancePrivateInstance(
+		$thrownException, bool $expectedResult
+	): void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['rawRequest'])
+			->getMock();
+		$service
+			->method('rawRequest')
+			->willThrowException($thrownException);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
+		$this->assertSame($expectedResult, $result->getData());
 	}
 }

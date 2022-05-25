@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
@@ -270,5 +271,49 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
+	}
+
+	/**
+	 * check if there is a OpenProject behind a certain URL
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 *
+	 * @param string $url
+	 *
+	 * @return DataResponse
+	 */
+	public function isValidOpenProjectInstance(string $url): DataResponse {
+		try {
+			$response = $this->openprojectAPIService->rawRequest('', $url, '');
+			$body = (string) $response->getBody();
+			$decodedBody = json_decode($body, true);
+			if (
+				$decodedBody &&
+				isset($decodedBody['_type']) &&
+				isset ($decodedBody['instanceName']) &&
+				$decodedBody['_type'] === 'Root' &&
+				$decodedBody['instanceName'] !== ''
+			) {
+				return new DataResponse(true);
+			}
+		} catch (ClientException $e) {
+			$response = $e->getResponse();
+			$body = (string) $response->getBody();
+			$decodedBody = json_decode($body, true);
+			if (
+				$decodedBody &&
+				isset($decodedBody['_type']) &&
+				isset ($decodedBody['errorIdentifier']) &&
+				$decodedBody['_type'] === 'Error' &&
+				$decodedBody['errorIdentifier'] !== ''
+			) {
+				return new DataResponse(true);
+			}
+		} catch (Exception $e) {
+			return new DataResponse(false);
+		}
+		return new DataResponse(false);
+
 	}
 }

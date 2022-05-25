@@ -345,7 +345,7 @@ class OpenProjectAPIService {
 	 * @param string $method
 	 * @return array{error: string} | IResponse
 	 */
-	private function rawRequest(string $accessToken, string $openprojectUrl,
+	public function rawRequest(string $accessToken, string $openprojectUrl,
 							   string $endPoint, array $params = [], string $method = 'GET') {
 		$url = $openprojectUrl . '/api/v3/' . $endPoint;
 		$options = [
