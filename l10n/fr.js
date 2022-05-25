@@ -6,7 +6,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
     "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Vous avez %s notification dans {instance}","Vous avez %s notifications dans {instance}","Vous avez %s notifications dans {instance}"],
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
     "Connected accounts" : "Comptes connectés",

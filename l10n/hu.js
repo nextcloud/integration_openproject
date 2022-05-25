@@ -7,7 +7,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
     "OpenProject notifications" : "OpenProject értesítések",
     "OpenProject activity" : "OpenProject tevékenység",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["%s értesítése van itt: {instance}","%s értesítése van itt: {instance}"],
     "Bad HTTP method" : "Hibás HTTP metódus",
     "OAuth access token refused" : "Az OAuth hozzáférési token lekérése visszautasítva",
     "Connected accounts" : "Kapcsolt fiókok",

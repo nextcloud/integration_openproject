@@ -5,7 +5,6 @@
     "Error during OAuth exchanges" : "Chyba při OAuth výměnách",
     "OpenProject notifications" : "Upozorňování z OpenProject",
     "OpenProject activity" : "Aktivita v OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Máte %s upozornění v {instance}","Máte %s upozornění v {instance}","Máte %s upozornění v {instance}","Máte %s upozornění v {instance}"],
     "Bad HTTP method" : "Nesprávná HTTP metoda",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "Connected accounts" : "Propojené účty",

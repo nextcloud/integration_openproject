@@ -7,7 +7,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["{instance} 中有 %s 個通告"],
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "Connected accounts" : "已連線的賬號",

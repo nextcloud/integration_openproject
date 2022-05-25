@@ -7,7 +7,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
     "OpenProject notifications" : "Известия на OpenProject",
     "OpenProject activity" : "Активност на OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Имате %s известие в {instance}","Имате %s notifications in {instance}"],
     "Bad HTTP method" : "Лош HTTP метод",
     "OAuth access token refused" : " Маркерът за достъп OAuth е отказан",
     "Connected accounts" : "Свързани профили",

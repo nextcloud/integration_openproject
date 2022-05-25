@@ -5,7 +5,6 @@
     "Error during OAuth exchanges" : "Błąd podczas zamiany OAuth",
     "OpenProject notifications" : "Powiadomienia OpenProject",
     "OpenProject activity" : "Aktywność OpenProject",
-    "_You have %s notification in {instance}_::_You have %s notifications in {instance}_" : ["Masz %s powiadomienie w {instance}","Masz %s powiadomienia w {instance}","Masz %s powiadomień w {instance}","Masz %s powiadomień w {instance}"],
     "Bad HTTP method" : "Zła metoda HTTP",
     "OAuth access token refused" : "Odmowa tokena dostępu OAuth",
     "Connected accounts" : "Połączone konta",
