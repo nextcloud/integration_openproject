@@ -305,7 +305,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidateOpenProjectURL(string $url, bool $expected) {
-		$result = OpenProjectAPIService::validateOpenProjectURL($url);
+		$result = OpenProjectAPIService::validateURL($url);
 		$this->assertSame($expected, $result);
 	}
 

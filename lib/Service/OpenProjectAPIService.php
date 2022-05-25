@@ -408,7 +408,7 @@ class OpenProjectAPIService {
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		if (!$openprojectUrl || !OpenProjectAPIService::validateOpenProjectURL($openprojectUrl)) {
+		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
 		try {
@@ -519,9 +519,9 @@ class OpenProjectAPIService {
 		}
 	}
 
-	public static function validateOpenProjectURL(string $openprojectUrl): bool {
-		return filter_var($openprojectUrl, FILTER_VALIDATE_URL) &&
-			preg_match('/^https?/', $openprojectUrl);
+	public static function validateURL(string $url): bool {
+		return filter_var($url, FILTER_VALIDATE_URL) &&
+			preg_match('/^https?/', $url);
 	}
 
 	/**
@@ -723,7 +723,7 @@ class OpenProjectAPIService {
 		if (!$checkIfConfigIsSet) {
 			return false;
 		} else {
-			return self::validateOpenProjectURL($oauthInstanceUrl);
+			return self::validateURL($oauthInstanceUrl);
 		}
 	}
 
