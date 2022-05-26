@@ -628,6 +628,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame($expectedResult, $result->getData());
 	}
 
+	/**
+	 * @return array<int, array<int, string>>
+	 */
 	public function isValidOpenProjectInstanceInvalidUrlDataProvider() {
 		return [
 			[ '123' ],
@@ -637,7 +640,6 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 	}
 	/**
-	 * @param $url
 	 * @dataProvider isValidOpenProjectInstanceInvalidUrlDataProvider
 	 * @return void
 	 */

@@ -293,7 +293,7 @@ class OpenProjectAPIController extends Controller {
 			if (
 				$decodedBody &&
 				isset($decodedBody['_type']) &&
-				isset ($decodedBody['instanceName']) &&
+				isset($decodedBody['instanceName']) &&
 				$decodedBody['_type'] === 'Root' &&
 				$decodedBody['instanceName'] !== ''
 			) {
@@ -306,7 +306,7 @@ class OpenProjectAPIController extends Controller {
 			if (
 				$decodedBody &&
 				isset($decodedBody['_type']) &&
-				isset ($decodedBody['errorIdentifier']) &&
+				isset($decodedBody['errorIdentifier']) &&
 				$decodedBody['_type'] === 'Error' &&
 				$decodedBody['errorIdentifier'] !== ''
 			) {
@@ -316,6 +316,5 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(false);
 		}
 		return new DataResponse(false);
-
 	}
 }
