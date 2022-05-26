@@ -517,6 +517,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame('something went wrong', $response->getData());
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function isValidOpenProjectInstanceDataProvider() {
 		return [
 			['{"_type":"Root","instanceName":"OpenProject"}', true],
@@ -551,7 +554,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 
 	/**
-	 * @return array<Exception, bool>
+	 * @return array<mixed>
 	 */
 	public function isValidOpenProjectInstanceExpectionDataProvider() {
 		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
