@@ -98,6 +98,9 @@ describe('AdminSettings', () => {
 				expect(wrapper.find(selectors.saveConfigButton).exists()).toBeFalsy()
 			})
 			it('should trigger confirm dialog on update', async () => {
+				axios.post.mockImplementationOnce(() =>
+					Promise.resolve({ data: true }),
+				)
 				const updateConfigButton = wrapper.find(selectors.updateConfigButton)
 				const inputField = wrapper.find(selectors.oauthClientId)
 				await inputField.setValue('test')
