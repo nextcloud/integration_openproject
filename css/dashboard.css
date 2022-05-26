@@ -1,31 +1,72 @@
 .icon-openproject {
 	background-image: url(./../img/app.svg);
-	filter: contrast(0) brightness(0);
+	filter: contrast(0) brightness(0) !important;
+	min-width: 32px !important;
 }
 
-.icon-noConnection {
-	background-image: url(./../img/noConnection.svg);
-	filter: contrast(0) brightness(0);
-}
-
-.icon-open-project {
+.icon-openproject-till-nc-25 {
 	position: relative;
 }
 
-.panel--header .icon-open-project::after {
-	left: 20px; top: 22%;
+.panel--header .icon-openproject-till-nc-25::after {
+	left: 20px;
+	top: 22%;
+	height: 30px;
+	width: 30px;
+	background-size: 30px;
 }
 
-.icon-open-project::after {
+.panels li .icon-openproject-till-nc-25::after {
+	left: 10%;
+	top: 15%;
+	height: 26px;
+	width: 26px;
+	background-size: 26px;
+}
+
+.icon-openproject-till-nc-25::after {
 	content: '';
 	position: absolute;
-	top: 10%; left: 40%;
-	height: 30px; width: 30px;
-	background-size: 30px 30px;
 	filter: contrast(0) brightness(0);
 	background-image: url(./../img/app.svg);
 }
 
-body.theme--dark .icon-openproject, .icon-noConnection, .icon-open-project::after {
-	filter: none;
+.icon-noConnection {
+	background-image: url(./../img/noConnection.svg);
+}
+
+body.theme--dark .icon-openproject-till-nc-25::after {
+	filter: none !important;
+}
+
+body.theme--dark .icon-openproject {
+	filter: none !important;
+}
+
+body[data-theme-dark] .icon-openproject-till-nc-25::after {
+	filter: none !important;
+}
+
+body[data-theme-dark] .icon-openproject {
+	filter: none !important;
+}
+
+body[data-theme-dark-highcontrast] .icon-openproject {
+	filter: none !important;
+}
+
+body[data-theme-dark-highcontrast] .icon-openproject-till-nc-25::after {
+	filter: none !important;
+}
+
+body.theme--dark .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: contrast(0);
+}
+
+body[data-theme-dark] .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: contrast(0);
+}
+
+body[data-theme-dark-highcontrast] .icon-close, .icon-checkmark, .icon-noConnection {
+	filter: contrast(0);
 }

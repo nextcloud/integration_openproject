@@ -122,31 +122,39 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.grid-form label {
-	line-height: 38px;
-}
+#openproject_prefs {
+	.icon {
+		display: inline-block;
+		width: 32px;
+	}
+	.grid-form {
+		max-width: 500px;
+		display: grid;
+		grid-template: 1fr / 1fr 1fr;
+		margin-left: 30px;
 
-.grid-form input {
-	width: 100%;
-}
+		label {
+			line-height: 38px;
+		}
 
-.grid-form {
-	max-width: 500px;
-	display: grid;
-	grid-template: 1fr / 1fr 1fr;
-	margin-left: 30px;
-}
+		input {
+			width: 100%;
+		}
 
-#openproject_prefs .icon {
-	display: inline-block;
-	width: 32px;
-}
-
-#openproject_prefs .grid-form .icon {
-	margin-bottom: -3px;
+		.icon {
+			margin-bottom: -3px;
+		}
+	}
 }
 
 .save-config-btn, .update-config-btn {
 	margin-left: 30px;
 }
+
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
+	.icon-details, .icon-link, .icon-category-auth {
+		filter: contrast(0);
+	}
+}
+
 </style>

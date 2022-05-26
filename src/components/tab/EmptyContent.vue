@@ -102,6 +102,7 @@ export default {
 		img {
 			height: 50px;
 			width: 50px;
+			filter: var(--background-invert-if-dark);
 		}
 	}
 	&--message {
@@ -127,6 +128,12 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+}
+
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
+	.empty-content--message--title {
+		color: #cfcfcf;
 	}
 }
 </style>

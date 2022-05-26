@@ -1,5 +1,5 @@
 <template>
-	<h2>
+	<h2 class="settings-title">
 		<div class="icon-openproject" />
 		<span>{{ title }}</span>
 	</h2>
@@ -19,17 +19,23 @@ export default {
 <style lang="scss" scoped>
 @import '../../../css/dashboard.css';
 
-.icon-openproject {
-	background-size: cover;
-	height: 23px;
-	width: 23px;
-}
-
-h2 {
+.settings-title {
 	display: flex;
 	align-items: center;
+	.icon-openproject {
+		height: 32px;
+		background-size: cover;
+	}
 	span {
 		padding-left: 10px;
+	}
+}
+
+body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
+	.settings-title {
+		.icon-openproject {
+			filter: none !important;
+		}
 	}
 }
 </style>
