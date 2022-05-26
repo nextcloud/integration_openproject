@@ -1,13 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the save button 1`] = `
+<button class="save-config-btn">
+  Save
+  <div class="icon-loading"></div>
+</button>
+`;
+
+exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the update button 1`] = `
+<button class="update-config-btn">
+  Update
+  <div class="icon-loading"></div>
+</button>
+`;
+
 exports[`AdminSettings form submit when the admin config is not complete should show the save button 1`] = `
 <button class="save-config-btn">
   Save
+  <!---->
 </button>
 `;
 
 exports[`AdminSettings form submit when the admin config status is complete should show the update button 1`] = `
 <button class="update-config-btn">
   Update
+  <!---->
 </button>
 `;
