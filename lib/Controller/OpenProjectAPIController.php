@@ -283,6 +283,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function isValidOpenProjectInstance(string $url): DataResponse {
+		if ($this->openprojectAPIService::validateURL($url) !== true) {
+			return new DataResponse(false);
+		}
 		try {
 			$response = $this->openprojectAPIService->rawRequest('', $url, '');
 			$body = (string) $response->getBody();
