@@ -277,7 +277,6 @@ class OpenProjectAPIController extends Controller {
 	 * check if there is a OpenProject behind a certain URL
 	 *
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 *
 	 * @param string $url
 	 *
