@@ -611,7 +611,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @param bool $expectedResult
 	 * @return void
 	 */
-	public function testIsValidOpenProjectInstancePrivateInstance(
+	public function testIsValidOpenProjectInstanceException(
 		$thrownException, bool $expectedResult
 	): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
@@ -626,5 +626,30 @@ class OpenProjectAPIControllerTest extends TestCase {
 		);
 		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
 		$this->assertSame($expectedResult, $result->getData());
+	}
+
+	public function isValidOpenProjectInstanceInvalidUrlDataProvider() {
+		return [
+			[ '123' ],
+			[ 'htt://something' ],
+			[ '' ],
+			[ 'ftp://something.org ']
+		];
+	}
+	/**
+	 * @param $url
+	 * @dataProvider isValidOpenProjectInstanceInvalidUrlDataProvider
+	 * @return void
+	 */
+	public function testIsValidOpenProjectInstanceInvalidUrl(string $url): void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods([])
+			->getMock();
+		$controller = new OpenProjectAPIController(
+			'integration_openproject', $this->requestMock, $this->configMock, $service, 'test'
+		);
+		$result = $controller->isValidOpenProjectInstance($url);
+		$this->assertFalse($result->getData());
 	}
 }
