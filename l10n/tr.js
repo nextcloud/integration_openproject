@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
     "OpenProject notifications" : "OpenProject bildirimleri",
     "OpenProject activity" : "OpenProject işlemleri",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} için %s yeni bildiriminiz var","{instance} için %s yeni bildiriminiz var"],
     "Bad HTTP method" : "HTTP yöntemi hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "Connected accounts" : "Bağlı hesaplar",

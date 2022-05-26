@@ -5,6 +5,7 @@
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
     "OpenProject notifications" : "OpenProject értesítések",
     "OpenProject activity" : "OpenProject tevékenység",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
     "Bad HTTP method" : "Hibás HTTP metódus",
     "OAuth access token refused" : "Az OAuth hozzáférési token lekérése visszautasítva",
     "Connected accounts" : "Kapcsolt fiókok",
