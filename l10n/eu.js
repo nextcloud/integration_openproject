@@ -28,6 +28,8 @@ OC.L10N.register(
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
     "Incorrect access token" : "Sarbide token okerra",
     "Invalid token" : "Token baliogabea",
+    "No connection with OpenProject" : "Ez dago konexiorik OpenProject-ekin",
+    "No OpenProject links yet" : "Ez dago OpenProject estekarik oraindik",
     "Unexpected Error" : "Ustekabeko errorea",
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
     "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan"

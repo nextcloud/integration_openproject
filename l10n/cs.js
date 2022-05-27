@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Chyba při OAuth výměnách",
     "OpenProject notifications" : "Upozorňování z OpenProject",
     "OpenProject activity" : "Aktivita v OpenProject",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s nové upozornění v {instance}","Máte %s nové upozornění v {instance}","Máte %s nových upozornění v {instance}","Máte %s nové upozornění v {instance}"],
     "Bad HTTP method" : "Nesprávná HTTP metoda",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "Connected accounts" : "Propojené účty",
