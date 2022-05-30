@@ -472,8 +472,14 @@ describe('ProjectsTab.vue Test', () => {
 			err.response = { status: cases.HTTPStatus }
 			axios.get.mockRejectedValueOnce(err)
 			wrapper = mountWrapper()
-			await wrapper.vm.unlinkWorkPackage(15, 6)
-			expect(wrapper.vm.state).toBe(cases.state)
+
+			try {
+				wrapper.vm.unlinkWorkPackage(15, 6)
+			} catch (error) {
+				expect(wrapper.vm.state).toBe(cases.state)
+				expect(error).toBe({ Error: 'could not fetch the delete link of work-package' })
+			}
+
 		})
 	})
 })

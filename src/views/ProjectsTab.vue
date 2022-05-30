@@ -191,7 +191,7 @@ export default {
 				response = await axios.delete(url)
 			} else {
 				this.checkForErrorCode(response.status)
-				throw new Error()
+				throw new Error('could not fetch the delete link of work-package')
 			}
 			return response
 		},
