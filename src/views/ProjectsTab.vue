@@ -185,13 +185,15 @@ export default {
 			} catch (e) {
 				response = e.response
 			}
-			this.checkForErrorCode(response.status)
 			if (response.status === 200) {
 				const id = this.processLink(response.data, fileId)
 				const url = generateUrl('/apps/integration_openproject/file-links/' + id)
 				response = await axios.delete(url)
-				return response
+			} else {
+				this.checkForErrorCode(response.status)
+				throw new Error()
 			}
+			return response
 		},
 		processLink(data, fileId) {
 			let linkId
