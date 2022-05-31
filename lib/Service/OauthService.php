@@ -50,11 +50,12 @@ class OauthService {
 	 * @return array<mixed>
 	 */
 	public function createNcOauthClient(string $name, string $redirectUri): array {
+		$clientId = $this->secureRandom->generate(64, self::validChars);
 		$client = new Client();
 		$client->setName($name);
-		$client->setRedirectUri($redirectUri);
+		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$client->setSecret($this->secureRandom->generate(64, self::validChars));
-		$client->setClientIdentifier($this->secureRandom->generate(64, self::validChars));
+		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
 		return $this->generateClientInfo($client);

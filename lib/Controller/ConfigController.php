@@ -155,7 +155,7 @@ class ConfigController extends Controller {
 		return new DataResponse([
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
 		]);
-	
+
 	}
 
 	/**
@@ -277,7 +277,7 @@ class ConfigController extends Controller {
 		}
 
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
-		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') . '/oauth/redirect');
+		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/'.'%s'. '/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		return new DataResponse($clientInfo);
 	}

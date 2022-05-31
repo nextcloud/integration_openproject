@@ -37,10 +37,6 @@
 				:readonly="readonly"
 				:placeholder="t('integration_openproject', 'Client secret of the OAuth app in OpenProject')"
 				@focus="readonly = false">
-			<button v-if="state.nc_oauth_client === null"
-				@click="onNextcloudOauthCreateClick">
-				{{ t('integration_openproject', 'Create a Nextcloud OAuth client for OpenProject') }}
-			</button>
 			<span v-if="state.nc_oauth_client === null" />
 			<label v-if="state.nc_oauth_client !== null"
 				for="nextcloud-client-id">
@@ -71,6 +67,12 @@
 			Update
 			<div v-if="isLoading" class="icon-loading" />
 		</button>
+		<br>
+		<button v-if="state.nc_oauth_client === null"
+			class="generate-oauth-client"
+			@click="onNextcloudOauthCreateClick">
+			{{ t('integration_openproject', 'Create a Nextcloud OAuth client for OpenProject') }}
+		</button>
 	</div>
 </template>
 
@@ -90,7 +92,6 @@ export default {
 	components: {
 		SettingsTitle,
 	},
-
 	data() {
 		return {
 			state: loadState('integration_openproject', 'admin-config'),
@@ -110,6 +111,15 @@ export default {
 		},
 		ncClientSecret() {
 			return this.state.nc_oauth_client?.clientSecret
+		},
+	},
+	watch: {
+		'state.oauth_instance_url': {
+			handler(newValue, oldValue) {
+				if (newValue !== oldValue) {
+					this.state.nc_oauth_client = null
+				}
+			},
 		},
 	},
 	methods: {
@@ -215,8 +225,9 @@ export default {
 	}
 }
 
-.save-config-btn, .update-config-btn {
+.save-config-btn, .update-config-btn, .generate-oauth-client{
 	margin-left: 30px;
+	margin-top: 10px;
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
