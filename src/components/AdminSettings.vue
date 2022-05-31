@@ -195,6 +195,7 @@ export default {
 					+ ': ' + error.response.request.responseText
 				)
 			})
+		},
 	},
 }
 </script>
@@ -225,7 +226,7 @@ export default {
 	}
 }
 
-.save-config-btn, .update-config-btn, .generate-oauth-client{
+.save-config-btn, .update-config-btn, .generate-oauth-client {
 	margin-left: 30px;
 	margin-top: 10px;
 }
