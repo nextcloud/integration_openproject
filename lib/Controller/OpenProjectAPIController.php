@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
@@ -98,7 +99,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getNotifications($this->userId);
@@ -121,7 +122,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse(
 				'invalid open project configuration', Http::STATUS_UNAUTHORIZED
 			);
@@ -153,7 +154,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile(int $workpackageId, int $fileId, string $fileName) {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -180,7 +181,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getWorkPackageFileLinks(int $id): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -205,7 +206,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -234,7 +235,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
@@ -258,7 +259,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
-		if ($this->accessToken === '' || !OpenProjectAPIService::validateOpenProjectURL($this->openprojectUrl)) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
@@ -270,5 +271,50 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
+	}
+
+	/**
+	 * check if there is a OpenProject behind a certain URL
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $url
+	 *
+	 * @return DataResponse
+	 */
+	public function isValidOpenProjectInstance(string $url): DataResponse {
+		if ($this->openprojectAPIService::validateURL($url) !== true) {
+			return new DataResponse(false);
+		}
+		try {
+			$response = $this->openprojectAPIService->rawRequest('', $url, '');
+			$body = (string) $response->getBody();
+			$decodedBody = json_decode($body, true);
+			if (
+				$decodedBody &&
+				isset($decodedBody['_type']) &&
+				isset($decodedBody['instanceName']) &&
+				$decodedBody['_type'] === 'Root' &&
+				$decodedBody['instanceName'] !== ''
+			) {
+				return new DataResponse(true);
+			}
+		} catch (ClientException $e) {
+			$response = $e->getResponse();
+			$body = (string) $response->getBody();
+			$decodedBody = json_decode($body, true);
+			if (
+				$decodedBody &&
+				isset($decodedBody['_type']) &&
+				isset($decodedBody['errorIdentifier']) &&
+				$decodedBody['_type'] === 'Error' &&
+				$decodedBody['errorIdentifier'] !== ''
+			) {
+				return new DataResponse(true);
+			}
+		} catch (Exception $e) {
+			return new DataResponse(false);
+		}
+		return new DataResponse(false);
 	}
 }

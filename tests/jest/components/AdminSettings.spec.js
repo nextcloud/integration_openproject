@@ -4,6 +4,8 @@ import axios from '@nextcloud/axios'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
+import { STATE } from '../../../src/utils'
+import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -98,6 +100,9 @@ describe('AdminSettings', () => {
 				expect(wrapper.find(selectors.saveConfigButton).exists()).toBeFalsy()
 			})
 			it('should trigger confirm dialog on update', async () => {
+				axios.post.mockImplementationOnce(() =>
+					Promise.resolve({ data: true }),
+				)
 				const updateConfigButton = wrapper.find(selectors.updateConfigButton)
 				const inputField = wrapper.find(selectors.oauthClientId)
 				await inputField.setValue('test')
@@ -148,6 +153,92 @@ describe('AdminSettings', () => {
 				await wrapper.vm.saveOptions()
 				expect(axiosSpy).toHaveBeenCalledTimes(1)
 				expect(wrapper.vm.isAdminConfigOk).toBe(finalComponentStatus)
+			})
+		})
+		describe('check whether OpenProject instance address is valid', () => {
+			let axiosSpySaveAdminConfig
+			beforeEach(() => {
+				axiosSpySaveAdminConfig = jest.spyOn(axios, 'put')
+					.mockImplementation(() => Promise.resolve({
+						data: {},
+					}))
+			})
+			it('should show the loading indicator while loading for the update button', () => {
+				const wrapper = getWrapper({
+					loadingState: STATE.LOADING,
+					isAdminConfigOk: true,
+				})
+				expect(wrapper.find(selectors.updateConfigButton)).toMatchSnapshot()
+			})
+			it('should show the loading indicator while loading for the save button', () => {
+				const wrapper = getWrapper({
+					loadingState: STATE.LOADING,
+					isAdminConfigOk: false,
+				})
+				expect(wrapper.find(selectors.saveConfigButton)).toMatchSnapshot()
+			})
+
+			describe.each([
+				['incomplete config', selectors.saveConfigButton, false],
+				['complete config', selectors.updateConfigButton, true],
+			])('invalid OpenProject instance with %s',
+				(name, buttonSelector, isAdminConfigOk) => {
+					let axiosSpyIsValidOPInstance
+					let saveConfigButton
+					beforeEach(async () => {
+						axiosSpyIsValidOPInstance = jest.spyOn(axios, 'post')
+							.mockImplementationOnce(() => Promise.resolve({ data: false }))
+
+						const wrapper = getWrapper({
+							isAdminConfigOk,
+						})
+						saveConfigButton = wrapper.find(buttonSelector)
+						const inputField = wrapper.find(selectors.oauthInstance)
+						await inputField.setValue('http://no-openproject-here.org')
+
+					})
+					it('should not save the config', async function() {
+						await saveConfigButton.trigger('click')
+						expect(axiosSpyIsValidOPInstance).toHaveBeenCalledTimes(1)
+						expect(axiosSpySaveAdminConfig).toHaveBeenCalledTimes(0)
+					})
+					it('should show an error message', async () => {
+						const showErrorSpy = jest.spyOn(dialogs, 'showError')
+						await saveConfigButton.trigger('click')
+						await localVue.nextTick()
+						expect(showErrorSpy).toBeCalledTimes(1)
+						showErrorSpy.mockRestore()
+					})
+				})
+			describe('valid OpenProject instance', () => {
+				let axiosSpyIsValidOPInstance
+				beforeEach(() => {
+					axiosSpyIsValidOPInstance = jest.spyOn(axios, 'post')
+						.mockImplementationOnce(() => Promise.resolve({ data: true }))
+				})
+				it('should save the config in case it was incomplete before', async function() {
+					const wrapper = getWrapper({
+						isAdminConfigOk: false,
+					})
+					const saveConfigButton = wrapper.find(selectors.saveConfigButton)
+					const inputField = wrapper.find(selectors.oauthInstance)
+					await inputField.setValue('http://openproject.org')
+					await saveConfigButton.trigger('click')
+					expect(axiosSpyIsValidOPInstance).toHaveBeenCalledTimes(1)
+					expect(axiosSpySaveAdminConfig).toHaveBeenCalledTimes(1)
+				})
+				it('should show the confirmation dialog in case the config was complete before', async () => {
+					const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+					const wrapper = getWrapper({
+						isAdminConfigOk: true,
+					})
+					const updateConfigButton = wrapper.find(selectors.updateConfigButton)
+					const inputField = wrapper.find(selectors.oauthInstance)
+					await inputField.setValue('http://openproject.org')
+					await updateConfigButton.trigger('click')
+					expect(axiosSpyIsValidOPInstance).toHaveBeenCalledTimes(1)
+					expect(confirmSpy).toBeCalledTimes(1)
+				})
 			})
 		})
 	})

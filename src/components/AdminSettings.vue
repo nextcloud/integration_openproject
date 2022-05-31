@@ -38,11 +38,13 @@
 				:placeholder="t('integration_openproject', 'Client secret of the OAuth app in OpenProject')"
 				@focus="readonly = false">
 		</div>
-		<button v-if="!isAdminConfigOk" class="save-config-btn" @click="saveOptions">
+		<button v-if="!isAdminConfigOk" class="save-config-btn" @click="validateOpenProjectInstance">
 			Save
+			<div v-if="isLoading" class="icon-loading" />
 		</button>
-		<button v-else class="update-config-btn" @click="updateForm">
+		<button v-else class="update-config-btn" @click="validateOpenProjectInstance">
 			Update
+			<div v-if="isLoading" class="icon-loading" />
 		</button>
 	</div>
 </template>
@@ -55,6 +57,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
 import { translate as t } from '@nextcloud/l10n'
+import { STATE } from '../utils'
 
 export default {
 	name: 'AdminSettings',
@@ -70,7 +73,13 @@ export default {
 			readonly: true,
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
+			loadingState: STATE.OK,
 		}
+	},
+	computed: {
+		isLoading() {
+			return this.loadingState === STATE.LOADING
+		},
 	},
 	methods: {
 		updateForm() {
@@ -117,6 +126,24 @@ export default {
 				)
 			}
 		},
+		async validateOpenProjectInstance() {
+			this.loadingState = STATE.LOADING
+			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
+			const response = await axios.post(url, { url: this.state.oauth_instance_url })
+			if (response.data !== true) {
+				showError(
+					t('integration_openproject', 'No OpenProject detected at the URL')
+				)
+				this.loadingState = STATE.OK
+				return
+			}
+			if (this.isAdminConfigOk) {
+				this.updateForm()
+			} else {
+				await this.saveOptions()
+			}
+			this.loadingState = STATE.OK
+		},
 	},
 }
 </script>
@@ -157,4 +184,13 @@ body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 	}
 }
 
+.icon-loading {
+	min-height: 0;
+}
+
+.icon-loading:after {
+	height: 14px;
+	width: 14px;
+	top: 0;
+}
 </style>
