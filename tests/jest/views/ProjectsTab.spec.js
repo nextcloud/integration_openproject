@@ -31,7 +31,7 @@ describe('ProjectsTab.vue Test', () => {
 	const existingRelationSelector = '.existing-relations'
 	const searchInputStubSelector = 'searchinput-stub'
 	const linkedWorkpackageSelector = '.workpackage'
-	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlink'
+	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlinkactionbutton'
 
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign

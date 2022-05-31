@@ -39,8 +39,13 @@
 						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
-					<div class="linked-workpackages--workpackage--unlink icon-noConnection"
-						@click="unlink(workpackage.id, fileInfo.id)" />
+					<Actions>
+						<ActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
+							icon="icon-noConnection"
+							@click="unlink(workpackage.id, fileInfo.id)">
+							Unlink WorkPackage
+						</ActionButton>
+					</Actions>
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== filterWorkpackagesByFileId.length-1 }" />
 			</div>
@@ -55,6 +60,8 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
@@ -70,6 +77,8 @@ export default {
 		EmptyContent,
 		SearchInput,
 		WorkPackage,
+		Actions,
+		ActionButton,
 	},
 	data: () => ({
 		error: '',
@@ -290,13 +299,8 @@ export default {
 		&--item {
 			border: none;
 		}
-		&--unlink {
-			position: absolute;
-			top: 12px;
-			right: 14px;
-			height: 15px;
-			width: 18px;
-			align-items: center;
+		&--unlinkactionbutton {
+			margin: 4px;
 			filter: contrast(0) brightness(0);
 			visibility: hidden;
 		}
@@ -306,7 +310,7 @@ export default {
 		background-color: var(--color-background-dark);
 	}
 
-	.linked-workpackages:hover .linked-workpackages--workpackage--unlink {
+	.linked-workpackages:hover .linked-workpackages--workpackage--unlinkactionbutton {
 		visibility: visible;
 		cursor: pointer;
 	}
@@ -334,7 +338,7 @@ export default {
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.linked-workpackages--workpackage--unlink {
+	.linked-workpackages--workpackage--unlinkactionbutton {
 		filter: invert(100%);
 	}
 }
