@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errorea OAuth trukeak egitean",
     "OpenProject notifications" : "OpenProject jakinarazpenak",
     "OpenProject activity" : "OpenProject aktibitatea",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
     "Bad HTTP method" : "HTTP metodo okerra",
     "OAuth access token refused" : "OAuth sarbide tokena ukatua izan da",
     "Connected accounts" : "Konektatutako kontuak",
