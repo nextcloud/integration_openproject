@@ -72,7 +72,7 @@ export default {
 					targetUrl: this.getNotificationTarget(n),
 					avatarUrl: this.getAuthorAvatarUrl(n),
 					avatarUsername: this.getAuthorShortName(n) + 'z',
-					overlayIconUrl: this.getNotificationTypeImage(n),
+					overlayIconUrl: false,
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
 				}
@@ -233,9 +233,6 @@ export default {
 		},
 		getNotificationContent(n) {
 			return ''
-		},
-		getNotificationTypeImage(n) {
-			return generateUrl('/svg/core/actions/sound?color=' + this.themingColor)
 		},
 		getSubline(n) {
 			return n._links.project.title + ' - ' + t('integration_openproject', n.reason)
