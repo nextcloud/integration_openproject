@@ -14,7 +14,9 @@
 				{{ t('integration_openproject', 'OpenProject instance address') }}
 			</label>
 			<input id="openproject-oauth-instance"
+				ref="openproject-oauth-instance-input"
 				v-model="state.oauth_instance_url"
+				:class="{ error: !isOpenProjectInstanceValid }"
 				type="text"
 				:placeholder="t('integration_openproject', 'OpenProject address')">
 			<label for="openproject-client-id">
@@ -74,6 +76,7 @@ export default {
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_openproject/oauth-redirect'),
 			loadingState: STATE.OK,
+			isOpenProjectInstanceValid: true,
 		}
 	},
 	computed: {
@@ -135,6 +138,8 @@ export default {
 					t('integration_openproject', 'No OpenProject detected at the URL')
 				)
 				this.loadingState = STATE.OK
+				this.isOpenProjectInstanceValid = false
+				this.$refs['openproject-oauth-instance-input'].focus()
 				return
 			}
 			if (this.isAdminConfigOk) {
@@ -143,6 +148,7 @@ export default {
 				await this.saveOptions()
 			}
 			this.loadingState = STATE.OK
+			this.isOpenProjectInstanceValid = true
 		},
 	},
 }
@@ -171,6 +177,10 @@ export default {
 		.icon {
 			margin-bottom: -3px;
 		}
+	}
+	.error {
+		color: var(--color-error);
+		border-color: var(--color-error);
 	}
 }
 
