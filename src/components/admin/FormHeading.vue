@@ -1,7 +1,7 @@
 <template>
 	<div class="form-heading"
 		:class="{'h-disabled': isDisabled}">
-		<div v-if="isComplete" class="complete">
+		<div v-if="isComplete && !isDisabled" class="complete">
 			<div class="icon icon-checkmark" />
 		</div>
 		<div v-else class="count">
