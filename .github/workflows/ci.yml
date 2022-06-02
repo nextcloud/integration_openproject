@@ -47,7 +47,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.1
+        uses: skjnldsv/read-package-engines-version-actions@v1.2
         id: versions
         with:
           fallbackNode: '^14'
