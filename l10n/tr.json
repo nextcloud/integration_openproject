@@ -26,6 +26,7 @@
     "Cancel" : "İptal",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
+    "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
     "Connect to OpenProject" : "OpenProject bağlantısı kur",
     "Some OpenProject integration application settings are not working." : "OpenProject bütünleşme uygulamasının bazı ayarları çalışmıyor.",
     "Failed to save OpenProject OAuth state" : "OpenProject OAuth durumu kaydedilemedi",

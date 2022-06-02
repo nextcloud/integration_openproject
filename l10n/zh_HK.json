@@ -26,6 +26,7 @@
     "Cancel" : "取消",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
+    "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "Connect to OpenProject" : "連接到 OpenProject",
     "Some OpenProject integration application settings are not working." : "某些 OpenProject 集成應用程序設置不起作用。",
     "Failed to save OpenProject OAuth state" : "儲存 OpenProject OAuth 狀態失敗",

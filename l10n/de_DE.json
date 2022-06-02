@@ -26,6 +26,7 @@
     "Cancel" : "Abbrechen",
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
+    "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
     "Connect to OpenProject" : "Mit OpenProject verbinden",
     "Some OpenProject integration application settings are not working." : "Einige Anwendungseinstellungen der OpenProject-Integration funktionieren nicht.",
     "Failed to save OpenProject OAuth state" : "Fehler beim Speichern des OpenProject OAuth-Status",

@@ -28,6 +28,7 @@ OC.L10N.register(
     "Cancel" : "Anuluj",
     "OpenProject admin options saved" : "Zapisano opcje administratora OpenProject",
     "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",
+    "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject",
     "Connect to OpenProject" : "Połącz się z OpenProject",
     "Some OpenProject integration application settings are not working." : "Niektóre ustawienia aplikacji integracyjnej OpenProject nie działają.",
     "Failed to save OpenProject OAuth state" : "Nie udało się zapisać statusu OAuth OpenProject",

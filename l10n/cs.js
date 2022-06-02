@@ -28,6 +28,7 @@ OC.L10N.register(
     "Cancel" : "Storno",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
+    "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
     "Connect to OpenProject" : "Připojeno k OpenProject",
     "Some OpenProject integration application settings are not working." : "Některá nastavení aplikace pro napojení na OpenProject nefungují.",
     "Failed to save OpenProject OAuth state" : "Nepodařilo se uložit OAuth stav pro OpenProject",
