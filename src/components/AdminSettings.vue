@@ -39,6 +39,27 @@
 				:readonly="readonly"
 				:placeholder="t('integration_openproject', 'Client secret of the OAuth app in OpenProject')"
 				@focus="readonly = false">
+			<span v-if="state.nc_oauth_client === null" />
+			<label v-if="state.nc_oauth_client !== null"
+				for="nextcloud-client-id">
+				<a class="icon icon-category-auth" />
+				{{ t('integration_openproject', 'Nextcloud client ID') }}
+			</label>
+			<input v-if="state.nc_oauth_client !== null"
+				id="openproject-client-id"
+				type="text"
+				:value="ncClientId"
+				:readonly="true">
+			<label v-if="state.nc_oauth_client !== null"
+				for="nextcloud-client-secret">
+				<a class="icon icon-category-auth" />
+				{{ t('integration_openproject', 'Nextcloud client secret') }}
+			</label>
+			<input v-if="state.nc_oauth_client !== null"
+				id="openproject-client-secret"
+				type="text"
+				:value="ncClientSecret"
+				:readonly="true">
 		</div>
 		<button v-if="!isAdminConfigOk" class="save-config-btn" @click="validateOpenProjectInstance">
 			Save
@@ -47,6 +68,12 @@
 		<button v-else class="update-config-btn" @click="validateOpenProjectInstance">
 			Update
 			<div v-if="isLoading" class="icon-loading" />
+		</button>
+		<br>
+		<button v-if="state.nc_oauth_client === null"
+			class="generate-oauth-client"
+			@click="onNextcloudOauthCreateClick">
+			{{ t('integration_openproject', 'Create a Nextcloud OAuth client for OpenProject') }}
 		</button>
 	</div>
 </template>
@@ -67,7 +94,6 @@ export default {
 	components: {
 		SettingsTitle,
 	},
-
 	data() {
 		return {
 			state: loadState('integration_openproject', 'admin-config'),
@@ -82,6 +108,21 @@ export default {
 	computed: {
 		isLoading() {
 			return this.loadingState === STATE.LOADING
+		},
+		ncClientId() {
+			return this.state.nc_oauth_client?.clientId
+		},
+		ncClientSecret() {
+			return this.state.nc_oauth_client?.clientSecret
+		},
+	},
+	watch: {
+		'state.oauth_instance_url': {
+			handler(newValue, oldValue) {
+				if (newValue !== oldValue) {
+					this.state.nc_oauth_client = null
+				}
+			},
 		},
 	},
 	methods: {
@@ -150,6 +191,17 @@ export default {
 			this.loadingState = STATE.OK
 			this.isOpenProjectInstanceValid = true
 		},
+		onNextcloudOauthCreateClick() {
+			const url = generateUrl('/apps/integration_openproject/nc-oauth')
+			axios.post(url).then((response) => {
+				this.state.nc_oauth_client = response.data
+			}).catch((error) => {
+				showError(
+					t('integration_openproject', 'Failed to create Nextcloud OAuth client')
+					+ ': ' + error.response.request.responseText
+				)
+			})
+		},
 	},
 }
 </script>
@@ -184,8 +236,9 @@ export default {
 	}
 }
 
-.save-config-btn, .update-config-btn {
+.save-config-btn, .update-config-btn, .generate-oauth-client {
 	margin-left: 30px;
+	margin-top: 10px;
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {

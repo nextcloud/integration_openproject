@@ -2,6 +2,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -100,6 +101,7 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
 			'testUser'
 		);
 	}
@@ -160,6 +162,7 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
+			$this->createMock(OauthService::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -216,6 +219,7 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
+			$this->createMock(OauthService::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -293,6 +297,7 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -351,11 +356,13 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'nc_oauth_client_id',''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
+				'123',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
@@ -389,6 +396,7 @@ class ConfigControllerTest extends TestCase {
 			$this->l,
 			$apiService,
 			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
 			'test101'
 		);
 
