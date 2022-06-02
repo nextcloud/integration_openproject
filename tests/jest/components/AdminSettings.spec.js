@@ -185,6 +185,7 @@ describe('AdminSettings', () => {
 				(name, buttonSelector, isAdminConfigOk) => {
 					let axiosSpyIsValidOPInstance
 					let saveConfigButton
+					let inputField
 					beforeEach(async () => {
 						axiosSpyIsValidOPInstance = jest.spyOn(axios, 'post')
 							.mockImplementationOnce(() => Promise.resolve({ data: false }))
@@ -193,7 +194,7 @@ describe('AdminSettings', () => {
 							isAdminConfigOk,
 						})
 						saveConfigButton = wrapper.find(buttonSelector)
-						const inputField = wrapper.find(selectors.oauthInstance)
+						inputField = wrapper.find(selectors.oauthInstance)
 						await inputField.setValue('http://no-openproject-here.org')
 
 					})
@@ -208,6 +209,20 @@ describe('AdminSettings', () => {
 						await localVue.nextTick()
 						expect(showErrorSpy).toBeCalledTimes(1)
 						showErrorSpy.mockRestore()
+					})
+					it('should focus the input field', async () => {
+						await saveConfigButton.trigger('click')
+						await localVue.nextTick()
+						try {
+							expect(inputField.element).toBe(document.activeElement)
+						} catch (e) {
+							throw new Error('input field not in focus')
+						}
+					})
+					it('should set the error class for the input field', async () => {
+						await saveConfigButton.trigger('click')
+						await localVue.nextTick()
+						expect(inputField.attributes().class).toContain('error')
 					})
 				})
 			describe('valid OpenProject instance', () => {
@@ -247,6 +262,7 @@ describe('AdminSettings', () => {
 function getWrapper(data = {}) {
 	return shallowMount(AdminSettings, {
 		localVue,
+		attachTo: document.body,
 		mocks: {
 			t: (app, msg) => msg,
 			generateUrl() {
