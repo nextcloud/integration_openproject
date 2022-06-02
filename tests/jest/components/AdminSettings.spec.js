@@ -80,6 +80,9 @@ describe('AdminSettings', () => {
 				expect(wrapper.find(selectors.updateConfigButton).exists()).toBeFalsy()
 			})
 			it('should not trigger confirm dialog on save', async () => {
+				axios.post.mockImplementationOnce(() =>
+					Promise.resolve({ data: true }),
+				)
 				const saveConfigButton = wrapper.find(selectors.saveConfigButton)
 				const inputField = wrapper.find(selectors.oauthClientId)
 				await inputField.setValue('test')
