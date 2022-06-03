@@ -26,7 +26,7 @@ class AdminSection implements IIconSection {
 	 * @returns string
 	 */
 	public function getID(): string {
-		return 'connected-accounts'; //or a generic id if feasible
+		return 'openproject';
 	}
 
 	/**
@@ -36,7 +36,7 @@ class AdminSection implements IIconSection {
 	 * @return string
 	 */
 	public function getName(): string {
-		return $this->l->t('Connected accounts');
+		return $this->l->t('OpenProject');
 	}
 
 	/**
@@ -52,6 +52,6 @@ class AdminSection implements IIconSection {
 	 * @return ?string The relative path to a an icon describing the section
 	 */
 	public function getIcon(): ?string {
-		return $this->urlGenerator->imagePath('core', 'categories/integration.svg');
+		return $this->urlGenerator->imagePath('integration_openproject', 'app-dark.svg');
 	}
 }
