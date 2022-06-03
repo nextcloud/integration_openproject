@@ -1,29 +1,299 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the save button 1`] = `
-<button class="save-config-btn">
-  Save
-  <div class="icon-loading"></div>
-</button>
+exports[`AdminSettings form heading should be green when the form is complete 1`] = `
+<div class="form-heading">
+  <div class="complete">
+    <div class="icon icon-checkmark"></div>
+  </div>
+  <div class="title green-text">
+    OpenProject Server
+  </div>
+</div>
 `;
 
-exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the update button 1`] = `
-<button class="update-config-btn">
-  Update
-  <div class="icon-loading"></div>
-</button>
+exports[`AdminSettings form heading should be green when the form is complete 2`] = `
+<div class="form-heading">
+  <div class="complete">
+    <div class="icon icon-checkmark"></div>
+  </div>
+  <div class="title green-text">
+    Nextcloud OAuth client
+  </div>
+</div>
 `;
 
-exports[`AdminSettings form submit when the admin config is not complete should show the save button 1`] = `
-<button class="save-config-btn">
-  Save
+exports[`AdminSettings form heading should be green when the form is complete 3`] = `
+<div class="form-heading">
+  <div class="complete">
+    <div class="icon icon-checkmark"></div>
+  </div>
+  <div class="title green-text">
+    OpenProject OAuth settings
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form heading should not be green when the form is incomplete 1`] = `
+<div class="form-heading">
+  <div class="index">
+    1
+  </div>
+  <div class="title">
+    OpenProject Server
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form heading should not be green when the form is incomplete 2`] = `
+<div class="form-heading is-disabled">
+  <div class="index">
+    3
+  </div>
+  <div class="title">
+    Nextcloud OAuth client
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form heading should not be green when the form is incomplete 3`] = `
+<div class="form-heading is-disabled">
+  <div class="index">
+    2
+  </div>
+  <div class="title">
+    OpenProject OAuth settings
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form mode nc oauth form when the form mode is EDIT should not show the form if OP OAuth form is complete and NC oauth credentials are not there 1`] = `
+<div class="nextcloud-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      3
+    </div>
+    <div class="title">
+      Nextcloud OAuth client
+    </div>
+  </div>
   <!---->
-</button>
+</div>
 `;
 
-exports[`AdminSettings form submit when the admin config status is complete should show the update button 1`] = `
-<button class="update-config-btn">
-  Update
+exports[`AdminSettings form mode nc oauth form when the form mode is EDIT should not show the form if OP OAuth form is incomplete 1`] = `
+<div class="nextcloud-oauth-values">
+  <div class="form-heading is-disabled">
+    <div class="index">
+      3
+    </div>
+    <div class="title">
+      Nextcloud OAuth client
+    </div>
+  </div>
   <!---->
-</button>
+</div>
+`;
+
+exports[`AdminSettings form mode nc oauth form when the form mode is EDIT should show the form if OP OAuth form is complete and NC oauth credentials are there 1`] = `
+<div class="nextcloud-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      3
+    </div>
+    <div class="title">
+      Nextcloud OAuth client
+    </div>
+  </div>
+  <div>
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          Nextcloud OAuth client ID *
+        </div> <input id="nextcloud-oauth-client-id" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Copy the following values back into the OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator.</div>
+        </div>
+      </div> <button class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div>
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          Nextcloud OAuth client secret *
+        </div> <input id="nextcloud-oauth-client-secret" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Copy the following values back into the OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator.</div>
+        </div>
+      </div> <button class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div> <button class="submit-btn submit-nextcloud-oauth">
+      <div class="b-icon check-icon"></div> <span>Done</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form mode nc oauth form when the form mode is VIEW should show the field values if the form mode is VIEW 1`] = `
+<div class="nextcloud-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      3
+    </div>
+    <div class="title">
+      Nextcloud OAuth client
+    </div>
+  </div>
+  <div>
+    <div class="field-value"><b class="title">
+        Nextcloud OAuth client ID*:
+      </b>
+      &nbsp;
+      <span>abc</span>
+      <!---->
+    </div>
+    <div class="field-value"><b class="title">
+        Nextcloud OAuth client secret*:
+      </b>
+      &nbsp;
+      <div><span>abcd******************************</span></div>
+      <div class="eye-icon"></div>
+    </div> <button>
+      <div class="b-icon reset-icon"></div> <span>Reset Nextcloud OAuth values</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form mode op oauth form when the form mode is EDIT should not show the form if server host form is incomplete 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading is-disabled">
+    <div class="index">
+      2
+    </div>
+    <div class="title">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`AdminSettings form mode op oauth form when the form mode is EDIT should show the form if server host form is complete 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      2
+    </div>
+    <div class="title">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <!---->
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client ID *
+        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div> <button disabled="disabled" class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div>
+    <!---->
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client secret *
+        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div> <button disabled="disabled" class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div> <button class="submit-btn submit-openproject-oauth">
+      <div class="b-icon check-icon"></div> <span>Save</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form mode op oauth form when the form mode is VIEW should show the saved client values 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <div class="field-value"><b class="title">
+        OpenProject OAuth client ID*:
+      </b>
+      &nbsp;
+      <span>abc</span>
+      <!---->
+    </div>
+    <!---->
+    <div class="field-value pb-1"><b class="title">
+        OpenProject OAuth client secret*:
+      </b>
+      &nbsp;
+      <div><span>defg******************************</span></div>
+      <!---->
+    </div>
+    <!----> <button>
+      <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings form mode server host form when the form mode is EDIT should show the form 1`] = `
+<div class="text-input-wrapper pb-2">
+  <div class="text-input">
+    <div class="text-input-label">
+      OpenProject host *
+    </div> <input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width">
+    <div class="text-input-messages">
+      <div class="text-input-hint">Please introduce your OpenProject host name</div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`AdminSettings form mode server host form when the form mode is VIEW should show the saved host value 1`] = `
+<div class="openproject-server-host">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject Server
+    </div>
+  </div>
+  <div class="field-value pb-1"><b class="title">
+      OpenProject host*:
+    </b>
+    &nbsp;
+    <span>https://example.com</span>
+    <!---->
+  </div>
+  <!----> <button>
+    <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
+    <!---->
+  </button>
+</div>
 `;

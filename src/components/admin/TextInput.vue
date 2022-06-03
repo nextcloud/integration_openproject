@@ -1,5 +1,5 @@
 <template>
-	<div class="input-wrapper">
+	<div class="text-input-wrapper">
 		<div class="text-input">
 			<div class="text-input-label">
 				{{ translate(labelText) }}
@@ -34,6 +34,8 @@
 	</div>
 </template>
 <script>
+import { translate as t } from '@nextcloud/l10n'
+
 export default {
 	name: 'TextInput',
 	props: {
@@ -95,7 +97,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.input-wrapper {
+.text-input-wrapper {
 	display: flex;
 	align-items: center;
 }

@@ -1,23 +1,25 @@
 <template>
 	<div class="form-heading"
-		:class="{'h-disabled': isDisabled}">
+		:class="{'is-disabled': isDisabled}">
 		<div v-if="isComplete && !isDisabled" class="complete">
 			<div class="icon icon-checkmark" />
 		</div>
-		<div v-else class="count">
-			{{ count }}
+		<div v-else class="index">
+			{{ translate(index) }}
 		</div>
 		<div class="title"
 			:class="{'green-text': isComplete}">
-			{{ title }}
+			{{ translate(title) }}
 		</div>
 	</div>
 </template>
 <script>
+import { translate as t } from '@nextcloud/l10n'
+
 export default {
 	name: 'FormHeading',
 	props: {
-		count: {
+		index: {
 			type: String,
 			required: true,
 		},
@@ -34,6 +36,11 @@ export default {
 			default: false,
 		},
 	},
+	methods: {
+		translate(text) {
+			return t('integration_openproject', text)
+		}
+	}
 }
 </script>
 <style lang="scss" scoped>
@@ -58,7 +65,7 @@ export default {
 		}
 	}
 
-	.count {
+	.index {
 		height: 16px;
 		width: 16px;
 		font-size: 14px;
@@ -77,8 +84,8 @@ export default {
 	}
 }
 
-.h-disabled {
-	.count {
+.form-heading.is-disabled {
+	.index {
 		background: #CCCCCC !important;
 	}
 	.title {

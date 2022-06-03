@@ -1,10 +1,10 @@
 /* jshint esversion: 8 */
 
 import axios from '@nextcloud/axios'
-import { createLocalVue, mount } from '@vue/test-utils'
+import {createLocalVue, mount} from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
-import { STATE } from '../../../src/utils'
+import {STATE} from '../../../src/utils'
 import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
@@ -31,6 +31,11 @@ const selectors = {
 	oauthInstance: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
 	oauthClientSecret: '#openproject-client-secret',
+	serverHostForm: '.openproject-server-host',
+	opOauthForm: '.openproject-oauth-values',
+	ncOauthForm: '.nextcloud-oauth-values',
+	formHeading: '.form-heading',
+	textInputWrapper: '.text-input-wrapper',
 }
 
 // eslint-disable-next-line no-import-assign
@@ -44,58 +49,179 @@ initialState.loadState = jest.fn(() => {
 
 describe('AdminSettings', () => {
 	describe("form heading", () => {
-		it("should be green when the form is complete", () => {})
-		it("should not be green when the form is incomplete", () => {})
-	})
-	describe("openproject server form", () => {
-		describe('when the form is complete', () => {
-			it('should show the green form heading', () => {})
+		it("should be green when the form is complete", () => {
+			const wrapper = getWrapper({
+				formState: {
+					server: "COMPLETE",
+					opOauth: "COMPLETE",
+					ncOauth: "COMPLETE"
+
+				}
+			})
+			const serverForm = wrapper.find(selectors.serverHostForm)
+			const ncOauthForm = wrapper.find(selectors.ncOauthForm)
+			const opOauthForm = wrapper.find(selectors.opOauthForm)
+
+			expect(serverForm.find(selectors.formHeading)).toMatchSnapshot()
+			expect(ncOauthForm.find(selectors.formHeading)).toMatchSnapshot()
+			expect(opOauthForm.find(selectors.formHeading)).toMatchSnapshot()
 		})
-		describe('when the form is incomplete', () => {
-			it('should not have the green form heading', () => {})
-		})
-		describe("when the form is in view mode", () => {
-			it("should not show the form", () => {})
-			it('should show the form field values', () => {})
-		})
-		describe("when the form is in edit mode", () => {
-			it("should show the form", () => {})
-			it('should not show the form field values', () => {})
-		})
-	})
-	describe("openproject oauth values form", () => {
-		describe('when the form is complete', () => {
-			it('should show the green form heading', () => {})
-		})
-		describe('when the form is incomplete', () => {
-			it('should not have the green form heading', () => {})
-		})
-		describe("when the form is in view mode", () => {
-			it("should not show the form", () => {})
-			it('should show the form field values', () => {})
-		})
-		describe("when the form is in edit mode", () => {
-			it("should show the form", () => {})
-			it('should not show the form field values', () => {})
-		})
-	})
-	describe("nextcloud oauth values form", () => {
-		describe('when the form is complete', () => {
-			it('should show the green form heading', () => {})
-		})
-		describe('when the form is incomplete', () => {
-			it('should not have the green form heading', () => {})
-		})
-		describe("when the form is in view mode", () => {
-			it("should not show the form", () => {})
-			it('should show the form field values', () => {})
-		})
-		describe("when the form is in edit mode", () => {
-			it("should show the form", () => {})
-			it('should not show the form field values', () => {})
+		it("should not be green when the form is incomplete", () => {
+			const wrapper = getWrapper({
+				formState: {
+					server: "INCOMPLETE",
+					opOauth: "INCOMPLETE",
+					ncOauth: "INCOMPLETE"
+				}
+			})
+			const serverForm = wrapper.find(selectors.serverHostForm)
+			const ncOauthForm = wrapper.find(selectors.ncOauthForm)
+			const opOauthForm = wrapper.find(selectors.opOauthForm)
+
+			expect(serverForm.find(selectors.formHeading)).toMatchSnapshot()
+			expect(ncOauthForm.find(selectors.formHeading)).toMatchSnapshot()
+			expect(opOauthForm.find(selectors.formHeading)).toMatchSnapshot()
 		})
 	})
-	describe('form submit', () => {
+	describe("form mode", () => {
+		describe("server host form", () => {
+			describe("when the form mode is EDIT", () => {
+				it("should show the form", () => {
+					const wrapper = getWrapper({
+						formState: {
+							server: "EDIT",
+						}
+					})
+					const serverForm = wrapper.find(selectors.serverHostForm)
+
+					expect(serverForm.find(selectors.textInputWrapper)).toMatchSnapshot()
+				})
+			})
+			describe("when the form mode is VIEW", () => {
+				it("should show the saved host value", () => {
+					const wrapper = getWrapper({
+						formState: {
+							server: "COMPLETE"
+						},
+						formMode: {
+							server: "VIEW"
+						},
+						state: {
+							oauth_instance_url: "https://example.com"
+						}
+					})
+					expect(wrapper.find(selectors.serverHostForm).html()).toMatchSnapshot()
+				})
+			})
+		})
+		describe("op oauth form", () => {
+			describe("when the form mode is EDIT", () => {
+				it("should show the form if server host form is complete", () => {
+					const wrapper = getWrapper({
+						formState: {
+							server: "COMPLETE"
+						},
+						formMode: {
+							opOauth: "EDIT"
+						}
+					})
+					expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
+				})
+				it("should not show the form if server host form is incomplete", () => {
+					const wrapper = getWrapper({
+						formState: {
+							server: "INCOMPLETE"
+						},
+						formMode: {
+							opOauth: "EDIT"
+						}
+					})
+					expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
+				})
+			})
+			describe("when the form mode is VIEW", () => {
+				it("should show the saved client values", () => {
+					const wrapper = getWrapper({
+						formState: {
+							server: "COMPLETE",
+							opOauth: "COMPLETE"
+						},
+						formMode: {
+							opOauth: "VIEW"
+						},
+						state: {
+							client_id: "abc",
+							client_secret: "defghi"
+						}
+					})
+					expect(wrapper.find(selectors.opOauthForm).html()).toMatchSnapshot()
+				})
+			})
+		})
+		describe("nc oauth form", () => {
+			describe("when the form mode is EDIT", () => {
+				it("should not show the form if OP OAuth form is complete and NC oauth credentials are not there", () => {
+					const wrapper = getWrapper({
+						formState: {
+							opOauth: "COMPLETE"
+						},
+						formMode: {
+							ncOauth: "EDIT"
+						}
+					})
+					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
+				})
+				it("should show the form if OP OAuth form is complete and NC oauth credentials are there", () => {
+					const wrapper = getWrapper({
+						state: {
+							nc_oauth_client: {
+								clientId: 'abc',
+								clientSecret: 'abcd'
+							}
+						},
+						formState: {
+							opOauth: "COMPLETE"
+						},
+						formMode: {
+							ncOauth: "EDIT"
+						}
+					})
+					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
+				})
+				it("should not show the form if OP OAuth form is incomplete", () => {
+					const wrapper = getWrapper({
+						formState: {
+							opOauth: "INCOMPLETE"
+						},
+						formMode: {
+							ncOauth: "EDIT"
+						}
+					})
+					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
+				})
+			})
+			describe("when the form mode is VIEW", () => {
+				it("should show the field values if the form mode is VIEW", () => {
+					const wrapper = getWrapper({
+						state: {
+							nc_oauth_client: {
+								clientId: 'abc',
+								clientSecret: 'abcd'
+							}
+						},
+						formState: {
+							opOauth: "COMPLETE"
+						},
+						formMode: {
+							ncOauth: "VIEW"
+						}
+					})
+					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
+				})
+			})
+		})
+	})
+	describe.skip('form submit', () => {
 		beforeEach(() => {
 			jest.clearAllMocks()
 		})
@@ -295,7 +421,11 @@ describe('AdminSettings', () => {
 })
 
 function getWrapper(data = {}) {
-	return mount(AdminSettings, {
+	const component = {
+		...AdminSettings,
+		created: jest.fn()
+	}
+	return mount(component, {
 		localVue,
 		attachTo: document.body,
 		mocks: {

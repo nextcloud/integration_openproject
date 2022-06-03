@@ -1,8 +1,8 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<SettingsTitle />
-		<div class="openproject-server">
-			<FormHeading count="1"
+		<div class="openproject-server-host">
+			<FormHeading index="1"
 				title="OpenProject Server"
 				:is-complete="isServerHostStateComplete" />
 			<FieldValue v-if="isServerHostStateComplete && !isServerHostFormInEdit"
@@ -36,8 +36,8 @@
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
-		<div class="openproject-oauth">
-			<FormHeading count="2"
+		<div class="openproject-oauth-values">
+			<FormHeading index="2"
 				title="OpenProject OAuth settings"
 				:is-complete="isOPOauthStateComplete"
 				:is-disabled="!isServerHostStateComplete" />
@@ -81,8 +81,8 @@
 					@click="saveOPOauthClientValues" />
 			</div>
 		</div>
-		<div class="nextcloud-oauth">
-			<FormHeading count="3"
+		<div class="nextcloud-oauth-values">
+			<FormHeading index="3"
 				title="Nextcloud OAuth client"
 				:is-complete="isNcOauthStateComplete"
 				:is-disabled="!isOPOauthStateComplete" />
@@ -143,7 +143,7 @@ import FieldValue from './admin/FieldValue'
 import Button from './admin/Button'
 
 const F_STATES = {
-	COMPLETED: 'COMPLETED',
+	COMPLETED: 'COMPLETE',
 	INCOMPLETE: 'INCOMPLETE',
 }
 
