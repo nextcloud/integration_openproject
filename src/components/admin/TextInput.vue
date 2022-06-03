@@ -5,29 +5,29 @@
 				{{ translate(labelText) }}
 			</div>
 			<input :id="id"
-				   ref="textInput"
-				   :value="value"
-				   :type="type"
-				   class="full-width"
-				   :class="{'error': !!errorMessage}"
-				   :placeholder="translate(placeHolder)"
-				   @input="$emit('input', $event.target.value)"
-				   @change="$emit('change', $event.target.value)"
-				   @focus="$emit('focus', $event)"
-				   @blur="$emit('blur', $event)">
+				ref="textInput"
+				:value="value"
+				:type="type"
+				class="full-width"
+				:class="{'error': !!errorMessage}"
+				:placeholder="translate(placeHolder)"
+				@input="$emit('input', $event.target.value)"
+				@change="$emit('change', $event.target.value)"
+				@focus="$emit('focus', $event)"
+				@blur="$emit('blur', $event)">
 			<div v-if="errorMessage || hintText" class="text-input-messages">
 				<div v-if="errorMessage" class="text-input-error">
 					{{ translate(errorMessage) }}
 				</div>
 				<div v-else
-					 class="text-input-hint"
-					 v-html="hintText"
-				/>
+					class="text-input-hint"
+					v-html="hintText" />
 			</div>
 		</div>
-		<button v-if="withCopyBtn" class="copy-btn" @click="copyValue"
+		<button v-if="withCopyBtn"
+			class="copy-btn"
 			:disabled="isDisabled"
-		>
+			@click="copyValue">
 			<div class="copy-icon" />
 			<span>{{ translate("Copy value") }}</span>
 		</button>
@@ -90,7 +90,7 @@ export default {
 		},
 		copyValue() {
 			navigator.clipboard.writeText(this.value)
-		}
+		},
 	},
 }
 </script>

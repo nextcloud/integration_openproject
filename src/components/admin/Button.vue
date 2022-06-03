@@ -2,26 +2,26 @@
 	<button v-on="$listeners">
 		<div v-if="iconClass" class="b-icon" :class="iconClass" />
 		<span>{{ t('integration_openproject', text) }}</span>
-		<div class="icon-loading" v-if="isLoading" />
+		<div v-if="isLoading" class="icon-loading" />
 	</button>
 </template>
 <script>
 export default {
-	name: "Button",
+	name: 'Button',
 	props: {
 		isLoading: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		iconClass: {
 			type: String,
-			default: null
+			default: null,
 		},
 		text: {
 			required: true,
-			type: String
-		}
-	}
+			type: String,
+		},
+	},
 }
 </script>
 <style lang="scss" scoped>
