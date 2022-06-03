@@ -132,6 +132,7 @@ export default {
 }
 
 .copy-btn {
+	cursor: copy;
 	display: flex;
 	align-items: center;
 	margin-left: 10px;

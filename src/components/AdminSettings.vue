@@ -59,7 +59,8 @@
 					is-required
 					class="pb-1"
 					title="OpenProject OAuth client secret"
-					:value="parsedOPClientSecret" />
+					encrypt-value
+					:value="state.client_secret" />
 				<TextInput v-if="isOPOauthFormInEdit"
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
@@ -99,21 +100,13 @@
 					with-copy-btn
 					label="Nextcloud OAuth client ID"
 					:hint-text="nextcloudClientHint" />
-				<div v-if="isNcOauthStateComplete"
-					class="saved-info pb-1">
-					<b class="title">
-						Nextcloud OAuth client secret*:
-					</b>
-					&nbsp;
-					<div v-if="inspectNCClientSecret">
-						{{ ncClientSecret }}
-					</div>
-					<div v-else>
-						{{ parsedNcClientSecret }}
-					</div>
-					<div class="eye-icon" @click="inspectNCClientSecret = !inspectNCClientSecret" />
-				</div>
-
+				<FieldValue v-if="isNcOauthStateComplete"
+					title="Nextcloud OAuth client secret"
+					is-required
+					:value="ncClientSecret"
+					encrypt-value
+					with-inspection
+				/>
 				<TextInput v-else
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
@@ -174,8 +167,6 @@ export default {
 	data() {
 		return {
 			isOpenProjectInstanceValid: null,
-			inspectNCClientSecret: false,
-			inspectOPClientSecret: false,
 			formState: {
 				server: F_STATES.INCOMPLETE,
 				opOauth: F_STATES.INCOMPLETE,
@@ -197,8 +188,11 @@ export default {
 	},
 	computed: {
 		serverHostErrMessage() {
-			if (this.state.oauth_instance_url === '') return false
-			if (this.isOpenProjectInstanceValid === null || this.isOpenProjectInstanceValid) return false
+			if (
+				this.state.oauth_instance_url === ''
+				|| this.isOpenProjectInstanceValid === null
+				|| this.isOpenProjectInstanceValid
+			) return false
 			return 'Please introduce a valid OpenProject host name'
 		},
 		isServerStateLoading() {
@@ -250,14 +244,6 @@ export default {
 				+ this.translate('Administration > File storages')
 				+ '</a> '
 				+ this.translate('as an Administrator.')
-		},
-		parsedOPClientSecret() {
-			const firstFour = this.state.client_secret.substr(0, 4)
-			return firstFour + '*'.repeat(30)
-		},
-		parsedNcClientSecret() {
-			const firstFour = this.state.nc_oauth_client.clientSecret.substr(0, 4)
-			return firstFour + '*'.repeat(30)
 		},
 	},
 	watch: {
@@ -502,15 +488,5 @@ body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 
 .check-icon {
 	background-image: url(./../../img/check.svg);
-}
-
-.eye-icon {
-	margin-left: 6px;
-	width: 16px;
-	height: 10px;
-	background-size: 16px;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url(./../../img/eye.svg);
 }
 </style>
