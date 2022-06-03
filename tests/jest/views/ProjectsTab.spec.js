@@ -474,10 +474,10 @@ describe('ProjectsTab.vue Test', () => {
 			wrapper = mountWrapper()
 
 			try {
-				wrapper.vm.unlinkWorkPackage(15, 6)
+				await wrapper.vm.unlinkWorkPackage(15, 6)
 			} catch (error) {
 				expect(wrapper.vm.state).toBe(cases.state)
-				expect(error).toBe({ Error: 'could not fetch the delete link of work-package' })
+				expect(error.message).toBe('could not fetch the delete link of work-package')
 			}
 
 		})
