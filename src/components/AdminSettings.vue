@@ -381,9 +381,11 @@ export default {
 				return false
 			}
 		},
-		createNCOAuthClient() {
+		createNCOAuthClient(reset = false) {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')
-			axios.post(url).then((response) => {
+			axios.post(url, {
+				reset,
+			}).then((response) => {
 				this.state.nc_oauth_client = response.data
 				this.formMode.ncOauth = F_MODES.VIEW
 				this.formState.ncState = F_STATES.COMPLETED
@@ -410,7 +412,8 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						await this.createNCOAuthClient()
+						this.state.nc_oauth_client = null
+						this.createNCOAuthClient(true)
 					}
 				},
 				true
