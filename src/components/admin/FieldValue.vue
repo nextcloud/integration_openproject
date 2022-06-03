@@ -59,6 +59,7 @@ export default {
 	display: flex;
 	align-items: center;
 }
+
 .eye-icon {
 	cursor: pointer;
 	margin-left: 6px;

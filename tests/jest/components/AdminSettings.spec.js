@@ -1,10 +1,10 @@
 /* jshint esversion: 8 */
 
 import axios from '@nextcloud/axios'
-import {createLocalVue, mount} from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
-import {STATE} from '../../../src/utils'
+import { STATE } from '../../../src/utils'
 import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
@@ -48,15 +48,15 @@ initialState.loadState = jest.fn(() => {
 })
 
 describe('AdminSettings', () => {
-	describe("form heading", () => {
-		it("should be green when the form is complete", () => {
+	describe('form heading', () => {
+		it('should be green when the form is complete', () => {
 			const wrapper = getWrapper({
 				formState: {
-					server: "COMPLETE",
-					opOauth: "COMPLETE",
-					ncOauth: "COMPLETE"
+					server: 'COMPLETE',
+					opOauth: 'COMPLETE',
+					ncOauth: 'COMPLETE',
 
-				}
+				},
 			})
 			const serverForm = wrapper.find(selectors.serverHostForm)
 			const ncOauthForm = wrapper.find(selectors.ncOauthForm)
@@ -66,13 +66,13 @@ describe('AdminSettings', () => {
 			expect(ncOauthForm.find(selectors.formHeading)).toMatchSnapshot()
 			expect(opOauthForm.find(selectors.formHeading)).toMatchSnapshot()
 		})
-		it("should not be green when the form is incomplete", () => {
+		it('should not be green when the form is incomplete', () => {
 			const wrapper = getWrapper({
 				formState: {
-					server: "INCOMPLETE",
-					opOauth: "INCOMPLETE",
-					ncOauth: "INCOMPLETE"
-				}
+					server: 'INCOMPLETE',
+					opOauth: 'INCOMPLETE',
+					ncOauth: 'INCOMPLETE',
+				},
 			})
 			const serverForm = wrapper.find(selectors.serverHostForm)
 			const ncOauthForm = wrapper.find(selectors.ncOauthForm)
@@ -83,138 +83,138 @@ describe('AdminSettings', () => {
 			expect(opOauthForm.find(selectors.formHeading)).toMatchSnapshot()
 		})
 	})
-	describe("form mode", () => {
-		describe("server host form", () => {
-			describe("when the form mode is EDIT", () => {
-				it("should show the form", () => {
+	describe('form mode', () => {
+		describe('server host form', () => {
+			describe('when the form mode is EDIT', () => {
+				it('should show the form', () => {
 					const wrapper = getWrapper({
 						formState: {
-							server: "EDIT",
-						}
+							server: 'EDIT',
+						},
 					})
 					const serverForm = wrapper.find(selectors.serverHostForm)
 
 					expect(serverForm.find(selectors.textInputWrapper)).toMatchSnapshot()
 				})
 			})
-			describe("when the form mode is VIEW", () => {
-				it("should show the saved host value", () => {
+			describe('when the form mode is VIEW', () => {
+				it('should show the saved host value', () => {
 					const wrapper = getWrapper({
 						formState: {
-							server: "COMPLETE"
+							server: 'COMPLETE',
 						},
 						formMode: {
-							server: "VIEW"
+							server: 'VIEW',
 						},
 						state: {
-							oauth_instance_url: "https://example.com"
-						}
+							oauth_instance_url: 'https://example.com',
+						},
 					})
 					expect(wrapper.find(selectors.serverHostForm).html()).toMatchSnapshot()
 				})
 			})
 		})
-		describe("op oauth form", () => {
-			describe("when the form mode is EDIT", () => {
-				it("should show the form if server host form is complete", () => {
+		describe('op oauth form', () => {
+			describe('when the form mode is EDIT', () => {
+				it('should show the form if server host form is complete', () => {
 					const wrapper = getWrapper({
 						formState: {
-							server: "COMPLETE"
+							server: 'COMPLETE',
 						},
 						formMode: {
-							opOauth: "EDIT"
-						}
+							opOauth: 'EDIT',
+						},
 					})
 					expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
 				})
-				it("should not show the form if server host form is incomplete", () => {
+				it('should not show the form if server host form is incomplete', () => {
 					const wrapper = getWrapper({
 						formState: {
-							server: "INCOMPLETE"
+							server: 'INCOMPLETE',
 						},
 						formMode: {
-							opOauth: "EDIT"
-						}
+							opOauth: 'EDIT',
+						},
 					})
 					expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
 				})
 			})
-			describe("when the form mode is VIEW", () => {
-				it("should show the saved client values", () => {
+			describe('when the form mode is VIEW', () => {
+				it('should show the saved client values', () => {
 					const wrapper = getWrapper({
 						formState: {
-							server: "COMPLETE",
-							opOauth: "COMPLETE"
+							server: 'COMPLETE',
+							opOauth: 'COMPLETE',
 						},
 						formMode: {
-							opOauth: "VIEW"
+							opOauth: 'VIEW',
 						},
 						state: {
-							client_id: "abc",
-							client_secret: "defghi"
-						}
+							client_id: 'abc',
+							client_secret: 'defghi',
+						},
 					})
 					expect(wrapper.find(selectors.opOauthForm).html()).toMatchSnapshot()
 				})
 			})
 		})
-		describe("nc oauth form", () => {
-			describe("when the form mode is EDIT", () => {
-				it("should not show the form if OP OAuth form is complete and NC oauth credentials are not there", () => {
+		describe('nc oauth form', () => {
+			describe('when the form mode is EDIT', () => {
+				it('should not show the form if OP OAuth form is complete and NC oauth credentials are not there', () => {
 					const wrapper = getWrapper({
 						formState: {
-							opOauth: "COMPLETE"
+							opOauth: 'COMPLETE',
 						},
 						formMode: {
-							ncOauth: "EDIT"
-						}
+							ncOauth: 'EDIT',
+						},
 					})
 					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 				})
-				it("should show the form if OP OAuth form is complete and NC oauth credentials are there", () => {
+				it('should show the form if OP OAuth form is complete and NC oauth credentials are there', () => {
 					const wrapper = getWrapper({
 						state: {
 							nc_oauth_client: {
 								clientId: 'abc',
-								clientSecret: 'abcd'
-							}
+								clientSecret: 'abcd',
+							},
 						},
 						formState: {
-							opOauth: "COMPLETE"
+							opOauth: 'COMPLETE',
 						},
 						formMode: {
-							ncOauth: "EDIT"
-						}
+							ncOauth: 'EDIT',
+						},
 					})
 					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 				})
-				it("should not show the form if OP OAuth form is incomplete", () => {
+				it('should not show the form if OP OAuth form is incomplete', () => {
 					const wrapper = getWrapper({
 						formState: {
-							opOauth: "INCOMPLETE"
+							opOauth: 'INCOMPLETE',
 						},
 						formMode: {
-							ncOauth: "EDIT"
-						}
+							ncOauth: 'EDIT',
+						},
 					})
 					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 				})
 			})
-			describe("when the form mode is VIEW", () => {
-				it("should show the field values if the form mode is VIEW", () => {
+			describe('when the form mode is VIEW', () => {
+				it('should show the field values if the form mode is VIEW', () => {
 					const wrapper = getWrapper({
 						state: {
 							nc_oauth_client: {
 								clientId: 'abc',
-								clientSecret: 'abcd'
-							}
+								clientSecret: 'abcd',
+							},
 						},
 						formState: {
-							opOauth: "COMPLETE"
+							opOauth: 'COMPLETE',
 						},
 						formMode: {
-							ncOauth: "VIEW"
-						}
+							ncOauth: 'VIEW',
+						},
 					})
 					expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 				})
@@ -423,7 +423,7 @@ describe('AdminSettings', () => {
 function getWrapper(data = {}) {
 	const component = {
 		...AdminSettings,
-		created: jest.fn()
+		created: jest.fn(),
 	}
 	return mount(component, {
 		localVue,

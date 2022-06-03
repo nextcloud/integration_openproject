@@ -77,7 +77,7 @@
 					:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
 					icon-class="check-icon"
 					text="Save"
-					:isLoading="loadingState.opOauth"
+					:is-loading="loadingState.opOauth"
 					@click="saveOPOauthClientValues" />
 			</div>
 		</div>
@@ -88,38 +88,37 @@
 				:is-disabled="!isOPOauthStateComplete" />
 			<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
 				<TextInput v-if="isNcOauthFormInEdit"
-				   id="nextcloud-oauth-client-id"
-				   v-model="state.nc_oauth_client.clientId"
-				   class="pb-2"
-				   is-required
-				   with-copy-btn
-				   label="Nextcloud OAuth client ID"
-				   :hint-text="nextcloudClientHint" />
+					id="nextcloud-oauth-client-id"
+					v-model="state.nc_oauth_client.clientId"
+					class="pb-2"
+					is-required
+					with-copy-btn
+					label="Nextcloud OAuth client ID"
+					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
 					title="Nextcloud OAuth client ID"
 					:value="state.nc_oauth_client.clientId"
 					is-required />
 				<TextInput v-if="isNcOauthFormInEdit"
-				   id="nextcloud-oauth-client-secret"
-				   v-model="state.nc_oauth_client.clientSecret"
-				   class="pb-2"
-				   is-required
-				   with-copy-btn
-				   label="Nextcloud OAuth client secret"
-				   :hint-text="nextcloudClientHint" />
+					id="nextcloud-oauth-client-secret"
+					v-model="state.nc_oauth_client.clientSecret"
+					class="pb-2"
+					is-required
+					with-copy-btn
+					label="Nextcloud OAuth client secret"
+					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
 					title="Nextcloud OAuth client secret"
 					is-required
 					:value="ncClientSecret"
 					encrypt-value
-					with-inspection
-				/>
+					with-inspection />
 				<Button v-if="isNcOauthFormInEdit"
-						class="submit-btn submit-nextcloud-oauth"
-						:class="{'submit-disabled': isNcOauthStateDisabled}"
-						icon-class="check-icon"
-						text="Done"
-						@click="formMode.ncOauth = 'VIEW'" />
+					class="submit-btn submit-nextcloud-oauth"
+					:class="{'submit-disabled': isNcOauthStateDisabled}"
+					icon-class="check-icon"
+					text="Done"
+					@click="formMode.ncOauth = 'VIEW'" />
 				<Button v-else
 					icon-class="reset-icon"
 					text="Reset Nextcloud OAuth values"

@@ -39,8 +39,8 @@ export default {
 	methods: {
 		translate(text) {
 			return t('integration_openproject', text)
-		}
-	}
+		},
+	},
 }
 </script>
 <style lang="scss" scoped>
