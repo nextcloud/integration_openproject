@@ -3,109 +3,103 @@
 		<SettingsTitle />
 		<div class="openproject-server full-width">
 			<FormHeading count="1"
-						 title="OpenProject Server"
-						 :is-complete="isServerHostStateComplete" />
+				 title="OpenProject Server"
+				 :is-complete="isServerHostStateComplete" />
 			<FieldValue v-if="isServerHostStateComplete && !isServerHostFormInEdit"
-						is-required class="pb-1"
-						title="OpenProject host"
-						:value="state.oauth_instance_url" />
+				is-required class="pb-1"
+				title="OpenProject host"
+				:value="state.oauth_instance_url" />
 			<TextInput v-if="isServerHostFormInEdit || !isServerHostStateComplete"
-					   ref="openproject-oauth-instance-input"
-					   id="openproject-oauth-instance"
-					   v-model="state.oauth_instance_url"
-					   is-required class="pb-3"
-					   label="OpenProject host"
-					   place-holder="https://www.my-openproject.com"
-					   hint-text="Please introduce your OpenProject host name"
-					   :error-message="serverHostErrMessage" />
-			<button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
-					class="edit-btn"
-					@click="setServerHostFormToEditMode">
-				<div class="icon pencil-icon" />
-				<div>Edit server information</div>
-			</button>
+			   ref="openproject-oauth-instance-input"
+			   id="openproject-oauth-instance"
+			   v-model="state.oauth_instance_url"
+			   is-required class="pb-3"
+			   label="OpenProject host"
+			   place-holder="https://www.my-openproject.com"
+			   hint-text="Please introduce your OpenProject host name"
+			   :error-message="serverHostErrMessage" />
+			<Button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
+				class="edit-btn"
+				iconClass="pencil-icon"
+				@click="setServerHostFormToEditMode"
+				text="Edit server information"
+			/>
 			<div v-else class="d-flex">
-				<button v-if="isServerHostStateComplete"
-						@click="setServerHostFormToViewMode"
-				>
-					Cancel
-				</button>
-				<button
+				<Button v-if="isServerHostStateComplete"
+					@click="setServerHostFormToViewMode"
+					text="Cancel"
+				/>
+				<Button
 					class="submit-btn submit-server"
 					:class="{'submit-disabled': isServerHostStateDisabled}"
-					@click="saveOpenProjectHostUrl">
-					<div class="check-icon" />
-					<span>Save</span>
-					<div class="icon-loading" v-if="isServerStateLoading" />
-				</button>
+					@click="saveOpenProjectHostUrl"
+					iconClass="check-icon"
+					text="Save"
+					:isLoading="isServerStateLoading"
+				/>
 			</div>
 		</div>
 		<div class="openproject-oauth full-width">
 			<FormHeading count="2"
-						 title="OpenProject OAuth settings"
-						 :is-complete="isOPOauthStateComplete"
-						 :is-disabled="!isServerHostStateComplete" />
+				 title="OpenProject OAuth settings"
+				 :is-complete="isOPOauthStateComplete"
+				 :is-disabled="!isServerHostStateComplete" />
 			<div v-if="isServerHostStateComplete">
 				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-							is-required
-							title="OpenProject OAuth client ID"
-							:value="state.client_id" />
+					is-required
+					title="OpenProject OAuth client ID"
+					:value="state.client_id" />
 				<TextInput v-if="isOPOauthFormInEdit"
-						   id="openproject-oauth-client-id"
-						   v-model="state.client_id"
-						   class="pb-3"
-						   label="OpenProject OAuth client ID"
-						   is-required
-						   :hint-text="openProjectClientHint" />
+				   id="openproject-oauth-client-id"
+				   v-model="state.client_id"
+				   class="pb-3"
+				   label="OpenProject OAuth client ID"
+				   is-required
+				   with-copy-btn
+				   :hint-text="openProjectClientHint" />
 				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-							is-required class="pb-1"
-							title="OpenProject OAuth client secret"
-							:value="parsedOPClientSecret" />
+					is-required class="pb-1"
+					title="OpenProject OAuth client secret"
+					:value="parsedOPClientSecret" />
 				<TextInput v-if="isOPOauthFormInEdit"
-						   id="openproject-oauth-client-secret"
-						   v-model="state.client_secret"
-						   is-required
-						   class="pb-3"
-						   label="OpenProject OAuth client secret"
-						   :hint-text="openProjectClientHint" />
-				<button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-						class="edit-btn"
-						@click="resetOPOauthClientValues">
-					<div class="icon reset-icon" />
-					<span>Reset OpenProject OAuth values</span>
-				</button>
-				<button v-else
-						class="submit-btn submit-openproject-oauth"
-						:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
-						@click="saveOPOauthClientValues">
-					<div class="check-icon" />
-					<span>Save</span>
-				</button>
+				   id="openproject-oauth-client-secret"
+				   v-model="state.client_secret"
+				   is-required
+				   with-copy-btn
+				   class="pb-3"
+				   label="OpenProject OAuth client secret"
+				   :hint-text="openProjectClientHint" />
+				<Button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+					class="edit-btn"
+					@click="resetOPOauthClientValues"
+					iconClass="reset-icon"
+					text="Reset OpenProject OAuth values" />
+				<Button v-else
+					class="submit-btn submit-openproject-oauth"
+					:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
+					@click="saveOPOauthClientValues"
+					iconClass="check-icon"
+					text="Save"/>
 			</div>
 		</div>
 		<div class="nextcloud-oauth full-width">
 			<FormHeading count="3"
-						 title="Nextcloud OAuth client"
-						 :is-complete="isNcOauthStateComplete"
-						 :is-disabled="!isOPOauthStateComplete"
+				title="Nextcloud OAuth client"
+				:is-complete="isNcOauthStateComplete"
+				:is-disabled="!isOPOauthStateComplete"
 			/>
 			<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
 				<FieldValue v-if="isNcOauthStateComplete"
-							title="Nextcloud OAuth client ID"
-							:value="state.nc_oauth_client.clientId"
-							is-required />
-				<div v-else class="d-flex">
-					<TextInput id="nextcloud-oauth-client-id"
-							   v-model="state.nc_oauth_client.clientId"
-							   class="pb-3"
-							   is-required
-							   label="Nextcloud OAuth client ID"
-							   :hint-text="nextcloudClientHint" />
-					<button class="copy-btn copy-nc-id" @click="copyNCClientId">
-						<div class="copy-icon" />
-						<span>Copy value</span>
-					</button>
-				</div>
+					title="Nextcloud OAuth client ID"
+					:value="state.nc_oauth_client.clientId"
+					is-required />
+				<TextInput v-else id="nextcloud-oauth-client-id"
+				   v-model="state.nc_oauth_client.clientId"
+				   class="pb-3"
+				   is-required
+				   with-copy-btn
+				   label="Nextcloud OAuth client ID"
+				   :hint-text="nextcloudClientHint" />
 				<div v-if="isNcOauthStateComplete"
 					 class="saved-info pb-1">
 					<b class="title">
@@ -121,32 +115,26 @@
 					<div class="eye-icon" @click="inspectNCClientSecret = !inspectNCClientSecret" />
 				</div>
 
-				<div v-else class="d-flex">
-					<TextInput id="nextcloud-oauth-client-secret"
-							   v-model="state.nc_oauth_client.clientSecret"
-							   class="pb-3"
-							   is-required
-							   label="Nextcloud OAuth client secret"
-							   :hint-text="nextcloudClientHint" />
-					<button class="copy-btn copy-nc-secret"
-							@click="copyNCClientSecret">
-						<div class="copy-icon" />
-						<span>Copy value</span>
-					</button>
-				</div>
-				<button v-if="isNcOauthStateComplete"
-						class="edit-btn"
-						@click="resetNcOauthValues">
-					<div class="icon reset-icon" />
-					<span>Reset Nextcloud OAuth values</span>
-				</button>
-				<button v-else
-						class="submit-btn submit-nextcloud-oauth"
-						:class="{'submit-disabled': isNcOauthStateDisabled}"
-						@click="formState.ncOauth = 'COMPLETED'">
-					<div class="check-icon" />
-					<span>Done</span>
-				</button>
+				<TextInput v-else id="nextcloud-oauth-client-secret"
+				   v-model="state.nc_oauth_client.clientSecret"
+				   class="pb-3"
+				   is-required
+				   with-copy-btn
+				   label="Nextcloud OAuth client secret"
+				   :hint-text="nextcloudClientHint" />
+				<Button v-if="isNcOauthStateComplete"
+					class="edit-btn"
+					@click="resetNcOauthValues"
+					iconClass="reset-icon"
+					text="Reset Nextcloud OAuth values"
+				/>
+				<Button v-else
+					class="submit-btn submit-nextcloud-oauth"
+					:class="{'submit-disabled': isNcOauthStateDisabled}"
+					@click="formState.ncOauth = 'COMPLETED'"
+					iconClass="check-icon"
+					text="Done"
+				/>
 			</div>
 		</div>
 	</div>
@@ -164,6 +152,7 @@ import { STATE } from '../utils'
 import TextInput from './admin/TextInput'
 import FormHeading from './admin/FormHeading'
 import FieldValue from './admin/FieldValue'
+import Button from './admin/Button'
 
 const F_STATES = {
 	COMPLETED: 'COMPLETED',
@@ -179,6 +168,7 @@ export default {
 	name: 'AdminSettings',
 
 	components: {
+		Button,
 		FieldValue,
 		FormHeading,
 		TextInput,
@@ -254,7 +244,7 @@ export default {
 			return this.translate('Go to your OpenProject')
 				+ ' <a class="link" href="https://google.com">'
 				+ this.translate('Administration > File storages')
-				+ '</a>'
+				+ '</a> '
 				+ this.translate('as an Administrator and start the setup and copy the values here.')
 		},
 		nextcloudClientHint() {
@@ -291,9 +281,6 @@ export default {
 			if (this.state.client_secret && this.state.client_id) {
 				this.formState.opOauth = F_STATES.COMPLETED
 				this.formMode.opOauth = F_MODES.VIEW
-				// if (!this.state.nc_oauth_client) {
-				// 	this.createNCOAuthClient()
-				// }
 			}
 			if (this.state.nc_oauth_client) {
 				if (this.state.nc_oauth_client.clientId && this.state.nc_oauth_client.clientSecret) {
@@ -307,14 +294,6 @@ export default {
 	methods: {
 		translate(text) {
 			return t('integration_openproject', text)
-		},
-		copyNCClientId() {
-			navigator.clipboard.writeText(this.state.nc_oauth_client.clientId)
-			showSuccess(this.translate('Nextcloud OAuth client ID copied to clipboard'))
-		},
-		copyNCClientSecret() {
-			navigator.clipboard.writeText(this.state.nc_oauth_client.clientSecret)
-			showSuccess(this.translate('Nextcloud OAuth client secret copied to clipboard'))
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -345,13 +324,7 @@ export default {
 			this.loadingState.server = false
 		},
 		async saveOPOauthClientValues() {
-			const req = {
-				values: {
-					client_id: this.state.client_id,
-					client_secret: this.state.client_secret,
-				}
-			}
-			await this.saveOPOptions(req)
+			await this.saveOPOptions()
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.formState.opOauth = F_STATES.COMPLETED
@@ -381,16 +354,10 @@ export default {
 			)
 		},
 		async clearOpClientValues() {
-			const req = {
-				values: {
-					client_id: '',
-					client_secret: '',
-				}
-			}
-			const saved = await this.saveOPOptions(req)
+			this.state.client_id = ''
+			this.state.client_secret = ''
+			const saved = await this.saveOPOptions()
 			if (saved) {
-				this.state.client_secret = ''
-				this.state.client_id = ''
 				this.formState.opOauth = F_STATES.INCOMPLETE
 				this.formMode.opOauth = F_MODES.EDIT
 			}
@@ -470,7 +437,7 @@ export default {
 
 <style scoped lang="scss">
 #openproject_prefs {
-	max-width: 800px;
+	//max-width: 800px;
 	.d-flex {
 		display: flex;
 		align-items: center;
@@ -497,56 +464,6 @@ export default {
 			margin-right: 4px;
 		}
 	}
-	.error {
-		color: var(--color-error);
-		border-color: var(--color-error);
-	}
-	.pencil-icon {
-		background-image: url(./../../img/pencil.svg);
-	}
-	.reset-icon {
-		background-image: url(./../../img/reset.svg);
-	}
-	.check-icon {
-		height: 14px;
-		width: 16px;
-		background-repeat: no-repeat;
-		background-position: center;
-		background-image: url(./../../img/check.svg);
-	}
-	.eye-icon {
-		margin-left: 6px;
-		width: 16px;
-		height: 10px;
-		background-size: 16px;
-		background-repeat: no-repeat;
-		background-position: center;
-		background-image: url(./../../img/eye.svg);
-	}
-	.copy-icon {
-		margin-left: 6px;
-		width: 15px;
-		height: 16px;
-		background-size: 16px;
-		background-repeat: no-repeat;
-		background-position: center;
-		background-image: url(./../../img/copy.svg);
-	}
-	button {
-		font-size: .875rem;
-		line-height: 1.25rem;
-		font-weight: 400;
-		position: relative;
-	}
-	.copy-btn {
-		display: flex;
-		align-items: center;
-		margin-left: 10px;
-		margin-top: -10px;
-		span {
-			margin-left: 6px;
-		}
-	}
 	.submit-btn {
 		display: flex;
 		justify-content: center;
@@ -567,20 +484,31 @@ export default {
 		color: #FFFFFF;
 		pointer-events: none;
 	}
-	.icon-loading {
-		min-height: 0;
-	}
-	.icon-loading:after {
-		height: 14px;
-		width: 14px;
-		top: 6px;
-		left: 20px;
-	}
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 	.pencil-icon, .reset-icon, .eye-icon, .copy-icon {
 		filter: invert(100%);
 	}
+}
+</style>
+<style>
+.pencil-icon {
+	background-image: url(./../../img/pencil.svg);
+}
+.reset-icon {
+	background-image: url(./../../img/reset.svg);
+}
+.check-icon {
+	background-image: url(./../../img/check.svg);
+}
+.eye-icon {
+	margin-left: 6px;
+	width: 16px;
+	height: 10px;
+	background-size: 16px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-image: url(./../../img/eye.svg);
 }
 </style>
