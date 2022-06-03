@@ -138,9 +138,11 @@ export default {
 	margin-left: 10px;
 	margin-top: 6px;
 	span {
+		cursor: copy;
 		margin-left: 6px;
 	}
 	.copy-icon {
+		cursor: copy;
 		width: 16px;
 		height: 16px;
 		background-size: 16px;

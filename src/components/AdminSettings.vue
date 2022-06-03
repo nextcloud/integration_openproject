@@ -87,42 +87,43 @@
 				:is-complete="isNcOauthStateComplete"
 				:is-disabled="!isOPOauthStateComplete" />
 			<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
-				<FieldValue v-if="isNcOauthStateComplete"
+				<TextInput v-if="isNcOauthFormInEdit"
+				   id="nextcloud-oauth-client-id"
+				   v-model="state.nc_oauth_client.clientId"
+				   class="pb-2"
+				   is-required
+				   with-copy-btn
+				   label="Nextcloud OAuth client ID"
+				   :hint-text="nextcloudClientHint" />
+				<FieldValue v-else
 					title="Nextcloud OAuth client ID"
 					:value="state.nc_oauth_client.clientId"
 					is-required />
-				<TextInput v-else
-					id="nextcloud-oauth-client-id"
-					v-model="state.nc_oauth_client.clientId"
-					class="pb-2"
-					is-required
-					with-copy-btn
-					label="Nextcloud OAuth client ID"
-					:hint-text="nextcloudClientHint" />
-				<FieldValue v-if="isNcOauthStateComplete"
+				<TextInput v-if="isNcOauthFormInEdit"
+				   id="nextcloud-oauth-client-secret"
+				   v-model="state.nc_oauth_client.clientSecret"
+				   class="pb-2"
+				   is-required
+				   with-copy-btn
+				   label="Nextcloud OAuth client secret"
+				   :hint-text="nextcloudClientHint" />
+				<FieldValue v-else
 					title="Nextcloud OAuth client secret"
 					is-required
 					:value="ncClientSecret"
 					encrypt-value
-					with-inspection />
-				<TextInput v-else
-					id="nextcloud-oauth-client-secret"
-					v-model="state.nc_oauth_client.clientSecret"
-					class="pb-2"
-					is-required
-					with-copy-btn
-					label="Nextcloud OAuth client secret"
-					:hint-text="nextcloudClientHint" />
-				<Button v-if="isNcOauthStateComplete"
+					with-inspection
+				/>
+				<Button v-if="isNcOauthFormInEdit"
+						class="submit-btn submit-nextcloud-oauth"
+						:class="{'submit-disabled': isNcOauthStateDisabled}"
+						icon-class="check-icon"
+						text="Done"
+						@click="formMode.ncOauth = 'VIEW'" />
+				<Button v-else
 					icon-class="reset-icon"
 					text="Reset Nextcloud OAuth values"
 					@click="resetNcOauthValues" />
-				<Button v-else
-					class="submit-btn submit-nextcloud-oauth"
-					:class="{'submit-disabled': isNcOauthStateDisabled}"
-					icon-class="check-icon"
-					text="Done"
-					@click="formState.ncOauth = 'COMPLETED'" />
 			</div>
 		</div>
 	</div>
@@ -219,6 +220,9 @@ export default {
 		isNcOauthStateComplete() {
 			return this.formState.ncOauth === F_STATES.COMPLETED
 		},
+		isNcOauthFormInEdit() {
+			return this.formMode.ncOauth === F_MODES.EDIT
+		},
 		isNcOauthStateDisabled() {
 			return this.formState.opOauth !== F_STATES.COMPLETED
 		},
@@ -308,7 +312,10 @@ export default {
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.formState.opOauth = F_STATES.COMPLETED
-				await this.createNCOAuthClient()
+				// if we do not have NC OAuth client yet, a new client is created
+				if (!this.state.nc_oauth_client) {
+					this.createNCOAuthClient()
+				}
 			}
 			this.loadingState.opOauth = false
 		},
@@ -370,7 +377,9 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')
 			axios.post(url).then((response) => {
 				this.state.nc_oauth_client = response.data
-				this.formMode.ncOauth = F_MODES.VIEW
+				// generate part is complete but still the NC OAuth form is set to edit mode
+				// so that copy buttons will be available for the user
+				this.formMode.ncOauth = F_MODES.EDIT
 				this.formState.ncState = F_STATES.COMPLETED
 			}).catch((error) => {
 				showError(

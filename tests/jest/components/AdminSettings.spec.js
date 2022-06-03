@@ -1,7 +1,7 @@
 /* jshint esversion: 8 */
 
 import axios from '@nextcloud/axios'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils'
@@ -31,8 +31,6 @@ const selectors = {
 	oauthInstance: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
 	oauthClientSecret: '#openproject-client-secret',
-	saveConfigButton: '.save-config-btn',
-	updateConfigButton: '.update-config-btn',
 }
 
 // eslint-disable-next-line no-import-assign
@@ -45,22 +43,56 @@ initialState.loadState = jest.fn(() => {
 })
 
 describe('AdminSettings', () => {
-	describe('input readonly attribute on focus', () => {
-		it.each([
-			selectors.oauthClientId,
-			selectors.oauthClientSecret,
-		])('should not have readonly attribute after the input is focused', async (inputSelector) => {
-			const wrapper = getWrapper()
-			const inputField = wrapper.find(inputSelector)
-			expect(inputField.attributes().readonly).toBeTruthy()
-
-			await inputField.trigger('focus')
-
-			expect(inputField.attributes().readonly).toBeFalsy()
-
-			await inputField.trigger('blur')
-
-			expect(inputField.attributes().readonly).toBeFalsy()
+	describe("form heading", () => {
+		it("should be green when the form is complete", () => {})
+		it("should not be green when the form is incomplete", () => {})
+	})
+	describe("openproject server form", () => {
+		describe('when the form is complete', () => {
+			it('should show the green form heading', () => {})
+		})
+		describe('when the form is incomplete', () => {
+			it('should not have the green form heading', () => {})
+		})
+		describe("when the form is in view mode", () => {
+			it("should not show the form", () => {})
+			it('should show the form field values', () => {})
+		})
+		describe("when the form is in edit mode", () => {
+			it("should show the form", () => {})
+			it('should not show the form field values', () => {})
+		})
+	})
+	describe("openproject oauth values form", () => {
+		describe('when the form is complete', () => {
+			it('should show the green form heading', () => {})
+		})
+		describe('when the form is incomplete', () => {
+			it('should not have the green form heading', () => {})
+		})
+		describe("when the form is in view mode", () => {
+			it("should not show the form", () => {})
+			it('should show the form field values', () => {})
+		})
+		describe("when the form is in edit mode", () => {
+			it("should show the form", () => {})
+			it('should not show the form field values', () => {})
+		})
+	})
+	describe("nextcloud oauth values form", () => {
+		describe('when the form is complete', () => {
+			it('should show the green form heading', () => {})
+		})
+		describe('when the form is incomplete', () => {
+			it('should not have the green form heading', () => {})
+		})
+		describe("when the form is in view mode", () => {
+			it("should not show the form", () => {})
+			it('should show the form field values', () => {})
+		})
+		describe("when the form is in edit mode", () => {
+			it("should show the form", () => {})
+			it('should not show the form field values', () => {})
 		})
 	})
 	describe('form submit', () => {
@@ -263,7 +295,7 @@ describe('AdminSettings', () => {
 })
 
 function getWrapper(data = {}) {
-	return shallowMount(AdminSettings, {
+	return mount(AdminSettings, {
 		localVue,
 		attachTo: document.body,
 		mocks: {
