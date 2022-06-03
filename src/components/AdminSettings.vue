@@ -105,8 +105,7 @@
 					is-required
 					:value="ncClientSecret"
 					encrypt-value
-					with-inspection
-				/>
+					with-inspection />
 				<TextInput v-else
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
@@ -367,11 +366,9 @@ export default {
 				return false
 			}
 		},
-		createNCOAuthClient(reset = false) {
+		createNCOAuthClient() {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')
-			axios.post(url, {
-				reset,
-			}).then((response) => {
+			axios.post(url).then((response) => {
 				this.state.nc_oauth_client = response.data
 				this.formMode.ncOauth = F_MODES.VIEW
 				this.formState.ncState = F_STATES.COMPLETED
@@ -399,7 +396,7 @@ export default {
 				async (result) => {
 					if (result) {
 						this.state.nc_oauth_client = null
-						this.createNCOAuthClient(true)
+						this.createNCOAuthClient()
 					}
 				},
 				true

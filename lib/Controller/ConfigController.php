@@ -265,19 +265,12 @@ class ConfigController extends Controller {
 	/**
 	 * @return DataResponse
 	 */
-	public function autoOauthCreation(bool $reset): DataResponse {
+	public function autoOauthCreation(): DataResponse {
 		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 		if ($oauthClientInternalId !== '') {
 			$id = (int) $oauthClientInternalId;
-			if ($reset === true) {
-				$this->oauthService->deleteClient($id);
-				$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
-			} else {
-				$clientInfo = $this->oauthService->getClientInfo($id);
-				if ($clientInfo !== null) {
-					return new DataResponse($clientInfo);
-				}
-			}
+			$this->oauthService->deleteClient($id);
+			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
 		}
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');

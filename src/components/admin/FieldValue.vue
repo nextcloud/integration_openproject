@@ -5,10 +5,10 @@
 		</b>
 		&nbsp;
 		<div v-if="encryptValue">
-			<span v-if="inspect">{{value}}</span>
-			<span v-else>{{encryptedValue}}</span>
+			<span v-if="inspect">{{ value }}</span>
+			<span v-else>{{ encryptedValue }}</span>
 		</div>
-		<span v-else>{{value}}</span>
+		<span v-else>{{ value }}</span>
 
 		<div v-if="encryptValue && withInspection" class="eye-icon" @click="toggleInspection" />
 	</div>
@@ -31,15 +31,15 @@ export default {
 		},
 		encryptValue: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		withInspection: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 	data: () => ({
-		inspect: false
+		inspect: false,
 	}),
 	computed: {
 		encryptedValue() {
@@ -48,9 +48,9 @@ export default {
 	},
 	methods: {
 		toggleInspection() {
-			this.inspect = !this.inspect;
-		}
-	}
+			this.inspect = !this.inspect
+		},
+	},
 }
 </script>
 <style lang="scss">
