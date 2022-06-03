@@ -26,6 +26,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	font-size: .875rem;
 	line-height: 1.25rem;
 	font-weight: 400;

@@ -1,7 +1,7 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<SettingsTitle />
-		<div class="openproject-server full-width">
+		<div class="openproject-server">
 			<FormHeading count="1"
 				title="OpenProject Server"
 				:is-complete="isServerHostStateComplete" />
@@ -15,13 +15,12 @@
 				ref="openproject-oauth-instance-input"
 				v-model="state.oauth_instance_url"
 				is-required
-				class="pb-3"
+				class="pb-2"
 				label="OpenProject host"
 				place-holder="https://www.my-openproject.com"
 				hint-text="Please introduce your OpenProject host name"
 				:error-message="serverHostErrMessage" />
 			<Button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
-				class="edit-btn"
 				icon-class="pencil-icon"
 				text="Edit server information"
 				@click="setServerHostFormToEditMode" />
@@ -37,7 +36,7 @@
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
-		<div class="openproject-oauth full-width">
+		<div class="openproject-oauth">
 			<FormHeading count="2"
 				title="OpenProject OAuth settings"
 				:is-complete="isOPOauthStateComplete"
@@ -50,7 +49,7 @@
 				<TextInput v-if="isOPOauthFormInEdit"
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
-					class="pb-3"
+					class="pb-2"
 					label="OpenProject OAuth client ID"
 					is-required
 					with-copy-btn
@@ -66,11 +65,10 @@
 					v-model="state.client_secret"
 					is-required
 					with-copy-btn
-					class="pb-3"
+					class="pb-2"
 					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
 				<Button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-					class="edit-btn"
 					icon-class="reset-icon"
 					text="Reset OpenProject OAuth values"
 					@click="resetOPOauthClientValues" />
@@ -79,10 +77,11 @@
 					:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
 					icon-class="check-icon"
 					text="Save"
+					:isLoading="loadingState.opOauth"
 					@click="saveOPOauthClientValues" />
 			</div>
 		</div>
-		<div class="nextcloud-oauth full-width">
+		<div class="nextcloud-oauth">
 			<FormHeading count="3"
 				title="Nextcloud OAuth client"
 				:is-complete="isNcOauthStateComplete"
@@ -95,7 +94,7 @@
 				<TextInput v-else
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
-					class="pb-3"
+					class="pb-2"
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client ID"
@@ -109,13 +108,12 @@
 				<TextInput v-else
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
-					class="pb-3"
+					class="pb-2"
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client secret"
 					:hint-text="nextcloudClientHint" />
 				<Button v-if="isNcOauthStateComplete"
-					class="edit-btn"
 					icon-class="reset-icon"
 					text="Reset Nextcloud OAuth values"
 					@click="resetNcOauthValues" />
@@ -305,12 +303,14 @@ export default {
 			this.loadingState.server = false
 		},
 		async saveOPOauthClientValues() {
+			this.loadingState.opOauth = true
 			await this.saveOPOptions()
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.formState.opOauth = F_STATES.COMPLETED
 				await this.createNCOAuthClient()
 			}
+			this.loadingState.opOauth = false
 		},
 		resetOPOauthClientValues() {
 			OC.dialogs.confirmDestructive(
@@ -419,7 +419,9 @@ export default {
 
 <style scoped lang="scss">
 #openproject_prefs {
-	//max-width: 800px;
+	div {
+		width: 100%;
+	}
 	.d-flex {
 		display: flex;
 		align-items: center;
@@ -427,39 +429,14 @@ export default {
 	.pb-1 {
 		padding-bottom: .5rem;
 	}
-	.pb-3 {
+	.pb-2 {
 		padding-bottom: 1rem;
 	}
-	.full-width {
-		width: 100%;
-	}
-	.edit-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		.icon {
-			background-size: 16px;
-			background-repeat: no-repeat;
-			background-position: center;
-			width: 16px;
-			height: 16px;
-			margin-right: 4px;
-		}
-	}
 	.submit-btn {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 6px 0;
 		background: #397DDA;
 		border: #397DDA;
 		color: white;
-		.icon {
-			filter: invert(100%);
-		}
-		span {
-			padding-left: 6px;
-		}
+
 	}
 	.submit-disabled {
 		background: #CCCCCC;
@@ -467,14 +444,8 @@ export default {
 		pointer-events: none;
 	}
 }
-
-body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.pencil-icon, .reset-icon, .eye-icon, .copy-icon {
-		filter: invert(100%);
-	}
-}
 </style>
-<style>
+<style lang="scss">
 .pencil-icon {
 	background-image: url(./../../img/pencil.svg);
 }
@@ -485,5 +456,11 @@ body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 
 .check-icon {
 	background-image: url(./../../img/check.svg);
+}
+
+body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
+	.pencil-icon, .reset-icon, .eye-icon, .copy-icon {
+		filter: invert(100%);
+	}
 }
 </style>
