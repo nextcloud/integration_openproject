@@ -1,152 +1,152 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<SettingsTitle />
-		<div class="form-content">
-			<div class="openproject-server full-width">
-				<FormHeading count="1"
-					title="OpenProject Server"
-					:is-complete="isServerHostStateComplete" />
-				<FieldValue v-if="isServerHostStateComplete && !isServerHostFormInEdit"
-					is-required class="pb-1"
-					title="OpenProject host"
-					:value="state.oauth_instance_url" />
-				<TextInput v-if="isServerHostFormInEdit || !isServerHostStateComplete"
-					id="openproject-oauth-instance"
-					v-model="state.oauth_instance_url"
-					is-required class="pb-3"
-					label="OpenProject host"
-					place-holder="https://www.my-openproject.com"
-					hint-text="Please introduce your OpenProject host name" />
-				<button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
+		<div class="openproject-server full-width">
+			<FormHeading count="1"
+						 title="OpenProject Server"
+						 :is-complete="isServerHostStateComplete" />
+			<FieldValue v-if="isServerHostStateComplete && !isServerHostFormInEdit"
+						is-required class="pb-1"
+						title="OpenProject host"
+						:value="state.oauth_instance_url" />
+			<TextInput v-if="isServerHostFormInEdit || !isServerHostStateComplete"
+					   ref="openproject-oauth-instance-input"
+					   id="openproject-oauth-instance"
+					   v-model="state.oauth_instance_url"
+					   is-required class="pb-3"
+					   label="OpenProject host"
+					   place-holder="https://www.my-openproject.com"
+					   hint-text="Please introduce your OpenProject host name"
+					   :error-message="serverHostErrMessage" />
+			<button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
 					class="edit-btn"
 					@click="setServerHostFormToEditMode">
-					<div class="icon pencil-icon" />
-					<div>Edit server information</div>
-				</button>
-				<div v-else class="d-flex">
-					<button v-if="isServerHostStateComplete"
+				<div class="icon pencil-icon" />
+				<div>Edit server information</div>
+			</button>
+			<div v-else class="d-flex">
+				<button v-if="isServerHostStateComplete"
 						@click="setServerHostFormToViewMode"
-					>
-						Cancel
-					</button>
-					<button
-							class="submit-btn submit-server"
-							:class="{'submit-disabled': isServerHostStateDisabled}"
-							@click="saveOpenProjectHostUrl">
-						<div class="check-icon" />
-						<span>Save</span>
-						<div class="icon-loading" v-if="isServerStateLoading" />
+				>
+					Cancel
+				</button>
+				<button
+					class="submit-btn submit-server"
+					:class="{'submit-disabled': isServerHostStateDisabled}"
+					@click="saveOpenProjectHostUrl">
+					<div class="check-icon" />
+					<span>Save</span>
+					<div class="icon-loading" v-if="isServerStateLoading" />
+				</button>
+			</div>
+		</div>
+		<div class="openproject-oauth full-width">
+			<FormHeading count="2"
+						 title="OpenProject OAuth settings"
+						 :is-complete="isOPOauthStateComplete"
+						 :is-disabled="!isServerHostStateComplete" />
+			<div v-if="isServerHostStateComplete">
+				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+							is-required
+							title="OpenProject OAuth client ID"
+							:value="state.client_id" />
+				<TextInput v-if="isOPOauthFormInEdit"
+						   id="openproject-oauth-client-id"
+						   v-model="state.client_id"
+						   class="pb-3"
+						   label="OpenProject OAuth client ID"
+						   is-required
+						   :hint-text="openProjectClientHint" />
+				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+							is-required class="pb-1"
+							title="OpenProject OAuth client secret"
+							:value="parsedOPClientSecret" />
+				<TextInput v-if="isOPOauthFormInEdit"
+						   id="openproject-oauth-client-secret"
+						   v-model="state.client_secret"
+						   is-required
+						   class="pb-3"
+						   label="OpenProject OAuth client secret"
+						   :hint-text="openProjectClientHint" />
+				<button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+						class="edit-btn"
+						@click="resetOPOauthClientValues">
+					<div class="icon reset-icon" />
+					<span>Reset OpenProject OAuth values</span>
+				</button>
+				<button v-else
+						class="submit-btn submit-openproject-oauth"
+						:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
+						@click="saveOPOauthClientValues">
+					<div class="check-icon" />
+					<span>Save</span>
+				</button>
+			</div>
+		</div>
+		<div class="nextcloud-oauth full-width">
+			<FormHeading count="3"
+						 title="Nextcloud OAuth client"
+						 :is-complete="isNcOauthStateComplete"
+						 :is-disabled="!isOPOauthStateComplete"
+			/>
+			<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
+				<FieldValue v-if="isNcOauthStateComplete"
+							title="Nextcloud OAuth client ID"
+							:value="state.nc_oauth_client.clientId"
+							is-required />
+				<div v-else class="d-flex">
+					<TextInput id="nextcloud-oauth-client-id"
+							   v-model="state.nc_oauth_client.clientId"
+							   class="pb-3"
+							   is-required
+							   label="Nextcloud OAuth client ID"
+							   :hint-text="nextcloudClientHint" />
+					<button class="copy-btn copy-nc-id" @click="copyNCClientId">
+						<div class="copy-icon" />
+						<span>Copy value</span>
 					</button>
 				</div>
-			</div>
-			<div class="openproject-oauth full-width">
-				<FormHeading count="2"
-					title="OpenProject OAuth settings"
-					:is-complete="isOPOauthStateComplete"
-					:is-disabled="!isServerHostStateComplete" />
-				<div v-if="isServerHostStateComplete">
-					<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-								is-required
-								title="OpenProject OAuth client ID"
-								:value="state.client_id" />
-					<TextInput v-if="isOPOauthFormInEdit"
-							   id="openproject-oauth-client-id"
-							   v-model="state.client_id"
-							   class="pb-3"
-							   label="OpenProject OAuth client ID"
-							   is-required
-							   :hint-text="openProjectClientHint" />
-					<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-								is-required class="pb-1"
-								title="OpenProject OAuth client secret"
-								:value="parsedOPClientSecret" />
-					<TextInput v-if="isOPOauthFormInEdit"
-							   id="openproject-oauth-client-secret"
-							   v-model="state.client_secret"
-							   is-required
-							   class="pb-3"
-							   label="OpenProject OAuth client secret"
-							   :hint-text="openProjectClientHint" />
-					<button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
-							class="edit-btn"
-							@click="resetOPOauthClientValues">
-						<div class="icon reset-icon" />
-						<span>Reset OpenProject OAuth values</span>
-					</button>
-					<button v-else
-							class="submit-btn submit-openproject-oauth"
-							:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
-							@click="saveOPOauthClientValues">
-						<div class="check-icon" />
-						<span>Save</span>
-					</button>
+				<div v-if="isNcOauthStateComplete"
+					 class="saved-info pb-1">
+					<b class="title">
+						Nextcloud OAuth client secret*:
+					</b>
+					&nbsp;
+					<div v-if="inspectNCClientSecret">
+						{{ ncClientSecret }}
+					</div>
+					<div v-else>
+						{{ parsedNcClientSecret }}
+					</div>
+					<div class="eye-icon" @click="inspectNCClientSecret = !inspectNCClientSecret" />
 				</div>
-			</div>
-			<div class="nextcloud-oauth full-width">
-				<FormHeading count="3"
-					title="Nextcloud OAuth client"
-					:is-complete="isNcOauthStateComplete"
-					:is-disabled="!isOPOauthStateComplete"
-				/>
-				<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
-					<FieldValue v-if="isNcOauthStateComplete"
-								title="Nextcloud OAuth client ID"
-								:value="state.nc_oauth_client.clientId"
-								is-required />
-					<div v-else class="d-flex">
-						<TextInput id="nextcloud-oauth-client-id"
-								   v-model="state.nc_oauth_client.clientId"
-								   class="pb-3"
-								   is-required
-								   label="Nextcloud OAuth client ID"
-								   :hint-text="nextcloudClientHint" />
-						<button class="copy-btn copy-nc-id" @click="copyNCClientId">
-							<div class="copy-icon" />
-							<span>Copy value</span>
-						</button>
-					</div>
-					<div v-if="isNcOauthStateComplete"
-						 class="saved-info pb-1">
-						<b class="title">
-							Nextcloud OAuth client secret*:
-						</b>
-						&nbsp;
-						<div v-if="inspectNCClientSecret">
-							{{ state.nc_oauth_client.clientId }}
-						</div>
-						<div v-else>
-							{{ parsedNcClientSecret }}
-						</div>
-						<div class="eye-icon" @click="inspectNCClientSecret = !inspectNCClientSecret" />
-					</div>
 
-					<div v-else class="d-flex">
-						<TextInput id="nextcloud-oauth-client-secret"
-								   v-model="state.nc_oauth_client.clientSecret"
-								   class="pb-3"
-								   is-required
-								   label="Nextcloud OAuth client secret"
-								   :hint-text="nextcloudClientHint" />
-						<button class="copy-btn copy-nc-secret"
-								@click="copyNCClientSecret">
-							<div class="copy-icon" />
-							<span>Copy value</span>
-						</button>
-					</div>
-					<button v-if="isNcOauthStateComplete"
-							class="edit-btn"
-							@click="resetNcOauthValues">
-						<div class="icon reset-icon" />
-						<span>Reset Nextcloud OAuth values</span>
-					</button>
-					<button v-else
-							class="submit-btn submit-nextcloud-oauth"
-							:class="{'submit-disabled': isNcOauthStateDisabled}"
-							@click="formState.ncOauth = 'COMPLETED'">
-						<div class="check-icon" />
-						<span>Done</span>
+				<div v-else class="d-flex">
+					<TextInput id="nextcloud-oauth-client-secret"
+							   v-model="state.nc_oauth_client.clientSecret"
+							   class="pb-3"
+							   is-required
+							   label="Nextcloud OAuth client secret"
+							   :hint-text="nextcloudClientHint" />
+					<button class="copy-btn copy-nc-secret"
+							@click="copyNCClientSecret">
+						<div class="copy-icon" />
+						<span>Copy value</span>
 					</button>
 				</div>
+				<button v-if="isNcOauthStateComplete"
+						class="edit-btn"
+						@click="resetNcOauthValues">
+					<div class="icon reset-icon" />
+					<span>Reset Nextcloud OAuth values</span>
+				</button>
+				<button v-else
+						class="submit-btn submit-nextcloud-oauth"
+						:class="{'submit-disabled': isNcOauthStateDisabled}"
+						@click="formState.ncOauth = 'COMPLETED'">
+					<div class="check-icon" />
+					<span>Done</span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -186,13 +186,9 @@ export default {
 	},
 	data() {
 		return {
-			isOpenProjectInstanceValid: false,
+			isOpenProjectInstanceValid: null,
 			inspectNCClientSecret: false,
 			inspectOPClientSecret: false,
-			ncState: {
-				client_id: '',
-				client_secret: '',
-			},
 			formState: {
 				server: F_STATES.INCOMPLETE,
 				opOauth: F_STATES.INCOMPLETE,
@@ -213,6 +209,11 @@ export default {
 		}
 	},
 	computed: {
+		serverHostErrMessage() {
+			if (this.state.oauth_instance_url === '') return false
+			if (this.isOpenProjectInstanceValid === null || this.isOpenProjectInstanceValid) return false
+			return 'Please introduce a valid OpenProject host name'
+		},
 		isServerStateLoading() {
 			return this.loadingState.server
 		},
@@ -234,10 +235,6 @@ export default {
 		isOPOauthStateComplete() {
 			return this.formState.opOauth === F_STATES.COMPLETED
 		},
-		isOPOauthStateDisabled() {
-			console.log(this.state.op_oauth_client_id, this.state.op_oauth_client_secret)
-			return !this.state.op_oauth_client_id || !this.state.op_oauth_client_secret;
-		},
 		isOPOauthFormInEdit() {
 			return this.formMode.opOauth === F_MODES.EDIT
 		},
@@ -254,14 +251,18 @@ export default {
 			return this.state.nc_oauth_client?.clientSecret
 		},
 		openProjectClientHint() {
-			return 'Go to your OpenProject '
-				+ '<a class="link" href="https://google.com">Administration > File storages</a> '
-				+ 'as an Administrator and start the setup and copy the values here.'
+			return this.translate('Go to your OpenProject')
+				+ ' <a class="link" href="https://google.com">'
+				+ this.translate('Administration > File storages')
+				+ '</a>'
+				+ this.translate('as an Administrator and start the setup and copy the values here.')
 		},
 		nextcloudClientHint() {
-			return 'Copy the following values back into the OpenProject '
-				+ '<a class="link" href="https://google.com">Administration > File storages</a> '
-				+ 'as an Administrator.'
+			return this.translate('Copy the following values back into the OpenProject')
+				+ ' <a class="link" href="https://google.com">'
+				+ this.translate('Administration > File storages')
+				+ '</a> '
+				+ this.translate('as an Administrator.')
 		},
 		parsedOPClientSecret() {
 			const firstFour = this.state.client_secret.substr(0, 4)
@@ -290,9 +291,9 @@ export default {
 			if (this.state.client_secret && this.state.client_id) {
 				this.formState.opOauth = F_STATES.COMPLETED
 				this.formMode.opOauth = F_MODES.VIEW
-				if (!this.state.nc_oauth_client) {
-					this.createNCOAuthClient()
-				}
+				// if (!this.state.nc_oauth_client) {
+				// 	this.createNCOAuthClient()
+				// }
 			}
 			if (this.state.nc_oauth_client) {
 				if (this.state.nc_oauth_client.clientId && this.state.nc_oauth_client.clientSecret) {
@@ -301,6 +302,7 @@ export default {
 				}
 			}
 		}
+		console.log(this.isOpenProjectInstanceValid)
 	},
 	methods: {
 		translate(text) {
@@ -334,14 +336,9 @@ export default {
 		},
 		async saveOpenProjectHostUrl() {
 			this.loadingState.server = true
-			const req = {
-				values: {
-					oauth_instance_url: this.state.oauth_instance_url
-				}
-			}
-			const isValid = await this.validateOpenProjectInstance()
-			if (isValid) {
-				await this.saveOPOptions(req)
+			await this.validateOpenProjectInstance()
+			if (this.isOpenProjectInstanceValid) {
+				await this.saveOPOptions()
 				this.formState.server = F_STATES.COMPLETED
 				this.formMode.server = F_MODES.VIEW
 			}
@@ -398,8 +395,15 @@ export default {
 				this.formMode.opOauth = F_MODES.EDIT
 			}
 		},
-		async saveOPOptions(req) {
+		async saveOPOptions() {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
+			const req = {
+				values: {
+					client_id: this.state.client_id,
+					client_secret: this.state.client_secret,
+					oauth_instance_url: this.state.oauth_instance_url,
+				}
+			}
 			try {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
@@ -457,11 +461,8 @@ export default {
 					this.translate('No OpenProject detected at the URL')
 				)
 				this.isOpenProjectInstanceValid = false
-				this.$refs['openproject-oauth-instance-input'].focus()
-				return
-			}
-			const saved = await this.saveOPOptions()
-			if (saved) this.isOpenProjectInstanceValid = true
+				this.$refs['openproject-oauth-instance-input']?.$refs?.['textInput']?.focus()
+			} else this.isOpenProjectInstanceValid = true
 		}
 	},
 }
@@ -469,6 +470,7 @@ export default {
 
 <style scoped lang="scss">
 #openproject_prefs {
+	max-width: 800px;
 	.d-flex {
 		display: flex;
 		align-items: center;
@@ -564,9 +566,6 @@ export default {
 		background: #CCCCCC;
 		color: #FFFFFF;
 		pointer-events: none;
-	}
-	.form-content {
-		max-width: 800px;
 	}
 	.icon-loading {
 		min-height: 0;

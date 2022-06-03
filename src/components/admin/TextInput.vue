@@ -4,21 +4,24 @@
 			{{ translate(labelText) }}
 		</div>
 		<input :id="id"
-			:value="value"
-			:type="type"
-			class="full-width"
-			:placeholder="translate(placeHolder)"
-			@input="$emit('input', $event.target.value)"
-			@change="$emit('change', $event.target.value)"
-			@focus="$emit('focus', $event)"
-			@blur="$emit('blur', $event)">
-		<div v-if="errorMessage || hintText" class="messages">
-			<div v-if="hintText"
-				class="text-input-hint"
-				v-html="translate(hintText)" />
+			   ref="textInput"
+			   :value="value"
+			   :type="type"
+			   class="full-width"
+			   :class="{'error': !!errorMessage}"
+			   :placeholder="translate(placeHolder)"
+			   @input="$emit('input', $event.target.value)"
+			   @change="$emit('change', $event.target.value)"
+			   @focus="$emit('focus', $event)"
+			   @blur="$emit('blur', $event)">
+		<div v-if="errorMessage || hintText" class="text-input-messages">
 			<div v-if="errorMessage" class="text-input-error">
 				{{ translate(errorMessage) }}
 			</div>
+			<div v-else
+				 class="text-input-hint"
+				 v-html="hintText"
+			/>
 		</div>
 	</div>
 </template>
@@ -57,6 +60,10 @@ export default {
 			default: false,
 			type: Boolean,
 		},
+		inputRef: {
+			default: null,
+			type: String,
+		}
 	},
 	computed: {
 		labelText() {
@@ -77,16 +84,30 @@ export default {
 	.full-width {
 		width: 100%;
 	}
+
 	&-label {
 		font-weight: 700;
 		font-size: .875rem;
 		line-height: 1.25rem;
 		color: #333333;
 	}
-	&-hint {
+
+	&-messages {
 		font-weight: 400;
 		font-size: .75rem;
 		line-height: 1rem;
+	}
+
+	.error {
+		border: 2px solid red !important;
+	}
+
+	&-error {
+		color: red;
+	}
+	input[data-focus-visible-added].error {
+		outline: none;
+		box-shadow: none;
 	}
 }
 
