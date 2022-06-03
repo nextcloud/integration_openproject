@@ -99,6 +99,7 @@ export default {
 	display: flex;
 	align-items: center;
 }
+
 .text-input {
 	.full-width {
 		width: 100%;
@@ -122,13 +123,14 @@ export default {
 	}
 
 	&-error {
-			color: var(--color-error);
+		color: var(--color-error);
 	}
 	input[data-focus-visible-added].error {
 		outline: none;
 		box-shadow: none;
 	}
 }
+
 .copy-btn {
 	display: flex;
 	align-items: center;

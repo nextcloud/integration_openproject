@@ -495,12 +495,15 @@ body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
 .pencil-icon {
 	background-image: url(./../../img/pencil.svg);
 }
+
 .reset-icon {
 	background-image: url(./../../img/reset.svg);
 }
+
 .check-icon {
 	background-image: url(./../../img/check.svg);
 }
+
 .eye-icon {
 	margin-left: 6px;
 	width: 16px;
