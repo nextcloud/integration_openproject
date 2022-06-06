@@ -5,7 +5,7 @@
 			<FormHeading index="1"
 				title="OpenProject Server"
 				:is-complete="isServerHostStateComplete" />
-			<FieldValue v-if="isServerHostStateComplete && !isServerHostFormInEdit"
+			<FieldValue v-if="isServerHostStateComplete && isServerHostFormInView"
 				is-required
 				class="pb-1"
 				title="OpenProject host"
@@ -20,15 +20,18 @@
 				place-holder="https://www.my-openproject.com"
 				hint-text="Please introduce your OpenProject host name"
 				:error-message="serverHostErrMessage" />
-			<Button v-if="isServerHostStateComplete && !isServerHostFormInEdit"
-				icon-class="pencil-icon"
-				text="Edit server information"
-				@click="setServerHostFormToEditMode" />
-			<div v-else class="d-flex">
-				<Button v-if="isServerHostStateComplete"
-					text="Cancel"
+			<div v-if="" class="d-flex">
+				<Button v-if="isServerHostStateComplete && isServerHostFormInView"
+					data-test-id="reset-server-host-btn"
+					icon-class="pencil-icon"
+					text="Edit server information"
+					@click="setServerHostFormToEditMode" />
+				<Button v-if="isServerHostStateComplete && isServerHostFormInEdit"
+					text="Calcel"
+					data-test-id="cancel-edit-server-host-btn"
 					@click="setServerHostFormToViewMode" />
-				<Button class="submit-btn submit-server"
+				<Button v-if="isServerHostFormInEdit"
+					class="submit-btn"
 					:class="{'submit-disabled': !state.oauth_instance_url}"
 					icon-class="check-icon"
 					text="Save"
@@ -43,7 +46,7 @@
 				:is-disabled="isOPOAuthFormModeDisabled"
 			/>
 			<div v-if="isServerHostStateComplete">
-				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+				<FieldValue v-if="isOPOauthStateComplete && isOPOauthFormInView"
 					is-required
 					title="OpenProject OAuth client ID"
 					:value="state.client_id" />
@@ -55,7 +58,7 @@
 					is-required
 					with-copy-btn
 					:hint-text="openProjectClientHint" />
-				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+				<FieldValue v-if="isOPOauthStateComplete && isOPOauthFormInView"
 					is-required
 					class="pb-1"
 					title="OpenProject OAuth client secret"
@@ -69,7 +72,8 @@
 					class="pb-2"
 					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
-				<Button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
+				<Button v-if="isOPOauthStateComplete && isOPOauthFormInView"
+					data-test-id="reset-op-oauth-btn"
 					icon-class="reset-icon"
 					text="Reset OpenProject OAuth values"
 					@click="resetOPOAuthClientValues" />
@@ -189,6 +193,9 @@ export default {
 		isServerHostFormInEdit() {
 			return this.formMode.server === F_MODES.EDIT
 		},
+		isServerHostFormInView() {
+			return this.formMode.server === F_MODES.VIEW
+		},
 		isOPOauthStateComplete() {
 			return this.formState.opOauth === F_STATES.COMPLETE
 		},
@@ -197,6 +204,9 @@ export default {
 		},
 		isOPOauthFormInEdit() {
 			return this.formMode.opOauth === F_MODES.EDIT
+		},
+		isOPOauthFormInView() {
+			return this.formMode.opOauth === F_MODES.VIEW
 		},
 		isNcOAuthStateCompleted() {
 			return this.formState.ncOauth === F_STATES.COMPLETE
@@ -281,9 +291,11 @@ export default {
 			this.loadingState.server = true
 			await this.validateOpenProjectInstance()
 			if (this.isOpenProjectInstanceValid) {
-				await this.saveOPOptions()
-				this.formState.server = F_STATES.COMPLETE
-				this.formMode.server = F_MODES.VIEW
+				const saved = await this.saveOPOptions()
+				if (saved) {
+					this.formState.server = F_STATES.COMPLETE
+					this.formMode.server = F_MODES.VIEW
+				}
 			}
 			this.loadingState.server = false
 		},
@@ -326,10 +338,22 @@ export default {
 			this.state.client_id = null
 			this.state.client_secret = null
 			const saved = await this.saveOPOptions()
+			console.log(saved)
 			if (saved) {
 				this.formState.opOauth = F_STATES.INCOMPLETE
 				this.formMode.opOauth = F_MODES.EDIT
 			}
+		},
+		async validateOpenProjectInstance() {
+			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
+			const response = await axios.post(url, { url: this.state.oauth_instance_url })
+			if (response.data !== true) {
+				showError(
+					this.translate('No OpenProject detected at the URL')
+				)
+				this.isOpenProjectInstanceValid = false
+				this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
+			} else this.isOpenProjectInstanceValid = true
 		},
 		async saveOPOptions() {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
@@ -354,21 +378,6 @@ export default {
 				return false
 			}
 		},
-		createNCOAuthClient() {
-			const url = generateUrl('/apps/integration_openproject/nc-oauth')
-			axios.post(url).then((response) => {
-				this.state.nc_oauth_client = response.data
-				// generate part is complete but still the NC OAuth form is set to edit mode
-				// so that copy buttons will be available for the user
-				this.formMode.ncOauth = F_MODES.EDIT
-				this.formState.ncState = F_STATES.COMPLETE
-			}).catch((error) => {
-				showError(
-					this.translate('Failed to create Nextcloud OAuth client')
-					+ ': ' + error.response.request.responseText
-				)
-			})
-		},
 		resetNcOauthValues() {
 			OC.dialogs.confirmDestructive(
 				this.translate(
@@ -392,16 +401,20 @@ export default {
 				true
 			)
 		},
-		async validateOpenProjectInstance() {
-			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
-			const response = await axios.post(url, { url: this.state.oauth_instance_url })
-			if (response.data !== true) {
+		createNCOAuthClient() {
+			const url = generateUrl('/apps/integration_openproject/nc-oauth')
+			axios.post(url).then((response) => {
+				this.state.nc_oauth_client = response.data
+				// generate part is complete but still the NC OAuth form is set to edit mode
+				// so that copy buttons will be available for the user
+				this.formMode.ncOauth = F_MODES.EDIT
+				this.formState.ncState = F_STATES.COMPLETE
+			}).catch((error) => {
 				showError(
-					this.translate('No OpenProject detected at the URL')
+					this.translate('Failed to create Nextcloud OAuth client')
+					+ ': ' + error.response.request.responseText
 				)
-				this.isOpenProjectInstanceValid = false
-				this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
-			} else this.isOpenProjectInstanceValid = true
+			})
 		},
 	},
 }

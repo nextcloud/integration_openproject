@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AdminSettings OpenProjec OAuth values form view mode and completed state reset button should be visible 1`] = `
+<button data-test-id="reset-op-oauth-btn">
+  <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
+  <!---->
+</button>
+`;
+
+exports[`AdminSettings OpenProjec OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <div class="field-value"><b class="title">
+        OpenProject OAuth client ID*:
+      </b>
+      &nbsp;
+      <span>abcd</span>
+      <!---->
+    </div>
+    <!---->
+    <div class="field-value pb-1"><b class="title">
+        OpenProject OAuth client secret*:
+      </b>
+      &nbsp;
+      <div><span>abcd******************************</span></div>
+      <!---->
+    </div>
+    <!----> <button data-test-id="reset-op-oauth-btn">
+      <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
+<button data-test-id="cancel-edit-server-host-btn">
+  <!----> <span>Calcel</span>
+  <!---->
+</button>
+`;
+
+exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
+<div class="text-input-wrapper pb-2">
+  <div class="text-input">
+    <div class="text-input-label">
+      OpenProject host *
+    </div> <input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width error">
+    <div class="text-input-messages">
+      <div class="text-input-error">
+        Please introduce a valid OpenProject host name
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
+<button data-test-id="reset-server-host-btn">
+  <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
+  <!---->
+</button>
+`;
+
+exports[`AdminSettings server host url form view mode and completed state should show field value and hide the input field 1`] = `
+<div class="openproject-server-host">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject Server
+    </div>
+  </div>
+  <div class="field-value pb-1"><b class="title">
+      OpenProject host*:
+    </b>
+    &nbsp;
+    <span>http://hello.com</span>
+    <!---->
+  </div>
+  <!---->
+  <div class="d-flex"><button data-test-id="reset-server-host-btn">
+      <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
+      <!---->
+    </button>
+    <!---->
+    <!---->
+  </div>
+</div>
+`;
