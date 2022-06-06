@@ -4,7 +4,7 @@ import axios from '@nextcloud/axios'
 import {createLocalVue, shallowMount, mount} from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
-import {F_STATES, F_MODES} from '../../../src/utils'
+import {F_MODES} from '../../../src/utils'
 import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
@@ -53,7 +53,7 @@ describe('AdminSettings', () => {
 		jest.restoreAllMocks()
 	})
 
-	describe("form mode", () => {
+	describe("form mode and completed status", () => {
 		it.each([
 			[
 				"with empty state",
@@ -62,11 +62,14 @@ describe('AdminSettings', () => {
 					client_id: null,
 					client_secret: null,
 					nc_oauth_client: null,
-				},
-				{
+				}, {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
+				}, {
+					server: undefined,
+					opOauth: undefined,
+					ncOauth: undefined
 				}
 			],
 			[
@@ -76,11 +79,14 @@ describe('AdminSettings', () => {
 					client_id: null,
 					client_secret: null,
 					nc_oauth_client: null,
-				},
-				{
+				}, {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.DISABLE,
+				}, {
+					server: true,
+					opOauth: undefined,
+					ncOauth: undefined
 				}
 			],
 			[
@@ -95,6 +101,10 @@ describe('AdminSettings', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.DISABLE,
+				}, {
+					server: true,
+					opOauth: true,
+					ncOauth: undefined
 				}
 			],
 			[
@@ -112,13 +122,21 @@ describe('AdminSettings', () => {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.VIEW,
+				},  {
+					server: undefined,
+					opOauth: undefined,
+					ncOauth: true
 				}
 			]
-		])("when the form is loaded %s", (name, state, expectedFormMode) => {
+		])("when the form is loaded %s", (name, state, expectedFormMode, expectedFormState) => {
 			const wrapper = getWrapper({state})
 			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
 			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
 			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
+
+			expect(wrapper.vm.isFormCompleted.server).toBe(expectedFormState.server)
+			expect(wrapper.vm.isFormCompleted.opOauth).toBe(expectedFormState.opOauth)
+			expect(wrapper.vm.isFormCompleted.ncOauth).toBe(expectedFormState.ncOauth)
 		})
 	})
 	describe("server host url form", () => {
@@ -149,7 +167,7 @@ describe('AdminSettings', () => {
 		describe("edit mode", () => {
 			describe("submit button", () => {
 				it("should set the input to error state when the url is invalid when clicked", async () => {
-					let serverHostForm;
+					let serverHostForm
 					const axiosSpyIsValidOPInstance = jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({ data: false }))
 					const saveOPOptionsSpy = jest.spyOn(AdminSettings.methods, "saveOPOptions")

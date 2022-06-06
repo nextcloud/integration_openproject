@@ -19,13 +19,8 @@ export const STATE = {
 	FAILED_FETCHING_WORKPACKAGES: 'failed-fetching-workpackages',
 }
 
-export const F_STATES = {
-	COMPLETE: 1,
-	INCOMPLETE: 0,
-}
-
 export const F_MODES = {
-	DISABLE: 2,
-	EDIT: 1,
 	VIEW: 0,
+	EDIT: 1,
+	DISABLE: 2,
 }
