@@ -1,7 +1,8 @@
 <template>
 	<div class="form-heading"
-		:class="{'is-disabled': isDisabled}">
-		<div v-if="isComplete && !isDisabled" class="complete">
+		:class="{'disabled': isDisabled}"
+	>
+		<div v-if="isComplete" class="complete">
 			<div class="icon icon-checkmark" />
 		</div>
 		<div v-else class="index">
@@ -84,7 +85,7 @@ export default {
 	}
 }
 
-.form-heading.is-disabled {
+.form-heading.disabled {
 	.index {
 		background: #CCCCCC !important;
 	}

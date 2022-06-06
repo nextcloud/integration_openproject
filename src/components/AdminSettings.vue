@@ -29,10 +29,10 @@
 					text="Cancel"
 					@click="setServerHostFormToViewMode" />
 				<Button class="submit-btn submit-server"
-					:class="{'submit-disabled': isServerHostStateDisabled}"
+					:class="{'submit-disabled': !state.oauth_instance_url}"
 					icon-class="check-icon"
 					text="Save"
-					:is-loading="isServerStateLoading"
+					:is-loading="loadingState.server"
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
@@ -40,7 +40,8 @@
 			<FormHeading index="2"
 				title="OpenProject OAuth settings"
 				:is-complete="isOPOauthStateComplete"
-				:is-disabled="!isServerHostStateComplete" />
+				:is-disabled="isOPOAuthFormModeDisabled"
+			/>
 			<div v-if="isServerHostStateComplete">
 				<FieldValue v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
 					is-required
@@ -71,10 +72,10 @@
 				<Button v-if="isOPOauthStateComplete && !isOPOauthFormInEdit"
 					icon-class="reset-icon"
 					text="Reset OpenProject OAuth values"
-					@click="resetOPOauthClientValues" />
+					@click="resetOPOAuthClientValues" />
 				<Button v-else
 					class="submit-btn submit-openproject-oauth"
-					:class="{'submit-disabled': state.client_id === '' || state.client_secret === ''}"
+					:class="{'submit-disabled': !state.client_id || !state.client_secret}"
 					icon-class="check-icon"
 					text="Save"
 					:is-loading="loadingState.opOauth"
@@ -84,8 +85,9 @@
 		<div class="nextcloud-oauth-values">
 			<FormHeading index="3"
 				title="Nextcloud OAuth client"
-				:is-complete="isNcOauthStateComplete"
-				:is-disabled="!isOPOauthStateComplete" />
+				:is-complete="isNcOAuthStateCompleted"
+				:is-disabled="isNcOAuthFormModeDisabled"
+			/>
 			<div v-if="state.nc_oauth_client && isOPOauthStateComplete">
 				<TextInput v-if="isNcOauthFormInEdit"
 					id="nextcloud-oauth-client-id"
@@ -118,7 +120,7 @@
 					:class="{'submit-disabled': isNcOauthStateDisabled}"
 					icon-class="check-icon"
 					text="Done"
-					@click="formMode.ncOauth = 'VIEW'" />
+					@click="setNCOAuthFormToView" />
 				<Button v-else
 					icon-class="reset-icon"
 					text="Reset Nextcloud OAuth values"
@@ -140,16 +142,7 @@ import TextInput from './admin/TextInput'
 import FormHeading from './admin/FormHeading'
 import FieldValue from './admin/FieldValue'
 import Button from './admin/Button'
-
-const F_STATES = {
-	COMPLETED: 'COMPLETE',
-	INCOMPLETE: 'INCOMPLETE',
-}
-
-const F_MODES = {
-	EDIT: 'EDIT',
-	VIEW: 'VIEW',
-}
+import { F_STATES, F_MODES } from './../utils'
 
 export default {
 	name: 'AdminSettings',
@@ -163,22 +156,20 @@ export default {
 	},
 	data() {
 		return {
-			isOpenProjectInstanceValid: null,
 			formState: {
 				server: F_STATES.INCOMPLETE,
 				opOauth: F_STATES.INCOMPLETE,
 				ncOauth: F_STATES.INCOMPLETE,
 			},
 			formMode: {
+				// server host form is never disabled.
+				// it's either editable or view only
 				server: F_MODES.EDIT,
-				opOauth: F_MODES.EDIT,
-				ncOauth: F_MODES.EDIT,
+				opOauth: F_MODES.DISABLE,
+				ncOauth: F_MODES.DISABLE,
 			},
-			loadingState: {
-				server: false,
-				opOauth: false,
-				ncOauth: false,
-			},
+			loadingState: {},
+			isOpenProjectInstanceValid: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 		}
@@ -192,38 +183,32 @@ export default {
 			) return false
 			return 'Please introduce a valid OpenProject host name'
 		},
-		isServerStateLoading() {
-			return this.loadingState.server
-		},
-		isOpOauthStateLoading() {
-			return this.loadingState.opOauth
-		},
-		isNcOauthStateLoading() {
-			return this.loadingState.ncOauth
-		},
 		isServerHostStateComplete() {
-			return this.formState.server === F_STATES.COMPLETED
+			return this.formState.server === F_STATES.COMPLETE
 		},
 		isServerHostFormInEdit() {
 			return this.formMode.server === F_MODES.EDIT
 		},
-		isServerHostStateDisabled() {
-			return this.state.oauth_instance_url === ''
-		},
 		isOPOauthStateComplete() {
-			return this.formState.opOauth === F_STATES.COMPLETED
+			return this.formState.opOauth === F_STATES.COMPLETE
+		},
+		isOPOAuthFormModeDisabled() {
+			return this.formMode.opOauth === F_MODES.DISABLE
 		},
 		isOPOauthFormInEdit() {
 			return this.formMode.opOauth === F_MODES.EDIT
 		},
-		isNcOauthStateComplete() {
-			return this.formState.ncOauth === F_STATES.COMPLETED
+		isNcOAuthStateCompleted() {
+			return this.formState.ncOauth === F_STATES.COMPLETE
+		},
+		isNcOAuthFormModeDisabled() {
+			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
 		isNcOauthFormInEdit() {
 			return this.formMode.ncOauth === F_MODES.EDIT
 		},
 		isNcOauthStateDisabled() {
-			return this.formState.opOauth !== F_STATES.COMPLETED
+			return this.formState.opOauth !== F_STATES.COMPLETE
 		},
 		ncClientId() {
 			return this.state.nc_oauth_client?.clientId
@@ -258,16 +243,22 @@ export default {
 	created() {
 		if (this.state) {
 			if (this.state.oauth_instance_url) {
-				this.formState.server = F_STATES.COMPLETED
+				this.formState.server = F_STATES.COMPLETE
 				this.formMode.server = F_MODES.VIEW
 			}
 			if (this.state.client_secret && this.state.client_id) {
-				this.formState.opOauth = F_STATES.COMPLETED
+				this.formState.opOauth = F_STATES.COMPLETE
 				this.formMode.opOauth = F_MODES.VIEW
+			}
+			if (this.state.oauth_instance_url) {
+				if (!this.state.client_secret || !this.state.client_id) {
+					this.formState.opOauth = F_STATES.INCOMPLETE
+					this.formMode.opOauth = F_MODES.EDIT
+				}
 			}
 			if (this.state.nc_oauth_client) {
 				if (this.state.nc_oauth_client.clientId && this.state.nc_oauth_client.clientSecret) {
-					this.formState.ncOauth = F_STATES.COMPLETED
+					this.formState.ncOauth = F_STATES.COMPLETE
 					this.formMode.ncOauth = F_MODES.VIEW
 				}
 			}
@@ -283,16 +274,7 @@ export default {
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
 		},
-		setOPOauthFormToEditMode() {
-			this.formMode.opOauth = F_MODES.EDIT
-		},
-		setOPOauthFormToViewMode() {
-			this.formMode.opOauth = F_MODES.VIEW
-		},
-		setNcOauthFormToEditMode() {
-			this.formMode.ncOauth = F_MODES.EDIT
-		},
-		setNcOauthFormToViewMode() {
+		setNCOAuthFormToView() {
 			this.formMode.ncOauth = F_MODES.VIEW
 		},
 		async saveOpenProjectHostUrl() {
@@ -300,7 +282,7 @@ export default {
 			await this.validateOpenProjectInstance()
 			if (this.isOpenProjectInstanceValid) {
 				await this.saveOPOptions()
-				this.formState.server = F_STATES.COMPLETED
+				this.formState.server = F_STATES.COMPLETE
 				this.formMode.server = F_MODES.VIEW
 			}
 			this.loadingState.server = false
@@ -310,7 +292,7 @@ export default {
 			await this.saveOPOptions()
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
-				this.formState.opOauth = F_STATES.COMPLETED
+				this.formState.opOauth = F_STATES.COMPLETE
 				// if we do not have NC OAuth client yet, a new client is created
 				if (!this.state.nc_oauth_client) {
 					this.createNCOAuthClient()
@@ -318,7 +300,7 @@ export default {
 			}
 			this.loadingState.opOauth = false
 		},
-		resetOPOauthClientValues() {
+		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(
 				this.translate(
 					'Are you sure you want to replace the OpenProject OAuth client details?'
@@ -334,15 +316,15 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						await this.clearOpClientValues()
+						await this.clearOPClientValues()
 					}
 				},
 				true
 			)
 		},
-		async clearOpClientValues() {
-			this.state.client_id = ''
-			this.state.client_secret = ''
+		async clearOPClientValues() {
+			this.state.client_id = null
+			this.state.client_secret = null
 			const saved = await this.saveOPOptions()
 			if (saved) {
 				this.formState.opOauth = F_STATES.INCOMPLETE
@@ -379,7 +361,7 @@ export default {
 				// generate part is complete but still the NC OAuth form is set to edit mode
 				// so that copy buttons will be available for the user
 				this.formMode.ncOauth = F_MODES.EDIT
-				this.formState.ncState = F_STATES.COMPLETED
+				this.formState.ncState = F_STATES.COMPLETE
 			}).catch((error) => {
 				showError(
 					this.translate('Failed to create Nextcloud OAuth client')
