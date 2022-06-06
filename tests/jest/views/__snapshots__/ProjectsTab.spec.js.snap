@@ -45,7 +45,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
 </div>
 `;
 
-exports[`ProjectsTab.vue Test fetchWorkpackages sets the "connection-error" state if the request url is not valid 1`] = `
+exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the request url is not valid 1`] = `
 <div class="projects">
   <!---->
   <div class="empty-content" id="openproject-empty-content">

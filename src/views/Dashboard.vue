@@ -88,24 +88,19 @@ export default {
 		emptyContentMessage() {
 			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
-			} else if (this.state === STATE.ERROR) {
+			} else if (this.state === STATE.CONNECTION_ERROR) {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === STATE.OK) {
 				return t('integration_openproject', 'No OpenProject notifications!')
 			}
-			return ''
+			return 'Cannot connect to OpenProject'
 		},
 		emptyContentIcon() {
-			if (!this.requestUrl) {
-				return 'icon-noConnection'
-			} else if (this.state === STATE.CONNECTION_ERROR) {
-				return 'icon-noConnection'
-			} else if (this.state === STATE.ERROR) {
-				return 'icon-close'
-			} else if (this.state === STATE.OK) {
+			if (this.state === STATE.OK) {
 				return 'icon-checkmark'
+			} else {
+				return 'icon-noConnection'
 			}
-			return 'icon-checkmark'
 		},
 		showOauthConnect() {
 			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
@@ -168,13 +163,14 @@ export default {
 				this.state = STATE.OK
 			}).catch((error) => {
 				clearInterval(this.loop)
-				if (error.response && error.response.status === 400) {
-					this.state = STATE.NO_TOKEN
+				if (error.response && error.response.status === 404) {
+					this.state = STATE.CONNECTION_ERROR
 				} else if (error.response && error.response.status === 401) {
 					showError(t('integration_openproject', 'Failed to get OpenProject notifications'))
-					this.state = STATE.ERROR
+					this.state = STATE.NO_TOKEN
 				} else {
 					// there was an error in notif processing
+					this.state = STATE.ERROR
 					console.debug(error)
 				}
 			})

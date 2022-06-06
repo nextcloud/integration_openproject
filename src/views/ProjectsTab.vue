@@ -116,7 +116,7 @@ export default {
 				// only fetch if we have a request url
 				await this.fetchWorkpackages(this.fileInfo.id)
 			} else {
-				this.state = STATE.CONNECTION_ERROR
+				this.state = STATE.ERROR
 			}
 		},
 		checkForErrorCode(statusCode) {
