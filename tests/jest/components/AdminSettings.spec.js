@@ -53,7 +53,7 @@ describe('AdminSettings', () => {
 		jest.restoreAllMocks()
 	})
 
-	describe("form mode and form state", () => {
+	describe("form mode", () => {
 		it.each([
 			[
 				"with empty state",
@@ -67,11 +67,6 @@ describe('AdminSettings', () => {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
-				},
-				{
-					server: F_STATES.INCOMPLETE,
-					opOauth: F_STATES.INCOMPLETE,
-					ncOauth: F_STATES.INCOMPLETE,
 				}
 			],
 			[
@@ -86,11 +81,6 @@ describe('AdminSettings', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.DISABLE,
-				},
-				{
-					server: F_STATES.COMPLETE,
-					opOauth: F_STATES.INCOMPLETE,
-					ncOauth: F_STATES.INCOMPLETE,
 				}
 			],
 			[
@@ -105,11 +95,6 @@ describe('AdminSettings', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.DISABLE,
-				},
-				{
-					server: F_STATES.COMPLETE,
-					opOauth: F_STATES.COMPLETE,
-					ncOauth: F_STATES.INCOMPLETE,
 				}
 			],
 			[
@@ -127,22 +112,13 @@ describe('AdminSettings', () => {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.VIEW,
-				},
-				{
-					server: F_STATES.INCOMPLETE,
-					opOauth: F_STATES.INCOMPLETE,
-					ncOauth: F_STATES.COMPLETE,
 				}
 			]
-		])("when the form is loaded %s", (name, state, expectedFormMode, expectedFormState) => {
+		])("when the form is loaded %s", (name, state, expectedFormMode) => {
 			const wrapper = getWrapper({state})
 			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
 			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
 			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
-
-			expect(wrapper.vm.formState.server).toBe(expectedFormState.server)
-			expect(wrapper.vm.formState.opOauth).toBe(expectedFormState.opOauth)
-			expect(wrapper.vm.formState.ncOauth).toBe(expectedFormState.ncOauth)
 		})
 	})
 	describe("server host url form", () => {
@@ -167,11 +143,6 @@ describe('AdminSettings', () => {
 					await resetButton.trigger("click")
 	
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
-				})
-				it("should not change the form state", async () => {
-					await resetButton.trigger("click")
-	
-					expect(wrapper.vm.formState.server).toBe(F_STATES.COMPLETE)
 				})
 			})
 		})
@@ -216,7 +187,6 @@ describe('AdminSettings', () => {
 						nc_oauth_client: null
 					}})
 					serverHostForm = wrapper.find(selectors.serverHostForm)
-					expect(wrapper.vm.formState.server).toBe(F_STATES.INCOMPLETE)
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
 					await serverHostForm.find('input').setValue('http://hero.com')
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
@@ -230,7 +200,6 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(true)
 					expect(saveOPOptionsSpy).toBeCalledTimes(1)
-					expect(wrapper.vm.formState.server).toBe(F_STATES.COMPLETE)
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
 				})
 			})
@@ -331,7 +300,9 @@ describe('AdminSettings', () => {
 					)
 				})
 				it("should clear values on confirm", async () => {
-
+					expect(wrapper.vm.state.client_id).toBe("abcd")
+					expect(wrapper.vm.state.client_secret).toBe("abcdefgh")
+					
 					await wrapper.vm.clearOPClientValues()
 
 					expect(saveOPOptionsSpy).toBeCalledTimes(1)
@@ -340,7 +311,58 @@ describe('AdminSettings', () => {
 			})
 		})
 		describe("edit mode", () => {
+			let wrapper
+			beforeEach(() => {
+				wrapper = getMountedWrapper({
+					state: {
+						oauth_instance_url: "http://hero.com",
+						client_id: "",
+						client_secret: "",
+						nc_oauth_client: null
+					}
+				})
+			})
+			it("should show the form and hide the field values", () => {
+				expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
+			})
+			describe("submit button", () => {
+				it("should be enabled with complete client values", async () => {
+					let submitButton
+					submitButton = wrapper.find('[data-test-id="submit-op-oauth-btn"]')
+					expect(submitButton.classes()).toContain('submit-disabled')
+					await wrapper.find("#openproject-oauth-client-id").setValue("qwerty")
+					await wrapper.find("#openproject-oauth-client-secret").setValue("qwerty")
 
+					submitButton = wrapper.find('[data-test-id="submit-op-oauth-btn"]')
+					expect(submitButton.classes()).not.toContain('submit-disabled')
+				})
+				describe("when clicked", () => {
+					it("should save options", () => {})
+					describe("when the admin config is ok on save options", () => {
+						it("should set the form to view mode", () => {})
+						it("should create Nextcloud OAuth client if not already present", () => {})
+						it("should not create Nextcloud OAuth client if not already present", () => {})
+					})
+				})
+			})
+		})
+	})
+
+	describe("Nextcloud OAuth values form", () => {
+		describe("view mode with complete values", () => {
+			it("should show the field values and hide the form", () => {})
+			describe("reset button", () => {
+				it("should trigger the confirm dialog", () => {})
+				it("should create new client", () => {})
+				it("should not change the form mode", () => {})
+			})
+		})
+		describe("edit mode", () => {
+			it("should show the form and hide the field values", () => {})
+			describe("done button", () => {
+				it("should be disabled if the oauth values are incomplete", () => {})
+				it("should set the form to view mode if the oauth values are complete", () => {})
+			})
 		})
 	})
 })

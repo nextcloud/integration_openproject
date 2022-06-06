@@ -1,5 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AdminSettings OpenProjec OAuth values form edit mode should show the form and hide the field values 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      2
+    </div>
+    <div class="title">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <!---->
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client ID *
+        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div> <button disabled="disabled" class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div>
+    <!---->
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client secret *
+        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div> <button disabled="disabled" class="copy-btn">
+        <div class="copy-icon"></div> <span>Copy value</span>
+      </button>
+    </div> <button data-test-id="submit-op-oauth-btn" class="submit-btn submit-disabled">
+      <div class="b-icon check-icon"></div> <span>Save</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
 exports[`AdminSettings OpenProjec OAuth values form view mode and completed state reset button should be visible 1`] = `
 <button data-test-id="reset-op-oauth-btn">
   <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
