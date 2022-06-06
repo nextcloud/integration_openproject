@@ -256,7 +256,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(\OCP\Notification\IManager::class),
 			$clientService,
 			$storageMock,
-			$urlGeneratorMock
+			$urlGeneratorMock,
+			$this->createMock(\OCP\ICacheFactory::class),
 		);
 	}
 
@@ -1146,6 +1147,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$clientService,
 			$this->createMock(\OCP\Files\IRootFolder::class),
 			$this->createMock(\OCP\IURLGenerator::class),
+			$this->createMock(\OCP\ICacheFactory::class),
 		);
 
 		$response = $service->request('', '', []);
