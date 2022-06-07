@@ -42,14 +42,14 @@
 		<div class="openproject-oauth-values">
 			<FormHeading index="2"
 				title="OpenProject OAuth settings"
-				:is-complete="isOPOauthStateComplete"
+				:is-complete="isOPOAuthStateComplete"
 				:is-disabled="isOPOAuthFormInDisableMode" />
 			<div v-if="isServerHostFormComplete">
-				<FieldValue v-if="isOPOauthStateComplete && isOPOauthFormInView"
+				<FieldValue v-if="isOPOAuthStateComplete && isOPOAuthFormInView"
 					is-required
 					title="OpenProject OAuth client ID"
 					:value="state.client_id" />
-				<TextInput v-if="isOPOauthFormInEdit"
+				<TextInput v-if="isOPOAuthFormInEdit"
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
 					class="pb-2"
@@ -57,13 +57,13 @@
 					is-required
 					with-copy-btn
 					:hint-text="openProjectClientHint" />
-				<FieldValue v-if="isOPOauthStateComplete && isOPOauthFormInView"
+				<FieldValue v-if="isOPOAuthStateComplete && isOPOAuthFormInView"
 					is-required
 					class="pb-1"
 					title="OpenProject OAuth client secret"
 					encrypt-value
 					:value="state.client_secret" />
-				<TextInput v-if="isOPOauthFormInEdit"
+				<TextInput v-if="isOPOAuthFormInEdit"
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
@@ -71,7 +71,7 @@
 					class="pb-2"
 					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
-				<Button v-if="isOPOauthStateComplete && isOPOauthFormInView"
+				<Button v-if="isOPOAuthStateComplete && isOPOAuthFormInView"
 					data-test-id="reset-op-oauth-btn"
 					icon-class="reset-icon"
 					text="Reset OpenProject OAuth values"
@@ -83,7 +83,7 @@
 					icon-class="check-icon"
 					text="Save"
 					:is-loading="loadingOPOauthForm"
-					@click="saveOPOauthClientValues" />
+					@click="saveOPOAuthClientValues" />
 			</div>
 		</div>
 		<div class="nextcloud-oauth-values">
@@ -92,7 +92,7 @@
 				:is-complete="isNcOAuthStateComplete"
 				:is-disabled="isNcOAuthFormInDisable" />
 			<div v-if="state.nc_oauth_client">
-				<TextInput v-if="isNcOauthFormInEdit"
+				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
 					class="pb-2"
@@ -104,7 +104,7 @@
 					title="Nextcloud OAuth client ID"
 					:value="state.nc_oauth_client.clientId"
 					is-required />
-				<TextInput v-if="isNcOauthFormInEdit"
+				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
 					class="pb-2"
@@ -118,7 +118,7 @@
 					:value="ncClientSecret"
 					encrypt-value
 					with-inspection />
-				<Button v-if="isNcOauthFormInEdit"
+				<Button v-if="isNcOAuthFormInEdit"
 					class="submit-btn"
 					:class="{'submit-disabled': !isNcOAuthStateComplete}"
 					icon-class="check-icon"
@@ -192,7 +192,7 @@ export default {
 		isServerHostFormComplete() {
 			return this.isFormCompleted?.server
 		},
-		isOPOauthStateComplete() {
+		isOPOAuthStateComplete() {
 			return this.isFormCompleted?.opOauth
 		},
 		isNcOAuthStateComplete() {
@@ -201,16 +201,16 @@ export default {
 		isServerHostFormInView() {
 			return this.formMode.server === F_MODES.VIEW
 		},
-		isOPOauthFormInView() {
+		isOPOAuthFormInView() {
 			return this.formMode.opOauth === F_MODES.VIEW
 		},
 		isServerHostFormInEdit() {
 			return this.formMode.server === F_MODES.EDIT
 		},
-		isOPOauthFormInEdit() {
+		isOPOAuthFormInEdit() {
 			return this.formMode.opOauth === F_MODES.EDIT
 		},
-		isNcOauthFormInEdit() {
+		isNcOAuthFormInEdit() {
 			return this.formMode.ncOauth === F_MODES.EDIT
 		},
 		isOPOAuthFormInDisableMode() {
@@ -280,7 +280,7 @@ export default {
 			}
 			this.loadingServerHostForm = false
 		},
-		async saveOPOauthClientValues() {
+		async saveOPOAuthClientValues() {
 			await this.saveOPOptions()
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
