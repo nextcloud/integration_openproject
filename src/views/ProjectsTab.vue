@@ -21,7 +21,8 @@
   -->
 
 <template>
-	<div class="projects">
+	<div class="projects"
+		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
 		<SearchInput v-if="!!requestUrl && !isLoading"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
@@ -138,7 +139,11 @@ export default {
 			this.workpackages.unshift(data)
 			this.$nextTick(() => {
 				const workpackage = document.getElementById('workpackage-' + data.id)
+				const topElementToScroll = this.$el.getElementsByClassName('existing-relations')[0]
 				workpackage.classList.add('workpackage-transition')
+				topElementToScroll.scrollIntoView({
+					behavior: 'smooth',
+				})
 				setTimeout(() => {
 					workpackage.classList.remove('workpackage-transition')
 				}, 3000)
@@ -263,9 +268,7 @@ export default {
 
 <style scoped lang="scss">
 .projects {
-	height: 100% !important;
 	width: 100%;
-
 	.existing-relations {
 		text-align: left;
 		font-weight: bold;
@@ -322,6 +325,10 @@ export default {
 		margin: 0 10px;
 		border-bottom: 1px solid rgb(237 237 237);
 	}
+}
+
+.projects--empty {
+	height: 100%;
 }
 
 @keyframes fade-in {
