@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormHeading is complete prop should hide the checkmark icon and show the index if not complete 1`] = `
+<div class="form-heading">
+  <div class="index">
+    1
+  </div>
+  <div class="title">
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading is complete prop should show checkmark icon, add green title and hide the index if complete 1`] = `
+<div class="form-heading">
+  <div class="complete">
+    <div class="icon icon-checkmark"></div>
+  </div>
+  <div class="title green-text">
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading is disabled prop should add disabled class to the form heading 1`] = `
+<div class="form-heading disabled">
+  <div class="index">
+    1
+  </div>
+  <div class="title">
+    Some Field Title
+  </div>
+</div>
+`;

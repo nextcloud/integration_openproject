@@ -26,7 +26,7 @@
 		</div>
 		<button v-if="withCopyBtn"
 			class="copy-btn"
-			:disabled="isDisabled"
+			:disabled="isCopyDisabled"
 			@click="copyValue">
 			<div class="copy-icon" />
 			<span>{{ translate("Copy value") }}</span>
@@ -81,7 +81,7 @@ export default {
 				return `${this.label} *`
 			} else return this.label
 		},
-		isDisabled() {
+		isCopyDisabled() {
 			if (!this.value) return 'disabled'
 			else return false
 		},

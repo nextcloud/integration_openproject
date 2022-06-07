@@ -20,14 +20,14 @@
 				place-holder="https://www.my-openproject.com"
 				hint-text="Please introduce your OpenProject host name"
 				:error-message="serverHostErrMessage" />
-			<div v-if="" class="d-flex">
+			<div class="d-flex">
 				<Button v-if="isServerHostFormComplete && isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
 					icon-class="pencil-icon"
 					text="Edit server information"
 					@click="setServerHostFormToEditMode" />
 				<Button v-if="isServerHostFormComplete && isServerHostFormInEdit"
-					text="Calcel"
+					text="Cancel"
 					data-test-id="cancel-edit-server-host-btn"
 					@click="setServerHostFormToViewMode" />
 				<Button v-if="isServerHostFormInEdit"
@@ -35,7 +35,7 @@
 					:class="{'submit-disabled': !state.oauth_instance_url}"
 					icon-class="check-icon"
 					text="Save"
-					:is-loading="loadingState.server"
+					:is-loading="loadingServerHostForm"
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
@@ -43,8 +43,7 @@
 			<FormHeading index="2"
 				title="OpenProject OAuth settings"
 				:is-complete="isOPOauthStateComplete"
-				:is-disabled="isOPOAuthFormInDisableMode"
-			/>
+				:is-disabled="isOPOAuthFormInDisableMode" />
 			<div v-if="isServerHostFormComplete">
 				<FieldValue v-if="isOPOauthStateComplete && isOPOauthFormInView"
 					is-required
@@ -83,7 +82,7 @@
 					:class="{'submit-disabled': !state.client_id || !state.client_secret}"
 					icon-class="check-icon"
 					text="Save"
-					:is-loading="loadingState.opOauth"
+					:is-loading="loadingOPOauthForm"
 					@click="saveOPOauthClientValues" />
 			</div>
 		</div>
@@ -91,8 +90,7 @@
 			<FormHeading index="3"
 				title="Nextcloud OAuth client"
 				:is-complete="isNcOAuthStateComplete"
-				:is-disabled="isNcOAuthFormInDisable"
-			/>
+				:is-disabled="isNcOAuthFormInDisable" />
 			<div v-if="state.nc_oauth_client">
 				<TextInput v-if="isNcOauthFormInEdit"
 					id="nextcloud-oauth-client-id"
@@ -121,7 +119,7 @@
 					encrypt-value
 					with-inspection />
 				<Button v-if="isNcOauthFormInEdit"
-					class="submit-btn submit-nextcloud-oauth"
+					class="submit-btn"
 					:class="{'submit-disabled': !isNcOAuthStateComplete}"
 					icon-class="check-icon"
 					text="Done"
@@ -136,17 +134,17 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
+import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
-import axios from '@nextcloud/axios'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
-import SettingsTitle from '../components/settings/SettingsTitle'
 import { translate as t } from '@nextcloud/l10n'
-import TextInput from './admin/TextInput'
-import FormHeading from './admin/FormHeading'
-import FieldValue from './admin/FieldValue'
 import Button from './admin/Button'
+import TextInput from './admin/TextInput'
+import FieldValue from './admin/FieldValue'
+import FormHeading from './admin/FormHeading'
+import SettingsTitle from '../components/settings/SettingsTitle'
 import { F_MODES } from './../utils'
 
 export default {
@@ -169,7 +167,8 @@ export default {
 				ncOauth: F_MODES.DISABLE,
 			},
 			isFormCompleted: {},
-			loadingState: {},
+			loadingServerHostForm: false,
+			loadingOPOauthForm: false,
 			isOpenProjectInstanceValid: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
@@ -191,15 +190,12 @@ export default {
 			return 'Please introduce a valid OpenProject host name'
 		},
 		isServerHostFormComplete() {
-			// return !!this.state.oauth_instance_url
 			return this.isFormCompleted?.server
 		},
 		isOPOauthStateComplete() {
-			// return (!!this.state.client_id && !!this.state.client_secret)
 			return this.isFormCompleted?.opOauth
 		},
 		isNcOAuthStateComplete() {
-			// return (!!this.ncClientId && !!this.ncClientSecret)
 			return this.isFormCompleted?.ncOauth
 		},
 		isServerHostFormInView() {
@@ -238,18 +234,20 @@ export default {
 				+ this.translate('as an Administrator.')
 		},
 	},
-	watch: {
-		'state.oauth_instance_url': {
-			handler(newValue, oldValue) {
-				if (newValue !== oldValue) {
-					this.state.nc_oauth_client = null
-				}
-			},
-		},
-	},
+	// watch: {
+	// 	'state.oauth_instance_url': {
+	// 		handler(newValue, oldValue) {
+	// 			if (newValue !== oldValue) {
+	// 				this.state.nc_oauth_client = null
+	// 				this.isFormCompleted.ncOauth = false
+	// 				this.formMode.ncOauth = F_MODES.DISABLE
+	// 			}
+	// 		},
+	// 	},
+	// },
 	created() {
-		if (!!this.state) {
-			if (!!this.state.oauth_instance_url) {
+		if (this.state) {
+			if (this.state.oauth_instance_url) {
 				this.formMode.server = F_MODES.VIEW
 				this.isFormCompleted.server = true
 			}
@@ -257,12 +255,12 @@ export default {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.isFormCompleted.opOauth = true
 			}
-			if (!!this.state.oauth_instance_url) {
+			if (this.state.oauth_instance_url) {
 				if (!this.state.client_id || !this.state.client_secret) {
 					this.formMode.opOauth = F_MODES.EDIT
 				}
 			}
-			if (!!this.state.nc_oauth_client) {
+			if (this.state.nc_oauth_client) {
 				this.formMode.ncOauth = F_MODES.VIEW
 				this.isFormCompleted.ncOauth = true
 			}
@@ -282,7 +280,7 @@ export default {
 			this.formMode.ncOauth = F_MODES.VIEW
 		},
 		async saveOpenProjectHostUrl() {
-			this.loadingState.server = true
+			this.loadingServerHostForm = true
 			await this.validateOpenProjectInstance()
 			if (this.isOpenProjectInstanceValid) {
 				const saved = await this.saveOPOptions()
@@ -291,10 +289,9 @@ export default {
 					this.isFormCompleted.server = true
 				}
 			}
-			this.loadingState.server = false
+			this.loadingServerHostForm = false
 		},
 		async saveOPOauthClientValues() {
-			this.loadingState.opOauth = true
 			await this.saveOPOptions()
 			if (this.isAdminConfigOk) {
 				this.formMode.opOauth = F_MODES.VIEW
@@ -305,7 +302,6 @@ export default {
 					this.createNCOAuthClient()
 				}
 			}
-			this.loadingState.opOauth = false
 		},
 		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(

@@ -4,7 +4,7 @@
 			{{ t('integration_openproject', title) }}{{ isRequired ? '*' : '' }}:
 		</b>
 		&nbsp;
-		<div v-if="encryptValue">
+		<div v-if="encryptValue" data-test-id="encrypted-value">
 			<span v-if="inspect">{{ value }}</span>
 			<span v-else>{{ encryptedValue }}</span>
 		</div>

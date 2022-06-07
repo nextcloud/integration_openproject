@@ -1,7 +1,6 @@
 <template>
 	<div class="form-heading"
-		:class="{'disabled': isDisabled}"
-	>
+		:class="{'disabled': isDisabled}">
 		<div v-if="isComplete" class="complete">
 			<div class="icon icon-checkmark" />
 		</div>
