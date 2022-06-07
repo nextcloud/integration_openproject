@@ -106,7 +106,12 @@ class OpenProjectAPIController extends Controller {
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
 		} else {
-			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
+			if (isset($result['statusCode'])) {
+				$statusCode = $result['statusCode'];
+			} else {
+				$statusCode = Http::STATUS_UNAUTHORIZED;
+			}
+			$response = new DataResponse($result, $statusCode);
 		}
 		return $response;
 	}
