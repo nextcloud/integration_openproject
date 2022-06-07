@@ -113,6 +113,14 @@ class OpenProjectAPIService {
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
 
+		$this->setupCache($cacheFactory);
+	}
+
+	/**
+	 * @param ICacheFactory $cacheFactory
+	 * @return void
+	 */
+	public function setupCache($cacheFactory) {
 		if ($cacheFactory->isAvailable()) {
 			if ($cacheFactory->isLocalCacheAvailable()) {
 				$this->cache = $cacheFactory->createLocal();
