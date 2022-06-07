@@ -16,14 +16,14 @@ describe('Admin Button', () => {
 	})
 	it('should show the icon if the "iconClass" prop is set', () => {
 		const wrapper = getWrapper({
-			iconClass: 'some class name'
+			iconClass: 'some class name',
 		})
 		expect(wrapper).toMatchSnapshot()
 	})
 	it('should show both button icon and loading icon if set', () => {
 		const wrapper = getWrapper({
 			iconClass: 'some class name',
-			isLoading: true
+			isLoading: true,
 		})
 		expect(wrapper).toMatchSnapshot()
 	})

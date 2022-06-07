@@ -40,7 +40,7 @@ const selectors = {
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
 	opOauthClientIdInput: '#openproject-oauth-client-id',
-	opOauthClientSecretInput: '#openproject-oauth-client-secret'
+	opOauthClientSecretInput: '#openproject-oauth-client-secret',
 
 }
 
@@ -202,7 +202,6 @@ describe('AdminSettings', () => {
 		describe('edit mode', () => {
 			describe('submit button', () => {
 				it('should set the input to error state when the url is invalid when clicked', async () => {
-					let serverHostForm
 					jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({ data: false }))
 					const saveOPOptionsSpy = jest.spyOn(AdminSettings.methods, 'saveOPOptions')
@@ -222,7 +221,7 @@ describe('AdminSettings', () => {
 					}
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
-					serverHostForm = wrapper.find(selectors.serverHostForm)
+					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					expect(serverHostForm.find(selectors.textInputWrapper)).toMatchSnapshot()
 					expect(saveOPOptionsSpy).toBeCalledTimes(0)
 				})
@@ -270,8 +269,8 @@ describe('AdminSettings', () => {
 					const wrapper = getMountedWrapper({
 						state: { oauth_instance_url: '' },
 					})
-					let serverHostForm, submitButton
-					serverHostForm = wrapper.find(selectors.serverHostForm)
+					let submitButton
+					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					submitButton = serverHostForm.find(selectors.submitButton)
 					expect(submitButton.classes()).toContain('submit-disabled')
 					await serverHostForm.find('input').setValue('a')
@@ -306,7 +305,7 @@ describe('AdminSettings', () => {
 		})
 	})
 
-	describe('OpenProjec OAuth values form', () => {
+	describe('OpenProject OAuth values form', () => {
 		describe('view mode and completed state', () => {
 			let wrapper, opOAuthForm, resetButton
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
@@ -353,7 +352,7 @@ describe('AdminSettings', () => {
 				})
 				it('should clear values on confirm', async () => {
 					jest.clearAllMocks()
-					await wrapper.vm.clearOPClientValues()
+					await wrapper.vm.clearOPOAuthClientValues()
 
 					expect(saveOPOptionsSpy).toBeCalledTimes(1)
 					expect(wrapper.vm.state.client_id).toBe(null)

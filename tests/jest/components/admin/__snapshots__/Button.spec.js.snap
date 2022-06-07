@@ -7,13 +7,6 @@ exports[`Admin Button should not show the loading icon or button icon if not set
 </button>
 `;
 
-exports[`Admin Button should not show the loading icon when "isLoading" is set as "false" 1`] = `
-<button>
-  <!----> <span>My Button</span>
-  <!---->
-</button>
-`;
-
 exports[`Admin Button should show both button icon and loading icon if set 1`] = `
 <button>
   <div class="b-icon some class name"></div> <span>My Button</span>

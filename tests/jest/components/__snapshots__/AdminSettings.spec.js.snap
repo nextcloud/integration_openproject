@@ -22,7 +22,7 @@ exports[`AdminSettings Nextcloud OAuth values form view mode with complete value
 </div>
 `;
 
-exports[`AdminSettings OpenProjec OAuth values form edit mode should show the form and hide the field values 1`] = `
+exports[`AdminSettings OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
     <div class="index">
@@ -66,7 +66,7 @@ exports[`AdminSettings OpenProjec OAuth values form edit mode should show the fo
 </div>
 `;
 
-exports[`AdminSettings OpenProjec OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
+exports[`AdminSettings OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
     <div class="complete">

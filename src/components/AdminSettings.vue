@@ -234,17 +234,6 @@ export default {
 				+ this.translate('as an Administrator.')
 		},
 	},
-	// watch: {
-	// 	'state.oauth_instance_url': {
-	// 		handler(newValue, oldValue) {
-	// 			if (newValue !== oldValue) {
-	// 				this.state.nc_oauth_client = null
-	// 				this.isFormCompleted.ncOauth = false
-	// 				this.formMode.ncOauth = F_MODES.DISABLE
-	// 			}
-	// 		},
-	// 	},
-	// },
 	created() {
 		if (this.state) {
 			if (this.state.oauth_instance_url) {
@@ -319,19 +308,21 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						await this.clearOPClientValues()
+						await this.clearOPOAuthClientValues()
 					}
 				},
 				true
 			)
 		},
-		async clearOPClientValues() {
+		async clearOPOAuthClientValues() {
+			this.formMode.opOauth = F_MODES.EDIT
+			this.isFormCompleted.opOauth = false
 			this.state.client_id = null
 			this.state.client_secret = null
 			const saved = await this.saveOPOptions()
-			if (saved) {
-				this.formMode.opOauth = F_MODES.EDIT
-				this.isFormCompleted.opOauth = false
+			if (!saved) {
+				this.formMode.opOauth = F_MODES.VIEW
+				this.isFormCompleted.opOauth = true
 			}
 		},
 		async validateOpenProjectInstance() {

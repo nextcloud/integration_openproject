@@ -3,25 +3,25 @@ import FormHeading from '../../../../src/components/admin/FormHeading'
 
 const localVue = createLocalVue()
 
-describe("FormHeading", () => {
-	describe("is complete prop", () => {
-		it("should show checkmark icon, add green title and hide the index if complete", () => {
+describe('FormHeading', () => {
+	describe('is complete prop', () => {
+		it('should show checkmark icon, add green title and hide the index if complete', () => {
 			const wrapper = getWrapper({
-				isComplete: true
+				isComplete: true,
 			})
 			expect(wrapper).toMatchSnapshot()
 		})
-		it("should hide the checkmark icon and show the index if not complete", () => {
+		it('should hide the checkmark icon and show the index if not complete', () => {
 			const wrapper = getWrapper({
-				isComplete: false
+				isComplete: false,
 			})
 			expect(wrapper).toMatchSnapshot()
 		})
 	})
-	describe("is disabled prop", () => {
-		it("should add disabled class to the form heading", () => {
+	describe('is disabled prop', () => {
+		it('should add disabled class to the form heading', () => {
 			const wrapper = getWrapper({
-				isDisabled: true
+				isDisabled: true,
 			})
 			expect(wrapper).toMatchSnapshot()
 		})
