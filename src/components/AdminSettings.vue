@@ -224,7 +224,7 @@ export default {
 		openProjectClientHint() {
 			return this.translate('Go to your OpenProject')
 				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
-  				+ `title="Administration > File storages">`
+				+ 'title="Administration > File storages">'
 				+ this.translate('Administration > File storages')
 				+ '</a> '
 				+ this.translate('as an Administrator and start the setup and copy the values here.')
@@ -232,7 +232,7 @@ export default {
 		nextcloudClientHint() {
 			return this.translate('Copy the following values back into the OpenProject')
 				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
-				+ `title="Administration > File storages">`
+				+ 'title="Administration > File storages">'
 				+ this.translate('Administration > File storages')
 				+ '</a> '
 				+ this.translate('as an Administrator.')
