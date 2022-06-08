@@ -134,7 +134,6 @@
 </template>
 
 <script>
-import * as path from 'path'
 import axios from '@nextcloud/axios'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
@@ -220,18 +219,20 @@ export default {
 			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
 		adminFileStorageHref() {
-			return path.join(this.state.oauth_instance_url, '/admin/settings/storages')
+			return this.state.oauth_instance_url + '/admin/settings/storages'
 		},
 		openProjectClientHint() {
 			return this.translate('Go to your OpenProject')
-				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank">`
+				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
+  				+ `title="Administration > File storages">`
 				+ this.translate('Administration > File storages')
 				+ '</a> '
 				+ this.translate('as an Administrator and start the setup and copy the values here.')
 		},
 		nextcloudClientHint() {
 			return this.translate('Copy the following values back into the OpenProject')
-				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank">`
+				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
+				+ `title="Administration > File storages">`
 				+ this.translate('Administration > File storages')
 				+ '</a> '
 				+ this.translate('as an Administrator.')
