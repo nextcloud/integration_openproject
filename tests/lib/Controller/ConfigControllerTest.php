@@ -356,11 +356,13 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
+				'123',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']

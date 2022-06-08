@@ -144,14 +144,14 @@ class ConfigController extends Controller {
 		$this->userManager->callForAllUsers(function (IUser $user) {
 			$this->clearUserInfo($user->getUID());
 		});
-//		if (isset($values['oauth_instance_url'])) {
-//			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
-//			if ($oauthClientInternalId !== '') {
-//				$id = (int) $oauthClientInternalId;
-//				$this->oauthService->deleteClient($id);
-//			}
-//			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
-//		}
+		if (isset($values['oauth_instance_url'])) {
+			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			if ($oauthClientInternalId !== '') {
+				$id = (int) $oauthClientInternalId;
+				$this->oauthService->deleteClient($id);
+			}
+			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
+		}
 		return new DataResponse([
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
 		]);

@@ -4,8 +4,8 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
-    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
-    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot; target=&quot;_blank&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot; target=&quot;_blank&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
     <button-stub iconclass="check-icon" text="Done" class="submit-btn"></button-stub>
   </div>
 </div>
@@ -39,7 +39,7 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
           OpenProject OAuth client ID *
         </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
         <div class="text-input-messages">
-          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages" target="_blank">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div> <button disabled="disabled" class="copy-btn">
         <div class="copy-icon"></div> <span>Copy value</span>
@@ -51,7 +51,7 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
           OpenProject OAuth client secret *
         </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
         <div class="text-input-messages">
-          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages" target="_blank">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div> <button disabled="disabled" class="copy-btn">
         <div class="copy-icon"></div> <span>Copy value</span>
