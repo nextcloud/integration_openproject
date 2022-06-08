@@ -122,13 +122,11 @@ export default {
 			}
 		},
 		async asyncFind(query) {
-			if (query) {
-				this.resetState()
-				if (query.length <= SEARCH_CHAR_LIMIT) return
-				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
-			}
+			this.resetState()
+			await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
+			if (args[0].length <= SEARCH_CHAR_LIMIT) return
 			return this.makeSearchRequest(...args)
 		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
