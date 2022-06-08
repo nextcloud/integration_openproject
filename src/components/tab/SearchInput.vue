@@ -41,7 +41,7 @@ import { workpackageHelper } from '../../utils/workpackageHelper'
 import { STATE } from '../../utils'
 
 const SEARCH_CHAR_LIMIT = 3
-const DEBOUNCE_THRESHOLD = 1000
+const DEBOUNCE_THRESHOLD = 500
 
 export default {
 	name: 'SearchInput',
