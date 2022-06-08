@@ -4,8 +4,8 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
-    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;https://google.com&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
-    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;https://google.com&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http:/hero.com/admin/settings/storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
     <button-stub iconclass="check-icon" text="Done" class="submit-btn"></button-stub>
   </div>
 </div>
@@ -33,32 +33,30 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
     </div>
   </div>
   <div>
-    <!---->
     <div class="text-input-wrapper pb-2">
       <div class="text-input">
         <div class="text-input-label">
           OpenProject OAuth client ID *
         </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
         <div class="text-input-messages">
-          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div> <button disabled="disabled" class="copy-btn">
         <div class="copy-icon"></div> <span>Copy value</span>
       </button>
     </div>
-    <!---->
     <div class="text-input-wrapper pb-2">
       <div class="text-input">
         <div class="text-input-label">
           OpenProject OAuth client secret *
         </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
         <div class="text-input-messages">
-          <div class="text-input-hint">Go to your OpenProject <a class="link" href="https://google.com">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http:/hero.com/admin/settings/storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div> <button disabled="disabled" class="copy-btn">
         <div class="copy-icon"></div> <span>Copy value</span>
       </button>
-    </div> <button data-test-id="submit-op-oauth-btn" class="submit-btn submit-disabled">
+    </div> <button disabled="disabled" class="submit-btn b-disabled" data-test-id="submit-op-oauth-btn">
       <div class="b-icon check-icon"></div> <span>Save</span>
       <!---->
     </button>
@@ -81,18 +79,16 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
         OpenProject OAuth client ID*:
       </b>
       &nbsp;
-      <span>abcd</span>
+      <span>openproject-client-id</span>
       <!---->
     </div>
-    <!---->
     <div class="field-value pb-1"><b class="title">
         OpenProject OAuth client secret*:
       </b>
       &nbsp;
-      <div data-test-id="encrypted-value"><span>abcd******************************</span></div>
+      <div data-test-id="encrypted-value"><span>open******************************</span></div>
       <!---->
-    </div>
-    <!----> <button data-test-id="reset-op-oauth-btn">
+    </div> <button class="" data-test-id="reset-op-oauth-btn">
       <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
       <!---->
     </button>
@@ -101,7 +97,7 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
 `;
 
 exports[`AdminSettings server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
-<button data-test-id="cancel-edit-server-host-btn">
+<button class="" data-test-id="cancel-edit-server-host-btn">
   <!----> <span>Cancel</span>
   <!---->
 </button>
@@ -124,7 +120,7 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 `;
 
 exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
-<button data-test-id="reset-server-host-btn">
+<button class="" data-test-id="reset-server-host-btn">
   <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
   <!---->
 </button>
@@ -147,8 +143,7 @@ exports[`AdminSettings server host url form view mode and completed state should
     <span>http://hello.com</span>
     <!---->
   </div>
-  <!---->
-  <div class="d-flex"><button data-test-id="reset-server-host-btn">
+  <div class="d-flex"><button class="" data-test-id="reset-server-host-btn">
       <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
       <!---->
     </button>

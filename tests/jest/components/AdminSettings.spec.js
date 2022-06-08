@@ -75,9 +75,9 @@ describe('AdminSettings', () => {
 					ncOauth: F_MODES.DISABLE,
 				},
 				{
-					server: undefined,
-					opOauth: undefined,
-					ncOauth: undefined,
+					server: false,
+					opOauth: false,
+					ncOauth: false,
 				},
 			],
 			[
@@ -95,8 +95,8 @@ describe('AdminSettings', () => {
 				},
 				{
 					server: true,
-					opOauth: undefined,
-					ncOauth: undefined,
+					opOauth: false,
+					ncOauth: false,
 				},
 			],
 			[
@@ -115,7 +115,7 @@ describe('AdminSettings', () => {
 				{
 					server: true,
 					opOauth: true,
-					ncOauth: undefined,
+					ncOauth: false,
 				},
 			],
 			[
@@ -136,7 +136,7 @@ describe('AdminSettings', () => {
 				},
 				{
 					server: true,
-					opOauth: undefined,
+					opOauth: false,
 					ncOauth: true,
 				},
 			],
@@ -206,13 +206,16 @@ describe('AdminSettings', () => {
 						.mockImplementationOnce(() => Promise.resolve({ data: false }))
 					const saveOPOptionsSpy = jest.spyOn(AdminSettings.methods, 'saveOPOptions')
 						.mockImplementationOnce(() => jest.fn())
+
 					const wrapper = getMountedWrapper()
 					await wrapper.setData({
 						state: {
 							oauth_instance_url: 'https://hero.com',
 						},
 					})
+
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
+
 					const submitServerFormButton = wrapper.find('.submit-btn')
 					await submitServerFormButton.trigger('click')
 
@@ -220,8 +223,8 @@ describe('AdminSettings', () => {
 						await wrapper.vm.$nextTick()
 					}
 
-					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
+					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
 					expect(serverHostForm.find(selectors.textInputWrapper)).toMatchSnapshot()
 					expect(saveOPOptionsSpy).toBeCalledTimes(0)
 				})
@@ -231,6 +234,7 @@ describe('AdminSettings', () => {
 						.mockImplementationOnce(() => Promise.resolve({ data: true }))
 					const setAdminConfigAPISpy = jest.spyOn(axios, 'put')
 						.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
+
 					const wrapper = getMountedWrapper({
 						state: {
 							oauth_instance_url: '',
@@ -239,10 +243,12 @@ describe('AdminSettings', () => {
 							nc_oauth_client: null,
 						},
 					})
-					serverHostForm = wrapper.find(selectors.serverHostForm)
+
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
+					expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.DISABLE)
 
+					serverHostForm = wrapper.find(selectors.serverHostForm)
 					await serverHostForm.find('input').setValue('http://hero.com')
 					serverHostForm = wrapper.find(selectors.serverHostForm)
 					await serverHostForm.find(selectors.submitButton).trigger('click')
@@ -253,7 +259,10 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(true)
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
+					expect(wrapper.vm.isFormCompleted.server).toBe(true)
 					expect(setAdminConfigAPISpy).toBeCalledTimes(1)
+					// should set the OpenProject OAuth Values form to edit mode
+					expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
 				})
 			})
 			describe('disabled state', () => {
@@ -263,7 +272,7 @@ describe('AdminSettings', () => {
 					})
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					const submitButton = serverHostForm.find('.submit-btn')
-					expect(submitButton.classes()).toContain('submit-disabled')
+					expect(submitButton.props().isDisabled).toBe(true)
 				})
 				it('should unset the disabled state on input', async () => {
 					const wrapper = getMountedWrapper({
@@ -272,11 +281,11 @@ describe('AdminSettings', () => {
 					let submitButton
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					submitButton = serverHostForm.find(selectors.submitButton)
-					expect(submitButton.classes()).toContain('submit-disabled')
+					expect(submitButton.classes()).toContain('b-disabled')
 					await serverHostForm.find('input').setValue('a')
 
 					submitButton = serverHostForm.find(selectors.submitButton)
-					expect(submitButton.classes()).not.toContain('submit-disabled')
+					expect(submitButton.classes()).not.toContain('b-disabled')
 				})
 			})
 			describe('cancel button', () => {
@@ -314,8 +323,8 @@ describe('AdminSettings', () => {
 				wrapper = getMountedWrapper({
 					state: {
 						oauth_instance_url: 'http://hero.com',
-						client_id: 'abcd',
-						client_secret: 'abcdefgh',
+						client_id: 'openproject-client-id',
+						client_secret: 'openproject-client-secret',
 						nc_oauth_client: null,
 					},
 				})
@@ -391,12 +400,12 @@ describe('AdminSettings', () => {
 				it('should be enabled with complete client values', async () => {
 					let submitButton
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.classes()).toContain('submit-disabled')
+					expect(submitButton.classes()).toContain('b-disabled')
 					await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
 					await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
 
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.classes()).not.toContain('submit-disabled')
+					expect(submitButton.classes()).not.toContain('b-disabled')
 				})
 				describe('when clicked', () => {
 					describe('when the admin config is ok on save options', () => {

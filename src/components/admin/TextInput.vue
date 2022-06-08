@@ -59,12 +59,12 @@ export default {
 			type: String,
 		},
 		hintText: {
-			default: false,
-			type: [String, Boolean],
+			default: null,
+			type: [String, null],
 		},
 		errorMessage: {
-			default: false,
-			type: [String, Boolean],
+			default: null,
+			type: [String, null],
 		},
 		isRequired: {
 			default: false,
@@ -82,8 +82,7 @@ export default {
 			} else return this.label
 		},
 		isCopyDisabled() {
-			if (!this.value) return 'disabled'
-			else return false
+			return !this.value
 		},
 	},
 	methods: {

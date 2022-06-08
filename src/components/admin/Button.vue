@@ -1,5 +1,7 @@
 <template>
-	<button v-on="$listeners">
+	<button :disabled="isDisabled"
+		:class="{ 'b-disabled': isDisabled }"
+		v-on="$listeners">
 		<div v-if="iconClass" class="b-icon" :class="iconClass" />
 		<span>{{ t('integration_openproject', text) }}</span>
 		<div v-if="isLoading" class="icon-loading" />
@@ -20,6 +22,10 @@ export default {
 		text: {
 			required: true,
 			type: String,
+		},
+		isDisabled: {
+			default: false,
+			type: Boolean,
 		},
 	},
 }
@@ -49,5 +55,11 @@ button {
 		top: 6px;
 		left: 20px;
 	}
+}
+
+button.b-disabled {
+	background: #CCCCCC !important;
+	border: #CCCCCC !important;
+	color: #FFFFFF !important;
 }
 </style>

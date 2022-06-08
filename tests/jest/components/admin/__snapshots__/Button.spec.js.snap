@@ -1,28 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Admin Button should not show the loading icon or button icon if not set 1`] = `
-<button>
+exports[`Admin Button should not show the loading icon or button icon if not provided 1`] = `
+<button class="">
   <!----> <span>My Button</span>
   <!---->
 </button>
 `;
 
-exports[`Admin Button should show both button icon and loading icon if set 1`] = `
-<button>
+exports[`Admin Button should set the button as disabled when isDisabled prop is set as "true" 1`] = `
+<button disabled="disabled" class="b-disabled">
+  <!----> <span>My Button</span>
+  <!---->
+</button>
+`;
+
+exports[`Admin Button should show both button icon and loading icon if set as "true" 1`] = `
+<button class="">
   <div class="b-icon some class name"></div> <span>My Button</span>
   <div class="icon-loading"></div>
 </button>
 `;
 
-exports[`Admin Button should show the icon if the "iconClass" prop is set 1`] = `
-<button>
+exports[`Admin Button should show the icon if the "iconClass" prop is provided with value 1`] = `
+<button class="">
   <div class="b-icon some class name"></div> <span>My Button</span>
   <!---->
 </button>
 `;
 
 exports[`Admin Button should show the loading icon when "isLoading" is set as "true" 1`] = `
-<button>
+<button class="">
   <!----> <span>My Button</span>
   <div class="icon-loading"></div>
 </button>
