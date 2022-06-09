@@ -113,21 +113,7 @@ class OpenProjectAPIService {
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
 
-		$this->setupCache($cacheFactory);
-	}
-
-	/**
-	 * @param ICacheFactory $cacheFactory
-	 * @return void
-	 */
-	public function setupCache($cacheFactory) {
-		if ($cacheFactory->isAvailable()) {
-			if ($cacheFactory->isLocalCacheAvailable()) {
-				$this->cache = $cacheFactory->createLocal();
-			} else {
-				$this->cache = $cacheFactory->createDistributed();
-			}
-		}
+		$this->cache = $cacheFactory->createDistributed();
 	}
 
 	/**
@@ -557,22 +543,20 @@ class OpenProjectAPIService {
 	 * @return string[]
 	 */
 	public function getOpenProjectWorkPackageStatus(string $userId, string $statusId): array {
-		if ($this->cache instanceof ICache) {
-			$result = $this->cache->get(Application::APP_ID . '/statuses/' . $statusId);
-			if ($result !== null) {
-				return $result;
-			}
+		$result = $this->cache->get(Application::APP_ID . '/statuses/' . $statusId);
+		if ($result !== null) {
+			return $result;
 		}
 		$result = $this->request($userId, 'statuses/' . $statusId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
-		} elseif ($this->cache instanceof ICache) {
-			$this->cache->set(
+		}
+
+		$this->cache->set(
 				Application::APP_ID . '/statuses/' . $statusId,
 				$result,
 				CACHE_TTL
-			);
-		}
+		);
 		return $result;
 	}
 
@@ -584,22 +568,19 @@ class OpenProjectAPIService {
 	 * @return string[]
 	 */
 	public function getOpenProjectWorkPackageType(string $userId, string $typeId): array {
-		if ($this->cache instanceof ICache) {
-			$result = $this->cache->get(Application::APP_ID . '/types/' . $typeId);
-			if ($result !== null) {
-				return $result;
-			}
+		$result = $this->cache->get(Application::APP_ID . '/types/' . $typeId);
+		if ($result !== null) {
+			return $result;
 		}
 		$result = $this->request($userId, 'types/' . $typeId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
-		} elseif ($this->cache instanceof ICache) {
-			$this->cache->set(
-				Application::APP_ID . '/types/' . $typeId,
-				$result,
-				CACHE_TTL
-			);
 		}
+		$this->cache->set(
+			Application::APP_ID . '/types/' . $typeId,
+			$result,
+			CACHE_TTL
+		);
 
 		return $result;
 	}

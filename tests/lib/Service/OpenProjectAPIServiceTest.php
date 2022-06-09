@@ -22,17 +22,23 @@ use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Http\Client\IClientService;
+use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\Notification\IManager;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
+use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIServiceTest extends TestCase {
 	/**
@@ -228,11 +234,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(
 				new GuestAvatar(
 					'test',
-					$this->createMock(\Psr\Log\LoggerInterface::class)
+					$this->createMock(LoggerInterface::class)
 				)
 			);
 		if ($storageMock === null) {
-			$storageMock = $this->createMock(\OCP\Files\IRootFolder::class);
+			$storageMock = $this->createMock(IRootFolder::class);
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
@@ -281,12 +287,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		return new OpenProjectAPIService(
 			'integration_openproject',
-			$this->createMock(\OCP\IUserManager::class),
+			$this->createMock(IUserManager::class),
 			$avatarManagerMock,
-			$this->createMock(\Psr\Log\LoggerInterface::class),
-			$this->createMock(\OCP\IL10N::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(IL10N::class),
 			$this->defaultConfigMock,
-			$this->createMock(\OCP\Notification\IManager::class),
+			$this->createMock(IManager::class),
 			$clientService,
 			$storageMock,
 			$urlGeneratorMock,
@@ -296,12 +302,31 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @param array<string> $onlyMethods
+	 * @param ICacheFactory|null $cacheFactoryMock
 	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	private function getServiceMock(array $onlyMethods = ['request']): OpenProjectAPIService {
+	private function getServiceMock(
+		array $onlyMethods = ['request'], $cacheFactoryMock = null
+	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
+		if ($cacheFactoryMock === null) {
+			$cacheFactoryMock = $this->createMock(ICacheFactory::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
+			->setConstructorArgs(
+				[
+					'integration_openproject',
+					$this->createMock(IUserManager::class),
+					$this->createMock(IAvatarManager::class),
+					$this->createMock(LoggerInterface::class),
+					$this->createMock(IL10N::class),
+					$this->createMock(IConfig::class),
+					$this->createMock(IManager::class),
+					$this->createMock(IClientService::class),
+					$this->createMock(IRootFolder::class),
+					$this->createMock(IURLGenerator::class),
+					$cacheFactoryMock
+				])
 			->onlyMethods($onlyMethods)
 			->getMock();
 		$mock->method('getBaseUrl')->willReturn('https://nc.my-server.org');
@@ -801,29 +826,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageStatusNoCache(): void {
-		$service = $this->getServiceMock();
-		$cacheMock = $this->getMockBuilder(ICache::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheMock->expects($this->never())->method('get');
-		$cacheMock->expects($this->never())->method('set');
-		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(false);
-		$service->setupCache($cacheFactoryMock);
-		$service->method('request')->willReturn($this->validStatusResponseBody);
-		$result = $service->getOpenProjectWorkPackageStatus('user', 'statusId');
-		$this->assertSame($this->validStatusResponseBody, $result);
-	}
-
-
-	/**
-	 * @return void
-	 */
-	public function testGetOpenProjectWorkPackageStatusCacheHitDestributed(): void {
-		$service = $this->getServiceMock();
+	public function testGetOpenProjectWorkPackageStatusCacheHit(): void {
 		$cacheMock = $this->getMockBuilder(ICache::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -831,32 +834,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(true);
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$cacheFactoryMock->expects($this->never())->method('createLocal');
-		$service->setupCache($cacheFactoryMock);
-		$service->expects($this->never())->method('request');
-		$result = $service->getOpenProjectWorkPackageStatus('user', 'statusId');
-		$this->assertSame($this->validStatusResponseBody, $result);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testGetOpenProjectWorkPackageStatusCacheHitLocal(): void {
-		$service = $this->getServiceMock();
-		$cacheMock = $this->getMockBuilder(ICache::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheMock->method('get')->willReturn($this->validStatusResponseBody);
-		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(true);
-		$cacheFactoryMock->method('isLocalCacheAvailable')->willReturn(true);
-		$cacheFactoryMock->method('createLocal')->willReturn($cacheMock);
-		$cacheFactoryMock->expects($this->never())->method('createDistributed');
-		$service->setupCache($cacheFactoryMock);
+		$service = $this->getServiceMock(['request'], $cacheFactoryMock);
 		$service->expects($this->never())->method('request');
 		$result = $service->getOpenProjectWorkPackageStatus('user', 'statusId');
 		$this->assertSame($this->validStatusResponseBody, $result);
@@ -865,7 +844,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageStatusCacheMiss(): void {
-		$service = $this->getServiceMock();
 		$cacheMock = $this->getMockBuilder(ICache::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -874,9 +852,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(true);
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service->setupCache($cacheFactoryMock);
+		$service = $this->getServiceMock(['request'], $cacheFactoryMock);
 		$service->expects($this->once())
 			->method('request')
 			->willReturn($this->validStatusResponseBody);
@@ -928,28 +905,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageTypeNoCache(): void {
-		$service = $this->getServiceMock();
-		$cacheMock = $this->getMockBuilder(ICache::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheMock->expects($this->never())->method('get');
-		$cacheMock->expects($this->never())->method('set');
-		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(false);
-		$service->setupCache($cacheFactoryMock);
-		$service->method('request')->willReturn($this->validTypeResponseBody);
-		$result = $service->getOpenProjectWorkPackageType('user', 'typeId');
-		$this->assertSame($this->validTypeResponseBody, $result);
-	}
-
-	/**
-	 * @return void
-	 */
 	public function testGetOpenProjectWorkPackageTypeCacheHit(): void {
-		$service = $this->getServiceMock();
 		$cacheMock = $this->getMockBuilder(ICache::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -957,9 +913,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(true);
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service->setupCache($cacheFactoryMock);
+		$service = $this->getServiceMock(['request'], $cacheFactoryMock);
 		$service->expects($this->never())->method('request');
 		$result = $service->getOpenProjectWorkPackageType('user', 'typeId');
 		$this->assertSame($this->validTypeResponseBody, $result);
@@ -969,7 +924,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeCacheMiss(): void {
-		$service = $this->getServiceMock();
 		$cacheMock = $this->getMockBuilder(ICache::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -978,9 +932,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$cacheFactoryMock = $this->getMockBuilder(ICacheFactory::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$cacheFactoryMock->method('isAvailable')->willReturn(true);
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service->setupCache($cacheFactoryMock);
+		$service = $this->getServiceMock(['request'], $cacheFactoryMock);
 		$service->expects($this->once())
 			->method('request')
 			->willReturn($this->validTypeResponseBody);
@@ -1289,15 +1242,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$service = new OpenProjectAPIService(
 			'integration_openproject',
-			$this->createMock(\OCP\IUserManager::class),
-			$this->createMock(\OCP\IAvatarManager::class),
-			$this->createMock(\Psr\Log\LoggerInterface::class),
-			$this->createMock(\OCP\IL10N::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IAvatarManager::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(IL10N::class),
 			$configMock,
-			$this->createMock(\OCP\Notification\IManager::class),
+			$this->createMock(IManager::class),
 			$clientService,
-			$this->createMock(\OCP\Files\IRootFolder::class),
-			$this->createMock(\OCP\IURLGenerator::class),
+			$this->createMock(IRootFolder::class),
+			$this->createMock(IURLGenerator::class),
 			$this->createMock(ICacheFactory::class),
 		);
 
