@@ -11,7 +11,7 @@ jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
-	getLanguage: jest.fn()
+	getLanguage: jest.fn(),
 }))
 
 global.OC = {
@@ -22,7 +22,7 @@ global.OC = {
 }
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
-const scrollSpy = jest.spyOn(window.HTMLElement.prototype, "scrollIntoView")
+const scrollSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
 
 const localVue = createLocalVue()
 
