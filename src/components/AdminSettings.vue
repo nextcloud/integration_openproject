@@ -284,10 +284,12 @@ export default {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
 					this.state.oauth_instance_url = this.openprojectUrl
-					if (!this.isFormCompleted.opOauth) {
-						this.formMode.opOauth = F_MODES.EDIT
-					} else {
+					if (this.isFormCompleted.opOauth === true) {
+						// (re)create the Nextcloud OAuth client if we already have a complete OpenProject OAuth values
 						await this.createNCOAuthClient()
+					} else {
+						// set the OpenProject OAuth values form to edit mode if not completed yet
+						this.formMode.opOauth = F_MODES.EDIT
 					}
 				}
 			}
@@ -299,7 +301,7 @@ export default {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.isFormCompleted.opOauth = true
 
-				// if we do not have NC OAuth client yet, a new client is created
+				// if we do not have Nextcloud OAuth client yet, a new client is created
 				if (!this.state.nc_oauth_client) {
 					this.createNCOAuthClient()
 				}
@@ -362,8 +364,6 @@ export default {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
-				this.state.nc_oauth_client = response?.data?.clientInfo
-				this.isFormCompleted.ncOauth = true
 				showSuccess(this.translate('OpenProject admin options saved'))
 				return true
 			} catch (error) {
@@ -401,10 +401,9 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')
 			axios.post(url).then((response) => {
 				this.state.nc_oauth_client = response.data
-				// generate part is complete but still the NC OAuth form is set to edit mode
-				// so that copy buttons will be available for the user
+				// generate part is complete but still the NC OAuth form is set to
+				// edit mode and not completed state so that copy buttons will be available for the user
 				this.formMode.ncOauth = F_MODES.EDIT
-				this.isFormCompleted.ncOauth = true
 			}).catch((error) => {
 				showError(
 					this.translate('Failed to create Nextcloud OAuth client')

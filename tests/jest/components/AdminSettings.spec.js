@@ -424,8 +424,7 @@ describe('AdminSettings', () => {
 								clientSecret: 'nc-client-secret101',
 							})
 						})
-						it.only('should not create Nextcloud OAuth client if already present', async () => {
-							jest.clearAllMocks()
+						it('should not create Nextcloud OAuth client if already present', async () => {
 							jest.spyOn(axios, 'put')
 								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
 							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
