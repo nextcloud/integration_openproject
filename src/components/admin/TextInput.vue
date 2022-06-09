@@ -39,9 +39,9 @@ import { translate as t } from '@nextcloud/l10n'
 export default {
 	name: 'TextInput',
 	props: {
-		// eslint-disable-next-line vue/require-prop-types
 		value: {
-			required: true,
+			default: '',
+			type: String,
 		},
 		id: {
 			type: String,
