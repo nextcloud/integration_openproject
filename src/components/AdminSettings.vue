@@ -286,6 +286,8 @@ export default {
 					this.state.oauth_instance_url = this.openprojectUrl
 					if (!this.isFormCompleted.opOauth) {
 						this.formMode.opOauth = F_MODES.EDIT
+					} else {
+						await this.createNCOAuthClient()
 					}
 				}
 			}
