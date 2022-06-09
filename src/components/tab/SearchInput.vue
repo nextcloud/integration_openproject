@@ -228,7 +228,7 @@ body.theme--dark, body[data-theme-dark] {
 	}
 }
 
-body.theme--dark, body[data-theme-dark-highcontrast] {
+body[data-theme-dark-highcontrast] {
 	#searchBar {
 		background-color: black;
 	}
