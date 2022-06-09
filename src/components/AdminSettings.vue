@@ -13,7 +13,7 @@
 			<TextInput v-else
 				id="openproject-oauth-instance"
 				ref="openproject-oauth-instance-input"
-				v-model="state.oauth_instance_url"
+				v-model="openprojectUrl"
 				is-required
 				class="pb-2"
 				label="OpenProject host"
@@ -35,7 +35,7 @@
 					icon-class="check-icon"
 					text="Save"
 					:is-loading="loadingServerHostForm"
-					:is-disabled="!state.oauth_instance_url"
+					:is-disabled="!openprojectUrl || openprojectUrl === state.oauth_instance_url"
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
@@ -174,6 +174,7 @@ export default {
 			isOpenProjectInstanceValid: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			openprojectUrl: null,
 		}
 	},
 	computed: {
@@ -243,6 +244,7 @@ export default {
 			if (this.state.oauth_instance_url) {
 				this.formMode.server = F_MODES.VIEW
 				this.isFormCompleted.server = true
+				this.openprojectUrl = this.state.oauth_instance_url
 			}
 			if (!!this.state.client_id && !!this.state.client_secret) {
 				this.formMode.opOauth = F_MODES.VIEW
@@ -268,6 +270,7 @@ export default {
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
+			this.openprojectUrl = this.state.oauth_instance_url
 		},
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
@@ -280,6 +283,7 @@ export default {
 				if (saved) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
+					this.state.oauth_instance_url = this.openprojectUrl
 					if (!this.isFormCompleted.opOauth) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
@@ -334,7 +338,7 @@ export default {
 		},
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
-			const response = await axios.post(url, { url: this.state.oauth_instance_url })
+			const response = await axios.post(url, { url: this.openprojectUrl })
 			if (response.data !== true) {
 				showError(
 					this.translate('No OpenProject detected at the URL')
@@ -349,13 +353,15 @@ export default {
 				values: {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
-					oauth_instance_url: this.state.oauth_instance_url,
+					oauth_instance_url: this.openprojectUrl,
 				},
 			}
 			try {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
+				this.state.nc_oauth_client = response?.data?.clientInfo
+				this.isFormCompleted.ncOauth = true
 				showSuccess(this.translate('OpenProject admin options saved'))
 				return true
 			} catch (error) {
