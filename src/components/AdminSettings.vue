@@ -285,8 +285,14 @@ export default {
 					this.isFormCompleted.server = true
 					this.state.oauth_instance_url = this.openprojectUrl
 					if (this.isFormCompleted.opOauth === true) {
-						// (re)create the Nextcloud OAuth client if we already have a complete OpenProject OAuth values
-						await this.createNCOAuthClient()
+						// (re)create the Nextcloud OAuth client if we
+						// 1. already have a complete OpenProject OAuth values
+						// 2. already have a complete Nextcloud OAuth values
+						// if we do not have Nextcloud OAuth client created yet,
+						// it will be created automatically while saving the 2nd form i.e. OpenProject OAuth Values form
+						if (this.isFormCompleted.ncOauth === true) {
+							await this.createNCOAuthClient()
+						}
 					} else {
 						// set the OpenProject OAuth values form to edit mode if not completed yet
 						this.formMode.opOauth = F_MODES.EDIT
