@@ -7,10 +7,11 @@ import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 
+jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
-	getLanguage: jest.fn(() => ''),
+	getLanguage: jest.fn()
 }))
 
 global.OC = {
@@ -20,7 +21,9 @@ global.OC = {
 	},
 }
 
-jest.mock('@nextcloud/axios')
+window.HTMLElement.prototype.scrollIntoView = jest.fn()
+const scrollSpy = jest.spyOn(window.HTMLElement.prototype, "scrollIntoView")
+
 const localVue = createLocalVue()
 
 describe('ProjectsTab.vue Test', () => {
@@ -34,6 +37,7 @@ describe('ProjectsTab.vue Test', () => {
 	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlinkactionbutton'
 
 	beforeEach(() => {
+		jest.useFakeTimers()
 		// eslint-disable-next-line no-import-assign
 		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
 		wrapper = shallowMount(ProjectsTab, { localVue })
@@ -90,11 +94,14 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.vm.state).toBe(STATE.LOADING)
 		})
 	})
-	describe('empty message', () => {
+	describe('empty content', () => {
 		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
 			wrapper.setData({ state })
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+		})
+		it('should set projects as empty when the list of linked work packages are empty', () => {
+			expect(wrapper.classes()).toContain('projects--empty')
 		})
 	})
 	describe('fetchWorkpackages', () => {
@@ -378,6 +385,10 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages).toMatchSnapshot()
+			expect(scrollSpy).toBeCalledTimes(1)
+			expect(wrapper.find(linkedWorkpackageSelector).classes()).toContain('workpackage-transition')
+			jest.runAllTimers()
+			expect(wrapper.find(linkedWorkpackageSelector).classes()).not.toContain('workpackage-transition')
 		})
 	})
 	describe('when the work package is clicked', () => {
@@ -487,6 +498,7 @@ describe('ProjectsTab.vue Test', () => {
 function mountWrapper() {
 	return mount(ProjectsTab, {
 		localVue,
+		attachTo: document.body,
 		mocks: {
 			t: (msg) => msg,
 			generateUrl() {
