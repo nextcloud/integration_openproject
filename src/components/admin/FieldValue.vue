@@ -43,7 +43,7 @@ export default {
 	}),
 	computed: {
 		encryptedValue() {
-			return this.value.substr(0, 4) + '*'.repeat(30)
+			return this.value.substr(0, 8) + '*'.repeat(15)
 		},
 	},
 	methods: {

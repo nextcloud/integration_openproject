@@ -118,7 +118,7 @@
 					:value="ncClientSecret" />
 				<Button v-if="isNcOAuthFormInEdit"
 					class="submit-btn"
-					text="Done"
+					text="Yes, I have copied these values"
 					icon-class="check-icon"
 					:is-disabled="!ncClientId || !ncClientSecret"
 					@click="setNCOAuthFormToViewMode" />
@@ -227,20 +227,20 @@ export default {
 			return util.format(urlPart, hostPart)
 		},
 		openProjectClientHint() {
-			return this.translate('Go to your OpenProject')
+			return this.translate('Go to your OpenProject'
 				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
 				+ 'title="Administration > File storages">'
-				+ this.translate('Administration > File storages')
+				+ 'Administration > File storages'
 				+ '</a> '
-				+ this.translate('as an Administrator and start the setup and copy the values here.')
+				+ 'as an Administrator and start the setup and copy the values here.')
 		},
 		nextcloudClientHint() {
-			return this.translate('Copy the following values back into the OpenProject')
+			return this.translate('Copy the following values back into the OpenProject'
 				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
 				+ 'title="Administration > File storages">'
-				+ this.translate('Administration > File storages')
+				+ 'Administration > File storages'
 				+ '</a> '
-				+ this.translate('as an Administrator.')
+				+ 'as an Administrator.')
 		},
 	},
 	created() {
@@ -278,6 +278,7 @@ export default {
 		},
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
+			this.isFormCompleted.ncOauth = true
 		},
 		async saveOpenProjectHostUrl() {
 			this.loadingServerHostForm = true
@@ -414,6 +415,7 @@ export default {
 				// generate part is complete but still the NC OAuth form is set to
 				// edit mode and not completed state so that copy buttons will be available for the user
 				this.formMode.ncOauth = F_MODES.EDIT
+				this.isFormCompleted.ncOauth = false
 			}).catch((error) => {
 				showError(
 					this.translate('Failed to create Nextcloud OAuth client')
