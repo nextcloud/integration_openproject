@@ -41,9 +41,8 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
         <div class="text-input-messages">
           <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://hero.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
-      </div> <button disabled="disabled" class="copy-btn">
-        <div class="copy-icon"></div> <span>Copy value</span>
-      </button>
+      </div>
+      <!---->
     </div>
     <div class="text-input-wrapper pb-2">
       <div class="text-input">
@@ -53,9 +52,8 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
         <div class="text-input-messages">
           <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://hero.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
-      </div> <button disabled="disabled" class="copy-btn">
-        <div class="copy-icon"></div> <span>Copy value</span>
-      </button>
+      </div>
+      <!---->
     </div> <button disabled="disabled" class="submit-btn b-disabled" data-test-id="submit-op-oauth-btn">
       <div class="b-icon check-icon"></div> <span>Save</span>
       <!---->

@@ -54,7 +54,6 @@
 					v-model="state.client_id"
 					class="pb-2"
 					is-required
-					with-copy-btn
 					label="OpenProject OAuth client ID"
 					:hint-text="openProjectClientHint" />
 				<FieldValue v-if="isOPOAuthFormInView"
@@ -67,7 +66,6 @@
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
-					with-copy-btn
 					class="pb-2"
 					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
