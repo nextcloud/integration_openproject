@@ -6,7 +6,7 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
   <div>
     <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://hero.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
     <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://hero.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
-    <button-stub iconclass="check-icon" text="Done" class="submit-btn"></button-stub>
+    <button-stub iconclass="check-icon" text="Yes, I have copied these values" class="submit-btn"></button-stub>
   </div>
 </div>
 `;
@@ -84,7 +84,7 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
         OpenProject OAuth client secret*:
       </b>
       &nbsp;
-      <div data-test-id="encrypted-value"><span>open******************************</span></div>
+      <div data-test-id="encrypted-value"><span>openproj***************</span></div>
       <!---->
     </div> <button class="" data-test-id="reset-op-oauth-btn">
       <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>

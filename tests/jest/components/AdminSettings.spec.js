@@ -523,6 +523,7 @@ describe('AdminSettings', () => {
 						clientSecret: 'new-client-secret77',
 					})
 					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.EDIT)
+					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(false)
 					wrapper.destroy()
 				})
 			})
@@ -571,6 +572,7 @@ describe('AdminSettings', () => {
 						.find(selectors.submitButton)
 						.trigger('click')
 					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.VIEW)
+					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(true)
 				})
 			})
 		})
