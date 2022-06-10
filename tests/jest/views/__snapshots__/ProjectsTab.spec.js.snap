@@ -46,7 +46,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
 `;
 
 exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the request url is not valid 1`] = `
-<div class="projects">
+<div class="projects projects--empty">
   <!---->
   <div class="empty-content" id="openproject-empty-content">
     <div class="empty-content--wrapper">
@@ -233,7 +233,7 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
-      <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-1">
+      <div class="workpackage linked-workpackages--workpackage--item workpackage-transition" id="workpackage-1">
         <div class="row">
           <div class="row__status" style="background-color: blue;">
             <div class="row__status__title">

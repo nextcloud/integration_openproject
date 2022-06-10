@@ -196,6 +196,11 @@ export default {
 <style lang="scss">
 #searchBar {
 	padding: 10px;
+	position: -webkit-sticky; /* Safari */
+	position: sticky;
+	background-color: white;
+	z-index: 1;
+	top: 0;
 	.searchInput {
 		width: 100%;
 	}
@@ -216,4 +221,17 @@ export default {
 		}
 	}
 }
+
+body.theme--dark, body[data-theme-dark] {
+	#searchBar {
+		background-color: #171717;
+	}
+}
+
+body[data-theme-dark-highcontrast] {
+	#searchBar {
+		background-color: black;
+	}
+}
+
 </style>
