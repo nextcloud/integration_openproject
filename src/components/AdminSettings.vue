@@ -132,6 +132,7 @@
 </template>
 
 <script>
+import util from 'util'
 import axios from '@nextcloud/axios'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
@@ -218,7 +219,12 @@ export default {
 			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
 		adminFileStorageHref() {
-			return this.state.oauth_instance_url + '/admin/settings/storages'
+			let hostPart = ''
+			const urlPart = '%sadmin/settings/storages'
+			if (this.state?.oauth_instance_url.endsWith('/')) {
+				hostPart = this.state.oauth_instance_url
+			} else hostPart = this.state.oauth_instance_url + '/'
+			return util.format(urlPart, hostPart)
 		},
 		openProjectClientHint() {
 			return this.translate('Go to your OpenProject')
