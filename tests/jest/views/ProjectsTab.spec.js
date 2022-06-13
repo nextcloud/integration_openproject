@@ -6,6 +6,7 @@ import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
+import { workpackageHelper } from '../../../src/utils/workpackageHelper'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -105,6 +106,11 @@ describe('ProjectsTab.vue Test', () => {
 		})
 	})
 	describe('fetchWorkpackages', () => {
+		let axiosGetSpy = jest.fn()
+		beforeEach(() => {
+			axiosGetSpy.mockRestore()
+			workpackageHelper.clearCache()
+		})
 		it.each([
 			{ HTTPStatus: 400, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
 			{ HTTPStatus: 401, AppState: STATE.NO_TOKEN },
@@ -247,7 +253,7 @@ describe('ProjectsTab.vue Test', () => {
 			{ statusColor: { }, typeColor: { } },
 		])('shows the linked workpackages', async (testCase) => {
 			wrapper = mountWrapper()
-			const axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
 					data: [{
@@ -296,6 +302,12 @@ describe('ProjectsTab.vue Test', () => {
 				.mockImplementationOnce(() => Promise.resolve(
 					{ status: 200, data: testCase.typeColor })
 				)
+				.mockImplementationOnce(() => Promise.resolve(
+					{ status: 200, data: testCase.statusColor })
+				)
+				.mockImplementationOnce(() => Promise.resolve(
+					{ status: 200, data: testCase.typeColor })
+				)
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
@@ -317,7 +329,7 @@ describe('ProjectsTab.vue Test', () => {
 			// this can happen if multiple replies arrive at the same time
 			// when the user switches between files while results still loading
 			wrapper = mountWrapper()
-			const axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
 					data: [{
@@ -371,6 +383,68 @@ describe('ProjectsTab.vue Test', () => {
 			expect(wrapper.vm.state).toBe(STATE.OK)
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(workPackages).toMatchSnapshot()
+		})
+		it('caches the results for status and type color', async () => {
+			wrapper = mountWrapper()
+			axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						id: 123,
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
+							},
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+						},
+					},
+					{
+						id: 456,
+						subject: 'your task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
+							},
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+						},
+					}],
+				}))
+				.mockImplementation(() => Promise.resolve({
+					status: 200,
+					data: { color: '#FFFFFF' },
+				}))
+			await wrapper.vm.update({ id: 2222 })
+
+			// there should be only 3 requests even there are 2 WP
+			// one request for the wp itself, one for status color one for type color
+			expect(axiosGetSpy).toBeCalledTimes(3)
+			expect(axiosGetSpy).toHaveBeenNthCalledWith(
+				2,
+				'http://localhost/apps/integration_openproject/statuses/12'
+			)
+			expect(axiosGetSpy).toHaveBeenNthCalledWith(
+				3,
+				'http://localhost/apps/integration_openproject/types/6'
+			)
 		})
 	})
 	describe('onSave', () => {

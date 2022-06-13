@@ -1,7 +1,14 @@
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 
+let cachedStatusColors = {}
+let cachedTypeColors = {}
 export const workpackageHelper = {
+	// to allow the unit tests, to clear the cache
+	clearCache() {
+		cachedStatusColors = {}
+		cachedTypeColors = {}
+	},
 	async getColorAttributes(path, id) {
 		const url = generateUrl(path + id)
 		let response
@@ -49,8 +56,22 @@ export const workpackageHelper = {
 			+ '=' + userId
 			+ '&' + encodeURIComponent('userName')
 			+ '=' + userName
-		const statusColor = await this.getColorAttributes('/apps/integration_openproject/statuses/', statusId)
-		const typeColor = await this.getColorAttributes('/apps/integration_openproject/types/', typeId)
+		let statusColor
+		if (cachedStatusColors[statusId] === undefined) {
+			statusColor = await this.getColorAttributes('/apps/integration_openproject/statuses/', statusId)
+			cachedStatusColors[statusId] = statusColor
+		} else {
+			statusColor = cachedStatusColors[statusId]
+		}
+
+		let typeColor
+		if (cachedTypeColors[typeId] === undefined) {
+			typeColor = await this.getColorAttributes('/apps/integration_openproject/types/', typeId)
+			cachedTypeColors[typeId] = typeColor
+		} else {
+			typeColor = cachedTypeColors[typeId]
+		}
+
 		return {
 			id: workPackage.id,
 			subject: workPackage.subject,
