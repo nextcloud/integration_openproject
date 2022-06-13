@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FieldValue encrypt value prop when set as 'true' should render the encrypted value 1`] = `<div data-test-id="encrypted-value"><span>Some******************************</span></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' should render the encrypted value 1`] = `<div data-test-id="encrypted-value"><span>Some Fie***************</span></div>`;
 
 exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should show the eye icon if set 1`] = `
 <div class="field-value"><b class="title">
     Some Field Title:
   </b>
   &nbsp;
-  <div data-test-id="encrypted-value"><span>Some******************************</span></div>
+  <div data-test-id="encrypted-value"><span>Some Fie***************</span></div>
   <div class="eye-icon"></div>
 </div>
 `;
 
 exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when eye icon is clicked 1`] = `<div data-test-id="encrypted-value"><span>Some Field Value</span></div>`;
 
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when eye icon is clicked 2`] = `<div data-test-id="encrypted-value"><span>Some******************************</span></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when eye icon is clicked 2`] = `<div data-test-id="encrypted-value"><span>Some Fie***************</span></div>`;
 
 exports[`FieldValue is required prop should append asterik with the title if set 1`] = `
 <div class="field-value"><b class="title">
