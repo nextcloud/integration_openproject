@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextInput is required prop should add asterik to the label text 1`] = `
+<div class="text-input-label">
+  some label *
+</div>
+`;
+
+exports[`TextInput is required prop should not add asterik to the label text 1`] = `
+<div class="text-input-label">
+  some label
+</div>
+`;
+
+exports[`TextInput messages should show error message if both error message and hint text are provided 1`] = `
+<div class="text-input-wrapper">
+  <div class="text-input">
+    <div class="text-input-label">
+      some label
+    </div> <input id="unique-id" type="text" placeholder="" class="full-width error">
+    <div class="text-input-messages">
+      <div class="text-input-error">
+        some error message
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`TextInput messages should show error message if provided 1`] = `
+<div class="text-input-wrapper">
+  <div class="text-input">
+    <div class="text-input-label">
+      some label
+    </div> <input id="unique-id" type="text" placeholder="" class="full-width error">
+    <div class="text-input-messages">
+      <div class="text-input-error">
+        some error message
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`TextInput messages should show hint text if provided 1`] = `
+<div class="text-input-wrapper">
+  <div class="text-input">
+    <div class="text-input-label">
+      some label
+    </div> <input id="unique-id" type="text" placeholder="" class="full-width">
+    <div class="text-input-messages">
+      <div class="text-input-hint">some hint message</div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`TextInput with copy button prop should render copy button if set 1`] = `
+<div class="text-input-wrapper">
+  <div class="text-input">
+    <div class="text-input-label">
+      some label
+    </div> <input id="unique-id" type="text" placeholder="" class="full-width">
+    <!---->
+  </div> <button disabled="disabled" class="copy-btn">
+    <div class="copy-icon"></div> <span>Copy value</span>
+  </button>
+</div>
+`;

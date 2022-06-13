@@ -1,29 +1,152 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the save button 1`] = `
-<button class="save-config-btn">
-  Save
-  <div class="icon-loading"></div>
-</button>
+exports[`AdminSettings Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
+<div class="nextcloud-oauth-values">
+  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
+  <div>
+    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <button-stub iconclass="check-icon" text="Yes, I have copied these values" class="submit-btn"></button-stub>
+  </div>
+</div>
 `;
 
-exports[`AdminSettings form submit check whether OpenProject instance address is valid should show the loading indicator while loading for the update button 1`] = `
-<button class="update-config-btn">
-  Update
-  <div class="icon-loading"></div>
-</button>
+exports[`AdminSettings Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
+<div class="nextcloud-oauth-values">
+  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
+  <div>
+    <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
+    <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
+    <button-stub iconclass="reset-icon" text="Reset Nextcloud OAuth values"></button-stub>
+  </div>
+</div>
 `;
 
-exports[`AdminSettings form submit when the admin config is not complete should show the save button 1`] = `
-<button class="save-config-btn">
-  Save
+exports[`AdminSettings OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="index">
+      2
+    </div>
+    <div class="title">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client ID *
+        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://openproject.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div>
+      <!---->
+    </div>
+    <div class="text-input-wrapper pb-2">
+      <div class="text-input">
+        <div class="text-input-label">
+          OpenProject OAuth client secret *
+        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
+        <div class="text-input-messages">
+          <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://openproject.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
+        </div>
+      </div>
+      <!---->
+    </div> <button disabled="disabled" class="submit-btn b-disabled" data-test-id="submit-op-oauth-btn">
+      <div class="b-icon check-icon"></div> <span>Save</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
+<div class="openproject-oauth-values">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject OAuth settings
+    </div>
+  </div>
+  <div>
+    <div class="field-value"><b class="title">
+        OpenProject OAuth client ID*:
+      </b>
+      &nbsp;
+      <span>openproject-client-id</span>
+      <!---->
+    </div>
+    <div class="field-value pb-1"><b class="title">
+        OpenProject OAuth client secret*:
+      </b>
+      &nbsp;
+      <div data-test-id="encrypted-value"><span>openproj***************</span></div>
+      <!---->
+    </div> <button class="" data-test-id="reset-op-oauth-btn">
+      <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
+      <!---->
+    </button>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
+<button class="" data-test-id="cancel-edit-server-host-btn">
+  <!----> <span>Cancel</span>
   <!---->
 </button>
 `;
 
-exports[`AdminSettings form submit when the admin config status is complete should show the update button 1`] = `
-<button class="update-config-btn">
-  Update
+exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
+<div class="text-input-wrapper pb-2">
+  <div class="text-input">
+    <div class="text-input-label">
+      OpenProject host *
+    </div> <input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width error">
+    <div class="text-input-messages">
+      <div class="text-input-error">
+        Please introduce a valid OpenProject host name
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
+<button class="" data-test-id="reset-server-host-btn">
+  <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
   <!---->
 </button>
+`;
+
+exports[`AdminSettings server host url form view mode and completed state should show field value and hide the input field 1`] = `
+<div class="openproject-server-host">
+  <div class="form-heading">
+    <div class="complete">
+      <div class="icon icon-checkmark"></div>
+    </div>
+    <div class="title green-text">
+      OpenProject Server
+    </div>
+  </div>
+  <div class="field-value pb-1"><b class="title">
+      OpenProject host*:
+    </b>
+    &nbsp;
+    <span>http://openproject.com</span>
+    <!---->
+  </div>
+  <div class="d-flex"><button class="" data-test-id="reset-server-host-btn">
+      <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
+      <!---->
+    </button>
+    <!---->
+    <!---->
+  </div>
+</div>
 `;

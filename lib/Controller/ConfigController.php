@@ -269,12 +269,9 @@ class ConfigController extends Controller {
 		$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 		if ($oauthClientInternalId !== '') {
 			$id = (int) $oauthClientInternalId;
-			$clientInfo = $this->oauthService->getClientInfo($id);
-			if ($clientInfo !== null) {
-				return new DataResponse($clientInfo);
-			}
+			$this->oauthService->deleteClient($id);
+			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
 		}
-
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);

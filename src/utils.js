@@ -18,3 +18,9 @@ export const STATE = {
 	CONNECTION_ERROR: 'connection-error',
 	FAILED_FETCHING_WORKPACKAGES: 'failed-fetching-workpackages',
 }
+
+export const F_MODES = {
+	VIEW: 0,
+	EDIT: 1,
+	DISABLE: 2,
+}
