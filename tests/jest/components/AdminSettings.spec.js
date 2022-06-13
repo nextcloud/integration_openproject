@@ -197,7 +197,7 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
 				})
-				it("should set the saved url to the edit parameter on click", async () => {
+				it('should set the saved url to the edit parameter on click', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							oauth_instance_url: 'http://openproject.com',
@@ -207,7 +207,7 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.serverHostUrlForEdit).toBe(null)
 
-					await resetButton.trigger("click")
+					await resetButton.trigger('click')
 
 					expect(wrapper.vm.serverHostUrlForEdit).toBe('http://openproject.com')
 					expect(wrapper.vm.state.oauth_instance_url).toBe('http://openproject.com')
