@@ -20,6 +20,8 @@ use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Http\Client\IResponse;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -36,6 +38,8 @@ use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
 
 use OCA\OpenProject\AppInfo\Application;
+
+define('CACHE_TTL', 3600);
 
 class OpenProjectAPIService {
 	/**
@@ -80,6 +84,10 @@ class OpenProjectAPIService {
 	private $urlGenerator;
 
 	/**
+	 * @var ICache
+	 */
+	private $cache = null;
+	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct(
@@ -92,7 +100,8 @@ class OpenProjectAPIService {
 								INotificationManager $notificationManager,
 								IClientService $clientService,
 								IRootFolder $storage,
-								IURLGenerator $urlGenerator) {
+								IURLGenerator $urlGenerator,
+								ICacheFactory $cacheFactory) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -103,6 +112,8 @@ class OpenProjectAPIService {
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
+
+		$this->cache = $cacheFactory->createDistributed();
 	}
 
 	/**
@@ -532,10 +543,20 @@ class OpenProjectAPIService {
 	 * @return string[]
 	 */
 	public function getOpenProjectWorkPackageStatus(string $userId, string $statusId): array {
+		$result = $this->cache->get(Application::APP_ID . '/statuses/' . $statusId);
+		if ($result !== null) {
+			return $result;
+		}
 		$result = $this->request($userId, 'statuses/' . $statusId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
+
+		$this->cache->set(
+				Application::APP_ID . '/statuses/' . $statusId,
+				$result,
+				CACHE_TTL
+		);
 		return $result;
 	}
 
@@ -547,10 +568,19 @@ class OpenProjectAPIService {
 	 * @return string[]
 	 */
 	public function getOpenProjectWorkPackageType(string $userId, string $typeId): array {
+		$result = $this->cache->get(Application::APP_ID . '/types/' . $typeId);
+		if ($result !== null) {
+			return $result;
+		}
 		$result = $this->request($userId, 'types/' . $typeId);
 		if (!isset($result['id'])) {
 			return ['error' => 'Malformed response'];
 		}
+		$this->cache->set(
+			Application::APP_ID . '/types/' . $typeId,
+			$result,
+			CACHE_TTL
+		);
 
 		return $result;
 	}

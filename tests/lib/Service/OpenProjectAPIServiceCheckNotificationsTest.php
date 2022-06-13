@@ -166,6 +166,7 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 			$clientService,
 			$this->createMock(\OCP\Files\IRootFolder::class),
 			$this->createMock(\OCP\IURLGenerator::class),
+			$this->createMock(\OCP\ICacheFactory::class),
 		);
 
 		$service->checkNotifications();
