@@ -87,7 +87,7 @@ export default {
 		},
 	},
 	data: () => ({
-		isCopied: false
+		isCopied: false,
 	}),
 	computed: {
 		labelText() {
@@ -107,7 +107,7 @@ export default {
 			const that = this
 			navigator.clipboard.writeText(this.value)
 			showSuccess(that.translate('Copied to the clipboard.'), {
-				timeout: COPY_TIMEOUT
+				timeout: COPY_TIMEOUT,
 			})
 			that.isCopied = true
 			setTimeout(() => {

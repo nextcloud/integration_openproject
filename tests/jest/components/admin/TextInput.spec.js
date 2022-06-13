@@ -78,7 +78,7 @@ describe('TextInput', () => {
 			})
 			expect(wrapper.find(selector.copyButton).attributes().disabled).toBe(undefined)
 		})
-		describe("on click", () => {
+		describe('on click', () => {
 			let copyButton
 			jest.useFakeTimers()
 			const spyWriteToClipboard = jest.spyOn(navigator.clipboard, 'writeText')
@@ -103,7 +103,7 @@ describe('TextInput', () => {
 				copyButton = wrapper.find(selector.copyButton)
 				expect(copyButton.find(selector.copyIcon).exists()).toBe(false)
 				expect(copyButton.find(selector.copiedIcon).exists()).toBe(true)
-				jest.advanceTimersByTime(5000);
+				jest.advanceTimersByTime(5000)
 				await wrapper.vm.$nextTick()
 				copyButton = wrapper.find(selector.copyButton)
 				expect(copyButton.find(selector.copyIcon).exists()).toBe(true)
