@@ -13,7 +13,7 @@
 			<TextInput v-else
 				id="openproject-oauth-instance"
 				ref="openproject-oauth-instance-input"
-				v-model="openprojectUrl"
+				v-model="serverHostUrlForEdit"
 				is-required
 				class="pb-2"
 				label="OpenProject host"
@@ -35,7 +35,7 @@
 					icon-class="check-icon"
 					text="Save"
 					:is-loading="loadingServerHostForm"
-					:is-disabled="!openprojectUrl || openprojectUrl === state.oauth_instance_url"
+					:is-disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
 					@click="saveOpenProjectHostUrl" />
 			</div>
 		</div>
@@ -173,7 +173,7 @@ export default {
 			isOpenProjectInstanceValid: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			openprojectUrl: null,
+			serverHostUrlForEdit: null,
 		}
 	},
 	computed: {
@@ -248,7 +248,6 @@ export default {
 			if (this.state.oauth_instance_url) {
 				this.formMode.server = F_MODES.VIEW
 				this.isFormCompleted.server = true
-				this.openprojectUrl = this.state.oauth_instance_url
 			}
 			if (!!this.state.client_id && !!this.state.client_secret) {
 				this.formMode.opOauth = F_MODES.VIEW
@@ -274,7 +273,7 @@ export default {
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
-			this.openprojectUrl = this.state.oauth_instance_url
+			this.serverHostUrlForEdit = this.state.oauth_instance_url
 		},
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
@@ -288,7 +287,7 @@ export default {
 				if (saved) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
-					this.state.oauth_instance_url = this.openprojectUrl
+					this.state.oauth_instance_url = this.serverHostUrlForEdit
 					if (this.isFormCompleted.opOauth === true) {
 						// (re)create the Nextcloud OAuth client if we
 						// 1. already have a complete OpenProject OAuth values
@@ -353,7 +352,7 @@ export default {
 		},
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
-			const response = await axios.post(url, { url: this.openprojectUrl })
+			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
 			if (response.data !== true) {
 				showError(
 					this.translate('No OpenProject detected at the URL')
@@ -368,7 +367,7 @@ export default {
 				values: {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
-					oauth_instance_url: this.openprojectUrl,
+					oauth_instance_url: this.serverHostUrlForEdit,
 				},
 			}
 			try {

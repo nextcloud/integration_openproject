@@ -125,8 +125,8 @@ describe('AdminSettings', () => {
 					client_id: null,
 					client_secret: null,
 					nc_oauth_client: {
-						clientId: 'abcd',
-						clientSecret: 'woljklkdsdk',
+						clientId: 'some-client-id-here',
+						clientSecret: 'some-client-secret-here',
 					},
 				},
 				{
@@ -144,11 +144,11 @@ describe('AdminSettings', () => {
 				'with a complete admin settings',
 				{
 					oauth_instance_url: 'https://openproject.example.com',
-					client_id: 'sldjfslfjlsdjfsd',
-					client_secret: 'sljlsjdflskdfslkdjflsdjf',
+					client_id: 'client-id-here',
+					client_secret: 'client-id-here',
 					nc_oauth_client: {
-						clientId: 'aslkdjflskdjflkd',
-						clientSecret: 'sljlfkjlskjdflkd',
+						clientId: 'nc-client-id-here',
+						clientSecret: 'nc-client-secret-here',
 					},
 				},
 				{
@@ -180,7 +180,7 @@ describe('AdminSettings', () => {
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://hello.com',
+						oauth_instance_url: 'http://openproject.com',
 					},
 				})
 				resetButton = wrapper.find(selectors.resetServerHostButton)
@@ -197,6 +197,21 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
 				})
+				it("should set the saved url to the edit parameter on click", async () => {
+					const wrapper = getMountedWrapper({
+						state: {
+							oauth_instance_url: 'http://openproject.com',
+						},
+					})
+					resetButton = wrapper.find(selectors.resetServerHostButton)
+
+					expect(wrapper.vm.serverHostUrlForEdit).toBe(null)
+
+					await resetButton.trigger("click")
+
+					expect(wrapper.vm.serverHostUrlForEdit).toBe('http://openproject.com')
+					expect(wrapper.vm.state.oauth_instance_url).toBe('http://openproject.com')
+				})
 			})
 		})
 		describe('edit mode', () => {
@@ -209,7 +224,7 @@ describe('AdminSettings', () => {
 
 					const wrapper = getMountedWrapper()
 					await wrapper.setData({
-						openprojectUrl: 'https://hero.com',
+						serverHostUrlForEdit: 'https://hero.com',
 					})
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
@@ -247,7 +262,7 @@ describe('AdminSettings', () => {
 					expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.DISABLE)
 
 					serverHostForm = wrapper.find(selectors.serverHostForm)
-					await serverHostForm.find('input').setValue('http://hero.com')
+					await serverHostForm.find('input').setValue('http://openproject.com')
 					serverHostForm = wrapper.find(selectors.serverHostForm)
 					await serverHostForm.find(selectors.submitButton).trigger('click')
 
@@ -291,7 +306,7 @@ describe('AdminSettings', () => {
 				beforeEach(async () => {
 					wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://hello.com',
+							oauth_instance_url: 'http://openproject.com',
 						},
 					})
 					await wrapper.setData({
@@ -320,7 +335,7 @@ describe('AdminSettings', () => {
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://hero.com',
+						oauth_instance_url: 'http://openproject.com',
 						client_id: 'openproject-client-id',
 						client_secret: 'openproject-client-secret',
 						nc_oauth_client: null,
@@ -380,7 +395,7 @@ describe('AdminSettings', () => {
 					}))
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://hero.com',
+						oauth_instance_url: 'http://openproject.com',
 						client_id: '',
 						client_secret: '',
 						nc_oauth_client: null,
@@ -431,7 +446,7 @@ describe('AdminSettings', () => {
 								.mockImplementationOnce(() => jest.fn())
 							const wrapper = getMountedWrapper({
 								state: {
-									oauth_instance_url: 'http://hero.com',
+									oauth_instance_url: 'http://openproject.com',
 									client_id: '',
 									client_secret: '',
 									nc_oauth_client: {
@@ -456,7 +471,7 @@ describe('AdminSettings', () => {
 			it('should show the field values and hide the form', () => {
 				const wrapper = getWrapper({
 					state: {
-						oauth_instance_url: 'http://hero.com',
+						oauth_instance_url: 'http://openproject.com',
 						client_id: 'some-client-id-here',
 						client_secret: 'some-client-secret-here',
 						nc_oauth_client: {
@@ -473,7 +488,7 @@ describe('AdminSettings', () => {
 						.mockImplementation((text) => text)
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://hero.com',
+							oauth_instance_url: 'http://openproject.com',
 							client_id: 'op-client-id',
 							client_secret: 'op-client-secret',
 							nc_oauth_client: {
@@ -508,7 +523,7 @@ describe('AdminSettings', () => {
 						}))
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://hero.com',
+							oauth_instance_url: 'http://openproject.com',
 							client_id: 'op-client-id',
 							client_secret: 'op-client-secret',
 							nc_oauth_client: {
@@ -534,7 +549,7 @@ describe('AdminSettings', () => {
 					.mockImplementation((text) => text)
 				const wrapper = getWrapper({
 					state: {
-						oauth_instance_url: 'http://hero.com',
+						oauth_instance_url: 'http://openproject.com',
 						client_id: 'op-client-id',
 						client_secret: 'op-client-secret',
 						nc_oauth_client: {
@@ -554,7 +569,7 @@ describe('AdminSettings', () => {
 				it('should set the form to view mode if the oauth values are complete', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://hero.com',
+							oauth_instance_url: 'http://openproject.com',
 							client_id: 'some-client-id-for-op',
 							client_secret: 'some-client-secret-for-op',
 							nc_oauth_client: {
