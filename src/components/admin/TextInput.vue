@@ -30,13 +30,17 @@
 			class="copy-btn"
 			:disabled="isCopyDisabled"
 			@click="copyValue">
-			<div class="copy-icon" />
+			<div v-if="isCopied" class="text-input-icon copied-icon" />
+			<div v-else class="text-input-icon copy-icon" />
 			<span>{{ translate("Copy value") }}</span>
 		</button>
 	</div>
 </template>
 <script>
 import { translate as t } from '@nextcloud/l10n'
+import { showSuccess } from '@nextcloud/dialogs'
+
+const COPY_TIMEOUT = 5000
 
 export default {
 	name: 'TextInput',
@@ -82,6 +86,9 @@ export default {
 			type: Boolean,
 		},
 	},
+	data: () => ({
+		isCopied: false
+	}),
 	computed: {
 		labelText() {
 			if (this.isRequired) {
@@ -97,7 +104,15 @@ export default {
 			return t('integration_openproject', text)
 		},
 		copyValue() {
+			const that = this
 			navigator.clipboard.writeText(this.value)
+			showSuccess(that.translate('Copied to the clipboard.'), {
+				timeout: COPY_TIMEOUT
+			})
+			that.isCopied = true
+			setTimeout(() => {
+				that.isCopied = false
+			}, COPY_TIMEOUT)
 		},
 	},
 }
@@ -137,6 +152,14 @@ export default {
 		outline: none;
 		box-shadow: none;
 	}
+	&-icon {
+		cursor: copy;
+		width: 16px;
+		height: 16px;
+		background-size: 16px;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
 }
 
 .copy-btn {
@@ -150,13 +173,10 @@ export default {
 		margin-left: 6px;
 	}
 	.copy-icon {
-		cursor: copy;
-		width: 16px;
-		height: 16px;
-		background-size: 16px;
-		background-repeat: no-repeat;
-		background-position: center;
 		background-image: url(./../../../img/copy.svg);
+	}
+	.copied-icon {
+		background-image: url(./../../../img/copied.svg);
 	}
 }
 

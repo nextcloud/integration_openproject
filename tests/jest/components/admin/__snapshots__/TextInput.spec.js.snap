@@ -66,7 +66,7 @@ exports[`TextInput with copy button prop should render copy button if set 1`] = 
     </div> <input id="unique-id" type="text" placeholder="" class="full-width">
     <!---->
   </div> <button disabled="disabled" class="copy-btn">
-    <div class="copy-icon"></div> <span>Copy value</span>
+    <div class="text-input-icon copy-icon"></div> <span>Copy value</span>
   </button>
 </div>
 `;
