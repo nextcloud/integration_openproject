@@ -8,6 +8,7 @@
 				ref="textInput"
 				:value="value"
 				:type="type"
+				:readonly="readOnly"
 				class="full-width"
 				:class="{'error': !!errorMessage}"
 				:placeholder="translate(placeHolder)"
@@ -72,6 +73,10 @@ export default {
 			type: Boolean,
 		},
 		withCopyBtn: {
+			default: false,
+			type: Boolean,
+		},
+		readOnly: {
 			default: false,
 			type: Boolean,
 		},

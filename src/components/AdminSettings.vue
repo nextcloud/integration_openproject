@@ -94,6 +94,7 @@
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
 					class="pb-2"
+					read-only
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client ID"
@@ -106,6 +107,7 @@
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
 					class="pb-2"
+					read-only
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client secret"
