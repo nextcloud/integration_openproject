@@ -4,7 +4,7 @@ import FieldValue from '../../../../src/components/admin/FieldValue'
 const localVue = createLocalVue()
 
 const selectors = {
-	eyeIcon: '.eye-icon',
+	inspectButton: '.inspect-icon',
 	encryptedValue: '[data-test-id="encrypted-value"]',
 }
 
@@ -35,22 +35,33 @@ describe('FieldValue', () => {
 					})
 					expect(wrapper).toMatchSnapshot()
 				})
-				it('should render the toggler if both inspect and encrypt props are set', () => {
+				it('should render the inspect button if both inspect and encrypt props are set', () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
 					})
-					expect(wrapper.find(selectors.eyeIcon).exists()).toBe(true)
+					expect(wrapper.find(selectors.inspectButton).exists()).toBe(true)
 				})
-				it('should toggle encrypted value when eye icon is clicked', async () => {
+				it('should toggle encrypted value when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
 					})
-					await wrapper.find(selectors.eyeIcon).trigger('click')
+					await wrapper.find(selectors.inspectButton).trigger('click')
 					expect(wrapper.find(selectors.encryptedValue)).toMatchSnapshot()
-					await wrapper.find(selectors.eyeIcon).trigger('click')
+					await wrapper.find(selectors.inspectButton).trigger('click')
 					expect(wrapper.find(selectors.encryptedValue)).toMatchSnapshot()
+				})
+				it('should toggle the inspect button icon when the inspect button is clicked', async () => {
+					const wrapper = getWrapper({
+						encryptValue: true,
+						withInspection: true,
+					})
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+
 				})
 			})
 		})

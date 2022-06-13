@@ -10,7 +10,13 @@
 		</div>
 		<span v-else>{{ value }}</span>
 
-		<div v-if="encryptValue && withInspection" class="eye-icon" @click="toggleInspection" />
+		<div v-if="encryptValue && withInspection"
+			class="inspect-icon"
+			:class="{
+				'eye-icon-off': inspect,
+				'eye-icon': !inspect,
+			}"
+			@click="toggleInspection" />
 	</div>
 </template>
 <script>
@@ -60,7 +66,7 @@ export default {
 	align-items: center;
 }
 
-.eye-icon {
+.inspect-icon {
 	cursor: pointer;
 	margin-left: 6px;
 	width: 16px;
@@ -68,6 +74,13 @@ export default {
 	background-size: 16px;
 	background-repeat: no-repeat;
 	background-position: center;
-	background-image: url('../../../img/eye.svg');
+}
+
+.eye-icon {
+	background-image: url(./../../../img/eye.svg);
+}
+
+.eye-icon-off {
+	background-image: url(./../../../img/add.svg);
 }
 </style>
