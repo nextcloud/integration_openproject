@@ -15,7 +15,8 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :request-url="requestUrl" />
+				<OAuthConnectButton :request-url="requestUrl"
+					:file-info="fileInfo" />
 			</div>
 		</div>
 	</div>
@@ -43,6 +44,12 @@ export default {
 		errorMessage: {
 			type: String,
 			default: '',
+		},
+		fileInfo: {
+			type: Object,
+			default() {
+				return {}
+			},
 		},
 	},
 	data() {

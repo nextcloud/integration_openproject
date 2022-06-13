@@ -26,13 +26,28 @@ describe('OAuthConnectButton.vue Test', () => {
 	describe('when the request url is valid', () => {
 		beforeEach(() => {
 			delete window.location
-			window.location = { replace: jest.fn() }
+			window.location = { replace: jest.fn(), pathname: '/index.php/apps/files/' }
 			wrapper = getWrapper()
 		})
 		describe('on successful retrieving of the OP OAuth URI', () => {
 			beforeEach(() => {
 				axios.get.mockImplementationOnce(() =>
-					Promise.resolve({ data: 'http://openproject/oauth' }),
+					Promise.resolve({ data: 'http://openproject/oauth' })
+				)
+				axios.put.mockImplementationOnce(() =>
+					Promise.resolve({}),
+				)
+			})
+			it('saves the state to user config', async () => {
+				wrapper.find('button').trigger('click')
+				await localVue.nextTick()
+				expect(axios.put).toHaveBeenCalledWith(
+					'http://localhost/apps/integration_openproject/config',
+					{
+						values: {
+							oauth_journey_starting_page: expect.stringMatching(/{.*}/),
+						},
+					},
 				)
 			})
 			it('redirects to the openproject oauth uri', async () => {

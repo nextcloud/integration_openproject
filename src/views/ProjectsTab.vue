@@ -54,6 +54,7 @@
 		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
+			:file-info="fileInfo"
 			:request-url="requestUrl" />
 	</div>
 </template>

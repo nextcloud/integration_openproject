@@ -23,6 +23,12 @@ export default {
 			type: [String, Boolean],
 			required: true,
 		},
+		fileInfo: {
+			type: Object,
+			default() {
+				return {}
+			},
+		},
 	},
 
 	computed: {
@@ -37,7 +43,16 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/op-oauth-url')
 			axios.get(url)
 				.then((result) => {
-					window.location.replace(result.data)
+					const req = {
+						values: {
+							oauth_journey_starting_page: JSON.stringify(this.getOauthJourneyStartingPage()),
+						},
+					}
+					const url = generateUrl('/apps/integration_openproject/config')
+					axios.put(url, req)
+						.then(() => {
+							window.location.replace(result.data)
+						})
 				})
 				.catch((error) => {
 					showError(
