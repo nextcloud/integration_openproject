@@ -88,6 +88,7 @@ export default {
 		state: STATE.LOADING,
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
+		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		color: null,
 	}),
 	computed: {
@@ -103,6 +104,9 @@ export default {
 				return wp.fileId === this.fileInfo.id
 			})
 		},
+	},
+	mounted() {
+		showError(t('integration_openproject', 'OAuth access token could not be obtained:') + ' ' + this.oauthConnectionErrorMessage)
 	},
 	methods: {
 		/**
