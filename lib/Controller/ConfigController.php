@@ -168,13 +168,13 @@ class ConfigController extends Controller {
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
 		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
-		$oauthJourneyStartingPage = $this->config->getUserValue(
-			$this->userId, Application::APP_ID, 'oauth_journey_starting_page'
-		);
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 		$codeVerifier = $this->config->getUserValue(
 			$this->userId, Application::APP_ID, 'code_verifier', false
+		);
+		$oauthJourneyStartingPage = $this->config->getUserValue(
+			$this->userId, Application::APP_ID, 'oauth_journey_starting_page'
 		);
 
 		try {

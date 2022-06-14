@@ -54,9 +54,13 @@ class LoadSidebarScript implements IEventListener {
 	private $config;
 
 	/**
-	 * @var IUser|null
+	 * @var string "error"|"success"|""
 	 */
-	private $user;
+	private $oauthConnectionResult;
+	/**
+	 * @var string
+	 */
+	private $oauthConnectionErrorMessage;
 
 	public function __construct(
 		IInitialState $initialStateService,
@@ -67,7 +71,19 @@ class LoadSidebarScript implements IEventListener {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
 		$this->url = $url;
-		$this->user = $userSession->getUser();
+		$user = $userSession->getUser();
+		$this->oauthConnectionResult = $this->config->getUserValue(
+			$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->config->deleteUserValue(
+			$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->oauthConnectionErrorMessage = $this->config->getUserValue(
+			$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+		);
+		$this->config->deleteUserValue(
+			$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+		);
 	}
 
 	public function handle(Event $event): void {
@@ -90,12 +106,12 @@ class LoadSidebarScript implements IEventListener {
 		} catch (\Exception $e) {
 			$this->initialStateService->provideInitialState('request-url', false);
 		}
-		$oauthConnectionErrorMessage = $this->config->getUserValue(
-			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-result', $this->oauthConnectionResult
 		);
-		$this->config->deleteUserValue(
-			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-error-message', $this->oauthConnectionErrorMessage
 		);
-		$this->initialStateService->provideInitialState('oauth-connection-error-message', $oauthConnectionErrorMessage);
 	}
 }

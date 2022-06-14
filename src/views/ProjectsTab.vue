@@ -89,6 +89,7 @@ export default {
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
+		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		color: null,
 	}),
 	computed: {
@@ -106,7 +107,17 @@ export default {
 		},
 	},
 	mounted() {
-		showError(t('integration_openproject', 'OAuth access token could not be obtained:') + ' ' + this.oauthConnectionErrorMessage)
+		if (this.oauthConnectionResult === 'success') {
+			showSuccess(t('integration_openproject', 'Successfully connected to OpenProject!'))
+		} else if (this.oauthConnectionResult === 'error') {
+			showError(
+				t(
+					'integration_openproject',
+					'OAuth access token could not be obtained:'
+				) + ' ' + this.oauthConnectionErrorMessage
+			)
+		}
+
 	},
 	methods: {
 		/**
