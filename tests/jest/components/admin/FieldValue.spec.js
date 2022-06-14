@@ -4,7 +4,7 @@ import FieldValue from '../../../../src/components/admin/FieldValue'
 const localVue = createLocalVue()
 
 const selectors = {
-	inspectButton: '.inspect-icon',
+	inspectButton: '.inspect-btn',
 	encryptedValue: '[data-test-id="encrypted-value"]',
 }
 

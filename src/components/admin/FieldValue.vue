@@ -11,7 +11,7 @@
 		<span v-else>{{ value }}</span>
 
 		<div v-if="encryptValue && withInspection"
-			class="inspect-icon"
+			class="inspect-btn"
 			:class="{
 				'eye-icon-off': inspect,
 				'eye-icon': !inspect,
@@ -49,7 +49,7 @@ export default {
 	}),
 	computed: {
 		encryptedValue() {
-			return this.value.substr(0, 8) + '*'.repeat(15)
+			return this.value.substring(0, 8) + '*'.repeat(15)
 		},
 	},
 	methods: {
@@ -66,11 +66,11 @@ export default {
 	align-items: center;
 }
 
-.inspect-icon {
+.inspect-btn {
 	cursor: pointer;
 	margin-left: 6px;
 	width: 16px;
-	height: 10px;
+	height: 16px;
 	background-size: 16px;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -81,6 +81,6 @@ export default {
 }
 
 .eye-icon-off {
-	background-image: url(./../../../img/add.svg);
+	background-image: url(./../../../img/eye-off.svg);
 }
 </style>
