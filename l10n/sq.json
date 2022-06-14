@@ -1,7 +1,4 @@
 { "translations": {
-    "Client ID" : "ID klienti",
-    "Client secret" : "E fshehtë klienti",
-    "Replace" : "Mbishkruaj",
     "Cancel" : "Anullo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

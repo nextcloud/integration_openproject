@@ -13,18 +13,6 @@ OC.L10N.register(
     "OpenProject integration" : "Интегриране на OpenProject",
     "Integration of OpenProject project management tool" : "Интегриране на инструмента за управление на проекти OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Интеграцията на OpenProject предоставя изпълним модул за табло, показващ важни за вас известия,\n\t доставчик за търсене на работни пакети и известия за промени в активните работни пакети.",
-    "If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below." : "Ако искате да позволите на потребителите на Nextcloud да използват OAuth за удостоверяване на екземпляр на OpenProject, създайте приложение в администраторските настройки на OpenProject и поставете идентификатора на клиента (AppId) и тайната на клиента по-долу.",
-    "Make sure you set the \"Redirect URI\" to" : "Уверете се, че сте задали „URI за пренасочване“ на",
-    "OpenProject instance address" : "Адрес на екземпляр на OpenProject",
-    "OpenProject address" : "Адрес на OpenProject",
-    "Client ID" : "Идентификатор на клиент",
-    "Client ID of the OAuth app in OpenProject" : "Идентификатор на клиент на приложението OAuth в OpenProject",
-    "Client secret" : "Тайна на клиент",
-    "Client secret of the OAuth app in OpenProject" : "Тайна на клиент на приложението OAuth в OpenProject",
-    "Replace" : "Замяна",
-    "Cancel" : "Отказ",
-    "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
-    "Failed to save OpenProject admin options" : "Неуспешно записване на опциите за администратор на OpenProject",
     "Connect to OpenProject" : "Свързване с OpenProject",
     "Some OpenProject integration application settings are not working." : "Някои настройки на приложението за интеграция на OpenProject не работят.",
     "Failed to save OpenProject OAuth state" : "Неуспешно записване на състоянието на OpenProject OAuth",
@@ -49,6 +37,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "За да добавите връзка, използвайте лентата за търсене по-горе, за да намерите желания работен пакет",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
-    "Existing relations:" : "Съществуващи отношения/връзки/:"
+    "Existing relations:" : "Съществуващи отношения/връзки/:",
+    "Cancel" : "Отказ"
 },
 "nplurals=2; plural=(n != 1);");

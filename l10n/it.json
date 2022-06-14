@@ -11,18 +11,6 @@
     "OpenProject integration" : "Integrazione OpenProject",
     "Integration of OpenProject project management tool" : "Integrazione dello strumento di gestione dei progetti OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'integrazione di OpenProject fornisce un widget del cruscotto che mostra le tue notifiche importanti,\nun provider di ricerca per i pacchetti di lavoro e le notifiche per le modifiche ai pacchetti di lavoro attivi.",
-    "If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below." : "Se desideri consentire ai tuoi utenti Nextcloud di utilizzare OAuth per autenticarsi su un'istanza OpenProject, crea un'applicazione nelle impostazioni di amministrazione di OpenProject e inserisci l'ID client (AppId) e il segreto client di seguito.",
-    "Make sure you set the \"Redirect URI\" to" : "Assicurati di impostare \"URI di reindirizzamento\" a",
-    "OpenProject instance address" : "Indirizzo istanza OpenProject",
-    "OpenProject address" : "Indirizzo OpenProject",
-    "Client ID" : "ID client",
-    "Client ID of the OAuth app in OpenProject" : "ID client dell'app OAuth in OpenProject",
-    "Client secret" : "Segreto del client",
-    "Client secret of the OAuth app in OpenProject" : "Segreto del client dell'app OAuth in OpenProject",
-    "Replace" : "Sostituisci",
-    "Cancel" : "Annulla",
-    "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
-    "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Connect to OpenProject" : "Collegati a OpenProject",
     "Failed to save OpenProject OAuth state" : "Salvataggio dello stato OAuth di OpenProject non riuscito",
     "Enable navigation link" : "Abilita collegamento di navigazione",
@@ -43,6 +31,7 @@
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
-    "Existing relations:" : "Relazioni esistenti:"
+    "Existing relations:" : "Relazioni esistenti:",
+    "Cancel" : "Annulla"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

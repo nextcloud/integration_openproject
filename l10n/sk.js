@@ -13,18 +13,6 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integrácia",
     "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integrácia OpenProject poskytuje miniaplikáciu na paneli, ktorá vám zobrazuje dôležité oznámenia,\n\tjednotný poskytovateľ vyhľadávania pre vyhľadávanie pracovných balíkov a oznámenia o zmenách v aktívnych pracovných balíkoch.",
-    "If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below." : "Ak chcete umožniť používateľom Nextcloud používať OAuth na autentifikáciu na vami vybranú inštanciu OpenProject, vytvorte aplikáciu v nastaveniach OpenProject a tu nastavte ID aplikácie (AppId) a tajný kľúč nižšie.",
-    "Make sure you set the \"Redirect URI\" to" : "Nezabudnite nastaviť \"Redirect URI\" na",
-    "OpenProject instance address" : "Adresa inštancie OpenProject",
-    "OpenProject address" : "Adresa OpenProjectu",
-    "Client ID" : "Client ID",
-    "Client ID of the OAuth app in OpenProject" : "ClienID OAuth aplikácie v OpenProject",
-    "Client secret" : "Heslo klienta",
-    "Client secret of the OAuth app in OpenProject" : "Heslo klienta v OAuth aplikácii OpenProjectu",
-    "Replace" : "Nahradiť",
-    "Cancel" : "Zrušiť",
-    "OpenProject admin options saved" : "Nastavenia administrátora OpenProjectu boli uložené",
-    "Failed to save OpenProject admin options" : "Nepodarilo sa uložiť nastavenia administrátora OpenProjectu",
     "Connect to OpenProject" : "Pripojiť k OpenProject",
     "Failed to save OpenProject OAuth state" : "Nepodarilo sa uložiť stav OAuth OpenProjectu",
     "Enable navigation link" : "Povoliť navigačný odkaz",
@@ -45,6 +33,7 @@ OC.L10N.register(
     "Unexpected Error" : "Neočakávaná chyba",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
-    "Existing relations:" : "Existujúce vzťahy:"
+    "Existing relations:" : "Existujúce vzťahy:",
+    "Cancel" : "Zrušiť"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

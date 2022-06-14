@@ -9,16 +9,12 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
     "Connected accounts" : "Verbonden accounts",
     "OpenProject integration" : "OpenProject integratie",
-    "Make sure you set the \"Redirect URI\" to" : "Zorg ervoor dat de \"Redirect URI\" is ingesteld op",
-    "Client ID" : "Client ID",
-    "Client secret" : "Client secret",
-    "Replace" : "Vervangen",
-    "Cancel" : "Annuleren",
     "Enable navigation link" : "Inschakelen navigatielink",
     "Connected as {user}" : "Verbonden als {user}",
     "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "Incorrect access token" : "Onjuist access token",
-    "Invalid token" : "Ongeldig token"
+    "Invalid token" : "Ongeldig token",
+    "Cancel" : "Annuleren"
 },
 "nplurals=2; plural=(n != 1);");

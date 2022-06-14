@@ -10,18 +10,6 @@
     "OpenProject integration" : "Intégration d'OpenProject",
     "Integration of OpenProject project management tool" : "Intégration de l'outil de gestion de projet OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'intégration d'OpenProject fournit un widget pour le dashboard qui affiche vos notifications importantes,\n\tun fournisseur de recherche pour les work packages et des notifications pour les changements dans les work packages actifs.",
-    "If you want to allow your Nextcloud users to use OAuth to authenticate to a OpenProject instance, create an application in your OpenProject admin settings and put the Client ID (AppId) and the Client secret below." : "Si vous souhaitez permettre à vos utilisateurs Nextcloud d'utiliser OAuth pour s'authentifier auprès d'une instance OpenProject, créez une application dans vos paramètres d'administration OpenProject et placez l'ID client (AppId) et le secret client ci-dessous.",
-    "Make sure you set the \"Redirect URI\" to" : "Assurez-vous que \"l'URI de redirection\" a la valeur",
-    "OpenProject instance address" : "Adresse de l'instance OpenProject",
-    "OpenProject address" : "Adresse d'OpenProject",
-    "Client ID" : "ID Client",
-    "Client ID of the OAuth app in OpenProject" : "ID client de l'application Oauth dans OpenProject",
-    "Client secret" : "Secret client",
-    "Client secret of the OAuth app in OpenProject" : "Secret client de l'application Oauth dans OpenProject",
-    "Replace" : "Remplacer",
-    "Cancel" : "Annuler",
-    "OpenProject admin options saved" : "Options d'administration OpenProject enregistrées",
-    "Failed to save OpenProject admin options" : "Échec de l'enregistrement des options d'administration OpenProject",
     "Connect to OpenProject" : "Se connecter à OpenProject",
     "Failed to save OpenProject OAuth state" : "Échec de l'enregistrement de l'état OAuth OpenProject",
     "Enable navigation link" : "Activer le lien de navigation",
@@ -39,6 +27,7 @@
     "Failed to save OpenProject options" : "Impossible d'enregistrer les options OpenProject",
     "Error connecting to OpenProject" : "Erreur de connexion à OpenProject",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
-    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject"
+    "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject",
+    "Cancel" : "Annuler"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

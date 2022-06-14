@@ -5,12 +5,9 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Villa í OAuth-samskiptum",
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
     "Connected accounts" : "Tengdir aðgangar",
-    "Client ID" : "Biðlaraauðkenni",
-    "Client secret" : "Leynilykill biðlara",
-    "Replace" : "Skipta út",
-    "Cancel" : "Hætta við",
     "Enable navigation link" : "Virkja flakktengil",
     "Connected as {user}" : "Tengt sem {user}",
-    "Incorrect access token" : "Rangt aðgangsteikn"
+    "Incorrect access token" : "Rangt aðgangsteikn",
+    "Cancel" : "Hætta við"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

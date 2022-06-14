@@ -6,15 +6,11 @@ OC.L10N.register(
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "Connected accounts" : "Comptes connectats",
-    "Make sure you set the \"Redirect URI\" to" : "Assegureu-vos de definir l'\"URI de redirecció\" a",
-    "Client ID" : "ID del client",
-    "Client secret" : "Secret del client",
-    "Replace" : "Reemplaça",
-    "Cancel" : "Cancel·la",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
-    "Incorrect access token" : "Testimoni d'accés incorrecte"
+    "Incorrect access token" : "Testimoni d'accés incorrecte",
+    "Cancel" : "Cancel·la"
 },
 "nplurals=2; plural=(n != 1);");

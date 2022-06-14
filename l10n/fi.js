@@ -6,12 +6,9 @@ OC.L10N.register(
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
     "Connected accounts" : "Yhdistetyt tilit",
-    "Client ID" : "Asiakas-ID",
-    "Client secret" : "Asiakassalasana",
-    "Replace" : "Korvaa",
-    "Cancel" : "Peruuta",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
-    "Incorrect access token" : "Virheellinen käyttöpoletti"
+    "Incorrect access token" : "Virheellinen käyttöpoletti",
+    "Cancel" : "Peruuta"
 },
 "nplurals=2; plural=(n != 1);");
