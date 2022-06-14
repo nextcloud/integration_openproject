@@ -291,7 +291,7 @@ export default {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
 					this.state.oauth_instance_url = this.serverHostUrlForEdit
-					if (this.isFormCompleted.opOauth !== true) {
+					if (!this.isFormCompleted.opOauth) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
 				}
