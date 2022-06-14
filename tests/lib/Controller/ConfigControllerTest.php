@@ -356,17 +356,21 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'oauth_instance_url', ''],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
+				'http://localhost:3000',
 				'123',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
 			);
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthServiceMock->method('setClientRedirectUri')->with(123, 'http://openproject.com');
 		$configMock
 			->expects($this->exactly(12)) // 6 times for each user
 			->method('deleteUserValue')
