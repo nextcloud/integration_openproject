@@ -185,7 +185,7 @@ export default {
 		},
 		serverHostErrorMessage() {
 			if (
-				this.state.oauth_instance_url === ''
+				this.serverHostUrlForEdit === ''
 				|| this.isOpenProjectInstanceValid === null
 				|| this.isOpenProjectInstanceValid
 			) return null
@@ -273,7 +273,9 @@ export default {
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
+			// set the edit variable to the current saved value
 			this.serverHostUrlForEdit = this.state.oauth_instance_url
+			this.isOpenProjectInstanceValid = null
 		},
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
@@ -285,9 +287,9 @@ export default {
 			if (this.isOpenProjectInstanceValid) {
 				const saved = await this.saveOPOptions()
 				if (saved) {
+					this.state.oauth_instance_url = this.serverHostUrlForEdit
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
-					this.state.oauth_instance_url = this.serverHostUrlForEdit
 					if (this.isFormCompleted.opOauth === true) {
 						// (re)create the Nextcloud OAuth client if we
 						// 1. already have a complete OpenProject OAuth values
@@ -358,8 +360,12 @@ export default {
 					this.translate('No OpenProject detected at the URL')
 				)
 				this.isOpenProjectInstanceValid = false
-				this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
-			} else this.isOpenProjectInstanceValid = true
+				await this.$nextTick()
+				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
+			} else {
+				this.isOpenProjectInstanceValid = true
+				this.state.oauth_instance_url = this.serverHostUrlForEdit
+			}
 		},
 		async saveOPOptions() {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
@@ -367,7 +373,7 @@ export default {
 				values: {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
-					oauth_instance_url: this.serverHostUrlForEdit,
+					oauth_instance_url: this.state.oauth_instance_url
 				},
 			}
 			try {
