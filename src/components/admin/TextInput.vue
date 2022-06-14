@@ -12,6 +12,7 @@
 				class="full-width"
 				:class="{'error': !!errorMessage}"
 				:placeholder="translate(placeHolder)"
+			    @click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"

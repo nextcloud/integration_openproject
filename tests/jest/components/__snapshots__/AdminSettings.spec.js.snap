@@ -101,12 +101,16 @@ exports[`AdminSettings server host url form edit mode cancel button should be vi
 </button>
 `;
 
+exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width">`;
+
+exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width">`;
+
 exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
 <div class="text-input-wrapper pb-2">
   <div class="text-input">
     <div class="text-input-label">
       OpenProject host *
-    </div> <input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width error">
+    </div> <input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width error">
     <div class="text-input-messages">
       <div class="text-input-error">
         Please introduce a valid OpenProject host name
