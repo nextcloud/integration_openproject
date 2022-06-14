@@ -79,15 +79,17 @@ class OauthService {
 	 * @param string $redirectUri
 	 * @return bool
 	 */
-	public function setClientRedirectUri(int $id, string $redirectUri): bool {
+	public function setClientRedirectUri(int $id, string $opUrl): bool {
 		try {
 			$client = $this->clientMapper->getByUid($id);
+			$clientId = $client->getClientIdentifier();
+			$redirectUri = rtrim($opUrl, '/') .'/oauth_clients/'.$clientId.'/callback';
 			$client->setRedirectUri($redirectUri);
 			$this->clientMapper->update($client);
-			return true;
+			return $this->getClientInfo($client);
 		} catch (ClientNotFoundException $e) {
+			return false;
 		}
-		return false;
 	}
 
 	/**
