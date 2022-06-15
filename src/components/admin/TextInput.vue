@@ -31,7 +31,7 @@
 			:disabled="isCopyDisabled"
 			@click="copyValue">
 			<div v-if="isCopied" class="text-input-icon copied-icon" />
-			<div v-else class="text-input-icon copy-icon" />
+			<div v-else class="text-input-icon icon-clippy" />
 			<span>{{ translate("Copy value") }}</span>
 		</button>
 	</div>
@@ -171,9 +171,6 @@ export default {
 	span {
 		cursor: copy;
 		margin-left: 6px;
-	}
-	.copy-icon {
-		background-image: url(./../../../img/copy.svg);
 	}
 	.copied-icon {
 		background-image: url(./../../../img/copied.svg);
