@@ -15,11 +15,13 @@
 				ref="openproject-oauth-instance-input"
 				v-model="serverHostUrlForEdit"
 				is-required
+				:read-only="isServerHostUrlReadOnly"
 				class="pb-2"
 				label="OpenProject host"
 				place-holder="https://www.my-openproject.com"
 				hint-text="Please introduce your OpenProject host name"
-				:error-message="serverHostErrorMessage" />
+				:error-message="serverHostErrorMessage"
+				@click="isServerHostUrlReadOnly = false" />
 			<div class="d-flex">
 				<Button v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
@@ -94,6 +96,7 @@
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
 					class="pb-2"
+					read-only
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client ID"
@@ -106,6 +109,7 @@
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
 					class="pb-2"
+					read-only
 					is-required
 					with-copy-btn
 					label="Nextcloud OAuth client secret"
@@ -174,6 +178,7 @@ export default {
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
+			isServerHostUrlReadOnly: true,
 		}
 	},
 	computed: {

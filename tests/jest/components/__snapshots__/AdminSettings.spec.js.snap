@@ -4,8 +4,8 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
-    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
-    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" readonly="true" class="pb-2"></textinput-stub>
+    <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject <a class=&quot;link&quot; href=&quot;http://openproject.com/admin/settings/storages&quot; target=&quot;_blank&quot;title=&quot;Administration > File storages&quot;>Administration > File storages</a> as an Administrator." isrequired="true" withcopybtn="true" readonly="true" class="pb-2"></textinput-stub>
     <button-stub iconclass="check-icon" text="Yes, I have copied these values" class="submit-btn"></button-stub>
   </div>
 </div>
@@ -101,12 +101,16 @@ exports[`AdminSettings server host url form edit mode cancel button should be vi
 </button>
 `;
 
+exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width">`;
+
+exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width">`;
+
 exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
 <div class="text-input-wrapper pb-2">
   <div class="text-input">
     <div class="text-input-label">
       OpenProject host *
-    </div> <input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width error">
+    </div> <input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width error">
     <div class="text-input-messages">
       <div class="text-input-error">
         Please introduce a valid OpenProject host name

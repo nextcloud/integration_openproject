@@ -27,7 +27,7 @@ global.OC = {
 }
 
 const selectors = {
-	oauthInstance: '#openproject-oauth-instance',
+	oauthInstanceInput: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
 	oauthClientSecret: '#openproject-client-secret',
 	serverHostForm: '.openproject-server-host',
@@ -215,6 +215,25 @@ describe('AdminSettings', () => {
 			})
 		})
 		describe('edit mode', () => {
+			describe('readonly state', () => {
+				let wrapper, oauthInstanceInput
+				beforeEach(() => {
+					wrapper = getMountedWrapper({
+						state: {
+							oauth_instance_url: '',
+						},
+					})
+					oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
+				})
+				it('should set the input field to readonly at first', () => {
+					expect(oauthInstanceInput).toMatchSnapshot()
+				})
+				it('should clear the readonly state when clicked on the input', async () => {
+					await oauthInstanceInput.trigger('click')
+					oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
+					expect(oauthInstanceInput).toMatchSnapshot()
+				})
+			})
 			describe('submit button', () => {
 				it('should set the input to error state when the url is invalid when clicked', async () => {
 					jest.spyOn(axios, 'post')
