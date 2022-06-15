@@ -26,8 +26,6 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use Psr\Log\LoggerInterface;
-use Punic\Exception;
-use function PHPUnit\Framework\throwException;
 
 class ConfigController extends Controller {
 
@@ -187,7 +185,7 @@ class ConfigController extends Controller {
 					'settings.PersonalSettings.index', ['section' => 'connected-accounts']
 				);
 			} elseif ($oauthJourneyStartingPageDecoded->page === 'files') {
-				$newUrl = $this->urlGenerator->linkToRoute('files.view.index',[
+				$newUrl = $this->urlGenerator->linkToRoute('files.view.index', [
 					'dir' => $oauthJourneyStartingPageDecoded->file->dir,
 					'scrollto' => $oauthJourneyStartingPageDecoded->file->name
 				]);

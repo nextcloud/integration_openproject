@@ -34,7 +34,6 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\IURLGenerator;
-use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
 
