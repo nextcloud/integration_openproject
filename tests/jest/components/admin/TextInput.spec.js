@@ -16,7 +16,7 @@ jest.mock('@nextcloud/dialogs', () => ({
 const selector = {
 	textInputLabel: '.text-input-label',
 	copyButton: '.copy-btn',
-	copyIcon: '.copy-icon',
+	copyIcon: '.icon-clippy',
 	copiedIcon: '.copied-icon',
 }
 
