@@ -24,6 +24,7 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @param string $codeVerifier The string that should be used as code_verifier
 	 * @param string $clientSecret The string that should be used as client_secret
+	 * @param string $startingPage JSON encoded string that defines the start of the OAuth journey
 	 * @return IConfig|MockObject
 	 */
 	private function getConfigMock(
@@ -72,74 +73,67 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
-	 * @param LoggerInterface|null $loggerMock
-	 * @param IConfig|null $configMock
-	 * @return ConfigController
+	 * @return array<mixed>
 	 */
-	private function getConfigController($loggerMock = null, $configMock = null) {
-		if ($configMock === null) {
-			$configMock = $this->getConfigMock(str_repeat("A", 128), str_repeat("S", 50));
-		}
-		if ($loggerMock === null) {
-			$loggerMock = $this->createMock(LoggerInterface::class);
-		}
-
-		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$apiServiceMock
-			->method('request')
-			->with(
-				'testUser',
-				'users/me'
-			)
-			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripatti', 'id' => 1]);
-
-		$apiServiceMock
-			->method('requestOAuthAccessToken')
-			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
-
+	public function redirectUrlDataProvider() {
+		return [
+			[
+				'{ "page": "dashboard" }',
+				['dashboard.dashboard.index'],
+				'https://nc.np/apps/dashboard'
+			],
+			[
+				'{ "page": "settings" }',
+				['settings.PersonalSettings.index', ['section' => 'connected-accounts']],
+				'https://nc.np/settings/user/connected-accounts'
+			],
+			[
+				'{ "page": "files", "file": {"dir": "/my/data", "name": "secret-data.txt"} }',
+				['files.view.index', ['dir' => '/my/data', 'scrollto' => 'secret-data.txt']],
+				'https://nc.np/apps/files/?dir=/my/data&scrollto=secret-data.txt'
+			],
+			[
+				'{ "page": "invalid" }',
+				['files.view.index'],
+				'https://nc.np/apps/files'
+			],
+		];
+	}
+	/**
+	 * @dataProvider redirectUrlDataProvider
+	 * @param string $startingPage
+	 * @param array<mixed> $linkToRouteArguments
+	 * @param string $redirectUrl
+	 * @return void
+	 */
+	public function testOauthRedirectCorrectRedirectUrl(
+		string $startingPage, array $linkToRouteArguments, string $redirectUrl
+	):void {
+		$configMock = $this->getConfigMock(
+			str_repeat("A", 128), str_repeat("S", 50),
+			$startingPage
+		);
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$urlGeneratorMock
-			->expects($this->atLeastOnce())
 			->method('linkToRoute')
-			->with('dashboard.dashboard.index');
-		return new ConfigController(
+			->with(...array_values($linkToRouteArguments))
+			->willReturn($redirectUrl);
+		$configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
 			$urlGeneratorMock,
 			$this->createMock(IUserManager::class),
 			$this->l,
-			$apiServiceMock,
-			$loggerMock,
+			$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
 			'testUser'
 		);
-	}
-	/**
-	 * @return void
-	 */
-	public function testOauthRedirect2() {
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50),
-			'{ "page": "dashboard" }'
-		);
-		$configMock
-			->expects($this->exactly(5))
-			->method('setUserValue')
-			->withConsecutive(
-				[$this->anything(),$this->anything(),$this->anything(),$this->anything()],
-				[$this->anything(),$this->anything(),$this->anything(),$this->anything()],
-				[$this->anything(),$this->anything(),$this->anything(),$this->anything()],
-				[$this->anything(),$this->anything(),$this->anything(),$this->anything()],
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
-			);
-		$configController = $this->getConfigController(null, $configMock);
-		$configController->oauthRedirect('code', 'randomString');
+		$result = $configController->oauthRedirect('code', 'randomString');
+		$this->assertSame($redirectUrl, $result->getRedirectURL());
 	}
 
 	/**
@@ -159,7 +153,18 @@ class ConfigControllerTest extends TestCase {
 					'Error during OAuth exchanges'
 				],
 			);
-		$configController = $this->getConfigController(null, $configMock);
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(IUserManager::class),
+			$this->l,
+			$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			'testUser'
+		);
 		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
 	}
 
