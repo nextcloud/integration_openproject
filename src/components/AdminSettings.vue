@@ -374,7 +374,7 @@ export default {
 				values: {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
-					oauth_instance_url: this.state.oauth_instance_url
+					oauth_instance_url: this.state.oauth_instance_url,
 				},
 			}
 			try {

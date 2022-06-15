@@ -506,9 +506,9 @@ describe('AdminSettings', () => {
 						cancel: 'Cancel',
 						confirm: 'Yes, replace',
 						confirmClasses: 'error',
-						type: 70
+						type: 70,
 					}
-					const expectedConfirmTitle = "Replace Nextcloud OAuth values"
+					const expectedConfirmTitle = 'Replace Nextcloud OAuth values'
 
 					const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
 					await resetButton.trigger('click')
