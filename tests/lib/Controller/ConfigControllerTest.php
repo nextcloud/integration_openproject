@@ -26,7 +26,9 @@ class ConfigControllerTest extends TestCase {
 	 * @param string $clientSecret The string that should be used as client_secret
 	 * @return IConfig|MockObject
 	 */
-	private function getConfigMock($codeVerifier, $clientSecret) {
+	private function getConfigMock(
+		$codeVerifier, $clientSecret, $startingPage = '{ page: "files" }'
+	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
@@ -50,7 +52,7 @@ class ConfigControllerTest extends TestCase {
 			->willReturnOnConsecutiveCalls(
 				'randomString',
 				$codeVerifier,
-				'{ page: "files" }',
+				$startingPage,
 				'oAuthRefreshToken',
 			);
 		return $configMock;
@@ -81,7 +83,6 @@ class ConfigControllerTest extends TestCase {
 		if ($loggerMock === null) {
 			$loggerMock = $this->createMock(LoggerInterface::class);
 		}
-		$userManager = $this->createMock(IUserManager::class);
 
 		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -99,12 +100,19 @@ class ConfigControllerTest extends TestCase {
 			->method('requestOAuthAccessToken')
 			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
 
+		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$urlGeneratorMock
+			->expects($this->atLeastOnce())
+			->method('linkToRoute')
+			->with('dashboard.dashboard.index');
 		return new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$userManager,
+			$urlGeneratorMock,
+			$this->createMock(IUserManager::class),
 			$this->l,
 			$apiServiceMock,
 			$loggerMock,
@@ -115,9 +123,10 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testOauthRedirect() {
+	public function testOauthRedirect2() {
 		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50)
+			str_repeat("A", 128), str_repeat("S", 50),
+			'{ "page": "dashboard" }'
 		);
 		$configMock
 			->expects($this->exactly(5))
