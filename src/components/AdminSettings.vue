@@ -123,6 +123,7 @@
 					:is-disabled="!ncClientId || !ncClientSecret"
 					@click="setNCOAuthFormToViewMode" />
 				<Button v-else
+					data-test-id="reset-nc-oauth-btn"
 					icon-class="reset-icon"
 					text="Reset Nextcloud OAuth values"
 					@click="resetNcOauthValues" />
@@ -322,14 +323,14 @@ export default {
 		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(
 				this.translate(
-					'Are you sure you want to replace the OpenProject OAuth client details?'
-					+ ' Every currently connected user will need to re-authorize this Nextcloud'
-					+ ' instance to have access to their OpenProject account.'
+					'If you proceed you will need to update these settings with the new'
+					+ ' OpenProject OAuth credentials. Also, all users will need to reauthorize'
+					+ ' access to their OpenProject account.'
 				),
-				this.translate('Replace OpenProject OAuth client details'),
+				this.translate('Replace OpenProject OAuth values'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: this.translate('Yes, Replace'),
+					confirm: this.translate('Yes, replace'),
 					confirmClasses: 'error',
 					cancel: this.translate('Cancel'),
 				},
@@ -393,11 +394,11 @@ export default {
 		resetNcOauthValues() {
 			OC.dialogs.confirmDestructive(
 				this.translate(
-					'If you proceed you will need to update the settings in your file '
-					+ 'storage with the new OpenProject OAuth credentials. Also, all users in '
-					+ 'the file storage will need to reauthorize access to their OpenProject account.'
+					'If you proceed you will need to update the settings in your OpenProject '
+					+ 'with the new Nextcloud OAuth credentials. Also, all users in OpenProject '
+					+ 'will need to reauthorize access to their Nextcloud account.'
 				),
-				this.translate('Replace OpenProject OAuth values'),
+				this.translate('Replace Nextcloud OAuth values'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
 					confirm: this.translate('Yes, replace'),
