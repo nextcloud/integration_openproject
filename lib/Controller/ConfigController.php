@@ -138,15 +138,14 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setAdminConfig(array $values): DataResponse {
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
+		$oldOpenProjectOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
 
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		if (isset($values['oauth_instance_url']) && $opUrl !== $values['oauth_instance_url']) {
+		if (isset($values['oauth_instance_url']) && $oldOpenProjectOauthUrl !== $values['oauth_instance_url']) {
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
-			$id = (int) $oauthClientInternalId;
-			$this->oauthService->setClientRedirectUri($id, $values['oauth_instance_url']);
+			$this->oauthService->setClientRedirectUri((int) $oauthClientInternalId, $values['oauth_instance_url']);
 		}
 		$this->userManager->callForAllUsers(function (IUser $user) {
 			$this->clearUserInfo($user->getUID());
