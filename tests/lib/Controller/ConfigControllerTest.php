@@ -72,6 +72,57 @@ class ConfigControllerTest extends TestCase {
 			});
 	}
 
+	public function testOauthRedirectSuccess():void {
+		$configMock = $this->getConfigMock(
+			str_repeat("A", 128), str_repeat("S", 50));
+		$configMock
+			->method('setUserValue')
+			->withConsecutive(
+				['testUser', 'integration_openproject', 'token', 'oAuthAccessToken'],
+				['testUser', 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
+				['testUser', 'integration_openproject', 'user_id', 1],
+				['testUser', 'integration_openproject', 'user_name', 'Tripatti Himal'],
+				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
+			);
+		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$urlGeneratorMock
+			->method('linkToRoute')
+			->with('files.view.index')
+			->willReturn('https://nc.np/apps/files/');
+		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$apiServiceMock
+			->method('request')
+			->with(
+				'testUser',
+				'users/me'
+			)
+			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripatti', 'id' => 1]);
+
+		$apiServiceMock
+			->method('requestOAuthAccessToken')
+			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$urlGeneratorMock,
+			$this->createMock(IUserManager::class),
+			$this->l,
+			$apiServiceMock,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			'testUser'
+		);
+		$result = $configController->oauthRedirect('code', 'randomString');
+		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
+	}
+
 	/**
 	 * @return array<mixed>
 	 */
