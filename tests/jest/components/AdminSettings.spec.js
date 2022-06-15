@@ -38,6 +38,7 @@ const selectors = {
 	submitButton: '.submit-btn',
 	cancelEditServerHostForm: '[data-test-id="cancel-edit-server-host-btn"]',
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
+	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
 	opOauthClientIdInput: '#openproject-oauth-client-id',
 	opOauthClientSecretInput: '#openproject-oauth-client-secret',
@@ -371,20 +372,20 @@ describe('AdminSettings', () => {
 					await resetButton.trigger('click')
 					expect(confirmSpy).toBeCalledTimes(1)
 
-					const expectedDialogMessage = 'Are you sure you want to replace the OpenProject OAuth client details?'
-						+ ' Every currently connected user will need to re-authorize this Nextcloud'
-						+ ' instance to have access to their OpenProject account.'
-					const expectedDialogTitle = 'Replace OpenProject OAuth client details'
-					const expectedButtonSet = {
+					const expectedDialogMessage = 'If you proceed you will need to update these settings with the new'
+						+ ' OpenProject OAuth credentials. Also, all users will need to reauthorize'
+						+ ' access to their OpenProject account.'
+					const expectedDialogTitle = 'Replace OpenProject OAuth values'
+					const expectedDialogOpts = {
 						cancel: 'Cancel',
-						confirm: 'Yes, Replace',
+						confirm: 'Yes, replace',
 						confirmClasses: 'error',
 						type: 70,
 					}
 					expect(confirmSpy).toHaveBeenCalledWith(
 						expectedDialogMessage,
 						expectedDialogTitle,
-						expectedButtonSet,
+						expectedDialogOpts,
 						expect.any(Function),
 						true
 					)
@@ -502,7 +503,7 @@ describe('AdminSettings', () => {
 				expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 			})
 			describe('reset button', () => {
-				it('should trigger the confirm dialog', () => {
+				it('should trigger the confirm dialog', async () => {
 					jest.spyOn(AdminSettings.methods, 'translate')
 						.mockImplementation((text) => text)
 					const wrapper = getMountedWrapper({
@@ -517,15 +518,25 @@ describe('AdminSettings', () => {
 						},
 					})
 
-					const resetButton = wrapper.find(selectors.resetOPOAuthFormButton)
-					resetButton.trigger('click')
+					const expectedConfirmText = 'If you proceed you will need to update the settings in your OpenProject '
+						+ 'with the new Nextcloud OAuth credentials. Also, all users in OpenProject '
+						+ 'will need to reauthorize access to their Nextcloud account.'
+					const expectedConfirmOpts = {
+						cancel: 'Cancel',
+						confirm: 'Yes, replace',
+						confirmClasses: 'error',
+						type: 70,
+					}
+					const expectedConfirmTitle = 'Replace Nextcloud OAuth values'
+
+					const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
+					await resetButton.trigger('click')
+
 					expect(confirmSpy).toBeCalledTimes(1)
 					expect(confirmSpy).toBeCalledWith(
-						'Are you sure you want to replace the OpenProject OAuth client details?'
-						+ ' Every currently connected user will need to re-authorize this Nextcloud'
-						+ ' instance to have access to their OpenProject account.',
-						'Replace OpenProject OAuth client details',
-						{ cancel: 'Cancel', confirm: 'Yes, Replace', confirmClasses: 'error', type: 70 },
+						expectedConfirmText,
+						expectedConfirmTitle,
+						expectedConfirmOpts,
 						expect.any(Function),
 						true
 					)

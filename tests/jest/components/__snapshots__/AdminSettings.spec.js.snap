@@ -17,7 +17,7 @@ exports[`AdminSettings Nextcloud OAuth values form view mode with complete value
   <div>
     <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
     <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
-    <button-stub iconclass="reset-icon" text="Reset Nextcloud OAuth values"></button-stub>
+    <button-stub iconclass="reset-icon" text="Reset Nextcloud OAuth values" data-test-id="reset-nc-oauth-btn"></button-stub>
   </div>
 </div>
 `;
