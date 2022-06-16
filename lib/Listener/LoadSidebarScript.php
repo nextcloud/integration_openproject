@@ -33,6 +33,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
+use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
@@ -71,18 +72,20 @@ class LoadSidebarScript implements IEventListener {
 		$this->config = $config;
 		$this->url = $url;
 		$user = $userSession->getUser();
-		$this->oauthConnectionResult = $this->config->getUserValue(
-			$user->getUID(), Application::APP_ID, 'oauth_connection_result'
-		);
-		$this->config->deleteUserValue(
-			$user->getUID(), Application::APP_ID, 'oauth_connection_result'
-		);
-		$this->oauthConnectionErrorMessage = $this->config->getUserValue(
-			$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
-		);
-		$this->config->deleteUserValue(
-			$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
-		);
+		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
+			$this->oauthConnectionResult = $this->config->getUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+			);
+			$this->config->deleteUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+			);
+			$this->oauthConnectionErrorMessage = $this->config->getUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+			);
+			$this->config->deleteUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+			);
+		}
 	}
 
 	public function handle(Event $event): void {
