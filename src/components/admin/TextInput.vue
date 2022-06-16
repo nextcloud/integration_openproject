@@ -9,16 +9,15 @@
 				:value="value"
 				:type="type"
 				:readonly="readOnly"
-				class="full-width"
-				:class="{'error': !!errorMessage}"
+				:class="{'text-input-error': !!errorMessage}"
 				:placeholder="translate(placeHolder)"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"
 				@blur="$emit('blur', $event)">
-			<div v-if="errorMessage || hintText" class="text-input-messages">
-				<div v-if="errorMessage" class="text-input-error">
+			<div v-if="errorMessage || hintText">
+				<div v-if="errorMessage" class="text-input-error-message">
 					{{ translate(errorMessage) }}
 				</div>
 				<div v-else
@@ -27,11 +26,11 @@
 			</div>
 		</div>
 		<button v-if="withCopyBtn"
-			class="copy-btn"
+			class="text-input-copy-value"
 			:disabled="isCopyDisabled"
+			:title="translate(copyButtonTooltip)"
 			@click="copyValue">
-			<div v-if="isCopied" class="text-input-icon copied-icon" />
-			<div v-else class="text-input-icon icon-clippy" />
+			<div class="text-input-icon icon-clippy" />
 			<span>{{ translate("Copy value") }}</span>
 		</button>
 	</div>
@@ -98,6 +97,13 @@ export default {
 		isCopyDisabled() {
 			return !this.value
 		},
+		copyButtonTooltip() {
+			if (this.isCopied) {
+				return 'Copied!'
+			} else {
+				return 'Copy value'
+			}
+		},
 	},
 	methods: {
 		translate(text) {
@@ -118,14 +124,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.text-input-wrapper {
-	display: flex;
-	align-items: center;
-}
-
 .text-input {
-	.full-width {
+	input {
 		width: 100%;
+	}
+
+	&-wrapper {
+		display: flex;
+		align-items: center;
 	}
 
 	&-label {
@@ -141,17 +147,14 @@ export default {
 		line-height: 1rem;
 	}
 
-	.error {
+	&-error {
 		border: 2px solid var(--color-error) !important;
 	}
 
-	&-error {
+	&-error-message {
 		color: var(--color-error);
 	}
-	input[data-focus-visible-added].error {
-		outline: none;
-		box-shadow: none;
-	}
+
 	&-icon {
 		cursor: copy;
 		width: 16px;
@@ -160,20 +163,22 @@ export default {
 		background-repeat: no-repeat;
 		background-position: center;
 	}
-}
 
-.copy-btn {
-	cursor: copy;
-	display: flex;
-	align-items: center;
-	margin-left: 10px;
-	margin-top: 6px;
-	span {
-		cursor: copy;
-		margin-left: 6px;
+	input[data-focus-visible-added].text-input-error {
+		outline: none;
+		box-shadow: none;
 	}
-	.copied-icon {
-		background-image: url(./../../../img/copied.svg);
+
+	&-copy-value {
+		cursor: copy;
+		display: flex;
+		align-items: center;
+		margin-left: 10px;
+		margin-top: 6px;
+		span {
+			cursor: copy;
+			margin-left: 6px;
+		}
 	}
 }
 

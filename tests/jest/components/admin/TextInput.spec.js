@@ -15,9 +15,8 @@ jest.mock('@nextcloud/dialogs', () => ({
 
 const selector = {
 	textInputLabel: '.text-input-label',
-	copyButton: '.copy-btn',
+	copyButton: '.text-input-copy-value',
 	copyIcon: '.icon-clippy',
-	copiedIcon: '.copied-icon',
 }
 
 describe('TextInput', () => {
@@ -96,18 +95,15 @@ describe('TextInput', () => {
 				expect(spyWriteToClipboard).toBeCalledWith('some-value-to-copy')
 			})
 			it('should change the copy icon with the copied icon', async () => {
-				expect(copyButton.find(selector.copyIcon).exists()).toBe(true)
-				expect(copyButton.find(selector.copiedIcon).exists()).toBe(false)
+				expect(copyButton.attributes().title).toBe('Copy value')
 				await copyButton.trigger('click')
 				await wrapper.vm.$nextTick()
 				copyButton = wrapper.find(selector.copyButton)
-				expect(copyButton.find(selector.copyIcon).exists()).toBe(false)
-				expect(copyButton.find(selector.copiedIcon).exists()).toBe(true)
+				expect(copyButton.attributes().title).toBe('Copied!')
 				jest.advanceTimersByTime(5000)
 				await wrapper.vm.$nextTick()
 				copyButton = wrapper.find(selector.copyButton)
-				expect(copyButton.find(selector.copyIcon).exists()).toBe(true)
-				expect(copyButton.find(selector.copiedIcon).exists()).toBe(false)
+				expect(copyButton.attributes().title).toBe('Copy value')
 			})
 		})
 	})
