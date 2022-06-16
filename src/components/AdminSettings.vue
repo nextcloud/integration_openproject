@@ -447,7 +447,7 @@ export default {
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.pencil-icon, .reset-icon, .eye-icon, .copy-icon {
+	.pencil-icon, .reset-icon, .copy-icon {
 		filter: invert(100%);
 	}
 }

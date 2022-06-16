@@ -1,41 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FieldValue encrypt value prop when set as 'true' should render the encrypted value 1`] = `<div data-test-id="encrypted-value"><span>Some Fie***************</span></div>`;
-
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should show the eye icon if set 1`] = `
-<div class="field-value"><b class="title">
-    Some Field Title:
-  </b>
-  &nbsp;
-  <div data-test-id="encrypted-value"><span>Some Fie***************</span></div>
-  <div class="inspect-btn eye-icon"></div>
+exports[`FieldValue encrypt value prop should render the actual value as it is if not set 1`] = `
+<div class="field-item-value">
+  Some Field Value
 </div>
 `;
 
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when the inspect button is clicked 1`] = `<div data-test-id="encrypted-value"><span>Some Field Value</span></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' should render the encrypted value 1`] = `
+<div class="field-item-value">
+  Some Fie***************
+</div>
+`;
 
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when the inspect button is clicked 2`] = `<div data-test-id="encrypted-value"><span>Some Fie***************</span></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should show the inspect button with the eye icon if set 1`] = `
+<div class="field-item"><b class="field-item-title">
+    Some Field Title:
+  </b>
+  <div class="field-item-value">
+    Some Fie***************
+  </div>
+  <div class="field-item-inspect-btn icon-toggle"></div>
+</div>
+`;
 
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle the inspect button icon when the inspect button is clicked 1`] = `<div class="inspect-btn eye-icon-off"></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when the inspect button is clicked 1`] = `
+<div class="field-item-value">
+  Some Field Value
+</div>
+`;
 
-exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle the inspect button icon when the inspect button is clicked 2`] = `<div class="inspect-btn eye-icon"></div>`;
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle encrypted value when the inspect button is clicked 2`] = `
+<div class="field-item-value">
+  Some Fie***************
+</div>
+`;
+
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle the inspect button icon when the inspect button is clicked 1`] = `<div class="field-item-inspect-btn icon-toggle toggle-off"></div>`;
+
+exports[`FieldValue encrypt value prop when set as 'true' with inspection prop should toggle the inspect button icon when the inspect button is clicked 2`] = `<div class="field-item-inspect-btn icon-toggle"></div>`;
 
 exports[`FieldValue is required prop should append asterik with the title if set 1`] = `
-<div class="field-value"><b class="title">
+<div class="field-item"><b class="field-item-title">
     Some Field Title*:
   </b>
-  &nbsp;
-  <span>Some Field Value</span>
+  <div class="field-item-value">
+    Some Field Value
+  </div>
   <!---->
 </div>
 `;
 
 exports[`FieldValue is required prop should not append asterik with the title if not set 1`] = `
-<div class="field-value"><b class="title">
+<div class="field-item"><b class="field-item-title">
     Some Field Title:
   </b>
-  &nbsp;
-  <span>Some Field Value</span>
+  <div class="field-item-value">
+    Some Field Value
+  </div>
   <!---->
 </div>
 `;
