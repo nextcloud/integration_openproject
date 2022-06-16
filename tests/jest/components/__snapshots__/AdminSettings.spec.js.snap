@@ -37,8 +37,8 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
       <div class="text-input">
         <div class="text-input-label">
           OpenProject OAuth client ID *
-        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="full-width">
-        <div class="text-input-messages">
+        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="">
+        <div>
           <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://openproject.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div>
@@ -48,8 +48,8 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
       <div class="text-input">
         <div class="text-input-label">
           OpenProject OAuth client secret *
-        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="full-width">
-        <div class="text-input-messages">
+        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="">
+        <div>
           <div class="text-input-hint">Go to your OpenProject <a class="link" href="http://openproject.com/admin/settings/storages" target="_blank" title="Administration > File storages">Administration &gt; File storages</a> as an Administrator and start the setup and copy the values here.</div>
         </div>
       </div>
@@ -101,18 +101,18 @@ exports[`AdminSettings server host url form edit mode cancel button should be vi
 </button>
 `;
 
-exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="full-width">`;
+exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="">`;
 
-exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width">`;
+exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="">`;
 
 exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
 <div class="text-input-wrapper pb-2">
   <div class="text-input">
     <div class="text-input-label">
       OpenProject host *
-    </div> <input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="full-width error">
-    <div class="text-input-messages">
-      <div class="text-input-error">
+    </div> <input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error">
+    <div>
+      <div class="text-input-error-message">
         Please introduce a valid OpenProject host name
       </div>
     </div>
