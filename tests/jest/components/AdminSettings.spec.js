@@ -26,6 +26,8 @@ global.OC = {
 	},
 }
 
+global.t = (app, text) => text
+
 const selectors = {
 	oauthInstanceInput: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
@@ -504,8 +506,6 @@ describe('AdminSettings', () => {
 			})
 			describe('reset button', () => {
 				it('should trigger the confirm dialog', async () => {
-					jest.spyOn(AdminSettings.methods, 'translate')
-						.mockImplementation((text) => text)
 					const wrapper = getMountedWrapper({
 						state: {
 							oauth_instance_url: 'http://openproject.com',
@@ -575,8 +575,6 @@ describe('AdminSettings', () => {
 		})
 		describe('edit mode', () => {
 			it('should show the form and hide the field values', async () => {
-				jest.spyOn(AdminSettings.methods, 'translate')
-					.mockImplementation((text) => text)
 				const wrapper = getWrapper({
 					state: {
 						oauth_instance_url: 'http://openproject.com',
