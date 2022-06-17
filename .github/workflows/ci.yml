@@ -50,7 +50,7 @@ jobs:
         uses: skjnldsv/read-package-engines-version-actions@v1.2
         id: versions
         with:
-          fallbackNode: '^14'
+          fallbackNode: '^16'
           fallbackNpm: '^7'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
