@@ -50,7 +50,7 @@
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.client_id"
-					title="OpenProject OAuth client ID" />
+					:title="t('integration_openproject', 'OpenProject OAuth client ID')" />
 				<TextInput v-else
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"

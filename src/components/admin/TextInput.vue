@@ -31,11 +31,12 @@
 			:title="copyButtonTooltip"
 			@click="copyValue">
 			<div class="text-input-icon icon-clippy" />
-			<span>{{ copyText }}</span>
+			<span>{{ t("integration_openproject", "Copy value") }}</span>
 		</button>
 	</div>
 </template>
 <script>
+import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 
 const COPY_TIMEOUT = 5000
@@ -85,7 +86,6 @@ export default {
 		},
 	},
 	data: () => ({
-		copyText: t('integration_openproject', 'Copy value'),
 		isCopied: false,
 	}),
 	computed: {

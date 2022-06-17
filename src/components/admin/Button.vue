@@ -3,7 +3,7 @@
 		:class="{ 'b-disabled': isDisabled }"
 		v-on="$listeners">
 		<div v-if="iconClass" class="b-icon" :class="iconClass" />
-		<span>{{ t('integration_openproject', text) }}</span>
+		<span>{{ text }}</span>
 		<div v-if="isLoading" class="icon-loading" />
 	</button>
 </template>
