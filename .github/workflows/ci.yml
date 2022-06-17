@@ -53,10 +53,10 @@ jobs:
           fallbackNode: '^16'
           fallbackNpm: '^7'
 
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+      - name: Setup NodeJS 16
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          node-version: 16
           cache: 'npm'
 
       - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
