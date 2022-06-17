@@ -26,6 +26,7 @@ use OCP\AppFramework\Controller;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCP\IURLGenerator;
 
 class OpenProjectAPIController extends Controller {
 
@@ -47,16 +48,29 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $openprojectUrl;
 
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
+	/**
+	 * @var IURLGenerator
+	 */
+	private $urlGenerator;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
+								IURLGenerator $urlGenerator,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
 		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$this->config = $config;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -321,5 +335,45 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(false);
 		}
 		return new DataResponse(false);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function getOpenProjectOauthURL(): DataResponse {
+		$url = $this->openprojectAPIService::getOpenProjectOauthURL(
+			$this->config, $this->urlGenerator
+		);
+		$oauthState = bin2hex(random_bytes(5));
+		$this->config->setUserValue(
+			$this->userId,
+			Application::APP_ID,
+			'oauth_state',
+			$oauthState
+		);
+		$randomString = bin2hex(random_bytes(64));
+		$codeVerifier = $this->base64UrlEncode(pack('H*', $randomString));
+		$this->config->setUserValue(
+			$this->userId,
+			Application::APP_ID,
+			'code_verifier',
+			$codeVerifier
+		);
+		$hash = hash('sha256', $codeVerifier);
+		$codeChallenge = $this->base64UrlEncode(pack('H*', $hash));
+		$url = $url . '&state=' .$oauthState .
+				 '&code_challenge=' . $codeChallenge .
+				'&code_challenge_method=S256';
+
+		return new DataResponse($url);
+	}
+
+	private function base64UrlEncode($plainText) {
+		$base64 = base64_encode($plainText);
+		$base64 = trim($base64, "=");
+		$base64url = strtr($base64, '+/', '-_');
+		return ($base64url);
 	}
 }
