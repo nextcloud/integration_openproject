@@ -781,4 +781,66 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$result = $controller->isValidOpenProjectInstance($url);
 		$this->assertFalse($result->getData());
 	}
+
+	public function testGetOpenProjectOauthURLWithStateAndPKCE(): void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods([])
+			->getMock();
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'oauth_instance_url'],
+			)->willReturnOnConsecutiveCalls(
+				'http://openproject.org',
+				'myClientID',
+				'myClientSecret',
+				'http://openproject.org',
+				'myClientID',
+				'http://openproject.org',
+			);
+		$this->configMock
+			->expects($this->exactly(2))
+			->method('setUserValue')
+			->withConsecutive(
+				[
+					'test',
+					'integration_openproject',
+					'oauth_state',
+					$this->matchesRegularExpression('/[a-z0-9]{10}/')
+				],
+				[
+					'test',
+					'integration_openproject',
+					'code_verifier',
+					$this->matchesRegularExpression('/[A-Za-z0-9\-._~]{128}/')
+				],
+			);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			'test'
+		);
+		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
+		$this->assertMatchesRegularExpression(
+			'/^http:\/\/openproject\.org\/oauth\/authorize\?' .
+			'client_id=myClientID&' .
+			'redirect_uri=&' .
+			'response_type=code&' .
+			'state=[a-z0-9]{10}&' .
+			'code_challenge=[a-zA-Z0-9\-_]{43}&' .
+			'code_challenge_method=S256$/',
+			$result->getData()
+		);
+	}
 }
