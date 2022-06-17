@@ -342,7 +342,7 @@ class OpenProjectAPIController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function getOpenProjectOauthURL(): DataResponse {
+	public function getOpenProjectOauthURLWithStateAndPKCE(): DataResponse {
 		$url = $this->openprojectAPIService::getOpenProjectOauthURL(
 			$this->config, $this->urlGenerator
 		);

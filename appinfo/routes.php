@@ -25,7 +25,7 @@ return [
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageType', 'url' => '/types/{id}', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/file-links/{id}', 'verb' => 'DELETE'],
 		['name' => 'openProjectAPI#isValidOpenProjectInstance', 'url' => '/is-valid-op-instance', 'verb' => 'POST'],
-		['name' => 'openProjectAPI#getOpenProjectOauthURL', 'url' => '/op-oauth-url', 'verb' => 'GET'],
+		['name' => 'openProjectAPI#getOpenProjectOauthURLWithStateAndPKCE', 'url' => '/op-oauth-url', 'verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],
