@@ -9,16 +9,15 @@
 				:value="value"
 				:type="type"
 				:readonly="readOnly"
-				class="full-width"
-				:class="{ 'error': !!errorMessage }"
+				:class="{'text-input-error': !!errorMessage}"
 				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"
 				@blur="$emit('blur', $event)">
-			<div v-if="errorMessage || hintText" class="text-input-messages">
-				<div v-if="errorMessage" class="text-input-error">
+			<div v-if="errorMessage || hintText">
+				<div v-if="errorMessage" class="text-input-error-message">
 					{{ errorMessage }}
 				</div>
 				<div v-else
@@ -27,15 +26,19 @@
 			</div>
 		</div>
 		<button v-if="withCopyBtn"
-			class="copy-btn"
+			class="text-input-copy-value"
 			:disabled="isCopyDisabled"
+			:title="copyButtonTooltip"
 			@click="copyValue">
-			<div class="copy-icon" />
+			<div class="text-input-icon icon-clippy" />
 			<span>{{ copyText }}</span>
 		</button>
 	</div>
 </template>
 <script>
+import { showSuccess } from '@nextcloud/dialogs'
+
+const COPY_TIMEOUT = 5000
 
 export default {
 	name: 'TextInput',
@@ -83,6 +86,7 @@ export default {
 	},
 	data: () => ({
 		copyText: t('integration_openproject', 'Copy value'),
+		isCopied: false,
 	}),
 	computed: {
 		labelText() {
@@ -93,23 +97,38 @@ export default {
 		isCopyDisabled() {
 			return !this.value
 		},
+		copyButtonTooltip() {
+			if (this.isCopied) {
+				return t('integration_openproject', 'Copied!')
+			} else {
+				return t('integration_openproject', 'Copy value')
+			}
+		},
 	},
 	methods: {
 		copyValue() {
+			const that = this
 			navigator.clipboard.writeText(this.value)
+			showSuccess(t('integration_openproject', 'Copied to the clipboard.'), {
+				timeout: COPY_TIMEOUT,
+			})
+			that.isCopied = true
+			setTimeout(() => {
+				that.isCopied = false
+			}, COPY_TIMEOUT)
 		},
 	},
 }
 </script>
 <style lang="scss" scoped>
-.text-input-wrapper {
-	display: flex;
-	align-items: center;
-}
-
 .text-input {
-	.full-width {
+	input {
 		width: 100%;
+	}
+
+	&-wrapper {
+		display: flex;
+		align-items: center;
 	}
 
 	&-label {
@@ -125,37 +144,38 @@ export default {
 		line-height: 1rem;
 	}
 
-	.error {
+	&-error {
 		border: 2px solid var(--color-error) !important;
 	}
 
-	&-error {
+	&-error-message {
 		color: var(--color-error);
 	}
-	input[data-focus-visible-added].error {
-		outline: none;
-		box-shadow: none;
-	}
-}
 
-.copy-btn {
-	cursor: copy;
-	display: flex;
-	align-items: center;
-	margin-left: 10px;
-	margin-top: 6px;
-	span {
-		cursor: copy;
-		margin-left: 6px;
-	}
-	.copy-icon {
+	&-icon {
 		cursor: copy;
 		width: 16px;
 		height: 16px;
 		background-size: 16px;
 		background-repeat: no-repeat;
 		background-position: center;
-		background-image: url(./../../../img/copy.svg);
+	}
+
+	input[data-focus-visible-added].text-input-error {
+		outline: none;
+		box-shadow: none;
+	}
+
+	&-copy-value {
+		cursor: copy;
+		display: flex;
+		align-items: center;
+		margin-left: 10px;
+		margin-top: 6px;
+		span {
+			cursor: copy;
+			margin-left: 6px;
+		}
 	}
 }
 
