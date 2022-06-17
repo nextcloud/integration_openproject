@@ -371,7 +371,7 @@ class OpenProjectAPIController extends Controller {
 		return new DataResponse($url);
 	}
 
-	private function base64UrlEncode($plainText) {
+	private function base64UrlEncode(string $plainText): string {
 		$base64 = base64_encode($plainText);
 		$base64 = trim($base64, "=");
 		$base64url = strtr($base64, '+/', '-_');
