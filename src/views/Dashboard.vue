@@ -23,13 +23,13 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { DashboardWidget } from '@nextcloud/vue-dashboard'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton'
-import { STATE } from '../utils'
+import { checkOauthConnectionResult, STATE } from '../utils'
 import { translate as t } from '@nextcloud/l10n'
 
 export default {
@@ -118,16 +118,7 @@ export default {
 		},
 	},
 	mounted() {
-		if (this.oauthConnectionResult === 'success') {
-			showSuccess(t('integration_openproject', 'Successfully connected to OpenProject!'))
-		} else if (this.oauthConnectionResult === 'error') {
-			showError(
-				t(
-					'integration_openproject',
-					'OAuth access token could not be obtained:'
-				) + ' ' + this.oauthConnectionErrorMessage
-			)
-		}
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 
 	beforeDestroy() {

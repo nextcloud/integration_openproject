@@ -71,7 +71,7 @@ import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
-import { STATE } from '../utils'
+import { STATE, checkOauthConnectionResult } from '../utils'
 
 export default {
 	name: 'ProjectsTab',
@@ -107,17 +107,7 @@ export default {
 		},
 	},
 	mounted() {
-		if (this.oauthConnectionResult === 'success') {
-			showSuccess(t('integration_openproject', 'Successfully connected to OpenProject!'))
-		} else if (this.oauthConnectionResult === 'error') {
-			showError(
-				t(
-					'integration_openproject',
-					'OAuth access token could not be obtained:'
-				) + ' ' + this.oauthConnectionErrorMessage
-			)
-		}
-
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 	methods: {
 		/**
