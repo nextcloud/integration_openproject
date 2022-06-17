@@ -9,9 +9,14 @@ Object.assign(navigator, {
 	},
 })
 
+jest.mock('@nextcloud/dialogs', () => ({
+	showSuccess: jest.fn(),
+}))
+
 const selector = {
 	textInputLabel: '.text-input-label',
-	copyButton: '.copy-btn',
+	copyButton: '.text-input-copy-value',
+	copyIcon: '.icon-clippy',
 }
 
 describe('TextInput', () => {
@@ -72,16 +77,34 @@ describe('TextInput', () => {
 			})
 			expect(wrapper.find(selector.copyButton).attributes().disabled).toBe(undefined)
 		})
-		it('should copy the input value on click', async () => {
+		describe('on click', () => {
+			let copyButton
+			jest.useFakeTimers()
 			const spyWriteToClipboard = jest.spyOn(navigator.clipboard, 'writeText')
 				.mockImplementationOnce(() => jest.fn())
-			wrapper = getWrapper({
-				withCopyBtn: true,
-				value: 'some-value-to-copy',
+			beforeEach(() => {
+				wrapper = getWrapper({
+					withCopyBtn: true,
+					value: 'some-value-to-copy',
+				})
+				copyButton = wrapper.find(selector.copyButton)
 			})
-			await wrapper.find(selector.copyButton).trigger('click')
-			expect(spyWriteToClipboard).toBeCalledTimes(1)
-			expect(spyWriteToClipboard).toBeCalledWith('some-value-to-copy')
+			it('should copy the input value', async () => {
+				await copyButton.trigger('click')
+				expect(spyWriteToClipboard).toBeCalledTimes(1)
+				expect(spyWriteToClipboard).toBeCalledWith('some-value-to-copy')
+			})
+			it('should change the copy icon with the copied icon', async () => {
+				expect(copyButton.attributes().title).toBe('Copy value')
+				await copyButton.trigger('click')
+				await wrapper.vm.$nextTick()
+				copyButton = wrapper.find(selector.copyButton)
+				expect(copyButton.attributes().title).toBe('Copied!')
+				jest.advanceTimersByTime(5000)
+				await wrapper.vm.$nextTick()
+				copyButton = wrapper.find(selector.copyButton)
+				expect(copyButton.attributes().title).toBe('Copy value')
+			})
 		})
 	})
 })
