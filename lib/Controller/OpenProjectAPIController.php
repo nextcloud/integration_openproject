@@ -353,7 +353,8 @@ class OpenProjectAPIController extends Controller {
 			'oauth_state',
 			$oauthState
 		);
-		$randomString = bin2hex(random_bytes(64));
+		// this results in a random string of 192 char and after packing and encoding a 128 char verifier
+		$randomString = bin2hex(random_bytes(96));
 		$codeVerifier = $this->base64UrlEncode(pack('H*', $randomString));
 		$this->config->setUserValue(
 			$this->userId,
