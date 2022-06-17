@@ -5,16 +5,15 @@
 			<div class="icon icon-checkmark" />
 		</div>
 		<div v-else class="index">
-			{{ translate(index) }}
+			{{ index }}
 		</div>
 		<div class="title"
 			:class="{'green-text': isComplete}">
-			{{ translate(title) }}
+			{{ title }}
 		</div>
 	</div>
 </template>
 <script>
-import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'FormHeading',
@@ -37,9 +36,6 @@ export default {
 		},
 	},
 	methods: {
-		translate(text) {
-			return t('integration_openproject', text)
-		},
 	},
 }
 </script>

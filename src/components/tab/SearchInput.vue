@@ -19,7 +19,7 @@
 					:workpackage="option" />
 			</template>
 			<template #noOptions>
-				{{ translate('Start typing to search') }}
+				{{ noOptionsText }}
 			</template>
 		</Multiselect>
 		<div v-if="!isStateOk"
@@ -33,7 +33,6 @@
 import debounce from 'lodash/debounce'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
-import { translate as t } from '@nextcloud/l10n'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -62,6 +61,8 @@ export default {
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
+		noOptionsText: t('integration_openproject', 'Start typing to search'),
+		placeholder: t('integration_openproject', 'Search for a work package to create a relation'),
 	}),
 	computed: {
 		isStateOk() {
@@ -70,14 +71,11 @@ export default {
 		isStateLoading() {
 			return this.state === STATE.LOADING
 		},
-		placeholder() {
-			return this.translate('Search for a work package to create a relation')
-		},
 		stateMessages() {
 			if (this.state === STATE.NO_TOKEN) {
-				return this.translate('No OpenProject account connected')
+				return t('integration_openproject', 'No OpenProject account connected')
 			} else if (this.state === STATE.ERROR) {
-				return this.translate('Error connecting to OpenProject')
+				return t('integration_openproject', 'Error connecting to OpenProject')
 			}
 			return ''
 		},
@@ -109,9 +107,6 @@ export default {
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK
-		},
-		translate(key) {
-			return t('integration_openproject', key)
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200) return
@@ -145,13 +140,13 @@ export default {
 				await axios.post(url, params, config)
 				this.$emit('saved', selectedOption)
 				showSuccess(
-					this.translate('Work package linked successfully!')
+					t('integration_openproject', 'Work package linked successfully!')
 				)
 				this.resetState()
 				this.emptySearchInput()
 			} catch (e) {
 				showError(
-					this.translate('Failed to link file to work package')
+					t('integration_openproject', 'Failed to link file to work package')
 				)
 			}
 		},

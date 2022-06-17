@@ -23,6 +23,8 @@ jest.mock('lodash/debounce', () =>
 	})
 )
 
+global.t = (app, text) => text
+
 const localVue = createLocalVue()
 const simpleWorkPackageSearchResponse = [{
 	id: 1,

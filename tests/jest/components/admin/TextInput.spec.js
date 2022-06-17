@@ -14,6 +14,8 @@ const selector = {
 	copyButton: '.copy-btn',
 }
 
+global.t = (app, text) => text
+
 describe('TextInput', () => {
 	describe('messages', () => {
 		it('should show error message if provided', () => {

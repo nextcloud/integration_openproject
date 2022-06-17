@@ -2,7 +2,7 @@
 	<div class="text-input-wrapper">
 		<div class="text-input">
 			<div class="text-input-label">
-				{{ translate(labelText) }}
+				{{ labelText }}
 			</div>
 			<input :id="id"
 				ref="textInput"
@@ -10,8 +10,8 @@
 				:type="type"
 				:readonly="readOnly"
 				class="full-width"
-				:class="{'error': !!errorMessage}"
-				:placeholder="translate(placeHolder)"
+				:class="{ 'error': !!errorMessage }"
+				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
@@ -19,7 +19,7 @@
 				@blur="$emit('blur', $event)">
 			<div v-if="errorMessage || hintText" class="text-input-messages">
 				<div v-if="errorMessage" class="text-input-error">
-					{{ translate(errorMessage) }}
+					{{ errorMessage }}
 				</div>
 				<div v-else
 					class="text-input-hint"
@@ -31,12 +31,11 @@
 			:disabled="isCopyDisabled"
 			@click="copyValue">
 			<div class="copy-icon" />
-			<span>{{ translate("Copy value") }}</span>
+			<span>{{ copyText }}</span>
 		</button>
 	</div>
 </template>
 <script>
-import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'TextInput',
@@ -82,6 +81,9 @@ export default {
 			type: Boolean,
 		},
 	},
+	data: () => ({
+		copyText: t('integration_openproject', 'Copy value'),
+	}),
 	computed: {
 		labelText() {
 			if (this.isRequired) {
@@ -93,9 +95,6 @@ export default {
 		},
 	},
 	methods: {
-		translate(text) {
-			return t('integration_openproject', text)
-		},
 		copyValue() {
 			navigator.clipboard.writeText(this.value)
 		},

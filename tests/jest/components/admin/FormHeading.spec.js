@@ -3,6 +3,8 @@ import FormHeading from '../../../../src/components/admin/FormHeading'
 
 const localVue = createLocalVue()
 
+global.t = (app, text) => text
+
 describe('FormHeading', () => {
 	describe('is complete prop', () => {
 		it('should show checkmark icon, add green title and hide the index if complete', () => {
