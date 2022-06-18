@@ -12,7 +12,6 @@
     "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integrácia OpenProject poskytuje miniaplikáciu na paneli, ktorá vám zobrazuje dôležité oznámenia,\n\tjednotný poskytovateľ vyhľadávania pre vyhľadávanie pracovných balíkov a oznámenia o zmenách v aktívnych pracovných balíkoch.",
     "Connect to OpenProject" : "Pripojiť k OpenProject",
-    "Failed to save OpenProject OAuth state" : "Nepodarilo sa uložiť stav OAuth OpenProjectu",
     "Enable navigation link" : "Povoliť navigačný odkaz",
     "Connected as {user}" : "Pripojený ako {user}",
     "Disconnect from OpenProject" : "Odpojiť od OpenProject",

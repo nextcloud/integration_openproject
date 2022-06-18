@@ -14,7 +14,6 @@
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject integrazioak zure jakinarazpen garrantzitsuak erakusten dituen paneleko widget bat eskaintzen du,\nlan-paketeen bilaketa-hornitzailea eta lan-pakete aktiboetan aldaketen jakinarazpenak.",
     "Connect to OpenProject" : "Konektatu OpenProject-era",
     "Some OpenProject integration application settings are not working." : "OpenProject integrazio aplikazioaren ezarpen batzuk ez dira funtzionatzen ari",
-    "Failed to save OpenProject OAuth state" : "Ezin izan da gorde OpenProject OAuth egoera",
     "Enable navigation link" : "Gaitu nabigazio esteka",
     "Connected as {user}" : "{user} gisa konektatuta",
     "Disconnect from OpenProject" : "Deskonektatu OpenProject-etik",

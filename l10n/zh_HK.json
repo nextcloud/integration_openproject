@@ -14,7 +14,6 @@
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject 整合提供了一個儀表板小部件，顯示您的重要通知，\n工作包的搜索提供程序和活動工作包更改的通知。",
     "Connect to OpenProject" : "連接到 OpenProject",
     "Some OpenProject integration application settings are not working." : "某些 OpenProject 集成應用程序設置不起作用。",
-    "Failed to save OpenProject OAuth state" : "儲存 OpenProject OAuth 狀態失敗",
     "Enable navigation link" : "啟用導覽連結",
     "Connected as {user}" : "以 {user} 身份連線",
     "Disconnect from OpenProject" : "與 OpenProject 斷開連線",

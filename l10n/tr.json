@@ -14,7 +14,6 @@
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject bütünleştirmesi, önemli bildirimleri, çalışma paketleri için arama özelliğini\n\tve etkin çalışma paketlerindeki değişiklik bildirimlerini görüntüleyen bir pano bileşeni sağlar.",
     "Connect to OpenProject" : "OpenProject bağlantısı kur",
     "Some OpenProject integration application settings are not working." : "OpenProject bütünleşme uygulamasının bazı ayarları çalışmıyor.",
-    "Failed to save OpenProject OAuth state" : "OpenProject OAuth durumu kaydedilemedi",
     "Enable navigation link" : "Gezinme bağlantısı kullanılsın",
     "Connected as {user}" : "{user} olarak bağlantı kuruldu",
     "Disconnect from OpenProject" : "OpenProject bağlantısını kes",

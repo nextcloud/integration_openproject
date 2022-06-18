@@ -16,7 +16,6 @@ OC.L10N.register(
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Az OpenProject integráció egy irányítópult modult nyújt, amely megjeleníti a fontos értesítéseit,\n\tkeresési szolgáltatót biztosít a munkacsomagjaihoz és értesíti az aktív munkacsomagjai változásairól.",
     "Connect to OpenProject" : "Kapcsolódás az OpenProjecthez",
     "Some OpenProject integration application settings are not working." : "Az OpenProject integrációs alkalmazás egyes beállításai nem működnek.",
-    "Failed to save OpenProject OAuth state" : "Az OpenPoject OAuth állapotának mentése sikertelen",
     "Enable navigation link" : "Navigációs hivatkozás engedélyezése",
     "Connected as {user}" : "Kapcsolódva {user} felhasználóként",
     "Disconnect from OpenProject" : "Kapcsolat bontása az OpenProjecttel",
