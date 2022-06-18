@@ -34,7 +34,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-	}
+	},
 }
 </script>
 <style lang="scss" scoped>
