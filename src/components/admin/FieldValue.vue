@@ -1,7 +1,7 @@
 <template>
 	<div class="field-value">
 		<b class="title">
-			{{ t('integration_openproject', title) }}{{ isRequired ? '*' : '' }}:
+			{{ title + (isRequired ? '*' : '') }}:
 		</b>
 		&nbsp;
 		<div v-if="encryptValue" data-test-id="encrypted-value">
@@ -68,6 +68,6 @@ export default {
 	background-size: 16px;
 	background-repeat: no-repeat;
 	background-position: center;
-	background-image: url(./../../../img/eye.svg);
+	background-image: url('../../../img/eye.svg');
 }
 </style>

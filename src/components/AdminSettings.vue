@@ -3,12 +3,12 @@
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
-				title="OpenProject Server"
+				:title="t('integration_openproject', 'OpenProject Server')"
 				:is-complete="isServerHostFormComplete" />
 			<FieldValue v-if="isServerHostFormInView"
 				is-required
 				class="pb-1"
-				title="OpenProject host"
+				:title="t('integration_openproject', 'OpenProject host')"
 				:value="state.oauth_instance_url" />
 			<TextInput v-else
 				id="openproject-oauth-instance"
@@ -17,25 +17,25 @@
 				is-required
 				:read-only="isServerHostUrlReadOnly"
 				class="pb-2"
-				label="OpenProject host"
+				:label="t('integration_openproject', 'OpenProject host')"
 				place-holder="https://www.my-openproject.com"
-				hint-text="Please introduce your OpenProject host name"
+				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
 				:error-message="serverHostErrorMessage"
 				@click="isServerHostUrlReadOnly = false" />
 			<div class="d-flex">
 				<Button v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
 					icon-class="pencil-icon"
-					text="Edit server information"
+					:text="t('integration_openproject', 'Edit server information')"
 					@click="setServerHostFormToEditMode" />
 				<Button v-if="isServerHostFormComplete && isServerHostFormInEdit"
-					text="Cancel"
+					:text="t('integration_openproject', 'Cancel')"
 					data-test-id="cancel-edit-server-host-btn"
 					@click="setServerHostFormToViewMode" />
 				<Button v-if="isServerHostFormInEdit"
 					class="submit-btn"
 					icon-class="check-icon"
-					text="Save"
+					:text="t('integration_openproject', 'Save')"
 					:is-loading="loadingServerHostForm"
 					:is-disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
 					@click="saveOpenProjectHostUrl" />
@@ -43,43 +43,43 @@
 		</div>
 		<div class="openproject-oauth-values">
 			<FormHeading index="2"
-				title="OpenProject OAuth settings"
+				:title="t('integration_openproject', 'OpenProject OAuth settings')"
 				:is-complete="isOPOAuthFormComplete"
 				:is-disabled="isOPOAuthFormInDisableMode" />
 			<div v-if="isServerHostFormComplete">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.client_id"
-					title="OpenProject OAuth client ID" />
+					:title="t('integration_openproject', 'OpenProject OAuth client ID')" />
 				<TextInput v-else
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
 					class="pb-2"
 					is-required
-					label="OpenProject OAuth client ID"
+					:label="t('integration_openproject', 'OpenProject OAuth client ID')"
 					:hint-text="openProjectClientHint" />
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					class="pb-1"
 					encrypt-value
-					title="OpenProject OAuth client secret"
+					:title="t('integration_openproject', 'OpenProject OAuth client secret')"
 					:value="state.client_secret" />
 				<TextInput v-else
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
 					class="pb-2"
-					label="OpenProject OAuth client secret"
+					:label="t('integration_openproject', 'OpenProject OAuth client secret')"
 					:hint-text="openProjectClientHint" />
 				<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
 					data-test-id="reset-op-oauth-btn"
 					icon-class="reset-icon"
-					text="Reset OpenProject OAuth values"
+					:text="t('integration_openproject', 'Reset OpenProject OAuth values')"
 					@click="resetOPOAuthClientValues" />
 				<Button v-else
 					class="submit-btn"
 					data-test-id="submit-op-oauth-btn"
-					text="Save"
+					:text="t('integration_openproject', 'Save')"
 					icon-class="check-icon"
 					:is-loading="loadingOPOauthForm"
 					:is-disabled="!state.client_id || !state.client_secret"
@@ -88,7 +88,7 @@
 		</div>
 		<div class="nextcloud-oauth-values">
 			<FormHeading index="3"
-				title="Nextcloud OAuth client"
+				:title="t('integration_openproject', 'Nextcloud OAuth client')"
 				:is-complete="isNcOAuthFormComplete"
 				:is-disabled="isNcOAuthFormInDisableMode" />
 			<div v-if="state.nc_oauth_client">
@@ -99,10 +99,10 @@
 					read-only
 					is-required
 					with-copy-btn
-					label="Nextcloud OAuth client ID"
+					:label="t('integration_openproject', 'Nextcloud OAuth client ID')"
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
-					title="Nextcloud OAuth client ID"
+					:title="t('integration_openproject', 'Nextcloud OAuth client ID')"
 					:value="state.nc_oauth_client.clientId"
 					is-required />
 				<TextInput v-if="isNcOAuthFormInEdit"
@@ -112,24 +112,24 @@
 					read-only
 					is-required
 					with-copy-btn
-					label="Nextcloud OAuth client secret"
+					:label="t('integration_openproject', 'Nextcloud OAuth client secret')"
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
-					title="Nextcloud OAuth client secret"
+					:title="t('integration_openproject', 'Nextcloud OAuth client secret')"
 					is-required
 					encrypt-value
 					with-inspection
 					:value="ncClientSecret" />
 				<Button v-if="isNcOAuthFormInEdit"
 					class="submit-btn"
-					text="Yes, I have copied these values"
+					:text="t('integration_openproject', 'Yes, I have copied these values')"
 					icon-class="check-icon"
 					:is-disabled="!ncClientId || !ncClientSecret"
 					@click="setNCOAuthFormToViewMode" />
 				<Button v-else
 					data-test-id="reset-nc-oauth-btn"
 					icon-class="reset-icon"
-					text="Reset Nextcloud OAuth values"
+					:text="t('integration_openproject', 'Reset Nextcloud OAuth values')"
 					@click="resetNcOauthValues" />
 			</div>
 		</div>
@@ -143,7 +143,6 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { translate as t } from '@nextcloud/l10n'
 import Button from './admin/Button'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
@@ -195,7 +194,7 @@ export default {
 				|| this.isOpenProjectInstanceValid === null
 				|| this.isOpenProjectInstanceValid
 			) return null
-			return 'Please introduce a valid OpenProject host name'
+			return t('integration_openproject', 'Please introduce a valid OpenProject host name')
 		},
 		isServerHostFormComplete() {
 			return this.isFormCompleted.server
@@ -233,20 +232,14 @@ export default {
 			return util.format(urlPart, hostPart)
 		},
 		openProjectClientHint() {
-			return this.translate('Go to your OpenProject'
-				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
-				+ 'title="Administration > File storages">'
-				+ 'Administration > File storages'
-				+ '</a> '
-				+ 'as an Administrator and start the setup and copy the values here.')
+			const linkText = t('integration_openproject', 'Administration > File storages')
+			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.', { htmlLink }, null, { escape: false })
 		},
 		nextcloudClientHint() {
-			return this.translate('Copy the following values back into the OpenProject'
-				+ ` <a class="link" href="${this.adminFileStorageHref}" target="_blank"`
-				+ 'title="Administration > File storages">'
-				+ 'Administration > File storages'
-				+ '</a> '
-				+ 'as an Administrator.')
+			const linkText = t('integration_openproject', 'Administration > File storages')
+			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false })
 		},
 	},
 	created() {
@@ -271,9 +264,6 @@ export default {
 		}
 	},
 	methods: {
-		translate(text) {
-			return t('integration_openproject', text)
-		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
 		},
@@ -317,17 +307,13 @@ export default {
 		},
 		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(
-				this.translate(
-					'If you proceed you will need to update these settings with the new'
-					+ ' OpenProject OAuth credentials. Also, all users will need to reauthorize'
-					+ ' access to their OpenProject account.'
-				),
-				this.translate('Replace OpenProject OAuth values'),
+				t('integration_openproject', 'If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account.'),
+				t('integration_openproject', 'Replace OpenProject OAuth values'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: this.translate('Yes, replace'),
+					confirm: t('integration_openproject', 'Yes, replace'),
 					confirmClasses: 'error',
-					cancel: this.translate('Cancel'),
+					cancel: t('integration_openproject', 'Cancel'),
 				},
 				async (result) => {
 					if (result) {
@@ -353,7 +339,7 @@ export default {
 			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
 			if (response.data !== true) {
 				showError(
-					this.translate('No OpenProject detected at the URL')
+					t('integration_openproject', 'No OpenProject detected at the URL')
 				)
 				this.isOpenProjectInstanceValid = false
 				await this.$nextTick()
@@ -376,29 +362,25 @@ export default {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
-				showSuccess(this.translate('OpenProject admin options saved'))
+				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				return true
 			} catch (error) {
 				console.debug(error)
 				showError(
-					this.translate('Failed to save OpenProject admin options')
+					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
 				return false
 			}
 		},
 		resetNcOauthValues() {
 			OC.dialogs.confirmDestructive(
-				this.translate(
-					'If you proceed you will need to update the settings in your OpenProject '
-					+ 'with the new Nextcloud OAuth credentials. Also, all users in OpenProject '
-					+ 'will need to reauthorize access to their Nextcloud account.'
-				),
-				this.translate('Replace Nextcloud OAuth values'),
+				t('integration_openproject', 'If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account.'),
+				t('integration_openproject', 'Replace Nextcloud OAuth values'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: this.translate('Yes, replace'),
+					confirm: t('integration_openproject', 'Yes, replace'),
 					confirmClasses: 'error',
-					cancel: this.translate('Cancel'),
+					cancel: t('integration_openproject', 'Cancel'),
 				},
 				async (result) => {
 					if (result) {
@@ -419,7 +401,7 @@ export default {
 				this.isFormCompleted.ncOauth = false
 			}).catch((error) => {
 				showError(
-					this.translate('Failed to create Nextcloud OAuth client')
+					t('integration_openproject', 'Failed to create Nextcloud OAuth client')
 					+ ': ' + error.response.request.responseText
 				)
 			})
@@ -453,15 +435,15 @@ export default {
 </style>
 <style lang="scss">
 .pencil-icon {
-	background-image: url(./../../img/pencil.svg);
+	background-image: url('../../img/pencil.svg');
 }
 
 .reset-icon {
-	background-image: url(./../../img/reset.svg);
+	background-image: url('../../img/reset.svg');
 }
 
 .check-icon {
-	background-image: url(./../../img/check.svg);
+	background-image: url('../../img/check.svg');
 }
 
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {

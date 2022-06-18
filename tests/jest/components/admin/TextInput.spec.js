@@ -19,6 +19,8 @@ const selector = {
 	copyIcon: '.icon-clippy',
 }
 
+global.t = (app, text) => text
+
 describe('TextInput', () => {
 	describe('messages', () => {
 		it('should show error message if provided', () => {

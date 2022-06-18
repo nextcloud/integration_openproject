@@ -2,7 +2,7 @@
 	<div class="text-input-wrapper">
 		<div class="text-input">
 			<div class="text-input-label">
-				{{ translate(labelText) }}
+				{{ labelText }}
 			</div>
 			<input :id="id"
 				ref="textInput"
@@ -10,7 +10,7 @@
 				:type="type"
 				:readonly="readOnly"
 				:class="{'text-input-error': !!errorMessage}"
-				:placeholder="translate(placeHolder)"
+				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
@@ -18,7 +18,7 @@
 				@blur="$emit('blur', $event)">
 			<div v-if="errorMessage || hintText">
 				<div v-if="errorMessage" class="text-input-error-message">
-					{{ translate(errorMessage) }}
+					{{ errorMessage }}
 				</div>
 				<div v-else
 					class="text-input-hint"
@@ -28,10 +28,10 @@
 		<button v-if="withCopyBtn"
 			class="text-input-copy-value"
 			:disabled="isCopyDisabled"
-			:title="translate(copyButtonTooltip)"
+			:title="copyButtonTooltip"
 			@click="copyValue">
 			<div class="text-input-icon icon-clippy" />
-			<span>{{ translate("Copy value") }}</span>
+			<span>{{ t("integration_openproject", "Copy value") }}</span>
 		</button>
 	</div>
 </template>
@@ -99,20 +99,17 @@ export default {
 		},
 		copyButtonTooltip() {
 			if (this.isCopied) {
-				return 'Copied!'
+				return t('integration_openproject', 'Copied!')
 			} else {
-				return 'Copy value'
+				return t('integration_openproject', 'Copy value')
 			}
 		},
 	},
 	methods: {
-		translate(text) {
-			return t('integration_openproject', text)
-		},
 		copyValue() {
 			const that = this
 			navigator.clipboard.writeText(this.value)
-			showSuccess(that.translate('Copied to the clipboard.'), {
+			showSuccess(t('integration_openproject', 'Copied to the clipboard.'), {
 				timeout: COPY_TIMEOUT,
 			})
 			that.isCopied = true
