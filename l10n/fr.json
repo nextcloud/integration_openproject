@@ -1,9 +1,11 @@
 { "translations": {
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Erreur lors de l'obtention du jeton d'accès OAuth",
+    "Error getting OAuth refresh token" : "Erreur à l'obtention du jeton de rafraîchissement OAuth",
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
     "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Vous avez %s nouvelle notification dans {instance}","Vous avez %s nouvelles notifications dans {instance}","Vous avez %s nouvelles notifications dans {instance}"],
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
     "Connected accounts" : "Comptes connectés",
@@ -11,7 +13,7 @@
     "Integration of OpenProject project management tool" : "Intégration de l'outil de gestion de projet OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'intégration d'OpenProject fournit un widget pour le dashboard qui affiche vos notifications importantes,\n\tun fournisseur de recherche pour les work packages et des notifications pour les changements dans les work packages actifs.",
     "Connect to OpenProject" : "Se connecter à OpenProject",
-    "Failed to save OpenProject OAuth state" : "Échec de l'enregistrement de l'état OAuth OpenProject",
+    "Some OpenProject integration application settings are not working." : "Certain paramètres de l'application d'intégration d'OpenProject sont incorrects.",
     "Enable navigation link" : "Activer le lien de navigation",
     "Connected as {user}" : "Connecté en tant que {user}",
     "Disconnect from OpenProject" : "Se déconnecter d'OpenProject",
@@ -25,9 +27,20 @@
     "Invalid token" : "Jeton non valide",
     "OpenProject instance not found" : "Instance OpenProject introuvable",
     "Failed to save OpenProject options" : "Impossible d'enregistrer les options OpenProject",
+    "No connection with OpenProject" : "Pas de connexion avec OpenProject",
     "Error connecting to OpenProject" : "Erreur de connexion à OpenProject",
+    "Could not fetch work packages from OpenProject" : "Erreur à la récupération des modules de travail d'OpenProject",
+    "No OpenProject links yet" : "Pas encore de lien OpenProject",
+    "Unexpected Error" : "Erreur inattendue",
+    "To add a link, use the search bar above to find the desired work package" : "Pour ajouter un lien, utilisez la barre de recherche ci-dessus pour sélectionner un module de travail",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
     "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject",
-    "Cancel" : "Annuler"
+    "Existing relations:" : "Relations existantes :",
+    "Are you sure you want to unlink the work package?" : "Êtes-vous sûr de vouloir supprimer le lien vers le module de travail ?",
+    "Confirm unlink" : "Confirmation de suppression de lien",
+    "Unlink" : "Supprimer le lien",
+    "Cancel" : "Annuler",
+    "Work package unlinked" : "Lien vers module de travail supprimé",
+    "Failed to unlink work package" : "Impossible de supprimer le lien vers le module de travail"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -14,7 +14,6 @@
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integracja OpenProject zapewnia widżet pulpitu wyświetlający ważne powiadomienia,\n\twyszukiwanie dostawcy pakietów roboczych i powiadomień o zmianach w aktywnych pakietach roboczych.",
     "Connect to OpenProject" : "Połącz się z OpenProject",
     "Some OpenProject integration application settings are not working." : "Niektóre ustawienia aplikacji integracyjnej OpenProject nie działają.",
-    "Failed to save OpenProject OAuth state" : "Nie udało się zapisać statusu OAuth OpenProject",
     "Enable navigation link" : "Włącz link nawigacyjny",
     "Connected as {user}" : "Połączono jako {user}",
     "Disconnect from OpenProject" : "Rozłącz się z OpenProject",

@@ -16,7 +16,6 @@ OC.L10N.register(
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Napojení na OpenProject poskytuje ovládací prvek pro přehled zobrazující důležitá upozornění pro vás,\n\ta sjednoceného poskytovatele vyhledávání v pracovních balíčcích a upozorňování na změny v aktivních pracovních balíčcích.",
     "Connect to OpenProject" : "Připojeno k OpenProject",
     "Some OpenProject integration application settings are not working." : "Některá nastavení aplikace pro napojení na OpenProject nefungují.",
-    "Failed to save OpenProject OAuth state" : "Nepodařilo se uložit OAuth stav pro OpenProject",
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Connected as {user}" : "Připojeni jako {user}",
     "Disconnect from OpenProject" : "Odpojeno od OpenProject",
