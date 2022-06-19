@@ -11,6 +11,7 @@
     "OpenProject integration" : "Integrazione OpenProject",
     "Integration of OpenProject project management tool" : "Integrazione dello strumento di gestione dei progetti OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'integrazione di OpenProject fornisce un widget del cruscotto che mostra le tue notifiche importanti,\nun provider di ricerca per i pacchetti di lavoro e le notifiche per le modifiche ai pacchetti di lavoro attivi.",
+    "Cancel" : "Annulla",
     "Connect to OpenProject" : "Collegati a OpenProject",
     "Enable navigation link" : "Abilita collegamento di navigazione",
     "Connected as {user}" : "Connesso come {user}",
@@ -30,7 +31,6 @@
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
-    "Existing relations:" : "Relazioni esistenti:",
-    "Cancel" : "Annulla"
+    "Existing relations:" : "Relazioni esistenti:"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

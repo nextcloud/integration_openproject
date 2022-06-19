@@ -12,6 +12,9 @@
     "OpenProject integration" : "OpenProject integrazioa",
     "Integration of OpenProject project management tool" : "OpenProject proiektuak kudeatzeko tresnaren integrazioa",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject integrazioak zure jakinarazpen garrantzitsuak erakusten dituen paneleko widget bat eskaintzen du,\nlan-paketeen bilaketa-hornitzailea eta lan-pakete aktiboetan aldaketen jakinarazpenak.",
+    "Cancel" : "Utzi",
+    "Failed to save OpenProject admin options" : "Ezin izan dira gorde OpenProject administratzailearen aukerak",
+    "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "Connect to OpenProject" : "Konektatu OpenProject-era",
     "Some OpenProject integration application settings are not working." : "OpenProject integrazio aplikazioaren ezarpen batzuk ez dira funtzionatzen ari",
     "Enable navigation link" : "Gaitu nabigazio esteka",
@@ -27,6 +30,7 @@
     "Invalid token" : "Token baliogabea",
     "OpenProject instance not found" : "OpenProject instantzia ez da aurkitu",
     "Failed to save OpenProject options" : "Ezin izan dira gorde OpenProject aukerak",
+    "Copied!" : "Kopiatua!",
     "No connection with OpenProject" : "Ez dago konexiorik OpenProject-ekin",
     "Error connecting to OpenProject" : "Errore bat gertatu da OpenProject-era konektatzean",
     "Could not fetch work packages from OpenProject" : "Ezin izan dira lortu lan paketeak OpenProject-etik",
@@ -39,7 +43,6 @@
     "Are you sure you want to unlink the work package?" : "Ziur lan-paketearen lotura deskonektatu nahi duzula?",
     "Confirm unlink" : "Berretsi lotura kentzea",
     "Unlink" : "Deskonektatu",
-    "Cancel" : "Utzi",
     "Work package unlinked" : "Deskonektatu da lan paketea",
     "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

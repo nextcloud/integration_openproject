@@ -4,11 +4,14 @@
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "Connected accounts" : "Comptes connectats",
+    "Cancel" : "Cancel·la",
+    "Save" : "Desar",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
     "Incorrect access token" : "Testimoni d'accés incorrecte",
-    "Cancel" : "Cancel·la"
+    "Copied!" : "S'ha copiat!",
+    "Start typing to search" : "Escriviu per a cercar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -13,6 +13,8 @@ OC.L10N.register(
     "OpenProject integration" : "Интегриране на OpenProject",
     "Integration of OpenProject project management tool" : "Интегриране на инструмента за управление на проекти OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Интеграцията на OpenProject предоставя изпълним модул за табло, показващ важни за вас известия,\n\t доставчик за търсене на работни пакети и известия за промени в активните работни пакети.",
+    "Cancel" : "Отказ",
+    "Failed to save OpenProject admin options" : "Неуспешно записване на опциите за администратор на OpenProject",
     "Connect to OpenProject" : "Свързване с OpenProject",
     "Some OpenProject integration application settings are not working." : "Някои настройки на приложението за интеграция на OpenProject не работят.",
     "Enable navigation link" : "Активиране на връзка за навигация",
@@ -36,7 +38,6 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "За да добавите връзка, използвайте лентата за търсене по-горе, за да намерите желания работен пакет",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
-    "Existing relations:" : "Съществуващи отношения/връзки/:",
-    "Cancel" : "Отказ"
+    "Existing relations:" : "Съществуващи отношения/връзки/:"
 },
 "nplurals=2; plural=(n != 1);");

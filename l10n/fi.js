@@ -6,9 +6,12 @@ OC.L10N.register(
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
     "Connected accounts" : "Yhdistetyt tilit",
+    "Cancel" : "Peruuta",
+    "Save" : "Tallenna",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
-    "Cancel" : "Peruuta"
+    "Copied!" : "Kopioitu!",
+    "Start typing to search" : "Aloita kirjoittaminen hakeaksesi"
 },
 "nplurals=2; plural=(n != 1);");

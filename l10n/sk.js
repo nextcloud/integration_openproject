@@ -13,6 +13,8 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integrácia",
     "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integrácia OpenProject poskytuje miniaplikáciu na paneli, ktorá vám zobrazuje dôležité oznámenia,\n\tjednotný poskytovateľ vyhľadávania pre vyhľadávanie pracovných balíkov a oznámenia o zmenách v aktívnych pracovných balíkoch.",
+    "Cancel" : "Zrušiť",
+    "Failed to save OpenProject admin options" : "Nepodarilo sa uložiť nastavenia administrátora OpenProjectu",
     "Connect to OpenProject" : "Pripojiť k OpenProject",
     "Enable navigation link" : "Povoliť navigačný odkaz",
     "Connected as {user}" : "Pripojený ako {user}",
@@ -27,12 +29,13 @@ OC.L10N.register(
     "Invalid token" : "Neplatný token",
     "OpenProject instance not found" : "Inštancia OpenProject nebola nájdená",
     "Failed to save OpenProject options" : "Nepodarilo sa uložiť nastavenia OpenProjectu",
+    "Copied!" : "Skopírované!",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
     "Unexpected Error" : "Neočakávaná chyba",
+    "No OpenProject account connected" : "Nie je pripojený žiadny OpenProject účet",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
-    "Existing relations:" : "Existujúce vzťahy:",
-    "Cancel" : "Zrušiť"
+    "Existing relations:" : "Existujúce vzťahy:"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

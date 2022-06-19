@@ -5,9 +5,10 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 通信中のエラー",
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
     "Connected accounts" : "接続済みアカウント",
+    "Cancel" : "キャンセル",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Connected as {user}" : "{user} に接続済み",
     "Incorrect access token" : "正しくないアクセストークン",
-    "Cancel" : "キャンセル"
+    "Copied!" : "コピーしました！"
 },
 "nplurals=1; plural=0;");

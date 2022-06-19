@@ -14,6 +14,8 @@ OC.L10N.register(
     "OpenProject integration" : "Integracja OpenProject",
     "Integration of OpenProject project management tool" : "Integracja narzędzia do zarządzania projektami OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integracja OpenProject zapewnia widżet pulpitu wyświetlający ważne powiadomienia,\n\twyszukiwanie dostawcy pakietów roboczych i powiadomień o zmianach w aktywnych pakietach roboczych.",
+    "Cancel" : "Anuluj",
+    "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",
     "Connect to OpenProject" : "Połącz się z OpenProject",
     "Some OpenProject integration application settings are not working." : "Niektóre ustawienia aplikacji integracyjnej OpenProject nie działają.",
     "Enable navigation link" : "Włącz link nawigacyjny",
@@ -41,7 +43,6 @@ OC.L10N.register(
     "Are you sure you want to unlink the work package?" : "Czy na pewno chcesz odłączyć pakiet roboczy?",
     "Confirm unlink" : "Potwierdź odłączenie",
     "Unlink" : "Odłącz",
-    "Cancel" : "Anuluj",
     "Work package unlinked" : "Pakiet roboczy odłączony",
     "Failed to unlink work package" : "Nie udało się odłączyć pakietu roboczego"
 },

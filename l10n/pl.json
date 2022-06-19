@@ -12,6 +12,8 @@
     "OpenProject integration" : "Integracja OpenProject",
     "Integration of OpenProject project management tool" : "Integracja narzędzia do zarządzania projektami OpenProject",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integracja OpenProject zapewnia widżet pulpitu wyświetlający ważne powiadomienia,\n\twyszukiwanie dostawcy pakietów roboczych i powiadomień o zmianach w aktywnych pakietach roboczych.",
+    "Cancel" : "Anuluj",
+    "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",
     "Connect to OpenProject" : "Połącz się z OpenProject",
     "Some OpenProject integration application settings are not working." : "Niektóre ustawienia aplikacji integracyjnej OpenProject nie działają.",
     "Enable navigation link" : "Włącz link nawigacyjny",
@@ -39,7 +41,6 @@
     "Are you sure you want to unlink the work package?" : "Czy na pewno chcesz odłączyć pakiet roboczy?",
     "Confirm unlink" : "Potwierdź odłączenie",
     "Unlink" : "Odłącz",
-    "Cancel" : "Anuluj",
     "Work package unlinked" : "Pakiet roboczy odłączony",
     "Failed to unlink work package" : "Nie udało się odłączyć pakietu roboczego"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"

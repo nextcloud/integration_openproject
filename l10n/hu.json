@@ -12,8 +12,11 @@
     "OpenProject integration" : "OpenProject integráció",
     "Integration of OpenProject project management tool" : "Az OpenProject projektmenedzsment-eszköz integrációja",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Az OpenProject integráció egy irányítópult modult nyújt, amely megjeleníti a fontos értesítéseit,\n\tkeresési szolgáltatót biztosít a munkacsomagjaihoz és értesíti az aktív munkacsomagjai változásairól.",
+    "Cancel" : "Mégse",
+    "Failed to save OpenProject admin options" : "Az OpenProject rendszergazdai beállításainak mentése sikertelen",
     "Connect to OpenProject" : "Kapcsolódás az OpenProjecthez",
     "Some OpenProject integration application settings are not working." : "Az OpenProject integrációs alkalmazás egyes beállításai nem működnek.",
+    "Failed to redirect to OpenProject" : "Nem sikerült az átirányítás az OpenProjecthez",
     "Enable navigation link" : "Navigációs hivatkozás engedélyezése",
     "Connected as {user}" : "Kapcsolódva {user} felhasználóként",
     "Disconnect from OpenProject" : "Kapcsolat bontása az OpenProjecttel",
@@ -27,6 +30,7 @@
     "Invalid token" : "Érvénytelen token",
     "OpenProject instance not found" : "Az OpenProject példány nem található",
     "Failed to save OpenProject options" : "Az OpenProject beállításainak mentése sikertelen",
+    "Copied!" : "Másolva.",
     "No connection with OpenProject" : "Nincs kapcsolat az OpenProjecttel",
     "Error connecting to OpenProject" : "Hiba történt az OpenProjecthez történő csatlakozáskor",
     "Could not fetch work packages from OpenProject" : "Nem sikerült a munkacsomagok lekérése az OpenProjecttől",
@@ -39,7 +43,6 @@
     "Are you sure you want to unlink the work package?" : "Biztos, hogy megszünteti a munkacsomag hivatkozását?",
     "Confirm unlink" : "Hivatkozás megszüntetésének megerősítése",
     "Unlink" : "Hivatkozás megszüntetése",
-    "Cancel" : "Mégse",
     "Work package unlinked" : "Munkacsomag hivatkozása megszüntetve",
     "Failed to unlink work package" : "A munkacsomag hivatkozásának megszüntetése sikertelen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
