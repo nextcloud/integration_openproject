@@ -23,8 +23,6 @@ export function checkOauthConnectionResult(oauthConnectionResult, oauthConnectio
 				'OAuth access token could not be obtained:'
 			) + ' ' + oauthConnectionErrorMessage
 		)
-	} else {
-		console.error(`'${oauthConnectionResult}' is an invalid value`)
 	}
 }
 
