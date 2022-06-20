@@ -15,8 +15,7 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :request-url="requestUrl"
-					:file-info="fileInfo" />
+				<OAuthConnectButton :request-url="requestUrl" :file-info="fileInfo" />
 			</div>
 		</div>
 	</div>

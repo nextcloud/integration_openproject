@@ -81,7 +81,7 @@ class ConfigControllerTest extends TestCase {
 				['testUser', 'integration_openproject', 'token', 'oAuthAccessToken'],
 				['testUser', 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
 				['testUser', 'integration_openproject', 'user_id', 1],
-				['testUser', 'integration_openproject', 'user_name', 'Tripatti Himal'],
+				['testUser', 'integration_openproject', 'user_name', 'Tripathi Himal'],
 				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
 			);
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
@@ -101,7 +101,7 @@ class ConfigControllerTest extends TestCase {
 				'testUser',
 				'users/me'
 			)
-			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripatti', 'id' => 1]);
+			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripathi', 'id' => 1]);
 
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
