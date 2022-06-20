@@ -25,9 +25,9 @@
 					v-html="hintText" />
 			</div>
 		</div>
-		<button v-if="withCopyBtn"
+		<button v-if="showCopyButton"
 			class="text-input-copy-value"
-			:disabled="isCopyDisabled"
+			:disabled="isInputFieldEmpty"
 			:title="copyButtonTooltip"
 			@click="copyValue">
 			<div class="text-input-icon icon-clippy" />
@@ -94,8 +94,11 @@ export default {
 				return `${this.label} *`
 			} else return this.label
 		},
-		isCopyDisabled() {
+		isInputFieldEmpty() {
 			return !this.value
+		},
+		showCopyButton() {
+			return (this.withCopyBtn && navigator.clipboard)
 		},
 		copyButtonTooltip() {
 			if (this.isCopied) {
