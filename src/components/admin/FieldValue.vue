@@ -1,16 +1,17 @@
 <template>
-	<div class="field-value">
-		<b class="title">
-			{{ title + (isRequired ? '*' : '') }}:
+	<div class="field-item">
+		<b class="field-item-title">
+			{{ t('integration_openproject', title) }}{{ isRequired ? '*' : '' }}:
 		</b>
-		&nbsp;
-		<div v-if="encryptValue" data-test-id="encrypted-value">
-			<span v-if="inspect">{{ value }}</span>
-			<span v-else>{{ encryptedValue }}</span>
-		</div>
-		<span v-else>{{ value }}</span>
 
-		<div v-if="encryptValue && withInspection" class="eye-icon" @click="toggleInspection" />
+		<div class="field-item-value">
+			{{ valueContent }}
+		</div>
+
+		<div v-if="encryptValue && withInspection"
+			class="field-item-inspect-btn icon-toggle"
+			:class="{ 'toggle-off': inspect }"
+			@click="toggleInspection" />
 	</div>
 </template>
 <script>
@@ -43,7 +44,12 @@ export default {
 	}),
 	computed: {
 		encryptedValue() {
-			return this.value.substr(0, 8) + '*'.repeat(15)
+			return this.value.substring(0, 8) + '*'.repeat(15)
+		},
+		valueContent() {
+			return (this.encryptValue && !this.inspect)
+				? this.encryptedValue
+				: this.value
 		},
 	},
 	methods: {
@@ -54,20 +60,44 @@ export default {
 }
 </script>
 <style lang="scss">
-.field-value {
+.field-item {
 	padding: 6px 0;
 	display: flex;
 	align-items: center;
+	&-value {
+		padding: 0 4px;
+	}
+	&-inspect-btn {
+		cursor: pointer;
+		width: 20px;
+		height: 20px;
+	}
+	.toggle-off {
+		position: relative;
+	}
+	.toggle-off::after {
+		content: '';
+		position: absolute;
+		left: 8px;
+		top: -1px;
+		height: 19px;
+		width: 2px;
+		background: grey;
+		border-radius: 4px;
+		border: 1px solid white;
+		transform: rotate(130deg);
+	}
 }
 
-.eye-icon {
-	cursor: pointer;
-	margin-left: 6px;
-	width: 16px;
-	height: 10px;
-	background-size: 16px;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url('../../../img/eye.svg');
+body.theme--dark, body[data-theme-dark] {
+	.toggle-off::after {
+		border: 1px solid #171717;
+	}
+}
+
+body[data-theme-dark-highcontrast] {
+	.toggle-off::after {
+		border: 1px solid #000;
+	}
 }
 </style>

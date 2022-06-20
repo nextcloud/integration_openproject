@@ -73,18 +73,20 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
     </div>
   </div>
   <div>
-    <div class="field-value"><b class="title">
+    <div class="field-item"><b class="field-item-title">
         OpenProject OAuth client ID*:
       </b>
-      &nbsp;
-      <span>openproject-client-id</span>
+      <div class="field-item-value">
+        openproject-client-id
+      </div>
       <!---->
     </div>
-    <div class="field-value pb-1"><b class="title">
+    <div class="field-item pb-1"><b class="field-item-title">
         OpenProject OAuth client secret*:
       </b>
-      &nbsp;
-      <div data-test-id="encrypted-value"><span>openproj***************</span></div>
+      <div class="field-item-value">
+        openproj***************
+      </div>
       <!---->
     </div> <button class="" data-test-id="reset-op-oauth-btn">
       <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
@@ -138,11 +140,12 @@ exports[`AdminSettings server host url form view mode and completed state should
       OpenProject Server
     </div>
   </div>
-  <div class="field-value pb-1"><b class="title">
+  <div class="field-item pb-1"><b class="field-item-title">
       OpenProject host*:
     </b>
-    &nbsp;
-    <span>http://openproject.com</span>
+    <div class="field-item-value">
+      http://openproject.com
+    </div>
     <!---->
   </div>
   <div class="d-flex"><button class="" data-test-id="reset-server-host-btn">

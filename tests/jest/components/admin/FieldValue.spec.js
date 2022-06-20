@@ -4,8 +4,8 @@ import FieldValue from '../../../../src/components/admin/FieldValue'
 const localVue = createLocalVue()
 
 const selectors = {
-	eyeIcon: '.eye-icon',
-	encryptedValue: '[data-test-id="encrypted-value"]',
+	inspectButton: '.field-item-inspect-btn',
+	itemValue: '.field-item-value',
 }
 
 describe('FieldValue', () => {
@@ -25,38 +25,42 @@ describe('FieldValue', () => {
 				const wrapper = getWrapper({
 					encryptValue: true,
 				})
-				expect(wrapper.find(selectors.encryptedValue)).toMatchSnapshot()
+				expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
 			})
 			describe('with inspection prop', () => {
-				it('should show the eye icon if set', () => {
+				it('should show the inspect button with the eye icon if set', () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
 					})
 					expect(wrapper).toMatchSnapshot()
 				})
-				it('should render the toggler if both inspect and encrypt props are set', () => {
+				it('should toggle encrypted value when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
 					})
-					expect(wrapper.find(selectors.eyeIcon).exists()).toBe(true)
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
 				})
-				it('should toggle encrypted value when eye icon is clicked', async () => {
+				it('should toggle the inspect button icon when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
 					})
-					await wrapper.find(selectors.eyeIcon).trigger('click')
-					expect(wrapper.find(selectors.encryptedValue)).toMatchSnapshot()
-					await wrapper.find(selectors.eyeIcon).trigger('click')
-					expect(wrapper.find(selectors.encryptedValue)).toMatchSnapshot()
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+					await wrapper.find(selectors.inspectButton).trigger('click')
+					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+
 				})
 			})
 		})
-		it('should render the value as it is if not set', () => {
+		it('should render the actual value as it is if not set', () => {
 			const wrapper = getWrapper()
-			expect(wrapper.find(selectors.encryptedValue).exists()).toBe(false)
+			expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
 		})
 	})
 })
