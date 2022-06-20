@@ -137,7 +137,7 @@ exports[`AdminSettings server host url form view mode and completed state should
       <div class="icon icon-checkmark"></div>
     </div>
     <div class="title green-text">
-      OpenProject Server
+      OpenProject server
     </div>
   </div>
   <div class="field-item pb-1"><b class="field-item-title">
