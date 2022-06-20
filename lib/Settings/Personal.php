@@ -60,10 +60,10 @@ class Personal implements ISettings {
 		];
 
 		try {
-			$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
-			$userConfig['request_url'] = $requestUrl;
+			$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
+			$userConfig['isAdminConfigOk'] = $adminConfigStatus;
 		} catch (\Exception $e) {
-			$userConfig['request_url'] = false;
+			$userConfig['isAdminConfigOk'] = false;
 		} finally {
 			$this->initialStateService->provideInitialState('user-config', $userConfig);
 		}

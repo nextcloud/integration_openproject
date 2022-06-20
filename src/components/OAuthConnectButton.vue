@@ -1,5 +1,5 @@
 <template>
-	<button v-if="!!requestUrl"
+	<button v-if="!!isAdminConfigOk"
 		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<span class="icon icon-external" />
@@ -19,8 +19,8 @@ export default {
 	name: 'OAuthConnectButton',
 
 	props: {
-		requestUrl: {
-			type: [String, Boolean],
+		isAdminConfigOk: {
+			type: Boolean,
 			required: true,
 		},
 		fileInfo: {

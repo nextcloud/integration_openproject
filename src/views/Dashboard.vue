@@ -11,7 +11,7 @@
 						{{ emptyContentMessage }}
 					</div>
 					<div v-if="showOauthConnect" class="connect-button">
-						<OAuthConnectButton :request-url="requestUrl" />
+						<OAuthConnectButton :is-admin-config-ok="isAdminConfigOk" />
 					</div>
 				</template>
 			</EmptyContent>
@@ -52,9 +52,9 @@ export default {
 			notifications: [],
 			loop: null,
 			state: STATE.LOADING,
-			requestUrl: loadState('integration_openproject', 'request-url'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
+			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			settingsUrl: generateUrl('/settings/user/connected-accounts'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -138,7 +138,7 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (!this.requestUrl) {
+			if (!this.isAdminConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}

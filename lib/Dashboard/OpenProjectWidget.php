@@ -120,10 +120,10 @@ class OpenProjectWidget implements IWidget {
 		Util::addStyle(Application::APP_ID, 'dashboard');
 
 		try {
-			$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
-			$this->initialStateService->provideInitialState('request-url', $requestUrl);
+			$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
+			$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
 		} catch (\Exception $e) {
-			$this->initialStateService->provideInitialState('request-url', false);
+			$this->initialStateService->provideInitialState('admin-config-status', false);
 		}
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
