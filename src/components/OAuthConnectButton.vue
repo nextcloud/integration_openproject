@@ -1,10 +1,13 @@
 <template>
 	<button v-if="!!isAdminConfigOk"
 		class="oauth-connect--button"
-		@click="onOAuthClick">
-		<span class="icon icon-external" />
+		@click="onOAuthClick"
+	>
+		<template #icon>
+			<div class="icon-external" />
+		</template>
 		{{ t('integration_openproject', 'Connect to OpenProject') }}
-	</button>
+	</Button>
 	<div v-else class="oauth-connect--message">
 		{{ adminConfigNotOkMessage }}
 	</div>
@@ -14,9 +17,14 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'OAuthConnectButton',
+
+	components: {
+		Button
+	},
 
 	props: {
 		isAdminConfigOk: {
@@ -80,14 +88,14 @@ export default {
 		text-align: center;
 		font-weight: 400;
 		color: #333333;
-		padding: 0px 18px;
+		padding: 0 18px;
 		line-height: 1.4rem;
 	}
 }
 
 body[data-theme-dark], body[data-theme-dark-highcontrast], body.theme--dark {
 	.oauth-connect--message {
-		color: #cfcfcf;
+		filter: invert(100%);
 	}
 }
 </style>

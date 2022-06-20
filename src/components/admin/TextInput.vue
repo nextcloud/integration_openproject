@@ -28,24 +28,28 @@
 					v-html="hintText" />
 			</div>
 		</div>
-		<button v-if="showCopyButton"
+		<Button v-if="showCopyButton"
 			class="text-input-copy-value"
 			:disabled="isInputFieldEmpty"
 			:title="copyButtonTooltip"
 			@click="copyValue">
-			<div class="text-input-icon icon-clippy" />
-			<span>{{ t("integration_openproject", "Copy value") }}</span>
-		</button>
+			<template #icon>
+				<div class="icon-clippy" />
+			</template>
+			{{ t("integration_openproject", "Copy value") }}
+		</Button>
 	</div>
 </template>
 <script>
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 const COPY_TIMEOUT = 5000
 
 export default {
 	name: 'TextInput',
+	components: { Button },
 	props: {
 		value: {
 			default: '',
@@ -173,15 +177,8 @@ export default {
 	}
 
 	&-copy-value {
-		cursor: copy;
-		display: flex;
-		align-items: center;
-		margin-left: 10px;
-		margin-top: 6px;
-		span {
-			cursor: copy;
-			margin-left: 6px;
-		}
+		cursor: copy !important;
+		margin-left: .5rem;
 	}
 
 	&-readonly {
@@ -204,5 +201,8 @@ body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 .text-input .link {
 	color: #1a67a3 !important;
 	font-style: italic;
+}
+.text-input-copy-value * {
+	cursor: copy !important;
 }
 </style>
