@@ -77,8 +77,8 @@ exports[`TextInput with copy button prop should render copy button if set 1`] = 
       some label
     </div> <input id="unique-id" type="text" placeholder="" class="">
     <!---->
-  </div> <button disabled="disabled" title="Copy value" class="text-input-copy-value">
-    <div class="text-input-icon icon-clippy"></div> <span>Copy value</span>
-  </button>
+  </div> <button data-v-27e36536="" type="button" disabled="disabled" title="Copy value" class="button-vue text-input-copy-value button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="icon-clippy"></div></span> <span data-v-27e36536="" class="button-vue__text">
+		Copy value
+	</span></span></button>
 </div>
 `;

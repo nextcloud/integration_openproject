@@ -6,7 +6,9 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
   <div>
     <textinput-stub value="nc-client-id" id="nextcloud-oauth-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" class="pb-2"></textinput-stub>
     <textinput-stub value="nc-client-secret" id="nextcloud-oauth-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" class="pb-2"></textinput-stub>
-    <button-stub iconclass="check-icon" text="Yes, I have copied these values" class="submit-btn"></button-stub>
+    <button-stub type="primary" nativetype="button" data-test-id="submit-nc-oauth-values-form-btn">
+      Yes, I have copied these values
+    </button-stub>
   </div>
 </div>
 `;
@@ -17,7 +19,9 @@ exports[`AdminSettings Nextcloud OAuth values form view mode with complete value
   <div>
     <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
     <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
-    <button-stub iconclass="reset-icon" text="Reset Nextcloud OAuth values" data-test-id="reset-nc-oauth-btn"></button-stub>
+    <button-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
+      Reset Nextcloud OAuth values
+    </button-stub>
   </div>
 </div>
 `;
@@ -54,10 +58,9 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
         </div>
       </div>
       <!---->
-    </div> <button disabled="disabled" class="submit-btn b-disabled" data-test-id="submit-op-oauth-btn">
-      <div class="b-icon check-icon"></div> <span>Save</span>
-      <!---->
-    </button>
+    </div> <button data-v-27e36536="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="check-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+				Save
+			</span></span></button>
   </div>
 </div>
 `;
@@ -88,19 +91,17 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
         openproj***************
       </div>
       <!---->
-    </div> <button class="" data-test-id="reset-op-oauth-btn">
-      <div class="b-icon reset-icon"></div> <span>Reset OpenProject OAuth values</span>
-      <!---->
-    </button>
+    </div> <button data-v-27e36536="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="reset-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+				Reset OpenProject OAuth values
+			</span></span></button>
   </div>
 </div>
 `;
 
 exports[`AdminSettings server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
-<button class="" data-test-id="cancel-edit-server-host-btn">
-  <!----> <span>Cancel</span>
-  <!---->
-</button>
+<button data-v-27e36536="" type="button" data-test-id="cancel-edit-server-host-btn" class="button-vue mr-2 button-vue--text-only button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><!----> <span data-v-27e36536="" class="button-vue__text">
+				Cancel
+			</span></span></button>
 `;
 
 exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="">`;
@@ -124,10 +125,9 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 `;
 
 exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
-<button class="" data-test-id="reset-server-host-btn">
-  <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
-  <!---->
-</button>
+<button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="pencil-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+				Edit server information
+			</span></span></button>
 `;
 
 exports[`AdminSettings server host url form view mode and completed state should show field value and hide the input field 1`] = `
@@ -148,10 +148,9 @@ exports[`AdminSettings server host url form view mode and completed state should
     </div>
     <!---->
   </div>
-  <div class="d-flex"><button class="" data-test-id="reset-server-host-btn">
-      <div class="b-icon pencil-icon"></div> <span>Edit server information</span>
-      <!---->
-    </button>
+  <div class="d-flex"><button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="pencil-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+				Edit server information
+			</span></span></button>
     <!---->
     <!---->
   </div>

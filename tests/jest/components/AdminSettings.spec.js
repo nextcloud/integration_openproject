@@ -37,14 +37,14 @@ const selectors = {
 	ncOauthForm: '.nextcloud-oauth-values',
 	resetServerHostButton: '[data-test-id="reset-server-host-btn"]',
 	textInputWrapper: '.text-input-wrapper',
-	submitButton: '.submit-btn',
 	cancelEditServerHostForm: '[data-test-id="cancel-edit-server-host-btn"]',
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
 	opOauthClientIdInput: '#openproject-oauth-client-id',
 	opOauthClientSecretInput: '#openproject-oauth-client-secret',
-
+	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
+	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 }
 
 // eslint-disable-next-line no-import-assign
@@ -251,7 +251,7 @@ describe('AdminSettings', () => {
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
 
-					const submitServerFormButton = wrapper.find('.submit-btn')
+					const submitServerFormButton = wrapper.find(selectors.submitServerHostFormButton)
 					await submitServerFormButton.trigger('click')
 
 					for (let i = 0; i <= 100; i++) {
@@ -286,7 +286,7 @@ describe('AdminSettings', () => {
 					serverHostForm = wrapper.find(selectors.serverHostForm)
 					await serverHostForm.find('input').setValue('http://openproject.com')
 					serverHostForm = wrapper.find(selectors.serverHostForm)
-					await serverHostForm.find(selectors.submitButton).trigger('click')
+					await serverHostForm.find(selectors.submitServerHostFormButton).trigger('click')
 
 					for (let i = 0; i <= 100; i++) {
 						await wrapper.vm.$nextTick()
@@ -306,8 +306,8 @@ describe('AdminSettings', () => {
 						state: { oauth_instance_url: value },
 					})
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
-					const submitButton = serverHostForm.find('.submit-btn')
-					expect(submitButton.props().isDisabled).toBe(true)
+					const submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
+					expect(submitButton.attributes().disabled).toBe("true")
 				})
 				it('should unset the disabled state on input', async () => {
 					const wrapper = getMountedWrapper({
@@ -315,12 +315,15 @@ describe('AdminSettings', () => {
 					})
 					let submitButton
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
-					submitButton = serverHostForm.find(selectors.submitButton)
-					expect(submitButton.classes()).toContain('b-disabled')
+					submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
+					expect(submitButton.attributes().disabled).toBe('disabled')
+
+					// first click to enable the input field
+					await serverHostForm.find('input').trigger('click')
 					await serverHostForm.find('input').setValue('a')
 
-					submitButton = serverHostForm.find(selectors.submitButton)
-					expect(submitButton.classes()).not.toContain('b-disabled')
+					submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
+					expect(submitButton.attributes().disabled).toBe(undefined)
 				})
 			})
 			describe('cancel button', () => {
@@ -435,12 +438,12 @@ describe('AdminSettings', () => {
 				it('should be enabled with complete client values', async () => {
 					let submitButton
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.classes()).toContain('b-disabled')
+					expect(submitButton.attributes().disabled).toBe('disabled')
 					await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
 					await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
 
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.classes()).not.toContain('b-disabled')
+					expect(submitButton.attributes().disabled).toBe(undefined)
 				})
 				describe('when clicked', () => {
 					describe('when the admin config is ok on save options', () => {
@@ -612,7 +615,7 @@ describe('AdminSettings', () => {
 						},
 					})
 					await wrapper.find(selectors.ncOauthForm)
-						.find(selectors.submitButton)
+						.find(selectors.submitNcOAuthFormButton)
 						.trigger('click')
 					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.VIEW)
 					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(true)

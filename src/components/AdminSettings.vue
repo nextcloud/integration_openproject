@@ -39,6 +39,7 @@
 				</Button>
 				<Button v-if="isServerHostFormInEdit"
 					type="primary"
+					data-test-id="submit-server-host-form-btn"
 					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
 					@click="saveOpenProjectHostUrl">
 					<template #icon>
@@ -137,6 +138,7 @@
 				<Button v-if="isNcOAuthFormInEdit"
 					type="primary"
 					:disabled="!ncClientId || !ncClientSecret"
+					data-test-id="submit-nc-oauth-values-form-btn"
 					@click="setNCOAuthFormToViewMode">
 					<template #icon>
 						<div class="check-icon" />
