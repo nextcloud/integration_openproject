@@ -3,7 +3,7 @@
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
-				:title="t('integration_openproject', 'OpenProject Server')"
+				:title="t('integration_openproject', 'OpenProject server')"
 				:is-complete="isServerHostFormComplete" />
 			<FieldValue v-if="isServerHostFormInView"
 				is-required
