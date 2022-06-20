@@ -53,6 +53,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
 import OAuthConnectButton from './OAuthConnectButton'
+import { translate as t } from '@nextcloud/l10n'
+import { checkOauthConnectionResult } from '../utils'
 
 export default {
 	name: 'PersonalSettings',
@@ -65,6 +67,8 @@ export default {
 		return {
 			loading: false,
 			state: loadState('integration_openproject', 'user-config'),
+			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
+			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		}
 	},
 
@@ -80,15 +84,7 @@ export default {
 	},
 
 	mounted() {
-		const paramString = window.location.search.substr(1)
-		// eslint-disable-next-line
-		const urlParams = new URLSearchParams(paramString)
-		const zmToken = urlParams.get('openprojectToken')
-		if (zmToken === 'success') {
-			showSuccess(t('integration_openproject', 'Successfully connected to OpenProject!'))
-		} else if (zmToken === 'error') {
-			showError(t('integration_openproject', 'OAuth access token could not be obtained:') + ' ' + urlParams.get('message'))
-		}
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 
 	methods: {

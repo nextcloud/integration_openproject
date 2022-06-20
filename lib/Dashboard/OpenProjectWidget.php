@@ -29,6 +29,8 @@ use OCP\Dashboard\IWidget;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Util;
 
 use OCA\OpenProject\AppInfo\Application;
@@ -52,16 +54,23 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $config;
 
+	/**
+	 * @var IUser
+	 */
+	private $user;
+
 	public function __construct(
 		IL10N $l10n,
 		IInitialState $initialStateService,
 		IURLGenerator $url,
-		IConfig $config
+		IConfig $config,
+		IUserSession $userSession
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
+		$this->user = $userSession->getUser();
 	}
 
 	/**
@@ -116,5 +125,23 @@ class OpenProjectWidget implements IWidget {
 		} catch (\Exception $e) {
 			$this->initialStateService->provideInitialState('request-url', false);
 		}
+		$oauthConnectionResult = $this->config->getUserValue(
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->config->deleteUserValue(
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-result', $oauthConnectionResult
+		);
+		$oauthConnectionErrorMessage = $this->config->getUserValue(
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+		);
+		$this->config->deleteUserValue(
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+		);
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-error-message', $oauthConnectionErrorMessage
+		);
 	}
 }

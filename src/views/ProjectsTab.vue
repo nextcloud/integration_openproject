@@ -54,6 +54,7 @@
 		<EmptyContent v-else
 			id="openproject-empty-content"
 			:state="state"
+			:file-info="fileInfo"
 			:request-url="requestUrl" />
 	</div>
 </template>
@@ -70,7 +71,7 @@ import { translate as t } from '@nextcloud/l10n'
 import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
-import { STATE } from '../utils'
+import { STATE, checkOauthConnectionResult } from '../utils'
 
 export default {
 	name: 'ProjectsTab',
@@ -87,6 +88,8 @@ export default {
 		state: STATE.LOADING,
 		workpackages: [],
 		requestUrl: loadState('integration_openproject', 'request-url'),
+		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
+		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		color: null,
 	}),
 	computed: {
@@ -102,6 +105,9 @@ export default {
 				return wp.fileId === this.fileInfo.id
 			})
 		},
+	},
+	mounted() {
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 	methods: {
 		/**

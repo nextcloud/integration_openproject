@@ -29,7 +29,8 @@ import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton'
-import { STATE } from '../utils'
+import { checkOauthConnectionResult, STATE } from '../utils'
+import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'Dashboard',
@@ -52,12 +53,13 @@ export default {
 			loop: null,
 			state: STATE.LOADING,
 			requestUrl: loadState('integration_openproject', 'request-url'),
+			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
+			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			settingsUrl: generateUrl('/settings/user/connected-accounts'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
 		}
 	},
-
 	computed: {
 		isLoading() {
 			return this.state === STATE.LOADING
@@ -106,7 +108,6 @@ export default {
 			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
 		},
 	},
-
 	watch: {
 		windowVisibility(newValue) {
 			if (newValue) {
@@ -115,6 +116,9 @@ export default {
 				this.stopLoop()
 			}
 		},
+	},
+	mounted() {
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 
 	beforeDestroy() {

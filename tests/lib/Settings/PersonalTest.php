@@ -128,14 +128,20 @@ class PersonalTest extends TestCase {
 
 		$this->initialState
 			->method('provideInitialState')
-			->with('user-config', [
-				'token' => 'some-token',
-				'user_name' => 'some-username',
-				'search_enabled' => false,
-				'notification_enabled' => false,
-				'navigation_enabled' => false,
-				'request_url' => $expectedRequestUrl === '' ? false : $expectedRequestUrl,
-			]);
+			->withConsecutive(
+				[
+					'user-config', [
+						'token' => 'some-token',
+						'user_name' => 'some-username',
+						'search_enabled' => false,
+						'notification_enabled' => false,
+						'navigation_enabled' => false,
+						'request_url' => $expectedRequestUrl === '' ? false : $expectedRequestUrl,
+					]
+				],
+				['oauth-connection-result'],
+				['oauth-connection-error-message']
+			);
 
 		$form = $this->setting->getForm();
 		$expected = new TemplateResponse('integration_openproject', 'personalSettings');

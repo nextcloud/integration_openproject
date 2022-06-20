@@ -68,6 +68,26 @@ class Personal implements ISettings {
 			$this->initialStateService->provideInitialState('user-config', $userConfig);
 		}
 
+		$oauthConnectionResult = $this->config->getUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->config->deleteUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_result'
+		);
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-result', $oauthConnectionResult
+		);
+		$oauthConnectionErrorMessage = $this->config->getUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_error_message'
+		);
+		$this->config->deleteUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_error_message'
+		);
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-error-message', $oauthConnectionErrorMessage
+		);
+
+
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
 	}
 

@@ -171,6 +171,34 @@ class ConfigController extends Controller {
 		$codeVerifier = $this->config->getUserValue(
 			$this->userId, Application::APP_ID, 'code_verifier', false
 		);
+		$oauthJourneyStartingPage = $this->config->getUserValue(
+			$this->userId, Application::APP_ID, 'oauth_journey_starting_page'
+		);
+
+		try {
+			$oauthJourneyStartingPageDecoded = \Safe\json_decode($oauthJourneyStartingPage);
+
+			if ($oauthJourneyStartingPageDecoded->page === 'dashboard') {
+				$newUrl = $this->urlGenerator->linkToRoute('dashboard.dashboard.index');
+			} elseif ($oauthJourneyStartingPageDecoded->page === 'settings') {
+				$newUrl = $this->urlGenerator->linkToRoute(
+					'settings.PersonalSettings.index', ['section' => 'connected-accounts']
+				);
+			} elseif ($oauthJourneyStartingPageDecoded->page === 'files') {
+				$newUrl = $this->urlGenerator->linkToRoute('files.view.index', [
+					'dir' => $oauthJourneyStartingPageDecoded->file->dir,
+					'scrollto' => $oauthJourneyStartingPageDecoded->file->name
+				]);
+			} else {
+				$this->logger->error(
+					'could not determine where the OAuth journey ' .
+					'to connect to OpenProject started'
+				);
+				throw new \Exception();
+			}
+		} catch (\Exception $e) {
+			$newUrl = $this->urlGenerator->linkToRoute('files.view.index');
+		}
 
 		// anyway, reset state
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'oauth_state');
@@ -206,10 +234,10 @@ class ConfigController extends Controller {
 				// get user info
 				// ToDo check response for errors
 				$this->storeUserInfo();
-				return new RedirectResponse(
-					$this->urlGenerator->linkToRoute('settings.PersonalSettings.index', ['section' => 'connected-accounts']) .
-					'?openprojectToken=success'
+				$this->config->setUserValue(
+					$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
 				);
+				return new RedirectResponse($newUrl);
 			}
 			$error = '';
 			if (!isset($result['access_token'])) {
@@ -230,10 +258,13 @@ class ConfigController extends Controller {
 			}
 			$result = $this->l->t('Error during OAuth exchanges');
 		}
-		return new RedirectResponse(
-			$this->urlGenerator->linkToRoute('settings.PersonalSettings.index', ['section' => 'connected-accounts']) .
-			'?openprojectToken=error&message=' . urlencode($result)
+		$this->config->setUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
 		);
+		$this->config->setUserValue(
+			$this->userId, Application::APP_ID, 'oauth_connection_error_message', $result
+		);
+		return new RedirectResponse($newUrl);
 	}
 
 	/**

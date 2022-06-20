@@ -33,7 +33,9 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
+use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUserSession;
 use OCP\Util;
 
 class LoadSidebarScript implements IEventListener {
@@ -51,14 +53,39 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	private $config;
 
+	/**
+	 * @var string "error"|"success"|""
+	 */
+	private $oauthConnectionResult;
+	/**
+	 * @var string
+	 */
+	private $oauthConnectionErrorMessage;
+
 	public function __construct(
 		IInitialState $initialStateService,
 		IURLGenerator $url,
-		IConfig $config
+		IConfig $config,
+		IUserSession $userSession
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
 		$this->url = $url;
+		$user = $userSession->getUser();
+		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
+			$this->oauthConnectionResult = $this->config->getUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+			);
+			$this->config->deleteUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+			);
+			$this->oauthConnectionErrorMessage = $this->config->getUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+			);
+			$this->config->deleteUserValue(
+				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+			);
+		}
 	}
 
 	public function handle(Event $event): void {
@@ -81,5 +108,12 @@ class LoadSidebarScript implements IEventListener {
 		} catch (\Exception $e) {
 			$this->initialStateService->provideInitialState('request-url', false);
 		}
+
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-result', $this->oauthConnectionResult
+		);
+		$this->initialStateService->provideInitialState(
+			'oauth-connection-error-message', $this->oauthConnectionErrorMessage
+		);
 	}
 }
