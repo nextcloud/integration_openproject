@@ -9,7 +9,10 @@
 				:value="value"
 				:type="type"
 				:readonly="readOnly"
-				:class="{'text-input-error': !!errorMessage}"
+				:class="{
+					'text-input-error': !!errorMessage,
+					'text-input-readonly': readOnly
+				}"
 				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
@@ -164,11 +167,6 @@ export default {
 		background-position: center;
 	}
 
-	input[data-focus-visible-added].text-input-error {
-		outline: none;
-		box-shadow: none;
-	}
-
 	&-copy-value {
 		cursor: copy;
 		display: flex;
@@ -180,6 +178,18 @@ export default {
 			margin-left: 6px;
 		}
 	}
+	&-readonly {
+		cursor: default;
+		outline: none !important;
+		border: 1px solid grey !important;
+		box-shadow: none !important;
+		background-color: transparent !important;
+	}
+}
+
+input[data-focus-visible-added].text-input-error {
+	outline: none;
+	box-shadow: none;
 }
 
 body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
