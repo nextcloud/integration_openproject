@@ -1,6 +1,6 @@
 # OpenProject integration into Nextcloud
 
-OpenProject integration provides a dashboard widget for displaying notifications on changes in active work packages,
+OpenProject integration provides a dashboard widget for displaying notifications of changes in active work packages, and
 a search provider for work packages, through which you can search, link, and unlink work packages to a particular file.
 
 ## :computer: Development
@@ -15,7 +15,7 @@ Requirements:
   - for v2, make sure to use `docker compose` instead of `docker-compose`
 - OpenProject server instance running in the host machine, you can set up openProject and get it running with the help of this [documentation](https://www.openproject.org/docs/development/development-environment-ubuntu/)
 
->**Note:**  while starting the OpenProject server make sure to add environment variable `OPENPROJECT_FEATURE__STORAGES__MODULE__ACTIVE=true` or set `feature_storages_module_active: true` in `configuration.yml`
+>**Note:**  While starting the OpenProject server make sure to add environment variable `OPENPROJECT_FEATURE__STORAGES__MODULE__ACTIVE=true` or set `feature_storages_module_active: true` in the `configuration.yml`
 
 - OpenProject integration app
 
@@ -53,12 +53,12 @@ Now, run the containers.
 ```shell
 docker-compose up
 ```
-**Note:** If you've cloned integration app anywhere other that the default `./../../custom_apps`, provide its path in `APP_DIR` environment variable
+**Note:** If you've cloned the integration app anywhere other that the default `./../../custom_apps`, provide its path in the `APP_DIR` environment variable
 ```shell
 APP_DIR = <path-to-integration-app> docker-compose up
 ```
 
-After this, you should be able to access the nextcloud server at [http://localhost](http://localhost).
+After this, you should be able to access the Nextcloud server at [http://localhost](http://localhost).
 
 ### Setup NC server
 
@@ -94,4 +94,4 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
-> **Note:** Inorder to use the search bar for searching work packages you need to set-up file storages in openProject side for your particular nextcloud instance. To do so you can follow this [documentation](https://google.com)
+> **Note:** In order to use the search bar for searching work packages you need to set up file storages on the OpenProject side for your particular Nextcloud instance. To do so you can follow this [documentation](https://www.openproject.org/docs/)
