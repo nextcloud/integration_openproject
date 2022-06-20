@@ -9,6 +9,7 @@ OC.L10N.register(
     "Enable navigation link" : "Aktivera navigeringslänk",
     "Connected as {user}" : "Ansluten som {user}",
     "Incorrect access token" : "Ogiltig åtkomst-token",
-    "Copied!" : "Kopierad!"
+    "Copied!" : "Kopierad!",
+    "Start typing to search" : "Börja skriva för att söka"
 },
 "nplurals=2; plural=(n != 1);");

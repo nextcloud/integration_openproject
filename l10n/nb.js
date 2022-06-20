@@ -6,8 +6,10 @@ OC.L10N.register(
     "Bad HTTP method" : "HTTP-metode er feil",
     "OAuth access token refused" : "OAuth access token ble avslått",
     "Cancel" : "Avbryt",
+    "Save" : "Lagre",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
     "Invalid token" : "Ugyldig polett",
-    "Copied!" : "Kopiert!"
+    "Copied!" : "Kopiert!",
+    "Start typing to search" : "Start å skrive for å søke"
 },
 "nplurals=2; plural=(n != 1);");

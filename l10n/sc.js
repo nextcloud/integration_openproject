@@ -7,10 +7,13 @@ OC.L10N.register(
     "OAuth access token refused" : "Token de intrada OAuth refudadu",
     "Connected accounts" : "Contos connètidos",
     "Cancel" : "Annulla",
+    "Save" : "Sarva",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
-    "Incorrect access token" : "Token de intrada non bàlidu"
+    "Incorrect access token" : "Token de intrada non bàlidu",
+    "Copied!" : "Copiados!",
+    "Start typing to search" : "Cumintza a iscrìere pro chircare"
 },
 "nplurals=2; plural=(n != 1);");

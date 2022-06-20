@@ -6,10 +6,13 @@ OC.L10N.register(
     "OAuth access token refused" : "Foi rexeitado o testemuño de acceso de OAuth",
     "Connected accounts" : "Contas conectadas",
     "Cancel" : "Cancelar",
+    "Save" : "Gardar",
     "Enable navigation link" : "Activar a ligazón de navegación",
     "Connected as {user}" : "Conectado como {user}",
     "Enable unified search for tickets" : "Activar a busca unificada de billetes.",
     "OAuth access token could not be obtained:" : "Non foi posíbel obter o testemuño de acceso OAuth",
-    "Incorrect access token" : "Testemuño de acceso incorrecto"
+    "Incorrect access token" : "Testemuño de acceso incorrecto",
+    "Copied!" : "Copiado!",
+    "Start typing to search" : "Comece a escribir para buscar"
 },
 "nplurals=2; plural=(n != 1);");

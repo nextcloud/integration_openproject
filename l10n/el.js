@@ -13,6 +13,7 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
-    "Copied!" : "Αντιγράφηκαν!"
+    "Copied!" : "Αντιγράφηκαν!",
+    "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση"
 },
 "nplurals=2; plural=(n != 1);");

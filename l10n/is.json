@@ -4,9 +4,11 @@
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
     "Connected accounts" : "Tengdir aðgangar",
     "Cancel" : "Hætta við",
+    "Save" : "Vista",
     "Enable navigation link" : "Virkja flakktengil",
     "Connected as {user}" : "Tengt sem {user}",
     "Incorrect access token" : "Rangt aðgangsteikn",
-    "Copied!" : "Afritað!"
+    "Copied!" : "Afritað!",
+    "Start typing to search" : "Skrifaðu hér til að leita"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

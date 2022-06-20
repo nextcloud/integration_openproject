@@ -6,9 +6,11 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
     "Connected accounts" : "接続済みアカウント",
     "Cancel" : "キャンセル",
+    "Save" : "保存",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Connected as {user}" : "{user} に接続済み",
     "Incorrect access token" : "正しくないアクセストークン",
-    "Copied!" : "コピーしました！"
+    "Copied!" : "コピーしました！",
+    "Start typing to search" : "入力して検索を開始します"
 },
 "nplurals=1; plural=0;");
