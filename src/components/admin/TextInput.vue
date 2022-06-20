@@ -112,7 +112,7 @@ export default {
 		copyValue() {
 			const that = this
 			navigator.clipboard.writeText(this.value)
-			showSuccess(t('integration_openproject', 'Copied to the clipboard.'), {
+			showSuccess(t('integration_openproject', 'Copied to the clipboard'), {
 				timeout: COPY_TIMEOUT,
 			})
 			that.isCopied = true
