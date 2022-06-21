@@ -5,7 +5,6 @@ namespace OCA\OpenProject\Settings;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
 use OCA\OpenProject\AppInfo\Application;
@@ -25,19 +24,14 @@ class Personal implements ISettings {
 	 * @var string|null
 	 */
 	private $userId;
-	/**
-	 * @var IURLGenerator
-	 */
-	private $url;
+
 
 	public function __construct(
 								IConfig $config,
 								IInitialState $initialStateService,
-								IURLGenerator $url,
 								?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
-		$this->url = $url;
 		$this->userId = $userId;
 	}
 
