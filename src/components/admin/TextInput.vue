@@ -167,6 +167,11 @@ export default {
 		background-position: center;
 	}
 
+	input[data-focus-visible-added].text-input-error {
+		outline: none;
+		box-shadow: none;
+	}
+
 	&-copy-value {
 		cursor: copy;
 		display: flex;
@@ -178,24 +183,19 @@ export default {
 			margin-left: 6px;
 		}
 	}
+
 	&-readonly {
 		cursor: default;
-		outline: none !important;
-		border: 1px solid grey !important;
+		outline: none;
 		box-shadow: none !important;
-		background-color: transparent !important;
+		border: 1px solid grey !important;
 	}
-}
-
-input[data-focus-visible-added].text-input-error {
-	outline: none;
-	box-shadow: none;
 }
 
 body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 	.text-input {
 		&-label {
-			color: #FFFFFF;
+			filter: invert(100%);
 		}
 	}
 }
