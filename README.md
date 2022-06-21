@@ -1,7 +1,8 @@
 # OpenProject integration into Nextcloud
 
-OpenProject integration provides a dashboard widget for displaying notifications of changes in active work packages, and
-a search provider for work packages, through which you can search, link, and unlink work packages to a particular file.
+OpenProject integration provides the possibility to link OpenProject work packages to a file in NextCloud, a dashboard widget for displaying OpenProject notifications, a search provider to search for work packages through the unified search and can display the count of OpenProject notifications as NextCloud notification.
+
+> **Note:** The configuration documentation to set up the OpenProject to link work packages in the Nextcloud can be found [here](https://www.openproject.org/docs/)
 
 ## :computer: Development
 Develop using docker compose
@@ -94,4 +95,3 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
-> **Note:** In order to use the search bar for searching work packages you need to set up file storages on the OpenProject side for your particular Nextcloud instance. To do so you can follow this [documentation](https://www.openproject.org/docs/)
