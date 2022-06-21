@@ -475,40 +475,48 @@ export default {
 }
 </style>
 <style lang="scss">
-.button-vue {
-	height: 32px !important;
-	min-height: 32px !important;
-	&--vue-primary {
-		.button-vue__text {
-			color: #fff !important;
+#openproject_prefs {
+	.button-vue {
+		height: 32px !important;
+		min-height: 32px !important;
+
+		&--vue-primary {
+			.button-vue__text {
+				color: #fff !important;
+			}
 		}
-	}
-	&__icon {
-		height: 32px;
-		min-height: 32px;
-		div {
-			height: 16px !important;
-			width: 16px !important;
-			background-size: 16px !important;
-			background-repeat: no-repeat;
-			background-position: center;
+
+		&__icon {
+			height: 32px;
+			min-height: 32px;
+
+			div {
+				height: 16px !important;
+				width: 16px !important;
+				background-size: 16px !important;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
 		}
-	}
-	&__text {
-		font-weight: 400 !important;
-		font-size: 14px !important;
-		line-height: 20px !important;
-		color: #333333 !important;
+
+		&__text {
+			font-weight: 400 !important;
+			font-size: 14px !important;
+			line-height: 20px !important;
+			color: #333333 !important;
+		}
 	}
 }
-
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.reset-icon, .pencil-icon {
-		filter: invert(100%);
-	}
-	.button-vue {
-		&__text {
-			color: #fff !important;
+	#openproject_prefs {
+		.reset-icon, .pencil-icon {
+			filter: invert(100%);
+		}
+
+		.button-vue {
+			&__text {
+				color: #fff !important;
+			}
 		}
 	}
 }
