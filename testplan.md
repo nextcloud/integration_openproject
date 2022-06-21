@@ -4,6 +4,11 @@
 
 - fresh NextCloud, without any previous history of having the app installed
 
+### Run tests as
+
+1. main admin user
+2. newly created user that is member of the "admin" group
+
 ### Tests
 
 | steps                                                  | expected outcome                     | result | comment |
@@ -23,6 +28,11 @@
 - fresh NextCloud, without any previous history of having the app installed
 - install, but don't configure OpenProject integration app
 
+### Run tests as
+
+1. main admin user
+2. newly created user that is member of the "admin" group
+
 #### Tests
 
 | steps                               | expected outcome                                                            | result | comment |
@@ -38,6 +48,11 @@
 - NextCloud installed
 - OpenProject integration app installed
 - OpenProject integration app enabled
+
+### Run tests as
+
+1. main admin user
+2. newly created user that is member of the "admin" group
 
 #### Tests
 
@@ -56,6 +71,9 @@
 - OpenProject integration app installed
 - OpenProject integration app enabled
 - OpenProject integration app configured as administrator
+
+### Run tests as
+1. normal user
 
 #### Tests
 
@@ -80,6 +98,11 @@
 - OpenProject integration app configured as administrator
 - multiple NC users connected to OpenProject
 
+### Run tests as
+
+1. main admin user
+2. newly created user that is member of the "admin" group
+
 #### Tests
 
 | steps                  | expected outcome                                                                                              | result | comment |
@@ -97,6 +120,9 @@
 - OpenProject integration app enabled
 - OpenProject integration app configured as administrator
 - multiple NC users connected to OpenProject
+
+### Run tests as
+1. normal user
 
 ### Dashboard
 
