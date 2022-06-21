@@ -26,8 +26,6 @@
     "Enable unified search for tickets" : "Ativar a pesquisa unificada de tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Atenção, tudo o que você digitar na barra de pesquisa será enviado para sua instância do OpenProject.",
     "Enable notifications for activity in my work packages" : "Habilitar notificações de atividade em meus pacotes de trabalho",
-    "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
-    "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
     "OpenProject options saved" : "Opções do OpenProject salvas",
     "Incorrect access token" : "Token de acesso incorreto",
     "Invalid token" : "Token inválido",
@@ -48,6 +46,8 @@
     "Confirm unlink" : "Confirmar desvinculação",
     "Unlink" : "Desvincular",
     "Work package unlinked" : "Pacote de trabalho desvinculado",
-    "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho"
+    "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho",
+    "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
+    "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

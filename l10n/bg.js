@@ -25,8 +25,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Активиране на унифицирано търсене на билети",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Предупреждение, всичко, което въведете в лентата за търсене, ще бъде изпратено до вашия екземпляр на OpenProject.",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
-    "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
-    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
     "OpenProject options saved" : " 80% match \nОпциите на OpenProject са записани",
     "Incorrect access token" : "Неправилен токен за достъп",
     "Invalid token" : "Невалиден токен",
@@ -42,6 +40,8 @@ OC.L10N.register(
     "Start typing to search" : "Започнете да пишете, за търсене",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
-    "Existing relations:" : "Съществуващи отношения/връзки/:"
+    "Existing relations:" : "Съществуващи отношения/връзки/:",
+    "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
+    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:"
 },
 "nplurals=2; plural=(n != 1);");

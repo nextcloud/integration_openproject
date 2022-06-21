@@ -14,7 +14,6 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject bütünleştirmesi",
     "Integration of OpenProject project management tool" : "OpenProject proje yönetim aracı bütünleştirmesi",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject bütünleştirmesi, önemli bildirimleri, çalışma paketleri için arama özelliğini\n\tve etkin çalışma paketlerindeki değişiklik bildirimlerini görüntüleyen bir pano bileşeni sağlar.",
-    "OpenProject Server" : "OpenProject sunucusu",
     "OpenProject host" : "OpenProject sunucu adı",
     "Please introduce your OpenProject host name" : "Lütfen OpenProject sunucu adını yazın",
     "Edit server information" : "Sunucu bilgilerini düzenle",
@@ -51,8 +50,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Destek kayıtları için birleşik arama yapılabilsin",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Uyarı, arama çubuğuna yazdığınız her şey OpenProject kopyanıza gönderilecek.",
     "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
-    "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
-    "OAuth access token could not be obtained:" : "OAuth erişim kodu eklenemedi:",
     "OpenProject options saved" : "OpenProject ayarları kaydedildi",
     "Incorrect access token" : "Erişim kodu geçersiz",
     "Invalid token" : "Kod geçersiz.",
@@ -60,7 +57,6 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "OpenProject ayarları kaydedilemedi",
     "Copied!" : "Kopyalandı!",
     "Copy value" : "Değeri kopyala",
-    "Copied to the clipboard." : "Panoya kopyalandı.",
     "No connection with OpenProject" : "OpenProject bağlantısı yok",
     "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
     "Could not fetch work packages from OpenProject" : "OpenProject üzerinden çalışma paketleri alınamadı",
@@ -79,6 +75,8 @@ OC.L10N.register(
     "Confirm unlink" : "Bağlantı kesmeyi onayla",
     "Unlink" : "Bağlantıyı kes",
     "Work package unlinked" : "Çalışma paketinin bağlantısı kesildi",
-    "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi"
+    "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi",
+    "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
+    "OAuth access token could not be obtained:" : "OAuth erişim kodu eklenemedi:"
 },
 "nplurals=2; plural=(n > 1);");

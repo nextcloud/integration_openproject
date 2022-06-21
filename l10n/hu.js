@@ -29,8 +29,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Egyesített kereső engedélyezése a jegyekhez",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Figyelem, minden amit a keresősávba ír, el lesz küldve az OpenProject példánynak.",
     "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
-    "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
-    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
     "OpenProject options saved" : "Az OpenProject beállításai mentve",
     "Incorrect access token" : "Helytelen hozzáférési token",
     "Invalid token" : "Érvénytelen token",
@@ -51,6 +49,8 @@ OC.L10N.register(
     "Confirm unlink" : "Hivatkozás megszüntetésének megerősítése",
     "Unlink" : "Hivatkozás megszüntetése",
     "Work package unlinked" : "Munkacsomag hivatkozása megszüntetve",
-    "Failed to unlink work package" : "A munkacsomag hivatkozásának megszüntetése sikertelen"
+    "Failed to unlink work package" : "A munkacsomag hivatkozásának megszüntetése sikertelen",
+    "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
+    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:"
 },
 "nplurals=2; plural=(n != 1);");

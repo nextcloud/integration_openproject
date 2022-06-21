@@ -14,10 +14,10 @@ OC.L10N.register(
     "Enable navigation link" : "Inschakelen navigatielink",
     "Connected as {user}" : "Verbonden als {user}",
     "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",
-    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "Incorrect access token" : "Onjuist access token",
     "Invalid token" : "Ongeldig token",
     "Copied!" : "Gekopieerd!",
-    "Start typing to search" : "Begin met typen om te zoeken"
+    "Start typing to search" : "Begin met typen om te zoeken",
+    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
 },
 "nplurals=2; plural=(n != 1);");

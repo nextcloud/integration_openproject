@@ -24,8 +24,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Zapnúť jednotné vyhľadávanie tiketov",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varovanie, všetko čo napíšete do vyhľadávania bude odoslané do OpenProject inštancie.",
     "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch",
-    "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
-    "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:",
     "OpenProject options saved" : "Nastavenia OpenProjectu boli uložené",
     "Incorrect access token" : "Nesprávny prístupový token",
     "Invalid token" : "Neplatný token",
@@ -40,6 +38,8 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nie je pripojený žiadny OpenProject účet",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
-    "Existing relations:" : "Existujúce vzťahy:"
+    "Existing relations:" : "Existujúce vzťahy:",
+    "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
+    "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

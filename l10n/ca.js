@@ -11,9 +11,9 @@ OC.L10N.register(
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
-    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
     "Incorrect access token" : "Testimoni d'accés incorrecte",
     "Copied!" : "S'ha copiat!",
-    "Start typing to search" : "Escriviu per a cercar"
+    "Start typing to search" : "Escriviu per a cercar",
+    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:"
 },
 "nplurals=2; plural=(n != 1);");

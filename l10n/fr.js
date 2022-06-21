@@ -26,8 +26,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Activer la recherche unifiée pour les tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Attention, tout ce que vous tapez dans la barre de recherche sera envoyé à votre instance OpenProject.",
     "Enable notifications for activity in my work packages" : "Activer les notifications d'activité dans mes work packages",
-    "Successfully connected to OpenProject!" : "Connexion à OpenProject réussie !",
-    "OAuth access token could not be obtained:" : "Le jeton d'accès OAuth n'a pas pu être obtenu :",
     "OpenProject options saved" : "Options OpenProject enregistrées",
     "Incorrect access token" : "Jeton d'accès incorrect",
     "Invalid token" : "Jeton non valide",
@@ -49,6 +47,8 @@ OC.L10N.register(
     "Confirm unlink" : "Confirmation de suppression de lien",
     "Unlink" : "Supprimer le lien",
     "Work package unlinked" : "Lien vers module de travail supprimé",
-    "Failed to unlink work package" : "Impossible de supprimer le lien vers le module de travail"
+    "Failed to unlink work package" : "Impossible de supprimer le lien vers le module de travail",
+    "Successfully connected to OpenProject!" : "Connexion à OpenProject réussie !",
+    "OAuth access token could not be obtained:" : "Le jeton d'accès OAuth n'a pas pu être obtenu :"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -9,9 +9,9 @@
     "Enable navigation link" : "启用应用图标链接至实例",
     "Connected as {user}" : "以 {user} 身份连接",
     "Enable unified search for tickets" : "启用统一的票证搜索",
-    "OAuth access token could not be obtained:" : "无法获取 OAuth 访问令牌：",
     "Incorrect access token" : "访问令牌不正确",
     "Copied!" : "已复制！",
-    "Start typing to search" : "开始输入搜索内容"
+    "Start typing to search" : "开始输入搜索内容",
+    "OAuth access token could not be obtained:" : "无法获取 OAuth 访问令牌："
 },"pluralForm" :"nplurals=1; plural=0;"
 }

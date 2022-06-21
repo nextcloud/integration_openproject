@@ -12,7 +12,6 @@
     "OpenProject integration" : "OpenProject 整合",
     "Integration of OpenProject project management tool" : "整合 OpenProject 項目管理工具",
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject 整合提供了一個儀表板小部件，顯示您的重要通知，\n工作包的搜索提供程序和活動工作包更改的通知。",
-    "OpenProject Server" : "OpenProject 伺服器",
     "OpenProject host" : "OpenProject 主機",
     "Please introduce your OpenProject host name" : "請輸入您的 OpenProject 主機名",
     "Edit server information" : "編輯伺服器資訊",
@@ -49,8 +48,6 @@
     "Enable unified search for tickets" : "啟用統一搜尋票證",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "警告，您在搜尋列中輸入的所有東西都會傳送到 OpenProject。",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
-    "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
-    "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖：",
     "OpenProject options saved" : "已儲存 OpenProject 選項",
     "Incorrect access token" : "不正確的存取權杖",
     "Invalid token" : "無效的權杖",
@@ -58,7 +55,6 @@
     "Failed to save OpenProject options" : "儲存 OpenProject 選項失敗",
     "Copied!" : "已複製！",
     "Copy value" : "複製值",
-    "Copied to the clipboard." : "已複製到剪貼板",
     "No connection with OpenProject" : "與 OpenProject 沒有連接",
     "Error connecting to OpenProject" : "連線至 OpenProject 時發生錯誤",
     "Could not fetch work packages from OpenProject" : "無法從 OpenProject 獲取工作包",
@@ -77,6 +73,8 @@
     "Confirm unlink" : "確認取消連結",
     "Unlink" : "取消連結",
     "Work package unlinked" : "工作包連結已取消",
-    "Failed to unlink work package" : "取消工作包連結失敗"
+    "Failed to unlink work package" : "取消工作包連結失敗",
+    "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
+    "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖："
 },"pluralForm" :"nplurals=1; plural=0;"
 }

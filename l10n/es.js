@@ -28,8 +28,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Activar búsqueda unificada de tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Aviso: todo lo que escribas en la barra de búsqueda será enviado a tu instancia de OpenProject",
     "Enable notifications for activity in my work packages" : "Activar notificaciones de actividad en mis paquetes de trabajo",
-    "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
-    "OAuth access token could not be obtained:" : "No se ha podido obtener el token de acceso:",
     "OpenProject options saved" : "Opciones de OpenProject guardadas",
     "Incorrect access token" : "Token de acceso incorrecto",
     "Invalid token" : "Token inválido",
@@ -52,6 +50,8 @@ OC.L10N.register(
     "Confirm unlink" : "Confirmar desvinculación",
     "Unlink" : "Desvincular",
     "Work package unlinked" : "Paquete de trabajo desvinculado",
-    "Failed to unlink work package" : "Fallo al desvincular el paquete de trabajo"
+    "Failed to unlink work package" : "Fallo al desvincular el paquete de trabajo",
+    "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
+    "OAuth access token could not be obtained:" : "No se ha podido obtener el token de acceso:"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -27,8 +27,6 @@
     "Enable unified search for tickets" : "Zahrnout vyhledávání v požadavcích do celkového sjednoceného vyhledávání",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varování: vše co napíšete do kolonky sjednoceného vyhledávání v rámci Nextcloud, bude odesíláno i do vámi používané instance OpenProject!",
     "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích",
-    "Successfully connected to OpenProject!" : "Úspěšně připojeno k OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth přístupový token se nepodařilo získat:",
     "OpenProject options saved" : "Předvolby pro OpenProject uloženy",
     "Incorrect access token" : "Nesprávný přístupový token",
     "Invalid token" : "Neplatný token",
@@ -51,6 +49,8 @@
     "Confirm unlink" : "Potvrdit odpojení",
     "Unlink" : "Odpojit",
     "Work package unlinked" : "Balíček práce odpojen",
-    "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce"
+    "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce",
+    "Successfully connected to OpenProject!" : "Úspěšně připojeno k OpenProject!",
+    "OAuth access token could not be obtained:" : "OAuth přístupový token se nepodařilo získat:"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

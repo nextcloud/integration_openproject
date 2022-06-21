@@ -28,8 +28,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua ticketentzako",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Kontuz, bilaketa-barran idazten duzun guztia zure OpenProject instantziara bidaliko da.",
     "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
-    "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
     "OpenProject options saved" : "OpenProject aukerak gorde dira ",
     "Incorrect access token" : "Sarbide token okerra",
     "Invalid token" : "Token baliogabea",
@@ -50,6 +48,8 @@ OC.L10N.register(
     "Confirm unlink" : "Berretsi lotura kentzea",
     "Unlink" : "Deskonektatu",
     "Work package unlinked" : "Deskonektatu da lan paketea",
-    "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea"
+    "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea",
+    "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
 },
 "nplurals=2; plural=(n != 1);");

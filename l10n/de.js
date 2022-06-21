@@ -26,8 +26,6 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Einheitliche Suche nach Tickets aktivieren",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Achtung, alles, was Du in die Suchleiste eingibst, wird an Deine OpenProject-Instanz gesendet.",
     "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
-    "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
-    "OAuth access token could not be obtained:" : "OAuth-Zugriffstoken konnte nicht abgerufen werden:",
     "OpenProject options saved" : "OpenProject-Einstellungen gespeichert",
     "Incorrect access token" : "Zugriffstoken nicht korrekt",
     "Invalid token" : "Ungültiger Token",
@@ -45,6 +43,8 @@ OC.L10N.register(
     "No OpenProject account connected" : "Kein OpenProject-Konto verbunden",
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
-    "Existing relations:" : "Bestehende Verbindungen:"
+    "Existing relations:" : "Bestehende Verbindungen:",
+    "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
+    "OAuth access token could not be obtained:" : "OAuth-Zugriffstoken konnte nicht abgerufen werden:"
 },
 "nplurals=2; plural=(n != 1);");

@@ -11,9 +11,9 @@ OC.L10N.register(
     "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
-    "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
     "Copied!" : "Αντιγράφηκαν!",
-    "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση"
+    "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
+    "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:"
 },
 "nplurals=2; plural=(n != 1);");

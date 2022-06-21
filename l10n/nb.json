@@ -5,9 +5,9 @@
     "OAuth access token refused" : "OAuth access token ble avslått",
     "Cancel" : "Avbryt",
     "Save" : "Lagre",
-    "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
     "Invalid token" : "Ugyldig polett",
     "Copied!" : "Kopiert!",
-    "Start typing to search" : "Start å skrive for å søke"
+    "Start typing to search" : "Start å skrive for å søke",
+    "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
