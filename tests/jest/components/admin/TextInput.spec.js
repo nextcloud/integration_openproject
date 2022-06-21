@@ -109,6 +109,14 @@ describe('TextInput', () => {
 			})
 		})
 	})
+	describe('readonly prop', () => {
+		it('should set the input to readonly', () => {
+			const wrapper = getWrapper({
+				readOnly: true,
+			})
+			expect(wrapper).toMatchSnapshot()
+		})
+	})
 })
 
 function getWrapper(props = {}) {

@@ -58,6 +58,18 @@ exports[`TextInput messages should show hint text if provided 1`] = `
 </div>
 `;
 
+exports[`TextInput readonly prop should set the input to readonly 1`] = `
+<div class="text-input-wrapper">
+  <div class="text-input">
+    <div class="text-input-label">
+      some label
+    </div> <input id="unique-id" type="text" readonly="readonly" placeholder="" class="text-input-readonly">
+    <!---->
+  </div>
+  <!---->
+</div>
+`;
+
 exports[`TextInput with copy button prop should render copy button if set 1`] = `
 <div class="text-input-wrapper">
   <div class="text-input">

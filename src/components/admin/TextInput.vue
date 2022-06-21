@@ -9,7 +9,10 @@
 				:value="value"
 				:type="type"
 				:readonly="readOnly"
-				:class="{'text-input-error': !!errorMessage}"
+				:class="{
+					'text-input-error': !!errorMessage,
+					'text-input-readonly': readOnly
+				}"
 				:placeholder="placeHolder"
 				@click="$emit('click', $event)"
 				@input="$emit('input', $event.target.value)"
@@ -180,12 +183,19 @@ export default {
 			margin-left: 6px;
 		}
 	}
+
+	&-readonly {
+		cursor: default;
+		outline: none;
+		box-shadow: none !important;
+		border: 1px solid grey !important;
+	}
 }
 
 body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 	.text-input {
 		&-label {
-			color: #FFFFFF;
+			filter: invert(100%);
 		}
 	}
 }
