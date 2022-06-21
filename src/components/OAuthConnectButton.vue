@@ -1,8 +1,7 @@
 <template>
 	<button v-if="!!isAdminConfigOk"
 		class="oauth-connect--button"
-		@click="onOAuthClick"
-	>
+		@click="onOAuthClick">
 		<template #icon>
 			<div class="icon-external" />
 		</template>
@@ -23,7 +22,7 @@ export default {
 	name: 'OAuthConnectButton',
 
 	components: {
-		Button
+		Button,
 	},
 
 	props: {

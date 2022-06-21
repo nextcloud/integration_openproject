@@ -63,7 +63,7 @@ export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, Button
+		SettingsTitle, OAuthConnectButton, Button,
 	},
 
 	data() {

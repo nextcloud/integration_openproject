@@ -202,6 +202,7 @@ body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 	color: #1a67a3 !important;
 	font-style: italic;
 }
+
 .text-input-copy-value * {
 	cursor: copy !important;
 }

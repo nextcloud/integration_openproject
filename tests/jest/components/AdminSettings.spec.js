@@ -307,7 +307,7 @@ describe('AdminSettings', () => {
 					})
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					const submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
-					expect(submitButton.attributes().disabled).toBe("true")
+					expect(submitButton.attributes().disabled).toBe('true')
 				})
 				it('should unset the disabled state on input', async () => {
 					const wrapper = getMountedWrapper({
