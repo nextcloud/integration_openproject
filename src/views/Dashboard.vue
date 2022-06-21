@@ -7,7 +7,7 @@
 			<EmptyContent v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
-					<div v-if="!!requestUrl">
+					<div v-if="!!isAdminConfigOk">
 						{{ emptyContentMessage }}
 					</div>
 					<div v-if="showOauthConnect" class="connect-button">

@@ -17,13 +17,13 @@ describe('OAuthConnectButton.vue Test', () => {
 		window.location = location
 		jest.clearAllMocks()
 	})
-	describe('when the request url is not valid', () => {
+	describe('when the admin config is not okay', () => {
 		it('should show message', async () => {
-			wrapper = getWrapper({ requestUrl: false })
+			wrapper = getWrapper({ isAdminConfigOk: false })
 			expect(wrapper).toMatchSnapshot()
 		})
 	})
-	describe('when the request url is valid', () => {
+	describe('when the admin config is ok', () => {
 		beforeEach(() => {
 			delete window.location
 			window.location = { replace: jest.fn(), pathname: '/index.php/apps/files/' }
@@ -84,7 +84,7 @@ function getWrapper(props = {}) {
 			t: (app, msg) => msg,
 		},
 		propsData: {
-			requestUrl: 'http://openproject/oauth/',
+			isAdminConfigOk: true,
 			...props,
 		},
 	})

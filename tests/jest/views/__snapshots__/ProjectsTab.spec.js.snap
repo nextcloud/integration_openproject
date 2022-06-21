@@ -35,12 +35,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>
@@ -49,7 +45,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
 </div>
 `;
 
-exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the request url is not valid 1`] = `
+exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the admin config is not okay 1`] = `
 <div class="projects projects--empty">
   <!---->
   <div class="empty-content" id="openproject-empty-content">
@@ -101,12 +97,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>
@@ -142,12 +134,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>
@@ -191,12 +179,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>
@@ -232,12 +216,8 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>
@@ -281,12 +261,8 @@ exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
             </div>
           </div>
         </div>
-      </div> <button data-v-2a98ba3b="" rel="nofollow noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
-        <!---->
-
-
-
-        <span data-v-2a98ba3b="" aria-hidden="true" hidden="hidden"><li data-v-ef50c406="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-2a98ba3b=""><button data-v-ef50c406="" aria-label="" type="button" class="action-button focusable"><span data-v-ef50c406="" class="action-button__icon icon-noConnection"></span> <span data-v-ef50c406="" class="action-button__text">Unlink WorkPackage</span>
+      </div> <button data-v-68f2cb4a="" rel="noreferrer noopener" class="action-item action-item--single icon-noConnection linked-workpackages--workpackage--unlinkactionbutton undefined has-tooltip" aria-label="" icon="icon-noConnection" data-original-title="">
+        <!----> <span data-v-68f2cb4a="" aria-hidden="true" hidden="hidden"><li data-v-71ea20d2="" class="action linked-workpackages--workpackage--unlinkactionbutton" data-v-68f2cb4a=""><button data-v-71ea20d2="" aria-label="" type="button" class="action-button focusable"><span data-v-71ea20d2="" class="action-button__icon icon-noConnection"></span> <span data-v-71ea20d2="" class="action-button__text">Unlink WorkPackage</span>
         <!---->
       </button></li></span></button>
     </div>

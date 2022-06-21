@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OAuthConnectButton.vue Test when the request url is not valid should show message 1`] = `
+exports[`OAuthConnectButton.vue Test when the admin config is not okay should show message 1`] = `
 <div class="oauth-connect--message">
   Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator.
 </div>

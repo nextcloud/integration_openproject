@@ -61,9 +61,9 @@ class Personal implements ISettings {
 
 		try {
 			$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
-			$userConfig['isAdminConfigOk'] = $adminConfigStatus;
+			$userConfig['admin_config_ok'] = $adminConfigStatus;
 		} catch (\Exception $e) {
-			$userConfig['isAdminConfigOk'] = false;
+			$userConfig['admin_config_ok'] = false;
 		} finally {
 			$this->initialStateService->provideInitialState('user-config', $userConfig);
 		}

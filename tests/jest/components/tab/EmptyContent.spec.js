@@ -28,8 +28,8 @@ describe('EmptyContent.vue Test', () => {
 		})
 	})
 	describe('content title', () => {
-		it('should not be displayed if the request url is not valid', () => {
-			wrapper = getWrapper({ requestUrl: false })
+		it('should not be displayed if the admin config is not okay', () => {
+			wrapper = getWrapper({ isAdminConfigOk: false })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBe(false)
 		})
 		it.each([
@@ -38,7 +38,7 @@ describe('EmptyContent.vue Test', () => {
 			STATE.CONNECTION_ERROR,
 			STATE.FAILED_FETCHING_WORKPACKAGES,
 			STATE.OK,
-		])('shows the correct empty message depending on states if the request url is valid', async (state) => {
+		])('shows the correct empty message depending on states if the admin config is okay', async (state) => {
 			wrapper = getWrapper({ state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
 			expect(wrapper.find(emptyContentMessageSelector)).toMatchSnapshot()
@@ -54,7 +54,7 @@ function getWrapper(propsData = {}) {
 		},
 		propsData: {
 			state: 'ok',
-			requestUrl: 'http://openproject/',
+			isAdminConfigOk: true,
 			...propsData,
 		},
 	})

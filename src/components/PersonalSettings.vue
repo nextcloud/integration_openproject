@@ -40,7 +40,7 @@
 					@input="onNotificationChange">
 				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}</label>
 			</div>
-			<OAuthConnectButton v-else :is-admin-config-ok="state.isAdminConfigOk" />
+			<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 		</div>
 	</div>
 </template>
@@ -74,7 +74,7 @@ export default {
 
 	computed: {
 		connected() {
-			if (!this.state.isAdminConfigOk) return false
+			if (!this.state.admin_config_ok) return false
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
 		},
