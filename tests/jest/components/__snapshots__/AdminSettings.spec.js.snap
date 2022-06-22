@@ -58,7 +58,7 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
       <div>
         <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
       </div>
-    </div> <button data-v-27e36536="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="check-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+    </div> <button data-v-27e36536="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
 				Save
 			</span></span></button>
   </div>
@@ -68,9 +68,7 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
 exports[`AdminSettings OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
-    <div class="complete">
-      <div class="icon icon-checkmark"></div>
-    </div>
+    <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
     <div class="title green-text">
       OpenProject OAuth settings
     </div>
@@ -91,7 +89,7 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
         openproj***************
       </div>
       <!---->
-    </div> <button data-v-27e36536="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="reset-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+    </div> <button data-v-27e36536="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon restore-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
 				Reset OpenProject OAuth values
 			</span></span></button>
   </div>
@@ -125,7 +123,7 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 `;
 
 exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
-<button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="pencil-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+<button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
 				Edit server information
 			</span></span></button>
 `;
@@ -133,9 +131,7 @@ exports[`AdminSettings server host url form view mode and completed state reset 
 exports[`AdminSettings server host url form view mode and completed state should show field value and hide the input field 1`] = `
 <div class="openproject-server-host">
   <div class="form-heading">
-    <div class="complete">
-      <div class="icon icon-checkmark"></div>
-    </div>
+    <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
     <div class="title green-text">
       OpenProject server
     </div>
@@ -148,7 +144,7 @@ exports[`AdminSettings server host url form view mode and completed state should
     </div>
     <!---->
   </div>
-  <div class="d-flex"><button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="pencil-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
+  <div class="d-flex"><button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
 				Edit server information
 			</span></span></button>
     <!---->

@@ -4,7 +4,8 @@ import FieldValue from '../../../../src/components/admin/FieldValue'
 const localVue = createLocalVue()
 
 const selectors = {
-	inspectButton: '.field-item-inspect-btn',
+	inspectButton: '.eye-icon',
+	inspectOffButton: '.eye-off-icon',
 	itemValue: '.field-item-value',
 }
 
@@ -32,6 +33,7 @@ describe('FieldValue', () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
+						inspect: true,
 					})
 					expect(wrapper).toMatchSnapshot()
 				})
@@ -39,21 +41,25 @@ describe('FieldValue', () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
+						inspect: true,
 					})
 					await wrapper.find(selectors.inspectButton).trigger('click')
 					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
-					await wrapper.find(selectors.inspectButton).trigger('click')
+					await wrapper.find(selectors.inspectOffButton).trigger('click')
 					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
 				})
 				it('should toggle the inspect button icon when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
 						encryptValue: true,
 						withInspection: true,
+						inspect: true,
 					})
-					await wrapper.find(selectors.inspectButton).trigger('click')
-					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
-					await wrapper.find(selectors.inspectButton).trigger('click')
-					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+					const inspect = wrapper.find(selectors.inspectButton)
+					await inspect.trigger('click')
+					expect(inspect).toMatchSnapshot()
+					const inspectOff = wrapper.find(selectors.inspectOffButton)
+					await inspectOff.trigger('click')
+					expect(inspectOff).toMatchSnapshot()
 
 				})
 			})

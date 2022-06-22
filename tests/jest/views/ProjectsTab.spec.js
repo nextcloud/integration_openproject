@@ -29,7 +29,7 @@ const localVue = createLocalVue()
 
 describe('ProjectsTab.vue Test', () => {
 	let wrapper
-	const loadingIndicatorSelector = '.icon-loading'
+	const loadingIndicatorSelector = '.loading-spinner'
 	const emptyContentSelector = '#openproject-empty-content'
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'

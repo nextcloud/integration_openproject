@@ -2,9 +2,9 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img v-if="!!isAdminConfigOk && !isStateOk" :src="noConnectionSvg" alt="no connection">
-				<img v-else-if="!!isAdminConfigOk && isStateOk" :src="addLinkSvg" alt="add work package">
-				<img v-else :src="noConnectionSvg" alt="error">
+				<LinkOffIcon v-if="!!requestUrl && !isStateOk" :size="60" />
+				<LinkPlusIcon v-else-if="!!requestUrl && isStateOk" :size="60" />
+				<LinkOffIcon v-else :size="60" />
 			</div>
 			<div v-if="!!isAdminConfigOk" class="empty-content--message">
 				<div class="empty-content--message--title">
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import LinkPlusIcon from 'vue-material-design-icons/LinkPlus.vue'
+import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton'
@@ -29,7 +31,7 @@ import { STATE } from '../../utils'
 
 export default {
 	name: 'EmptyContent',
-	components: { OAuthConnectButton },
+	components: { OAuthConnectButton, LinkPlusIcon, LinkOffIcon },
 	props: {
 		state: {
 			type: String,
@@ -59,12 +61,6 @@ export default {
 	computed: {
 		isStateOk() {
 			return this.state === STATE.OK
-		},
-		noConnectionSvg() {
-			return require('../../../img/noConnection.svg')
-		},
-		addLinkSvg() {
-			return require('../../../img/addLink.svg')
 		},
 		showConnectButton() {
 			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)

@@ -4,8 +4,11 @@
 		:show-more-text="title"
 		:loading="isLoading">
 		<template #empty-content>
-			<EmptyContent v-if="emptyContentMessage"
-				:icon="emptyContentIcon">
+			<EmptyContent v-if="emptyContentMessage">
+				<template #icon>
+					<CheckBoldIcon v-if="state === 'ok'" :size="70" />
+					<LinkOffIcon v-else :size="70" />
+				</template>
 				<template #desc>
 					<div v-if="!!isAdminConfigOk">
 						{{ emptyContentMessage }}
@@ -21,6 +24,8 @@
 
 <script>
 import axios from '@nextcloud/axios'
+import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
+import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import { DashboardWidget } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
@@ -36,7 +41,7 @@ export default {
 	name: 'Dashboard',
 
 	components: {
-		DashboardWidget, EmptyContent, OAuthConnectButton,
+		DashboardWidget, EmptyContent, OAuthConnectButton, CheckBoldIcon, LinkOffIcon,
 	},
 
 	props: {
@@ -96,13 +101,6 @@ export default {
 				return t('integration_openproject', 'No OpenProject notifications!')
 			}
 			return 'Cannot connect to OpenProject'
-		},
-		emptyContentIcon() {
-			if (this.state === STATE.OK) {
-				return 'icon-checkmark'
-			} else {
-				return 'icon-noConnection'
-			}
 		},
 		showOauthConnect() {
 			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)

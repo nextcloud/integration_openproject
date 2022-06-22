@@ -13,12 +13,12 @@
 			<br><br>
 			<div v-if="connected" class="openproject-grid-form">
 				<label class="openproject-connected">
-					<a class="icon icon-checkmark-color" />
+					<CheckIcon class="openproject-connected-checkmark" :size="20" fill-color="#007500" />
 					{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 				</label><br>
 				<Button id="openproject-rm-cred" @click="onLogoutClick">
 					<template #icon>
-						<div class="icon-close" />
+						<CloseIcon :size="23" />
 					</template>
 					{{ t('integration_openproject', 'Disconnect from OpenProject') }}
 				</Button>
@@ -32,7 +32,7 @@
 				<label for="search-openproject">{{ t('integration_openproject', 'Enable unified search for tickets') }}</label>
 				<br><br>
 				<p v-if="state.search_enabled" class="settings-hint">
-					<span class="icon icon-details" />
+					<InformationVariant />
 					{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
 				</p>
 				<input id="notification-openproject"
@@ -51,6 +51,9 @@
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import InformationVariant from 'vue-material-design-icons/InformationVariant.vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
@@ -63,7 +66,7 @@ export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, Button,
+		SettingsTitle, OAuthConnectButton, Button, CloseIcon, CheckIcon, InformationVariant,
 	},
 
 	data() {
@@ -159,6 +162,18 @@ export default {
 	button .icon {
 		margin-bottom: -1px;
 	}
+}
+
+.openproject-connected {
+	display: flex;
+}
+
+.openproject-connected-checkmark {
+	padding-right: 8px;
+}
+
+.settings-hint {
+	display: flex;
 }
 
 #openproject_prefs .icon {
