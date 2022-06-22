@@ -1,35 +1,8 @@
 # OpenProject integration into Nextcloud
 
-OpenProject integration provides a dashboard widget displaying your important notifications,
-a search provider for work packages and notifications for changes in active work packages.
+OpenProject integration provides the possibility to link OpenProject work packages to a file in NextCloud, a dashboard widget for displaying OpenProject notifications, a search provider to search for work packages through the unified search and can display the count of OpenProject notifications as NextCloud notification.
 
-## :wrench: Configuration
-
-### :lock: Authentication
-
-To access data in OpenProject on behalf of the user this app needs to authenticate to OpenProject as the respective user. This happens using the OAuth workflow. (Using a personal access token is deprecated and not possible anymore.)
-
-1. As an OpenProject admin create an OAuth app
-	1. in OpenProject go to "Administration" -> "Authentication" -> "OAuth applications"
-	2. use a name of your choice
-	3. as `Redirect URI` use `<nextcloud-uri>/index.php/apps/integration_openproject/oauth-redirect`
-	4. note down the Client ID and the Client Secret
-2. As an NextCloud admin configure the OpenProject integration
-	1. in NextCloud go to "Settings" -> "Administration" -> "Connected accounts"
-	2. provide the OpenProject address, the Client ID and the Client Secret
-3. As an NextCloud user connect to OpenProject
-    1. click the `Connect to OpenProject` button that you can find on:
-       - the OpenProject dashboard widget
-       - the OpenProject tab in the details of every file
-       - "Settings" -> "Personal" -> "Connected accounts"
-    2. you will be redirected to OpenProject
-    3. log-in to OpenProject if you haven't already
-    4. Authorize the NextCloud App
-    5. you will be redirected back to NextCloud
-
-#### Background jobs
-
-To be able to periodically check activity in OpenProject (when "notifications for activity in my work packages" is enabled), you need to choose the "Cron" background job method and set a system cron task calling cron.php as explained in the [documentation](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron).
+> **Note:** The configuration documentation to set up the OpenProject to link work packages in the Nextcloud can be found [here](https://www.openproject.org/docs/)
 
 ## :computer: Development
 Develop using docker compose
@@ -41,7 +14,10 @@ Requirements:
 - Docker Compose
   - for v1, minimum version required is v1.29.0 (our guide is for v1)
   - for v2, make sure to use `docker compose` instead of `docker-compose`
-- OpenProject server instance running in the host machine
+- OpenProject server instance running in the host machine, you can set up openProject and get it running with the help of this [documentation](https://www.openproject.org/docs/development/development-environment-ubuntu/)
+
+>**Note:**  While starting the OpenProject server make sure to add environment variable `OPENPROJECT_FEATURE__STORAGES__MODULE__ACTIVE=true` or set `feature_storages_module_active: true` in the `configuration.yml`
+
 - OpenProject integration app
 
 ### Setup
@@ -69,25 +45,30 @@ sudo chmod g+w $HOME/development/custom_apps -R
 ### Start compose
 **Note:** If your host machine has anything up on port `80`, please kill it before starting. 
 
-```shell
-docker-compose up
-```
-
 It is highly recommended to regularly update the included containers.
 ```shell
 docker-compose pull
 ```
 
-After this, you should be able to access nextcloud server at [http://localhost](http://localhost).
+Now, run the containers.
+```shell
+docker-compose up
+```
+**Note:** If you've cloned the integration app anywhere other that the default `./../../custom_apps`, provide its path in the `APP_DIR` environment variable
+```shell
+APP_DIR = <path-to-integration-app> docker-compose up
+```
+
+After this, you should be able to access the Nextcloud server at [http://localhost](http://localhost).
 
 ### Setup NC server
 
 > **Note:** These steps will only be necessary for the first setup.
 
 #### Create admin
-1. browse to [http://localhost](http://localhost)
-2. create an admin user
-3. get an installed NC server
+1. Browse to [http://localhost](http://localhost)
+2. Create an admin user
+3. Get an installed NC server
 
 For the database, **PostgreSQL** is used with the following credentials:
 - **Database:** `nextcloud`
@@ -95,7 +76,7 @@ For the database, **PostgreSQL** is used with the following credentials:
 - **Password:** `nextcloud`
 
 #### Enable integration app 
-You can browse as admin to the apps center and enable it using the webUI. Or, you can just use the terminal as:
+You can browse as admin to the apps center and enable it using the webUI or you can just use the terminal as:
 
 ```shell
 docker exec --user www-data integration_openproject_nc php occ a:e integration_openproject
