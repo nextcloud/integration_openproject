@@ -1,6 +1,6 @@
 /* jshint esversion: 8 */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue } from '@vue/test-utils'
 import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
@@ -78,7 +78,7 @@ describe('OAuthConnectButton.vue Test', () => {
 })
 
 function getWrapper(props = {}) {
-	return shallowMount(OAuthConnectButton, {
+	return mount(OAuthConnectButton, {
 		localVue,
 		mocks: {
 			t: (app, msg) => msg,

@@ -16,10 +16,12 @@
 					<a class="icon icon-checkmark-color" />
 					{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 				</label><br>
-				<button id="openproject-rm-cred" @click="onLogoutClick">
-					<span class="icon icon-close" />
+				<Button id="openproject-rm-cred" @click="onLogoutClick">
+					<template #icon>
+						<div class="icon-close" />
+					</template>
 					{{ t('integration_openproject', 'Disconnect from OpenProject') }}
-				</button>
+				</Button>
 			</div>
 			<div v-if="connected" id="openproject-search-block">
 				<input id="search-openproject"
@@ -55,12 +57,13 @@ import SettingsTitle from '../components/settings/SettingsTitle'
 import OAuthConnectButton from './OAuthConnectButton'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult } from '../utils'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton,
+		SettingsTitle, OAuthConnectButton, Button,
 	},
 
 	data() {

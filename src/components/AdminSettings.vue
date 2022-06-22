@@ -25,20 +25,29 @@
 			<div class="d-flex">
 				<Button v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
-					icon-class="pencil-icon"
-					:text="t('integration_openproject', 'Edit server information')"
-					@click="setServerHostFormToEditMode" />
+					@click="setServerHostFormToEditMode">
+					<template #icon>
+						<div class="pencil-icon" />
+					</template>
+					{{ t('integration_openproject', 'Edit server information') }}
+				</Button>
 				<Button v-if="isServerHostFormComplete && isServerHostFormInEdit"
-					:text="t('integration_openproject', 'Cancel')"
+					class="mr-2"
 					data-test-id="cancel-edit-server-host-btn"
-					@click="setServerHostFormToViewMode" />
+					@click="setServerHostFormToViewMode">
+					{{ t('integration_openproject', 'Cancel') }}
+				</Button>
 				<Button v-if="isServerHostFormInEdit"
-					class="submit-btn"
-					icon-class="check-icon"
-					:text="t('integration_openproject', 'Save')"
-					:is-loading="loadingServerHostForm"
-					:is-disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
-					@click="saveOpenProjectHostUrl" />
+					type="primary"
+					data-test-id="submit-server-host-form-btn"
+					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
+					@click="saveOpenProjectHostUrl">
+					<template #icon>
+						<div v-if="loadingServerHostForm" class="icon-loading" />
+						<div v-else class="check-icon" />
+					</template>
+					{{ t('integration_openproject', 'Save') }}
+				</Button>
 			</div>
 		</div>
 		<div class="openproject-oauth-values">
@@ -73,17 +82,23 @@
 					:hint-text="openProjectClientHint" />
 				<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
 					data-test-id="reset-op-oauth-btn"
-					icon-class="reset-icon"
-					:text="t('integration_openproject', 'Reset OpenProject OAuth values')"
-					@click="resetOPOAuthClientValues" />
+					@click="resetOPOAuthClientValues">
+					<template #icon>
+						<div class="reset-icon" />
+					</template>
+					{{ t('integration_openproject', 'Reset OpenProject OAuth values') }}
+				</Button>
 				<Button v-else
-					class="submit-btn"
 					data-test-id="submit-op-oauth-btn"
-					:text="t('integration_openproject', 'Save')"
-					icon-class="check-icon"
-					:is-loading="loadingOPOauthForm"
-					:is-disabled="!state.client_id || !state.client_secret"
-					@click="saveOPOAuthClientValues" />
+					type="primary"
+					:disabled="!state.client_id || !state.client_secret"
+					@click="saveOPOAuthClientValues">
+					<template #icon>
+						<div v-if="loadingOPOauthForm" class="icon-loading" />
+						<div v-else class="check-icon" />
+					</template>
+					{{ t('integration_openproject', 'Save') }}
+				</Button>
 			</div>
 		</div>
 		<div class="nextcloud-oauth-values">
@@ -121,16 +136,23 @@
 					with-inspection
 					:value="ncClientSecret" />
 				<Button v-if="isNcOAuthFormInEdit"
-					class="submit-btn"
-					:text="t('integration_openproject', 'Yes, I have copied these values')"
-					icon-class="check-icon"
-					:is-disabled="!ncClientId || !ncClientSecret"
-					@click="setNCOAuthFormToViewMode" />
+					type="primary"
+					:disabled="!ncClientId || !ncClientSecret"
+					data-test-id="submit-nc-oauth-values-form-btn"
+					@click="setNCOAuthFormToViewMode">
+					<template #icon>
+						<div class="check-icon" />
+					</template>
+					{{ t('integration_openproject', 'Yes, I have copied these values') }}
+				</Button>
 				<Button v-else
 					data-test-id="reset-nc-oauth-btn"
-					icon-class="reset-icon"
-					:text="t('integration_openproject', 'Reset Nextcloud OAuth values')"
-					@click="resetNcOauthValues" />
+					@click="resetNcOauthValues">
+					<template #icon>
+						<div class="reset-icon" />
+					</template>
+					{{ t('integration_openproject', 'Reset Nextcloud OAuth values') }}
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -143,12 +165,12 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import Button from './admin/Button'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
 import FormHeading from './admin/FormHeading'
 import SettingsTitle from '../components/settings/SettingsTitle'
 import { F_MODES } from './../utils'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'AdminSettings',
@@ -425,30 +447,77 @@ export default {
 	.pb-2 {
 		padding-bottom: 1rem;
 	}
-	.submit-btn {
-		background: #397DDA;
-		border: #397DDA;
-		color: white;
+	.mr-2 {
+		margin-right: .5rem;
+	}
+	.pencil-icon {
+		background-image: url('../../img/pencil.svg');
+	}
 
+	.reset-icon {
+		background-image: url('../../img/reset.svg');
+	}
+
+	.check-icon {
+		background-image: url('../../img/check.svg');
+	}
+
+	.icon-loading {
+		min-height: 0;
+	}
+
+	.icon-loading:after {
+		height: 14px;
+		width: 14px;
+		top: 15px;
+		left: 20px;
 	}
 }
 </style>
 <style lang="scss">
-.pencil-icon {
-	background-image: url('../../img/pencil.svg');
-}
+#openproject_prefs {
+	.button-vue {
+		height: 32px !important;
+		min-height: 32px !important;
 
-.reset-icon {
-	background-image: url('../../img/reset.svg');
-}
+		&--vue-primary {
+			.button-vue__text {
+				color: #fff !important;
+			}
+		}
 
-.check-icon {
-	background-image: url('../../img/check.svg');
-}
+		&__icon {
+			height: 32px;
+			min-height: 32px;
 
+			div {
+				height: 16px !important;
+				width: 16px !important;
+				background-size: 16px !important;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+		}
+
+		&__text {
+			font-weight: 400 !important;
+			font-size: 14px !important;
+			line-height: 20px !important;
+			color: #333333 !important;
+		}
+	}
+}
 body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.pencil-icon, .reset-icon, .copy-icon {
-		filter: invert(100%);
+	#openproject_prefs {
+		.reset-icon, .pencil-icon {
+			filter: invert(100%);
+		}
+
+		.button-vue {
+			&__text {
+				color: #fff !important;
+			}
+		}
 	}
 }
 </style>
