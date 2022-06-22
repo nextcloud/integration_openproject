@@ -40,26 +40,26 @@ describe('ProjectsTab.vue Test', () => {
 	beforeEach(() => {
 		jest.useFakeTimers()
 		// eslint-disable-next-line no-import-assign
-		initialState.loadState = jest.fn(() => 'https://openproject/oauth/')
+		initialState.loadState = jest.fn(() => true)
 		wrapper = shallowMount(ProjectsTab, { localVue })
 	})
 	describe('search input existence', () => {
-		it('should not exist if the request url is not valid', async () => {
+		it('should not exist if admin config is not ok', async () => {
 			await wrapper.setData({
-				requestUrl: false,
+				isAdminConfigOk: false,
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
 		})
 		it('should not exist if the wrapper is in "loading" state', async () => {
 			await wrapper.setData({
-				requestUrl: true,
+				isAdminConfigOk: true,
 				state: STATE.LOADING,
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
 		})
-		it('should exist if the request url is valid and wrapper is not "loading"', async () => {
+		it('should exist if the admin config is ok but wrapper is not "loading"', async () => {
 			await wrapper.setData({
-				requestUrl: 'https://open.project/',
+				isAdminConfigOk: true,
 				state: STATE.OK,
 
 			})
@@ -237,12 +237,12 @@ describe('ProjectsTab.vue Test', () => {
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
-		it('sets the "error" state if the request url is not valid', async () => {
+		it('sets the "error" state if the admin config is not okay', async () => {
 			const wrapper = mountWrapper()
 			axios.get
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 			await wrapper.setData({
-				requestUrl: false,
+				isAdminConfigOk: false,
 			})
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(STATE.ERROR)
@@ -589,7 +589,7 @@ function mountWrapper() {
 			state: STATE.OK,
 			fileInfo: {},
 			workpackages: [],
-			requestUrl: 'something',
+			isAdminConfigOk: true,
 		}),
 	})
 }

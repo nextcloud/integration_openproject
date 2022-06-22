@@ -2,11 +2,11 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<img v-if="!!requestUrl && !isStateOk" :src="noConnectionSvg" alt="no connection">
-				<img v-else-if="!!requestUrl && isStateOk" :src="addLinkSvg" alt="add work package">
+				<img v-if="!!isAdminConfigOk && !isStateOk" :src="noConnectionSvg" alt="no connection">
+				<img v-else-if="!!isAdminConfigOk && isStateOk" :src="addLinkSvg" alt="add work package">
 				<img v-else :src="noConnectionSvg" alt="error">
 			</div>
-			<div v-if="!!requestUrl" class="empty-content--message">
+			<div v-if="!!isAdminConfigOk" class="empty-content--message">
 				<div class="empty-content--message--title">
 					{{ emptyContentTitleMessage }}
 				</div>
@@ -15,7 +15,7 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :request-url="requestUrl" :file-info="fileInfo" />
+				<OAuthConnectButton :is-admin-config-ok="isAdminConfigOk" :file-info="fileInfo" />
 			</div>
 		</div>
 	</div>
@@ -36,8 +36,8 @@ export default {
 			required: true,
 			default: STATE.OK,
 		},
-		requestUrl: {
-			type: [String, Boolean],
+		isAdminConfigOk: {
+			type: Boolean,
 			required: true,
 		},
 		errorMessage: {

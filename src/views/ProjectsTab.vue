@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="!!requestUrl && !isLoading"
+		<SearchInput v-if="!!isAdminConfigOk && !isLoading"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			@saved="onSaved" />
@@ -55,7 +55,7 @@
 			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
-			:request-url="requestUrl" />
+			:is-admin-config-ok="isAdminConfigOk" />
 	</div>
 </template>
 
@@ -87,9 +87,9 @@ export default {
 		fileInfo: {},
 		state: STATE.LOADING,
 		workpackages: [],
-		requestUrl: loadState('integration_openproject', 'request-url'),
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
+		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 		color: null,
 	}),
 	computed: {
@@ -119,7 +119,7 @@ export default {
 			this.fileInfo = fileInfo
 			this.workpackages = []
 			this.state = STATE.LOADING
-			if (this.requestUrl) {
+			if (this.isAdminConfigOk) {
 				// only fetch if we have a request url
 				await this.fetchWorkpackages(this.fileInfo.id)
 			} else {

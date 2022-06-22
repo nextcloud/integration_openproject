@@ -9,7 +9,7 @@ const localVue = createLocalVue()
 // eslint-disable-next-line no-import-assign
 initialState.loadState = jest.fn(() => {
 	return {
-		request_url: 'https://nextcloud.com/',
+		admin_config_ok: true,
 	}
 })
 
@@ -32,7 +32,7 @@ describe('PersonalSettings.vue Test', () => {
 			})
 		})
 
-		describe('when the request url is valid', () => {
+		describe('when the admin config is okay', () => {
 			describe.each([
 				{ user_name: 'test', token: '' },
 				{ user_name: 'test', token: null },
@@ -47,7 +47,7 @@ describe('PersonalSettings.vue Test', () => {
 				beforeEach(async () => {
 					await wrapper.setData({
 						state: {
-							request_url: 'http://someurl.com',
+							admin_config_ok: true,
 							...cases,
 						},
 					})
@@ -65,7 +65,7 @@ describe('PersonalSettings.vue Test', () => {
 			describe('when username and token are given', () => {
 				beforeEach(async () => {
 					await wrapper.setData({
-						state: { user_name: 'test', token: '123', request_url: 'http://someurl.com' },
+						state: { user_name: 'test', token: '123', admin_config_ok: true },
 					})
 				})
 				it('oAuth connect button is not displayed', () => {
@@ -82,16 +82,16 @@ describe('PersonalSettings.vue Test', () => {
 				})
 			})
 		})
-		describe('when request url is not valid', () => {
+		describe('when the admin config is not okay', () => {
 			beforeEach(async () => {
 				await wrapper.setData({
-					state: { user_name: 'test', token: '123', request_url: false },
+					state: { user_name: 'test', token: '123', admin_config_ok: false },
 				})
 			})
 			it('should set proper props to the oauth connect component', () => {
 				expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
 				expect(wrapper.find(oAuthButtonSelector).props()).toMatchObject({
-					requestUrl: false,
+					isAdminConfigOk: false,
 				})
 			})
 		})

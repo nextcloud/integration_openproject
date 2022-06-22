@@ -12,7 +12,6 @@ namespace OCA\OpenProject\Settings;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
-use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,17 +31,11 @@ class PersonalTest extends TestCase {
 	 */
 	private $initialState;
 
-	/**
-	 * @var MockObject | IURLGenerator
-	 */
-	private $url;
-
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->initialState = $this->getMockBuilder(IInitialState::class)->getMock();
-		$this->url = $this->getMockBuilder(IURLGenerator::class)->getMock();
-		$this->setting = new Personal($this->config, $this->initialState, $this->url, "testUser");
+		$this->setting = new Personal($this->config, $this->initialState, "testUser");
 	}
 
 	/**
@@ -55,25 +48,21 @@ class PersonalTest extends TestCase {
 				"clientId" => 'some-client-id',
 				"clientSecret" => 'some-client-secret',
 				"oauthInstanceUrl" => 'http://some.url',
-				"expectedRequestUrl" => 'http://some.url/'
-					. 'oauth/authorize'
-					. '?client_id=' . 'some-client-id'
-					.'&redirect_uri=' . urlencode('http://redirect.url/test/')
-					. '&response_type=code',
+				"adminConfigStatus" => true,
 			],
 			[
 				// dataset with empty client secret
 				"clientId" => 'some-client-id',
 				"clientSecret" => '',
 				"oauthInstanceUrl" => 'http://some.url',
-				"expectedRequestUrl" => '',
+				"adminConfigStatus" => false,
 			],
 			[
 				// dataset with invalid oauth instance url
 				"clientId" => 'some-client-id',
 				"clientSecret" => 'some-secret',
 				"oauthInstanceUrl" => 'http:/',
-				"expectedRequestUrl" => '',
+				"adminConfigStatus" => false,
 			],
 		];
 	}
@@ -84,11 +73,11 @@ class PersonalTest extends TestCase {
 	 * @param string $clientId
 	 * @param string $clientSecret
 	 * @param string $oauthInstanceUrl
-	 * @param string $expectedRequestUrl
+	 * @param bool $adminConfigStatus
 	 * @return void
 	 */
 	public function testGetForm(
-		string $clientId, string $clientSecret, string $oauthInstanceUrl, string $expectedRequestUrl
+		string $clientId, string $clientSecret, string $oauthInstanceUrl, bool $adminConfigStatus
 	) {
 		$this->config
 			->method('getUserValue')
@@ -121,10 +110,7 @@ class PersonalTest extends TestCase {
 				$oauthInstanceUrl,
 			);
 
-		$this->url
-			->method('linkToRouteAbsolute')
-			->with('integration_openproject.config.oauthRedirect')
-			->willReturn('http://redirect.url/test/');
+
 
 		$this->initialState
 			->method('provideInitialState')
@@ -136,7 +122,7 @@ class PersonalTest extends TestCase {
 						'search_enabled' => false,
 						'notification_enabled' => false,
 						'navigation_enabled' => false,
-						'request_url' => $expectedRequestUrl === '' ? false : $expectedRequestUrl,
+						'admin_config_ok' => $adminConfigStatus,
 					]
 				],
 				['oauth-connection-result'],

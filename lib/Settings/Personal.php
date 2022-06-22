@@ -5,7 +5,6 @@ namespace OCA\OpenProject\Settings;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
 use OCA\OpenProject\AppInfo\Application;
@@ -25,19 +24,14 @@ class Personal implements ISettings {
 	 * @var string|null
 	 */
 	private $userId;
-	/**
-	 * @var IURLGenerator
-	 */
-	private $url;
+
 
 	public function __construct(
 								IConfig $config,
 								IInitialState $initialStateService,
-								IURLGenerator $url,
 								?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
-		$this->url = $url;
 		$this->userId = $userId;
 	}
 
@@ -59,14 +53,8 @@ class Personal implements ISettings {
 			'user_name' => $userName,
 		];
 
-		try {
-			$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
-			$userConfig['request_url'] = $requestUrl;
-		} catch (\Exception $e) {
-			$userConfig['request_url'] = false;
-		} finally {
-			$this->initialStateService->provideInitialState('user-config', $userConfig);
-		}
+		$userConfig['admin_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->userId, Application::APP_ID, 'oauth_connection_result'

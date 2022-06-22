@@ -34,16 +34,11 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\IRequest;
-use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
 
 class LoadSidebarScript implements IEventListener {
 
-	/**
-	 * @var IURLGenerator
-	 */
-	private $url;
 	/**
 	 * @var IInitialState
 	 */
@@ -64,13 +59,11 @@ class LoadSidebarScript implements IEventListener {
 
 	public function __construct(
 		IInitialState $initialStateService,
-		IURLGenerator $url,
 		IConfig $config,
 		IUserSession $userSession
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
-		$this->url = $url;
 		$user = $userSession->getUser();
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
 			$this->oauthConnectionResult = $this->config->getUserValue(
@@ -102,12 +95,7 @@ class LoadSidebarScript implements IEventListener {
 		}
 		Util::addStyle(Application::APP_ID, 'tab');
 
-		try {
-			$requestUrl = OpenProjectAPIService::getOpenProjectOauthURL($this->config, $this->url);
-			$this->initialStateService->provideInitialState('request-url', $requestUrl);
-		} catch (\Exception $e) {
-			$this->initialStateService->provideInitialState('request-url', false);
-		}
+		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
 
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $this->oauthConnectionResult
