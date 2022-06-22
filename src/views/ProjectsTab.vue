@@ -27,7 +27,7 @@
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			@saved="onSaved" />
-		<div v-if="isLoading" class="icon-loading" />
+		<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 		<div v-else-if="filterWorkpackagesByFileId.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
@@ -72,6 +72,7 @@ import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
 import { STATE, checkOauthConnectionResult } from '../utils'
+import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 
 export default {
 	name: 'ProjectsTab',
@@ -81,6 +82,7 @@ export default {
 		WorkPackage,
 		Actions,
 		ActionButton,
+		LoadingIcon,
 	},
 	data: () => ({
 		error: '',

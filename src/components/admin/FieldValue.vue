@@ -8,15 +8,25 @@
 			{{ valueContent }}
 		</div>
 
-		<div v-if="encryptValue && withInspection"
-			class="field-item-inspect-btn icon-toggle"
-			:class="{ 'toggle-off': inspect }"
+		<EyeIcon v-if="encryptValue && withInspection && !inspect"
+			:size="16"
+			class="field-item-inspect-btn"
+			@click="toggleInspection" />
+		<EyeOffIcon v-else-if="inspect"
+			:size="16"
+			class="field-item-inspect-off-btn"
 			@click="toggleInspection" />
 	</div>
 </template>
 <script>
+import EyeIcon from 'vue-material-design-icons/Eye.vue'
+import EyeOffIcon from 'vue-material-design-icons/EyeOff.vue'
+
 export default {
 	name: 'FieldValue',
+	components: {
+		EyeIcon, EyeOffIcon,
+	},
 	props: {
 		title: {
 			type: String,
@@ -66,38 +76,6 @@ export default {
 	align-items: center;
 	&-value {
 		padding: 0 4px;
-	}
-	&-inspect-btn {
-		cursor: pointer;
-		width: 20px;
-		height: 20px;
-	}
-	.toggle-off {
-		position: relative;
-	}
-	.toggle-off::after {
-		content: '';
-		position: absolute;
-		left: 8px;
-		top: -1px;
-		height: 19px;
-		width: 2px;
-		background: grey;
-		border-radius: 4px;
-		border: 1px solid white;
-		transform: rotate(130deg);
-	}
-}
-
-body.theme--dark, body[data-theme-dark] {
-	.toggle-off::after {
-		border: 1px solid #171717;
-	}
-}
-
-body[data-theme-dark-highcontrast] {
-	.toggle-off::after {
-		border: 1px solid #000;
 	}
 }
 </style>

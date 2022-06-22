@@ -3,7 +3,7 @@
 		class="oauth-connect--button"
 		@click="onOAuthClick">
 		<template #icon>
-			<div class="icon-external" />
+			<OpenInNewIcon :size="20" />
 		</template>
 		{{ t('integration_openproject', 'Connect to OpenProject') }}
 	</Button>
@@ -13,6 +13,7 @@
 </template>
 <script>
 import axios from '@nextcloud/axios'
+import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
@@ -23,6 +24,7 @@ export default {
 
 	components: {
 		Button,
+		OpenInNewIcon,
 	},
 
 	props: {

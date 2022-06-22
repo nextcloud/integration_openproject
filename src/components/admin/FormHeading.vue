@@ -2,7 +2,7 @@
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
 		<div v-if="isComplete" class="complete">
-			<div class="icon icon-checkmark" />
+			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else class="index">
 			{{ index }}
@@ -15,8 +15,13 @@
 </template>
 <script>
 
+import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
+
 export default {
 	name: 'FormHeading',
+	components: {
+		CheckBoldIcon,
+	},
 	props: {
 		index: {
 			type: String,
@@ -53,10 +58,8 @@ export default {
 		width: 16px;
 		border-radius: 50%;
 		background: #308720;
-		.icon {
-			filter: invert(1);
-			background-size: 12px;
-		}
+		display: flex;
+		justify-content: center;
 	}
 
 	.index {
