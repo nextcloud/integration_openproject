@@ -37,27 +37,27 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
     </div>
   </div>
   <div>
-    <div class="text-input-wrapper pb-2">
-      <div class="text-input">
-        <div class="text-input-label">
-          OpenProject OAuth client ID *
-        </div> <input id="openproject-oauth-client-id" type="text" placeholder="" class="">
-        <div>
-          <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
-        </div>
+    <div class="text-input pb-2">
+      <div class="text-input-label">
+        OpenProject OAuth client ID *
       </div>
-      <!---->
+      <div class="text-input-input-wrapper"><input id="openproject-oauth-client-id" type="text" placeholder="" class="">
+        <!---->
+      </div>
+      <div>
+        <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
+      </div>
     </div>
-    <div class="text-input-wrapper pb-2">
-      <div class="text-input">
-        <div class="text-input-label">
-          OpenProject OAuth client secret *
-        </div> <input id="openproject-oauth-client-secret" type="text" placeholder="" class="">
-        <div>
-          <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
-        </div>
+    <div class="text-input pb-2">
+      <div class="text-input-label">
+        OpenProject OAuth client secret *
       </div>
-      <!---->
+      <div class="text-input-input-wrapper"><input id="openproject-oauth-client-secret" type="text" placeholder="" class="">
+        <!---->
+      </div>
+      <div>
+        <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
+      </div>
     </div> <button data-v-27e36536="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><div data-v-27e36536="" class="check-icon"></div></span> <span data-v-27e36536="" class="button-vue__text">
 				Save
 			</span></span></button>
@@ -109,18 +109,18 @@ exports[`AdminSettings server host url form edit mode readonly state should clea
 exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-readonly">`;
 
 exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
-<div class="text-input-wrapper pb-2">
-  <div class="text-input">
-    <div class="text-input-label">
-      OpenProject host *
-    </div> <input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <div>
-      <div class="text-input-error-message">
-        Please introduce a valid OpenProject host name
-      </div>
+<div class="text-input pb-2">
+  <div class="text-input-label">
+    OpenProject host *
+  </div>
+  <div class="text-input-input-wrapper"><input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
+    <!---->
+  </div>
+  <div>
+    <div class="text-input-error-message">
+      Please introduce a valid OpenProject host name
     </div>
   </div>
-  <!---->
 </div>
 `;
 
