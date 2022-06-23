@@ -34,7 +34,7 @@
 			:title="copyButtonTooltip"
 			@click="copyValue">
 			<template #icon>
-				<div class="icon-clippy" />
+				<ClippyIcon :size="16" />
 			</template>
 			{{ t("integration_openproject", "Copy value") }}
 		</Button>
@@ -44,12 +44,16 @@
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import ClippyIcon from '../icons/ClippyIcon'
 
 const COPY_TIMEOUT = 5000
 
 export default {
 	name: 'TextInput',
-	components: { Button },
+	components: {
+		Button,
+		ClippyIcon,
+	},
 	props: {
 		value: {
 			default: '',
