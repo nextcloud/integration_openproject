@@ -36,7 +36,7 @@ const selectors = {
 	opOauthForm: '.openproject-oauth-values',
 	ncOauthForm: '.nextcloud-oauth-values',
 	resetServerHostButton: '[data-test-id="reset-server-host-btn"]',
-	textInputWrapper: '.text-input-wrapper',
+	textInputWrapper: '.text-input',
 	cancelEditServerHostForm: '[data-test-id="cancel-edit-server-host-btn"]',
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',

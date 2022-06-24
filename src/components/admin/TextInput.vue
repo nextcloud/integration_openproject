@@ -1,9 +1,9 @@
 <template>
-	<div class="text-input-wrapper">
-		<div class="text-input">
-			<div class="text-input-label">
-				{{ labelText }}
-			</div>
+	<div class="text-input">
+		<div class="text-input-label">
+			{{ labelText }}
+		</div>
+		<div class="text-input-input-wrapper">
 			<input :id="id"
 				ref="textInput"
 				:value="value"
@@ -19,25 +19,25 @@
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"
 				@blur="$emit('blur', $event)">
-			<div v-if="errorMessage || hintText">
-				<div v-if="errorMessage" class="text-input-error-message">
-					{{ errorMessage }}
-				</div>
-				<div v-else
-					class="text-input-hint"
-					v-html="hintText" />
-			</div>
+			<Button v-if="showCopyButton"
+				class="text-input-copy-value"
+				:disabled="isInputFieldEmpty"
+				:title="copyButtonTooltip"
+				@click="copyValue">
+				<template #icon>
+					<ClippyIcon :size="16" />
+				</template>
+				{{ t("integration_openproject", "Copy value") }}
+			</Button>
 		</div>
-		<Button v-if="showCopyButton"
-			class="text-input-copy-value"
-			:disabled="isInputFieldEmpty"
-			:title="copyButtonTooltip"
-			@click="copyValue">
-			<template #icon>
-				<ClippyIcon :size="16" />
-			</template>
-			{{ t("integration_openproject", "Copy value") }}
-		</Button>
+		<div v-if="errorMessage || hintText">
+			<div v-if="errorMessage" class="text-input-error-message">
+				{{ errorMessage }}
+			</div>
+			<div v-else
+				class="text-input-hint"
+				v-html="hintText" />
+		</div>
 	</div>
 </template>
 <script>
@@ -136,8 +136,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .text-input {
-	input {
-		width: 100%;
+	&-input-wrapper {
+		display: flex;
+		align-items: center;
+
+		input {
+			flex-grow: 1;
+			max-width: 700px;
+		}
 	}
 
 	&-wrapper {
