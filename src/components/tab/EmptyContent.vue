@@ -2,8 +2,7 @@
 	<div class="empty-content">
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
-				<LinkOffIcon v-if="!!requestUrl && !isStateOk" :size="60" />
-				<LinkPlusIcon v-else-if="!!requestUrl && isStateOk" :size="60" />
+				<LinkPlusIcon v-if="!!isAdminConfigOk && isStateOk" :size="60" />
 				<LinkOffIcon v-else :size="60" />
 			</div>
 			<div v-if="!!isAdminConfigOk" class="empty-content--message">

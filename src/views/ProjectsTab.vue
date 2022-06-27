@@ -42,9 +42,11 @@
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<Actions>
 						<ActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
-							icon="icon-noConnection"
 							@click="unlink(workpackage.id, fileInfo.id)">
 							Unlink WorkPackage
+							<template #icon>
+								<LinkOffIcon :size="20" />
+							</template>
 						</ActionButton>
 					</Actions>
 				</div>
@@ -64,15 +66,18 @@ import EmptyContent from '../components/tab/EmptyContent'
 import WorkPackage from '../components/tab/WorkPackage'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import SearchInput from '../components/tab/SearchInput'
+import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
+import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+
 import axios from '@nextcloud/axios'
+
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
-import SearchInput from '../components/tab/SearchInput'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper'
 import { STATE, checkOauthConnectionResult } from '../utils'
-import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 
 export default {
 	name: 'ProjectsTab',
@@ -83,6 +88,7 @@ export default {
 		Actions,
 		ActionButton,
 		LoadingIcon,
+		LinkOffIcon,
 	},
 	data: () => ({
 		error: '',
@@ -301,10 +307,6 @@ export default {
 		font-size: 1.2rem;
 	}
 
-	.icon-loading:after {
-		top: 140%;
-	}
-
 	.linked-workpackages--workpackage {
 		display: flex;
 		position: relative;
@@ -352,11 +354,5 @@ export default {
 
 .workpackage-transition {
 	animation: fade-in 3s 1;
-}
-
-body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.linked-workpackages--workpackage--unlinkactionbutton {
-		filter: invert(100%);
-	}
 }
 </style>
