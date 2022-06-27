@@ -50,14 +50,14 @@ export default {
 	padding: 20px 0;
 
 	.green-text {
-		color: #308720;
+		color: var(--color-success);
 	}
 
 	.complete {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		background: #308720;
+		background-color: var(--color-success);
 		display: flex;
 		justify-content: center;
 		align-items: center;
