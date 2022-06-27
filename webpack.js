@@ -18,6 +18,7 @@ webpackConfig.entry = {
 	adminSettings: { import: path.join(__dirname, 'src', 'adminSettings.js'), filename: appId + '-adminSettings.js' },
 	dashboard: { import: path.join(__dirname, 'src', 'dashboard.js'), filename: appId + '-dashboard.js' },
 	'openproject-tab': { import: path.join(__dirname, 'src', 'projectTab.js'), filename: appId + '-projectTab.js' },
+	directDownload: { import: path.join(__dirname, 'src', 'directDownload.js'), filename: appId + '-directDownload.js' },
 }
 
 webpackConfig.plugins.push(
