@@ -8,10 +8,11 @@ module.exports = {
 	},
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
 	collectCoverage: true,
+	coverageProvider: 'v8',
 	collectCoverageFrom: ['./src/**'],
 	coverageDirectory: '<rootDir>/coverage/jest/',
 	coverageReporters: ['lcov', 'html', 'text'],
 	transformIgnorePatterns: [
 		'node_modules/(?!vue-material-design-icons)',
-	  ],
+	]
 }
