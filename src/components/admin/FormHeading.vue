@@ -60,6 +60,7 @@ export default {
 		background: #308720;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 	}
 
 	.index {
