@@ -6,7 +6,7 @@
 		<template #empty-content>
 			<EmptyContent v-if="emptyContentMessage">
 				<template #icon>
-					<CheckBoldIcon v-if="state === 'ok'" :size="70" />
+					<CheckBoldIcon v-if="isStateOk" :size="70" />
 					<LinkOffIcon v-else :size="70" />
 				</template>
 				<template #desc>
@@ -66,6 +66,9 @@ export default {
 		}
 	},
 	computed: {
+		isStateOk() {
+			return this.state === STATE.OK
+		},
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
