@@ -13,7 +13,7 @@
 			<br><br>
 			<div v-if="connected" class="openproject-grid-form">
 				<label class="openproject-connected">
-					<CheckIcon class="openproject-connected-checkmark" :size="20" fill-color="#007500" />
+					<CheckIcon class="openproject-connected-checkmark" :size="20" />
 					{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 				</label><br>
 				<Button id="openproject-rm-cred" @click="onLogoutClick">
@@ -170,6 +170,7 @@ export default {
 
 .openproject-connected-checkmark {
 	padding-right: 8px;
+	color: var(--color-success);
 }
 
 .settings-hint {
