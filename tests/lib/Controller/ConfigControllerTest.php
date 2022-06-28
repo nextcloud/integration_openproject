@@ -4,6 +4,7 @@ namespace OCA\OpenProject\Controller;
 
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -111,6 +112,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$urlGeneratorMock,
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -175,6 +177,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$urlGeneratorMock,
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -208,6 +211,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -274,6 +278,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -342,6 +347,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -415,6 +421,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(IUserManager::class),
 			$this->l,
@@ -517,6 +524,7 @@ class ConfigControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$configMock,
+			$this->createMock(IInitialState::class),
 			$this->createMock(IURLGenerator::class),
 			$userManager,
 			$this->l,
