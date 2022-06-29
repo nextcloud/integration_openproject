@@ -249,20 +249,30 @@ export default {
 					// empty data means there are no workpackages linked
 					if (response.data.length > 0) {
 						for (let workPackage of response.data) {
+							if (fileId !== this.fileInfo.id) {
+								break
+							}
 							workPackage.fileId = fileId
 							// if the WP is already in the list, because the user switched quickly between files
-							// don't even try to fetch all the additional meta data
+							// and came back to a file that was selected before and so work-packages are already
+							// in the list. In that case don't even try to fetch all the additional meta data
 							if (!this.workpackageAlreadyInList(workPackage)) {
 								workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 								// check again, the WP might have been added by an outstanding request
-								// from another file
-								if (!this.workpackageAlreadyInList(workPackage)) {
+								// from another file or the file might have changed while fetching metadata
+								if (
+									!this.workpackageAlreadyInList(workPackage)
+									&& workPackage.fileId === this.fileInfo.id
+								) {
 									this.workpackages.push(workPackage)
 								}
 							}
 						}
 					}
-					this.state = STATE.OK
+					// if the file was changed in between the state cannot be OK
+					if (fileId === this.fileInfo.id) {
+						this.state = STATE.OK
+					}
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
