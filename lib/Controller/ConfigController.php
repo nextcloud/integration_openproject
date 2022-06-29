@@ -11,6 +11,8 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -63,10 +65,15 @@ class ConfigController extends Controller {
 	 * @var OauthService
 	 */
 	private $oauthService;
+	/**
+	 * @var IInitialState
+	 */
+	private $initialStateService;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
+								IInitialState $initialStateService,
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								IL10N $l,
@@ -83,6 +90,7 @@ class ConfigController extends Controller {
 		$this->logger = $logger;
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
+		$this->initialStateService = $initialStateService;
 	}
 
 	/**
@@ -305,5 +313,22 @@ class ConfigController extends Controller {
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		return new DataResponse($clientInfo);
+	}
+
+	/**
+	 * Direct download page
+	 * @NoCSRFRequired
+	 * @PublicPage
+	 */
+	public function directDownloadPage(string $token, string $fileName): PublicTemplateResponse {
+		$this->initialStateService->provideInitialState('direct', [
+			'token' => $token,
+			'fileName' => $fileName,
+		]);
+		$response = new PublicTemplateResponse(Application::APP_ID, 'directDownload');
+		$response->setHeaderTitle($this->l->t('Direct download'));
+		$response->setHeaderDetails($fileName);
+		$response->setFooterVisible(false);
+		return $response;
 	}
 }
