@@ -34,9 +34,10 @@
 			<div v-if="errorMessage" class="text-input-error-message">
 				{{ errorMessage }}
 			</div>
+
 			<div v-else
 				class="text-input-hint"
-				v-html="hintText" />
+				v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 		</div>
 	</div>
 </template>
@@ -45,6 +46,7 @@ import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import ClippyIcon from '../icons/ClippyIcon'
+import dompurify from 'dompurify'
 
 const COPY_TIMEOUT = 5000
 
@@ -117,6 +119,9 @@ export default {
 			} else {
 				return t('integration_openproject', 'Copy value')
 			}
+		},
+		sanitizedHintText() {
+			return dompurify.sanitize(this.hintText)
 		},
 	},
 	methods: {
