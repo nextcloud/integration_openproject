@@ -15,7 +15,10 @@ return [
 		['name' => 'config#setConfig', 'url' => '/config', 'verb' => 'PUT'],
 		['name' => 'config#setAdminConfig', 'url' => '/admin-config', 'verb' => 'PUT'],
 		['name' => 'config#autoOauthCreation', 'url' => '/nc-oauth', 'verb' => 'POST'],
-		['name' => 'config#directDownloadPage', 'url' => '/direct', 'verb' => 'GET'],
+
+		['name' => 'directDownload#directDownloadPage', 'url' => '/direct', 'verb' => 'GET'],
+		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
+
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/url', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectAvatar', 'url' => '/avatar', 'verb' => 'GET'],
