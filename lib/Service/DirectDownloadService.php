@@ -56,6 +56,8 @@ class DirectDownloadService {
 				$userFolder = $this->root->getUserFolder($dbUserId);
 				$files = $userFolder->getById($dbFileId);
 				if (count($files) > 0 && $files[0] instanceof File) {
+					$req->closeCursor();
+					$qb->resetQueryParts();
 					return $files[0];
 				}
 			}
