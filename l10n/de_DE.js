@@ -5,6 +5,7 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Fehler beim Abrufen des OAuth-Zugriffstokens",
     "Error getting OAuth refresh token" : "Fehler beim Abrufen des OAuth-Aktualisierungstokens",
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
+    "Direct download" : "Direkt herunterladen",
     "OpenProject notifications" : "OpenProject-Benachrichtigungen",
     "OpenProject activity" : "OpenProject-Aktivitäten",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Sie haben %s neue Benachrichtigung in {instance}","Sie haben %s neue Benachrichtigungen in {instance}"],
