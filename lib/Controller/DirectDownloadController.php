@@ -13,14 +13,10 @@ namespace OCA\OpenProject\Controller;
 
 use OCA\OpenProject\Service\DirectDownloadService;
 use OCP\AppFramework\Http\DataDownloadResponse;
-use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\AppFramework\Controller;
-
-use OCA\OpenProject\AppInfo\Application;
 
 class DirectDownloadController extends Controller {
 
@@ -29,40 +25,17 @@ class DirectDownloadController extends Controller {
 	 */
 	private $l;
 	/**
-	 * @var IInitialState
-	 */
-	private $initialStateService;
-	/**
 	 * @var DirectDownloadService
 	 */
 	private $directDownloadService;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								IInitialState $initialStateService,
 								IL10N $l,
 								DirectDownloadService $directDownloadService) {
 		parent::__construct($appName, $request);
 		$this->l = $l;
-		$this->initialStateService = $initialStateService;
 		$this->directDownloadService = $directDownloadService;
-	}
-
-	/**
-	 * Direct download page
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 */
-	public function directDownloadPage(string $token, string $fileName): PublicTemplateResponse {
-		$this->initialStateService->provideInitialState('direct', [
-			'token' => $token,
-			'fileName' => $fileName,
-		]);
-		$response = new PublicTemplateResponse(Application::APP_ID, 'directDownload');
-		$response->setHeaderTitle($this->l->t('Direct download'));
-		$response->setHeaderDetails($fileName);
-		$response->setFooterVisible(false);
-		return $response;
 	}
 
 	/**

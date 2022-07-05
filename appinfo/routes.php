@@ -16,7 +16,6 @@ return [
 		['name' => 'config#setAdminConfig', 'url' => '/admin-config', 'verb' => 'PUT'],
 		['name' => 'config#autoOauthCreation', 'url' => '/nc-oauth', 'verb' => 'POST'],
 
-		['name' => 'directDownload#directDownloadPage', 'url' => '/direct', 'verb' => 'GET'],
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
