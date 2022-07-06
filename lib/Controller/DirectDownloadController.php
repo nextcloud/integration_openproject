@@ -57,8 +57,8 @@ class DirectDownloadController extends Controller {
 		return new TemplateResponse('core', 'error', [
 			'errors' => [
 				[
-					'error' => $this->l->t('Direct download error.'),
-					'hint' => $this->l->t('This direct download link is invalid or has expired.'),
+					'error' => $this->l->t('Direct download error'),
+					'hint' => $this->l->t('This direct download link is invalid or has expired'),
 				],
 			],
 		], TemplateResponse::RENDER_AS_GUEST);
