@@ -3,7 +3,6 @@
     "Error getting OAuth access token" : "擷取 OAuth 存取權杖時發生錯誤",
     "Error getting OAuth refresh token" : "獲取 OAuth 更新權杖時發生錯誤。",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
-    "Direct download" : "直接下載",
     "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],

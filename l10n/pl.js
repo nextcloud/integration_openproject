@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Błąd podczas pobierania tokena dostępu OAuth",
     "Error getting OAuth refresh token" : "Błąd podczas pobierania tokena odświeżania OAuth",
     "Error during OAuth exchanges" : "Błąd podczas zamiany OAuth",
-    "Direct download" : "Pobieranie bezpośrednie",
     "OpenProject notifications" : "Powiadomienia OpenProject",
     "OpenProject activity" : "Aktywność OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Masz %s nowe powiadomienie w {instance}","Masz %s nowe powiadomienia w {instance}","Masz %s nowych powiadomień w {instance}","Masz %s nowych powiadomień w {instance}"],

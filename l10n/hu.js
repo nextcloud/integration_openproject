@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Hiba történt az OAuth hozzáférési token lekérése során",
     "Error getting OAuth refresh token" : "Hiba történt az OAuth frissítési token lekérése során",
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
-    "Direct download" : "Közvetlen letöltés",
     "OpenProject notifications" : "OpenProject értesítések",
     "OpenProject activity" : "OpenProject tevékenység",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
