@@ -88,13 +88,6 @@ export default {
 				}
 			})
 		},
-		lastDate() {
-			const nbNotif = this.notifications.length
-			return (nbNotif > 0) ? this.notifications[0].updatedAt : null
-		},
-		lastMoment() {
-			return moment(this.lastDate)
-		},
 		emptyContentMessage() {
 			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
@@ -155,17 +148,14 @@ export default {
 			this.loop = setInterval(() => this.fetchNotifications(), 60000)
 		},
 		fetchNotifications() {
-			const req = {}
-			if (this.lastDate) {
-				req.params = {
-					since: this.lastDate,
-				}
-			}
-			axios.get(generateUrl('/apps/integration_openproject/notifications'), req).then((response) => {
+			axios.get(generateUrl('/apps/integration_openproject/notifications')).then((response) => {
 				if (Array.isArray(response.data)) {
-					this.processNotifications(response.data)
+					this.notifications = response.data
+					this.state = STATE.OK
+				} else {
+					this.state = STATE.ERROR
+					console.debug('notifications API returned invalid data')
 				}
-				this.state = STATE.OK
 			}).catch((error) => {
 				clearInterval(this.loop)
 				if (error.response && error.response.status === 404) {
@@ -179,25 +169,6 @@ export default {
 					console.debug(error)
 				}
 			})
-		},
-		processNotifications(newNotifications) {
-			if (this.lastDate) {
-				// just add those which are more recent than our most recent one
-				let i = 0
-				while (i < newNotifications.length && this.lastMoment.isBefore(newNotifications[i].updatedAt)) {
-					i++
-				}
-				if (i > 0) {
-					const toAdd = this.filter(newNotifications.slice(0, i))
-					this.notifications = toAdd.concat(this.notifications)
-				}
-			} else {
-				// first time we don't check the date
-				this.notifications = this.filter(newNotifications)
-			}
-		},
-		filter(notifications) {
-			return notifications
 		},
 		getNotificationTarget(n) {
 			const wpId = n._links?.resource?.href
