@@ -150,6 +150,18 @@ export default {
 			axios.get(generateUrl('/apps/integration_openproject/notifications')).then((response) => {
 				if (Array.isArray(response.data)) {
 					this.notifications = response.data
+					let ns
+					for (let i = 0; i < response.data.length; i++) {
+						const n = response.data[i]
+						const wpId = n._links.resource.href.replace(/.*\//, '')
+						if (ns[wpId] === undefined) {
+							ns[wpId] = {}
+						}
+						if (!Array.isArray(this.notifications[wpId].reasons)) {
+							ns[wpId].reasons = []
+						}
+						ns[wpId].reasons = n.reason
+					}
 					this.state = STATE.OK
 				} else {
 					this.state = STATE.ERROR
