@@ -968,7 +968,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider getOpenProjectOauthURLValidDataProvider
 	 * @return void
 	 */
-	public function testGetOpenProjectOauthURL($oauthInstanceUrl) {
+	public function testGetOpenProjectOauthURL(string $oauthInstanceUrl) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
