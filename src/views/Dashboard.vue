@@ -82,7 +82,6 @@ export default {
 					targetUrl: this.getNotificationTarget(n),
 					avatarUrl: this.getAuthorAvatarUrl(n),
 					avatarUsername: this.getAuthorShortName(n) + 'z',
-					overlayIconUrl: false,
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
 				}
