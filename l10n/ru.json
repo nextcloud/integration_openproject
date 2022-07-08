@@ -2,6 +2,7 @@
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Ошибка получения токена доступа OAuth",
     "Error during OAuth exchanges" : "Ошибка по время обмена OAuth",
+    "This direct download link is invalid or has expired" : "Прямая ссылка для загрузки неверна или срок её действия истёк",
     "Bad HTTP method" : "Неверный метод HTTP",
     "OAuth access token refused" : "Токен доступа OAuth был отклонен",
     "Connected accounts" : "Подключённые учётные записи",

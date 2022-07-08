@@ -5,6 +5,8 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Chyba při získávání přístupového OAuth přístupového tokenu",
     "Error getting OAuth refresh token" : "Chyba při získávání obnovovacího OAuth tokenu",
     "Error during OAuth exchanges" : "Chyba při OAuth výměnách",
+    "Direct download error" : "Chyba přímého stahování",
+    "This direct download link is invalid or has expired" : "Tento odkaz pro přímé stažení není platný nebo jeho platnost skončila",
     "OpenProject notifications" : "Upozorňování z OpenProject",
     "OpenProject activity" : "Aktivita v OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s nové upozornění v {instance}","Máte %s nové upozornění v {instance}","Máte %s nových upozornění v {instance}","Máte %s nové upozornění v {instance}"],

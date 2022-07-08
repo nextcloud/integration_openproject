@@ -5,6 +5,8 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Erro ao obter o token de acesso OAuth",
     "Error getting OAuth refresh token" : "Erro ao obter o token de atualização OAuth",
     "Error during OAuth exchanges" : "Erro durante as trocas OAuth",
+    "Direct download error" : "Erro de download direto",
+    "This direct download link is invalid or has expired" : "Este link de download direto é inválido ou expirou",
     "OpenProject notifications" : "Notificações do OpenProject",
     "OpenProject activity" : "Atividade OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Você tem %s nova notificação em {instance}","Você tem 1%s nova notificação em {instance}","Você tem %s novas notificações em {instance}"],
