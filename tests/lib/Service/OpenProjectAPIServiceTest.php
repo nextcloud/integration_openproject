@@ -954,9 +954,21 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function getOpenProjectOauthURLValidDataProvider() {
+		return [
+			["https://openproject"],
+			["https://openproject/"]
+		];
+	}
+
+
+	/**
+	 * @dataProvider getOpenProjectOauthURLValidDataProvider
 	 * @return void
 	 */
-	public function testGetOpenProjectOauthURL() {
+	public function testGetOpenProjectOauthURL(string $oauthInstanceUrl) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
@@ -966,7 +978,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				['integration_openproject', 'oauth_instance_url'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'oauth_instance_url'],
-			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', 'https://openproject', 'clientID', 'https://openproject');
+			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
 
 		$url = $this->createMock(IURLGenerator::class);
 		$url->expects($this->once())
@@ -986,7 +998,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getOpenProjectOauthURLDataProvider() {
+	public function getOpenProjectOauthURLInvalidDataProvider() {
 		return [
 			[
 				'clientId',
@@ -1014,7 +1026,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return void
 	 *
-	 * @dataProvider getOpenProjectOauthURLDataProvider
+	 * @dataProvider getOpenProjectOauthURLInvalidDataProvider
 	 */
 	public function testGetOpenProjectOauthURLWithInvalidAdminConfig(
 		string $clientId, string $clientSecret, string $oauthInstanceUrl
