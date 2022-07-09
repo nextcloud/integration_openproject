@@ -5,6 +5,8 @@ OC.L10N.register(
     "Error getting OAuth access token" : "擷取 OAuth 存取權杖時發生錯誤",
     "Error getting OAuth refresh token" : "獲取 OAuth 更新權杖時發生錯誤。",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
+    "Direct download error" : "直接下載錯誤",
+    "This direct download link is invalid or has expired" : "此直接下載連結無效或已過期",
     "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],

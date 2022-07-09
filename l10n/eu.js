@@ -5,6 +5,8 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Errorea OAuth sarbide tokena eskuratzen",
     "Error getting OAuth refresh token" : "Errore bat gertatu da OAuth freskatze-tokena eskuratzean",
     "Error during OAuth exchanges" : "Errorea OAuth trukeak egitean",
+    "Direct download error" : "Deskarga zuzen errorea",
+    "This direct download link is invalid or has expired" : "Deskarga zuzen esteka hau baliogabea da edo iraungita dago",
     "OpenProject notifications" : "OpenProject jakinarazpenak",
     "OpenProject activity" : "OpenProject aktibitatea",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
