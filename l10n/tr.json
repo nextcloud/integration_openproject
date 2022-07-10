@@ -3,6 +3,8 @@
     "Error getting OAuth access token" : "OAuth erişim kodu alınırken sorun çıktı",
     "Error getting OAuth refresh token" : "OAuth yenileme kodu alınırken sorun çıktı.",
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
+    "Direct download error" : "Doğrudan indirme sorunu",
+    "This direct download link is invalid or has expired" : "Bu doğrudan indirme bağlantısı geçersiz ya da süresi geçmiş",
     "OpenProject notifications" : "OpenProject bildirimleri",
     "OpenProject activity" : "OpenProject işlemleri",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} için %s yeni bildiriminiz var","{instance} için %s yeni bildiriminiz var"],
