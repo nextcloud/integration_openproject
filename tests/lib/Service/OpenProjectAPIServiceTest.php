@@ -373,23 +373,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function searchWorkPackageDataProvider() {
 		return [
-			[   // description and subject search, both return a result
+			[
 				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
-				["_embedded" => ["elements" => [['id' => 3], ['id' => 4], ['id' => 5]]]],
-				[['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]
-			],
-			[   // only subject search returns a result
-				[],
-				["_embedded" => ["elements" => [['id' => 3], ['id' => 4], ['id' => 5]]]],
-				[['id' => 3], ['id' => 4], ['id' => 5]]
-			],
-			[   // only description search returns a result
-				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
-				[],
 				[['id' => 1], ['id' => 2], ['id' => 3]]
 			],
 			[   // no search result returned
-				[],
 				[],
 				[]
 			]
@@ -397,49 +385,28 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @param array<mixed> $descriptionResponse
-	 * @param array<mixed> $subjectResponse
+	 * @param array<mixed> $response
 	 * @param array<mixed> $expectedResult
 	 * @return void
 	 * @dataProvider searchWorkPackageDataProvider
 	 */
-	public function testSearchWorkPackageOnlyQueryDescAndSubjectResponse(
-		array $descriptionResponse, array $subjectResponse, array $expectedResult
-	) {
+	public function testSearchWorkPackageOnlyQuery(array $response, array $expectedResult) {
 		$service = $this->getServiceMock();
 		$service->method('request')
-			->withConsecutive(
-				[
+			->with(
 					'user', 'work_packages',
 					[
 						'filters' => '[' .
-							'{"description":' .
-								'{"operator":"~","values":["search query"]}'.
+							'{"typeahead":' .
+								'{"operator":"**","values":["search query"]}'.
 							'},'.
 							'{"linkable_to_storage_url":'.
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 							']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
-				],
-				[
-					'user', 'work_packages',
-					[
-						'filters' => '[' .
-							'{"subject":' .
-								'{"operator":"~","values":["search query"]}'.
-							'},'.
-							'{"linkable_to_storage_url":'.
-								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
-							']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
-					]
-				]
 			)
-			->willReturnOnConsecutiveCalls(
-				$descriptionResponse,
-				$subjectResponse
-			);
+			->willReturn($response);
 		$result = $service->searchWorkPackage('user', 'search query');
 		$this->assertSame($expectedResult, $result);
 	}
@@ -476,39 +443,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function testSearchWorkPackageByQueryAndFileId() {
 		$service = $this->getServiceMock();
 		$service->method('request')
-			->withConsecutive(
-				[
+			->with(
 					'user', 'work_packages',
 					[
 						'filters' => '['.
 							'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
-							'{"description":{"operator":"~","values":["search query"]}},'.
+							'{"typeahead":{"operator":"**","values":["search query"]}},'.
 							'{"linkable_to_storage_url":'.
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
 							'}'.
 						']',
 						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
 					]
-				],
-				[
-					'user', 'work_packages',
-					[
-						'filters' => '[' .
-							'{"subject":{"operator":"~","values":["search query"]}},' .
-							'{"linkable_to_storage_url":'.
-								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
-							'}'.
-						']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
-					]
-				]
 			)
-			->willReturnOnConsecutiveCalls(
-				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
+			->willReturn(
 				["_embedded" => ["elements" => [['id' => 4], ['id' => 5], ['id' => 6]]]]
 			);
 		$result = $service->searchWorkPackage('user', 'search query', 123);
-		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5], ['id' => 6]], $result);
+		$this->assertSame([['id' => 4], ['id' => 5], ['id' => 6]], $result);
 	}
 
 	/**
@@ -518,21 +470,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'some issue', 'statusCode' => 404 ]);
-		$result = $service->searchWorkPackage('user', 'search query', 123);
-		$this->assertSame(['error' => 'some issue', 'statusCode' => 404 ], $result);
-	}
-
-
-	/**
-	 * @return void
-	 */
-	public function testSearchWorkPackageSecondRequestProblem() {
-		$service = $this->getServiceMock();
-		$service->method('request')
-			->willReturnOnConsecutiveCalls(
-				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]],
-				['error' => 'some issue', 'statusCode' => 404 ]
-			);
 		$result = $service->searchWorkPackage('user', 'search query', 123);
 		$this->assertSame(['error' => 'some issue', 'statusCode' => 404 ], $result);
 	}

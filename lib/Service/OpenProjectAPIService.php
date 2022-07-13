@@ -265,35 +265,24 @@ class OpenProjectAPIService {
 			$filters[] = ['file_link_origin_id' => ['operator' => '=', 'values' => [(string)$fileId]]];
 		}
 		if ($query !== null) {
-			$filters[] = ['description' => ['operator' => '~', 'values' => [$query]]];
+			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$query]]];
 		}
 		$resultsById = $this->searchRequest($userId, $filters);
 		if (isset($resultsById['error'])) {
 			return $resultsById;
 		}
-		// search by subject
-		if ($query !== null) {
-			$filters = [
-				['subject' => ['operator' => '~', 'values' => [$query]]],
-			];
-			$resultsById = $this->searchRequest($userId, $filters, $resultsById);
-			if (isset($resultsById['error'])) {
-				return $resultsById;
-			}
-		}
-
 		return array_values($resultsById);
 	}
 
 	/**
 	 * @param string $userId
 	 * @param array<mixed> $filters
-	 * @param array<mixed> $resultsById
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
 	 */
-	private function searchRequest(string $userId, array $filters, array $resultsById = []): array {
+	private function searchRequest(string $userId, array $filters): array {
+		$resultsById = [];
 		$sortBy = [['status', 'asc'],['updatedAt', 'desc']];
 		$filters[] = [
 			'linkable_to_storage_url' =>

@@ -39,7 +39,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper'
 import { STATE } from '../../utils'
 
-const SEARCH_CHAR_LIMIT = 3
+const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
 
 export default {
@@ -121,7 +121,7 @@ export default {
 			await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
-			if (args[0].length <= SEARCH_CHAR_LIMIT) return
+			if (args[0].length < SEARCH_CHAR_LIMIT) return
 			return this.makeSearchRequest(...args)
 		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
