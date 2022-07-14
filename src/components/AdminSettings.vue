@@ -16,7 +16,7 @@
 				v-model="serverHostUrlForEdit"
 				is-required
 				:read-only="isServerHostUrlReadOnly"
-				class="pb-2"
+				class="pb-1"
 				:label="t('integration_openproject', 'OpenProject host')"
 				place-holder="https://www.my-openproject.com"
 				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
@@ -63,7 +63,7 @@
 				<TextInput v-else
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
-					class="pb-2"
+					class="py-1"
 					is-required
 					:label="t('integration_openproject', 'OpenProject OAuth client ID')"
 					:hint-text="openProjectClientHint" />
@@ -77,7 +77,7 @@
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
-					class="pb-2"
+					class="py-1"
 					:label="t('integration_openproject', 'OpenProject OAuth client secret')"
 					:hint-text="openProjectClientHint" />
 				<div class="form-actions">
@@ -112,7 +112,7 @@
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
-					class="pb-2"
+					class="py-1"
 					read-only
 					is-required
 					with-copy-btn
@@ -125,7 +125,7 @@
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
-					class="pb-2"
+					class="py-1"
 					read-only
 					is-required
 					with-copy-btn
@@ -458,8 +458,8 @@ export default {
 	.pb-1 {
 		padding-bottom: .5rem;
 	}
-	.pb-2 {
-		padding-bottom: 1rem;
+	.py-1 {
+		padding: .3rem 0;
 	}
 	.mr-2 {
 		margin-right: .5rem;

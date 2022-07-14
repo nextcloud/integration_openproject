@@ -47,7 +47,7 @@ export default {
 	display: flex;
 	justify-content: start;
 	align-items: center;
-	padding: 20px 0;
+	padding: 15px 0;
 
 	.green-text {
 		color: var(--color-success);
