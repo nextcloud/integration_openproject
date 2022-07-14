@@ -5,8 +5,6 @@ services:
     image: postgres:alpine
     container_name: integration_openproject_db
     restart: always
-    ports:
-      - "5433:5432"
     volumes:
       - db:/var/lib/postgresql/data
     environment:
@@ -18,12 +16,15 @@ services:
     image: nextcloud:apache
     container_name: integration_openproject_nc
     restart: always
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8080:80"
     volumes:
       - nextcloud:/var/www/html
       - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
     environment:
-      - POSTGRES_HOST=localhost:5433
+      - POSTGRES_HOST=db
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=nextcloud
