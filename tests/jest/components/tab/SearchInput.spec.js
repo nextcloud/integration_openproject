@@ -77,6 +77,11 @@ describe('SearchInput.vue tests', () => {
 	describe('work packages multiselect', () => {
 		describe('search input', () => {
 			it('should reset the state if search value length becomes lesser than search char limit', async () => {
+				const axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await wrapper.setData({
@@ -87,30 +92,27 @@ describe('SearchInput.vue tests', () => {
 				await wrapper.setData({
 					state: STATE.LOADING,
 				})
-
-				await inputField.setValue('org')
+				await inputField.setValue('a')
+				await inputField.setValue('')
 
 				expect(wrapper.vm.searchResults).toMatchObject([])
 				expect(wrapper.vm.state).toBe(STATE.OK)
+				axiosSpy.mockRestore()
 			})
 			it.each([
 				{
-					search: 'o',
+					search: '',
 					expectedCallCount: 0,
+				},
+				{
+					search: 'o',
+					expectedCallCount: 1,
 				},
 				{
 					search: 'or',
-					expectedCallCount: 0,
-				},
-				{
-					search: 'org',
-					expectedCallCount: 0,
-				},
-				{
-					search: 'orga',
 					expectedCallCount: 1,
 				},
-			])('should send search request only if the search text is greater than search threshold', async ({
+			])('should send search request only if the search text is greater than or equal to the search char limit', async ({
 				search,
 				expectedCallCount,
 			}) => {
