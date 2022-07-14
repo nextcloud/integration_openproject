@@ -367,16 +367,22 @@ export default {
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
 			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
-			if (response.data !== true) {
-				showError(
-					t('integration_openproject', 'No OpenProject detected at the URL')
-				)
+			if (response.data === true) {
+				this.isOpenProjectInstanceValid = true
+				this.state.oauth_instance_url = this.serverHostUrlForEdit
+			} else {
+				if (response.data === 'invalid') {
+					showError(
+						t('integration_openproject', 'OpenProject URL is invalid, provide an URL in the form "https://openproject.org"')
+					)
+				} else {
+					showError(
+						t('integration_openproject', 'No OpenProject detected at the URL')
+					)
+				}
 				this.isOpenProjectInstanceValid = false
 				await this.$nextTick()
 				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
-			} else {
-				this.isOpenProjectInstanceValid = true
-				this.state.oauth_instance_url = this.serverHostUrlForEdit
 			}
 		},
 		async saveOPOptions() {

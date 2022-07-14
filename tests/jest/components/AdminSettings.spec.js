@@ -5,6 +5,7 @@ import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings'
 import * as initialState from '@nextcloud/initial-state'
 import { F_MODES } from '../../../src/utils'
+import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -238,15 +239,22 @@ describe('AdminSettings', () => {
 				})
 			})
 			describe('submit button', () => {
-				it('should set the input to error state when the url is invalid when clicked', async () => {
+				it.each([{
+					data: false,
+					message: 'No OpenProject detected at the URL',
+				}, {
+					data: 'invalid',
+					message: 'OpenProject URL is invalid, provide an URL in the form "https://openproject.org"',
+				}])('should set the input to error state when the url is invalid when clicked', async (testCase) => {
+					dialogs.showError.mockImplementationOnce()
 					jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({ data: false }))
+						.mockImplementationOnce(() => Promise.resolve({ data: testCase.data }))
 					const saveOPOptionsSpy = jest.spyOn(AdminSettings.methods, 'saveOPOptions')
 						.mockImplementationOnce(() => jest.fn())
 
 					const wrapper = getMountedWrapper()
 					await wrapper.setData({
-						serverHostUrlForEdit: 'https://hero.com',
+						serverHostUrlForEdit: 'does-not-matter-for-the-test',
 					})
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
@@ -262,6 +270,8 @@ describe('AdminSettings', () => {
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
 					expect(serverHostForm.find(selectors.textInputWrapper)).toMatchSnapshot()
 					expect(saveOPOptionsSpy).toBeCalledTimes(0)
+					expect(dialogs.showError).toHaveBeenCalledWith(testCase.message)
+					jest.clearAllMocks()
 				})
 				it('should save the form when the url is valid', async () => {
 					let serverHostForm
