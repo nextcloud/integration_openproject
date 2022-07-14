@@ -84,9 +84,9 @@
 					data-test-id="reset-op-oauth-btn"
 					@click="resetOPOAuthClientValues">
 					<template #icon>
-						<RestoreIcon :size="20" />
+						<AutoRenewIcon :size="20" />
 					</template>
-					{{ t('integration_openproject', 'Reset OpenProject OAuth values') }}
+					{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
 				</Button>
 				<Button v-else
 					data-test-id="submit-op-oauth-btn"
@@ -149,9 +149,9 @@
 					data-test-id="reset-nc-oauth-btn"
 					@click="resetNcOauthValues">
 					<template #icon>
-						<RestoreIcon :size="20" />
+						<AutoRenewIcon :size="20" />
 					</template>
-					{{ t('integration_openproject', 'Reset Nextcloud OAuth values') }}
+					{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
 				</Button>
 			</div>
 		</div>
@@ -167,8 +167,8 @@ import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
 import FormHeading from './admin/FormHeading'
@@ -187,8 +187,8 @@ export default {
 		SettingsTitle,
 		CheckBoldIcon,
 		PencilIcon,
-		RestoreIcon,
 		LoadingIcon,
+		AutoRenewIcon,
 	},
 	data() {
 		return {
