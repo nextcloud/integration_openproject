@@ -485,7 +485,7 @@ export default {
 			color: #333333 !important;
 		}
 	}
-	.actions {
+	.form-actions {
 		display: flex;
 		align-items: center;
 		padding: 15px 0;
