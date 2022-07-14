@@ -17,7 +17,7 @@ const selector = {
 	textInputLabel: '.text-input-label',
 	copyButton: '.text-input-copy-value',
 	copyIcon: '.icon-clippy',
-	textInputHint: '.text-input-hint'
+	textInputHint: '.text-input-hint',
 }
 
 global.t = (app, text) => text
