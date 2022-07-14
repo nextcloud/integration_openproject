@@ -82,18 +82,18 @@
 					:hint-text="openProjectClientHint" />
 				<div class="form-actions">
 					<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
-							data-test-id="reset-op-oauth-btn"
-							@click="resetOPOAuthClientValues">
+						data-test-id="reset-op-oauth-btn"
+						@click="resetOPOAuthClientValues">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
 					</Button>
 					<Button v-else
-							data-test-id="submit-op-oauth-btn"
-							type="primary"
-							:disabled="!state.client_id || !state.client_secret"
-							@click="saveOPOAuthClientValues">
+						data-test-id="submit-op-oauth-btn"
+						type="primary"
+						:disabled="!state.client_id || !state.client_secret"
+						@click="saveOPOAuthClientValues">
 						<template #icon>
 							<LoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
 							<CheckBoldIcon v-else :size="20" />
@@ -139,18 +139,18 @@
 					:value="ncClientSecret" />
 				<div class="form-actions">
 					<Button v-if="isNcOAuthFormInEdit"
-							type="primary"
-							:disabled="!ncClientId || !ncClientSecret"
-							data-test-id="submit-nc-oauth-values-form-btn"
-							@click="setNCOAuthFormToViewMode">
+						type="primary"
+						:disabled="!ncClientId || !ncClientSecret"
+						data-test-id="submit-nc-oauth-values-form-btn"
+						@click="setNCOAuthFormToViewMode">
 						<template #icon>
 							<CheckBoldIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Yes, I have copied these values') }}
 					</Button>
 					<Button v-else
-							data-test-id="reset-nc-oauth-btn"
-							@click="resetNcOauthValues">
+						data-test-id="reset-nc-oauth-btn"
+						@click="resetNcOauthValues">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
