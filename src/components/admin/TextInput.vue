@@ -121,7 +121,7 @@ export default {
 			}
 		},
 		sanitizedHintText() {
-			return dompurify.sanitize(this.hintText)
+			return dompurify.sanitize(this.hintText, { ADD_ATTR: ['target'] })
 		},
 	},
 	methods: {
