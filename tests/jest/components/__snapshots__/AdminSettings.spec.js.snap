@@ -21,9 +21,11 @@ exports[`AdminSettings Nextcloud OAuth values form view mode with complete value
   <div>
     <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
     <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
-    <button-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
-      Replace Nextcloud OAuth values
-    </button-stub>
+    <div class="form-actions">
+      <button-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
+        Replace Nextcloud OAuth values
+      </button-stub>
+    </div>
   </div>
 </div>
 `;
@@ -92,9 +94,10 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
         openproj***************
       </div>
       <!---->
-    </div> <button data-v-27e36536="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
-				Replace OpenProject OAuth values
-			</span></span></button>
+    </div>
+    <div class="form-actions"><button data-v-27e36536="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
+					Replace OpenProject OAuth values
+				</span></span></button></div>
   </div>
 </div>
 `;
