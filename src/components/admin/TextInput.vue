@@ -121,7 +121,8 @@ export default {
 			}
 		},
 		sanitizedHintText() {
-			return dompurify.sanitize(this.hintText)
+			const hint = this.hintText.replace("<a", "<a target='_blank'")
+			return dompurify.sanitize(hint, { ADD_ATTR: ['target'] })
 		},
 	},
 	methods: {

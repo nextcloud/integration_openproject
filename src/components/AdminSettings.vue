@@ -263,13 +263,13 @@ export default {
 		},
 		openProjectClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.', { htmlLink }, null, { escape: false })
 		},
 		nextcloudClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false })
+			const htmlLink = `<a class="link" title="${linkText}" href="${this.adminFileStorageHref}">${linkText}</a>`
+			return  t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false })
 		},
 	},
 	created() {

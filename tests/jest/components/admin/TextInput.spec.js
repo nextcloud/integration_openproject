@@ -17,6 +17,7 @@ const selector = {
 	textInputLabel: '.text-input-label',
 	copyButton: '.text-input-copy-value',
 	copyIcon: '.icon-clippy',
+	textInputHint: '.text-input-hint'
 }
 
 global.t = (app, text) => text
@@ -43,6 +44,12 @@ describe('TextInput', () => {
 				errorMessage: 'some error message',
 			})
 			expect(wrapper).toMatchSnapshot()
+		})
+		it('should add the target blank on ta "a" tag if present', () => {
+			const wrapper = getWrapper({
+				hintText: 'some hint <a href="some-link">here to go</a> message',
+			})
+			expect(wrapper.find(selector.textInputHint)).toMatchSnapshot()
 		})
 	})
 	describe('is required prop', () => {
