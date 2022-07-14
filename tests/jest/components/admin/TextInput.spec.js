@@ -45,7 +45,7 @@ describe('TextInput', () => {
 			})
 			expect(wrapper).toMatchSnapshot()
 		})
-		it('should add the target blank on ta "a" tag if present', () => {
+		it('should add the target blank on the "a" tag if present', () => {
 			const wrapper = getWrapper({
 				hintText: 'some hint <a href="some-link">here to go</a> message',
 			})

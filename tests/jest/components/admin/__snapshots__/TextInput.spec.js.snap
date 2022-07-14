@@ -12,7 +12,7 @@ exports[`TextInput is required prop should not add asterik to the label text 1`]
 </div>
 `;
 
-exports[`TextInput messages should add the target blank on ta "a" tag if present 1`] = `<div class="text-input-hint">some hint <a href="some-link" target="_blank">here to go</a> message</div>`;
+exports[`TextInput messages should add the target blank on the "a" tag if present 1`] = `<div class="text-input-hint">some hint <a href="some-link" target="_blank">here to go</a> message</div>`;
 
 exports[`TextInput messages should show error message if both error message and hint text are provided 1`] = `
 <div class="text-input">
