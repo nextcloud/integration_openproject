@@ -75,6 +75,7 @@ export default {
 			font-size: 0.75rem;
 			border-radius: 2px;
 			margin-right: 4px;
+			background-color: #F99601;
 
 			&__title {
 				font-size: 0.75rem;
