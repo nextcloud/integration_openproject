@@ -16,13 +16,15 @@ Requirements:
   - for v2, make sure to use `docker compose` instead of `docker-compose`
 - OpenProject server instance running in the host machine
 
-  it must be reachable by the hostname `host.docker.internal`.
+  It must be reachable by the hostname `host.docker.internal`, you can do this through this environment variable: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal`.
 
-  This hostname will resolve to `127.0.0.1` on the docker host and to something like `172.17.0.1` inside of the docker services, so OpenProject needs to listen to those addresses
+  This hostname will resolve to `127.0.0.1` on the docker host and to something like `172.17.0.1` inside of the docker services, so OpenProject needs to listen to those addresses. For that use the `-b` option if you are running OpenProject manually e.g. `bin/rails server -b 0.0.0.0` or when using foreman set `HOST=0.0.0.0` as env. variable.
+
+  The whole OpenProject start command might look something like:
+  - manual start: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal RAILS_ENV=development bin/rails server -b 0.0.0.0`
+  - using foreman: `HOST=0.0.0.0 OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal foreman start -f Procfile.dev`
 
   For more information see: [OpenProject documentation](https://www.openproject.org/docs/development/development-environment-ubuntu/)
-
->**Note:**  While starting the OpenProject server make sure to add environment variable `OPENPROJECT_FEATURE__STORAGES__MODULE__ACTIVE=true` or set `feature_storages_module_active: true` in the `configuration.yml`
 
 - OpenProject integration app
 
@@ -49,7 +51,6 @@ sudo chmod g+w $HOME/development/custom_apps -R
   - default: `./../../custom_apps`
 
 ### Start compose
-**Note:** If your host machine has anything up on port `80`, please kill it before starting. 
 
 It is highly recommended to regularly update the included containers.
 ```shell
