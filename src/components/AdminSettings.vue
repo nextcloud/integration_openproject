@@ -160,6 +160,14 @@
 				</div>
 			</div>
 		</div>
+		<Button id="reset-all-app-settings-btn"
+			type="error"
+			@click="resetAllAppValues">
+			<template #icon>
+				<RestoreIcon :size="20" />
+			</template>
+			{{ t('integration_openproject', 'Reset') }}
+		</Button>
 	</div>
 </template>
 
@@ -173,6 +181,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
@@ -194,6 +203,7 @@ export default {
 		PencilIcon,
 		LoadingIcon,
 		AutoRenewIcon,
+		RestoreIcon,
 	},
 	data() {
 		return {
@@ -369,6 +379,42 @@ export default {
 				this.isFormCompleted.opOauth = true
 			}
 		},
+		resetAllAppValues() {
+			OC.dialogs.confirmDestructive(
+				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
+				t('integration_openproject', 'Reset OpenProject integration'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'Yes, reset'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				async (result) => {
+					if (result) {
+						this.state.client_id = null
+						this.state.client_secret = null
+						this.state.oauth_instance_url = null
+						const promises = []
+						promises.push(this.saveOPOptions())
+						promises.push(this.deleteNCOAuthClient())
+						Promise.all(promises).then(() => {
+							window.location.reload()
+						})
+					}
+				},
+			)
+		},
+		async deleteNCOAuthClient() {
+			const url = generateUrl('/apps/integration_openproject/nc-oauth')
+			try {
+				await axios.delete(url)
+			} catch (error) {
+				console.debug(error)
+				showError(
+					t('integration_openproject', 'Failed to delete Nextcloud OAuth client')
+				)
+			}
+		},
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
 			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
@@ -454,6 +500,12 @@ export default {
 <style scoped lang="scss">
 @import '../../css/tab.css';
 
+#reset-all-app-settings-btn {
+	position: absolute;
+	top: 30px;
+	right: 22px;
+}
+
 #openproject_prefs {
 	div {
 		width: 100%;
@@ -480,6 +532,12 @@ export default {
 		min-height: 32px !important;
 
 		&--vue-primary {
+			.button-vue__text {
+				color: #fff !important;
+			}
+		}
+
+		&--vue-error {
 			.button-vue__text {
 				color: #fff !important;
 			}
