@@ -218,6 +218,19 @@ describe('AdminSettings', () => {
 			})
 		})
 		describe('edit mode', () => {
+			it('should reset open project server host validity check on input', async () => {
+				const wrapper = getMountedWrapper()
+				await wrapper.setData({
+					isOpenProjectInstanceValid: true,
+				})
+
+				const oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
+				await oauthInstanceInput.trigger('input')
+				await wrapper.vm.$nextTick()
+
+				expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
+			})
+
 			describe('readonly state', () => {
 				let wrapper, oauthInstanceInput
 				beforeEach(() => {
