@@ -5,6 +5,8 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Грешка при получаване на маркер за достъп до OAuth",
     "Error getting OAuth refresh token" : "Грешка при получаване на маркер за опресняване на OAuth",
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
+    "Direct download error" : "Грешка при директно сваляне",
+    "This direct download link is invalid or has expired" : "Директната връзка за изтегляне е невалидна или е изтекла",
     "OpenProject notifications" : "Известия на OpenProject",
     "OpenProject activity" : "Активност на OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Имате %s нови известия в {instance}","Имате %s нови известия в {instance}"],
