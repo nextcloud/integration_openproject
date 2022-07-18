@@ -21,7 +21,8 @@
 				place-holder="https://www.my-openproject.com"
 				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
 				:error-message="serverHostErrorMessage"
-				@click="isServerHostUrlReadOnly = false" />
+				@click="isServerHostUrlReadOnly = false"
+				@input="isOpenProjectInstanceValid = null" />
 			<div class="d-flex">
 				<Button v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
