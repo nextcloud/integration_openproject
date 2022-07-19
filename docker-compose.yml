@@ -7,6 +7,8 @@ services:
     restart: always
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - nextcloud
     environment:
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
@@ -23,6 +25,8 @@ services:
     volumes:
       - nextcloud:/var/www/html
       - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
+    networks:
+      - nextcloud
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_DB=nextcloud
@@ -37,10 +41,15 @@ services:
     restart: always
     volumes:
       - nextcloud:/var/www/html
+    networks:
+      - nextcloud
     entrypoint: /cron.sh
     depends_on:
       - db
 
 volumes:
   db:
+  nextcloud:
+
+networks:
   nextcloud:
