@@ -12,9 +12,13 @@
 namespace OCA\OpenProject\Controller;
 
 use OC\User\User;
+use OCA\Activity\GroupHelper;
+use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;
+use OCP\Activity\IManager;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\IRootFolder;
+use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
@@ -43,17 +47,40 @@ class FilesController extends OCSController {
 	 */
 	private $mountCollection;
 
+	/** @var IManager */
+	protected $activityManager;
+
+	/** @var IDBConnection */
+	protected $connection;
+
+	/**
+	 * @var UserSettings
+	 */
+	private $userSettings;
+
+	/**
+	 * @var GroupHelper
+	 */
+	private $groupHelper;
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
 								IUserSession $userSession,
-								IMountProviderCollection $mountCollection) {
+								IMountProviderCollection $mountCollection,
+								IManager $activityManager, IDBConnection $connection,
+								GroupHelper $groupHelper,
+								UserSettings $userSettings
+	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->trashManager = $trashManager;
 		$this->mountCollection = $mountCollection;
+		$this->activityManager = $activityManager;
+		$this->connection = $connection;
+		$this->groupHelper = $groupHelper;
+		$this->userSettings = $userSettings;
 	}
 
 	/**
@@ -100,6 +127,9 @@ class FilesController extends OCSController {
 	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
+		$activity = new \OCA\Activity\Data($this->activityManager, $this->connection);
+
+
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
@@ -118,6 +148,8 @@ class FilesController extends OCSController {
 			$owner = $file->getOwner();
 			$internalPath = $mount[0]->getInternalPath();
 
+			$activities = $activity->get(
+				$this->groupHelper, $this->userSettings, $this->user->getUID(),0,999, 'asc','filter', 'files', $file->getId());
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -129,7 +161,8 @@ class FilesController extends OCSController {
 				'size' => $file->getSize(),
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
-				'trashed' => $trashed
+				'trashed' => $trashed,
+				'activities' => $activities
 			];
 		}
 
