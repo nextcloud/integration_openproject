@@ -779,7 +779,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance($url);
-		$this->assertFalse($result->getData());
+		$this->assertSame('invalid', $result->getData());
 	}
 
 	public function testGetOpenProjectOauthURLWithStateAndPKCE(): void {
