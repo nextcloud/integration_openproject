@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SearchInput.vue tests state messages any: should display the correct state message 1`] = `
+exports[`SearchInput.vue state messages any: should display the correct state message 1`] = `
 <div class="stateMsg text-center">
 
 </div>
 `;
 
-exports[`SearchInput.vue tests state messages error: should display the correct state message 1`] = `
+exports[`SearchInput.vue state messages error: should display the correct state message 1`] = `
 <div class="stateMsg text-center">
   Error connecting to OpenProject
 </div>
 `;
 
-exports[`SearchInput.vue tests state messages no-token: should display the correct state message 1`] = `
+exports[`SearchInput.vue state messages no-token: should display the correct state message 1`] = `
 <div class="stateMsg text-center">
   No OpenProject account connected
 </div>
 `;
 
-exports[`SearchInput.vue tests work packages multiselect search list should display correct options list of search results 1`] = `
+exports[`SearchInput.vue work packages multiselect search list should display correct options list of search results 1`] = `
 Object {
   "workpackage": Object {
     "assignee": "test",
@@ -36,7 +36,7 @@ Object {
 }
 `;
 
-exports[`SearchInput.vue tests work packages multiselect search list should not be displayed if the search results is empty 1`] = `
+exports[`SearchInput.vue work packages multiselect search list should not be displayed if the search results is empty 1`] = `
 <ul class="multiselect__content" style="display: block;">
   <!---->
   <li style="display: none;"><span class="multiselect__option"><span>No results</span></span></li>
@@ -46,7 +46,7 @@ exports[`SearchInput.vue tests work packages multiselect search list should not 
 </ul>
 `;
 
-exports[`SearchInput.vue tests work packages multiselect search list should only use the options from the latest search response 1`] = `
+exports[`SearchInput.vue work packages multiselect search list should only use the options from the latest search response 1`] = `
 Object {
   "workpackage": Object {
     "assignee": "some assignee",

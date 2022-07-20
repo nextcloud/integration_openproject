@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProjectsTab.vue Test shows work packages information 1`] = `
+exports[`WorkPackage.vue shows work packages information 1`] = `
 <div class="workpackage">
   <div class="row">
     <div class="row__status" style="background-color: blue;">
