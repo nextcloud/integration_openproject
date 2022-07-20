@@ -21,7 +21,7 @@ const selector = {
 
 global.t = (app, text) => text
 
-describe('TextInput', () => {
+describe('TextInput.vue', () => {
 	describe('messages', () => {
 		it('should show error message if provided', () => {
 			const wrapper = getWrapper({

@@ -57,7 +57,7 @@ initialState.loadState = jest.fn(() => {
 	}
 })
 
-describe('AdminSettings', () => {
+describe('AdminSettings.vue', () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
 	})

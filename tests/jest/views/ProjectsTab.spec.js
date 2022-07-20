@@ -27,7 +27,7 @@ const scrollSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
 
 const localVue = createLocalVue()
 
-describe('ProjectsTab.vue Test', () => {
+describe('ProjectsTab.vue', () => {
 	let wrapper
 	const loadingIndicatorSelector = '.loading-spinner'
 	const emptyContentSelector = '#openproject-empty-content'
