@@ -4,6 +4,7 @@
     "Error getting OAuth refresh token" : "Hiba történt az OAuth frissítési token lekérése során",
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
     "Direct download error" : "Közvetlen letöltési hiba",
+    "This direct download link is invalid or has expired" : "Ez a közvetlen letöltési hivatkozás érvénytelen vagy lejárt",
     "OpenProject notifications" : "OpenProject értesítések",
     "OpenProject activity" : "OpenProject tevékenység",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
