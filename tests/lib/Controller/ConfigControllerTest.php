@@ -22,6 +22,17 @@ class ConfigControllerTest extends TestCase {
 	private $l;
 
 	/**
+	 * @var IUser|bool
+	 */
+	private $user1 = false;
+
+	protected function tearDown(): void {
+		if ($this->user1 instanceof IUser) {
+			$this->user1->delete();
+		}
+	}
+
+	/**
 	 * @param string $codeVerifier The string that should be used as code_verifier
 	 * @param string $clientSecret The string that should be used as client_secret
 	 * @param string $startingPage JSON encoded string that defines the start of the OAuth journey
@@ -458,14 +469,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
 		$userManager = \OC::$server->getUserManager();
-		$count = 0;
-		$function = function (IUser $user) use (&$count) {
-			$count++;
-			return null;
-		};
-		$userManager->callForAllUsers($function);
-		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
-		$user1 = $userManager->createUser('test101', 'test101');
+
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->expects($this->exactly(3))
@@ -479,6 +483,8 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'oauth_instance_url', ''],
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
@@ -486,29 +492,12 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
+				'',
+				'',
 				'123',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
-			);
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthServiceMock->method('setClientRedirectUri')->with(123, 'http://openproject.com');
-		$configMock
-			->expects($this->exactly(12)) // 6 times for each user
-			->method('deleteUserValue')
-			->withConsecutive(
-				['admin', 'integration_openproject', 'token'],
-				['admin', 'integration_openproject', 'login'],
-				['admin', 'integration_openproject', 'user_id'],
-				['admin', 'integration_openproject', 'user_name'],
-				['admin', 'integration_openproject', 'refresh_token'],
-				['admin', 'integration_openproject', 'last_notification_check'],
-				[$user1->getUID(), 'integration_openproject', 'token'],
-				[$user1->getUID(), 'integration_openproject', 'login'],
-				[$user1->getUID(), 'integration_openproject', 'user_id'],
-				[$user1->getUID(), 'integration_openproject', 'user_name'],
-				[$user1->getUID(), 'integration_openproject', 'refresh_token'],
-				[$user1->getUID(), 'integration_openproject', 'last_notification_check'],
 			);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -532,6 +521,182 @@ class ConfigControllerTest extends TestCase {
 			["status" => $adminConfigStatus],
 			$result->getData()
 		);
-		$user1->delete();
+	}
+
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigClearUserDataChangeNCOauthClientDataProvider() {
+		return [
+			[ // everything changes so delete user values and change the oAuth Client
+				[
+					'client_id' => 'old-client_id',
+					'client_secret' => 'old-client_secret',
+					'oauth_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				true,
+				true
+			],
+			[ // only client id changes so delete user values but don't change the oAuth Client
+				[
+					'client_id' => 'old-client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				true,
+				false
+			],
+			[ // only client secret changes so delete user values but don't change the oAuth Client
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'old-client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				true,
+				false
+			],
+			[ //only the oauth_instance_url changes so don't delete the user values but change the oAuth Client
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://openproject.com',
+				],
+				false,
+				true
+			],
+		];
+	}
+
+	/**
+	 * @param array<string> $oldCreds
+	 * @param array<string> $credsToUpdate
+	 * @param bool $deleteUserValues
+	 * @param bool $updateNCOAuthClient
+	 * @return void
+	 * @dataProvider setAdminConfigClearUserDataChangeNCOauthClientDataProvider
+	 */
+	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
+		$oldCreds, $credsToUpdate, $deleteUserValues, $updateNCOAuthClient
+	) {
+		$userManager = \OC::$server->getUserManager();
+		$count = 0;
+		$function = function (IUser $user) use (&$count) {
+			$count++;
+			return null;
+		};
+		$userManager->callForAllUsers($function);
+		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$this->user1 = $userManager->createUser('test101', 'test101');
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+
+		if ($updateNCOAuthClient === true) {
+			$configMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'oauth_instance_url', ''],
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'nc_oauth_client_id', ''],
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'oauth_instance_url']
+				)
+				->willReturnOnConsecutiveCalls(
+					$oldCreds['oauth_instance_url'],
+					$oldCreds['client_id'],
+					$oldCreds['client_secret'],
+					'123',
+					$credsToUpdate['client_id'],
+					$credsToUpdate['client_secret'],
+					$credsToUpdate['oauth_instance_url']
+				);
+			$oauthServiceMock->method('setClientRedirectUri')->with(
+				123, $credsToUpdate['oauth_instance_url']
+			);
+		} else {
+			$configMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'oauth_instance_url', ''],
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'oauth_instance_url']
+				)
+				->willReturnOnConsecutiveCalls(
+					$oldCreds['oauth_instance_url'],
+					$oldCreds['client_id'],
+					$oldCreds['client_secret'],
+					$credsToUpdate['client_id'],
+					$credsToUpdate['client_secret'],
+					$credsToUpdate['oauth_instance_url']
+				);
+			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
+		}
+
+		if ($deleteUserValues === true) {
+			$configMock
+				->expects($this->exactly(12)) // 6 times for each user
+				->method('deleteUserValue')
+				->withConsecutive(
+					['admin', 'integration_openproject', 'token'],
+					['admin', 'integration_openproject', 'login'],
+					['admin', 'integration_openproject', 'user_id'],
+					['admin', 'integration_openproject', 'user_name'],
+					['admin', 'integration_openproject', 'refresh_token'],
+					['admin', 'integration_openproject', 'last_notification_check'],
+					[$this->user1->getUID(), 'integration_openproject', 'token'],
+					[$this->user1->getUID(), 'integration_openproject', 'login'],
+					[$this->user1->getUID(), 'integration_openproject', 'user_id'],
+					[$this->user1->getUID(), 'integration_openproject', 'user_name'],
+					[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
+					[$this->user1->getUID(), 'integration_openproject', 'last_notification_check'],
+				);
+		} else {
+			$configMock
+				->expects($this->never())
+				->method('deleteUserValue');
+		}
+
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			'test101'
+		);
+
+		$configController->setAdminConfig($credsToUpdate);
 	}
 }
