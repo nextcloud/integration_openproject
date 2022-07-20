@@ -162,7 +162,7 @@
 		</div>
 		<Button id="reset-all-app-settings-btn"
 			type="error"
-			@click="resetAllAppValues">
+			@click="resetAllAppValuesConfirmation">
 			<template #icon>
 				<RestoreIcon :size="20" />
 			</template>
@@ -379,7 +379,7 @@ export default {
 				this.isFormCompleted.opOauth = true
 			}
 		},
-		resetAllAppValues() {
+		resetAllAppValuesConfirmation() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
 				t('integration_openproject', 'Reset OpenProject integration'),
@@ -391,18 +391,22 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						this.state.client_id = null
-						this.state.client_secret = null
-						this.state.oauth_instance_url = null
-						const promises = []
-						promises.push(this.saveOPOptions())
-						promises.push(this.deleteNCOAuthClient())
-						Promise.all(promises).then(() => {
-							window.location.reload()
-						})
+						this.resetAllAppValues()
 					}
 				},
+				true
 			)
+		},
+		resetAllAppValues() {
+			this.state.client_id = null
+			this.state.client_secret = null
+			this.state.oauth_instance_url = null
+			const promises = []
+			promises.push(this.saveOPOptions())
+			promises.push(this.deleteNCOAuthClient())
+			Promise.all(promises).then(() => {
+				window.location.reload()
+			})
 		},
 		async deleteNCOAuthClient() {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')

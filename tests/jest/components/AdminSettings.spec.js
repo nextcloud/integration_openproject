@@ -46,6 +46,7 @@ const selectors = {
 	opOauthClientSecretInput: '#openproject-oauth-client-secret',
 	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
+	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 }
 
 // eslint-disable-next-line no-import-assign
@@ -531,6 +532,9 @@ describe('AdminSettings.vue', () => {
 				expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
 			})
 			describe('reset button', () => {
+				afterEach(() => {
+					jest.resetAllMocks()
+				})
 				it('should trigger the confirm dialog', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
@@ -644,6 +648,69 @@ describe('AdminSettings.vue', () => {
 					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(true)
 				})
 			})
+		})
+	})
+
+	describe('reset all app settings button', () => {
+		let wrapper
+		let confirmSpy
+		beforeEach(() => {
+			wrapper = getMountedWrapper({
+				state: {
+					oauth_instance_url: 'http://openproject.com',
+					client_id: 'some-client-id-for-op',
+					client_secret: 'some-client-secret-for-op',
+					nc_oauth_client: {
+						clientId: 'something',
+						clientSecret: 'something-else',
+					},
+				},
+			})
+			confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+		})
+		afterEach(() => {
+			jest.clearAllMocks()
+		})
+		it('should trigger confirm dialog on click', async () => {
+			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
+			await resetButton.trigger('click')
+			const expectedConfirmText = 'Are you sure that you want to reset this app '
+				+ 'and delete all settings and all connections of all Nextcloud users to OpenProject?'
+			const expectedConfirmOpts = {
+				cancel: 'Cancel',
+				confirm: 'Yes, reset',
+				confirmClasses: 'error',
+				type: 70,
+			}
+			const expectedConfirmTitle = 'Reset OpenProject integration'
+
+			expect(confirmSpy).toBeCalledTimes(1)
+			expect(confirmSpy).toBeCalledWith(
+				expectedConfirmText,
+				expectedConfirmTitle,
+				expectedConfirmOpts,
+				expect.any(Function),
+				true
+			)
+		})
+		it('should reset all settings on confirm', async () => {
+			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+				.mockImplementationOnce(() => Promise.resolve({ data: true }))
+			const deleteNCOAuthClientSpy = jest.spyOn(axios, 'delete')
+				.mockImplementationOnce(() => Promise.resolve({ data: true }))
+			await wrapper.vm.resetAllAppValues()
+
+			expect(saveOPOptionsSpy).toBeCalledTimes(1)
+			expect(deleteNCOAuthClientSpy).toBeCalledTimes(1)
+		})
+		it('should reload the window at the end', async () => {
+			const { location } = window
+			delete window.location
+			window.location = { reload: jest.fn() }
+			await wrapper.vm.resetAllAppValues()
+			await wrapper.vm.$nextTick()
+			expect(window.location.reload).toBeCalledTimes(1)
+			window.location = location
 		})
 	})
 })
