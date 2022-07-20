@@ -16,14 +16,14 @@
 				v-model="serverHostUrlForEdit"
 				is-required
 				:read-only="isServerHostUrlReadOnly"
-				class="pb-2"
+				class="pb-1"
 				:label="t('integration_openproject', 'OpenProject host')"
 				place-holder="https://www.my-openproject.com"
 				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
 				:error-message="serverHostErrorMessage"
 				@click="isServerHostUrlReadOnly = false"
 				@input="isOpenProjectInstanceValid = null" />
-			<div class="d-flex">
+			<div class="form-actions">
 				<Button v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
 					@click="setServerHostFormToEditMode">
@@ -64,7 +64,7 @@
 				<TextInput v-else
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
-					class="pb-2"
+					class="py-1"
 					is-required
 					:label="t('integration_openproject', 'OpenProject OAuth client ID')"
 					:hint-text="openProjectClientHint" />
@@ -78,28 +78,30 @@
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
-					class="pb-2"
+					class="py-1"
 					:label="t('integration_openproject', 'OpenProject OAuth client secret')"
 					:hint-text="openProjectClientHint" />
-				<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
-					data-test-id="reset-op-oauth-btn"
-					@click="resetOPOAuthClientValues">
-					<template #icon>
-						<AutoRenewIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
-				</Button>
-				<Button v-else
-					data-test-id="submit-op-oauth-btn"
-					type="primary"
-					:disabled="!state.client_id || !state.client_secret"
-					@click="saveOPOAuthClientValues">
-					<template #icon>
-						<LoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Save') }}
-				</Button>
+				<div class="form-actions">
+					<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
+						data-test-id="reset-op-oauth-btn"
+						@click="resetOPOAuthClientValues">
+						<template #icon>
+							<AutoRenewIcon :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
+					</Button>
+					<Button v-else
+						data-test-id="submit-op-oauth-btn"
+						type="primary"
+						:disabled="!state.client_id || !state.client_secret"
+						@click="saveOPOAuthClientValues">
+						<template #icon>
+							<LoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
+							<CheckBoldIcon v-else :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Save') }}
+					</Button>
+				</div>
 			</div>
 		</div>
 		<div class="nextcloud-oauth-values">
@@ -111,7 +113,7 @@
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-id"
 					v-model="state.nc_oauth_client.clientId"
-					class="pb-2"
+					class="py-1"
 					read-only
 					is-required
 					with-copy-btn
@@ -124,7 +126,7 @@
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-secret"
 					v-model="state.nc_oauth_client.clientSecret"
-					class="pb-2"
+					class="py-1"
 					read-only
 					is-required
 					with-copy-btn
@@ -136,24 +138,26 @@
 					encrypt-value
 					with-inspection
 					:value="ncClientSecret" />
-				<Button v-if="isNcOAuthFormInEdit"
-					type="primary"
-					:disabled="!ncClientId || !ncClientSecret"
-					data-test-id="submit-nc-oauth-values-form-btn"
-					@click="setNCOAuthFormToViewMode">
-					<template #icon>
-						<CheckBoldIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Yes, I have copied these values') }}
-				</Button>
-				<Button v-else
-					data-test-id="reset-nc-oauth-btn"
-					@click="resetNcOauthValues">
-					<template #icon>
-						<AutoRenewIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
-				</Button>
+				<div class="form-actions">
+					<Button v-if="isNcOAuthFormInEdit"
+						type="primary"
+						:disabled="!ncClientId || !ncClientSecret"
+						data-test-id="submit-nc-oauth-values-form-btn"
+						@click="setNCOAuthFormToViewMode">
+						<template #icon>
+							<CheckBoldIcon :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Yes, I have copied these values') }}
+					</Button>
+					<Button v-else
+						data-test-id="reset-nc-oauth-btn"
+						@click="resetNcOauthValues">
+						<template #icon>
+							<AutoRenewIcon :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
+					</Button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -461,8 +465,8 @@ export default {
 	.pb-1 {
 		padding-bottom: .5rem;
 	}
-	.pb-2 {
-		padding-bottom: 1rem;
+	.py-1 {
+		padding: .3rem 0;
 	}
 	.mr-2 {
 		margin-right: .5rem;
@@ -487,6 +491,11 @@ export default {
 			line-height: 20px !important;
 			color: #333333 !important;
 		}
+	}
+	.form-actions {
+		display: flex;
+		align-items: center;
+		padding: 15px 0;
 	}
 }
 
