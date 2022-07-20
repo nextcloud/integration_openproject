@@ -4,7 +4,7 @@ import EmptyContent from '../../../../src/components/tab/EmptyContent'
 import { STATE } from '../../../../src/utils'
 const localVue = createLocalVue()
 
-describe('EmptyContent.vue Test', () => {
+describe('EmptyContent.vue', () => {
 	let wrapper
 	const emptyContentMessageSelector = '.empty-content--message'
 	const connectButtonSelector = 'oauthconnectbutton-stub'

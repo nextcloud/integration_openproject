@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
+exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
@@ -15,7 +15,7 @@ exports[`AdminSettings Nextcloud OAuth values form edit mode should show the for
 </div>
 `;
 
-exports[`AdminSettings Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
+exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
@@ -30,7 +30,7 @@ exports[`AdminSettings Nextcloud OAuth values form view mode with complete value
 </div>
 `;
 
-exports[`AdminSettings OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
+exports[`AdminSettings.vue OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
     <div class="index">
@@ -70,7 +70,7 @@ exports[`AdminSettings OpenProject OAuth values form edit mode should show the f
 </div>
 `;
 
-exports[`AdminSettings OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
+exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
     <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
@@ -102,17 +102,17 @@ exports[`AdminSettings OpenProject OAuth values form view mode and completed sta
 </div>
 `;
 
-exports[`AdminSettings server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
+exports[`AdminSettings.vue server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
 <button data-v-27e36536="" type="button" data-test-id="cancel-edit-server-host-btn" class="button-vue mr-2 button-vue--text-only button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><!----> <span data-v-27e36536="" class="button-vue__text">
 				Cancel
 			</span></span></button>
 `;
 
-exports[`AdminSettings server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="">`;
+exports[`AdminSettings.vue server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input id="openproject-oauth-instance" type="text" placeholder="https://www.my-openproject.com" class="">`;
 
-exports[`AdminSettings server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-readonly">`;
+exports[`AdminSettings.vue server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-readonly">`;
 
-exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
+exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 1`] = `
 <div class="text-input pb-1">
   <div class="text-input-label">
     OpenProject host *
@@ -128,7 +128,7 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 </div>
 `;
 
-exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 2`] = `
+exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 2`] = `
 <div class="text-input pb-1">
   <div class="text-input-label">
     OpenProject host *
@@ -144,13 +144,13 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 </div>
 `;
 
-exports[`AdminSettings server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
+exports[`AdminSettings.vue server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
 <button data-v-27e36536="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><span data-v-27e36536="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-27e36536=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-27e36536="" class="button-vue__text">
 				Edit server information
 			</span></span></button>
 `;
 
-exports[`AdminSettings server host url form view mode and completed state should show field value and hide the input field 1`] = `
+exports[`AdminSettings.vue server host url form view mode and completed state should show field value and hide the input field 1`] = `
 <div class="openproject-server-host">
   <div class="form-heading">
     <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>

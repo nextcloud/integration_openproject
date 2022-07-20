@@ -5,7 +5,7 @@ const localVue = createLocalVue()
 
 global.t = (app, text) => text
 
-describe('FormHeading', () => {
+describe('FormHeading.vue', () => {
 	describe('is complete prop', () => {
 		it('should show checkmark icon, add green title and hide the index if complete', () => {
 			const wrapper = getWrapper({

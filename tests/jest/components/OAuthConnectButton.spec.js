@@ -11,7 +11,7 @@ jest.mock('@nextcloud/dialogs')
 const { location } = window
 const localVue = createLocalVue()
 
-describe('OAuthConnectButton.vue Test', () => {
+describe('OAuthConnectButton.vue', () => {
 	let wrapper
 	afterEach(() => {
 		window.location = location

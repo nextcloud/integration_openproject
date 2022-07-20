@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only once 1`] = `
+exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
     integration_openproject
@@ -48,7 +48,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages adds every work-package only onc
 </div>
 `;
 
-exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the admin config is not okay 1`] = `
+exports[`ProjectsTab.vue fetchWorkpackages sets the "error" state if the admin config is not okay 1`] = `
 <div class="projects projects--empty">
   <!---->
   <div class="empty-content" id="openproject-empty-content">
@@ -65,7 +65,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages sets the "error" state if the ad
 </div>
 `;
 
-exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`] = `
+exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
     integration_openproject
@@ -153,7 +153,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 1`
 </div>
 `;
 
-exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`] = `
+exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
     integration_openproject
@@ -241,7 +241,7 @@ exports[`ProjectsTab.vue Test fetchWorkpackages shows the linked workpackages 2`
 </div>
 `;
 
-exports[`ProjectsTab.vue Test onSave shows the just linked workpackage 1`] = `
+exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
     integration_openproject

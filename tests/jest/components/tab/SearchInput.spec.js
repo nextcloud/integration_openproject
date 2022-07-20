@@ -49,7 +49,7 @@ const simpleWorkPackageSearchResponse = [{
 	},
 }]
 
-describe('SearchInput.vue tests', () => {
+describe('SearchInput.vue', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'

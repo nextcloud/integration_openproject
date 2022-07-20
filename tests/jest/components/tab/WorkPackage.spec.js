@@ -5,7 +5,7 @@ import workPackagesSearchResponse from '../../fixtures/workPackagesSearchRespons
 
 const localVue = createLocalVue()
 
-describe('ProjectsTab.vue Test', () => {
+describe('WorkPackage.vue', () => {
 	let wrapper
 	const workPackagesSelector = '.workpackage'
 	beforeEach(() => {

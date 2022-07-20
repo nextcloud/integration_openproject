@@ -9,7 +9,7 @@ const selectors = {
 	itemValue: '.field-item-value',
 }
 
-describe('FieldValue', () => {
+describe('FieldValue.vue', () => {
 	describe('is required prop', () => {
 		it('should append asterik with the title if set', () => {
 			const wrapper = getWrapper({ isRequired: true })

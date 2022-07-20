@@ -13,7 +13,7 @@ initialState.loadState = jest.fn(() => {
 	}
 })
 
-describe('PersonalSettings.vue Test', () => {
+describe('PersonalSettings.vue', () => {
 	describe('oAuth', () => {
 		const oAuthButtonSelector = 'oauthconnectbutton-stub'
 		const oAuthDisconnectButtonSelector = '#openproject-rm-cred'
