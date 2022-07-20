@@ -129,7 +129,7 @@ exports[`AdminSettings server host url form edit mode submit button should set t
 `;
 
 exports[`AdminSettings server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 2`] = `
-<div class="text-input pb-2">
+<div class="text-input pb-1">
   <div class="text-input-label">
     OpenProject host *
   </div>
