@@ -4,7 +4,7 @@ exports[`WorkPackage.vue shows work packages information 1`] = `
 <div class="workpackage">
   <div class="row">
     <div class="row__status" style="background-color: blue;">
-      <div class="row__status__title">
+      <div class="row__status__title" style="color: rgb(255, 255, 255);">
         in-progress
       </div>
     </div>
