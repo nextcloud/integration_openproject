@@ -164,7 +164,6 @@ class ConfigController extends Controller {
 					(int) $oauthClientInternalId, $values['oauth_instance_url']
 				);
 			}
-
 		}
 		if ((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
 			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) {

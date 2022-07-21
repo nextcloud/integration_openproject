@@ -586,32 +586,32 @@ class ConfigControllerTest extends TestCase {
 				'change'
 			],
 			[ //everything cleared
-			  [
-				  'client_id' => 'client_id',
-				  'client_secret' => 'client_secret',
-				  'oauth_instance_url' => 'http://old-openproject.com',
-			  ],
-			  [
-				  'client_id' => null,
-				  'client_secret' => null,
-				  'oauth_instance_url' => null,
-			  ],
-			  true,
-			  'delete'
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'client_id' => null,
+					'client_secret' => null,
+					'oauth_instance_url' => null,
+				],
+				true,
+				'delete'
 			],
 			[ //everything cleared with empty strings
-			  [
-				  'client_id' => 'client_id',
-				  'client_secret' => 'client_secret',
-				  'oauth_instance_url' => 'http://old-openproject.com',
-			  ],
-			  [
-				  'client_id' => '',
-				  'client_secret' => '',
-				  'oauth_instance_url' => '',
-			  ],
-			  true,
-			  'delete'
+				[
+					'client_id' => 'client_id',
+					'client_secret' => 'client_secret',
+					'oauth_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'client_id' => '',
+					'client_secret' => '',
+					'oauth_instance_url' => '',
+				],
+				true,
+				'delete'
 			],
 		];
 	}
