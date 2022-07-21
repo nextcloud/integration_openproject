@@ -127,7 +127,10 @@ class FilesController extends OCSController {
 	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
-		$activity = new \OCA\Activity\Data($this->activityManager, $this->connection);
+		$activity = null;
+		if (class_exists('\OCA\Activity\Data')) {
+			$activity = new \OCA\Activity\Data($this->activityManager, $this->connection);
+		}
 
 
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
