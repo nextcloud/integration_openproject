@@ -541,7 +541,7 @@ class ConfigControllerTest extends TestCase {
 					'oauth_instance_url' => 'http://openproject.com',
 				],
 				true,
-				true
+				'change'
 			],
 			[ // only client id changes so delete user values but don't change the oAuth Client
 				[
@@ -583,7 +583,35 @@ class ConfigControllerTest extends TestCase {
 					'oauth_instance_url' => 'http://openproject.com',
 				],
 				false,
-				true
+				'change'
+			],
+			[ //everything cleared
+			  [
+				  'client_id' => 'client_id',
+				  'client_secret' => 'client_secret',
+				  'oauth_instance_url' => 'http://old-openproject.com',
+			  ],
+			  [
+				  'client_id' => null,
+				  'client_secret' => null,
+				  'oauth_instance_url' => null,
+			  ],
+			  true,
+			  'delete'
+			],
+			[ //everything cleared with empty strings
+			  [
+				  'client_id' => 'client_id',
+				  'client_secret' => 'client_secret',
+				  'oauth_instance_url' => 'http://old-openproject.com',
+			  ],
+			  [
+				  'client_id' => '',
+				  'client_secret' => '',
+				  'oauth_instance_url' => '',
+			  ],
+			  true,
+			  'delete'
 			],
 		];
 	}
@@ -592,7 +620,7 @@ class ConfigControllerTest extends TestCase {
 	 * @param array<string> $oldCreds
 	 * @param array<string> $credsToUpdate
 	 * @param bool $deleteUserValues
-	 * @param bool $updateNCOAuthClient
+	 * @param bool|string $updateNCOAuthClient false => don't touch the client, 'change' => update it, 'delete' => remove it
 	 * @return void
 	 * @dataProvider setAdminConfigClearUserDataChangeNCOauthClientDataProvider
 	 */
@@ -611,7 +639,7 @@ class ConfigControllerTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
 
-		if ($updateNCOAuthClient === true) {
+		if ($updateNCOAuthClient) {
 			$configMock
 				->method('getAppValue')
 				->withConsecutive(
@@ -632,9 +660,23 @@ class ConfigControllerTest extends TestCase {
 					$credsToUpdate['client_secret'],
 					$credsToUpdate['oauth_instance_url']
 				);
-			$oauthServiceMock->method('setClientRedirectUri')->with(
-				123, $credsToUpdate['oauth_instance_url']
-			);
+			if ($updateNCOAuthClient === 'change') {
+				$oauthServiceMock
+					->expects($this->once())
+					->method('setClientRedirectUri')
+					->with(123, $credsToUpdate['oauth_instance_url']);
+				$oauthServiceMock
+					->expects($this->never())
+					->method('deleteClient');
+			} else { // delete the client
+				$oauthServiceMock
+					->expects($this->never())
+					->method('setClientRedirectUri');
+				$oauthServiceMock
+					->expects($this->once())
+					->method('deleteClient')
+					->with(123);
+			}
 		} else {
 			$configMock
 				->method('getAppValue')

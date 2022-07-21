@@ -452,7 +452,9 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 			afterEach(() => {
-				jest.resetAllMocks()
+				axios.post.mockReset()
+				axios.put.mockReset()
+				jest.clearAllMocks()
 				wrapper.destroy()
 			})
 			it('should show the form and hide the field values', () => {
@@ -533,7 +535,7 @@ describe('AdminSettings.vue', () => {
 			})
 			describe('reset button', () => {
 				afterEach(() => {
-					jest.resetAllMocks()
+					jest.clearAllMocks()
 				})
 				it('should trigger the confirm dialog', async () => {
 					const wrapper = getMountedWrapper({
@@ -573,7 +575,6 @@ describe('AdminSettings.vue', () => {
 					wrapper.destroy()
 				})
 				it('should create new client on confirm', async () => {
-					jest.restoreAllMocks()
 					jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({
 							data: {
@@ -696,12 +697,13 @@ describe('AdminSettings.vue', () => {
 		it('should reset all settings on confirm', async () => {
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 				.mockImplementationOnce(() => Promise.resolve({ data: true }))
-			const deleteNCOAuthClientSpy = jest.spyOn(axios, 'delete')
-				.mockImplementationOnce(() => Promise.resolve({ data: true }))
 			await wrapper.vm.resetAllAppValues()
 
-			expect(saveOPOptionsSpy).toBeCalledTimes(1)
-			expect(deleteNCOAuthClientSpy).toBeCalledTimes(1)
+			expect(saveOPOptionsSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/admin-config',
+				{ values: { client_id: null, client_secret: null, oauth_instance_url: null } }
+			)
+			axios.put.mockReset()
 		})
 		it('should reload the window at the end', async () => {
 			const { location } = window

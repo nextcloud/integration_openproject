@@ -151,12 +151,23 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		if (isset($values['oauth_instance_url']) && $oldOpenProjectOauthUrl !== $values['oauth_instance_url']) {
-			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
-			$this->oauthService->setClientRedirectUri((int) $oauthClientInternalId, $values['oauth_instance_url']);
+		if (key_exists('oauth_instance_url', $values)
+			&& $oldOpenProjectOauthUrl !== $values['oauth_instance_url']
+		) {
+			if ($values['oauth_instance_url'] === null || $values['oauth_instance_url'] === '') {
+				$this->deleteOauthClient();
+			} else {
+				$oauthClientInternalId = $this->config->getAppValue(
+					Application::APP_ID, 'nc_oauth_client_id', ''
+				);
+				$this->oauthService->setClientRedirectUri(
+					(int) $oauthClientInternalId, $values['oauth_instance_url']
+				);
+			}
+
 		}
-		if ((isset($values['client_id']) && $values['client_id'] !== $oldClientId) ||
-			(isset($values['client_secret']) && $values['client_secret'] !== $oldClientSecret)) {
+		if ((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
+			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) {
 			$this->userManager->callForAllUsers(function (IUser $user) {
 				$this->clearUserInfo($user->getUID());
 			});
@@ -307,22 +318,14 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		$this->cleanupOauthClientAndSettings();
+		$this->deleteOauthClient();
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		return new DataResponse($clientInfo);
 	}
 
-	/**
-	 * @return DataResponse
-	 */
-	public function deleteOauthClient(): DataResponse {
-		$this->cleanupOauthClientAndSettings();
-		return new DataResponse();
-	}
-
-	private function cleanupOauthClientAndSettings(): void {
+	private function deleteOauthClient(): void {
 		$oauthClientInternalId = $this->config->getAppValue(
 			Application::APP_ID, 'nc_oauth_client_id', ''
 		);

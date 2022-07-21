@@ -391,33 +391,18 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						this.resetAllAppValues()
+						await this.resetAllAppValues()
 					}
 				},
 				true
 			)
 		},
-		resetAllAppValues() {
+		async resetAllAppValues() {
 			this.state.client_id = null
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null
-			const promises = []
-			promises.push(this.saveOPOptions())
-			promises.push(this.deleteNCOAuthClient())
-			Promise.all(promises).then(() => {
-				window.location.reload()
-			})
-		},
-		async deleteNCOAuthClient() {
-			const url = generateUrl('/apps/integration_openproject/nc-oauth')
-			try {
-				await axios.delete(url)
-			} catch (error) {
-				console.debug(error)
-				showError(
-					t('integration_openproject', 'Failed to delete Nextcloud OAuth client')
-				)
-			}
+			await this.saveOPOptions()
+			window.location.reload()
 		},
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
