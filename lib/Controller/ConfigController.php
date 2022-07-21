@@ -134,7 +134,7 @@ class ConfigController extends Controller {
 	/**
 	 * set admin config values
 	 *
-	 * @param array<string, string> $values
+	 * @param array<string, string|null> $values
 	 * @return DataResponse
 	 */
 	public function setAdminConfig(array $values): DataResponse {
@@ -154,7 +154,7 @@ class ConfigController extends Controller {
 		if (key_exists('oauth_instance_url', $values)
 			&& $oldOpenProjectOauthUrl !== $values['oauth_instance_url']
 		) {
-			if ($values['oauth_instance_url'] === null || $values['oauth_instance_url'] === '') {
+			if (is_null($values['oauth_instance_url']) || $values['oauth_instance_url'] === '') {
 				$this->deleteOauthClient();
 			} else {
 				$oauthClientInternalId = $this->config->getAppValue(
