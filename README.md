@@ -86,14 +86,16 @@ For the database, **PostgreSQL** is used with the following credentials:
 You can browse as admin to the apps center and enable it using the webUI or you can just use the terminal as:
 
 ```shell
-docker exec --user www-data integration_openproject_nc php occ a:e integration_openproject
+docker exec --user www-data integration_openproject-nextcloud-1 php occ a:e integration_openproject
 ```
 
 #### Allow local remote servers: 
 
 ```shell
-docker exec --user www-data integration_openproject_nc php occ config:system:set allow_local_remote_servers --value 1
+docker exec --user www-data integration_openproject-nextcloud-1 php occ config:system:set allow_local_remote_servers --value 1
 ```
+
+> NOTE: If multiple `nextcloud` services are added inside the _compose file_, the container names may be updated. So plesae see the container names using `docker ps`
 
 #### Configure the integration app:
 - as NextCloud admin browse to Settings->Administration->OpenProject

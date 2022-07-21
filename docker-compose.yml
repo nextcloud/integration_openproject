@@ -3,7 +3,6 @@ version: '3.9'
 services:
   db:
     image: postgres:alpine
-    container_name: integration_openproject_db
     restart: always
     volumes:
       - db:/var/lib/postgresql/data
@@ -16,7 +15,6 @@ services:
 
   nextcloud:
     image: nextcloud:apache
-    container_name: integration_openproject_nc
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -37,7 +35,6 @@ services:
 
   cron:
     image: nextcloud:apache
-    container_name: integration_openproject_cron
     restart: always
     volumes:
       - nextcloud:/var/www/html
