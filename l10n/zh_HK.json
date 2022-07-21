@@ -35,6 +35,7 @@
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "以管理員身份將以下值複製回 OpenProject {htmlLink}。",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "如果繼續，您將需要使用新的 OpenProject OAuth 憑據更新這些設置。 此外，所有用戶都需要重新授權訪問其 OpenProject 帳戶。",
     "Yes, replace" : "是的，取代",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",

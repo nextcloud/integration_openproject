@@ -37,6 +37,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Skopiuj następujące wartości z powrotem do OpenProject {htmlLink} jako administrator.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Jeśli będziesz kontynuować, będziesz musiał zaktualizować te ustawienia przy użyciu nowych poświadczeń OAuth OpenProject. Ponadto wszyscy użytkownicy będą musieli ponownie autoryzować dostęp do swojego konta OpenProject.",
     "Yes, replace" : "Tak, zamień",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject jest nieprawidłowy, podaj adres URL w formie „https://openproject.org”",
     "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject",
     "OpenProject admin options saved" : "Zapisano opcje administratora OpenProject",
     "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",

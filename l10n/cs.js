@@ -37,6 +37,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Zkopírujte (jako správce) následující hodnoty zpět do OpenProject {htmlLink}.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Pokud budete pokračovat, bude třeba aktualizovat nastavení těmi novými  OpenProject OAuth přihlašovacími údaji. Také bude třeba, aby všichni uživatelé znovu udělili oprávnění k přístupu ke svým účtům v OpenProject.",
     "Yes, replace" : "Ano, nahradit",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL není platná, zadejte adresu v podobě „https://openproject.org“",
     "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",

@@ -37,6 +37,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Másolja vissza a következő értékeket az OpenProjectbe {htmlLink} adminisztrátorként.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ha folytatja, akkor frissítenie kell ezeket a beállításokat az OpenProject OAuth hitelesítő adatokkal. Továbbá az összes felhasználónak újból hitelesítenie kell az OpenProject-fiókjával.",
     "Yes, replace" : "Igen, csere",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
     "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
     "OpenProject admin options saved" : "Az OpenProject rendszergazdai beállításai mentve",
     "Failed to save OpenProject admin options" : "Az OpenProject rendszergazdai beállításainak mentése sikertelen",
