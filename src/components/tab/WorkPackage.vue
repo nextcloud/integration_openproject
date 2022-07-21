@@ -2,8 +2,9 @@
 	<div class="workpackage" @mouseover="setWPTypeTextStroke" @mouseleave="setWPTypeTextStroke">
 		<div class="row">
 			<div class="row__status"
-				:style="{'background-color':workpackage.statusCol}">
-				<div class="row__status__title">
+				:style="{'background-color': getWPStatusColor()}">
+				<div class="row__status__title"
+					:style="{'color': wpStatusFontColor }">
 					{{ workpackage.statusTitle }}
 				</div>
 			</div>
@@ -54,11 +55,33 @@ export default {
 	},
 	data: () => ({
 		wpTypeTextStroke: 'unset',
+		wpStatusFontColor: '#FFFFFF',
 	}),
 	created() {
 		this.setWPTypeTextStroke()
+		this.setWPStatusFontColor()
 	},
 	methods: {
+		getWPStatusColor() {
+			if (this.workpackage.statusCol === undefined || this.workpackage.statusCol === '') {
+				return '#F99601'
+			}
+			return this.workpackage.statusCol
+		},
+		setWPStatusFontColor() {
+			this.wpStatusFontColor = '#FFFFFF'
+			try {
+				const contrast = this.contrastRatio(
+					this.wpStatusFontColor,
+					this.getWPStatusColor()
+				)
+				if (contrast <= 2) {
+					this.wpStatusFontColor = '#000000'
+				}
+			} catch (e) {
+				// something went  wrong, leave the values as they are
+			}
+		},
 		setWPTypeTextStroke() {
 			this.wpTypeTextStroke = 'unset'
 			try {
@@ -195,13 +218,11 @@ export default {
 			font-size: 0.75rem;
 			border-radius: 2px;
 			margin-right: 4px;
-			background-color: #F99601;
 
 			&__title {
 				font-size: 0.75rem;
 				line-height: 14px;
 				text-align: center;
-				filter: contrast(0) brightness(0);
 			}
 		}
 
