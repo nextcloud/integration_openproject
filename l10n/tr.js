@@ -37,6 +37,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Şu değerleri yönetici olarak OpenProject {htmlLink} bağlantısına geri kopyalayın.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Devam ederseniz, bu ayarları yeni OpenProject OAuth kimlik bilgileriyle güncellemeniz gerekir. Ayrıca, tüm kullanıcıların yeniden OpenProject hesaplarına erişim izni vermeleri gerekir.",
     "Yes, replace" : "Evet, değiştir",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
