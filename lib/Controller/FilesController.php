@@ -11,20 +11,24 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OC\User\User;
+use OCA\Activity\Data;
 use OCA\Activity\GroupHelper;
 use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\RichObjectStrings\IValidator;
 
 class FilesController extends OCSController {
 
@@ -62,15 +66,38 @@ class FilesController extends OCSController {
 	 * @var GroupHelper
 	 */
 	private $groupHelper;
+
+	/**
+	 * @var IValidator
+	 */
+	private $richObjectValidator;
+
+	/**
+	 * @var ILogger
+	 */
+	private $logger;
+
+	/**
+	 * @var IL10N
+	 */
+	private $l;
+
+	/**
+	 * @var IConfig
+	 */
+	private $config;
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
 								ITrashManager $trashManager,
 								IUserSession $userSession,
 								IMountProviderCollection $mountCollection,
-								IManager $activityManager, IDBConnection $connection,
-								GroupHelper $groupHelper,
-								UserSettings $userSettings
+								IManager $activityManager,
+								IDBConnection $connection,
+								IValidator $richObjectValidator,
+								ILogger $logger,
+								IL10N $l,
+								IConfig $config
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -79,8 +106,10 @@ class FilesController extends OCSController {
 		$this->mountCollection = $mountCollection;
 		$this->activityManager = $activityManager;
 		$this->connection = $connection;
-		$this->groupHelper = $groupHelper;
-		$this->userSettings = $userSettings;
+		$this->richObjectValidator = $richObjectValidator;
+		$this->logger = $logger;
+		$this->l = $l;
+		$this->config = $config;
 	}
 
 	/**
@@ -127,12 +156,6 @@ class FilesController extends OCSController {
 	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
-		$activity = null;
-		if (class_exists('\OCA\Activity\Data')) {
-			$activity = new \OCA\Activity\Data($this->activityManager, $this->connection);
-		}
-
-
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
@@ -151,8 +174,7 @@ class FilesController extends OCSController {
 			$owner = $file->getOwner();
 			$internalPath = $mount[0]->getInternalPath();
 
-			$activities = $activity->get(
-				$this->groupHelper, $this->userSettings, $this->user->getUID(),0,999, 'asc','filter', 'files', $file->getId());
+
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -165,7 +187,7 @@ class FilesController extends OCSController {
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
 				'trashed' => $trashed,
-				'activities' => $activities
+				'activities' => $this->getLastModifier($owner->getUID(), $file->getId())
 			];
 		}
 
@@ -179,5 +201,36 @@ class FilesController extends OCSController {
 			'status' => 'Not Found',
 			'statuscode' => 404,
 		];
+	}
+
+	private function getLastModifier(string $ownerId, int $fileId) {
+		$activityData = null;
+		if (class_exists('\OCA\Activity\Data')) {
+			$activityData = new Data($this->activityManager, $this->connection);
+		}
+		if ($activityData === null) {
+			return null;
+		}
+		else {
+			$groupHelper = new GroupHelper(
+				$this->l,
+				$this->activityManager,
+				$this->richObjectValidator,
+				$this->logger
+			);
+			$userSettings = new UserSettings($this->activityManager, $this->config);
+			$activities = $activityData->get(
+				$groupHelper,
+				$userSettings,
+				$ownerId,
+				0,
+				999,
+				'asc',
+				'filter',
+				'files',
+				$fileId
+			);
+			return $activities;
+		}
 	}
 }
