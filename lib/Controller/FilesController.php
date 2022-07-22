@@ -27,6 +27,7 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
 
@@ -58,16 +59,6 @@ class FilesController extends OCSController {
 	protected $connection;
 
 	/**
-	 * @var UserSettings
-	 */
-	private $userSettings;
-
-	/**
-	 * @var GroupHelper
-	 */
-	private $groupHelper;
-
-	/**
 	 * @var IValidator
 	 */
 	private $richObjectValidator;
@@ -86,6 +77,12 @@ class FilesController extends OCSController {
 	 * @var IConfig
 	 */
 	private $config;
+
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
@@ -97,7 +94,8 @@ class FilesController extends OCSController {
 								IValidator $richObjectValidator,
 								ILogger $logger,
 								IL10N $l,
-								IConfig $config
+								IConfig $config,
+								IUserManager $userManager
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -110,6 +108,7 @@ class FilesController extends OCSController {
 		$this->logger = $logger;
 		$this->l = $l;
 		$this->config = $config;
+		$this->userManager = $userManager;
 	}
 
 	/**
@@ -174,7 +173,14 @@ class FilesController extends OCSController {
 			$owner = $file->getOwner();
 			$internalPath = $mount[0]->getInternalPath();
 
-
+			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
+			if ($modifier instanceof IUser) {
+				$modifierId = $modifier->getUID();
+				$modifierName = $modifier->getDisplayName();
+			} else {
+				$modifierId = null;
+				$modifierName = null;
+			}
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -187,7 +193,8 @@ class FilesController extends OCSController {
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
 				'trashed' => $trashed,
-				'activities' => $this->getLastModifier($owner->getUID(), $file->getId())
+				'modifier_name' => $modifierName,
+				'modifier_id' => $modifierId
 			];
 		}
 
@@ -203,34 +210,41 @@ class FilesController extends OCSController {
 		];
 	}
 
-	private function getLastModifier(string $ownerId, int $fileId) {
-		$activityData = null;
+	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
 		if (class_exists('\OCA\Activity\Data')) {
 			$activityData = new Data($this->activityManager, $this->connection);
-		}
-		if ($activityData === null) {
+		} else {
 			return null;
 		}
-		else {
-			$groupHelper = new GroupHelper(
-				$this->l,
-				$this->activityManager,
-				$this->richObjectValidator,
-				$this->logger
-			);
-			$userSettings = new UserSettings($this->activityManager, $this->config);
-			$activities = $activityData->get(
-				$groupHelper,
-				$userSettings,
-				$ownerId,
-				0,
-				999,
-				'asc',
-				'filter',
-				'files',
-				$fileId
-			);
-			return $activities;
+
+		$groupHelper = new GroupHelper(
+			$this->l,
+			$this->activityManager,
+			$this->richObjectValidator,
+			$this->logger
+		);
+		$userSettings = new UserSettings($this->activityManager, $this->config);
+		$activities = $activityData->get(
+			$groupHelper,
+			$userSettings,
+			$ownerId,
+			$since,
+			10,
+			'DESC',
+			'filter',
+			'files',
+			$fileId
+		);
+		foreach ($activities['data'] as $activity) {
+			if ($activity['type'] === 'file_changed') {
+				return $this->userManager->get($activity['user']);
+			}
 		}
+		if ($activities['has_more'] === true) {
+			return $this->getLastModifier(
+				$ownerId, $fileId, $activities['headers']['X-Activity-Last-Given']
+			);
+		}
+		return null;
 	}
 }
