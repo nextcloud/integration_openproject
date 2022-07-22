@@ -238,7 +238,12 @@ class FilesController extends OCSController {
 		);
 		foreach ($activities['data'] as $activity) {
 			if ($activity['type'] === 'file_changed') {
-				return $this->userManager->get($activity['user']);
+				$activityDetails = $activityData->getById($activity['activity_id']);
+				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
+				// sadly we only get the localized subject from the `get()` request and need to do an other request
+				if (str_starts_with($activityDetails->getSubject(), 'changed')) {
+					return $this->userManager->get($activity['user']);
+				}
 			}
 		}
 		if ($activities['has_more'] === true) {
