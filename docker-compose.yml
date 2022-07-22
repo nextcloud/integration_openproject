@@ -3,12 +3,11 @@ version: '3.9'
 services:
   db:
     image: postgres:alpine
-    container_name: integration_openproject_db
     restart: always
     volumes:
       - db:/var/lib/postgresql/data
     networks:
-      - nextcloud
+      - internal
     environment:
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
@@ -16,17 +15,14 @@ services:
 
   nextcloud:
     image: nextcloud:apache
-    container_name: integration_openproject_nc
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - "8080:80"
     volumes:
       - nextcloud:/var/www/html
       - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
     networks:
-      - nextcloud
+      - internal
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_DB=nextcloud
@@ -37,12 +33,11 @@ services:
 
   cron:
     image: nextcloud:apache
-    container_name: integration_openproject_cron
     restart: always
     volumes:
       - nextcloud:/var/www/html
     networks:
-      - nextcloud
+      - internal
     entrypoint: /cron.sh
     depends_on:
       - db
@@ -52,4 +47,4 @@ volumes:
   nextcloud:
 
 networks:
-  nextcloud:
+  internal:
