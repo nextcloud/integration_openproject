@@ -251,7 +251,6 @@ class FilesController extends OCSController {
 			if ($lastGiven < $since || $since === 0) {
 				return $this->getLastModifier($ownerId, $fileId, $lastGiven);
 			}
-
 		}
 		return null;
 	}
