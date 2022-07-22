@@ -218,12 +218,14 @@ class FilesController extends OCSController {
 			return null;
 		}
 
+		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$groupHelper = new GroupHelper(
 			$this->l,
 			$this->activityManager,
 			$this->richObjectValidator,
 			$this->logger
 		);
+		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$userSettings = new UserSettings($this->activityManager, $this->config);
 		$activities = $activityData->get(
 			$groupHelper,
