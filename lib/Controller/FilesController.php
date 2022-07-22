@@ -241,9 +241,11 @@ class FilesController extends OCSController {
 			}
 		}
 		if ($activities['has_more'] === true) {
-			return $this->getLastModifier(
-				$ownerId, $fileId, $activities['headers']['X-Activity-Last-Given']
-			);
+			$lastGiven = (int)$activities['headers']['X-Activity-Last-Given'];
+			if ($lastGiven > $since) {
+				return $this->getLastModifier($ownerId, $fileId, $lastGiven);
+			}
+
 		}
 		return null;
 	}
