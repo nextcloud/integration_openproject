@@ -152,7 +152,8 @@ class FilesController extends OCSController {
 	 * @param int $fileId
 	 * @return array{'status': string, 'statuscode': int, 'id'?: int, 'name'?:string,
 	 *               'mtime'?: int, 'ctime'?: int, 'mimetype'?: string, 'path'?: string,
-	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string}
+	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string, 'trashed'?: bool,
+	 *               'modifier_name'?: string, 'modifier_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
