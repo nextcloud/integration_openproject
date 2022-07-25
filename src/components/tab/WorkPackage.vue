@@ -1,8 +1,8 @@
 <template>
-	<div class="workpackage" @mouseover="setWPTypeTextStroke" @mouseleave="setWPTypeTextStroke">
+	<div class="workpackage" @mouseover="resetColorsOnHover" @mouseleave="resetColorsOnHover">
 		<div class="row">
 			<div class="row__status"
-				:style="{'background-color': getWPStatusColor()}">
+				:style="{'background-color': getWPStatusColor(), border: wpStatusBorder}">
 				<div class="row__status__title"
 					:style="{'color': wpStatusFontColor }">
 					{{ workpackage.statusTitle }}
@@ -56,12 +56,18 @@ export default {
 	data: () => ({
 		wpTypeTextStroke: 'unset',
 		wpStatusFontColor: '#FFFFFF',
+		wpStatusBorder: '0px',
 	}),
 	created() {
 		this.setWPTypeTextStroke()
 		this.setWPStatusFontColor()
+		this.setWPStatusBorder()
 	},
 	methods: {
+		resetColorsOnHover() {
+			this.setWPTypeTextStroke()
+			this.setWPStatusBorder()
+		},
 		getWPStatusColor() {
 			if (this.workpackage.statusCol === undefined || this.workpackage.statusCol === '') {
 				return '#F99601'
@@ -82,6 +88,27 @@ export default {
 				// something went  wrong, leave the values as they are
 			}
 		},
+		setWPStatusBorder() {
+			try {
+				let contrast = this.getContrastBetweenStatusColorAndBackground()
+				if (contrast <= 2) {
+					contrast = this.contrastRatio(this.getWPStatusColor(), '#000000')
+					if (contrast <= 2) {
+						this.wpStatusBorder = 'solid 1px #FFFFFF'
+						return
+					}
+					this.wpStatusBorder = 'solid 1px #000000'
+					return
+				}
+				this.wpStatusBorder = '0px'
+			} catch (e) {
+				// something went  wrong, leave the values as they are
+			}
+		},
+		getContrastBetweenStatusColorAndBackground() {
+			const backgroundColor = this.getBackgroundColor(this.getWPBackgroundElement())
+			return this.contrastRatio(this.getWPStatusColor(), backgroundColor)
+		},
 		setWPTypeTextStroke() {
 			this.wpTypeTextStroke = 'unset'
 			try {
@@ -94,18 +121,16 @@ export default {
 			}
 		},
 		getContrastBetweenTypeColorAndBackground() {
+			const backgroundColor = this.getBackgroundColor(this.getWPBackgroundElement())
+			return this.contrastRatio(this.workpackage.typeCol, backgroundColor)
+		},
+		getWPBackgroundElement() {
 			let el = document.getElementById('workpackage-' + this.workpackage.id)
 			if (el === null) {
 				el = document.getElementById('tab-open-project')
 			}
-			const backgroundColor = this.getBackgroundColor(el)
-
-			return this.contrastRatio(
-				this.workpackage.typeCol,
-				backgroundColor
-			)
+			return el
 		},
-
 		hexToRgbA(hex) {
 			let c
 			if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
