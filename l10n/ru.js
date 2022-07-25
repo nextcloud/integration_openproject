@@ -12,6 +12,7 @@ OC.L10N.register(
     "Save" : "Сохранить",
     "Enable navigation link" : "Включить ссылку для навигации",
     "Connected as {user}" : "Подключено под именем {user}",
+    "Enable unified search for tickets" : "Включить унифицированный поиск билетов",
     "Incorrect access token" : "Неверный токен доступа",
     "Invalid token" : "Недопустимый токен",
     "Copied!" : "Скопировано!",
