@@ -74,6 +74,7 @@ a `docker-compose.override.yml` specifying the exposed ports. In this example, w
 the provided `docker-compose.override.example.yml`, which exposes port `8080`.
 
 ```shell
+cp docker-compose.override.example.yml docker-compose.override.yml
 docker compose up
 ```
 
