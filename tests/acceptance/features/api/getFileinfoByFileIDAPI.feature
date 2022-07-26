@@ -909,3 +909,62 @@ Feature: retrieve file information of a single file, using the file ID
       }
     }
    """
+
+
+  Scenario: get modifier of a file with a lot of unrelated change
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Brian" has been created
+    And user "Chandra" has been created
+    And user "Alice" has uploaded file with content "some data" to "file.txt"
+    And user "Alice" has shared file "/file.txt" with user "Brian"
+    And user "Brian" has uploaded file with content "change" to "file.txt"
+    And user "Alice" has shared file "/file.txt" with user "Chandra"
+    And user "Brian" has shared file "/file.txt" with user "Chandra"
+    And user "Alice" has renamed file "/file.txt" to "/file1.txt"
+    And user "Alice" has renamed file "/file1.txt" to "/file2.txt"
+    And user "Alice" has renamed file "/file2.txt" to "/file3.txt"
+    And user "Alice" has renamed file "/file3.txt" to "/file4.txt"
+    And user "Alice" has renamed file "/file4.txt" to "/file5.txt"
+    And user "Alice" has renamed file "/file5.txt" to "/file6.txt"
+    And user "Alice" has renamed file "/file6.txt" to "/file7.txt"
+    And user "Alice" has renamed file "/file7.txt" to "/file8.txt"
+    And user "Alice" has renamed file "/file8.txt" to "/file9.txt"
+    And user "Alice" has renamed file "/file9.txt" to "/file10.txt"
+    And user "Alice" has renamed file "/file10.txt" to "/file11.txt"
+    And user "Alice" has renamed file "/file11.txt" to "/file12.txt"
+    And user "Alice" has renamed file "/file12.txt" to "/file13.txt"
+    And user "Alice" has renamed file "/file13.txt" to "/file14.txt"
+    And user "Alice" has renamed file "/file14.txt" to "/file15.txt"
+    And user "Alice" has renamed file "/file15.txt" to "/file16.txt"
+    And user "Alice" has renamed file "/file16.txt" to "/file17.txt"
+    And user "Alice" has renamed file "/file17.txt" to "/file18.txt"
+    And user "Alice" has renamed file "/file18.txt" to "/file19.txt"
+    And user "Alice" has renamed file "/file19.txt" to "/file20.txt"
+    When user "Alice" gets the information of last created file
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "status",
+        "statuscode",
+        "size",
+        "name",
+        "owner_id",
+        "owner_name",
+        "modifier_id",
+        "modifier_name"
+      ],
+      "properties": {
+          "status": {"type": "string", "pattern": "^OK$"},
+          "statuscode" : {"type" : "number", "enum": [200]},
+          "size" : {"type" : "integer", "enum": [6] },
+          "name": {"type": "string", "pattern": "^file20.txt$"},
+          "owner_id": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+          "modifier_id": {"type": "string", "pattern": "^Brian"},
+          "modifier_name": {"type": "string", "pattern": "^Brian$"}
+      }
+    }
+   """
