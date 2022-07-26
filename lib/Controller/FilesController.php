@@ -212,7 +212,10 @@ class FilesController extends OCSController {
 	}
 
 	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
-		if (class_exists('\OCA\Activity\Data')) {
+		if (class_exists('\OCA\Activity\Data') &&
+			class_exists('\OCA\Activity\GroupHelperDisabled') &&
+			class_exists('\OCA\Activity\UserSettings')
+		) {
 			$activityData = new Data($this->activityManager, $this->connection);
 		} else {
 			return null;
@@ -228,6 +231,11 @@ class FilesController extends OCSController {
 
 		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$userSettings = new UserSettings($this->activityManager, $this->config);
+		if (!method_exists($activityData, 'get') ||
+			!method_exists($activityData, 'getById')
+		) {
+			return null;
+		}
 		$activities = $activityData->get(
 			$groupHelper,
 			$userSettings,
@@ -244,6 +252,9 @@ class FilesController extends OCSController {
 				$activityDetails = $activityData->getById($activity['activity_id']);
 				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
 				// sadly we only get the localized subject from the `get()` request and need to do an other request
+				if (!method_exists($activityDetails, 'getSubject')) {
+					return null;
+				}
 				if (str_starts_with($activityDetails->getSubject(), 'changed')) {
 					return $this->userManager->get($activity['user']);
 				}
@@ -251,7 +262,7 @@ class FilesController extends OCSController {
 		}
 		if ($activities['has_more'] === true) {
 			$lastGiven = (int)$activities['headers']['X-Activity-Last-Given'];
-			if ($lastGiven < $since || $since === 0) {
+			if (($lastGiven < $since || $since === 0) && $lastGiven != $since) {
 				return $this->getLastModifier($ownerId, $fileId, $lastGiven);
 			}
 		}
