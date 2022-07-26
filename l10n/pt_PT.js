@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Reset" : "Reiniciar",
     "Invalid token" : "token inválido",
     "Copied!" : "Copiado!",
     "Start typing to search" : "Digitar para pesquisar"

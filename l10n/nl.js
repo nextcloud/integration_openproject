@@ -11,6 +11,7 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integratie",
     "Cancel" : "Annuleren",
     "Save" : "Opslaan",
+    "Reset" : "Herstellen",
     "Enable navigation link" : "Inschakelen navigatielink",
     "Connected as {user}" : "Verbonden als {user}",
     "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",

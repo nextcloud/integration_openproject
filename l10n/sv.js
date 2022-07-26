@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Anslutna konton",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
+    "Reset" : "Återställ",
     "Enable navigation link" : "Aktivera navigeringslänk",
     "Connected as {user}" : "Ansluten som {user}",
     "Incorrect access token" : "Ogiltig åtkomst-token",

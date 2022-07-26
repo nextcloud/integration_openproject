@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Yhdistetyt tilit",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Reset" : "Palauta",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Incorrect access token" : "Virheellinen käyttöpoletti",

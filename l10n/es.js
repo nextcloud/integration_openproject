@@ -31,6 +31,7 @@ OC.L10N.register(
     "Nextcloud OAuth client secret" : "Secreto del cliente Nextcloud OAuth",
     "Yes, I have copied these values" : "Sí, he copiado estos valores",
     "Replace Nextcloud OAuth values" : "Reemplazar los valores de Nextcloud OAuth",
+    "Reset" : "Restablecer",
     "Please introduce a valid OpenProject host name" : "Por favor, introduzca un nombre de host de OpenProject válido",
     "Administration > File storages" : "Administración > Almacenamiento de archivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vaya a su OpenProject {htmlLink} como administrador e inicie la configuración y copie los valores aquí.",

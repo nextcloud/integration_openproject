@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Membatalkan",
     "Save" : "Simpan",
+    "Reset" : "Setel ulang",
     "Copied!" : "Tersalin!",
     "Start typing to search" : "Mulai mengetik untuk mencari"
 },

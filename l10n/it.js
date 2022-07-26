@@ -15,6 +15,7 @@ OC.L10N.register(
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'integrazione di OpenProject fornisce un widget del cruscotto che mostra le tue notifiche importanti,\nun provider di ricerca per i pacchetti di lavoro e le notifiche per le modifiche ai pacchetti di lavoro attivi.",
     "Cancel" : "Annulla",
     "Save" : "Salva",
+    "Reset" : "Ripristina",
     "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Connect to OpenProject" : "Collegati a OpenProject",

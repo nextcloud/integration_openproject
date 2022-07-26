@@ -7,6 +7,7 @@ OC.L10N.register(
     "Connected accounts" : "חשבונות מקושרים",
     "Cancel" : "ביטול",
     "Save" : "שמירה",
+    "Reset" : "איפוס",
     "Enable navigation link" : "הפעלת קישור ניווט",
     "Incorrect access token" : "אסימון הגישה שגוי",
     "Copied!" : "הועתק!",

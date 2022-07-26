@@ -29,6 +29,7 @@
     "Nextcloud OAuth client secret" : "Segredo do cliente OAuth Nextcloud",
     "Yes, I have copied these values" : "Sim, copiei esses valores",
     "Replace Nextcloud OAuth values" : "Substituir os valores OAuth do Nextcloud",
+    "Reset" : "Redefinir",
     "Please introduce a valid OpenProject host name" : "Introduza um nome de host OpenProject válido",
     "Administration > File storages" : "Administração > Armazenamentos de arquivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vá para o seu OpenProject {htmlLink} como administrador e inicie a configuração e copie os valores aqui.",

@@ -7,6 +7,7 @@ OC.L10N.register(
     "Connected accounts" : "Tengdir aðgangar",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
+    "Reset" : "Endurstilla",
     "Enable navigation link" : "Virkja flakktengil",
     "Connected as {user}" : "Tengt sem {user}",
     "Incorrect access token" : "Rangt aðgangsteikn",

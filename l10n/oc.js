@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Anullar",
     "Save" : "Enregistrar",
+    "Reset" : "Reïnicializar",
     "Connected as {user}" : "Connectat coma {user}",
     "Invalid token" : "Geton invalid",
     "Copied!" : "Copiat !",

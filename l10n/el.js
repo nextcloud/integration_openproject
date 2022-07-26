@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
+    "Reset" : "Επαναφορά",
     "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",

@@ -6,6 +6,7 @@
     "Connected accounts" : "계정 연결됨",
     "Cancel" : "취소",
     "Save" : "저장",
+    "Reset" : "초기화",
     "Connected as {user}" : "{user}로 연결됨",
     "Incorrect access token" : "잘못된 액세스 토큰",
     "Copied!" : "복사 성공!",

@@ -6,6 +6,7 @@ OC.L10N.register(
     "Connected accounts" : "Поврзани сметки",
     "Cancel" : "Откажи",
     "Save" : "Зачувај",
+    "Reset" : "Ресетирање",
     "Enable navigation link" : "Овозможи линк за навигација",
     "Connected as {user}" : "Поврзан како {user}",
     "Incorrect access token" : "Неточен токен за пристап",

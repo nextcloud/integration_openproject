@@ -7,6 +7,7 @@ OC.L10N.register(
     "Connected accounts" : "接続済みアカウント",
     "Cancel" : "キャンセル",
     "Save" : "保存",
+    "Reset" : "リセット",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Connected as {user}" : "{user} に接続済み",
     "Incorrect access token" : "正しくないアクセストークン",

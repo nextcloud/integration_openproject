@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth access token refused",
     "Cancel" : "Cancel",
     "Save" : "Save",
+    "Reset" : "Reset",
     "Copied!" : "Copied!",
     "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },

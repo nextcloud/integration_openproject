@@ -7,6 +7,7 @@ OC.L10N.register(
     "Connected accounts" : "Contas conectadas",
     "Cancel" : "Cancelar",
     "Save" : "Gardar",
+    "Reset" : "Restabelecer",
     "Enable navigation link" : "Activar a ligazón de navegación",
     "Connected as {user}" : "Conectado como {user}",
     "Enable unified search for tickets" : "Activar a busca unificada de billetes.",

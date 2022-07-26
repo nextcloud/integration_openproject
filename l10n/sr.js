@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Поништи",
     "Save" : "Сачувај",
+    "Reset" : "Ресетуј",
     "Copied!" : "Копирано!",
     "Start typing to search" : "Почните да куцате да бисте претраживали"
 },

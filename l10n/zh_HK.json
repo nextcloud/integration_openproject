@@ -29,6 +29,7 @@
     "Nextcloud OAuth client secret" : "Nextcloud OAuth 客戶端密碼",
     "Yes, I have copied these values" : "是的，我已複製了這些值",
     "Replace Nextcloud OAuth values" : "取代 Nextcloud OAuth 值",
+    "Reset" : "重設",
     "Please introduce a valid OpenProject host name" : "請輸入一個有效的 OpenProject 主機名",
     "Administration > File storages" : "管理 > 檔案存儲",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "以管理員身份轉到您的 OpenProject {htmlLink}，開始設置並在此處複製值。",

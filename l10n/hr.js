@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Povezani računi",
     "Cancel" : "Odustani",
     "Save" : "Spremi",
+    "Reset" : "Resetiraj",
     "Enable navigation link" : "Omogući navigacijsku poveznicu",
     "Connected as {user}" : "Povezan kao {user}",
     "Enable unified search for tickets" : "Omogući objedinjeno pretraživanje prijava",

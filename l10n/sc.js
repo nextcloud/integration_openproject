@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Contos connètidos",
     "Cancel" : "Annulla",
     "Save" : "Sarva",
+    "Reset" : "Torra a impostare",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",

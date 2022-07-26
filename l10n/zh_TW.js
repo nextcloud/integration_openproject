@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "已連線的帳號",
     "Cancel" : "取消",
     "Save" : "儲存",
+    "Reset" : "重設",
     "Enable navigation link" : "啟用導覽連結",
     "Connected as {user}" : "以 {user} 身份連線",
     "Incorrect access token" : "不正確的存取權杖",

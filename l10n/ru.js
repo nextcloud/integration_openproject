@@ -10,6 +10,7 @@ OC.L10N.register(
     "Connected accounts" : "Подключённые учётные записи",
     "Cancel" : "Отменить",
     "Save" : "Сохранить",
+    "Reset" : "Сброс",
     "Enable navigation link" : "Включить ссылку для навигации",
     "Connected as {user}" : "Подключено под именем {user}",
     "Enable unified search for tickets" : "Включить унифицированный поиск билетов",
