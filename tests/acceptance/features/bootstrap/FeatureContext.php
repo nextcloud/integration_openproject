@@ -225,6 +225,19 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets the information of the file :fileName
+	 * @When user :user gets the information of the folder :fileName
+	 */
+	public function userGetsTheInformationOfFileWithName(string $user, string $fileName): void {
+		$fileId = $this->getIdOfElement($user, $fileName);
+		$this->response = $this->sendOCSRequest(
+			'/apps/integration_openproject/fileinfo/' . $fileId,
+			'GET',
+			$user
+		);
+	}
+
+	/**
 	 * @When user :user gets the information of all files created in this scenario
 	 */
 	public function userGetsTheInformationOfAllCreatedFiles(string $user): void {
@@ -310,11 +323,15 @@ class FeatureContext implements Context {
 			[],
 			$content
 		);
+		return $this->getIdOfElement($user, $destination);
+	}
+
+	private function getIdOfElement(string $user, string $element): int {
 		$propfindResponse = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
 			"PROPFIND",
-			$destination,
+			$element,
 			null,
 			'<?xml version="1.0"?>
 					<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns">
@@ -331,7 +348,6 @@ class FeatureContext implements Context {
 		);
 		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
 	}
-
 	/**
 	 * @param string $path
 	 * @param string $method

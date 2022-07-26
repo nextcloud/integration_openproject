@@ -778,3 +778,52 @@ Feature: retrieve file information of a single file, using the file ID
       }
     }
    """
+
+
+  Scenario: get modifier of a folder
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Brian" has been created
+    And user "Alice" has created folder "/folder"
+    And user "Alice" has uploaded file with content "some data" to "/folder/file.txt"
+    And user "Alice" has shared folder "/folder" with user "Brian"
+    And user "Brian" has uploaded file with content "changed data" to "/folder/file.txt"
+    And user "Brian" has uploaded file with content "data" to "/folder/new-file.txt"
+    When user "Alice" gets the information of the folder "/folder"
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "status",
+        "statuscode",
+        "id",
+        "size",
+        "name",
+        "mtime",
+        "ctime",
+        "mimetype",
+        "owner_id",
+        "owner_name",
+        "modifier_id",
+        "modifier_name",
+        "trashed"
+      ],
+      "properties": {
+          "status": {"type": "string", "pattern": "^OK$"},
+          "statuscode" : {"type" : "number", "enum": [200]},
+          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+          "size" : {"type" : "integer", "enum": [16] },
+          "mtime" : {"type" : "integer"},
+          "ctime" : {"type" : "integer", "enum": [0]},
+          "name": {"type": "string", "pattern": "^folder$"},
+          "mimetype": {"type": "string", "pattern": "^httpd\/unix-directory$"},
+          "owner_id": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+          "modifier_id": null,
+          "modifier_name": null,
+          "trashed": {"type": "boolean", "enum": [false]}
+      }
+    }
+   """
+
