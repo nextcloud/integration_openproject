@@ -827,3 +827,85 @@ Feature: retrieve file information of a single file, using the file ID
     }
    """
 
+
+  Scenario: get modifier of a file changed through a public link
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Alice" has created folder "/folder"
+    And user "Alice" has uploaded file with content "some data" to "/folder/file.txt"
+    And user "Alice" has shared folder "/folder" with the public
+    And the public has uploaded file "file.txt" with content "changed content" to last created public link
+    When user "Alice" gets the information of the file "/folder/file.txt"
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "status",
+        "statuscode",
+        "id",
+        "size",
+        "name",
+        "mtime",
+        "ctime",
+        "mimetype",
+        "owner_id",
+        "owner_name",
+        "modifier_id",
+        "modifier_name",
+        "trashed"
+      ],
+      "properties": {
+          "status": {"type": "string", "pattern": "^OK$"},
+          "statuscode" : {"type" : "number", "enum": [200]},
+          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+          "size" : {"type" : "integer", "enum": [15] },
+          "mtime" : {"type" : "integer"},
+          "ctime" : {"type" : "integer", "enum": [0]},
+          "name": {"type": "string", "pattern": "^file.txt$"},
+          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+          "owner_id": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+          "modifier_id": null,
+          "modifier_name": null,
+          "trashed": {"type": "boolean", "enum": [false]}
+      }
+    }
+   """
+
+
+  Scenario: get modifier of a file changed through a public link after a real change
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Alice" has created folder "/folder"
+    And user "Alice" has uploaded file with content "some data" to "/folder/file.txt"
+    And user "Alice" has uploaded file with content "change" to "/folder/file.txt"
+    And user "Alice" has shared folder "/folder" with the public
+    And the public has uploaded file "file.txt" with content "changed content" to last created public link
+    When user "Alice" gets the information of the file "/folder/file.txt"
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "status",
+        "statuscode",
+        "size",
+        "name",
+        "owner_id",
+        "owner_name",
+        "modifier_id",
+        "modifier_name"
+      ],
+      "properties": {
+          "status": {"type": "string", "pattern": "^OK$"},
+          "statuscode" : {"type" : "number", "enum": [200]},
+          "size" : {"type" : "integer", "enum": [15] },
+          "name": {"type": "string", "pattern": "^file.txt$"},
+          "owner_id": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+          "modifier_id": null,
+          "modifier_name": null
+      }
+    }
+   """

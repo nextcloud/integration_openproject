@@ -20,11 +20,14 @@ class FeatureContext implements Context {
 	private const SHARE_TYPES = [
 		'user' => 0,
 		'group' => 1,
+		'the public' => 3
 	];
 	/**
 	 * @var array<int>
 	 */
 	private array $createdFiles = [];
+
+	private string $lastCreatedPublicLink;
 	private ?ResponseInterface $response = null;
 
 	public function getAdminUsername(): string {
@@ -112,6 +115,27 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given the public has uploaded file :destination with content :content to last created public link
+	 */
+	public function publicHasUploadedFileWithContent(
+		string $content, string $destination
+	):void {
+		$this->response = $this->makeDavRequest(
+			$this->lastCreatedPublicLink,
+			'',
+			"PUT",
+			$destination,
+			[],
+			$content,
+			'public-link'
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			["201", "204"],
+			"HTTP status code was not 201 or 204 while trying to upload file '$destination' as public"
+		);
+	}
+
+	/**
 	 * @Given user :user has created folder :folder
 	 */
 	public function userHasCreatedFolder(
@@ -130,15 +154,22 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @Given /^user "([^"]*)" has shared (?:file|folder) "([^"]*)" with (user|group) "([^"]*)"$/
+	 * @Given /^user "([^"]*)" has shared (?:file|folder) "([^"]*)" with (user|group|the public)\s?"?([^"]*)"?$/
+	 * @throws \Exception
+	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	public function userHasSharedFileWithUser(
-		string $sharer, string $path, string $userOrGroup, string $shareWith): void {
+		string $sharer, string $path, string $shareType, string $shareWith = ''): void {
 		$body['path'] = $path;
-		$body['shareType'] = self::SHARE_TYPES[$userOrGroup];
-		$body['shareWith'] = $shareWith;
+		$body['shareType'] = self::SHARE_TYPES[$shareType];
 		$body['permissions'] = 31;
-
+		if ($shareType === 'the public') {
+			$shareWithForMessage = $shareType;
+			$body['publicUpload'] = true;
+		} else {
+			$body['shareWith'] = $shareWith;
+			$shareWithForMessage = $shareWith;
+		}
 		$this->response = $this->sendOCSRequest(
 			'/apps/files_sharing/api/v1/shares',
 			'POST',
@@ -147,8 +178,28 @@ class FeatureContext implements Context {
 		);
 		$this->theHTTPStatusCodeShouldBe(
 			"200",
-			"HTTP status code was not 200 while sharing '$path' with '$shareWith'"
+			"HTTP status code was not 200 while sharing '$path' with '$shareWithForMessage'"
 		);
+
+		if ($shareType === 'the public') {
+			$fixPublicLinkPermBody['permissions'] = 15;
+			$shareData = json_decode($this->response->getBody()->getContents());
+			if ($shareData === null) {
+				throw new \Exception('could not JSON decode content of share response');
+			}
+			$shareId = $shareData->ocs->data->id;
+			$this->lastCreatedPublicLink = $shareData->ocs->data->token;
+			$this->response = $this->sendOCSRequest(
+				'/apps/files_sharing/api/v1/shares/' . $shareId ,
+				'PUT',
+				$sharer,
+				$fixPublicLinkPermBody
+			);
+			$this->theHTTPStatusCodeShouldBe(
+				"200",
+				"HTTP status code was not 200 while giving upload permissions to public share of '$path'"
+			);
+		}
 	}
 
 	/**
@@ -447,7 +498,7 @@ class FeatureContext implements Context {
 		$body = null,
 		string $type = 'files'
 	): ResponseInterface {
-		$davPath = self::getDavPath($user);
+		$davPath = self::getDavPath($user, $type);
 
 		//replace %, # and ? and in the path, Guzzle will not encode them
 		$urlSpecialChar = [['%', '#', '?'], ['%25', '%23', '%3F']];
@@ -484,7 +535,10 @@ class FeatureContext implements Context {
 		);
 	}
 
-	private static function getDavPath(string $user): string {
+	private static function getDavPath(string $user, string $type = 'files'): string {
+		if ($type === 'public-link') {
+			return '/public.php/webdav/';
+		}
 		return 'remote.php/dav/files/' . strtolower($user) . '/';
 	}
 
