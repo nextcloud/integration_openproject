@@ -62,18 +62,28 @@ class FeatureContext implements Context {
 	/**
 	 * @Given user :user has been created
 	 */
-	public function userHasBeenCreated(string $user):void {
+	public function userHasBeenCreated(string $user, string $displayName = null):void {
 		// delete the user if it exists
 		$this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
+		if ($displayName !== null) {
+			$userAttributes['displayName'] = $displayName;
+		}
 
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 		);
 		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
+	 * @Given user :user has been created with display-name :displayName
+	 */
+	public function userHasBeenCreatedWithDisplayName(string $user, string $displayName):void {
+		$this->userHasBeenCreated($user, $displayName);
 	}
 
 	/**

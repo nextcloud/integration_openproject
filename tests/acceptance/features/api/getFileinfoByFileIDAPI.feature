@@ -484,7 +484,7 @@ Feature: retrieve file information of a single file, using the file ID
    """
 
   Scenario: get modifier when same user uploads and overwrites a file
-    Given user "Alice" has been created
+    Given user "Alice" has been created with display-name "Alice Hansen"
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     And user "Alice" has uploaded file with content "changed data" to "file.txt"
     When user "Alice" gets the information of last created file
@@ -513,9 +513,9 @@ Feature: retrieve file information of a single file, using the file ID
           "ctime" : {"type" : "integer", "enum": [0]},
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice Hansen"},
           "modifier_id": {"type": "string", "pattern": "^Alice$"},
-          "modifier_name": {"type": "string", "pattern": "^Alice$"}
+          "modifier_name": {"type": "string", "pattern": "^Alice Hansen"}
       }
     }
    """
@@ -523,8 +523,8 @@ Feature: retrieve file information of a single file, using the file ID
 
   Scenario Outline: get modifier in a chain of shares
     Given user "Alice" has been created
-    And user "Brian" has been created
-    And user "Chandra" has been created
+    And user "Brian" has been created with display-name "Brian Peters"
+    And user "Chandra" has been created with display-name "Chandra Thapa"
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     And user "Alice" has shared file "file.txt" with user "Brian"
     And user "Brian" has shared file "file.txt" with user "Chandra"
@@ -555,23 +555,23 @@ Feature: retrieve file information of a single file, using the file ID
           "ctime" : {"type" : "integer", "enum": [0]},
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "owner_name": {"type": "string", "pattern": "^Alice"},
           "modifier_id": {"type": "string", "pattern": "^<modifier>"},
-          "modifier_name": {"type": "string", "pattern": "^<modifier>"}
+          "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"}
       }
     }
    """
     Examples:
-      | modifier | retriever |
-      | Alice    | Alice     |
-      | Brian    | Alice     |
-      | Chandra  | Alice     |
-      | Alice    | Brian     |
-      | Brian    | Brian     |
-      | Chandra  | Brian     |
-      | Alice    | Chandra   |
-      | Brian    | Chandra   |
-      | Chandra  | Chandra   |
+      | modifier | modifier-display-name | retriever | comment                                              |
+      | Alice    | Alice                 | Alice     | display-name should be username if not specially set |
+      | Brian    | Brian Peters          | Alice     |                                                      |
+      | Chandra  | Chandra Thapa         | Alice     |                                                      |
+      | Alice    | Alice                 | Brian     |                                                      |
+      | Brian    | Brian Peters          | Brian     |                                                      |
+      | Chandra  | Chandra Thapa         | Brian     |                                                      |
+      | Alice    | Alice                 | Chandra   |                                                      |
+      | Brian    | Brian Peters          | Chandra   |                                                      |
+      | Chandra  | Chandra Thapa         | Chandra   |                                                      |
 
 
   Scenario: get modifier in a chain of shares when there are multiple modifiers

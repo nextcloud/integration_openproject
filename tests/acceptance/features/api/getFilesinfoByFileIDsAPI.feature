@@ -2,7 +2,7 @@ Feature: retrieve information of multiple files using the file IDs
 
   Scenario: get information of four files, one own, one received as share, one trashed, one not accessible
     Given user "Alice" has been created
-    And user "Brian" has been created
+    And user "Brian" has been created with display-name "Brian Adams"
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     And user "Brian" has uploaded file with content "some data" to "fromBrian.txt"
     And user "Alice" has uploaded file with content "more data" to "trashed.txt"
@@ -87,7 +87,7 @@ Feature: retrieve information of multiple files using the file IDs
               "name": {"type": "string", "pattern": "^fromBrian.txt$"},
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Brian$"},
-              "owner_name": {"type": "string", "pattern": "^Brian$"},
+              "owner_name": {"type": "string", "pattern": "^Brian Adams$"},
               "modifier_id": null,
               "modifier_name": null,
               "trashed": {"type": "boolean", "enum": [false]}
