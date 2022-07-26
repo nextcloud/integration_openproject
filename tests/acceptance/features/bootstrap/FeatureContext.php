@@ -77,6 +77,16 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given user :user has been deleted
+	 */
+	public function userHasBeenDeleted(string $user):void {
+		$this->sendOCSRequest(
+			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
+		);
+		$this->theHttpStatusCodeShouldBe(204);
+	}
+
+	/**
 	 * @Given user :user has uploaded file with content :content to :destination
 	 */
 	public function userHasUploadedFileWithContentTo(
@@ -148,7 +158,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @Given /^user "([^"]*)" has renamed (?:file|folder) "([^"]*)" to "([^"]*)"$/
+	 * @Given /^user "([^"]*)" has (?:renamed|moved) (?:file|folder) "([^"]*)" to "([^"]*)"$/
 	 */
 	public function userHasRenamedFile(string $user, string $src, string $dst):void {
 		$davPath = self::getDavPath($user);
