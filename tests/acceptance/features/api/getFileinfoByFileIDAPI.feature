@@ -20,6 +20,8 @@ Feature: retrieve file information of a single file, using the file ID
         "mimetype",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -33,6 +35,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype": {"type": "string", "pattern": "^text\/plain$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -59,6 +63,8 @@ Feature: retrieve file information of a single file, using the file ID
         "mimetype",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -72,6 +78,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype": {"type": "string", "pattern": "^text\/plain$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -98,6 +106,8 @@ Feature: retrieve file information of a single file, using the file ID
         "mimetype",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -111,6 +121,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype": {"type": "string", "pattern": "^text\/plain$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [true]}
       }
     }
@@ -138,6 +150,8 @@ Feature: retrieve file information of a single file, using the file ID
         "mimetype",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -151,6 +165,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype": {"type": "string", "pattern": "^text\/plain$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [true]}
       }
     }
@@ -180,6 +196,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype",
           "owner_id",
           "owner_name",
+          "modifier_id",
+          "modifier_name",
           "trashed"
         ]
       },
@@ -212,6 +230,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype",
           "owner_id",
           "owner_name",
+          "modifier_id",
+          "modifier_name",
           "trashed"
         ]
       },
@@ -239,6 +259,8 @@ Feature: retrieve file information of a single file, using the file ID
         "name",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -247,6 +269,8 @@ Feature: retrieve file information of a single file, using the file ID
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -270,6 +294,8 @@ Feature: retrieve file information of a single file, using the file ID
         "name",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -278,6 +304,8 @@ Feature: retrieve file information of a single file, using the file ID
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -302,6 +330,8 @@ Feature: retrieve file information of a single file, using the file ID
         "name",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -310,6 +340,8 @@ Feature: retrieve file information of a single file, using the file ID
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -333,6 +365,8 @@ Feature: retrieve file information of a single file, using the file ID
         "name",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -341,6 +375,8 @@ Feature: retrieve file information of a single file, using the file ID
           "name": {"type": "string", "pattern": "^file.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -365,6 +401,8 @@ Feature: retrieve file information of a single file, using the file ID
         "name",
         "owner_id",
         "owner_name",
+        "modifier_id",
+        "modifier_name",
         "trashed"
       ],
       "properties": {
@@ -373,6 +411,8 @@ Feature: retrieve file information of a single file, using the file ID
           "name": {"type": "string", "pattern": "^renamed.txt$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
+          "modifier_id": null,
+          "modifier_name": null,
           "trashed": {"type": "boolean", "enum": [false]}
       }
     }
@@ -396,14 +436,18 @@ Feature: retrieve file information of a single file, using the file ID
         "statuscode",
         "name",
         "owner_id",
-        "owner_name"
+        "owner_name",
+        "modifier_id",
+        "modifier_name"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
           "statuscode" : {"type" : "number",  "enum": [200] },
           "name": {"type": "string", "pattern": "^moved-out.txt$"},
           "owner_id": {"type": "string", "pattern": "^Brian$"},
-          "owner_name": {"type": "string", "pattern": "^Brian$"}
+          "owner_name": {"type": "string", "pattern": "^Brian$"},
+          "modifier_id": null,
+          "modifier_name": null
       }
     }
    """
@@ -427,6 +471,8 @@ Feature: retrieve file information of a single file, using the file ID
           "mimetype",
           "owner_id",
           "owner_name",
+          "modifier_id",
+          "modifier_name",
           "trashed"
         ]
       },

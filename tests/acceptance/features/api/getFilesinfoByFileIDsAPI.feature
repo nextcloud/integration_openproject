@@ -40,6 +40,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype",
               "owner_id",
               "owner_name",
+              "modifier_id",
+              "modifier_name",
               "trashed"
             ],
             "properties": {
@@ -53,6 +55,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Alice$"},
               "owner_name": {"type": "string", "pattern": "^Alice$"},
+              "modifier_id": null,
+              "modifier_name": null,
               "trashed": {"type": "boolean", "enum": [false]}
             }
           },
@@ -69,6 +73,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype",
               "owner_id",
               "owner_name",
+              "modifier_id",
+              "modifier_name",
               "trashed"
             ],
             "properties": {
@@ -82,6 +88,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Brian$"},
               "owner_name": {"type": "string", "pattern": "^Brian$"},
+              "modifier_id": null,
+              "modifier_name": null,
               "trashed": {"type": "boolean", "enum": [false]}
             }
           },
@@ -98,6 +106,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype",
               "owner_id",
               "owner_name",
+              "modifier_id",
+              "modifier_name",
               "trashed"
             ],
             "properties": {
@@ -111,6 +121,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Alice$"},
               "owner_name": {"type": "string", "pattern": "^Alice$"},
+              "modifier_id": null,
+              "modifier_name": null,
               "trashed": {"type": "boolean", "enum": [true]}
             }
           },
@@ -130,6 +142,8 @@ Feature: retrieve information of multiple files using the file IDs
                 "mimetype",
                 "owner_id",
                 "owner_name",
+                "modifier_id",
+                "modifier_name",
                 "trashed"
               ]
             },
@@ -154,6 +168,8 @@ Feature: retrieve information of multiple files using the file IDs
                 "mimetype",
                 "owner_id",
                 "owner_name",
+                "modifier_id",
+                "modifier_name",
                 "trashed"
               ]
             },
