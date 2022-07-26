@@ -773,8 +773,8 @@ Feature: retrieve file information of a single file, using the file ID
           "statuscode" : {"type" : "number", "enum": [200]},
           "size" : {"type" : "integer", "enum": [12]},
           "name": {"type": "string", "pattern": "^file.txt$"},
-          "modifier_id": {"type": "string", "pattern": "^Brian"},
-          "modifier_name": {"type": "string", "pattern": "^Brian"}
+          "modifier_id": null,
+          "modifier_name": null
       }
     }
    """
