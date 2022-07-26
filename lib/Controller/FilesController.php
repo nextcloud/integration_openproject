@@ -12,7 +12,6 @@
 namespace OCA\OpenProject\Controller;
 
 use OCA\Activity\Data;
-use OCA\Activity\GroupHelper;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;

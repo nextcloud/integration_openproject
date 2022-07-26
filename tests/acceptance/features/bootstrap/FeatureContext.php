@@ -190,7 +190,7 @@ class FeatureContext implements Context {
 			$shareId = $shareData->ocs->data->id;
 			$this->lastCreatedPublicLink = $shareData->ocs->data->token;
 			$this->response = $this->sendOCSRequest(
-				'/apps/files_sharing/api/v1/shares/' . $shareId ,
+				'/apps/files_sharing/api/v1/shares/' . $shareId,
 				'PUT',
 				$sharer,
 				$fixPublicLinkPermBody
