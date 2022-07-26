@@ -19,9 +19,9 @@ Requirements:
 - Docker Compose
     - for v1, minimum version required is v1.29.0, make sure to use `docker-compose` instead of `docker compose`
     - this guide is written for v2
-- OpenProject server instance running in the host machine
+- OpenProject server instance
 
-  It must be reachable by the hostname `host.docker.internal`, you can do this through this environment
+  It must be reachable by the hostname `host.docker.internal` in the host machine. You can do this through this environment
   variable: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal`.
 
   This hostname will resolve to `127.0.0.1` on the docker host and to something like `172.17.0.1` inside of the docker
@@ -91,17 +91,46 @@ After this, you should be able to access the Nextcloud server at [http://localho
 
 > **Note:** These steps will only be necessary for the first setup.
 
-#### Create admin
+#### Database
 
-1. Browse to [http://localhost:8080](http://localhost:8080)
-2. Create an admin user
-3. Get an installed NC server
+With our compose setup, there are two options for the database:
 
-For the database, **PostgreSQL** is used with the following credentials:
+- **SQLite:** No specific configuration is necessary
+- **PostgreSQL:**
+  - Database: `nextcloud`
+  - User: `nextcloud`
+  - Password: `nextcloud`
 
-- **Database:** `nextcloud`
-- **User:** `nextcloud`
-- **Password:** `nextcloud`
+#### Installation
+
+The NC server installation can be done in two ways:
+
+1. With `occ` command (CLI):
+    - Using `PostgreSQL` as database type:
+      ```bash
+      docker compose exec --user www-data nextcloud php occ maintenance:install -vvv \
+      --database pgsql \
+      --database-name nextcloud \
+      --database-host db \
+      --database-user nextcloud \
+      --database-pass nextcloud \
+      --admin-user admin \
+      --admin-pass admin \
+      --data-dir /var/www/html/data
+      ```
+    - Using `SQLite` as database type:
+      ```shell
+      docker compose exec --user www-data nextcloud php occ maintenance:install -vvv \
+      --admin-user admin \
+      --admin-pass admin \
+      --data-dir /var/www/html/data
+      ```
+
+2. With the `browser` (WebUI):
+    1. Browse to [http://localhost:8080](http://localhost:8080)
+    2. Fill `Create an admin account` form
+    3. Choose the database type
+    4. Click the `Install` button
 
 #### Enable the integration app:
 
