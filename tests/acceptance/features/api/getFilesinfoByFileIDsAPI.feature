@@ -55,8 +55,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Alice$"},
               "owner_name": {"type": "string", "pattern": "^Alice$"},
-              "modifier_id": null,
-              "modifier_name": null,
+              "modifier_id": {"type": "null"},
+              "modifier_name": {"type": "null"},
               "trashed": {"type": "boolean", "enum": [false]}
             }
           },
@@ -88,8 +88,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Brian$"},
               "owner_name": {"type": "string", "pattern": "^Brian Adams$"},
-              "modifier_id": null,
-              "modifier_name": null,
+              "modifier_id": {"type": "null"},
+              "modifier_name": {"type": "null"},
               "trashed": {"type": "boolean", "enum": [false]}
             }
           },
@@ -121,8 +121,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Alice$"},
               "owner_name": {"type": "string", "pattern": "^Alice$"},
-              "modifier_id": null,
-              "modifier_name": null,
+              "modifier_id": {"type": "null"},
+              "modifier_name": {"type": "null"},
               "trashed": {"type": "boolean", "enum": [true]}
             }
           },
