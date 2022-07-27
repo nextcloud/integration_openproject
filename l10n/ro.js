@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Conturile conectate",
     "Cancel" : "Anulare",
     "Save" : "Salvează",
+    "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
     "Copied!" : "S-a copiat!"
 },

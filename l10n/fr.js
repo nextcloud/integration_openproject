@@ -16,6 +16,7 @@ OC.L10N.register(
     "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'intégration d'OpenProject fournit un widget pour le dashboard qui affiche vos notifications importantes,\n\tun fournisseur de recherche pour les work packages et des notifications pour les changements dans les work packages actifs.",
     "Cancel" : "Annuler",
     "Save" : "Enregistrer",
+    "Reset" : "Réinitialiser",
     "OpenProject admin options saved" : "Options d'administration OpenProject enregistrées",
     "Failed to save OpenProject admin options" : "Échec de l'enregistrement des options d'administration OpenProject",
     "Connect to OpenProject" : "Se connecter à OpenProject",

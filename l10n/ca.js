@@ -8,6 +8,7 @@ OC.L10N.register(
     "Connected accounts" : "Comptes connectats",
     "Cancel" : "Cancel·la",
     "Save" : "Desar",
+    "Reset" : "Restableix",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
