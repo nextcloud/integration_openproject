@@ -93,9 +93,11 @@ jobs:
         env:
           NEXTCLOUD_BASE_URL: http://localhost:8080
         run: |
+          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
+          ./occ a:e activity
           ./occ a:e integration_openproject
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject

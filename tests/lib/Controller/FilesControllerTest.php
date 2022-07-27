@@ -3,12 +3,31 @@
 namespace OCA\OpenProject\Controller;
 
 use OCA\Files_Trashbin\Trash\ITrashManager;
+use OCP\Activity\IManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Node;
+use OCP\IConfig;
+use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\RichObjectStrings\IValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
+
+/**
+ * overriding the class_exists method, so that the unit tests always pass,
+ * no matter if the activity app is enabled or not
+ */
+function class_exists(string $className): bool {
+	if ($className === '\OCA\Activity\Data') {
+		return false;
+	} else {
+		return \class_exists($className);
+	}
+}
 
 class FilesControllerTest extends TestCase {
 
@@ -103,7 +122,9 @@ class FilesControllerTest extends TestCase {
 				"size" => 200245,
 				"owner_name" => "Test User",
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-				'trashed' => false
+				'trashed' => false,
+				'modifier_name' => null,
+				'modifier_id' => null
 			],
 			$result->getData()
 		);
@@ -455,7 +476,9 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false
+					'trashed' => false,
+					'modifier_name' => null,
+					'modifier_id' => null
 				],
 				3 => [
 					'status' => 'OK',
@@ -468,7 +491,9 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false
+					'trashed' => false,
+					'modifier_name' => null,
+					'modifier_id' => null
 				]
 			],
 			$result->getData()
@@ -518,7 +543,9 @@ class FilesControllerTest extends TestCase {
 		"size" => 200245,
 		"owner_name" => "Test User",
 		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-		"trashed" => true
+		"trashed" => true,
+		'modifier_name' => null,
+		'modifier_id' => null
 	];
 
 	/**
@@ -535,7 +562,9 @@ class FilesControllerTest extends TestCase {
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-		'trashed' => false
+		'trashed' => false,
+		'modifier_name' => null,
+		'modifier_id' => null
 	];
 
 	/**
@@ -552,7 +581,9 @@ class FilesControllerTest extends TestCase {
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-		'trashed' => false
+		'trashed' => false,
+		'modifier_name' => null,
+		'modifier_id' => null
 	];
 
 	/**
@@ -592,7 +623,14 @@ class FilesControllerTest extends TestCase {
 			$storageMock,
 			$trashManagerMock,
 			$userSessionMock,
-			$mountProviderCollectionMock
+			$mountProviderCollectionMock,
+			$this->createMock(IManager::class),
+			$this->createMock(IDBConnection::class),
+			$this->createMock(IValidator::class),
+			$this->createMock(ILogger::class),
+			$this->createMock(IL10N::class),
+			$this->createMock(IConfig::class),
+			$this->createMock(IUserManager::class)
 		);
 	}
 
