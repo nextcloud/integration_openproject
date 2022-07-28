@@ -56,7 +56,7 @@ export default {
 	data: () => ({
 		wpTypeTextStroke: 'unset',
 		wpStatusFontColor: '#FFFFFF',
-		wpStatusBorder: '0px',
+		wpStatusBorder: '0',
 	}),
 	created() {
 		this.setWPTypeTextStroke()
@@ -100,7 +100,7 @@ export default {
 					this.wpStatusBorder = 'solid 1px #000000'
 					return
 				}
-				this.wpStatusBorder = '0px'
+				this.wpStatusBorder = '0'
 			} catch (e) {
 				// something went  wrong, leave the values as they are
 			}
