@@ -326,7 +326,6 @@ export default {
 		}
 		&--unlinkactionbutton {
 			margin: 4px;
-			filter: contrast(0) brightness(0);
 			visibility: hidden;
 		}
 	}
