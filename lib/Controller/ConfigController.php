@@ -334,4 +334,18 @@ class ConfigController extends Controller {
 			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
 		}
 	}
+
+	/**
+	 * @NoCSRFRequired
+	 * @NoAdminRequired
+	 * @PublicPage
+	 *
+	 * @return DataResponse
+	 */
+	public function checkConfig(): DataResponse {
+		return new DataResponse([
+			'user_id' => $this->userId ?? '',
+			'authorization_header' => $_SERVER['HTTP_AUTHORIZATION'],
+		]);
+	}
 }
