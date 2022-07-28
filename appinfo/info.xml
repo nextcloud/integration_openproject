@@ -10,7 +10,7 @@
 	<namespace>OpenProject</namespace>
 	<documentation>
 		<user>https://openproject.org/docs/user-guide/nextcloud-integration/</user>
-		<admin>ttps://openproject.org/docs/system-admin-guide/integrations/nextcloud/</admin>
+		<admin>https://openproject.org/docs/system-admin-guide/integrations/nextcloud/</admin>
 		<developer>https://github.com/eneiluj/integration_openproject</developer>
 	</documentation>
 	<category>integration</category>
