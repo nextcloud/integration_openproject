@@ -9,8 +9,8 @@ exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`]
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-123">
         <div class="row">
-          <div class="row__status">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: rgb(249, 150, 1); border: 0px;">
+            <div class="row__status__title" style="color: rgb(255, 255, 255);">
               open
             </div>
           </div>
@@ -74,8 +74,8 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-123">
         <div class="row">
-          <div class="row__status" style="background-color: rgb(165, 216, 255);">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: rgb(165, 216, 255); border: 0px;">
+            <div class="row__status__title" style="color: rgb(0, 0, 0);">
               open
             </div>
           </div>
@@ -114,8 +114,8 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-589">
         <div class="row">
-          <div class="row__status" style="background-color: rgb(165, 216, 255);">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: rgb(165, 216, 255); border: 0px;">
+            <div class="row__status__title" style="color: rgb(0, 0, 0);">
               प्रगति हुदैछ
             </div>
           </div>
@@ -162,8 +162,8 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-123">
         <div class="row">
-          <div class="row__status">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: rgb(249, 150, 1); border: 0px;">
+            <div class="row__status__title" style="color: rgb(255, 255, 255);">
               open
             </div>
           </div>
@@ -202,8 +202,8 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item" id="workpackage-589">
         <div class="row">
-          <div class="row__status">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: rgb(249, 150, 1); border: 0px;">
+            <div class="row__status__title" style="color: rgb(255, 255, 255);">
               प्रगति हुदैछ
             </div>
           </div>
@@ -250,8 +250,8 @@ exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
     <div class="linked-workpackages--workpackage">
       <div class="workpackage linked-workpackages--workpackage--item workpackage-transition" id="workpackage-1">
         <div class="row">
-          <div class="row__status" style="background-color: blue;">
-            <div class="row__status__title">
+          <div class="row__status" style="background-color: blue; border: 0px;">
+            <div class="row__status__title" style="color: rgb(255, 255, 255);">
               in-progress
             </div>
           </div>
