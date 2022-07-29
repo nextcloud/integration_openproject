@@ -36,6 +36,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiere als Administrator die folgenden Werte zurück in das OpenProject {htmlLink}",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Wenn Du fortfährst, musst Du diese Einstellungen mit den neuen OpenProject-OAuth-Anmeldeinformationen aktualisieren. Außerdem müssen alle Benutzer den Zugriff auf ihr OpenProject-Konto erneut autorisieren.",
     "Yes, replace" : "Ja, ersetzen",
+    "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Bist Du sicher, dass Du diese App zurücksetzen und alle Einstellungen und alle Verbindungen aller Nextcloud-Benutzer zu OpenProject löschen möchtest?",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
