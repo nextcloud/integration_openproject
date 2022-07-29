@@ -11,11 +11,11 @@
 	<documentation>
 		<user>https://openproject.org/docs/user-guide/nextcloud-integration/</user>
 		<admin>https://openproject.org/docs/system-admin-guide/integrations/nextcloud/</admin>
-		<developer>https://github.com/eneiluj/integration_openproject</developer>
+		<developer>https://github.com/nextcloud/integration_openproject</developer>
 	</documentation>
 	<category>integration</category>
 	<category>dashboard</category>
-	<website>https://github.com/eneiluj/integration_openproject</website>
+	<website>https://github.com/nextcloud/integration_openproject</website>
 	<bugs>https://community.openproject.org/projects/nextcloud-integration/work_packages</bugs>
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png</screenshot>
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot2.png</screenshot>
