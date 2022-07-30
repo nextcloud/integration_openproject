@@ -15,7 +15,6 @@ OC.L10N.register(
     "Connected accounts" : "Propojené účty",
     "OpenProject integration" : "Napojení na OpenProject",
     "Integration of OpenProject project management tool" : "Napojení na OpenProject – nástroj pro správu projektů",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Napojení na OpenProject poskytuje ovládací prvek pro přehled zobrazující důležitá upozornění pro vás,\n\ta sjednoceného poskytovatele vyhledávání v pracovních balíčcích a upozorňování na změny v aktivních pracovních balíčcích.",
     "OpenProject server" : "Server s OpenProject",
     "OpenProject host" : "Server s OpenProject",
     "Please introduce your OpenProject host name" : "Zadejte název stroje, na kterém je provozována vámi využívaná instance OpenProject",

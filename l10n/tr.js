@@ -15,7 +15,6 @@ OC.L10N.register(
     "Connected accounts" : "Bağlı hesaplar",
     "OpenProject integration" : "OpenProject bütünleştirmesi",
     "Integration of OpenProject project management tool" : "OpenProject proje yönetim aracı bütünleştirmesi",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject bütünleştirmesi, önemli bildirimleri, çalışma paketleri için arama özelliğini\n\tve etkin çalışma paketlerindeki değişiklik bildirimlerini görüntüleyen bir pano bileşeni sağlar.",
     "OpenProject server" : "OpenProject sunucusu",
     "OpenProject host" : "OpenProject sunucu adı",
     "Please introduce your OpenProject host name" : "Lütfen OpenProject sunucu adını yazın",

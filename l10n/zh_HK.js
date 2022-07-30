@@ -15,7 +15,6 @@ OC.L10N.register(
     "Connected accounts" : "已連線的賬號",
     "OpenProject integration" : "OpenProject 整合",
     "Integration of OpenProject project management tool" : "整合 OpenProject 項目管理工具",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "OpenProject 整合提供了一個儀表板小部件，顯示您的重要通知，\n工作包的搜索提供程序和活動工作包更改的通知。",
     "OpenProject server" : "OpenProject 伺服器",
     "OpenProject host" : "OpenProject 主機",
     "Please introduce your OpenProject host name" : "請輸入您的 OpenProject 主機名",

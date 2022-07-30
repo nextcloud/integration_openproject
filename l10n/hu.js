@@ -15,7 +15,6 @@ OC.L10N.register(
     "Connected accounts" : "Kapcsolt fiókok",
     "OpenProject integration" : "OpenProject integráció",
     "Integration of OpenProject project management tool" : "Az OpenProject projektmenedzsment-eszköz integrációja",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Az OpenProject integráció egy irányítópult modult nyújt, amely megjeleníti a fontos értesítéseit,\n\tkeresési szolgáltatót biztosít a munkacsomagjaihoz és értesíti az aktív munkacsomagjai változásairól.",
     "OpenProject server" : "OpenProject-kiszolgáló",
     "OpenProject host" : "OpenProject-gazdagép",
     "Please introduce your OpenProject host name" : "Adja meg az OpenProject-gazdagépet",

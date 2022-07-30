@@ -13,7 +13,6 @@
     "Connected accounts" : "Cuentas conectadas",
     "OpenProject integration" : "Integración con OpenProject",
     "Integration of OpenProject project management tool" : "Integración con la herramienta de manejo de proyectos OpenProject",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "La integración con OpenProject ofrece un widget para el panel de control que muestra tus notificaciones importantes, \n\tun proveedor de búsqueda para paquetes de trabajo y notifcaciones de cambios en paquetes de trabajo activos.",
     "OpenProject server" : "Servidor OpenProject ",
     "OpenProject host" : "OpenProject host",
     "Please introduce your OpenProject host name" : "Introduzca su nombre de host de OpenProject",

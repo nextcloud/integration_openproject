@@ -11,7 +11,6 @@
     "Connected accounts" : "Comptes connectés",
     "OpenProject integration" : "Intégration d'OpenProject",
     "Integration of OpenProject project management tool" : "Intégration de l'outil de gestion de projet OpenProject",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "L'intégration d'OpenProject fournit un widget pour le dashboard qui affiche vos notifications importantes,\n\tun fournisseur de recherche pour les work packages et des notifications pour les changements dans les work packages actifs.",
     "Cancel" : "Annuler",
     "Save" : "Enregistrer",
     "Reset" : "Réinitialiser",

@@ -12,7 +12,6 @@ OC.L10N.register(
     "Connected accounts" : "Prepojené účty",
     "OpenProject integration" : "OpenProject integrácia",
     "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
-    "OpenProject integration provides a dashboard widget displaying your important notifications,\n\ta search provider for work packages and notifications for changes in active work packages." : "Integrácia OpenProject poskytuje miniaplikáciu na paneli, ktorá vám zobrazuje dôležité oznámenia,\n\tjednotný poskytovateľ vyhľadávania pre vyhľadávanie pracovných balíkov a oznámenia o zmenách v aktívnych pracovných balíkoch.",
     "Cancel" : "Zrušiť",
     "Save" : "Uložiť",
     "Reset" : "Resetovať",
