@@ -15,6 +15,7 @@ OC.L10N.register(
     "Connected accounts" : "已連線的賬號",
     "OpenProject integration" : "OpenProject 整合",
     "Integration of OpenProject project management tool" : "整合 OpenProject 項目管理工具",
+    "This application deeply integrates with the open source project management software OpenProject. It allows linking files and folders in Nextcloud with work packages in OpenProject. In OpenProject, you can see all files related to a work package, and in Nextcloud, you can find all work packages linked to a file. Your project teams gain productivity as they clearly know where to find and store the files that they need for finishing a work package. Further, it extends the Nextcloud dashboard with a widget for personal notifications from OpenProject. The app can also extend the search function in Nextcloud to find work packages in OpenProject." : "該應用程序與開源項目管理軟件 OpenProject 緊密集成。 它允許將 Nextcloud 中的文件和文件夾與 OpenProject 中的工作包鏈接。 在 OpenProject 中，您可以看到與一個工作包相關的所有文件，在 Nextcloud 中，您可以找到所有鏈接到一個文件的工作包。 您的項目團隊可以提高工作效率，因為他們清楚地知道在哪裡可以找到和存儲完成工作包所需的文件。 此外，它使用來自 OpenProject 的個人通知小部件擴展了 Nextcloud 儀表板。 該應用程序還可以擴展 Nextcloud 中的搜索功能，以查找 OpenProject 中的工作包。",
     "OpenProject server" : "OpenProject 伺服器",
     "OpenProject host" : "OpenProject 主機",
     "Please introduce your OpenProject host name" : "請輸入您的 OpenProject 主機名",
