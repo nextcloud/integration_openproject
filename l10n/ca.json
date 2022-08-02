@@ -11,6 +11,7 @@
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
     "Incorrect access token" : "Testimoni d'accés incorrecte",
+    "Invalid token" : "El testimoni no és vàlid",
     "Copied!" : "S'ha copiat!",
     "Start typing to search" : "Escriviu per a cercar",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:"
