@@ -152,6 +152,38 @@ docker compose exec --user www-data nextcloud php occ config:system:set allow_lo
 - configure the connection to OpenProject using `http://host.docker.internal:3000` as the OpenProject URL
 - in OpenProject use `http://localhost:8080` as the NextCloud URL
 
+#### change the setup for testing purpose
+##### strip off Authorization Bearer tokens of HTTP requests
+If the bearer tokens are not forwarded to Nextcloud the authorization cannot work and that needs to be detected by OpenProject.
+Easiest way to do that is to disable `mod_rewrite` in Apache:
+```shell
+docker compose exec nextcloud a2dismod rewrite
+docker compose exec nextcloud service apache2 restart
+```
+To enable it again run:
+```shell
+docker compose exec nextcloud a2enmod rewrite
+docker compose exec nextcloud service apache2 restart
+```
+
+##### change version of Nextcloud
+To test another version of Nextcloud change the nextcloud images in the `docker-compose.overwrite.yml`
+e.g:
+```
+services:
+  nextcloud:
+    image: nextcloud:23-apache
+    ports:
+      - "8080:80"
+
+  cron:
+    image: nextcloud:23-apache
+```
+
+Please note:
+1. only [apache based versions](https://hub.docker.com/_/nextcloud/?tab=description) will work
+2. nextcloud does not support downgrading, so if you want to go back to an older version, you need to delete all the volumes with `docker compose down -v` and start the Nextcloud installation again
+
 ### Start Developing
 
 Now you can watch for the app code changes using the following command and start developing.
