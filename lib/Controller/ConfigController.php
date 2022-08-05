@@ -236,15 +236,15 @@ class ConfigController extends Controller {
 		}
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
-			$redirect_uri = $this->urlGenerator->linkToRouteAbsolute(
-				Application::APP_ID . '.config.oauthRedirect'
+			$redirectUri = $this->urlGenerator->getAbsoluteURL(
+				'/index.php/apps/' . Application::APP_ID . '/oauth-redirect'
 			);
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
 				'code' => $code,
-				'redirect_uri' => $redirect_uri,
+				'redirect_uri' => $redirectUri,
 				'grant_type' => 'authorization_code',
 				'code_verifier' => $codeVerifier
 			], 'POST');

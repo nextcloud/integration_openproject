@@ -589,7 +589,9 @@ class OpenProjectAPIService {
 		}
 		$clientID = $config->getAppValue(Application::APP_ID, 'client_id');
 		$oauthUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$redirectUri = $urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.config.oauthRedirect');
+		$redirectUri = $urlGenerator->getAbsoluteURL(
+			'/index.php/apps/' . Application::APP_ID . '/oauth-redirect'
+		);
 
 		// remove trailing slash from the oauthUrl if present
 		if (substr($oauthUrl, -1) === '/') {
