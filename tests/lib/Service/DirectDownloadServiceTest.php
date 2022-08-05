@@ -9,10 +9,12 @@
 
 namespace OCA\OpenProject\Service;
 
+use OC_Util;
 use OCA\DAV\Controller\DirectController;
 use OCA\DAV\Db\DirectMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -62,16 +64,33 @@ class DirectDownloadServiceTest extends TestCase {
 		$root = $c->get(IRootFolder::class);
 		$this->userFolder = $root->getUserFolder(self::USER_ID);
 
-		$this->directController = new DirectController(
-			'dav',
-			$c->get(IRequest::class),
-			$root,
-			self::USER_ID,
-			$c->get(DirectMapper::class),
-			$c->get(ISecureRandom::class),
-			$c->get(ITimeFactory::class),
-			$c->get(IURLGenerator::class)
-		);
+		// DirectController constructor changed from NC version 24, see https://github.com/nextcloud/server/pull/32482
+		if (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+			// @phpstan-ignore-next-line
+			$this->directController = new DirectController(
+				'dav',
+				$c->get(IRequest::class),
+				$root,
+				self::USER_ID,
+				$c->get(DirectMapper::class),
+				$c->get(ISecureRandom::class),
+				$c->get(ITimeFactory::class),
+				$c->get(IURLGenerator::class),
+				$c->get(IEventDispatcher::class)
+			);
+		} else {
+			// @phpstan-ignore-next-line
+			$this->directController = new DirectController(
+				'dav',
+				$c->get(IRequest::class),
+				$root,
+				self::USER_ID,
+				$c->get(DirectMapper::class),
+				$c->get(ISecureRandom::class),
+				$c->get(ITimeFactory::class),
+				$c->get(IURLGenerator::class)
+			);
+		}
 	}
 
 	public static function tearDownAfterClass(): void {
