@@ -182,7 +182,20 @@ services:
 
 Please note:
 1. only [apache based versions](https://hub.docker.com/_/nextcloud/?tab=description) will work
-2. nextcloud does not support downgrading, so if you want to go back to an older version, you need to delete all the volumes with `docker compose down -v` and start the Nextcloud installation again
+2. Nextcloud does not support downgrading, so if you want to go back to an older version, you need to delete all the volumes with `docker compose down -v` and start the Nextcloud installation again
+
+##### disable pretty URLs
+NC can work with or without `index.php` in the URL. The connection to Openproject has to work regardless on how Nextcloud is configured.
+
+By default, the docker setup in this repo starts Nextcloud without `index.php` in the URL, to change that we have to edit the `.htaccess` file:
+```shell
+docker compose exec --user www-data nextcloud sed -i '/#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####/,$d' .htaccess
+```
+
+To remove `index.php` again from the URL run
+```shell
+docker compose exec --user www-data nextcloud php occ maintenance:update:htaccess
+```
 
 ### Start Developing
 
