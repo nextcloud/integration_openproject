@@ -187,7 +187,25 @@ Please note:
 ##### Disable pretty URLs
 Nextcloud can work with or without `index.php` in the URL. The connection to Openproject has to work regardless of how it is configured.
 
-By default, the docker setup in this repo starts Nextcloud without `index.php` in the URL. To change that, we have to edit the `.htaccess` file:
+By default, the docker setup in this repo starts Nextcloud without `index.php` in the URL. To change that, we have to edit the `.htaccess` file. The  code that is responsible to rewrite the URLs and make them prettier is attached at the bottom of the `.htaccess` file in the Nextcloud folder.
+
+It looks like that:
+```
+#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####
+
+ErrorDocument 403 /
+ErrorDocument 404 /
+<IfModule mod_rewrite.c>
+  Options -MultiViews
+  RewriteRule ^core/js/oc.js$ index.php [PT,E=PATH_INFO:$1]
+  RewriteRule ^core/preview.png$ index.php [PT,E=PATH_INFO:$1]
+...
+</IfModule>
+```
+
+If you haven't changed anything else in the `.htaccess` file, deleting everything below `#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####` will reset the file to a state where it does not rewrite the URLs.
+
+You can use `sed` to do it in one command:
 ```shell
 docker compose exec --user www-data nextcloud sed -i '/#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####/,$d' .htaccess
 ```
@@ -196,6 +214,8 @@ To remove `index.php` again from the URL run
 ```shell
 docker compose exec --user www-data nextcloud php occ maintenance:update:htaccess
 ```
+
+This will put the rewrite rules back into the `.htaccess` file.
 
 ### Start Developing
 
