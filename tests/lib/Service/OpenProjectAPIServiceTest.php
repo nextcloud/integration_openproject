@@ -919,8 +919,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$url = $this->createMock(IURLGenerator::class);
 		$url->expects($this->once())
-			->method('linkToRouteAbsolute')
-			->with('integration_openproject.config.oauthRedirect')
+			->method('getAbsoluteURL')
 			->willReturn('http://nextcloud.org/index.php/oauth-redirect');
 		$result = $this->service::getOpenProjectOauthURL($configMock, $url);
 		$this->assertSame(
