@@ -17,6 +17,7 @@ use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
 use OCP\Files\Config\IMountProviderCollection;
+use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -182,6 +183,12 @@ class FilesController extends OCSController {
 				$modifierId = null;
 				$modifierName = null;
 			}
+			if ($file->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
+				$mimeType = 'application/x-op-directory';
+			} else {
+				$mimeType = $file->getMimeType();
+			}
+
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -189,7 +196,7 @@ class FilesController extends OCSController {
 				'name' => basename($internalPath),
 				'mtime' => $file->getMTime(),
 				'ctime' => $file->getCreationTime(),
-				'mimetype' => $file->getMimetype(),
+				'mimetype' => $mimeType,
 				'size' => $file->getSize(),
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),

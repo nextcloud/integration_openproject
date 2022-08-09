@@ -63,7 +63,7 @@ class FilesControllerTest extends TestCase {
 				],
 				'files/myFolder',
 				'myFolder',
-				'httpd/unix-directory'
+				'application/x-op-directory'
 			],
 			// getById returns a sub folder
 			[
@@ -72,7 +72,7 @@ class FilesControllerTest extends TestCase {
 				],
 				'files/myFolder/a-sub-folder',
 				'a-sub-folder',
-				'httpd/unix-directory'
+				'application/x-op-directory'
 			],
 			// getById returns the root folder
 			[
@@ -81,7 +81,7 @@ class FilesControllerTest extends TestCase {
 				],
 				'files',
 				'files',
-				'httpd/unix-directory'
+				'application/x-op-directory'
 			],
 		];
 	}
@@ -472,7 +472,7 @@ class FilesControllerTest extends TestCase {
 					'name' => 'a-sub-folder',
 					'mtime' => 1640008813,
 					'ctime' => 1639906930,
-					'mimetype' => 'httpd/unix-directory',
+					'mimetype' => 'application/x-op-directory',
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
@@ -487,7 +487,7 @@ class FilesControllerTest extends TestCase {
 					'name' => 'files',
 					'mtime' => 1640008813,
 					'ctime' => 1639906930,
-					'mimetype' => 'httpd/unix-directory',
+					'mimetype' => 'application/x-op-directory',
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
