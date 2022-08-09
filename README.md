@@ -167,7 +167,7 @@ docker compose exec nextcloud service apache2 restart
 ```
 
 ##### Change version of Nextcloud
-To test another version of Nextcloud change the nextcloud images in the `docker-compose.overwrite.yml`
+To test another version of Nextcloud change the nextcloud images in the `docker-compose.override.yml`
 e.g:
 ```
 services:
