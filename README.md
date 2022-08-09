@@ -217,8 +217,8 @@ docker compose exec --user www-data nextcloud php occ maintenance:update:htacces
 
 This will put the rewrite rules back into the `.htaccess` file.
 
-##### serve Nextcloud from a sub folder
-The default docker configuration serves Nextcloud from the root of the domain (`http://localhost:8080/`), but it is also possible to serve it from a sub folder e.g. `http://localhost:8080/nextcloud/`. To do that with the existing docker configuration there are a couple of steps to take.
+##### Serve Nextcloud from a sub folder
+The default docker configuration serves Nextcloud from the root of the domain (`http://localhost:8080/`), but it is also possible to serve it from a sub folder e.g. `http://localhost:8080/nextcloud/`. To do that with the existing docker configuration, there are a couple of steps to take.
 
 1. configure apache to serve the parent folder as `DocumentRoot`:
    ```shell
@@ -243,7 +243,7 @@ The default docker configuration serves Nextcloud from the root of the domain (`
    docker compose exec --user www-data nextcloud php occ maintenance:update:htaccess
    ```
 
-Now you should be able to reach the Nextcloud installation under http://localhost:8080/html/
+Now, you should be able to reach the Nextcloud installation at http://localhost:8080/html/
 
 ### Start Developing
 
