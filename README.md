@@ -23,14 +23,18 @@ Requirements:
 
   It must be reachable by the hostname `host.docker.internal` in the host machine. You can do this through this environment
   variable: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal`.
-
-  This hostname will resolve to `127.0.0.1` on the docker host and to something like `172.17.0.1` inside of the docker
+  
+  It must also use hostname `host.docker.internal:3000` instead of `localhost:3000` in the settings. Change it in
+  Administration > System settings > General > Host name, or through the environment variable
+  `OPENPROJECT_HOST__NAME=host.docker.internal:3000`.
+  
+  `host.docker.internal` will resolve to `127.0.0.1` on the docker host and to something like `172.17.0.1` inside of the docker
   services, so OpenProject needs to listen to those addresses. For that use the `-b` option if you are running
   OpenProject manually e.g. `bin/rails server -b 0.0.0.0` or when using foreman set `HOST=0.0.0.0` as env. variable.
 
   The whole OpenProject start command might look something like:
-    - manual start: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal RAILS_ENV=development bin/rails server -b 0.0.0.0`
-    - using foreman: `HOST=0.0.0.0 OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal foreman start -f Procfile.dev`
+    - manual start: `OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal OPENPROJECT_HOST__NAME=host.docker.internal:3000 RAILS_ENV=development bin/rails server -b 0.0.0.0`
+    - using foreman: `HOST=0.0.0.0 OPENPROJECT_DEV_EXTRA_HOSTS=host.docker.internal OPENPROJECT_HOST__NAME=host.docker.internal:3000 foreman start -f Procfile.dev`
 
   For more information
   see: [OpenProject documentation](https://www.openproject.org/docs/development/development-environment-ubuntu/)
