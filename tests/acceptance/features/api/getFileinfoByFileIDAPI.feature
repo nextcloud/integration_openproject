@@ -817,7 +817,7 @@ Feature: retrieve file information of a single file, using the file ID
           "mtime" : {"type" : "integer"},
           "ctime" : {"type" : "integer", "enum": [0]},
           "name": {"type": "string", "pattern": "^folder$"},
-          "mimetype": {"type": "string", "pattern": "^httpd\/unix-directory$"},
+          "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
           "modifier_id": {"type": "null"},
