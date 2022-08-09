@@ -152,6 +152,71 @@ docker compose exec --user www-data nextcloud php occ config:system:set allow_lo
 - configure the connection to OpenProject using `http://host.docker.internal:3000` as the OpenProject URL
 - in OpenProject use `http://localhost:8080` as the NextCloud URL
 
+#### Change the setup for testing purpose
+##### Strip off Authorization Bearer tokens of HTTP requests
+If the bearer tokens are not forwarded to Nextcloud the authorization cannot work and that needs to be detected by OpenProject.
+Easiest way to do that is to disable `mod_rewrite` in Apache:
+```shell
+docker compose exec nextcloud a2dismod rewrite
+docker compose exec nextcloud service apache2 restart
+```
+To enable it again run:
+```shell
+docker compose exec nextcloud a2enmod rewrite
+docker compose exec nextcloud service apache2 restart
+```
+
+##### Change version of Nextcloud
+To test another version of Nextcloud change the nextcloud images in the `docker-compose.override.yml`
+e.g:
+```
+services:
+  nextcloud:
+    image: nextcloud:23-apache
+    ports:
+      - "8080:80"
+
+  cron:
+    image: nextcloud:23-apache
+```
+
+Please note:
+1. Only [apache based versions](https://hub.docker.com/_/nextcloud/?tab=description) will work
+2. Nextcloud does not support downgrading. If you want to go back to an older version, you need to delete all the volumes with `docker compose down -v` and start the Nextcloud installation again
+
+##### Disable pretty URLs
+Nextcloud can work with or without `index.php` in the URL. The connection to Openproject has to work regardless of how it is configured.
+
+By default, the docker setup in this repo starts Nextcloud without `index.php` in the URL. To change that, we have to edit the `.htaccess` file. The  code that is responsible to rewrite the URLs and make them prettier is attached at the bottom of the `.htaccess` file in the Nextcloud folder.
+
+It looks like that:
+```
+#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####
+
+ErrorDocument 403 /
+ErrorDocument 404 /
+<IfModule mod_rewrite.c>
+  Options -MultiViews
+  RewriteRule ^core/js/oc.js$ index.php [PT,E=PATH_INFO:$1]
+  RewriteRule ^core/preview.png$ index.php [PT,E=PATH_INFO:$1]
+...
+</IfModule>
+```
+
+If you haven't changed anything else in the `.htaccess` file, deleting everything below `#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####` will reset the file to a state where it does not rewrite the URLs.
+
+You can use `sed` to do it in one command:
+```shell
+docker compose exec --user www-data nextcloud sed -i '/#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####/,$d' .htaccess
+```
+
+To remove `index.php` again from the URL run
+```shell
+docker compose exec --user www-data nextcloud php occ maintenance:update:htaccess
+```
+
+This will put the rewrite rules back into the `.htaccess` file.
+
 ### Start Developing
 
 Now you can watch for the app code changes using the following command and start developing.
