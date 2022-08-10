@@ -169,11 +169,9 @@ class FilesController extends OCSController {
 			$trashed = true;
 		}
 
-		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
-
-		if ($file !== null && is_array($mount) && count($mount) > 0) {
+		if ($file !== null) {
 			$owner = $file->getOwner();
-			$internalPath = $mount[0]->getInternalPath();
+			$internalPath = $file->getName();
 
 			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
