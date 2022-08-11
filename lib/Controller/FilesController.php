@@ -16,6 +16,7 @@ use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
+use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
@@ -169,11 +170,26 @@ class FilesController extends OCSController {
 			$trashed = true;
 		}
 
-		$mount = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
+		$mounts = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
 
-		if ($file !== null && is_array($mount) && count($mount) > 0) {
+		if ($file !== null && is_array($mounts) && count($mounts) > 0) {
 			$owner = $file->getOwner();
-			$internalPath = $mount[0]->getInternalPath();
+			$internalPath = null;
+			foreach ($mounts as $mount) {
+				if ($mount instanceof  ICachedMountFileInfo &&
+					$mount->getUser()->getUID() === $owner->getUID()
+				) {
+					$internalPath = $mount->getInternalPath();
+					break;
+				}
+			}
+			if ($internalPath === null) {
+				$this->logger->error(
+					'could not get the file name in the context of the owner,' .
+					' falling back to the context of requester'
+				);
+				$internalPath = $file->getName();
+			}
 
 			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
@@ -206,7 +222,7 @@ class FilesController extends OCSController {
 			];
 		}
 
-		if (is_array($mount) && count($mount) > 0) {
+		if (is_array($mounts) && count($mounts) > 0) {
 			return [
 				'status' => 'Forbidden',
 				'statuscode' => 403,
