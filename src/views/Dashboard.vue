@@ -60,6 +60,7 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			moreActorsIconUrl: loadState('integration_openproject', 'more-actors-icon-url'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -86,6 +87,7 @@ export default {
 					avatarUsername: this.getAuthorShortName(n) + 'z',
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
+					overlayIconUrl: this.getOverlayIconUrl(n),
 				})
 			}
 			return notifications
@@ -161,6 +163,7 @@ export default {
 								wpId,
 								resourceTitle: n._links.resource.title,
 								projectTitle: n._links.project.title,
+								moreActors: false,
 							}
 						}
 						if (!(notifications[wpId].reasons instanceof Set)) {
@@ -168,16 +171,18 @@ export default {
 						}
 						notifications[wpId].reasons.add(n.reason)
 
-						if (!(notifications[wpId].actors instanceof Set)) {
-							notifications[wpId].actors = new Set()
-						}
 						const userId = n._links?.actor?.href
 							? n._links.actor.href.replace(/.*\//, '')
 							: null
-						notifications[wpId].actors.add({
-							title: n._links.actor.title,
-							id: userId,
-						})
+						if (notifications[wpId].firstActor === undefined) {
+							notifications[wpId].firstActor = {
+								title: n._links.actor.title,
+								id: userId,
+							}
+						} else if (userId !== notifications[wpId].firstActor.id) {
+							notifications[wpId].moreActors = true
+						}
+
 					}
 					this.state = STATE.OK
 					this.notifications = notifications
@@ -206,23 +211,23 @@ export default {
 			return n.id + ':' + n.updatedAt
 		},
 		getAuthorShortName(n) {
-			return n._links?.actor?.title
-				? n._links.actor.title
+			return n.firstActor.title
+				? n.firstActor.title
 				: undefined
 		},
 		getAuthorFullName(n) {
 			return n.firstname + ' ' + n.lastname
 		},
 		getAuthorAvatarUrl(n) {
-			const userId = n._links?.actor?.href
-				? n._links.actor.href.replace(/.*\//, '')
-				: null
-			const userName = n._links?.actor?.title
-				? n._links.actor.title
-				: null
-			return userId
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
+			return n.firstActor.id
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.firstActor.id + '&' + encodeURIComponent('userName') + '=' + n.firstActor.title
 				: ''
+		},
+		getOverlayIconUrl(n) {
+			if (n.moreActors === true) {
+				return this.moreActorsIconUrl
+			}
+			return ''
 		},
 		getNotificationProjectName(n) {
 			return ''

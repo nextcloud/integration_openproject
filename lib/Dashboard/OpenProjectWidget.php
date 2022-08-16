@@ -135,5 +135,8 @@ class OpenProjectWidget implements IWidget {
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-error-message', $oauthConnectionErrorMessage
 		);
+		$this->initialStateService->provideInitialState(
+			'more-actors-icon-url', $this->url->imagePath(Application::APP_ID, 'plus-circle.svg')
+		);
 	}
 }
