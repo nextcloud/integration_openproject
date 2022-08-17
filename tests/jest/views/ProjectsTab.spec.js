@@ -57,6 +57,13 @@ describe('ProjectsTab.vue', () => {
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
 		})
+		it('should not exist if the wrapper is in "no token" state', async () => {
+			await wrapper.setData({
+				isAdminConfigOk: true,
+				state: STATE.NO_TOKEN,
+			})
+			expect(wrapper.find(searchInputStubSelector).exists()).toBeFalsy()
+		})
 		it('should exist if the admin config is ok but wrapper is not "loading"', async () => {
 			await wrapper.setData({
 				isAdminConfigOk: true,
