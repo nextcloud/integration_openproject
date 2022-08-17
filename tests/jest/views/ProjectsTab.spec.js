@@ -574,7 +574,7 @@ function mountWrapper() {
 		localVue,
 		attachTo: document.body,
 		mocks: {
-			t: (msg) => msg,
+			t: (app, msg) => msg,
 			generateUrl() {
 				return '/'
 			},
