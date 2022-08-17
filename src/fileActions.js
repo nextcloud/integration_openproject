@@ -7,6 +7,11 @@ OCA.Files.fileActions.registerAction({
 	permissions: OC.PERMISSION_READ,
 	iconClass: 'icon-openproject',
 	actionHandler: (filename, context) => {
-		console.log(filename, context)
+		const fileList = context.fileList
+		if (!fileList._detailsView) {
+			return
+		}
+		// use the sidebar-tab id for the navigation
+		fileList.showDetailsView(filename, 'open-project')
 	}
 })
