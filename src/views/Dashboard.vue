@@ -164,7 +164,10 @@ export default {
 								resourceTitle: n._links.resource.title,
 								projectTitle: n._links.project.title,
 								moreActors: false,
+								count: 1,
 							}
+						} else {
+							notifications[wpId].count++
 						}
 						if (!(notifications[wpId].reasons instanceof Set)) {
 							notifications[wpId].reasons = new Set()
@@ -251,7 +254,7 @@ export default {
 			return n.projectTitle + ' - ' + reasonsString.replace(/^,/, '')
 		},
 		getTargetTitle(n) {
-			return n.resourceTitle
+			return '(' + n.count + ') ' + n.resourceTitle
 		},
 		getFormattedDate(n) {
 			return moment(n.updated_at).format('LLL')
