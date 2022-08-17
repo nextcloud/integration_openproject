@@ -174,13 +174,21 @@ export default {
 						const userId = n._links?.actor?.href
 							? n._links.actor.href.replace(/.*\//, '')
 							: null
-						if (notifications[wpId].firstActor === undefined) {
-							notifications[wpId].firstActor = {
+						if (notifications[wpId].mostRecentActor === undefined) {
+							notifications[wpId].mostRecentActor = {
 								title: n._links.actor.title,
 								id: userId,
+								createdAt: n.createdAt,
 							}
-						} else if (userId !== notifications[wpId].firstActor.id) {
+						} else if (userId !== notifications[wpId].mostRecentActor.id) {
 							notifications[wpId].moreActors = true
+							if (Date.parse(n.createdAt) > Date.parse(notifications[wpId].mostRecentActor.createdAt)) {
+								notifications[wpId].mostRecentActor = {
+									title: n._links.actor.title,
+									id: userId,
+									createdAt: n.createdAt,
+								}
+							}
 						}
 
 					}
@@ -211,16 +219,16 @@ export default {
 			return n.id + ':' + n.updatedAt
 		},
 		getAuthorShortName(n) {
-			return n.firstActor.title
-				? n.firstActor.title
+			return n.mostRecentActor.title
+				? n.mostRecentActor.title
 				: undefined
 		},
 		getAuthorFullName(n) {
 			return n.firstname + ' ' + n.lastname
 		},
 		getAuthorAvatarUrl(n) {
-			return n.firstActor.id
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.firstActor.id + '&' + encodeURIComponent('userName') + '=' + n.firstActor.title
+			return n.mostRecentActor.id
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
 				: ''
 		},
 		getOverlayIconUrl(n) {
