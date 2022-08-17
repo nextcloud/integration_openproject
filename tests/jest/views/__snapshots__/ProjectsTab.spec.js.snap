@@ -3,7 +3,7 @@
 exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
-    integration_openproject
+    Existing relations:
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
@@ -68,7 +68,7 @@ exports[`ProjectsTab.vue fetchWorkpackages sets the "error" state if the admin c
 exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
-    integration_openproject
+    Existing relations:
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
@@ -156,7 +156,7 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
 exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
-    integration_openproject
+    Existing relations:
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
@@ -244,7 +244,7 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
 exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
 <div id="openproject-linked-workpackages">
   <div class="existing-relations">
-    integration_openproject
+    Existing relations:
   </div>
   <div class="linked-workpackages">
     <div class="linked-workpackages--workpackage">
