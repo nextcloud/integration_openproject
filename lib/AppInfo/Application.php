@@ -72,7 +72,6 @@ class Application extends App implements IBootstrap {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
-		// TODO this creates some deprecation warnings!
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
 		});

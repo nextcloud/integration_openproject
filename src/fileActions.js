@@ -13,5 +13,5 @@ OCA.Files.fileActions.registerAction({
 		}
 		// use the sidebar-tab id for the navigation
 		fileList.showDetailsView(filename, 'open-project')
-	}
+	},
 })
