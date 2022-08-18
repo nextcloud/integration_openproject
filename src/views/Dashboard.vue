@@ -30,7 +30,6 @@ import { generateUrl } from '@nextcloud/router'
 import { DashboardWidget } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
-import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton'
@@ -218,16 +217,10 @@ export default {
 		getNotificationTarget(n) {
 			return this.openprojectUrl + '/notifications/details/' + n.wpId + '/activity/'
 		},
-		getUniqueKey(n) {
-			return n.id + ':' + n.updatedAt
-		},
 		getAuthorShortName(n) {
 			return n.mostRecentActor.title
 				? n.mostRecentActor.title
 				: undefined
-		},
-		getAuthorFullName(n) {
-			return n.firstname + ' ' + n.lastname
 		},
 		getAuthorAvatarUrl(n) {
 			return n.mostRecentActor.id
@@ -240,12 +233,6 @@ export default {
 			}
 			return ''
 		},
-		getNotificationProjectName(n) {
-			return ''
-		},
-		getNotificationContent(n) {
-			return ''
-		},
 		getSubline(n) {
 			let reasonsString = ''
 			n.reasons.forEach((value) => {
@@ -255,9 +242,6 @@ export default {
 		},
 		getTargetTitle(n) {
 			return '(' + n.count + ') ' + n.resourceTitle
-		},
-		getFormattedDate(n) {
-			return moment(n.updated_at).format('LLL')
 		},
 	},
 }
