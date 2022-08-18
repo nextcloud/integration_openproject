@@ -4,8 +4,10 @@ OpenProject integration provides the possibility to link OpenProject work packag
 widget for displaying OpenProject notifications, a search provider to search for work packages through the unified
 search and can display the count of OpenProject notifications as NextCloud notification.
 
-> **Note:** The configuration documentation to set up the OpenProject to link work packages in the Nextcloud can be
-> found [here](https://www.openproject.org/docs/)
+Please report issues and bug in: https://community.openproject.org/projects/nextcloud-integration/work_packages
+
+## :busts_in_silhouette: [User documentation](https://openproject.org/docs/user-guide/nextcloud-integration/)
+## :shipit: [Admin documentation](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/)
 
 ## :computer: Development
 
