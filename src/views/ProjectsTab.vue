@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="!!isAdminConfigOk && !isLoading"
+		<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			@saved="onSaved" />
@@ -103,6 +103,9 @@ export default {
 	computed: {
 		isLoading() {
 			return this.state === STATE.LOADING
+		},
+		isStateOk() {
+			return this.state === STATE.OK
 		},
 		filterWorkpackagesByFileId() {
 			return this.workpackages.filter(wp => {
