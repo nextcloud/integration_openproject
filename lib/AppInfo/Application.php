@@ -17,12 +17,14 @@ use OCP\IL10N;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\Util;
 
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\EventDispatcher\IEventDispatcher;
 
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
@@ -68,6 +70,11 @@ class Application extends App implements IBootstrap {
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
+		/** @var IEventDispatcher $dispatcher */
+		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
+		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
+			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
+		});
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {

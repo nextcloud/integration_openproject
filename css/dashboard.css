@@ -54,3 +54,7 @@ body[data-theme-dark-highcontrast] .icon-openproject {
 body[data-theme-dark-highcontrast] .icon-openproject-till-nc-25::after {
 	filter: none !important;
 }
+
+.action-open-project > .icon-openproject {
+	height: 100%;
+}
