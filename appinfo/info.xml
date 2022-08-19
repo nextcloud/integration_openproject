@@ -4,7 +4,7 @@
 	<name>OpenProject integration</name>
 	<summary>Integration of OpenProject project management tool</summary>
 	<description><![CDATA[This application deeply integrates with the open source project management software OpenProject. It allows linking files and folders in Nextcloud with work packages in OpenProject. In OpenProject, you can see all files related to a work package, and in Nextcloud, you can find all work packages linked to a file. Your project teams gain productivity as they clearly know where to find and store the files that they need for finishing a work package. Further, it extends the Nextcloud dashboard with a widget for personal notifications from OpenProject. The app can also extend the search function in Nextcloud to find work packages in OpenProject.]]></description>
-	<version>2.0.0</version>
+	<version>2.0.2</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
 	<namespace>OpenProject</namespace>
