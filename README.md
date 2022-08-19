@@ -261,7 +261,8 @@ npm run watch
 ```
 
 ### Release:
-1. Tag a commit on the `master` branch. The tag has to have the format `v1.1.1` for releases and `v1.1.1-20220728-nightly` for nightly builds
+1. Update the version in `appinfo/info.xml` (not needed for nightly builds)
+2. Tag a commit on the `master` branch. The tag has to have the format `v1.1.1` for releases and `v1.1.1-20220728-nightly` for nightly builds
   e.g: `git tag v1.0.6-20220728-nightly -m"v1.0.6-20220728-nightly"`
 2. Push the tag to the release branch: `git push origin master:release --tags -f`
 3. Approve the deployment in GitHub actions
