@@ -78,6 +78,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
     "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan",
     "Existing relations:" : "Dauden harremanak:",
+    "Unlink WorkPackage" : "Desestekatu WorkPackage",
     "Are you sure you want to unlink the work package?" : "Ziur lan-paketearen lotura deskonektatu nahi duzula?",
     "Confirm unlink" : "Berretsi lotura kentzea",
     "Unlink" : "Deskonektatu",
