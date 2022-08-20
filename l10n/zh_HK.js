@@ -78,6 +78,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
     "Existing relations:" : "現有關係：",
+    "Unlink WorkPackage" : "取消 WorkPackage 連結",
     "Are you sure you want to unlink the work package?" : "確定要取消連結工作包嗎？",
     "Confirm unlink" : "確認取消連結",
     "Unlink" : "取消連結",

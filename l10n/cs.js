@@ -78,6 +78,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
     "Existing relations:" : "Existující souvislosti:",
+    "Unlink WorkPackage" : "Zrušit propojení s balíčkem práce",
     "Are you sure you want to unlink the work package?" : "Opravdu chcete balíček práce odpojit?",
     "Confirm unlink" : "Potvrdit odpojení",
     "Unlink" : "Odpojit",

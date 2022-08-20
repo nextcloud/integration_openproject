@@ -78,6 +78,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Brak powiadomień OpenProject!",
     "Failed to get OpenProject notifications" : "Nie udało się pobrać powiadomień OpenProject",
     "Existing relations:" : "Istniejące relacje:",
+    "Unlink WorkPackage" : "Odłącz pakiet roboczy",
     "Are you sure you want to unlink the work package?" : "Czy na pewno chcesz odłączyć pakiet roboczy?",
     "Confirm unlink" : "Potwierdź odłączenie",
     "Unlink" : "Odłącz",
