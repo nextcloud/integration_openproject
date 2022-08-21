@@ -78,6 +78,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Nincsenek OpenProject értesítések!",
     "Failed to get OpenProject notifications" : "Az OpenProject értesítések lekérése sikertelen",
     "Existing relations:" : "Meglévő kapcsolatok:",
+    "Unlink WorkPackage" : "Munkacsomag szétkapcsolása",
     "Are you sure you want to unlink the work package?" : "Biztos, hogy megszünteti a munkacsomag hivatkozását?",
     "Confirm unlink" : "Hivatkozás megszüntetésének megerősítése",
     "Unlink" : "Hivatkozás megszüntetése",
