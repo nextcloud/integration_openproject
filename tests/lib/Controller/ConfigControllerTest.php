@@ -146,8 +146,8 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				'{ "page": "settings" }',
-				['settings.PersonalSettings.index', ['section' => 'connected-accounts']],
-				'https://nc.np/settings/user/connected-accounts'
+				['settings.PersonalSettings.index', ['section' => 'openproject']],
+				'https://nc.np/settings/user/openproject'
 			],
 			[
 				'{ "page": "files", "file": {"dir": "/my/data", "name": "secret-data.txt"} }',
