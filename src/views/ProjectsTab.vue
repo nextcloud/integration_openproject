@@ -43,7 +43,7 @@
 					<Actions>
 						<ActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
 							@click="unlink(workpackage.id, fileInfo.id)">
-							{{ t('integration_openproject', 'Unlink WorkPackage') }}
+							{{ t('integration_openproject', 'Unlink Work Package') }}
 							<template #icon>
 								<LinkOffIcon :size="20" />
 							</template>
