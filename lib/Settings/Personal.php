@@ -80,7 +80,7 @@ class Personal implements ISettings {
 	}
 
 	public function getSection(): string {
-		return 'connected-accounts';
+		return 'openproject';
 	}
 
 	public function getPriority(): int {
