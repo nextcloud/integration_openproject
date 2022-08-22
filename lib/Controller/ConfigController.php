@@ -204,7 +204,7 @@ class ConfigController extends Controller {
 				$newUrl = $this->urlGenerator->linkToRoute('dashboard.dashboard.index');
 			} elseif ($oauthJourneyStartingPageDecoded->page === 'settings') {
 				$newUrl = $this->urlGenerator->linkToRoute(
-					'settings.PersonalSettings.index', ['section' => 'connected-accounts']
+					'settings.PersonalSettings.index', ['section' => 'openproject']
 				);
 			} elseif ($oauthJourneyStartingPageDecoded->page === 'files') {
 				$newUrl = $this->urlGenerator->linkToRoute('files.view.index', [

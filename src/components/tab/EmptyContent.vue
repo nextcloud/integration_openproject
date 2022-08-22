@@ -54,7 +54,7 @@ export default {
 	},
 	data() {
 		return {
-			settingsUrl: generateUrl('/settings/user/connected-accounts'),
+			settingsUrl: generateUrl('/settings/user/openproject'),
 		}
 	},
 	computed: {
