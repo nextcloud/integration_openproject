@@ -21,9 +21,7 @@ exports[`TextInput.vue messages should show error message if both error message 
     <!---->
   </div>
   <div>
-    <div class="text-input-error-message">
-      some error message
-    </div>
+    <div class="text-input-error-message">some error message</div>
   </div>
 </div>
 `;
@@ -37,9 +35,7 @@ exports[`TextInput.vue messages should show error message if provided 1`] = `
     <!---->
   </div>
   <div>
-    <div class="text-input-error-message">
-      some error message
-    </div>
+    <div class="text-input-error-message">some error message</div>
   </div>
 </div>
 `;

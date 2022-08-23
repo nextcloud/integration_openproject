@@ -31,9 +31,9 @@
 			</Button>
 		</div>
 		<div v-if="errorMessage || hintText">
-			<div v-if="errorMessage" class="text-input-error-message">
-				{{ errorMessage }}
-			</div>
+			<div v-if="errorMessage"
+				class="text-input-error-message"
+				v-html="sanitizedErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
 
 			<div v-else
 				class="text-input-hint"
@@ -122,6 +122,9 @@ export default {
 		},
 		sanitizedHintText() {
 			return dompurify.sanitize(this.hintText, { ADD_ATTR: ['target'] })
+		},
+		sanitizedErrorMessage() {
+			return dompurify.sanitize(this.errorMessage, { ADD_ATTR: ['target'] })
 		},
 	},
 	methods: {
