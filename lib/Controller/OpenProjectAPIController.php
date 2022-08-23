@@ -18,6 +18,7 @@ use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -343,6 +344,8 @@ class OpenProjectAPIController extends Controller {
 			) {
 				return new DataResponse(true);
 			}
+		} catch (LocalServerException $e) {
+			return new DataResponse('local_remote_servers_not_allowed');
 		} catch (Exception $e) {
 			$this->logger->error(
 				"Could not connect to the OpenProject URL '$url'",

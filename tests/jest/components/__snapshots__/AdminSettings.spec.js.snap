@@ -139,9 +139,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
     <!---->
   </div>
   <div>
-    <div class="text-input-error-message">
-      Please introduce a valid OpenProject host name
-    </div>
+    <div class="text-input-error-message">Please introduce a valid OpenProject host name</div>
   </div>
 </div>
 `;
@@ -155,9 +153,21 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
     <!---->
   </div>
   <div>
-    <div class="text-input-error-message">
-      Please introduce a valid OpenProject host name
-    </div>
+    <div class="text-input-error-message">Please introduce a valid OpenProject host name</div>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state when the url is invalid when clicked 3`] = `
+<div class="text-input pb-1">
+  <div class="text-input-label">
+    OpenProject host *
+  </div>
+  <div class="text-input-input-wrapper"><input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
+    <!---->
+  </div>
+  <div>
+    <div class="text-input-error-message">To be able to use an OpenProject server with a local address, enable the \`allow_local_remote_servers\` setting. {htmlLink}.</div>
   </div>
 </div>
 `;

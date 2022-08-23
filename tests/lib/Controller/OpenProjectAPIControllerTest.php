@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Http\Client\IResponse;
+use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -745,6 +746,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 				false
 			],
 			[
+				new LocalServerException('Host violates local access rules'),
+				'local_remote_servers_not_allowed'
+			],
+			[
 				new \Exception('some issue'),
 				false
 			],
@@ -755,11 +760,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @dataProvider isValidOpenProjectInstanceExpectionDataProvider
 	 * @param Exception $thrownException
-	 * @param bool $expectedResult
+	 * @param bool|string $expectedResult
 	 * @return void
 	 */
 	public function testIsValidOpenProjectInstanceException(
-		$thrownException, bool $expectedResult
+		$thrownException, $expectedResult
 	): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()

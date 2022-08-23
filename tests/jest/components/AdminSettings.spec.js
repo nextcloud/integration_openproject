@@ -277,6 +277,9 @@ describe('AdminSettings.vue', () => {
 				}, {
 					data: 'invalid',
 					message: 'OpenProject URL is invalid, provide an URL in the form "https://openproject.org"',
+				}, {
+					data: 'local_remote_servers_not_allowed',
+					message: 'Accessing OpenProject servers with local addresses is not allowed.',
 				}])('should set the input to error state when the url is invalid when clicked', async (testCase) => {
 					dialogs.showError.mockImplementationOnce()
 					jest.spyOn(axios, 'post')
