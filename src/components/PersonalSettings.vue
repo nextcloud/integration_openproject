@@ -1,49 +1,53 @@
 <template>
-	<div id="openproject_prefs" class="section">
+	<div class="openproject-prefs section">
 		<SettingsTitle />
-		<div id="openproject-content">
-			<div id="toggle-openproject-navigation-link">
-				<input id="openproject-link"
-					type="checkbox"
-					class="checkbox"
-					:checked="state.navigation_enabled"
-					@input="onNavigationChange">
-				<label for="openproject-link">{{ t('integration_openproject', 'Enable navigation link') }}</label>
-			</div>
-			<br><br>
-			<div v-if="connected" class="openproject-grid-form">
-				<label class="openproject-connected">
-					<CheckIcon class="openproject-connected-checkmark" :size="20" />
-					{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
-				</label><br>
-				<Button id="openproject-rm-cred" @click="onLogoutClick">
-					<template #icon>
-						<CloseIcon :size="23" />
-					</template>
-					{{ t('integration_openproject', 'Disconnect from OpenProject') }}
-				</Button>
-			</div>
-			<div v-if="connected" id="openproject-search-block">
-				<input id="search-openproject"
-					type="checkbox"
-					class="checkbox"
-					:checked="state.search_enabled"
-					@input="onSearchChange">
-				<label for="search-openproject">{{ t('integration_openproject', 'Enable unified search for tickets') }}</label>
-				<br><br>
-				<p v-if="state.search_enabled" class="settings-hint">
-					<InformationVariant />
-					{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
-				</p>
-				<input id="notification-openproject"
-					type="checkbox"
-					class="checkbox"
-					:checked="state.notification_enabled"
-					@input="onNotificationChange">
-				<label for="notification-openproject">{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}</label>
-			</div>
-			<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
+		<div v-if="connected" class="openproject-prefs--connected">
+			<label>
+				<CheckIcon :size="20" />
+				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
+			</label>
+			<Button class="openproject-prefs--disconnect" @click="onLogoutClick">
+				<template #icon>
+					<CloseIcon :size="23" />
+				</template>
+				{{ t('integration_openproject', 'Disconnect from OpenProject') }}
+			</Button>
 		</div>
+		<br>
+		<div v-if="connected" class="openproject-prefs--form">
+			<input id="openproject-prefs--link"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.navigation_enabled"
+				@input="onNavigationChange">
+			<label for="openproject-prefs--link">
+				{{ t('integration_openproject', 'Enable navigation link') }}
+			</label>
+			<br><br>
+			<input id="openproject-prefs--u-search"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.search_enabled"
+				@input="onSearchChange">
+			<label for="openproject-prefs--u-search">
+				{{ t('integration_openproject', 'Enable unified search for tickets') }}
+			</label>
+			<p v-if="state.search_enabled" class="openproject-prefs--hint">
+				<InformationVariant />
+				{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
+			</p>
+			<br v-else>
+			<br>
+			<input id="openproject-prefs--notifications"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.notification_enabled"
+				@input="onNotificationChange">
+			<label for="openproject-prefs--notifications">
+				{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}
+			</label>
+		</div>
+		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>
 </template>
 
@@ -143,58 +147,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#openproject-search-block {
-	margin-top: 30px;
-}
-
-.openproject-grid-form label {
-	line-height: 38px;
-}
-
-.openproject-grid-form input {
-	width: 100%;
-}
-
-.openproject-grid-form {
-	max-width: 600px;
-	display: grid;
-	grid-template: 1fr / 1fr 1fr;
-	button .icon {
-		margin-bottom: -1px;
+.openproject-prefs {
+	&--connected {
+		padding-block: 1rem;
+		label {
+			display: flex;
+			align-items: center;
+			padding-bottom: .5rem;
+		}
+		.check-icon {
+			padding-right: .2rem;
+			color: var(--color-success);
+		}
 	}
-}
-
-.openproject-connected {
-	display: flex;
-}
-
-.openproject-connected-checkmark {
-	padding-right: 8px;
-	color: var(--color-success);
-}
-
-.settings-hint {
-	display: flex;
-}
-
-#openproject_prefs .icon {
-	display: inline-block;
-	width: 32px;
-}
-
-#openproject_prefs .grid-form .icon {
-	margin-bottom: -3px;
-}
-
-#openproject-content {
-	margin-left: 40px;
-}
-
-#openproject-search-block .icon {
-	width: 22px;
-}
-
-#openproject-content .oauth-connect--message {
-	text-align: left !important;
+	&--hint {
+		display: flex;
+		align-items: center;
+		padding-top: 1rem;
+	}
+	.oauth-connect--message {
+		text-align: left;
+		padding: 0;
+	}
 }
 </style>
