@@ -6,7 +6,7 @@
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<Button class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+			<Button class="openproject-prefs--disconnect" @click="onLogoutClick">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
@@ -15,26 +15,37 @@
 		</div>
 		<br>
 		<div v-if="connected" class="openproject-prefs--form">
-			<CheckBox v-model="state.navigation_enabled"
-				input-id="openproject-prefs-link"
-				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="saveForm()" />
-			<CheckBox v-model="state.search_enabled"
-				input-id="openproject-prefs--u-search"
-				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="saveForm()">
-				<template #hint>
-					<p v-if="state.search_enabled" class="openproject-prefs--hint">
-						<InformationVariant />
-						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
-					</p>
-					<br v-else>
-				</template>
-			</CheckBox>
-			<CheckBox v-model="state.notification_enabled"
-				input-id="openproject-prefs--notifications"
-				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
-				@input="saveForm()" />
+			<input id="openproject-prefs--link"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.navigation_enabled"
+				@input="onNavigationChange">
+			<label for="openproject-prefs--link">
+				{{ t('integration_openproject', 'Enable navigation link') }}
+			</label>
+			<br><br>
+			<input id="openproject-prefs--u-search"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.search_enabled"
+				@input="onSearchChange">
+			<label for="openproject-prefs--u-search">
+				{{ t('integration_openproject', 'Enable unified search for tickets') }}
+			</label>
+			<p v-if="state.search_enabled" class="openproject-prefs--hint">
+				<InformationVariant />
+				{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
+			</p>
+			<br v-else>
+			<br>
+			<input id="openproject-prefs--notifications"
+				type="checkbox"
+				class="checkbox"
+				:checked="state.notification_enabled"
+				@input="onNotificationChange">
+			<label for="openproject-prefs--notifications">
+				{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}
+			</label>
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>
