@@ -15,37 +15,26 @@
 		</div>
 		<br>
 		<div v-if="connected" class="openproject-prefs--form">
-			<input id="openproject-prefs--link"
-				type="checkbox"
-				class="checkbox"
-				:checked="state.navigation_enabled"
-				@input="onNavigationChange">
-			<label for="openproject-prefs--link">
-				{{ t('integration_openproject', 'Enable navigation link') }}
-			</label>
-			<br><br>
-			<input id="openproject-prefs--u-search"
-				type="checkbox"
-				class="checkbox"
-				:checked="state.search_enabled"
+			<CheckBox v-model="state.navigation_enabled"
+				input-id="openproject-prefs-link"
+				:label="t('integration_openproject', 'Enable navigation link')"
+				@input="onNavigationChange" />
+			<CheckBox v-model="state.search_enabled"
+				input-id="openproject-prefs--u-search"
+				:label="t('integration_openproject', 'Enable unified search for tickets')"
 				@input="onSearchChange">
-			<label for="openproject-prefs--u-search">
-				{{ t('integration_openproject', 'Enable unified search for tickets') }}
-			</label>
-			<p v-if="state.search_enabled" class="openproject-prefs--hint">
-				<InformationVariant />
-				{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
-			</p>
-			<br v-else>
-			<br>
-			<input id="openproject-prefs--notifications"
-				type="checkbox"
-				class="checkbox"
-				:checked="state.notification_enabled"
-				@input="onNotificationChange">
-			<label for="openproject-prefs--notifications">
-				{{ t('integration_openproject', 'Enable notifications for activity in my work packages') }}
-			</label>
+				<template #hint>
+					<p v-if="state.search_enabled" class="openproject-prefs--hint">
+						<InformationVariant />
+						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
+					</p>
+					<br v-else>
+				</template>
+			</CheckBox>
+			<CheckBox v-model="state.notification_enabled"
+				input-id="openproject-prefs--notifications"
+				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
+				@input="onNotificationChange" />
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>
@@ -62,6 +51,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import SettingsTitle from '../components/settings/SettingsTitle'
 import OAuthConnectButton from './OAuthConnectButton'
+import CheckBox from './settings/CheckBox'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult } from '../utils'
 import Button from '@nextcloud/vue/dist/Components/Button'
@@ -70,7 +60,7 @@ export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, Button, CloseIcon, CheckIcon, InformationVariant,
+		SettingsTitle, OAuthConnectButton, Button, CloseIcon, CheckIcon, InformationVariant, CheckBox,
 	},
 
 	data() {
@@ -99,16 +89,13 @@ export default {
 			this.state.token = ''
 			this.saveOptions({ token: this.state.token, token_type: '' })
 		},
-		onNotificationChange(e) {
-			this.state.notification_enabled = e.target.checked
+		onNotificationChange() {
 			this.saveOptions({ notification_enabled: this.state.notification_enabled ? '1' : '0' })
 		},
-		onSearchChange(e) {
-			this.state.search_enabled = e.target.checked
+		onSearchChange() {
 			this.saveOptions({ search_enabled: this.state.search_enabled ? '1' : '0' })
 		},
-		onNavigationChange(e) {
-			this.state.navigation_enabled = e.target.checked
+		onNavigationChange() {
 			this.saveOptions({ navigation_enabled: this.state.navigation_enabled ? '1' : '0' })
 		},
 		saveOptions(values) {
