@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Error during OAuth exchanges" : "Грешка при размена на податоци со OAuth ",
     "OAuth access token refused" : "Одбиен OAuth пристапен токен ",
-    "Connected accounts" : "Поврзани сметки",
     "Cancel" : "Откажи",
     "Save" : "Зачувај",
     "Reset" : "Ресетирање",

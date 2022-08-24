@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Σφάλμα κατά την ανταλλαγή OAuth",
     "Bad HTTP method" : "Κακή μέθοδος HTTP",
     "OAuth access token refused" : "Το διακριτικό πρόσβασης OAuth απορρίφθηκε",
-    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
     "Reset" : "Επαναφορά",

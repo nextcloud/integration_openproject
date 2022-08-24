@@ -8,7 +8,6 @@ OC.L10N.register(
     "OpenProject activity" : "OpenProject activiteit",
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
-    "Connected accounts" : "Verbonden accounts",
     "OpenProject integration" : "OpenProject integratie",
     "OpenProject server" : "OpenProject server",
     "OpenProject host" : "OpenProject host",

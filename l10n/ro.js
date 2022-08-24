@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Eroare în schimbarea OAuth",
     "Bad HTTP method" : "Metodă HTTP nepotrivită",
     "OAuth access token refused" : "Token-ul OAuth a fost refuzat",
-    "Connected accounts" : "Conturile conectate",
     "Cancel" : "Anulare",
     "Save" : "Salvează",
     "Reset" : "Resetare",

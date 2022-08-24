@@ -4,7 +4,6 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Villa við að ná í OAuth-aðgangsteikn",
     "Error during OAuth exchanges" : "Villa í OAuth-samskiptum",
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
-    "Connected accounts" : "Tengdir aðgangar",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
     "Reset" : "Endurstilla",

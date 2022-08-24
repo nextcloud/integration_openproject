@@ -3,7 +3,6 @@
     "Error during OAuth exchanges" : "OAuth 交换期间出错",
     "Bad HTTP method" : "错误的HTTP方法",
     "OAuth access token refused" : "OAuth 访问令牌被拒绝",
-    "Connected accounts" : "关联账号",
     "Cancel" : "取消",
     "Save" : "保存",
     "Reset" : "重置",

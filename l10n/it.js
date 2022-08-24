@@ -9,7 +9,6 @@ OC.L10N.register(
     "OpenProject activity" : "Attività OpenProject",
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
-    "Connected accounts" : "Account connessi",
     "OpenProject integration" : "Integrazione OpenProject",
     "Integration of OpenProject project management tool" : "Integrazione dello strumento di gestione dei progetti OpenProject",
     "Cancel" : "Annulla",

@@ -10,7 +10,6 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Vous avez %s nouvelle notification dans {instance}","Vous avez %s nouvelles notifications dans {instance}","Vous avez %s nouvelles notifications dans {instance}"],
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
-    "Connected accounts" : "Comptes connectés",
     "OpenProject integration" : "Intégration d'OpenProject",
     "Integration of OpenProject project management tool" : "Intégration de l'outil de gestion de projet OpenProject",
     "Cancel" : "Annuler",

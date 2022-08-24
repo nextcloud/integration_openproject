@@ -7,7 +7,6 @@ OC.L10N.register(
     "This direct download link is invalid or has expired" : "Прямая ссылка для загрузки неверна или срок её действия истёк",
     "Bad HTTP method" : "Неверный метод HTTP",
     "OAuth access token refused" : "Токен доступа OAuth был отклонен",
-    "Connected accounts" : "Подключённые учётные записи",
     "Cancel" : "Отменить",
     "Save" : "Сохранить",
     "Reset" : "Сброс",

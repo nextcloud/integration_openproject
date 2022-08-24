@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Napaka med izmenjavo podatkov OAuth",
     "Bad HTTP method" : "Neustrezen način HTTP",
     "OAuth access token refused" : "Žeton OAuth za dostop je bil zavrnjen",
-    "Connected accounts" : "Povezani računi",
     "Cancel" : "Prekliči",
     "Save" : "Shrani",
     "Reset" : "Ponastavi",

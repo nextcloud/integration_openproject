@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 교환 중 발생한 에러",
     "Bad HTTP method" : "옳지 않은 HTTP 메소드",
     "OAuth access token refused" : "OAuth 접근 토큰 거부됐습니다",
-    "Connected accounts" : "계정 연결됨",
     "Cancel" : "취소",
     "Save" : "저장",
     "Reset" : "초기화",
