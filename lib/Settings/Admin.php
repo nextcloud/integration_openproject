@@ -57,10 +57,17 @@ class Admin implements ISettings {
 			'nc_oauth_client' => $clientInfo,
 		];
 
+		$defaultUserConfig = [
+			"default_enable_navigation" => $this->config->getAppValue(Application::APP_ID, "default_enable_navigation", false),
+			"default_enable_notifications" => $this->config->getAppValue(Application::APP_ID, "default_enable_notifications", false),
+			"default_enable_unified_search" => $this->config->getAppValue(Application::APP_ID, "default_enable_unified_search", false),
+		];
+
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
 
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
 		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
+		$this->initialStateService->provideInitialState('default-user-config', $defaultUserConfig);
 
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
 	}

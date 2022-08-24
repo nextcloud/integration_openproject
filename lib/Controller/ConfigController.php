@@ -178,6 +178,29 @@ class ConfigController extends Controller {
 	}
 
 	/**
+	 * set admin config values
+	 *
+	 * @param array<string, string|null> $values
+	 * @return DataResponse
+	 */
+	public function setDefaultUserConfig(array $values): DataResponse {
+		foreach ($values as $key => $value) {
+			$this->config->setAppValue(Application::APP_ID, $key, \boolval($value));
+		}
+		return new DataResponse([
+			"default_enable_navigation" => $this->config->getAppValue(
+				Application::APP_ID, 'default_enable_navigation', false
+			),
+			"default_enable_notifications" => $this->config->getAppValue(
+				Application::APP_ID, 'default_enable_notifications', false
+			),
+			"default_enable_unified_search" => $this->config->getAppValue(
+				Application::APP_ID, 'default_enable_unified_search', false
+			),
+		]);
+	}
+
+	/**
 	 * receive oauth code and get oauth access token
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
