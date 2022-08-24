@@ -168,6 +168,31 @@
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
 		</Button>
+		<br><br>
+		<h2>Default user settings</h2>
+		<p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p>
+		<div class="default-prefs">
+			<CheckBox v-model="defaultPrefs.navigation_enabled"
+					  input-id="default-prefs--link"
+					  :label="t('integration_openproject', 'Enable navigation link')"
+					  @input="onNavigationChange" />
+			<CheckBox v-model="defaultPrefs.search_enabled"
+					  input-id="default-prefs--u-search"
+					  :label="t('integration_openproject', 'Enable unified search for tickets')"
+					  @input="onSearchChange">
+				<template #hint>
+					<p v-if="defaultPrefs.search_enabled" class="default-prefs--hint">
+						<InformationVariant />
+						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
+					</p>
+					<br v-else>
+				</template>
+			</CheckBox>
+			<CheckBox v-model="defaultPrefs.notification_enabled"
+					  input-id="default-prefs--notifications"
+					  :label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
+					  @input="onNotificationChange" />
+		</div>
 	</div>
 </template>
 
@@ -186,6 +211,7 @@ import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
 import FormHeading from './admin/FormHeading'
+import CheckBox from '../components/CheckBox'
 import SettingsTitle from '../components/settings/SettingsTitle'
 import { F_MODES } from './../utils'
 import Button from '@nextcloud/vue/dist/Components/Button'
@@ -204,6 +230,7 @@ export default {
 		LoadingIcon,
 		AutoRenewIcon,
 		RestoreIcon,
+		CheckBox,
 	},
 	data() {
 		return {
@@ -224,6 +251,11 @@ export default {
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
+			defaultPrefs: {
+				navigation_enabled: false,
+				search_enabled: false,
+				notification_enabled: false,
+			},
 		}
 	},
 	computed: {
@@ -482,6 +514,9 @@ export default {
 				)
 			})
 		},
+		onNavigationChange() {},
+		onSearchChange() {},
+		onNotificationChange() {},
 	},
 }
 </script>
@@ -511,6 +546,9 @@ export default {
 	}
 	.mr-2 {
 		margin-right: .5rem;
+	}
+	.default-prefs {
+		padding-top: 2rem;
 	}
 }
 </style>
