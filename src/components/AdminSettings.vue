@@ -171,27 +171,19 @@
 		<br><br>
 		<h2>Default user settings</h2>
 		<p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p>
-		<div class="default-prefs">
+		<div v-if="isIntegrationComplete" class="default-prefs">
 			<CheckBox v-model="defaultUserConfig.default_enable_navigation"
-					  input-id="default-prefs--link"
-					  :label="t('integration_openproject', 'Enable navigation link')"
-					  @input="setDefaultConfig" />
+				input-id="default-prefs--link"
+				:label="t('integration_openproject', 'Enable navigation link')"
+				@input="setDefaultConfig" />
 			<CheckBox v-model="defaultUserConfig.default_enable_unified_search"
-					  input-id="default-prefs--u-search"
-					  :label="t('integration_openproject', 'Enable unified search for tickets')"
-					  @input="setDefaultConfig">
-				<template #hint>
-					<p v-if="defaultUserConfig.default_enable_unified_search" class="default-prefs--hint">
-						<InformationVariant />
-						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
-					</p>
-					<br v-else>
-				</template>
-			</CheckBox>
+				input-id="default-prefs--u-search"
+				:label="t('integration_openproject', 'Enable unified search for tickets')"
+				@input="setDefaultConfig" />
 			<CheckBox v-model="defaultUserConfig.default_enable_notifications"
-					  input-id="default-prefs--notifications"
-					  :label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
-					  @input="setDefaultConfig" />
+				input-id="default-prefs--notifications"
+				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
+				@input="setDefaultConfig" />
 		</div>
 	</div>
 </template>
@@ -213,15 +205,11 @@ import FieldValue from './admin/FieldValue'
 import FormHeading from './admin/FormHeading'
 import CheckBox from '../components/settings/CheckBox'
 import SettingsTitle from '../components/settings/SettingsTitle'
-import { F_MODES } from './../utils'
+import { F_MODES } from '../utils'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import InformationVariant from 'vue-material-design-icons/InformationVariant.vue'
 
 export default {
 	name: 'AdminSettings',
-
 	components: {
 		Button,
 		FieldValue,
@@ -234,7 +222,6 @@ export default {
 		AutoRenewIcon,
 		RestoreIcon,
 		CheckBox,
-		InformationVariant
 	},
 	data() {
 		return {
@@ -318,30 +305,37 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-	},
-	created() {
-		console.log(this.defaultUserConfig)
-		if (this.state) {
-			if (this.state.oauth_instance_url) {
-				this.formMode.server = F_MODES.VIEW
-				this.isFormCompleted.server = true
-			}
-			if (!!this.state.client_id && !!this.state.client_secret) {
-				this.formMode.opOauth = F_MODES.VIEW
-				this.isFormCompleted.opOauth = true
-			}
-			if (this.state.oauth_instance_url) {
-				if (!this.state.client_id || !this.state.client_secret) {
-					this.formMode.opOauth = F_MODES.EDIT
-				}
-			}
-			if (this.state.nc_oauth_client) {
-				this.formMode.ncOauth = F_MODES.VIEW
-				this.isFormCompleted.ncOauth = true
-			}
+		isIntegrationComplete() {
+			return (this.isServerHostFormComplete &&
+				this.isOPOAuthFormComplete &&
+				this.isNcOAuthFormComplete)
 		}
 	},
+	created() {
+		this.init()
+	},
 	methods: {
+		init() {
+			if (this.state) {
+				if (this.state.oauth_instance_url) {
+					this.formMode.server = F_MODES.VIEW
+					this.isFormCompleted.server = true
+				}
+				if (!!this.state.client_id && !!this.state.client_secret) {
+					this.formMode.opOauth = F_MODES.VIEW
+					this.isFormCompleted.opOauth = true
+				}
+				if (this.state.oauth_instance_url) {
+					if (!this.state.client_id || !this.state.client_secret) {
+						this.formMode.opOauth = F_MODES.EDIT
+					}
+				}
+				if (this.state.nc_oauth_client) {
+					this.formMode.ncOauth = F_MODES.VIEW
+					this.isFormCompleted.ncOauth = true
+				}
+			}
+		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
 		},
@@ -516,8 +510,6 @@ export default {
 			})
 		},
 		setDefaultConfig() {
-			console.log(this.defaultUserConfig)
-
 			const url = generateUrl('/apps/integration_openproject/default-user-config')
 			const req = {
 				values: {
@@ -526,7 +518,7 @@ export default {
 					default_enable_unified_search: !!this.defaultUserConfig.default_enable_unified_search,
 				},
 			}
-			axios.put(url, req).then(res => {
+			axios.put(url, req).then(() => {
 				showSuccess(t('integration_openproject', 'Default user configuration saved'))
 			}).catch(error => {
 				showError(
@@ -566,7 +558,7 @@ export default {
 		margin-right: .5rem;
 	}
 	.default-prefs {
-		padding-top: 2rem;
+		padding-top: 1.2rem;
 	}
 }
 </style>

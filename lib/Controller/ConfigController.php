@@ -186,6 +186,8 @@ class ConfigController extends Controller {
 	public function setDefaultUserConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, \boolval($value));
+			$v = $this->config->getAppValue(Application::APP_ID, $key);
+			var_dump($v);
 		}
 		return new DataResponse([
 			"default_enable_navigation" => $this->config->getAppValue(
