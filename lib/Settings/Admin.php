@@ -58,9 +58,9 @@ class Admin implements ISettings {
 		];
 
 		$defaultUserConfig = [
-			"default_enable_navigation" => $this->config->getAppValue(Application::APP_ID, "default_enable_navigation", false) === "1",
-			"default_enable_notifications" => $this->config->getAppValue(Application::APP_ID, "default_enable_notifications", false) === "1",
-			"default_enable_unified_search" => $this->config->getAppValue(Application::APP_ID, "default_enable_unified_search", false) === "1",
+			"default_enable_navigation" => $this->config->getAppValue(Application::APP_ID, "default_enable_navigation", "0") === "1",
+			"default_enable_notifications" => $this->config->getAppValue(Application::APP_ID, "default_enable_notifications", "0") === "1",
+			"default_enable_unified_search" => $this->config->getAppValue(Application::APP_ID, "default_enable_unified_search", "0") === "1",
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

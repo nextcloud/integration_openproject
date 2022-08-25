@@ -186,7 +186,7 @@ class ConfigController extends Controller {
 	 */
 	public function setDefaultUserConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, \boolval($value));
+			$this->config->setAppValue(Application::APP_ID, $key, \trim($value));
 		}
 		return new DataResponse(["status" => true], Http::STATUS_OK);
 	}
