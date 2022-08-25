@@ -178,15 +178,22 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * set admin config values
+	 * set default user config values
 	 *
 	 * @param array<string, string|null> $values
 	 *
 	 * @return DataResponse
 	 */
 	public function setDefaultUserConfig(array $values): DataResponse {
+		$default_user_keys = [
+			"default_enable_unified_search",
+			"default_enable_notifications",
+			"default_enable_navigation",
+		];
 		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, \trim($value));
+			if (\in_array($key, $default_user_keys)) {
+				$this->config->setAppValue(Application::APP_ID, $key, $value);
+			}
 		}
 		return new DataResponse(["status" => true], Http::STATUS_OK);
 	}
