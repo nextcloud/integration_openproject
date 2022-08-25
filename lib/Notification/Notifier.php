@@ -108,6 +108,33 @@ class Notifier implements INotifier {
 				)
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 			return $notification;
+		case 'op_notification':
+			$p = $notification->getSubjectParameters();
+
+			// see https://github.com/nextcloud/server/issues/1706 for docs
+			$richSubjectInstance = [
+				'type' => 'file',
+				'id' => 0,
+				'name' => $p['link'],
+				'path' => '',
+				'link' => $p['link'],
+			];
+			$message = $p['projectTitle'] . ' ';
+			foreach ($p['reasons'] as $reason) {
+				$message .= $reason . ',';
+			}
+			$message = rtrim($message, ',');
+			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
+				->setParsedMessage('--')
+				->setLink($p['link'] ?? '')
+				->setRichMessage(
+					$message,
+					[
+						'instance' => $richSubjectInstance,
+					]
+				)
+				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
+			return $notification;
 
 		default:
 			// Unknown subject => Unknown notification => throw

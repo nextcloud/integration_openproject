@@ -147,6 +147,7 @@ class OpenProjectAPIService {
 			$newLastNotificationCheck = time();
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
+			$aggregatedNotifications = [];
 			if (!isset($notifications['error']) && count($notifications) > 0) {
 				$this->config->setUserValue(
 					$userId,
@@ -160,7 +161,29 @@ class OpenProjectAPIService {
 					if ($createdAt->getTimestamp() > $lastNotificationCheck) {
 						$nbRelevantNotifications++;
 					}
+					$wpId = preg_replace('/.*\//','', $n['_links']['resource']['href']);
+					if (!array_key_exists($wpId, $aggregatedNotifications)) {
+						$aggregatedNotifications[$wpId] = [
+							'resourceTitle' => $n['_links']['resource']['title'],
+							'projectTitle' => $n['_links']['project']['title'],
+							'count' => 1,
+							// TODO according to the docs https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#creating-a-new-notification
+							// links should not be set here
+							'link' => self::sanitizeUrl(
+								$openprojectUrl . '/notifications/details/' . $wpId . '/activity/'
+							)
+						];
+					} else {
+						$aggregatedNotifications[$wpId]['count']++;
+					}
+					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
 				}
+				foreach ($aggregatedNotifications as $n) {
+					$n['reasons'] = array_unique($n['reasons']);
+					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
+					$this->sendNCNotification($userId, 'op_notification', $n);
+				}
+
 				if ($nbRelevantNotifications > 0) {
 					$this->sendNCNotification($userId, 'new_open_tickets', [
 						'nbNotifications' => $nbRelevantNotifications,
