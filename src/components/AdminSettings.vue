@@ -168,10 +168,10 @@
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
 		</Button>
-		<br><br>
-		<h2>Default user settings</h2>
-		<p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p>
 		<div v-if="isIntegrationComplete" class="default-prefs">
+			<h2>Default user settings</h2>
+			<p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p>
+			<br>
 			<CheckBox v-model="defaultUserConfig.default_enable_navigation"
 				input-id="default-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')"
