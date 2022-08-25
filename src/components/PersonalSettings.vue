@@ -99,7 +99,7 @@ export default {
 		},
 		saveOptions(values) {
 			const req = {
-				values,
+				values
 			}
 			const url = generateUrl('/apps/integration_openproject/config')
 			axios.put(url, req)
@@ -127,7 +127,7 @@ export default {
 				.finally(() => {
 					this.loading = false
 				})
-		},
+		}
 	},
 }
 </script>
