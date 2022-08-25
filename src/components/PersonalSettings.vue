@@ -6,7 +6,7 @@
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<Button class="openproject-prefs--disconnect" @click="onLogoutClick">
+			<Button class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
@@ -18,11 +18,11 @@
 			<CheckBox v-model="state.navigation_enabled"
 				input-id="openproject-prefs-link"
 				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="onNavigationChange" />
+				@input="saveForm()" />
 			<CheckBox v-model="state.search_enabled"
 				input-id="openproject-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="onSearchChange">
+				@input="saveForm()">
 				<template #hint>
 					<p v-if="state.search_enabled" class="openproject-prefs--hint">
 						<InformationVariant />
@@ -34,7 +34,7 @@
 			<CheckBox v-model="state.notification_enabled"
 				input-id="openproject-prefs--notifications"
 				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
-				@input="onNotificationChange" />
+				@input="saveForm()" />
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>
@@ -85,18 +85,17 @@ export default {
 	},
 
 	methods: {
-		onLogoutClick() {
+		disconnectFromOP() {
 			this.state.token = ''
 			this.saveOptions({ token: this.state.token, token_type: '' })
 		},
-		onNotificationChange() {
-			this.saveOptions({ notification_enabled: this.state.notification_enabled ? '1' : '0' })
-		},
-		onSearchChange() {
-			this.saveOptions({ search_enabled: this.state.search_enabled ? '1' : '0' })
-		},
-		onNavigationChange() {
-			this.saveOptions({ navigation_enabled: this.state.navigation_enabled ? '1' : '0' })
+		saveForm() {
+			const opts = {
+				notification_enabled: this.state.notification_enabled ? '1' : '0',
+				search_enabled: this.state.search_enabled ? '1' : '0',
+				navigation_enabled: this.state.navigation_enabled ? '1' : '0',
+			}
+			this.saveOptions(opts)
 		},
 		saveOptions(values) {
 			const req = {
@@ -125,7 +124,7 @@ export default {
 						+ ': ' + msg
 					)
 				})
-				.then(() => {
+				.finally(() => {
 					this.loading = false
 				})
 		},
