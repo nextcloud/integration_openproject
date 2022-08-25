@@ -306,10 +306,10 @@ export default {
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
-			return (this.isServerHostFormComplete &&
-				this.isOPOAuthFormComplete &&
-				this.isNcOAuthFormComplete)
-		}
+			return (this.isServerHostFormComplete
+				 && this.isOPOAuthFormComplete
+				 && this.isNcOAuthFormComplete)
+		},
 	},
 	created() {
 		this.init()
@@ -526,7 +526,7 @@ export default {
 					+ ': ' + error.response.request.responseText
 				)
 			})
-		}
+		},
 	},
 }
 </script>
