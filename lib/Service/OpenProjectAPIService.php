@@ -177,9 +177,11 @@ class OpenProjectAPIService {
 						$aggregatedNotifications[$wpId]['count']++;
 					}
 					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
+					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
 				}
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
+					$n['actors'] = array_unique($n['actors']);
 					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
 					$this->sendNCNotification($userId, 'op_notification', $n);
 				}

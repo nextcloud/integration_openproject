@@ -124,6 +124,13 @@ class Notifier implements INotifier {
 				$message .= $reason . ',';
 			}
 			$message = rtrim($message, ',');
+			$message .= ' ' . $l->t('by') . ' ';
+
+			foreach ($p['actors'] as $actor) {
+				$message .= $actor . ',';
+			}
+			$message = rtrim($message, ',');
+
 			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
 				->setLink($p['link'] ?? '')
