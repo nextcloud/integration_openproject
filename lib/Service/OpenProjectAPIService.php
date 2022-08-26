@@ -164,6 +164,7 @@ class OpenProjectAPIService {
 					$wpId = preg_replace('/.*\//','', $n['_links']['resource']['href']);
 					if (!array_key_exists($wpId, $aggregatedNotifications)) {
 						$aggregatedNotifications[$wpId] = [
+							'wpId' => $wpId,
 							'resourceTitle' => $n['_links']['resource']['title'],
 							'projectTitle' => $n['_links']['project']['title'],
 							'count' => 1,

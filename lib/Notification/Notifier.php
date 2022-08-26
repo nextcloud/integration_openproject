@@ -130,6 +130,15 @@ class Notifier implements INotifier {
 				$message .= $actor . ',';
 			}
 			$message = rtrim($message, ',');
+			$markAsReadAction = $notification->createAction();
+			$markAsReadAction->setLabel('mark_as_read')
+			->setParsedLabel($l->t('Mark as read in OpenProject'))
+			->setPrimary(true)
+			->setLink($this->url->linkToRouteAbsolute(
+				'integration_openproject.openProjectAPI.markNotificationAsRead',
+				['id' => $p['wpId']]),
+				'DELETE'
+			);
 
 			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
@@ -140,6 +149,7 @@ class Notifier implements INotifier {
 						'instance' => $richSubjectInstance,
 					]
 				)
+				->addParsedAction($markAsReadAction)
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 			return $notification;
 
