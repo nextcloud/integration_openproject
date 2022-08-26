@@ -12,6 +12,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
     "Bad HTTP method" : "Hibás HTTP metódus",
     "OAuth access token refused" : "Az OAuth hozzáférési token lekérése visszautasítva",
+    "Connected accounts" : "Kapcsolt fiókok",
     "OpenProject integration" : "OpenProject integráció",
     "Integration of OpenProject project management tool" : "Az OpenProject projektmenedzsment-eszköz integrációja",
     "OpenProject server" : "OpenProject-kiszolgáló",

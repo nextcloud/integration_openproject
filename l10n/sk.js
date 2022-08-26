@@ -9,6 +9,7 @@ OC.L10N.register(
     "OpenProject activity" : "OpenProject aktivity",
     "Bad HTTP method" : "Zlá metóda HTTP",
     "OAuth access token refused" : "Prístupový token OAuth bol zamietnutý",
+    "Connected accounts" : "Prepojené účty",
     "OpenProject integration" : "OpenProject integrácia",
     "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
     "Cancel" : "Zrušiť",

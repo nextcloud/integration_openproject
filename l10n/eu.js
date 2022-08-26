@@ -12,6 +12,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
     "Bad HTTP method" : "HTTP metodo okerra",
     "OAuth access token refused" : "OAuth sarbide tokena ukatua izan da",
+    "Connected accounts" : "Konektatutako kontuak",
     "OpenProject integration" : "OpenProject integrazioa",
     "Integration of OpenProject project management tool" : "OpenProject proiektuak kudeatzeko tresnaren integrazioa",
     "OpenProject server" : "OpenProject zerbitzaria",

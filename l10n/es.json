@@ -10,6 +10,7 @@
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tienes %s notificación en {instance}","Tienes %s notificaciones en {instance}","Tienes %s notificaciones en {instance}"],
     "Bad HTTP method" : "Método HTTP erróneo",
     "OAuth access token refused" : "Se ha rechazado el token de acceso OAuth",
+    "Connected accounts" : "Cuentas conectadas",
     "OpenProject integration" : "Integración con OpenProject",
     "Integration of OpenProject project management tool" : "Integración con la herramienta de manejo de proyectos OpenProject",
     "OpenProject server" : "Servidor OpenProject ",

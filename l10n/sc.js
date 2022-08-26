@@ -5,6 +5,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errore cuncambiende OAuth",
     "Bad HTTP method" : "Mètodu HTTP no bàlidu",
     "OAuth access token refused" : "Token de intrada OAuth refudadu",
+    "Connected accounts" : "Contos connètidos",
     "Cancel" : "Annulla",
     "Save" : "Sarva",
     "Reset" : "Torra a impostare",

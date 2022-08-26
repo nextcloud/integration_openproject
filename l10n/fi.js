@@ -5,6 +5,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Virhe OAuth-tunnistautumisessa",
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
+    "Connected accounts" : "Yhdistetyt tilit",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
     "Reset" : "Palauta",
