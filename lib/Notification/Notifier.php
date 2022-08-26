@@ -119,7 +119,7 @@ class Notifier implements INotifier {
 				'path' => '',
 				'link' => $p['link'],
 			];
-			$message = $p['projectTitle'] . ' ';
+			$message = $p['projectTitle'] . ' - ';
 			foreach ($p['reasons'] as $reason) {
 				$message .= $reason . ',';
 			}
