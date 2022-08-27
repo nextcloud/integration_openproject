@@ -12,6 +12,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
+    "Connected accounts" : "Comptes connectats",
     "OpenProject integration" : "Integració OpenProject",
     "Integration of OpenProject project management tool" : "Integració de l'eina de gestió de projectes OpenProject",
     "OpenProject server" : "Servidor OpenProject",
