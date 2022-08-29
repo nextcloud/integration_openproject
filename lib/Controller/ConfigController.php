@@ -135,9 +135,29 @@ class ConfigController extends Controller {
 	 * set admin config values
 	 *
 	 * @param array<string, string|null> $values
+	 *
 	 * @return DataResponse
 	 */
 	public function setAdminConfig(array $values): DataResponse {
+		$allowedKeys = [
+			"oauth_instance_url",
+			"client_id",
+			"client_secret",
+			"default_enable_navigation",
+			"default_enable_notifications",
+			"default_enable_unified_search"
+		];
+
+		// if values contains a key that is not in the allowedKeys array,
+		// return a response with status code 400 and an error message
+		foreach ($values as $key => $value) {
+			if (!in_array($key, $allowedKeys)) {
+				return new DataResponse([
+					'error' => $this->l->t('Invalid key')
+				], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'oauth_instance_url', ''
 		);

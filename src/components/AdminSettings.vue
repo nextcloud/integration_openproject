@@ -510,7 +510,7 @@ export default {
 			})
 		},
 		setDefaultConfig() {
-			const url = generateUrl('/apps/integration_openproject/default-user-config')
+			const url = generateUrl('/apps/integration_openproject/admin-config')
 			const req = {
 				values: {
 					default_enable_navigation: !!this.defaultUserConfig.default_enable_navigation,

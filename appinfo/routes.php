@@ -14,7 +14,6 @@ return [
 		['name' => 'config#oauthRedirect', 'url' => '/oauth-redirect', 'verb' => 'GET'],
 		['name' => 'config#setConfig', 'url' => '/config', 'verb' => 'PUT'],
 		['name' => 'config#setAdminConfig', 'url' => '/admin-config', 'verb' => 'PUT'],
-		['name' => 'config#setDefaultUserConfig', 'url' => '/default-user-config', 'verb' => 'PUT'],
 		['name' => 'config#autoOauthCreation', 'url' => '/nc-oauth', 'verb' => 'POST'],
 		['name' => 'config#checkConfig', 'url' => '/check-config', 'verb' => 'GET'],
 
