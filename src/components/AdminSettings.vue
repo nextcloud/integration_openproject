@@ -425,6 +425,14 @@ export default {
 			)
 		},
 		async resetAllAppValues() {
+			// to avoid general console errors, we need to set the form to
+			// editor mode so that we can update the form fields with null values
+			// also, form completeness should be set to false
+			this.formMode.opOauth = F_MODES.EDIT
+			this.isFormCompleted.opOauth = false
+			this.formMode.server = F_MODES.EDIT
+			this.isFormCompleted.server = false
+
 			this.state.client_id = null
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null

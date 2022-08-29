@@ -102,6 +102,22 @@ exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed
 </div>
 `;
 
+exports[`AdminSettings.vue default user configurations form should only be visible when the integration is complete 1`] = `
+<div class="default-prefs">
+  <h2>Default user settings</h2>
+  <p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p> <br>
+  <div class="form-check-input"><input id="default-prefs--link" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--link">
+      Enable navigation link
+    </label> </div>
+  <div class="form-check-input"><input id="default-prefs--u-search" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--u-search">
+      Enable unified search for tickets
+    </label> </div>
+  <div class="form-check-input"><input id="default-prefs--notifications" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--notifications">
+      Enable notifications for activity in my work packages
+    </label> </div>
+</div>
+`;
+
 exports[`AdminSettings.vue server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
 <button data-v-27e36536="" type="button" data-test-id="cancel-edit-server-host-btn" class="button-vue mr-2 button-vue--text-only button-vue--vue-secondary"><span data-v-27e36536="" class="button-vue__wrapper"><!----> <span data-v-27e36536="" class="button-vue__text">
 				Cancel

@@ -29,6 +29,12 @@ global.OC = {
 
 global.t = (app, text) => text
 
+global.navigator = {
+	clipboard: {
+		writeText: jest.fn(),
+	}
+}
+
 const selectors = {
 	oauthInstanceInput: '#openproject-oauth-instance',
 	oauthClientId: '#openproject-client-id',
@@ -47,6 +53,7 @@ const selectors = {
 	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
+	defaultUserConfigurationsForm: ".default-prefs"
 }
 
 // eslint-disable-next-line no-import-assign
@@ -655,6 +662,11 @@ describe('AdminSettings.vue', () => {
 	describe('reset all app settings button', () => {
 		let wrapper
 		let confirmSpy
+
+		const { location } = window
+		delete window.location
+		window.location = { reload: jest.fn() }
+
 		beforeEach(() => {
 			wrapper = getMountedWrapper({
 				state: {
@@ -694,7 +706,7 @@ describe('AdminSettings.vue', () => {
 				true
 			)
 		})
-		it('should reset all settings on confirm', async () => {
+		it.only('should reset all settings on confirm', async () => {
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 				.mockImplementationOnce(() => Promise.resolve({ data: true }))
 			await wrapper.vm.resetAllAppValues()
@@ -705,14 +717,31 @@ describe('AdminSettings.vue', () => {
 			)
 			axios.put.mockReset()
 		})
-		it('should reload the window at the end', async () => {
-			const { location } = window
-			delete window.location
-			window.location = { reload: jest.fn() }
+		it.only('should reload the window at the end', async () => {
 			await wrapper.vm.resetAllAppValues()
 			await wrapper.vm.$nextTick()
 			expect(window.location.reload).toBeCalledTimes(1)
 			window.location = location
+		})
+	})
+
+	describe('default user configurations form', () => {
+		it("should only be visible when the integration is complete", () => {
+			const wrapper = getMountedWrapper({
+				isFormCompleted: {
+					server: true, opOauth: true, ncOauth: true,
+				},
+				state: {
+					oauth_instance_url: 'http://openproject.com',
+					client_id: 'some-client-id-for-op',
+					client_secret: 'some-client-secret-for-op',
+					nc_oauth_client: {
+						clientId: 'something',
+						clientSecret: 'something-else',
+					}
+				}
+			})
+			expect(wrapper.find(selectors.defaultUserConfigurationsForm)).toMatchSnapshot()
 		})
 	})
 })
