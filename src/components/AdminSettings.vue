@@ -526,9 +526,12 @@ export default {
 					default_enable_unified_search: !!this.defaultUserConfig.default_enable_unified_search,
 				},
 			}
-			axios.put(url, req).then(() => {
+			axios.put(url, req).then((res) => {
+				console.log("success")
+				console.log(res)
 				showSuccess(t('integration_openproject', 'Default user configuration saved'))
 			}).catch(error => {
+				console.log(error.response.request.responseText)
 				showError(
 					t('integration_openproject', 'Failed to save default user configuration')
 					+ ': ' + error.response.request.responseText
