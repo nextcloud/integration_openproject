@@ -10,6 +10,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUser;
+use OCP\AppFramework\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -740,5 +741,36 @@ class ConfigControllerTest extends TestCase {
 		);
 
 		$configController->setAdminConfig($credsToUpdate);
+	}
+
+	public function testSetAdminConfigNotAllowedConfigValues() {
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$userManager = \OC::$server->getUserManager();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			'test101'
+		);
+
+		$response = $configController->setAdminConfig([
+			'client_id_top' => 'old-client_id',
+		]);
+
+		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertEquals('Invalid key', $response->getData()['error']);
+
+
 	}
 }
