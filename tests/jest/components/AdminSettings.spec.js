@@ -32,7 +32,7 @@ global.t = (app, text) => text
 global.navigator = {
 	clipboard: {
 		writeText: jest.fn(),
-	}
+	},
 }
 
 const selectors = {
@@ -53,8 +53,8 @@ const selectors = {
 	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
-	defaultUserConfigurationsForm: ".default-prefs",
-	defaultEnableNavigation: "#default-prefs--link"
+	defaultUserConfigurationsForm: '.default-prefs',
+	defaultEnableNavigation: '#default-prefs--link',
 }
 
 const completeIntegrationState = {
@@ -64,7 +64,7 @@ const completeIntegrationState = {
 	nc_oauth_client: {
 		clientId: 'something',
 		clientSecret: 'something-else',
-	}
+	},
 }
 
 // eslint-disable-next-line no-import-assign
@@ -724,7 +724,16 @@ describe('AdminSettings.vue', () => {
 
 			expect(saveOPOptionsSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/admin-config',
-				{ values: { client_id: null, client_secret: null, oauth_instance_url: null } }
+				{
+					values: {
+						client_id: null,
+						client_secret: null,
+						oauth_instance_url: null,
+						default_enable_navigation: null,
+						default_enable_notifications: null,
+						default_enable_unified_search: null,
+					},
+				}
 			)
 			axios.put.mockReset()
 		})
@@ -737,51 +746,53 @@ describe('AdminSettings.vue', () => {
 	})
 
 	describe('default user configurations form', () => {
-		it("should be visible when the integration is complete", () => {
+		it('should be visible when the integration is complete', () => {
 			const wrapper = getMountedWrapper({
-				state: completeIntegrationState
+				state: completeIntegrationState,
 			})
 			expect(wrapper.find(selectors.defaultUserConfigurationsForm)).toMatchSnapshot()
 		})
-		it("should not be visible if the integration is not complete", () => {
+		it('should not be visible if the integration is not complete', () => {
 			const wrapper = getMountedWrapper({
 				state: {
 					oauth_instance_url: 'http://openproject.com',
 					client_id: 'some-client-id-for-op',
 					client_secret: 'some-client-secret-for-op',
-					nc_oauth_client: null
-				}
+					nc_oauth_client: null,
+				},
 			})
 			expect(wrapper.find(selectors.defaultUserConfigurationsForm).exists()).toBeFalsy()
 		})
 
-		it("should show success message and update the default config on success", async () => {
+		it('should show success message and update the default config on success', async () => {
 			dialogs.showSuccess.mockImplementationOnce()
 			const saveDefaultsSpy = jest.spyOn(axios, 'put')
 				.mockImplementationOnce(() => Promise.resolve({ data: true }))
 
 			const wrapper = getMountedWrapper({
-				state: completeIntegrationState
+				state: completeIntegrationState,
 			})
 
 			let $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
-			await $defaultEnableNavigation.trigger("click")
+			await $defaultEnableNavigation.trigger('click')
 
 			$defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
 			expect(saveDefaultsSpy).toBeCalledTimes(1)
 			expect(saveDefaultsSpy).toBeCalledWith(
-				"http://localhost/apps/integration_openproject/admin-config",
-				{"values": {
-					"default_enable_navigation": true,
-					"default_enable_notifications": false,
-					"default_enable_unified_search": false
-				}}
+				'http://localhost/apps/integration_openproject/admin-config',
+				{
+					values: {
+						default_enable_navigation: true,
+						default_enable_notifications: false,
+						default_enable_unified_search: false,
+					},
+				}
 			)
 			expect(dialogs.showSuccess).toBeCalledTimes(1)
-			expect(dialogs.showSuccess).toBeCalledWith("Default user configuration saved")
+			expect(dialogs.showSuccess).toBeCalledWith('Default user configuration saved')
 		})
 
-		it("should show error message on fail response", async () => {
+		it('should show error message on fail response', async () => {
 			// mock the dialogs showError method
 			dialogs.showError.mockImplementationOnce()
 
@@ -791,18 +802,18 @@ describe('AdminSettings.vue', () => {
 			err.message = 'some issue'
 			err.response = {}
 			err.response.request = {}
-			err.response.request.responseText = "Some message"
+			err.response.request.responseText = 'Some message'
 			axios.put.mockRejectedValueOnce(err)
 
 			const wrapper = getMountedWrapper({
-				state: completeIntegrationState
+				state: completeIntegrationState,
 			})
 			const $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
-			await $defaultEnableNavigation.trigger("click")
+			await $defaultEnableNavigation.trigger('click')
 			await localVue.nextTick()
 
 			expect(dialogs.showError).toBeCalledTimes(1)
-			expect(dialogs.showError).toBeCalledWith("Failed to save default user configuration: Some message")
+			expect(dialogs.showError).toBeCalledWith('Failed to save default user configuration: Some message')
 
 		})
 	})

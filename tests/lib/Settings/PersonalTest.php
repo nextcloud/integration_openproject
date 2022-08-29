@@ -138,6 +138,9 @@ class PersonalTest extends TestCase {
 		$this->assertEquals($expected, $form);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testNoPersonalSettingsShouldUseValueFromTheDefaults() {
 		$this->config
 			->method('getUserValue')
@@ -178,13 +181,13 @@ class PersonalTest extends TestCase {
 			->withConsecutive(
 				[
 					'user-config', [
-					'token' => 'some-token',
-					'user_name' => 'some-username',
-					'search_enabled' => true,
-					'notification_enabled' => true,
-					'navigation_enabled' => true,
-					'admin_config_ok' => true,
-				]
+						'token' => 'some-token',
+						'user_name' => 'some-username',
+						'search_enabled' => true,
+						'notification_enabled' => true,
+						'navigation_enabled' => true,
+						'admin_config_ok' => true,
+					]
 				],
 				['oauth-connection-result'],
 				['oauth-connection-error-message']

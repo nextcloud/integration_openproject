@@ -55,9 +55,6 @@ class Admin implements ISettings {
 			'client_secret' => $clientSecret,
 			'oauth_instance_url' => $oauthUrl,
 			'nc_oauth_client' => $clientInfo,
-		];
-
-		$defaultUserConfig = [
 			"default_enable_navigation" => $this->config->getAppValue(Application::APP_ID, "default_enable_navigation", "0") === "1",
 			"default_enable_notifications" => $this->config->getAppValue(Application::APP_ID, "default_enable_notifications", "0") === "1",
 			"default_enable_unified_search" => $this->config->getAppValue(Application::APP_ID, "default_enable_unified_search", "0") === "1",
@@ -67,7 +64,6 @@ class Admin implements ISettings {
 
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
 		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
-		$this->initialStateService->provideInitialState('default-user-config', $defaultUserConfig);
 
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
 	}

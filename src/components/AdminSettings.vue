@@ -172,15 +172,15 @@
 			<h2>Default user settings</h2>
 			<p>A new user will receive these defaults and they will be applied to the integration app till the user changes them.</p>
 			<br>
-			<CheckBox v-model="defaultUserConfig.default_enable_navigation"
+			<CheckBox v-model="state.default_enable_navigation"
 				input-id="default-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')"
 				@input="setDefaultConfig" />
-			<CheckBox v-model="defaultUserConfig.default_enable_unified_search"
+			<CheckBox v-model="state.default_enable_unified_search"
 				input-id="default-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
 				@input="setDefaultConfig" />
-			<CheckBox v-model="defaultUserConfig.default_enable_notifications"
+			<CheckBox v-model="state.default_enable_notifications"
 				input-id="default-prefs--notifications"
 				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
 				@input="setDefaultConfig" />
@@ -240,7 +240,6 @@ export default {
 			isOpenProjectInstanceValid: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			defaultUserConfig: loadState('integration_openproject', 'default-user-config'),
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
 		}
@@ -436,6 +435,10 @@ export default {
 			this.state.client_id = null
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null
+			this.state.default_enable_navigation = null
+			this.state.default_enable_notifications = null
+			this.state.default_enable_unified_search = null
+
 			await this.saveOPOptions()
 			window.location.reload()
 		},
@@ -467,6 +470,9 @@ export default {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
 					oauth_instance_url: this.state.oauth_instance_url,
+					default_enable_navigation: this.state.default_enable_navigation,
+					default_enable_notifications: this.state.default_enable_notifications,
+					default_enable_unified_search: this.state.default_enable_unified_search,
 				},
 			}
 			try {
@@ -476,7 +482,6 @@ export default {
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				return true
 			} catch (error) {
-				console.debug(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
@@ -521,17 +526,14 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			const req = {
 				values: {
-					default_enable_navigation: !!this.defaultUserConfig.default_enable_navigation,
-					default_enable_notifications: !!this.defaultUserConfig.default_enable_notifications,
-					default_enable_unified_search: !!this.defaultUserConfig.default_enable_unified_search,
+					default_enable_navigation: !!this.state.default_enable_navigation,
+					default_enable_notifications: !!this.state.default_enable_notifications,
+					default_enable_unified_search: !!this.state.default_enable_unified_search,
 				},
 			}
 			axios.put(url, req).then((res) => {
-				console.log("success")
-				console.log(res)
 				showSuccess(t('integration_openproject', 'Default user configuration saved'))
 			}).catch(error => {
-				console.log(error.response.request.responseText)
 				showError(
 					t('integration_openproject', 'Failed to save default user configuration')
 					+ ': ' + error.response.request.responseText

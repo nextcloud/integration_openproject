@@ -743,6 +743,9 @@ class ConfigControllerTest extends TestCase {
 		$configController->setAdminConfig($credsToUpdate);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testSetAdminConfigNotAllowedConfigValues() {
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
