@@ -773,7 +773,5 @@ class ConfigControllerTest extends TestCase {
 
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		$this->assertEquals('Invalid key', $response->getData()['error']);
-
-
 	}
 }
