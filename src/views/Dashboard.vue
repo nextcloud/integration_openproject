@@ -1,8 +1,10 @@
 <template>
 	<DashboardWidget :items="items"
+		:item-menu="itemMenu"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
-		:loading="isLoading">
+		:loading="isLoading"
+		@markAsRead="onMarkAsRead">
 		<template #empty-content>
 			<EmptyContent v-if="emptyContentMessage">
 				<template #icon>
@@ -63,6 +65,12 @@ export default {
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
+			itemMenu: {
+				markAsRead: {
+					text: t('integration_openproject', 'Mark as read'),
+					icon: 'icon-checkmark',
+				},
+			},
 		}
 	},
 	computed: {
@@ -150,8 +158,11 @@ export default {
 			this.fetchNotifications()
 			this.loop = setInterval(() => this.fetchNotifications(), 60000)
 		},
+		getNotificationsUrl() {
+			return generateUrl('/apps/integration_openproject/notifications')
+		},
 		fetchNotifications() {
-			axios.get(generateUrl('/apps/integration_openproject/notifications')).then((response) => {
+			axios.get(this.getNotificationsUrl()).then((response) => {
 				const notifications = {}
 				if (Array.isArray(response.data)) {
 					for (let i = 0; i < response.data.length; i++) {
@@ -242,6 +253,13 @@ export default {
 		},
 		getTargetTitle(n) {
 			return '(' + n.count + ') ' + n.resourceTitle
+		},
+		onMarkAsRead(item) {
+			axios.delete(this.getNotificationsUrl()).then((response) => {
+				console.debug(response)
+			}).catch((error) => {
+				console.debug(error)
+			})
 		},
 	},
 }

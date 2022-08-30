@@ -24,6 +24,7 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 use OCP\IUserManager;
@@ -38,6 +39,7 @@ use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
 
 use OCA\OpenProject\AppInfo\Application;
+use Safe\Exceptions\JsonException;
 
 define('CACHE_TTL', 3600);
 
@@ -417,10 +419,11 @@ class OpenProjectAPIService {
 		}
 		try {
 			$response = $this->rawRequest($accessToken, $openprojectUrl, $endPoint, $params, $method);
-			if ($method === 'DELETE' && $response->getStatusCode() === Http::STATUS_NO_CONTENT) {
+			if (($method === 'DELETE' || $method === 'POST') &&
+				$response->getStatusCode() === Http::STATUS_NO_CONTENT
+			) {
 				return ['success' => true];
 			}
-
 			return json_decode($response->getBody(), true);
 		} catch (ServerException | ClientException $e) {
 			$response = $e->getResponse();
@@ -453,7 +456,16 @@ class OpenProjectAPIService {
 			$this->logger->warning('OpenProject API error : '.$e->getMessage(), ['app' => $this->appName]);
 			$decodedBody = json_decode($body, true);
 			if ($decodedBody && isset($decodedBody['message'])) {
-				$this->logger->warning('OpenProject API error : '.$decodedBody['message'], ['app' => $this->appName]);
+				if (gettype($decodedBody['message']) === 'array') {
+					// the OpenProject API sometimes responds with an array as message
+					// e.g. when sending a not-existing workpackage as resourceId filter
+					// to /api/v3/notifications/read_ian
+					// see POST /api/v3/notifications/read_ian in https://community.openproject.org/api/docs
+					$message = implode(' ', $decodedBody['message']);
+				} else {
+					$message = $decodedBody['message'];
+				}
+				$this->logger->warning('OpenProject API error : '. $message, ['app' => $this->appName]);
 			}
 			return [
 				'error' => $e->getMessage(),
@@ -696,6 +708,31 @@ class OpenProjectAPIService {
 		return $result['_embedded']['elements'][0]['id'];
 	}
 
+	/**
+	 * @throws OpenprojectErrorException
+	 * @throws PreConditionNotMetException
+	 * @throws JsonException
+	 * @throws Exception
+	 * @return array<mixed>
+	 */
+	public function markAllNotificationsOfWorkPackageAsRead(
+		int $workpackageId, string $userId
+	) {
+		$filters[] = [
+			'resourceId' =>
+				['operator' => '=', 'values' => [(string)$workpackageId]]
+		];
+		$params['body'] = '';
+		$fullUrl = 'notifications/read_ian?filters=' . urlencode(\Safe\json_encode($filters));
+
+		$result = $this->request(
+			$userId, $fullUrl, $params, 'POST'
+		);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error']);
+		}
+		return $result;
+	}
 	/**
 	 * @param int $workpackageId
 	 * @param string $userId

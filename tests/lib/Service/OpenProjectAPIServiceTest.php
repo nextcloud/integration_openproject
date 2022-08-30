@@ -1423,6 +1423,60 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 	}
 
+	public function testMarkAllNotificationsOfWorkPackageAsReadPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->notificationsPath . '/read_ian')
+			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["123"]}}]'))
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody(null);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_NO_CONTENT);
+
+		$this->builder
+			->uponReceiving('a POST request to mark all notifications of a WP as read')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+
+		$service = $this->getOpenProjectAPIService();
+
+		$result = $service->markAllNotificationsOfWorkPackageAsRead(
+			123,
+			'testUser'
+		);
+
+		$this->assertSame(['success' => true], $result);
+	}
+
+	public function testMarkAllNotificationsOfANotExistingWorkPackageAsReadPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->notificationsPath . '/read_ian')
+			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["789"]}}]'))
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody(null);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_BAD_REQUEST)
+			->setBody(["_type" => "Error", "errorIdentifier" => "urn:openproject-org:api:v3:errors:InvalidQuery", "message" => ["Filters Resource filter has invalid values."]]);
+
+		$this->builder
+			->uponReceiving('a POST request to mark all notifications of a not-existing WP as read')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+
+		$service = $this->getOpenProjectAPIService();
+		$this->expectException(OpenprojectErrorException::class);
+		$result = $service->markAllNotificationsOfWorkPackageAsRead(
+			789,
+			'testUser'
+		);
+	}
 	/**
 	 * @return array<mixed>
 	 */

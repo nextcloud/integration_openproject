@@ -20,6 +20,7 @@ return [
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
+		['name' => 'openProjectAPI#markNotificationAsRead', 'url' => '/notifications', 'verb' => 'DELETE'],
 		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/url', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getOpenProjectAvatar', 'url' => '/avatar', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getSearchedWorkPackages', 'url' => '/work-packages', 'verb' => 'GET'],
