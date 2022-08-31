@@ -6,10 +6,12 @@ search and can display the count of OpenProject notifications as NextCloud notif
 
 Please report issues and bugs in: https://community.openproject.org/projects/nextcloud-integration/work_packages
 
-## :busts_in_silhouette: [User documentation](https://openproject.org/docs/user-guide/nextcloud-integration/)
-## :shipit: [Admin documentation](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/)
+## Documentation for users and administrators
 
-## :computer: Development
+- For using the integration after it was installed and setup, please follow the user guide ["Using the Nextcloud integration"](https://openproject.org/docs/user-guide/nextcloud-integration/).
+- For install nstallation and setup, please follow the [System admin guide](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/).
+
+## Development
 
 Develop using docker compose
 
