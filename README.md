@@ -1,7 +1,7 @@
 # OpenProject Integration
 
 This application enables integration between Nextcloud and open-source project management software OpenProject. 
-	
+
 On the Nextcloud end, it allows users to:
 
 * Link files and folders with work packages in OpenProject
@@ -10,6 +10,7 @@ On the Nextcloud end, it allows users to:
 * Search for work packages using Nextcloud's search bar
 
 On the OpenProject end, users are able to:
+
 * View all Nextcloud files and folders linked to a work package
 * Download linked files or open them in Nextcloud to edit them
 
