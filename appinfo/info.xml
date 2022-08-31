@@ -3,16 +3,18 @@
 	<id>integration_openproject</id>
 	<name>OpenProject Integration</name>
 	<summary>Link Nextcloud files to OpenProject work packages</summary>
-	<description><![CDATA[This application enables seamless integration with the open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:
+	<description><![CDATA[This application enables seamless integration with the open source project management and collaboration software OpenProject. 
+	
+On the Nextcloud end, it allows users to:
 
 * Link files and folders with work packages in OpenProject
-* Find all work packages linked to a file or folder
+* Find all work packages linked to a file or a folder
 * View OpenProject notifications via the dashboard
 * Search for work packages using Nextcloud's search bar
 
 On the OpenProject end, users are able to:
 
-* View all Nextcloud files linked to a work package
+* View all Nextcloud files and folders linked to a work package
 * Download linked files or open them in Nextcloud to edit them
 
 For more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/).
