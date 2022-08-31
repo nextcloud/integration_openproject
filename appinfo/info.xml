@@ -3,7 +3,7 @@
 	<id>integration_openproject</id>
 	<name>OpenProject Integration</name>
 	<summary>Link Nextcloud files to OpenProject work packages</summary>
-	<description><![CDATA[This application enables seamless integration with the open source project management and collaboration software OpenProject. 
+	<description><![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject. 
 	
 On the Nextcloud end, it allows users to:
 
