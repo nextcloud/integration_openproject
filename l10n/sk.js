@@ -10,8 +10,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Zlá metóda HTTP",
     "OAuth access token refused" : "Prístupový token OAuth bol zamietnutý",
     "Connected accounts" : "Prepojené účty",
-    "OpenProject integration" : "OpenProject integrácia",
-    "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject",
     "Cancel" : "Zrušiť",
     "Save" : "Uložiť",
     "Reset" : "Resetovať",
@@ -30,6 +28,7 @@ OC.L10N.register(
     "OpenProject instance not found" : "Inštancia OpenProject nebola nájdená",
     "Failed to save OpenProject options" : "Nepodarilo sa uložiť nastavenia OpenProjectu",
     "Copied!" : "Skopírované!",
+    "OpenProject integration" : "OpenProject integrácia",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
     "Unexpected Error" : "Neočakávaná chyba",
@@ -40,6 +39,7 @@ OC.L10N.register(
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
     "Existing relations:" : "Existujúce vzťahy:",
     "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
-    "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:"
+    "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:",
+    "Integration of OpenProject project management tool" : "Integrácia nástroja pre projektový manažment OpenProject"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

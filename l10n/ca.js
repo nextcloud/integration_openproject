@@ -13,8 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "Connected accounts" : "Comptes connectats",
-    "OpenProject integration" : "Integració OpenProject",
-    "Integration of OpenProject project management tool" : "Integració de l'eina de gestió de projectes OpenProject",
     "OpenProject server" : "Servidor OpenProject",
     "OpenProject host" : "Amfitrió d'OpenProject",
     "Please introduce your OpenProject host name" : "Introduïu el vostre nom d'amfitrió d'OpenProject",
@@ -63,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "Copiat!",
     "Copy value" : "Copia el valor",
     "Copied to the clipboard" : "S'ha copiat al porta-retalls",
+    "OpenProject integration" : "Integració OpenProject",
     "No connection with OpenProject" : "No hi ha connexió amb OpenProject",
     "Error connecting to OpenProject" : "Error en connectar-se a OpenProject",
     "Could not fetch work packages from OpenProject" : "No s'han pogut recuperar els paquets de treball d'OpenProject",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "Work package unlinked" : "Paquet de treball desenllaçat",
     "Failed to unlink work package" : "No s'ha pogut desenllaçar el paquet de treball",
     "Successfully connected to OpenProject!" : "S'ha connectat correctament a OpenProject!",
-    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:"
+    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
+    "Integration of OpenProject project management tool" : "Integració de l'eina de gestió de projectes OpenProject"
 },
 "nplurals=2; plural=(n != 1);");

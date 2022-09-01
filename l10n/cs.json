@@ -11,9 +11,6 @@
     "Bad HTTP method" : "Nesprávná HTTP metoda",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "Connected accounts" : "Propojené účty",
-    "OpenProject integration" : "Napojení na OpenProject",
-    "Integration of OpenProject project management tool" : "Napojení na OpenProject – nástroj pro správu projektů",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Tato aplikace umožňuje hladké napojení na opensource software pro správu projektů a spolupráci OpenProject. Na straně Nextcloud, umožňuje uživatelům:\n\n* Propojovat soubory a složky s balíčky práce v OpenProject\n* Najít veškeré balíčky práce související se souborem či složkou\n* Udržovat si přehled o aktualizacích svých balíčků práce prostřednictvím nástěnky\n* Hledat v relevantních balíčcích práce pomocí lišty hledání v Nextcloud\n\nNa straně OpenProject uživatelé mohou:\n\n* Zobrazovat si veškeré soubory v Nextcloud, propojené s balíčkem práce\n* Stahovat si je nebo otevřít v Nextcloud a upravovat je tam\n* Rušit propojení u souborů\n\nDalší informace ohledně nastavení a používání aplikace OpenProject application, naleznete v [příručce pro nastavení napojení](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) (pro správce) a [uživatelské příručce](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "OpenProject server" : "Server s OpenProject",
     "OpenProject host" : "Server s OpenProject",
     "Please introduce your OpenProject host name" : "Zadejte název stroje, na kterém je provozována vámi využívaná instance OpenProject",
@@ -62,6 +59,7 @@
     "Copied!" : "Zkopírováno!",
     "Copy value" : "Zkopírovat hodnotu",
     "Copied to the clipboard" : "Zkopírováno do schránky",
+    "OpenProject integration" : "Napojení na OpenProject",
     "No connection with OpenProject" : "Nespojeno s OpenProject",
     "Error connecting to OpenProject" : "Chyba při připojování se k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodařilo se získat balíčky práce z OpenProject",
@@ -83,6 +81,8 @@
     "Work package unlinked" : "Balíček práce odpojen",
     "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce",
     "Successfully connected to OpenProject!" : "Úspěšně připojeno k OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth přístupový token se nepodařilo získat:"
+    "OAuth access token could not be obtained:" : "OAuth přístupový token se nepodařilo získat:",
+    "Integration of OpenProject project management tool" : "Napojení na OpenProject – nástroj pro správu projektů",
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Tato aplikace umožňuje hladké napojení na opensource software pro správu projektů a spolupráci OpenProject. Na straně Nextcloud, umožňuje uživatelům:\n\n* Propojovat soubory a složky s balíčky práce v OpenProject\n* Najít veškeré balíčky práce související se souborem či složkou\n* Udržovat si přehled o aktualizacích svých balíčků práce prostřednictvím nástěnky\n* Hledat v relevantních balíčcích práce pomocí lišty hledání v Nextcloud\n\nNa straně OpenProject uživatelé mohou:\n\n* Zobrazovat si veškeré soubory v Nextcloud, propojené s balíčkem práce\n* Stahovat si je nebo otevřít v Nextcloud a upravovat je tam\n* Rušit propojení u souborů\n\nDalší informace ohledně nastavení a používání aplikace OpenProject application, naleznete v [příručce pro nastavení napojení](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) (pro správce) a [uživatelské příručce](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
