@@ -13,8 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Método HTTP incorreto",
     "OAuth access token refused" : "Token de acesso OAuth recusado",
     "Connected accounts" : "Contas conectadas",
-    "OpenProject integration" : "Integração OpenProject",
-    "Integration of OpenProject project management tool" : "Integração da ferramenta de gerenciamento de projetos OpenProject",
     "OpenProject server" : "Servidor OpenProject",
     "OpenProject host" : "Host do OpenProject",
     "Please introduce your OpenProject host name" : "Por favor, introduza o seu nome de host OpenProject",
@@ -63,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "Copiado!",
     "Copy value" : "Copiar valor",
     "Copied to the clipboard" : "Copiado para a área de transferência",
+    "OpenProject integration" : "Integração OpenProject",
     "No connection with OpenProject" : "Sem conexão com OpenProject",
     "Error connecting to OpenProject" : "Erro ao conectar ao OpenProject",
     "Could not fetch work packages from OpenProject" : "Não foi possível buscar pacotes de trabalho do OpenProject",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "Work package unlinked" : "Pacote de trabalho desvinculado",
     "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho",
     "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
-    "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:"
+    "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
+    "Integration of OpenProject project management tool" : "Integração da ferramenta de gerenciamento de projetos OpenProject"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

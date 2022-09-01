@@ -13,8 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Лош HTTP метод",
     "OAuth access token refused" : " Маркерът за достъп OAuth е отказан",
     "Connected accounts" : "Свързани профили",
-    "OpenProject integration" : "Интегриране на OpenProject",
-    "Integration of OpenProject project management tool" : "Интегриране на инструмента за управление на проекти OpenProject",
     "OpenProject server" : "OpenProject сървър",
     "OpenProject host" : "OpenProject хост /сървър/",
     "Please introduce your OpenProject host name" : "Моля, въведете вашето хост име на сървър OpenProject",
@@ -63,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "Копирано!",
     "Copy value" : "Копиране на стойност",
     "Copied to the clipboard" : "Копирано в клипборда",
+    "OpenProject integration" : "Интегриране на OpenProject",
     "No connection with OpenProject" : "Няма връзка с OpenProject",
     "Error connecting to OpenProject" : "Грешка при свързването с OpenProject",
     "Could not fetch work packages from OpenProject" : "Не можаха да се извлекът работни пакети от OpenProject",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "Work package unlinked" : "Връзката на работният пакет е прекратена",
     "Failed to unlink work package" : "Неуспешно прекратяване на връзката на работният пакет",
     "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
-    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:"
+    "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
+    "Integration of OpenProject project management tool" : "Интегриране на инструмента за управление на проекти OpenProject"
 },
 "nplurals=2; plural=(n != 1);");

@@ -13,9 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "HTTP yöntemi hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "Connected accounts" : "Bağlı hesaplar",
-    "OpenProject integration" : "OpenProject bütünleştirmesi",
-    "Integration of OpenProject project management tool" : "OpenProject proje yönetim aracı bütünleştirmesi",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Bu uygulama, açık kaynaklı proje yönetimi ve işbirliği yazılımı OpenProject ile tam bütünleştirme sağlar. Nextcloud tarafında, kullanıcılar şu işlemleri yapabilir:\n\n* Dosyaları ve klasörleri OpenProject çalışma paketleriyle ilişkilendirebilir\n* Bir dosya veya klasöre bağlı tüm iş paketlerini bulabilir\n* Pano üzerinden iş paketlerindeki güncellemeleri izleyebilir\n* Nextcloud arama çubuğunu kullanarak ilgili iş paketlerini bulabilir\n\nOpenProject tarafında, kullanıcılar şunları yapabilir:\n\n* Bir iş paketine bağlı tüm Nextcloud dosyalarını görüntüleyebilir\n* Bağlantılı dosyaları indirebilir ya da düzenlemek için Nextcloud üzerinde açabilir\n* Bağlantılı dosyaların bağlantısını kaldırabilir\n\nOpenProject uygulamasının nasıl kurulacağı ve kullanılacağı hakkında ayrıntılı bilgi almak için yöneticiler için [bütünleştirme kurulum rehberi](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) ve [kullanıcı rehberi](https://www.openproject.org/docs/user-guide/nextcloud-integration/) bölümlerine bakabilirsiniz.",
     "OpenProject server" : "OpenProject sunucusu",
     "OpenProject host" : "OpenProject sunucu adı",
     "Please introduce your OpenProject host name" : "Lütfen OpenProject sunucu adını yazın",
@@ -64,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "Kopyalandı!",
     "Copy value" : "Değeri kopyala",
     "Copied to the clipboard" : "Panoya kopyalandı",
+    "OpenProject integration" : "OpenProject bütünleştirmesi",
     "No connection with OpenProject" : "OpenProject bağlantısı yok",
     "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
     "Could not fetch work packages from OpenProject" : "OpenProject üzerinden çalışma paketleri alınamadı",
@@ -85,6 +83,8 @@ OC.L10N.register(
     "Work package unlinked" : "Çalışma paketinin bağlantısı kesildi",
     "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi",
     "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
-    "OAuth access token could not be obtained:" : "OAuth erişim kodu eklenemedi:"
+    "OAuth access token could not be obtained:" : "OAuth erişim kodu eklenemedi:",
+    "Integration of OpenProject project management tool" : "OpenProject proje yönetim aracı bütünleştirmesi",
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Bu uygulama, açık kaynaklı proje yönetimi ve işbirliği yazılımı OpenProject ile tam bütünleştirme sağlar. Nextcloud tarafında, kullanıcılar şu işlemleri yapabilir:\n\n* Dosyaları ve klasörleri OpenProject çalışma paketleriyle ilişkilendirebilir\n* Bir dosya veya klasöre bağlı tüm iş paketlerini bulabilir\n* Pano üzerinden iş paketlerindeki güncellemeleri izleyebilir\n* Nextcloud arama çubuğunu kullanarak ilgili iş paketlerini bulabilir\n\nOpenProject tarafında, kullanıcılar şunları yapabilir:\n\n* Bir iş paketine bağlı tüm Nextcloud dosyalarını görüntüleyebilir\n* Bağlantılı dosyaları indirebilir ya da düzenlemek için Nextcloud üzerinde açabilir\n* Bağlantılı dosyaların bağlantısını kaldırabilir\n\nOpenProject uygulamasının nasıl kurulacağı ve kullanılacağı hakkında ayrıntılı bilgi almak için yöneticiler için [bütünleştirme kurulum rehberi](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) ve [kullanıcı rehberi](https://www.openproject.org/docs/user-guide/nextcloud-integration/) bölümlerine bakabilirsiniz."
 },
 "nplurals=2; plural=(n > 1);");

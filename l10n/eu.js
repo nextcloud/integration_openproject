@@ -13,8 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "HTTP metodo okerra",
     "OAuth access token refused" : "OAuth sarbide tokena ukatua izan da",
     "Connected accounts" : "Konektatutako kontuak",
-    "OpenProject integration" : "OpenProject integrazioa",
-    "Integration of OpenProject project management tool" : "OpenProject proiektuak kudeatzeko tresnaren integrazioa",
     "OpenProject server" : "OpenProject zerbitzaria",
     "OpenProject host" : "OpenProject ostalaria",
     "Please introduce your OpenProject host name" : "Mesedez sartu zure OpenProject ostalariaren izena",
@@ -63,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "Kopiatua!",
     "Copy value" : "Kopiatu balioa",
     "Copied to the clipboard" : "Arbelera kopiatuta",
+    "OpenProject integration" : "OpenProject integrazioa",
     "No connection with OpenProject" : "Ez dago konexiorik OpenProject-ekin",
     "Error connecting to OpenProject" : "Errore bat gertatu da OpenProject-era konektatzean",
     "Could not fetch work packages from OpenProject" : "Ezin izan dira lortu lan paketeak OpenProject-etik",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "Work package unlinked" : "Deskonektatu da lan paketea",
     "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
+    "Integration of OpenProject project management tool" : "OpenProject proiektuak kudeatzeko tresnaren integrazioa"
 },
 "nplurals=2; plural=(n != 1);");

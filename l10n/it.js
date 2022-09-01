@@ -10,8 +10,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Connected accounts" : "Account connessi",
-    "OpenProject integration" : "Integrazione OpenProject",
-    "Integration of OpenProject project management tool" : "Integrazione dello strumento di gestione dei progetti OpenProject",
     "Cancel" : "Annulla",
     "Save" : "Salva",
     "Reset" : "Ripristina",
@@ -30,6 +28,7 @@ OC.L10N.register(
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
     "Copied!" : "Copiato!",
+    "OpenProject integration" : "Integrazione OpenProject",
     "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
     "Unexpected Error" : "Si è verificato un errore inatteso",
@@ -40,6 +39,7 @@ OC.L10N.register(
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
     "Existing relations:" : "Relazioni esistenti:",
     "Successfully connected to OpenProject!" : "Connesso correttamente a OpenProject!",
-    "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:"
+    "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:",
+    "Integration of OpenProject project management tool" : "Integrazione dello strumento di gestione dei progetti OpenProject"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

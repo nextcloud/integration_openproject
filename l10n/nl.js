@@ -9,7 +9,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
     "Connected accounts" : "Verbonden accounts",
-    "OpenProject integration" : "OpenProject integratie",
     "OpenProject server" : "OpenProject server",
     "OpenProject host" : "OpenProject host",
     "Cancel" : "Annuleren",
@@ -26,6 +25,7 @@ OC.L10N.register(
     "Incorrect access token" : "Onjuist access token",
     "Invalid token" : "Ongeldig token",
     "Copied!" : "Gekopieerd!",
+    "OpenProject integration" : "OpenProject integratie",
     "Start typing to search" : "Begin met typen om te zoeken",
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
 },

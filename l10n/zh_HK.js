@@ -13,9 +13,6 @@ OC.L10N.register(
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "Connected accounts" : "已連線的賬號",
-    "OpenProject integration" : "OpenProject 整合",
-    "Integration of OpenProject project management tool" : "整合 OpenProject 項目管理工具",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "此應用程式可與開源項目管理和協作軟件 OpenProject 無縫集成。 在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作包連結\n* 查找連結到檔案或資料夾的所有工作包\n* 通過儀表板關注工作包的更新\n* 使用 Nextcloud 的搜索欄查找相關工作包\n\n在 OpenProject 方面，用戶能夠：\n\n* 查看連結到工作包的所有 Nextcloud 檔案\n* 下載連結檔案或在 Nextcloud 中打開它們進行編輯\n* 取消連結檔案\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員的 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) 和 [ 用戶指南](https://www.openproject.org/docs/user-guide/nextcloud-integration/)。",
     "OpenProject server" : "OpenProject 伺服器",
     "OpenProject host" : "OpenProject 主機",
     "Please introduce your OpenProject host name" : "請輸入您的 OpenProject 主機名",
@@ -64,6 +61,7 @@ OC.L10N.register(
     "Copied!" : "已複製！",
     "Copy value" : "複製值",
     "Copied to the clipboard" : "已複製到剪貼板",
+    "OpenProject integration" : "OpenProject 整合",
     "No connection with OpenProject" : "與 OpenProject 沒有連接",
     "Error connecting to OpenProject" : "連線至 OpenProject 時發生錯誤",
     "Could not fetch work packages from OpenProject" : "無法從 OpenProject 獲取工作包",
@@ -85,6 +83,8 @@ OC.L10N.register(
     "Work package unlinked" : "工作包連結已取消",
     "Failed to unlink work package" : "取消工作包連結失敗",
     "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
-    "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖："
+    "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖：",
+    "Integration of OpenProject project management tool" : "整合 OpenProject 項目管理工具",
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "此應用程式可與開源項目管理和協作軟件 OpenProject 無縫集成。 在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作包連結\n* 查找連結到檔案或資料夾的所有工作包\n* 通過儀表板關注工作包的更新\n* 使用 Nextcloud 的搜索欄查找相關工作包\n\n在 OpenProject 方面，用戶能夠：\n\n* 查看連結到工作包的所有 Nextcloud 檔案\n* 下載連結檔案或在 Nextcloud 中打開它們進行編輯\n* 取消連結檔案\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員的 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) 和 [ 用戶指南](https://www.openproject.org/docs/user-guide/nextcloud-integration/)。"
 },
 "nplurals=1; plural=0;");
