@@ -13,6 +13,7 @@ OC.L10N.register(
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "Connected accounts" : "已連線的賬號",
+    "OpenProject Integration" : "OpenProject 整合",
     "OpenProject server" : "OpenProject 伺服器",
     "OpenProject host" : "OpenProject 主機",
     "Please introduce your OpenProject host name" : "請輸入您的 OpenProject 主機名",

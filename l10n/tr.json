@@ -11,6 +11,8 @@
     "Bad HTTP method" : "HTTP yöntemi hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "Connected accounts" : "Bağlı hesaplar",
+    "OpenProject Integration" : "OpenProject bütünleştirmesi",
+    "Link Nextcloud files to OpenProject work packages" : "Nextcloud dosyaları ile OpenProject çalışma paketlerini ilişkilendirir",
     "OpenProject server" : "OpenProject sunucusu",
     "OpenProject host" : "OpenProject sunucu adı",
     "Please introduce your OpenProject host name" : "Lütfen OpenProject sunucu adını yazın",
