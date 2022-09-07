@@ -11,11 +11,12 @@
 
 namespace OCA\OpenProject\Controller;
 
+use Exception;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
+use OCP\App\IAppManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
@@ -32,6 +33,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
+use Throwable;
 
 class FilesController extends OCSController {
 
@@ -43,11 +45,6 @@ class FilesController extends OCSController {
 	 * @var IRootFolder
 	 */
 	private $rootFolder;
-
-	/**
-	 * @var ITrashManager
-	 */
-	private $trashManager;
 
 	/**
 	 * @var IMountProviderCollection
@@ -84,14 +81,18 @@ class FilesController extends OCSController {
 	 * @var IUserManager
 	 */
 	private $userManager;
+	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
-								ITrashManager $trashManager,
 								IUserSession $userSession,
 								IMountProviderCollection $mountCollection,
 								IManager $activityManager,
+								IAppManager $appManager,
 								IDBConnection $connection,
 								IValidator $richObjectValidator,
 								ILogger $logger,
@@ -102,7 +103,6 @@ class FilesController extends OCSController {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
-		$this->trashManager = $trashManager;
 		$this->mountCollection = $mountCollection;
 		$this->activityManager = $activityManager;
 		$this->connection = $connection;
@@ -111,6 +111,7 @@ class FilesController extends OCSController {
 		$this->l = $l;
 		$this->config = $config;
 		$this->userManager = $userManager;
+		$this->appManager = $appManager;
 	}
 
 	/**
@@ -158,16 +159,23 @@ class FilesController extends OCSController {
 	 *               'modifier_name'?: string, 'modifier_id'?: string}
 	 */
 	private function compileFileInfo($fileId) {
+		$file = null;
+		$trashed = false;
+
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
 			$file = $files[0];
-			$trashed = false;
-		} else {
-			$file = $this->trashManager->getTrashNodeById(
-				$this->user, $fileId
-			);
-			$trashed = true;
+		} elseif ($this->appManager->isEnabledForUser('files_trashbin')) {
+			try {
+				$trashManager = \OC::$server->get(\OCA\Files_Trashbin\Trash\ITrashManager::class);
+				$file = $trashManager->getTrashNodeById(
+					$this->user, $fileId
+				);
+				$trashed = true;
+			} catch (Exception | Throwable $e) {
+				$this->logger->error('failed to use the trashManager', ['exception' => $e]);
+			}
 		}
 
 		$mounts = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);

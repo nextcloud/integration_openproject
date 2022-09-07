@@ -4,6 +4,7 @@ namespace OCA\OpenProject\Controller;
 
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
+use OCP\App\IAppManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Node;
 use OCP\IConfig;
@@ -640,10 +641,10 @@ class FilesControllerTest extends TestCase {
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$storageMock,
-			$trashManagerMock,
 			$userSessionMock,
 			$mountProviderCollectionMock,
 			$this->createMock(IManager::class),
+			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(IValidator::class),
 			$this->createMock(ILogger::class),
