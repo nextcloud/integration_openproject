@@ -30,7 +30,7 @@ import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import DashboardWidget from '@nextcloud/vue/dist/Components/DashboardWidget'
-import { showError } from '@nextcloud/dialogs'
+import {showError, showSuccess} from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
@@ -246,9 +246,18 @@ export default {
 			return '(' + n.count + ') ' + n.resourceTitle
 		},
 		onMarkAsRead(item) {
-			axios.delete(this.getNotificationsUrl()).then((response) => {
-				console.debug(response)
+			const url = generateUrl(
+				'/apps/integration_openproject/work-packages/' + item.id + '/notifications'
+			)
+			axios.delete(url).then((response) => {
+				showSuccess(
+					t('integration_openproject', 'Notifications associated with Work package marked as read')
+				)
+				this.fetchNotifications()
 			}).catch((error) => {
+				showError(
+					t('integration_openproject', 'Failed to mark notifications as read')
+				)
 				console.debug(error)
 			})
 		},
