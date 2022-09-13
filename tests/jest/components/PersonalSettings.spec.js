@@ -16,9 +16,9 @@ initialState.loadState = jest.fn(() => {
 describe('PersonalSettings.vue', () => {
 	describe('oAuth', () => {
 		const oAuthButtonSelector = 'oauthconnectbutton-stub'
-		const oAuthDisconnectButtonSelector = '#openproject-rm-cred'
-		const connectedAsLabenSelector = '.openproject-connected'
-		const searchBlockSelector = '#openproject-search-block'
+		const oAuthDisconnectButtonSelector = '.openproject-prefs--disconnect'
+		const connectedAsLabelSelector = '.openproject-prefs--connected label'
+		const personalSettingsFormSelector = '.openproject-prefs--form'
 		let wrapper
 		beforeEach(() => {
 			wrapper = shallowMount(PersonalSettings, {
@@ -55,8 +55,8 @@ describe('PersonalSettings.vue', () => {
 				it('oAuth connect button is displayed', () => {
 					expect(wrapper.find(oAuthButtonSelector).exists()).toBeTruthy()
 				})
-				it('search settings are not displayed', () => {
-					expect(wrapper.find(searchBlockSelector).exists()).toBeFalsy()
+				it('personal settings form is not displayed', () => {
+					expect(wrapper.find(personalSettingsFormSelector).exists()).toBeFalsy()
 				})
 				it('oAuth disconnect button is not displayed', () => {
 					expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeFalsy()
@@ -75,10 +75,10 @@ describe('PersonalSettings.vue', () => {
 					expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeTruthy()
 				})
 				it('connected as label is displayed', () => {
-					expect(wrapper.find(connectedAsLabenSelector).text()).toBe('Connected as {user}')
+					expect(wrapper.find(connectedAsLabelSelector).text()).toBe('Connected as {user}')
 				})
-				it('oAuth search settings are displayed', () => {
-					expect(wrapper.find(searchBlockSelector).exists()).toBeTruthy()
+				it('personal settings form is displayed', () => {
+					expect(wrapper.find(personalSettingsFormSelector).exists()).toBeTruthy()
 				})
 			})
 		})
