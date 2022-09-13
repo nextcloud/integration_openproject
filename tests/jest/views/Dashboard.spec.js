@@ -66,7 +66,7 @@ describe('Dashboard.vue', () => {
 				avatarUsername: 'Admin de DEV userz',
 				mainText: '(5) Create wireframes for new landing page',
 				subText: 'Scrum project - assigned,mentioned',
-				overlayIconUrl: true,
+				overlayIconUrl: '',
 			},
 			{
 				id: '18',
