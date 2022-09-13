@@ -15,6 +15,7 @@ use Exception;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
+use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
 use OCP\App\IAppManager;
 use OCP\Files\Config\ICachedMountFileInfo;
@@ -85,6 +86,10 @@ class FilesController extends OCSController {
 	 * @var IAppManager
 	 */
 	private $appManager;
+	/**
+	 * @var ITrashManager
+	 */
+	private $trashManager = null;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -152,6 +157,18 @@ class FilesController extends OCSController {
 	}
 
 	/**
+	 * Function to make the trash-manager testable
+	 * @param ITrashManager $trashManager
+	 * @return void
+	 */
+	public function setTrashManager($trashManager = null) {
+		if ($trashManager !== null) {
+			$this->trashManager = $trashManager;
+		} elseif ($this->trashManager === null) {
+			$this->trashManager = \OC::$server->get(ITrashManager::class);
+		}
+	}
+	/**
 	 * @param int $fileId
 	 * @return array{'status': string, 'statuscode': int, 'id'?: int, 'name'?:string,
 	 *               'mtime'?: int, 'ctime'?: int, 'mimetype'?: string, 'path'?: string,
@@ -168,8 +185,8 @@ class FilesController extends OCSController {
 			$file = $files[0];
 		} elseif ($this->appManager->isEnabledForUser('files_trashbin')) {
 			try {
-				$trashManager = \OC::$server->get(\OCA\Files_Trashbin\Trash\ITrashManager::class);
-				$file = $trashManager->getTrashNodeById(
+				$this->setTrashManager();
+				$file = $this->trashManager->getTrashNodeById(
 					$this->user, $fileId
 				);
 				$trashed = true;

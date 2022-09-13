@@ -4,7 +4,6 @@ namespace OCA\OpenProject\Controller;
 
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
-use OCP\App\IAppManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Node;
 use OCP\IConfig;
@@ -158,6 +157,7 @@ class FilesControllerTest extends TestCase {
 
 		$filesController = $this->createFilesController(
 			$folderMock, $trashManagerMock, $mountCacheMock
+
 		);
 
 		$result = $filesController->getFileInfo(759);
@@ -194,6 +194,11 @@ class FilesControllerTest extends TestCase {
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')->willReturn(
 			$this->getNodeMock('text/plain', 759)
+		);
+
+		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
+		$appManagerMock->method('isEnabledForUser')->willReturn(
+			true
 		);
 
 		$mountCacheMock = $this->getSimpleMountCacheMock(
@@ -613,7 +618,10 @@ class FilesControllerTest extends TestCase {
 	 * @return FilesController
 	 */
 	private function createFilesController(
-		MockObject $folderMock, $trashManagerMock = null, MockObject $mountCacheMock = null
+		MockObject $folderMock,
+		$trashManagerMock = null,
+		MockObject $mountCacheMock = null,
+		bool $isAppEnables = true
 ): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -623,9 +631,6 @@ class FilesControllerTest extends TestCase {
 
 		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
 		$userSessionMock->method('getUser')->willReturn($userMock);
-		if ($trashManagerMock === null) {
-			$trashManagerMock = $this->createMock(ITrashManager::class);
-		}
 
 		if ($mountCacheMock === null) {
 			$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
@@ -636,15 +641,19 @@ class FilesControllerTest extends TestCase {
 			'OCP\Files\Config\IMountProviderCollection'
 		)->getMock();
 		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
+		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
+		$appManagerMock->method('isEnabledForUser')->willReturn(
+			$isAppEnables
+		);
 
-		return new FilesController(
+		$controller = new FilesController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
 			$storageMock,
 			$userSessionMock,
 			$mountProviderCollectionMock,
 			$this->createMock(IManager::class),
-			$this->createMock(IAppManager::class),
+			$appManagerMock,
 			$this->createMock(IDBConnection::class),
 			$this->createMock(IValidator::class),
 			$this->createMock(ILogger::class),
@@ -652,6 +661,12 @@ class FilesControllerTest extends TestCase {
 			$this->createMock(IConfig::class),
 			$this->createMock(IUserManager::class)
 		);
+		if ($trashManagerMock === null) {
+			$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+			$trashManagerMock->method('getTrashNodeById')->willReturn(null);
+		}
+		$controller->setTrashManager($trashManagerMock);
+		return $controller;
 	}
 
 	private function getNodeMock(string $mimeType, int $id = 123
