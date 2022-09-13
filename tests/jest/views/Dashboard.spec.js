@@ -1,11 +1,13 @@
 /* jshint esversion: 8 */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import Dashboard from '../../../src/views/Dashboard'
 import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils'
 import notificationsResponse from '../fixtures/notificationsResponse.json'
+import workPackagesSearchResponse
+	from '../fixtures/workPackagesSearchResponse.json'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -31,6 +33,8 @@ describe('Dashboard.vue', () => {
 		// mock the beforeMount() method, so that the loop is not called automatically
 		// we first need to mount the component, and the tests will call the loop themselves
 		Dashboard.beforeMount = jest.fn()
+	})
+	it('should show the notification items in the Dashboard', async () => {
 		wrapper = shallowMount(
 			Dashboard,
 			{
@@ -45,8 +49,6 @@ describe('Dashboard.vue', () => {
 					title: 'dashboard',
 				},
 			})
-	})
-	it('should show the notification items in the Dashboard', async () => {
 		const axiosSpy = jest.spyOn(axios, 'get')
 			.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
 			.mockImplementationOnce(() => Promise.resolve({ data: notificationsResponse }))
@@ -88,5 +90,74 @@ describe('Dashboard.vue', () => {
 			},
 		])
 		axiosSpy.mockRestore()
+	})
+	it('should send a DELETE request to mark notifications as read', async () => {
+		wrapper = mount(
+			Dashboard,
+			{
+				localVue,
+				mocks: {
+					t: (app, msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+				stubs: {
+					Avatar: true,
+				},
+				propsData: {
+					title: 'dashboard',
+				},
+			})
+		const axiosSpy = jest.spyOn(axios, 'get')
+			.mockImplementationOnce(() => Promise.resolve({
+				data: [
+					{
+						_type: 'Notification',
+						id: 47,
+						readIAN: false,
+						reason: 'assigned',
+						createdAt: '2022-08-17T10:27:01Z',
+						updatedAt: '2022-08-17T10:28:12Z',
+						_links: {
+							self: {
+								href: '/api/v3/notifications/47',
+							},
+							readIAN: {
+								href: '/api/v3/notifications/47/read_ian',
+								method: 'post',
+							},
+							actor: {
+								href: '/api/v3/users/8',
+								title: 'Admin de DEV user',
+							},
+							project: {
+								href: '/api/v3/projects/4',
+								title: 'Dev-large',
+							},
+							activity: {
+								href: '/api/v3/activities/261',
+							},
+							resource: {
+								href: '/api/v3/work_packages/36',
+								title: 'write a software',
+							},
+						},
+					},
+				],
+			}))
+		await wrapper.vm.fetchNotifications()
+		await localVue.nextTick()
+
+		//
+		// await localVue.nextTick()
+		// await localVue.nextTick()
+		// await localVue.nextTick()
+		// await localVue.nextTick()
+		await wrapper.find('.trigger').trigger('click')
+		await localVue.nextTick()
+		await localVue.nextTick()
+		await localVue.nextTick()
+		console.log(wrapper.html())
 	})
 })
