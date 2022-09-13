@@ -61,7 +61,6 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			moreActorsIconUrl: loadState('integration_openproject', 'more-actors-icon-url'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -94,7 +93,7 @@ export default {
 					avatarUsername: this.getAuthorShortName(n) + 'z',
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
-					overlayIconUrl: this.getOverlayIconUrl(n),
+					overlayIconUrl: '',
 				})
 			}
 			return notifications
@@ -173,7 +172,6 @@ export default {
 								wpId,
 								resourceTitle: n._links.resource.title,
 								projectTitle: n._links.project.title,
-								moreActors: false,
 								count: 1,
 							}
 						} else {
@@ -194,7 +192,6 @@ export default {
 								createdAt: n.createdAt,
 							}
 						} else if (userId !== notifications[wpId].mostRecentActor.id) {
-							notifications[wpId].moreActors = true
 							if (Date.parse(n.createdAt) > Date.parse(notifications[wpId].mostRecentActor.createdAt)) {
 								notifications[wpId].mostRecentActor = {
 									title: n._links.actor.title,
@@ -237,12 +234,6 @@ export default {
 			return n.mostRecentActor.id
 				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
 				: ''
-		},
-		getOverlayIconUrl(n) {
-			if (n.moreActors === true) {
-				return this.moreActorsIconUrl
-			}
-			return ''
 		},
 		getSubline(n) {
 			let reasonsString = ''
