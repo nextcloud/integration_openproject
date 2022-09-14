@@ -23,6 +23,7 @@ use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 use Exception;
 use OCP\Files\NotFoundException;
+use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIControllerTest extends TestCase {
 	/** @var IConfig $configMock */
@@ -35,6 +36,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @var IURLGenerator
 	 */
 	private $urlGeneratorMock;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $loggerMock;
 	/**
 	 * @return void
 	 * @before
@@ -42,6 +48,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function setUpMocks(): void {
 		$this->requestMock = $this->createMock(IRequest::class);
 		$this->urlGeneratorMock = $this->createMock(IURLGenerator::class);
+		$this->loggerMock = $this->createMock(LoggerInterface::class);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
@@ -83,6 +90,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test',
 		);
 		$response = $controller->getNotifications();
@@ -102,6 +110,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getNotifications();
@@ -126,6 +135,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getNotifications();
@@ -153,6 +163,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
@@ -187,6 +198,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
@@ -237,6 +249,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages($searchQuery, $fileId);
@@ -257,6 +270,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
@@ -281,6 +295,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
@@ -310,6 +325,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -332,6 +348,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -356,6 +373,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -383,6 +401,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -403,6 +422,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -427,6 +447,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -459,6 +480,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -484,6 +506,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -507,6 +530,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -531,6 +555,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -557,6 +582,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -576,6 +602,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -599,6 +626,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -623,6 +651,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -664,6 +693,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
@@ -749,6 +779,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
@@ -781,6 +812,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance($url);
@@ -834,6 +866,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
