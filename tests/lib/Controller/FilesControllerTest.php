@@ -157,12 +157,56 @@ class FilesControllerTest extends TestCase {
 
 		$filesController = $this->createFilesController(
 			$folderMock, $trashManagerMock, $mountCacheMock
-
 		);
 
 		$result = $filesController->getFileInfo(759);
 		assertSame($this->trashedWelcomeTxtResult, $result->getData());
 		assertSame(200, $result->getStatus());
+	}
+
+	// this case happens for files that have been deleted before the trashbinapp got disabled
+	public function testGetFileInfoFileFileExistsTrashappDisabled(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+		$mountCacheMock = $this->getSimpleMountCacheMock(
+			'files_trashbin/files/welcome.txt.d1648724302'
+		);
+		$filesController = $this->createFilesController(
+			$folderMock, null, $mountCacheMock, false
+		);
+
+		$result = $filesController->getFileInfo(123);
+		assertSame($this->forbiddenResponse, $result->getData());
+		assertSame(403, $result->getStatus());
+	}
+
+	// this case happens for files that get deleted while the trashbinapp was disabled
+	public function testGetFileInfoFileFileDoesNotExistsTrashappDisabled(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+		$filesController = $this->createFilesController(
+			$folderMock, null, null, false
+		);
+
+		$result = $filesController->getFileInfo(123);
+		assertSame($this->notFoundResponse, $result->getData());
+		assertSame(404, $result->getStatus());
+	}
+
+	public function testGetFileInfoFileTrashappThrowsException(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn([]);
+
+		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
+		$trashManagerMock->method('getTrashNodeById')->willThrowException(new \Exception());
+
+		$filesController = $this->createFilesController(
+			$folderMock, $trashManagerMock
+		);
+
+		$result = $filesController->getFileInfo(123);
+		assertSame($this->notFoundResponse, $result->getData());
+		assertSame(404, $result->getStatus());
 	}
 
 	public function testGetFileInfoFileExistingButNotReadable(): void {
@@ -621,7 +665,7 @@ class FilesControllerTest extends TestCase {
 		MockObject $folderMock,
 		$trashManagerMock = null,
 		MockObject $mountCacheMock = null,
-		bool $isAppEnables = true
+		bool $isAppEnabled = true
 ): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -643,7 +687,7 @@ class FilesControllerTest extends TestCase {
 		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
 		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
 		$appManagerMock->method('isEnabledForUser')->willReturn(
-			$isAppEnables
+			$isAppEnabled
 		);
 
 		$controller = new FilesController(
