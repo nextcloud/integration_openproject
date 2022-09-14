@@ -13,6 +13,8 @@ OC.L10N.register(
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "OAuth access token refused" : "OAuth-Zugriffstoken abgelehnt",
     "Connected accounts" : "Verbundene Konten",
+    "OpenProject Integration" : "OpenProject-Einbindung",
+    "Link Nextcloud files to OpenProject work packages" : "Verbinde Nextcloud-Dateien mit OpenProject Arbeits-Paketen",
     "OpenProject server" : "OpenProject-Server",
     "OpenProject host" : "OpenProject-Host",
     "Please introduce your OpenProject host name" : "Bitte gebe deinen OpenProject-Hostnamen ein",
