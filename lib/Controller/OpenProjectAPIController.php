@@ -27,6 +27,7 @@ use OCP\AppFramework\Controller;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\IURLGenerator;
+use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIController extends Controller {
 
@@ -58,11 +59,17 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $urlGenerator;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
 								IURLGenerator $urlGenerator,
+								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
@@ -71,6 +78,7 @@ class OpenProjectAPIController extends Controller {
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -303,6 +311,10 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function isValidOpenProjectInstance(string $url): DataResponse {
 		if ($this->openprojectAPIService::validateURL($url) !== true) {
+			$this->logger->error(
+				"The OpenProject URL '$url' is invalid",
+				['app' => $this->appName]
+			);
 			return new DataResponse('invalid');
 		}
 		try {
@@ -332,8 +344,16 @@ class OpenProjectAPIController extends Controller {
 				return new DataResponse(true);
 			}
 		} catch (Exception $e) {
+			$this->logger->error(
+				"Could not connect to the OpenProject URL '$url'",
+				['app' => $this->appName, 'exception' => $e]
+			);
 			return new DataResponse(false);
 		}
+		$this->logger->error(
+			"Could not connect to the OpenProject URL '$url'",
+			['app' => $this->appName, 'data' => $body]
+		);
 		return new DataResponse(false);
 	}
 
