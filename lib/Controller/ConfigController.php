@@ -198,27 +198,6 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * set default user config values
-	 *
-	 * @param array<string, string|null> $values
-	 *
-	 * @return DataResponse
-	 */
-	public function setDefaultUserConfig(array $values): DataResponse {
-		$default_user_keys = [
-			"default_enable_unified_search",
-			"default_enable_notifications",
-			"default_enable_navigation",
-		];
-		foreach ($values as $key => $value) {
-			if (\in_array($key, $default_user_keys)) {
-				$this->config->setAppValue(Application::APP_ID, $key, $value);
-			}
-		}
-		return new DataResponse(["status" => true], Http::STATUS_OK);
-	}
-
-	/**
 	 * receive oauth code and get oauth access token
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
