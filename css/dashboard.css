@@ -1,60 +1,14 @@
 .icon-openproject {
-	background-image: url(./../img/app.svg);
-	filter: contrast(0) brightness(0) !important;
+	background-image: url('../img/app-dark.svg');
+	filter: var(--background-invert-if-dark);
 	min-width: 32px !important;
 }
 
-.icon-openproject-till-nc-25 {
-	position: relative;
-}
-
-.panel--header .icon-openproject-till-nc-25::after {
-	left: 20px;
-	top: 22%;
-	height: 30px;
-	width: 30px;
-	background-size: 30px;
-}
-
-.panels li .icon-openproject-till-nc-25::after {
-	left: 10%;
-	top: 15%;
-	height: 26px;
-	width: 26px;
-	background-size: 26px;
-}
-
-.icon-openproject-till-nc-25::after {
-	content: '';
-	position: absolute;
-	filter: contrast(0) brightness(0);
-	background-image: url(./../img/app.svg);
-}
-
-body.theme--dark .icon-openproject-till-nc-25::after {
-	filter: none !important;
-}
-
+/* for NC <= 24 */
 body.theme--dark .icon-openproject {
-	filter: none !important;
+	background-image: url('../img/app.svg');
 }
 
-body[data-theme-dark] .icon-openproject-till-nc-25::after {
-	filter: none !important;
-}
-
-body[data-theme-dark] .icon-openproject {
-	filter: none !important;
-}
-
-body[data-theme-dark-highcontrast] .icon-openproject {
-	filter: none !important;
-}
-
-body[data-theme-dark-highcontrast] .icon-openproject-till-nc-25::after {
-	filter: none !important;
-}
-
-.action-open-project > .icon-openproject {
+.option-open-project > .icon-openproject, .action-open-project > .icon-openproject {
 	height: 100%;
 }
