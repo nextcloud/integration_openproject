@@ -1,8 +1,10 @@
 /* jshint esversion: 8 */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
 import PersonalSettings from '../../../src/components/PersonalSettings.vue'
 import * as initialState from '@nextcloud/initial-state'
+import * as dialogs from '@nextcloud/dialogs'
+import axios from '@nextcloud/axios'
 
 const localVue = createLocalVue()
 
@@ -13,13 +15,22 @@ initialState.loadState = jest.fn(() => {
 	}
 })
 
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
+
 describe('PersonalSettings.vue', () => {
 	describe('oAuth', () => {
 		const oAuthButtonSelector = 'oauthconnectbutton-stub'
 		const oAuthDisconnectButtonSelector = '.openproject-prefs--disconnect'
 		const connectedAsLabelSelector = '.openproject-prefs--connected label'
 		const personalSettingsFormSelector = '.openproject-prefs--form'
+		const personalEnableNavigationSelector = '#openproject-prefs--link'
+		const personalEnableSearchSelector = '#openproject-prefs--u-search'
 		let wrapper
+
 		beforeEach(() => {
 			wrapper = shallowMount(PersonalSettings, {
 				localVue,
@@ -95,5 +106,119 @@ describe('PersonalSettings.vue', () => {
 				})
 			})
 		})
+
+		describe('user settings', () => {
+			it('should be enabled if the admin has enabled the settings', async () => {
+				await wrapper.setData({
+					state: { user_name: 'test', token: '123', admin_config_ok: true, navigation_enabled: true, search_enabled: true, notification_enabled: true },
+				})
+				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
+			})
+
+			it('should be disabled if the admin has not enabled the settings', async () => {
+				await wrapper.setData({
+					state: {
+						user_name: 'test',
+						token: '123',
+						admin_config_ok: true,
+						navigation_enabled: false,
+						search_enabled: false,
+						notification_enabled: false,
+					},
+				})
+				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
+			})
+
+			it('should send only one request if only one is enabled by the user', async () => {
+				dialogs.showSuccess.mockImplementationOnce()
+				const saveDefaultsSpy = jest.spyOn(axios, 'put')
+					.mockImplementationOnce(() => Promise.resolve({ data: [] }))
+				const wrapper = getMountedWrapper({
+					state: {
+						user_name: 'test',
+						token: '123',
+						admin_config_ok: true,
+						navigation_enabled: false,
+						search_enabled: false,
+						notification_enabled: false,
+					},
+				})
+
+				let personalEnableNavigation = wrapper.find(personalEnableNavigationSelector)
+				await personalEnableNavigation.trigger('click')
+				personalEnableNavigation = wrapper.find(personalEnableNavigationSelector)
+				expect(saveDefaultsSpy).toBeCalledTimes(1)
+				expect(saveDefaultsSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/config',
+					{
+						values: {
+							navigation_enabled: '1',
+						},
+					}
+				)
+				expect(dialogs.showSuccess).toBeCalledTimes(1)
+				expect(dialogs.showSuccess).toBeCalledWith('OpenProject options saved')
+				jest.clearAllMocks()
+			})
+
+			it('admin and user should be able to enable and disable the setting simultaneously', async () => {
+				dialogs.showSuccess.mockImplementationOnce()
+				const saveDefaultsSpy = jest.spyOn(axios, 'put')
+					.mockImplementationOnce(() => Promise.resolve({ data: [] }))
+				const wrapper = getMountedWrapper({
+					state: {
+						user_name: 'test',
+						token: '123',
+						admin_config_ok: true,
+						navigation_enabled: true,
+						search_enabled: false,
+						notification_enabled: true,
+					},
+				})
+
+				let personalEnableSearch = wrapper.find(personalEnableSearchSelector)
+				await personalEnableSearch.trigger('click')
+				personalEnableSearch = wrapper.find(personalEnableSearchSelector)
+				expect(saveDefaultsSpy).toBeCalledTimes(1)
+				expect(saveDefaultsSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/config',
+					{
+						values: {
+							search_enabled: '1',
+						},
+					}
+				)
+				expect(dialogs.showSuccess).toBeCalledTimes(1)
+				expect(dialogs.showSuccess).toBeCalledWith('OpenProject options saved')
+				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
+				await wrapper.setData({
+					state: {
+						navigation_enabled: false,
+						search_enabled: true,
+						notification_enabled: false,
+					},
+				})
+				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
+				jest.clearAllMocks()
+			})
+		})
 	})
 })
+
+function getMountedWrapper(data = {}) {
+	return mount(PersonalSettings, {
+		localVue,
+		attachTo: document.body,
+		mocks: {
+			t: (app, msg) => msg,
+			generateUrl() {
+				return '/'
+			},
+		},
+		data() {
+			return {
+				...data,
+			}
+		},
+	})
+}

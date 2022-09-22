@@ -16,7 +16,7 @@
 		<br>
 		<div v-if="connected" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
-				input-id="openproject-prefs-link"
+				input-id="openproject-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')" />
 			<CheckBox v-model="state.search_enabled"
 				input-id="openproject-prefs--u-search"
@@ -76,17 +76,17 @@ export default {
 		},
 	},
 	watch: {
-		'state.notification_enabled'(newVal, oldVal) {
+		'state.notification_enabled'(newVal) {
 			this.saveOptions({
 				notification_enabled: newVal ? '1' : '0',
 			})
 		},
-		'state.search_enabled'(newVal, oldVal) {
+		'state.search_enabled'(newVal) {
 			this.saveOptions({
 				search_enabled: newVal ? '1' : '0',
 			})
 		},
-		'state.navigation_enabled'(newVal, oldVal) {
+		'state.navigation_enabled'(newVal) {
 			this.saveOptions({
 				navigation_enabled: newVal ? '1' : '0',
 			})
@@ -101,18 +101,6 @@ export default {
 		disconnectFromOP() {
 			this.state.token = ''
 			this.saveOptions({ token: this.state.token, token_type: '' })
-		},
-		notificationEnabledChanged() {
-			this.notifEnabled = this.state.notification_enabled ? '1' : '0'
-			return true
-		},
-		searchEnabledChanged() {
-			this.searchEnabled = this.state.search_enabled ? '1' : '0'
-			return true
-		},
-		navigationEnabledChanged() {
-			this.navigationEnabled = this.state.navigation_enabled ? '1' : '0'
-			return true
 		},
 		saveOptions(values) {
 			const req = {
