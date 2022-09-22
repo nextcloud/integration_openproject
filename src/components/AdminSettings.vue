@@ -437,9 +437,9 @@ export default {
 			this.state.client_id = null
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null
-			this.state.default_enable_navigation = null
-			this.state.default_enable_notifications = null
-			this.state.default_enable_unified_search = null
+			this.state.default_enable_navigation = false
+			this.state.default_enable_notifications = false
+			this.state.default_enable_unified_search = false
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -484,6 +484,7 @@ export default {
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				return true
 			} catch (error) {
+				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)

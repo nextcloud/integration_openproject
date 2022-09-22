@@ -140,12 +140,12 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
-			"oauth_instance_url",
-			"client_id",
-			"client_secret",
-			"default_enable_navigation",
-			"default_enable_notifications",
-			"default_enable_unified_search"
+			'oauth_instance_url',
+			'client_id',
+			'client_secret',
+			'default_enable_navigation',
+			'default_enable_notifications',
+			'default_enable_unified_search'
 		];
 
 		// if values contains a key that is not in the allowedKeys array,
