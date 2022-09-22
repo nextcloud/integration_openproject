@@ -729,9 +729,9 @@ describe('AdminSettings.vue', () => {
 						client_id: null,
 						client_secret: null,
 						oauth_instance_url: null,
-						default_enable_navigation: null,
-						default_enable_notifications: null,
-						default_enable_unified_search: null,
+						default_enable_navigation: false,
+						default_enable_notifications: false,
+						default_enable_unified_search: false,
 					},
 				}
 			)
