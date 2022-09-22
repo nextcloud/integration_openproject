@@ -452,32 +452,54 @@ export default {
 				'integration_openproject',
 				'Please introduce a valid OpenProject host name'
 			)
-			if (response.data === true) {
+			if (response.data.result === true) {
 				this.isOpenProjectInstanceValid = true
 				this.state.oauth_instance_url = this.serverHostUrlForEdit
 			} else {
-				if (response.data === 'invalid') {
-					showError(
-						t('integration_openproject', 'OpenProject URL is invalid, provide an URL in the form "https://openproject.org"')
+				switch (response.data.result) {
+				case 'invalid':
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'URL is invalid, provide an URL in the form "https://openproject.org"'
 					)
-				} else if (response.data === 'local_remote_servers_not_allowed') {
-					showError(
-						t('integration_openproject', 'Accessing OpenProject servers with local addresses is not allowed.')
+					break
+				case 'not_valid_body':
+				case 'client_exception': {
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'There is no valid OpenProject instance listening at that URL'
 					)
+					break
+				}
+				case 'server_exception': {
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'Server replied with an error message'
+					) + ' "' + response.data.detail + '"'
+					break
+				}
+				case 'local_remote_servers_not_allowed': {
 					const linkText = t('integration_openproject', 'Documentation')
 					const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'To be able to use an OpenProject server with a local address, '
+						'Accessing OpenProject servers with local addresses is not allowed. To be able to use an OpenProject server with a local address, '
 						+ 'enable the `allow_local_remote_servers` setting. {htmlLink}.',
 						{ htmlLink },
 						null,
 						{ escape: false, sanitize: false }
 					)
-				} else {
-					showError(
-						t('integration_openproject', 'No OpenProject detected at the URL')
-					)
+					break
+				}
+				case 'network_error':
+				case 'request_exception':
+				default: {
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'Could not connect to the given URL'
+					) + ' "' + response.data.detail + '"'
+					break
+				}
 				}
 				this.isOpenProjectInstanceValid = false
 				await this.$nextTick()
