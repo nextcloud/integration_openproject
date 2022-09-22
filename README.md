@@ -261,8 +261,18 @@ npm run watch
 ```
 
 ### Release:
-1. Update the version in `appinfo/info.xml` (not needed for nightly builds)
-2. Tag a commit on the `master` branch. The tag must have the format `v1.1.1` for releases and `v1.1.1-20220728-nightly` for nightly builds
-  e.g: `git tag v1.0.6-20220728-nightly -m"v1.0.6-20220728-nightly"`
-2. Push the tag to the release branch: `git push origin master:release --tags -f`
+#### 1a. preparation in case of a major/minor version
+1. Create a release branch from master with the name `release/<version>` e.g. `release/2.1`
+2. Protect that new branch the same way as `master`
+3. On the release branch update the version in `appinfo/info.xml`
+4. Do QA and fixes of bugs in the release branch
+
+#### 1b. preparation in case of a patch version
+1. On the release branch of the current minor version update the version in `appinfo/info.xml` (not needed for nightly builds)
+2. merge the release branch into the `master` branch, to get all good changes also into the current development
+
+#### 2. publish release
+1. Tag a commit on the `release/<version>` branch. The tag must have the format `v2.1.1` for releases and `v2.1.1-20220928-nightly` for nightly builds
+  e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220728-nightly"`
+2. Push the tag to the `auto-release`  branch: `git push origin release/<version>:auto-release --tags -f`
 3. Approve the deployment in GitHub actions
