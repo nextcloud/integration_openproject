@@ -11,6 +11,8 @@
     "Bad HTTP method" : "Método HTTP incorreto",
     "OAuth access token refused" : "Token de acesso OAuth recusado",
     "Connected accounts" : "Contas conectadas",
+    "OpenProject Integration" : "Integração OpenProject",
+    "Link Nextcloud files to OpenProject work packages" : "Vincular arquivos do Nextcloud aos pacotes de trabalho do OpenProject",
     "OpenProject server" : "Servidor OpenProject",
     "OpenProject host" : "Host do OpenProject",
     "Please introduce your OpenProject host name" : "Por favor, introduza o seu nome de host OpenProject",
@@ -82,6 +84,7 @@
     "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho",
     "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
     "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
-    "Integration of OpenProject project management tool" : "Integração da ferramenta de gerenciamento de projetos OpenProject"
+    "Integration of OpenProject project management tool" : "Integração da ferramenta de gerenciamento de projetos OpenProject",
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. On the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or folder\n* Keep an eye on updates to your work packages via the dashboard\n* Find relevant work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n* Unlink linked files\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Este aplicativo permite a integração perfeita com o software de colaboração e gerenciamento de projetos de código aberto OpenProject. No lado Nextcloud, ele permite que os usuários:\n\n* Vincular arquivos e pastas com pacotes de trabalho no OpenProject\n* Encontre todos os pacotes de trabalho vinculados a um arquivo ou pasta\n* Fique de olho nas atualizações dos seus pacotes de trabalho por meio do painel\n* Encontre pacotes de trabalho relevantes usando a barra de pesquisa do Nextcloud\n\nNo final do OpenProject, os usuários podem:\n\n* Exibir todos os arquivos Nextcloud vinculados a um pacote de trabalho\n* Baixe arquivos vinculados ou abra-os no Nextcloud para editá-los\n* Desvincular arquivos vinculados\n\nPara obter mais informações sobre como configurar e usar o aplicativo OpenProject, consulte o [guia de configuração de integração](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) para administradores e [ o guia do usuário](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
