@@ -98,11 +98,7 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		$currentVersion = implode('.', Util::getVersion());
-
-		return version_compare($currentVersion, '25') >= 0
-			? 'icon-openproject'
-			: 'icon-openproject-till-nc-25';
+		return 'icon-openproject';
 	}
 
 	/**
