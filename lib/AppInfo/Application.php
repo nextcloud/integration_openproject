@@ -83,7 +83,11 @@ class Application extends App implements IBootstrap {
 			$userId = $user->getUID();
 			$container = $this->getContainer();
 
-			if ($this->config->getUserValue($userId, self::APP_ID, 'navigation_enabled', '0') === '1') {
+			if ($this->config->getUserValue(
+				$userId,
+				self::APP_ID,
+				'navigation_enabled',
+				$this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0')) === '1') {
 				$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
 				if ($openprojectUrl !== '') {
 					$container->get(INavigationManager::class)->add(function () use ($container, $openprojectUrl) {
