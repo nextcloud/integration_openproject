@@ -348,6 +348,11 @@ class OpenProjectAPIController extends Controller {
 			) {
 				return new DataResponse(['result' => true]);
 			}
+			$this->logger->error(
+				"Could not connect to the OpenProject. " .
+				"There is no valid OpenProject instance at '$url'",
+				['app' => $this->appName, 'exception' => $e]
+			);
 			return new DataResponse(
 				[
 					'result' => 'client_exception',
@@ -356,6 +361,13 @@ class OpenProjectAPIController extends Controller {
 			);
 		} catch (ServerException $e) {
 			$response = $e->getResponse();
+			$this->logger->error(
+				"Could not connect to the OpenProject URL '$url', " .
+				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase() ,
+				['app' => $this->appName, 'exception' => $e]
+			);
+
+
 			return new DataResponse(
 				[
 					'result' => 'server_exception',
@@ -370,6 +382,12 @@ class OpenProjectAPIController extends Controller {
 				]
 			);
 		} catch (LocalServerException $e) {
+			$this->logger->error(
+				'Accessing OpenProject servers with local addresses is not allowed. ' .
+				'To be able to use an OpenProject server with a local address, ' .
+				'enable the `allow_local_remote_servers` setting.',
+				['app' => $this->appName, 'exception' => $e]
+			);
 			return new DataResponse(
 				[
 					'result' => 'local_remote_servers_not_allowed'
@@ -399,7 +417,8 @@ class OpenProjectAPIController extends Controller {
 			);
 		}
 		$this->logger->error(
-			"Could not detect an OpenProject instance at the URL '$url'",
+			"Could not connect to the OpenProject. " .
+			"There is no valid OpenProject instance at '$url'",
 			['app' => $this->appName, 'data' => $body]
 		);
 		return new DataResponse(
