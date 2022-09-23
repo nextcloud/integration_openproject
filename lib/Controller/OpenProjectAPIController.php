@@ -366,8 +366,6 @@ class OpenProjectAPIController extends Controller {
 				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase() ,
 				['app' => $this->appName, 'exception' => $e]
 			);
-
-
 			return new DataResponse(
 				[
 					'result' => 'server_exception',
@@ -375,6 +373,10 @@ class OpenProjectAPIController extends Controller {
 				]
 			);
 		} catch (RequestException $e) {
+			$this->logger->error(
+				"Could not connect to the URL '$url'",
+				['app' => $this->appName, 'exception' => $e]
+			);
 			return new DataResponse(
 				[
 					'result' => 'request_exception',
@@ -406,7 +408,7 @@ class OpenProjectAPIController extends Controller {
 			);
 		} catch (Exception $e) {
 			$this->logger->error(
-				"Could not connect to the OpenProject URL '$url'",
+				"Could not connect to the URL '$url'",
 				['app' => $this->appName, 'exception' => $e]
 			);
 			return new DataResponse(
