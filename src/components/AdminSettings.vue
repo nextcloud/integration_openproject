@@ -21,6 +21,7 @@
 				place-holder="https://www.my-openproject.com"
 				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
 				:error-message="serverHostErrorMessage"
+				:error-message-details="openProjectNotReachableErrorMessageDetails"
 				@click="isServerHostUrlReadOnly = false"
 				@input="isOpenProjectInstanceValid = null" />
 			<div class="form-actions">
@@ -241,6 +242,7 @@ export default {
 			loadingOPOauthForm: false,
 			isOpenProjectInstanceValid: null,
 			openProjectNotReachableErrorMessage: null,
+			openProjectNotReachableErrorMessageDetails: null,
 			state: loadState('integration_openproject', 'admin-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
@@ -448,6 +450,7 @@ export default {
 		async validateOpenProjectInstance() {
 			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
 			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
+			this.openProjectNotReachableErrorMessageDetails = null
 			this.openProjectNotReachableErrorMessage = t(
 				'integration_openproject',
 				'Please introduce a valid OpenProject host name'
@@ -460,7 +463,11 @@ export default {
 				case 'invalid':
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'URL is invalid, provide an URL in the form "https://openproject.org"'
+						'URL is invalid',
+					)
+					this.openProjectNotReachableErrorMessageDetails = t(
+						'integration_openproject',
+						'The URL should have the form "https://openproject.org"'
 					)
 					break
 				case 'not_valid_body':
@@ -469,21 +476,31 @@ export default {
 						'integration_openproject',
 						'There is no valid OpenProject instance listening at that URL'
 					)
+					this.openProjectNotReachableErrorMessageDetails = t(
+						'integration_openproject',
+						'Response:'
+					) + ' "' + response.data.detail + '"'
 					break
 				}
 				case 'server_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
 						'Server replied with an error message'
-					) + ' "' + response.data.detail + '"'
+					)
+					this.openProjectNotReachableErrorMessageDetails = response.data.detail
 					break
 				}
 				case 'local_remote_servers_not_allowed': {
 					const linkText = t('integration_openproject', 'Documentation')
 					const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
+
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Accessing OpenProject servers with local addresses is not allowed. To be able to use an OpenProject server with a local address, '
+						'Accessing OpenProject servers with local addresses is not allowed.'
+					)
+					this.openProjectNotReachableErrorMessageDetails = t(
+						'integration_openproject',
+						'To be able to use an OpenProject server with a local address, '
 						+ 'enable the `allow_local_remote_servers` setting. {htmlLink}.',
 						{ htmlLink },
 						null,
@@ -497,7 +514,8 @@ export default {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
 						'Could not connect to the given URL'
-					) + ' "' + response.data.detail + '"'
+					)
+					this.openProjectNotReachableErrorMessageDetails = response.data.detail
 					break
 				}
 				}
