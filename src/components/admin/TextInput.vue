@@ -31,10 +31,16 @@
 			</Button>
 		</div>
 		<div v-if="errorMessage || hintText">
-			<div v-if="errorMessage"
-				class="text-input-error-message"
-				v-html="sanitizedErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
-
+			<div v-if="errorMessage">
+				<div class="text-input-error-message"
+					v-html="sanitizedErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
+				<Popover v-if="errorMessageDetails">
+					<template #trigger>
+						<a class="link" href="#">{{ t("integration_openproject", "Details") }}</a>
+					</template>
+					<div v-html="sanitizedErrorMessageDetails" /> <!-- eslint-disable-line vue/no-v-html -->
+				</Popover>
+			</div>
 			<div v-else
 				class="text-input-hint"
 				v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
@@ -45,6 +51,7 @@
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import ClippyIcon from '../icons/ClippyIcon'
 import dompurify from 'dompurify'
 
@@ -55,6 +62,7 @@ export default {
 	components: {
 		Button,
 		ClippyIcon,
+		Popover,
 	},
 	props: {
 		value: {
@@ -82,6 +90,10 @@ export default {
 			type: [String, null],
 		},
 		errorMessage: {
+			default: null,
+			type: [String, null],
+		},
+		errorMessageDetails: {
 			default: null,
 			type: [String, null],
 		},
@@ -125,6 +137,9 @@ export default {
 		},
 		sanitizedErrorMessage() {
 			return dompurify.sanitize(this.errorMessage, { ADD_ATTR: ['target'] })
+		},
+		sanitizedErrorMessageDetails() {
+			return dompurify.sanitize(this.errorMessageDetails, { ADD_ATTR: ['target'] })
 		},
 	},
 	methods: {
@@ -216,7 +231,7 @@ body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 }
 </style>
 <style>
-.text-input .link {
+.text-input .link, .popover .link {
 	color: #1a67a3 !important;
 	font-style: italic;
 }
