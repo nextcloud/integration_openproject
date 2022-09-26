@@ -355,7 +355,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'client_exception',
-					'detail' => $response->getStatusCode() . " " . $response->getReasonPhrase()
+					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
 				]
 			);
 		} catch (ServerException $e) {
@@ -368,7 +368,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'server_exception',
-					'detail' => $response->getStatusCode() . " " . $response->getReasonPhrase()
+					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
 				]
 			);
 		} catch (RequestException $e) {
@@ -379,7 +379,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'request_exception',
-					'detail' => $e->getMessage()
+					'details' => $e->getMessage()
 				]
 			);
 		} catch (LocalServerException $e) {
@@ -402,7 +402,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'network_error',
-					'detail' => $e->getMessage()
+					'details' => $e->getMessage()
 				]
 			);
 		} catch (Exception $e) {
@@ -413,7 +413,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'unexpected_error',
-					'detail' => $e->getMessage()
+					'details' => $e->getMessage()
 				]
 			);
 		}
@@ -425,7 +425,7 @@ class OpenProjectAPIController extends Controller {
 		return new DataResponse(
 			[
 				'result' => 'not_valid_body',
-				'detail' => $body
+				'details' => $body
 			]
 		);
 	}
