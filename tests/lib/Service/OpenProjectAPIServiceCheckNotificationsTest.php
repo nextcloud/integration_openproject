@@ -89,7 +89,6 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 				'123456',
 				'refresh-token',
 			);
-
 		$configMock
 			->expects($this->once())
 			->method('setUserValue')
@@ -103,6 +102,7 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'default_enable_notifications','0'],
 				['integration_openproject', 'oauth_instance_url'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
@@ -110,6 +110,7 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'oauth_instance_url'],
 			)->willReturnOnConsecutiveCalls(
+				'0',
 				'https://openproject',
 				'clientID',
 				'SECRET',

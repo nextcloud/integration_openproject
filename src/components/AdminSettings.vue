@@ -168,6 +168,25 @@
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
 		</Button>
+		<div v-if="isIntegrationComplete" class="default-prefs">
+			<h2>{{ t('integration_openproject', 'Default user settings') }}</h2>
+			<p>
+				{{ t('integration_openproject', 'A new user will receive these defaults and they will be applied to the integration app till the user changes them.') }}
+			</p>
+			<br>
+			<CheckBox v-model="state.default_enable_navigation"
+				input-id="default-prefs--link"
+				:label="t('integration_openproject', 'Enable navigation link')"
+				@input="setDefaultConfig" />
+			<CheckBox v-model="state.default_enable_unified_search"
+				input-id="default-prefs--u-search"
+				:label="t('integration_openproject', 'Enable unified search for tickets')"
+				@input="setDefaultConfig" />
+			<CheckBox v-model="state.default_enable_notifications"
+				input-id="default-prefs--notifications"
+				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
+				@input="setDefaultConfig" />
+		</div>
 	</div>
 </template>
 
@@ -186,13 +205,13 @@ import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput'
 import FieldValue from './admin/FieldValue'
 import FormHeading from './admin/FormHeading'
+import CheckBox from '../components/settings/CheckBox'
 import SettingsTitle from '../components/settings/SettingsTitle'
-import { F_MODES } from './../utils'
+import { F_MODES } from '../utils'
 import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'AdminSettings',
-
 	components: {
 		Button,
 		FieldValue,
@@ -204,6 +223,7 @@ export default {
 		LoadingIcon,
 		AutoRenewIcon,
 		RestoreIcon,
+		CheckBox,
 	},
 	data() {
 		return {
@@ -286,29 +306,37 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		isIntegrationComplete() {
+			return (this.isServerHostFormComplete
+				 && this.isOPOAuthFormComplete
+				 && this.isNcOAuthFormComplete)
+		},
 	},
 	created() {
-		if (this.state) {
-			if (this.state.oauth_instance_url) {
-				this.formMode.server = F_MODES.VIEW
-				this.isFormCompleted.server = true
-			}
-			if (!!this.state.client_id && !!this.state.client_secret) {
-				this.formMode.opOauth = F_MODES.VIEW
-				this.isFormCompleted.opOauth = true
-			}
-			if (this.state.oauth_instance_url) {
-				if (!this.state.client_id || !this.state.client_secret) {
-					this.formMode.opOauth = F_MODES.EDIT
-				}
-			}
-			if (this.state.nc_oauth_client) {
-				this.formMode.ncOauth = F_MODES.VIEW
-				this.isFormCompleted.ncOauth = true
-			}
-		}
+		this.init()
 	},
 	methods: {
+		init() {
+			if (this.state) {
+				if (this.state.oauth_instance_url) {
+					this.formMode.server = F_MODES.VIEW
+					this.isFormCompleted.server = true
+				}
+				if (!!this.state.client_id && !!this.state.client_secret) {
+					this.formMode.opOauth = F_MODES.VIEW
+					this.isFormCompleted.opOauth = true
+				}
+				if (this.state.oauth_instance_url) {
+					if (!this.state.client_id || !this.state.client_secret) {
+						this.formMode.opOauth = F_MODES.EDIT
+					}
+				}
+				if (this.state.nc_oauth_client) {
+					this.formMode.ncOauth = F_MODES.VIEW
+					this.isFormCompleted.ncOauth = true
+				}
+			}
+		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
 		},
@@ -398,9 +426,21 @@ export default {
 			)
 		},
 		async resetAllAppValues() {
+			// to avoid general console errors, we need to set the form to
+			// editor mode so that we can update the form fields with null values
+			// also, form completeness should be set to false
+			this.formMode.opOauth = F_MODES.EDIT
+			this.isFormCompleted.opOauth = false
+			this.formMode.server = F_MODES.EDIT
+			this.isFormCompleted.server = false
+
 			this.state.client_id = null
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null
+			this.state.default_enable_navigation = false
+			this.state.default_enable_notifications = false
+			this.state.default_enable_unified_search = false
+
 			await this.saveOPOptions()
 			window.location.reload()
 		},
@@ -432,6 +472,9 @@ export default {
 					client_id: this.state.client_id,
 					client_secret: this.state.client_secret,
 					oauth_instance_url: this.state.oauth_instance_url,
+					default_enable_navigation: this.state.default_enable_navigation,
+					default_enable_notifications: this.state.default_enable_notifications,
+					default_enable_unified_search: this.state.default_enable_unified_search,
 				},
 			}
 			try {
@@ -441,7 +484,7 @@ export default {
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				return true
 			} catch (error) {
-				console.debug(error)
+				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
@@ -482,6 +525,24 @@ export default {
 				)
 			})
 		},
+		setDefaultConfig() {
+			const url = generateUrl('/apps/integration_openproject/admin-config')
+			const req = {
+				values: {
+					default_enable_navigation: !!this.state.default_enable_navigation,
+					default_enable_notifications: !!this.state.default_enable_notifications,
+					default_enable_unified_search: !!this.state.default_enable_unified_search,
+				},
+			}
+			axios.put(url, req).then((res) => {
+				showSuccess(t('integration_openproject', 'Default user configuration saved'))
+			}).catch(error => {
+				showError(
+					t('integration_openproject', 'Failed to save default user configuration')
+					+ ': ' + error.response.request.responseText
+				)
+			})
+		},
 	},
 }
 </script>
@@ -511,6 +572,9 @@ export default {
 	}
 	.mr-2 {
 		margin-right: .5rem;
+	}
+	.default-prefs {
+		padding-top: 1.2rem;
 	}
 }
 </style>

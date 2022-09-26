@@ -41,9 +41,27 @@ class Personal implements ISettings {
 	public function getForm(): TemplateResponse {
 		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
 		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
-		$searchEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'search_enabled', '0');
-		$notificationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'notification_enabled', '0');
-		$navigationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'navigation_enabled', '0');
+
+
+		// take the fallback value from the defaults
+		$searchEnabled = $this->config->getUserValue(
+			$this->userId,
+			Application::APP_ID,
+			'search_enabled',
+			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')
+		);
+		$notificationEnabled = $this->config->getUserValue(
+			$this->userId,
+			Application::APP_ID,
+			'notification_enabled',
+			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')
+		);
+		$navigationEnabled = $this->config->getUserValue(
+			$this->userId,
+			Application::APP_ID,
+			'navigation_enabled',
+			$this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0')
+		);
 
 		$userConfig = [
 			'token' => $token,

@@ -16,13 +16,11 @@
 		<br>
 		<div v-if="connected" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
-				input-id="openproject-prefs-link"
-				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="saveForm()" />
+				input-id="openproject-prefs--link"
+				:label="t('integration_openproject', 'Enable navigation link')" />
 			<CheckBox v-model="state.search_enabled"
 				input-id="openproject-prefs--u-search"
-				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="saveForm()">
+				:label="t('integration_openproject', 'Enable unified search for tickets')">
 				<template #hint>
 					<p v-if="state.search_enabled" class="openproject-prefs--hint">
 						<InformationVariant />
@@ -33,8 +31,7 @@
 			</CheckBox>
 			<CheckBox v-model="state.notification_enabled"
 				input-id="openproject-prefs--notifications"
-				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
-				@input="saveForm()" />
+				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')" />
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>
@@ -71,12 +68,28 @@ export default {
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		}
 	},
-
 	computed: {
 		connected() {
 			if (!this.state.admin_config_ok) return false
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
+		},
+	},
+	watch: {
+		'state.notification_enabled'(newVal) {
+			this.saveOptions({
+				notification_enabled: newVal ? '1' : '0',
+			})
+		},
+		'state.search_enabled'(newVal) {
+			this.saveOptions({
+				search_enabled: newVal ? '1' : '0',
+			})
+		},
+		'state.navigation_enabled'(newVal) {
+			this.saveOptions({
+				navigation_enabled: newVal ? '1' : '0',
+			})
 		},
 	},
 
@@ -88,14 +101,6 @@ export default {
 		disconnectFromOP() {
 			this.state.token = ''
 			this.saveOptions({ token: this.state.token, token_type: '' })
-		},
-		saveForm() {
-			const opts = {
-				notification_enabled: this.state.notification_enabled ? '1' : '0',
-				search_enabled: this.state.search_enabled ? '1' : '0',
-				navigation_enabled: this.state.navigation_enabled ? '1' : '0',
-			}
-			this.saveOptions(opts)
 		},
 		saveOptions(values) {
 			const req = {

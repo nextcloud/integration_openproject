@@ -134,7 +134,11 @@ class OpenProjectAPIService {
 	 */
 	private function checkNotificationsForUser(string $userId): void {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		$notificationEnabled = ($this->config->getUserValue($userId, Application::APP_ID, 'notification_enabled', '0') === '1');
+		$notificationEnabled = ($this->config->getUserValue(
+			$userId,
+			Application::APP_ID,
+			'notification_enabled',
+			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')) === '1');
 		if ($accessToken && $notificationEnabled) {
 			$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
 			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : (int)$lastNotificationCheck;

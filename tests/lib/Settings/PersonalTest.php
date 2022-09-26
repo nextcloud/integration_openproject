@@ -96,6 +96,9 @@ class PersonalTest extends TestCase {
 		$this->config
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'default_enable_unified_search'],
+				['integration_openproject', 'default_enable_notifications'],
+				['integration_openproject', 'default_enable_navigation'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url'],
@@ -103,6 +106,7 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'oauth_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				'0', '0', '0',
 				$clientId,
 				$clientSecret,
 				$oauthInstanceUrl,
@@ -129,6 +133,65 @@ class PersonalTest extends TestCase {
 				['oauth-connection-error-message']
 			);
 
+		$form = $this->setting->getForm();
+		$expected = new TemplateResponse('integration_openproject', 'personalSettings');
+		$this->assertEquals($expected, $form);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testNoPersonalSettingsShouldUseValueFromTheDefaults() {
+		$this->config
+			->method('getUserValue')
+			->withConsecutive(
+				['testUser', 'integration_openproject', 'token'],
+				['testUser', 'integration_openproject', 'user_name'],
+				['testUser', 'integration_openproject', 'search_enabled', '1'],
+				['testUser', 'integration_openproject', 'notification_enabled', '1'],
+				['testUser', 'integration_openproject', 'navigation_enabled', '1'],
+			)
+			->willReturnOnConsecutiveCalls(
+				'some-token',
+				'some-username',
+				'1', '1', '1'
+			);
+		$this->config
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'default_enable_unified_search'],
+				['integration_openproject', 'default_enable_notifications'],
+				['integration_openproject', 'default_enable_navigation'],
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'oauth_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				'1', '1', '1',
+				"some-client-id",
+				"some-client-secret",
+				"http://localhost",
+				"some-client-id",
+				"http://localhost",
+			);
+		$this->initialState
+			->method('provideInitialState')
+			->withConsecutive(
+				[
+					'user-config', [
+						'token' => 'some-token',
+						'user_name' => 'some-username',
+						'search_enabled' => true,
+						'notification_enabled' => true,
+						'navigation_enabled' => true,
+						'admin_config_ok' => true,
+					]
+				],
+				['oauth-connection-result'],
+				['oauth-connection-error-message']
+			);
 		$form = $this->setting->getForm();
 		$expected = new TemplateResponse('integration_openproject', 'personalSettings');
 		$this->assertEquals($expected, $form);
