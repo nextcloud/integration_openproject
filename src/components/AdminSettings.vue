@@ -439,7 +439,7 @@ export default {
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
 						'Response:'
-					) + ' "' + response.data.detail + '"'
+					) + ' "' + response.data.details + '"'
 					break
 				}
 				case 'server_exception': {
@@ -447,7 +447,7 @@ export default {
 						'integration_openproject',
 						'Server replied with an error message'
 					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.detail
+					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
 				}
 				case 'local_remote_servers_not_allowed': {
@@ -475,7 +475,7 @@ export default {
 						'integration_openproject',
 						'Could not connect to the given URL'
 					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.detail
+					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
 				}
 				}
