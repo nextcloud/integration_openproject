@@ -273,10 +273,8 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs</div>
+      <!---->
     </div>
   </div>
 </div>

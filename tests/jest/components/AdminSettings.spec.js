@@ -324,7 +324,7 @@ describe('AdminSettings.vue', () => {
 							result: 'not_valid_body',
 							details: '<body>the complete body of the return</body>',
 						},
-						expectedDetailsMessage: 'Response: "<body>the complete body of the return</body>"',
+						expectedDetailsMessage: null,
 					},
 				])('should set the input to error state and display correct message when the url is invalid', async (testCase) => {
 					dialogs.showError.mockImplementationOnce()
