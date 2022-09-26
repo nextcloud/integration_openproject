@@ -334,7 +334,6 @@ class OpenProjectAPIController extends Controller {
 			) {
 				return new DataResponse(['result' => true]);
 			}
-
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
 			$body = (string) $response->getBody();
@@ -356,14 +355,14 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(
 				[
 					'result' => 'client_exception',
-					'detail' =>  $response->getStatusCode() . " " . $response->getReasonPhrase()
+					'detail' => $response->getStatusCode() . " " . $response->getReasonPhrase()
 				]
 			);
 		} catch (ServerException $e) {
 			$response = $e->getResponse();
 			$this->logger->error(
 				"Could not connect to the OpenProject URL '$url', " .
-				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase() ,
+				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase(),
 				['app' => $this->appName, 'exception' => $e]
 			);
 			return new DataResponse(
