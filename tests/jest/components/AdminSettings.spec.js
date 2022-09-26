@@ -271,16 +271,62 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 			describe('submit button', () => {
-				it.each([{
-					data: false,
-					message: 'No OpenProject detected at the URL',
-				}, {
-					data: 'invalid',
-					message: 'OpenProject URL is invalid, provide an URL in the form "https://openproject.org"',
-				}, {
-					data: 'local_remote_servers_not_allowed',
-					message: 'Accessing OpenProject servers with local addresses is not allowed.',
-				}])('should set the input to error state when the url is invalid when clicked', async (testCase) => {
+				it.each([
+					{
+						data: {
+							result: 'client_exception',
+							details: '404 Not Found',
+						},
+						expectedDetailsMessage: 'Response: "404 Not Found"',
+					},
+					{
+						data: {
+							result: 'invalid',
+						},
+						expectedDetailsMessage: 'The URL should have the form "https://openproject.org"',
+					},
+					{
+						data: {
+							result: 'server_exception',
+							details: '503 Service Unavailable',
+						},
+						expectedDetailsMessage: '503 Service Unavailable',
+					},
+					{
+						data: {
+							result: 'request_exception',
+							details: 'a long message from the exception',
+						},
+						expectedDetailsMessage: 'a long message from the exception',
+					},
+					{
+						data: {
+							result: 'local_remote_servers_not_allowed',
+						},
+						expectedDetailsMessage: 'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
+					},
+					{
+						data: {
+							result: 'network_error',
+							details: 'a long message from the exception',
+						},
+						expectedDetailsMessage: 'a long message from the exception',
+					},
+					{
+						data: {
+							result: 'unexpected_error',
+							details: 'a long message from the exception',
+						},
+						expectedDetailsMessage: 'a long message from the exception',
+					},
+					{
+						data: {
+							result: 'not_valid_body',
+							details: '<body>the complete body of the return</body>',
+						},
+						expectedDetailsMessage: 'Response: "<body>the complete body of the return</body>"',
+					},
+				])('should set the input to error state and display correct message when the url is invalid', async (testCase) => {
 					dialogs.showError.mockImplementationOnce()
 					jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({ data: testCase.data }))
@@ -305,13 +351,14 @@ describe('AdminSettings.vue', () => {
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
 					expect(serverHostForm.find(selectors.textInputWrapper)).toMatchSnapshot()
 					expect(saveOPOptionsSpy).toBeCalledTimes(0)
-					expect(dialogs.showError).toHaveBeenCalledWith(testCase.message)
+					expect(wrapper.vm.openProjectNotReachableErrorMessageDetails)
+						.toBe(testCase.expectedDetailsMessage)
 					jest.clearAllMocks()
 				})
 				it('should save the form when the url is valid', async () => {
 					let serverHostForm
 					jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({ data: true }))
+						.mockImplementationOnce(() => Promise.resolve({ data: { result: true } }))
 					const setAdminConfigAPISpy = jest.spyOn(axios, 'put')
 						.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
 
