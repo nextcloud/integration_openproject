@@ -140,7 +140,7 @@ The NC server installation can be done in two ways:
 
 #### Enable the integration app:
 
-You can browse as admin to the apps center and enable it using the webUI or you can just use the terminal as:
+You can browse as admin to the apps center and enable it using the webUI, or you can just use the terminal as:
 
 ```shell
 docker compose exec --user www-data nextcloud php occ a:e integration_openproject
@@ -166,7 +166,7 @@ Easiest way to do that is to disable `mod_rewrite` in Apache:
 docker compose exec nextcloud a2dismod rewrite
 docker compose exec nextcloud service apache2 restart
 ```
-To enable it again run:
+To enable it again, run:
 ```shell
 docker compose exec nextcloud a2enmod rewrite
 docker compose exec nextcloud service apache2 restart
@@ -175,7 +175,7 @@ docker compose exec nextcloud service apache2 restart
 ##### Change version of Nextcloud
 To test another version of Nextcloud change the nextcloud images in the `docker-compose.override.yml`
 e.g:
-```
+```yaml
 services:
   nextcloud:
     image: nextcloud:23-apache
@@ -191,7 +191,7 @@ Please note:
 2. Nextcloud does not support downgrading. If you want to go back to an older version, you need to delete all the volumes with `docker compose down -v` and start the Nextcloud installation again
 
 ##### Disable pretty URLs
-Nextcloud can work with or without `index.php` in the URL. The connection to Openproject has to work regardless of how it is configured.
+Nextcloud can work with or without `index.php` in the URL. The connection to OpenProject has to work regardless of how it is configured.
 
 By default, the docker setup in this repo starts Nextcloud without `index.php` in the URL. To change that, we have to edit the `.htaccess` file. The  code that is responsible to rewrite the URLs and make them prettier is attached at the bottom of the `.htaccess` file in the Nextcloud folder.
 
@@ -261,18 +261,23 @@ npm run watch
 ```
 
 ### Release:
-#### 1a. preparation in case of a major/minor version
-1. Create a release branch from master with the name `release/<version>` e.g. `release/2.1`
-2. Protect that new branch the same way as `master`
-3. On the release branch update the version in `appinfo/info.xml`
-4. Do QA and fixes of bugs in the release branch
 
-#### 1b. preparation in case of a patch version
-1. On the release branch of the current minor version update the version in `appinfo/info.xml` (not needed for nightly builds)
-2. merge the release branch into the `master` branch, to get all good changes also into the current development
+#### 1. Release Preparation
 
-#### 2. publish release
-1. Tag a commit on the `release/<version>` branch. The tag must have the format `v2.1.1` for releases and `v2.1.1-20220928-nightly` for nightly builds
-  e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220728-nightly"`
-2. Push the tag to the `auto-release`  branch: `git push origin release/<version>:auto-release --tags -f`
-3. Approve the deployment in GitHub actions
+##### a. In case of a major/minor version
+
+   1. Create a release branch from master with the name `release/<version>` e.g. `release/2.1`
+   2. Protect that new branch the same way as `master`
+   3. On the release branch update the version in `appinfo/info.xml`
+   4. Do QA and fixes of bugs in the release branch
+
+##### b. In case of a patch version
+
+   1. On the release branch of the current minor version update the version in `appinfo/info.xml` (not needed for nightly builds)
+   2. Merge the release branch into the `master` branch, to get all good changes also into the current development
+
+#### 2. Publish Release
+   1. Tag a commit on the `release/<version>` branch. The tag must have the format `v2.1.1` for releases and `v2.1.1-20220928-nightly` for nightly builds.  
+      e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220728-nightly"`
+   3. Push the tag to the `auto-release`  branch: `git push origin release/<version>:auto-release --tags -f`
+   4. Approve the deployment in GitHub actions
