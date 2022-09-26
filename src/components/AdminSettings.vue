@@ -439,7 +439,7 @@ export default {
 				case 'client_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL'
+						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs'
 					)
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
@@ -450,7 +450,7 @@ export default {
 				case 'server_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Server replied with an error message'
+						'Server replied with an error message, please check the Nextcloud logs'
 					)
 					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
@@ -479,7 +479,7 @@ export default {
 				default: {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Could not connect to the given URL, please check the NextCloud logs.'
+						'Could not connect to the given URL, please check the Nextcloud logs'
 					)
 					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break

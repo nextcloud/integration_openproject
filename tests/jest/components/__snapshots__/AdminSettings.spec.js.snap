@@ -122,7 +122,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL</div>
+      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs</div>
       <div class="v-popover">
         <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
       </div>
@@ -160,7 +160,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">Server replied with an error message</div>
+      <div class="text-input-error-message">Server replied with an error message, please check the Nextcloud logs</div>
       <div class="v-popover">
         <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
       </div>
@@ -179,7 +179,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the NextCloud logs.</div>
+      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
       <div class="v-popover">
         <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
       </div>
@@ -217,7 +217,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the NextCloud logs.</div>
+      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
       <div class="v-popover">
         <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
       </div>
@@ -236,7 +236,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   </div>
   <div>
     <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the NextCloud logs.</div>
+      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
       <div class="v-popover">
         <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
       </div>
