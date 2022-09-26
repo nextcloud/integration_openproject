@@ -431,6 +431,11 @@ export default {
 					)
 					break
 				case 'not_valid_body':
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs'
+					)
+					break
 				case 'client_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
