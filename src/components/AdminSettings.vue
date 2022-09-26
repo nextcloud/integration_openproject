@@ -508,12 +508,13 @@ export default {
 					)
 					break
 				}
+				case 'unexpected_error':
 				case 'network_error':
 				case 'request_exception':
 				default: {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Could not connect to the given URL'
+						'Could not connect to the given URL, please check the NextCloud logs.'
 					)
 					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
