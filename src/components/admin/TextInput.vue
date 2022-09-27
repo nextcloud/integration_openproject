@@ -193,6 +193,8 @@ export default {
 
 	&-error-message {
 		color: var(--color-error);
+		float: left;
+		margin-right: 10px;
 	}
 
 	&-icon {
