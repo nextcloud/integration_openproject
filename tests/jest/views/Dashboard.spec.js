@@ -61,35 +61,7 @@ describe('Dashboard.vue', () => {
 			'http://localhost/apps/integration_openproject/notifications',
 		)
 		expect(wrapper.vm.state).toBe(STATE.OK)
-		expect(wrapper.vm.items).toStrictEqual([
-			{
-				id: '17',
-				targetUrl: 'http://openproject.org/notifications/details/17/activity/',
-				avatarUrl: 'http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user',
-				avatarUsername: 'Admin de DEV userz',
-				mainText: '(5) Create wireframes for new landing page',
-				subText: 'Scrum project - assigned,mentioned',
-				overlayIconUrl: '',
-			},
-			{
-				id: '18',
-				targetUrl: 'http://openproject.org/notifications/details/18/activity/',
-				avatarUrl: 'http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur Neumann',
-				avatarUsername: 'Artur Neumannz',
-				mainText: '(1) Contact form',
-				subText: 'Scrum project - mentioned',
-				overlayIconUrl: '',
-			},
-			{
-				id: '36',
-				targetUrl: 'http://openproject.org/notifications/details/36/activity/',
-				avatarUrl: 'http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user',
-				avatarUsername: 'Admin de DEV userz',
-				mainText: '(2) write a software',
-				subText: 'Dev-large - assigned',
-				overlayIconUrl: '',
-			},
-		])
+		expect(wrapper.vm.items).toMatchSnapshot()
 		axiosSpy.mockRestore()
 	})
 	describe('mark as read', () => {
@@ -116,38 +88,7 @@ describe('Dashboard.vue', () => {
 			axiosSpyGet = jest.spyOn(axios, 'get')
 				.mockImplementation(() => Promise.resolve({
 					data: [
-						{
-							_type: 'Notification',
-							id: 47,
-							readIAN: false,
-							reason: 'assigned',
-							createdAt: '2022-08-17T10:27:01Z',
-							updatedAt: '2022-08-17T10:28:12Z',
-							_links: {
-								self: {
-									href: '/api/v3/notifications/47',
-								},
-								readIAN: {
-									href: '/api/v3/notifications/47/read_ian',
-									method: 'post',
-								},
-								actor: {
-									href: '/api/v3/users/8',
-									title: 'Admin de DEV user',
-								},
-								project: {
-									href: '/api/v3/projects/4',
-									title: 'Dev-large',
-								},
-								activity: {
-									href: '/api/v3/activities/261',
-								},
-								resource: {
-									href: '/api/v3/work_packages/36',
-									title: 'write a software',
-								},
-							},
-						},
+						notificationsResponse[0],
 					],
 				}))
 		})

@@ -157,11 +157,9 @@ export default {
 			this.fetchNotifications()
 			this.loop = setInterval(() => this.fetchNotifications(), 60000)
 		},
-		getNotificationsUrl() {
-			return generateUrl('/apps/integration_openproject/notifications')
-		},
 		fetchNotifications() {
-			axios.get(this.getNotificationsUrl()).then((response) => {
+			const notificationsUrl = generateUrl('/apps/integration_openproject/notifications')
+			axios.get(notificationsUrl).then((response) => {
 				const notifications = {}
 				if (Array.isArray(response.data)) {
 					for (let i = 0; i < response.data.length; i++) {
