@@ -6,9 +6,7 @@ import axios from '@nextcloud/axios'
 import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils'
 import notificationsResponse from '../fixtures/notificationsResponse.json'
-import workPackagesSearchResponse
-	from '../fixtures/workPackagesSearchResponse.json'
-import * as dialogs from "@nextcloud/dialogs";
+import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
