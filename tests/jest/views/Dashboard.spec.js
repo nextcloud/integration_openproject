@@ -25,6 +25,8 @@ global.OC = {}
 const localVue = createLocalVue()
 
 describe('Dashboard.vue', () => {
+	const dashboardTriggerButtonSelector = '.trigger'
+	const markAsReadButtonSelector = '.popover__wrapper .action-button'
 	let wrapper
 	beforeEach(() => {
 		// eslint-disable-next-line no-import-assign
@@ -91,11 +93,12 @@ describe('Dashboard.vue', () => {
 		])
 		axiosSpy.mockRestore()
 	})
-	it('should send a DELETE request to mark notifications as read', async () => {
+	it('should mark notifications as read', async () => {
 		wrapper = mount(
 			Dashboard,
 			{
 				localVue,
+				attachTo: document.body,
 				mocks: {
 					t: (app, msg) => msg,
 					generateUrl() {
@@ -109,8 +112,8 @@ describe('Dashboard.vue', () => {
 					title: 'dashboard',
 				},
 			})
-		const axiosSpy = jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({
+		const axiosSpyGet = jest.spyOn(axios, 'get')
+			.mockImplementation(() => Promise.resolve({
 				data: [
 					{
 						_type: 'Notification',
@@ -146,18 +149,20 @@ describe('Dashboard.vue', () => {
 					},
 				],
 			}))
+		const axiosSpyDelete = jest.spyOn(axios, 'delete')
+			.mockImplementationOnce(() => Promise.resolve({})
+			)
 		await wrapper.vm.fetchNotifications()
 		await localVue.nextTick()
-
-		//
-		// await localVue.nextTick()
-		// await localVue.nextTick()
-		// await localVue.nextTick()
-		// await localVue.nextTick()
-		await wrapper.find('.trigger').trigger('click')
+		await wrapper.find(dashboardTriggerButtonSelector).trigger('click')
 		await localVue.nextTick()
+		await wrapper.find(markAsReadButtonSelector).trigger('click')
 		await localVue.nextTick()
-		await localVue.nextTick()
-		console.log(wrapper.html())
+		expect(axiosSpyDelete).toHaveBeenCalledWith(
+			'http://localhost/apps/integration_openproject/work-packages/36/notifications'
+		)
+		wrapper.destroy()
+		axiosSpyGet.mockRestore()
+		axiosSpyDelete.mockRestore()
 	})
 })
