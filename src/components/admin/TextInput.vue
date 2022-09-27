@@ -239,4 +239,8 @@ body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
 .text-input-copy-value * {
 	cursor: copy !important;
 }
+
+.popover__inner {
+	padding: 5px !important;
+}
 </style>
