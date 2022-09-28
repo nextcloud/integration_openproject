@@ -60,26 +60,26 @@
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.client_id"
-					:title="t('integration_openproject', 'OpenProject OAuth client ID')" />
+					title="OpenProject OAuth client ID" />
 				<TextInput v-else
 					id="openproject-oauth-client-id"
 					v-model="state.client_id"
 					class="py-1"
 					is-required
-					:label="t('integration_openproject', 'OpenProject OAuth client ID')"
+					label="OpenProject OAuth client ID"
 					:hint-text="openProjectClientHint" />
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					class="pb-1"
 					encrypt-value
-					:title="t('integration_openproject', 'OpenProject OAuth client secret')"
+					title="OpenProject OAuth client secret"
 					:value="state.client_secret" />
 				<TextInput v-else
 					id="openproject-oauth-client-secret"
 					v-model="state.client_secret"
 					is-required
 					class="py-1"
-					:label="t('integration_openproject', 'OpenProject OAuth client secret')"
+					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
 				<div class="form-actions">
 					<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
@@ -117,10 +117,10 @@
 					read-only
 					is-required
 					with-copy-btn
-					:label="t('integration_openproject', 'Nextcloud OAuth client ID')"
+					label="Nextcloud OAuth client ID"
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
-					:title="t('integration_openproject', 'Nextcloud OAuth client ID')"
+					title="Nextcloud OAuth client ID"
 					:value="state.nc_oauth_client.clientId"
 					is-required />
 				<TextInput v-if="isNcOAuthFormInEdit"
@@ -130,10 +130,10 @@
 					read-only
 					is-required
 					with-copy-btn
-					:label="t('integration_openproject', 'Nextcloud OAuth client secret')"
+					label="Nextcloud OAuth client secret"
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
-					:title="t('integration_openproject', 'Nextcloud OAuth client secret')"
+					title="Nextcloud OAuth client secret"
 					is-required
 					encrypt-value
 					with-inspection

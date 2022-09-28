@@ -1,7 +1,7 @@
 <template>
 	<div class="field-item">
 		<b class="field-item-title">
-			{{ t('integration_openproject', title) }}{{ isRequired ? '*' : '' }}:
+			{{ title }}{{ isRequired ? '*' : '' }}:
 		</b>
 
 		<div class="field-item-value">
