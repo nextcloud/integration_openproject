@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "Bad HTTP method" : "錯誤的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
-    "Connected accounts" : "已連線的帳號",
     "Cancel" : "取消",
     "Save" : "儲存",
     "Reset" : "重設",
@@ -15,6 +14,7 @@ OC.L10N.register(
     "Invalid token" : "無效的權杖",
     "Copied!" : "已複製！",
     "Start typing to search" : "開始輸入以搜尋",
-    "OAuth access token could not be obtained:" : "無法取得 OAuth 存取權杖："
+    "OAuth access token could not be obtained:" : "無法取得 OAuth 存取權杖：",
+    "Connected accounts" : "已連線的帳號"
 },
 "nplurals=1; plural=0;");
