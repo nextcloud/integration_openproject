@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Fel vid utväxling av OAuth-token",
     "Bad HTTP method" : "Felaktig HTTP-metod",
     "OAuth access token refused" : "OAuth-token avvisades",
-    "Connected accounts" : "Anslutna konton",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
     "Reset" : "Återställ",
@@ -13,6 +12,7 @@ OC.L10N.register(
     "Connected as {user}" : "Ansluten som {user}",
     "Incorrect access token" : "Ogiltig åtkomst-token",
     "Copied!" : "Kopierad!",
-    "Start typing to search" : "Börja skriva för att söka"
+    "Start typing to search" : "Börja skriva för att söka",
+    "Connected accounts" : "Anslutna konton"
 },
 "nplurals=2; plural=(n != 1);");

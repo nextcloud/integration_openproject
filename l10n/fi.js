@@ -5,7 +5,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Virhe OAuth-tunnistautumisessa",
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
-    "Connected accounts" : "Yhdistetyt tilit",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
     "Reset" : "Palauta",
@@ -13,6 +12,7 @@ OC.L10N.register(
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
     "Copied!" : "Kopioitu!",
-    "Start typing to search" : "Aloita kirjoittaminen hakeaksesi"
+    "Start typing to search" : "Aloita kirjoittaminen hakeaksesi",
+    "Connected accounts" : "Yhdistetyt tilit"
 },
 "nplurals=2; plural=(n != 1);");

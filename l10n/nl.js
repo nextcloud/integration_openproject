@@ -8,7 +8,7 @@ OC.L10N.register(
     "OpenProject activity" : "OpenProject activiteit",
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
-    "Connected accounts" : "Verbonden accounts",
+    "OpenProject integration" : "OpenProject integratie",
     "OpenProject server" : "OpenProject server",
     "OpenProject host" : "OpenProject host",
     "Cancel" : "Annuleren",
@@ -20,13 +20,15 @@ OC.L10N.register(
     "Nextcloud OAuth client secret" : "Nextcloud OAuth client secret",
     "Reset" : "Herstellen",
     "Enable navigation link" : "Inschakelen navigatielink",
-    "Connected as {user}" : "Verbonden als {user}",
     "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",
+    "Connected as {user}" : "Verbonden als {user}",
     "Incorrect access token" : "Onjuist access token",
     "Invalid token" : "Ongeldig token",
     "Copied!" : "Gekopieerd!",
-    "OpenProject integration" : "OpenProject integratie",
+    "Unexpected Error" : "Onverwachte fout",
     "Start typing to search" : "Begin met typen om te zoeken",
-    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
+    "Existing relations:" : "Bestaande relaties:",
+    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
+    "Connected accounts" : "Verbonden accounts"
 },
 "nplurals=2; plural=(n != 1);");
