@@ -132,7 +132,7 @@ class Notifier implements INotifier {
 			$message = rtrim($message, ',');
 			$markAsReadAction = $notification->createAction();
 			$markAsReadAction->setLabel('mark_as_read')
-			->setParsedLabel($l->t('Mark as read in OpenProject'))
+			->setParsedLabel($l->t('Mark as read'))
 			->setPrimary(true)
 			->setLink($this->url->linkToRouteAbsolute(
 				'integration_openproject.openProjectAPI.markNotificationAsRead',
