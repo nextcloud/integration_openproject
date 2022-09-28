@@ -136,7 +136,7 @@ class Notifier implements INotifier {
 			->setPrimary(true)
 			->setLink($this->url->linkToRouteAbsolute(
 				'integration_openproject.openProjectAPI.markNotificationAsRead',
-				['id' => $p['wpId']]),
+				['workpackageId' => $p['wpId']]),
 				'DELETE'
 			);
 
