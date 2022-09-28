@@ -180,6 +180,12 @@ class OpenProjectAPIService {
 					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
 					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
 				}
+				$manager = $this->notificationManager;
+				$notification = $manager->createNotification();
+				$notification->setApp(Application::APP_ID)
+					->setUser($userId);
+				$manager->markProcessed($notification);
+
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
 					$n['actors'] = array_unique($n['actors']);
