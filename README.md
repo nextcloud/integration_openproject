@@ -1,15 +1,27 @@
-# OpenProject integration into Nextcloud
+# OpenProject Integration
 
-OpenProject integration provides the possibility to link OpenProject work packages to a file in NextCloud, a dashboard
-widget for displaying OpenProject notifications, a search provider to search for work packages through the unified
-search and can display the count of OpenProject notifications as NextCloud notification.
+This application enables integration between Nextcloud and open-source project management software OpenProject. 
 
-Please report issues and bugs in: https://community.openproject.org/projects/nextcloud-integration/work_packages
+On the Nextcloud end, it allows users to:
 
-## :busts_in_silhouette: [User documentation](https://openproject.org/docs/user-guide/nextcloud-integration/)
-## :shipit: [Admin documentation](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/)
+* Link files and folders with work packages in OpenProject
+* Find all work packages linked to a file or a folder
+* View OpenProject notifications via the dashboard
+* Search for work packages using Nextcloud's search bar
 
-## :computer: Development
+On the OpenProject end, users are able to:
+
+* View all Nextcloud files and folders linked to a work package
+* Download linked files or open them in Nextcloud to edit them
+
+Please report issues and bugs here: https://community.openproject.org/projects/nextcloud-integration/work_packages
+
+## Documentation for users and administrators
+
+- For documentation on how to use the integration once it is set up, refer to [Using the Nextcloud integration](https://openproject.org/docs/user-guide/nextcloud-integration/).
+- For documentation on how to set up the integration as an administrator, refer to [Nextcloud integration setup](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/).
+
+## Development
 
 Develop using docker compose
 
