@@ -13,15 +13,11 @@ namespace OCA\OpenProject\Controller;
 
 use Exception;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ServerException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -31,7 +27,6 @@ use OCP\AppFramework\Controller;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\IURLGenerator;
-use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIController extends Controller {
 
@@ -63,17 +58,11 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $urlGenerator;
 
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
 								IURLGenerator $urlGenerator,
-								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
@@ -82,7 +71,6 @@ class OpenProjectAPIController extends Controller {
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -315,11 +303,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function isValidOpenProjectInstance(string $url): DataResponse {
 		if ($this->openprojectAPIService::validateURL($url) !== true) {
-			$this->logger->error(
-				"The OpenProject URL '$url' is invalid",
-				['app' => $this->appName]
-			);
-			return new DataResponse(['result' => 'invalid']);
+			return new DataResponse('invalid');
 		}
 		try {
 			$response = $this->openprojectAPIService->rawRequest('', $url, '');
@@ -332,7 +316,7 @@ class OpenProjectAPIController extends Controller {
 				$decodedBody['_type'] === 'Root' &&
 				$decodedBody['instanceName'] !== ''
 			) {
-				return new DataResponse(['result' => true]);
+				return new DataResponse(true);
 			}
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
@@ -345,89 +329,12 @@ class OpenProjectAPIController extends Controller {
 				$decodedBody['_type'] === 'Error' &&
 				$decodedBody['errorIdentifier'] !== ''
 			) {
-				return new DataResponse(['result' => true]);
+				return new DataResponse(true);
 			}
-			$this->logger->error(
-				"Could not connect to the OpenProject. " .
-				"There is no valid OpenProject instance at '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'client_exception',
-					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
-				]
-			);
-		} catch (ServerException $e) {
-			$response = $e->getResponse();
-			$this->logger->error(
-				"Could not connect to the OpenProject URL '$url', " .
-				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase(),
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'server_exception',
-					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
-				]
-			);
-		} catch (RequestException $e) {
-			$this->logger->error(
-				"Could not connect to the URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'request_exception',
-					'details' => $e->getMessage()
-				]
-			);
-		} catch (LocalServerException $e) {
-			$this->logger->error(
-				'Accessing OpenProject servers with local addresses is not allowed. ' .
-				'To be able to use an OpenProject server with a local address, ' .
-				'enable the `allow_local_remote_servers` setting.',
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'local_remote_servers_not_allowed'
-				]
-			);
-		} catch (ConnectException $e) {
-			$this->logger->error(
-				"A network error occurred while trying to connect to the OpenProject URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'network_error',
-					'details' => $e->getMessage()
-				]
-			);
 		} catch (Exception $e) {
-			$this->logger->error(
-				"Could not connect to the URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'unexpected_error',
-					'details' => $e->getMessage()
-				]
-			);
+			return new DataResponse(false);
 		}
-		$this->logger->error(
-			"Could not connect to the OpenProject. " .
-			"There is no valid OpenProject instance at '$url'",
-			['app' => $this->appName, 'data' => $body]
-		);
-		return new DataResponse(
-			[
-				'result' => 'not_valid_body',
-				'details' => $body
-			]
-		);
+		return new DataResponse(false);
 	}
 
 	/**
