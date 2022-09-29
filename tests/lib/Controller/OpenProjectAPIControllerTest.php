@@ -12,9 +12,11 @@ namespace OCA\OpenProject\Controller;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Http\Client\IResponse;
+use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -22,6 +24,7 @@ use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 use Exception;
 use OCP\Files\NotFoundException;
+use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIControllerTest extends TestCase {
 	/** @var IConfig $configMock */
@@ -34,6 +37,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @var IURLGenerator
 	 */
 	private $urlGeneratorMock;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $loggerMock;
 	/**
 	 * @return void
 	 * @before
@@ -41,6 +49,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function setUpMocks(): void {
 		$this->requestMock = $this->createMock(IRequest::class);
 		$this->urlGeneratorMock = $this->createMock(IURLGenerator::class);
+		$this->loggerMock = $this->createMock(LoggerInterface::class);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
@@ -82,6 +91,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test',
 		);
 		$response = $controller->getNotifications();
@@ -101,6 +111,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getNotifications();
@@ -125,6 +136,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getNotifications();
@@ -152,6 +164,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
@@ -186,6 +199,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
@@ -236,6 +250,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages($searchQuery, $fileId);
@@ -256,6 +271,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
@@ -280,6 +296,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getSearchedWorkPackages('test');
@@ -309,6 +326,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -331,6 +349,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -355,6 +374,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
@@ -382,6 +402,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -402,6 +423,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -426,6 +448,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
@@ -458,6 +481,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -483,6 +507,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -506,6 +531,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -530,6 +556,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
@@ -556,6 +583,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -575,6 +603,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -598,6 +627,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -622,6 +652,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
@@ -635,18 +666,20 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function isValidOpenProjectInstanceDataProvider() {
 		return [
 			['{"_type":"Root","instanceName":"OpenProject"}', true],
-			['{"_type":"something","instanceName":"OpenProject"}', false],
-			['{"_type":"Root","someData":"whatever"}', false],
-			['<h1>hello world</h1>', false],
+			['{"_type":"something","instanceName":"OpenProject"}', 'not_valid_body'],
+			['{"_type":"Root","someData":"whatever"}', 'not_valid_body'],
+			['<h1>hello world</h1>', 'not_valid_body'],
 		];
 	}
 
 	/**
-	 * @return void
 	 * @dataProvider isValidOpenProjectInstanceDataProvider
+	 * @param string $body
+	 * @param string|bool $expectedResult
+	 * @return void
 	 */
 	public function testIsValidOpenProjectInstance(
-		string $body, bool $expectedResult
+		string $body, $expectedResult
 	): void {
 		$response = $this->getMockBuilder(IResponse::class)->getMock();
 		$response->method('getBody')->willReturn($body);
@@ -663,10 +696,18 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
-		$this->assertSame($expectedResult, $result->getData());
+		if ($expectedResult === true) {
+			$this->assertSame([ 'result' => true], $result->getData());
+		} else {
+			$this->assertSame(
+				[ 'result' => $expectedResult, 'details' => $body ],
+				$result->getData()
+			);
+		}
 	}
 
 
@@ -680,43 +721,54 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'{"_type":"Error","errorIdentifier":"urn:openproject-org:api:v3:errors:Unauthenticated"}'
 		);
 		$notOP = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-		$notOP->method('getBody')->willReturn(
-			'Unauthenticated'
-		);
+		$notOP->method('getBody')->willReturn('Unauthenticated');
+		$notOP->method('getReasonPhrase')->willReturn('Unauthenticated');
+		$notOP->method('getStatusCode')->willReturn('401');
 		$notOPButJSON = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
 		$notOPButJSON->method('getBody')->willReturn(
 			'{"what":"Error","why":"Unauthenticated"}'
 		);
+		$notOPButJSON->method('getReasonPhrase')->willReturn('Unauthenticated');
+		$notOPButJSON->method('getStatusCode')->willReturn('401');
 		$otherResponseMock = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-
+		$otherResponseMock->method('getReasonPhrase')->willReturn('Internal Server Error');
+		$otherResponseMock->method('getStatusCode')->willReturn('500');
 		return [
 			[
 				new ConnectException('a connection problem', $requestMock),
-				false
+				[ 'result' => 'network_error', 'details' => 'a connection problem']
 			],
 			[
 				new ClientException('valid but private instance', $requestMock, $privateInstance),
-				true
+				[ 'result' => true ]
 			],
 			[
 				new ClientException('not a OP instance', $requestMock, $notOP),
-				false
+				[ 'result' => 'client_exception', 'details' => '401 Unauthenticated' ]
 			],
 			[
 				new ClientException('not a OP instance but return JSON', $requestMock, $notOPButJSON),
-				false
+				[ 'result' => 'client_exception', 'details' => '401 Unauthenticated' ]
 			],
 			[
 				new ServerException('some server issue', $requestMock, $otherResponseMock),
-				false
+				[ 'result' => 'server_exception', 'details' => '500 Internal Server Error' ]
 			],
 			[
 				new BadResponseException('some issue', $requestMock, $otherResponseMock),
-				false
+				[ 'result' => 'request_exception', 'details' => 'some issue' ]
+			],
+			[
+				new LocalServerException('Host violates local access rules'),
+				[ 'result' => 'local_remote_servers_not_allowed' ]
+			],
+			[
+				new RequestException('some issue', $requestMock, $otherResponseMock),
+				[ 'result' => 'request_exception', 'details' => 'some issue' ]
 			],
 			[
 				new \Exception('some issue'),
-				false
+				[ 'result' => 'unexpected_error', 'details' => 'some issue' ]
 			],
 
 		];
@@ -725,11 +777,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @dataProvider isValidOpenProjectInstanceExpectionDataProvider
 	 * @param Exception $thrownException
-	 * @param bool $expectedResult
+	 * @param bool|string $expectedResult
 	 * @return void
 	 */
 	public function testIsValidOpenProjectInstanceException(
-		$thrownException, bool $expectedResult
+		$thrownException, $expectedResult
 	): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -744,6 +796,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
@@ -776,10 +829,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->isValidOpenProjectInstance($url);
-		$this->assertSame('invalid', $result->getData());
+		$this->assertSame(['result' => 'invalid'], $result->getData());
 	}
 
 	public function testGetOpenProjectOauthURLWithStateAndPKCE(): void {
@@ -829,6 +883,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$this->configMock,
 			$service,
 			$this->urlGeneratorMock,
+			$this->loggerMock,
 			'test'
 		);
 		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
