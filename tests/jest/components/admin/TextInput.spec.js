@@ -44,21 +44,6 @@ describe('TextInput.vue', () => {
 			})
 			expect(wrapper).toMatchSnapshot()
 		})
-		it('should show error message details if both error message and details are provided', () => {
-			// the content of the error message details is not tested because the popup is rendered
-			// outside the wrapper
-			const wrapper = getWrapper({
-				errorMessage: 'some error message',
-				errorMessageDetails: 'here are some details',
-			})
-			expect(wrapper).toMatchSnapshot()
-		})
-		it('should not show error message details if not error message is provided', () => {
-			const wrapper = getWrapper({
-				errorMessageDetails: 'here are some details',
-			})
-			expect(wrapper).toMatchSnapshot()
-		})
 	})
 	describe('is required prop', () => {
 		it('should add asterik to the label text', () => {
