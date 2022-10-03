@@ -29,6 +29,7 @@ OC.L10N.register(
     "Replace Nextcloud OAuth values" : "Ordeztu Nextcloud OAuth balioak",
     "Reset" : "Berrezarri",
     "Default user settings" : "Lehentsitako erabiltzailearen ezarpenak",
+    "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Erabiltzaile berri batek balio lehenetsi hauek jasoko ditu eta integrazio aplikazioan aplikatuko dira erabiltzaileak aldatzen dituen arte.",
     "Enable navigation link" : "Gaitu nabigazio esteka",
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua tiketentzako",
     "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
