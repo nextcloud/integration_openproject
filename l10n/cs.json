@@ -1,9 +1,9 @@
 { "translations": {
     "OpenProject" : "OpenProject",
     "Invalid key" : "Neplatná klávesa",
-    "Error getting OAuth access token" : "Chyba při získávání přístupového OAuth přístupového tokenu",
-    "Error getting OAuth refresh token" : "Chyba při získávání obnovovacího OAuth tokenu",
-    "Error during OAuth exchanges" : "Chyba při OAuth výměnách",
+    "Error getting OAuth access token" : "Chyba při získávání OAuth přístupového tokenu",
+    "Error getting OAuth refresh token" : "Chyba při získávání OAuth obnovovacího tokenu",
+    "Error during OAuth exchanges" : "Chyba při výměnách informací v rámci OAuth",
     "Direct download error" : "Chyba přímého stahování",
     "This direct download link is invalid or has expired" : "Tento odkaz pro přímé stažení není platný nebo jeho platnost skončila",
     "OpenProject notifications" : "Upozorňování z OpenProject",
