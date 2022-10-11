@@ -17,86 +17,21 @@ use OCP\Notification\INotification;
 use PHPUnit\Framework\TestCase;
 
 class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
-	/**
-	 * @var string
-	 */
-	private $oPNotificationAPIResponse = '
-					{
-					  "_type": "Collection",
-					  "_embedded": {
-						"elements": [
-						  {
-							"_type": "Notification",
-							"id": 21,
-							"reason": "commented",
-							"createdAt": "2022-05-11T10:10:10Z"
-						  },
-						  {
-							"_type": "Notification",
-							"id": 22,
-							"reason": "commented",
-							"createdAt": "2022-05-12T10:10:10Z"
-						  },
-						  {
-							"_type": "Notification",
-							"id": 23,
-							"reason": "commented",
-							"createdAt": "2022-05-13T10:10:10Z"
-						  },
-						  {
-							"_type": "Notification",
-							"id": 25,
-							"reason": "commented",
-							"createdAt": "2022-05-14T10:10:10Z"
-						  }
-						]
-					  }
-					}';
-
-	/**
-	 * @return array<mixed>
-	 */
-	public function checkNotificationDataProvider(): array {
-		return [
-			[ '', 4, true ], // last_notification_check was not set yet
-			[ '1652132430', 4, true ], // all notifications are were created after the last_notification_check
-			[ '1652350210', 2, true ], // some notifications were created after and some befor the last_notification_check
-			[ '1652605230', 0, false] // all notifications are older that last_notification_check
-		];
-	}
-	/**
-	 * @dataProvider checkNotificationDataProvider
-	 */
-	public function testCheckNotifications(
-		string $lastNotificationCheck,
-		int    $countOfReportedOPNotifications,
-		bool   $nextCloudNotificationFired
-	): void {
+	public function testCheckNotifications(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getUserValue')
 			->withConsecutive(
 				[$this->anything(), 'integration_openproject', 'token'],
 				[$this->anything(), 'integration_openproject', 'notification_enabled'],
-				[$this->anything(), 'integration_openproject', 'last_notification_check'],
 				[$this->anything(), 'integration_openproject', 'token'],
 				[$this->anything(), 'integration_openproject', 'refresh_token'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'123456',
 				'1',
-				$lastNotificationCheck,
 				'123456',
 				'refresh-token',
-			);
-		$configMock
-			->expects($this->once())
-			->method('setUserValue')
-			->with(
-				$this->anything(),
-				'integration_openproject',
-				'last_notification_check',
-				$this->anything()
 			);
 
 		$configMock
@@ -120,7 +55,16 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 			);
 
 		$response = $this->getMockBuilder(IResponse::class)->getMock();
-		$response->method('getBody')->willReturn($this->oPNotificationAPIResponse);
+		$oPNotificationAPIResponse = '{
+			"_type": "Collection",
+			"_embedded": {
+			"elements":
+		';
+		$oPNotificationAPIResponse .= file_get_contents(
+			__DIR__ . '/../../jest/fixtures/notificationsResponse.json'
+		);
+		$oPNotificationAPIResponse .= '}}';
+		$response->method('getBody')->willReturn($oPNotificationAPIResponse);
 		$ocClient = $this->getMockBuilder('\OCP\Http\Client\IClient')->getMock();
 		$ocClient->method('get')->willReturn($response);
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
@@ -128,34 +72,65 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 
 		$notificationManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 
-		if ($nextCloudNotificationFired) {
-			$notificationMock = $this->getMockBuilder(INotification::class)
-				->getMock();
 
-			$notificationMock
-				->expects($this->once())
-				->method('setSubject')
-				->with(
-					'new_open_tickets',
+		$notificationMock = $this->getMockBuilder(INotification::class)
+			->getMock();
+
+		$notificationMock
+			->expects($this->exactly(3))
+			->method('setSubject')
+			->withConsecutive(
+				[
+					'op_notification',
 					[
-						'nbNotifications' => $countOfReportedOPNotifications,
-						'link' => 'https://openproject/notifications'
+						'wpId' => '36',
+						'resourceTitle' => 'write a software',
+						'projectTitle' => 'Dev-large',
+						'count' => 2,
+						'link' => 'https://openproject/notifications/details/36/activity',
+						'reasons' => ['assigned'],
+						'actors' => ['Admin de DEV user']
 					]
-				);
+				],
+				[
+					'op_notification',
+					[
+						'wpId' => '17',
+						'resourceTitle' => 'Create wireframes for new landing page',
+						'projectTitle' => 'Scrum project',
+						'count' => 5,
+						'link' => 'https://openproject/notifications/details/17/activity',
+						'reasons' => [0 => 'assigned', 3 => 'mentioned'],
+						'actors' => [0 => 'Admin de DEV user', 2 => 'Artur Neumann']
+					]
+				],
+				[
+					'op_notification',
+					[
+						'wpId' => '18',
+						'resourceTitle' => 'Contact form',
+						'projectTitle' => 'Scrum project',
+						'count' => 1,
+						'link' => 'https://openproject/notifications/details/18/activity',
+						'reasons' => ['mentioned'],
+						'actors' => ['Artur Neumann']
+					]
+				]
+			);
 
-			$notificationManagerMock
-				->expects($this->once())
-				->method('createNotification')
-				->willReturn($notificationMock);
+		$notificationManagerMock
+			->expects($this->exactly(4)) //once for marking as read and once for every notification
+			->method('createNotification')
+			->willReturn($notificationMock);
 
-			$notificationManagerMock
-				->expects($this->once())
-				->method('notify');
-		} else {
-			$notificationManagerMock
-				->expects($this->never())
-				->method('notify');
-		}
+		$notificationManagerMock
+			->expects($this->exactly(3))
+			->method('notify');
+
+		$notificationManagerMock
+			->expects($this->once())
+			->method('markProcessed');
+
 		$service = new OpenProjectAPIService(
 			'integration_openproject',
 			\OC::$server->get(IUserManager::class),
