@@ -702,7 +702,7 @@ class ConfigControllerTest extends TestCase {
 
 		if ($deleteUserValues === true) {
 			$configMock
-				->expects($this->exactly(12)) // 6 times for each user
+				->expects($this->exactly(10)) // 5 times for each user
 				->method('deleteUserValue')
 				->withConsecutive(
 					['admin', 'integration_openproject', 'token'],
@@ -710,13 +710,11 @@ class ConfigControllerTest extends TestCase {
 					['admin', 'integration_openproject', 'user_id'],
 					['admin', 'integration_openproject', 'user_name'],
 					['admin', 'integration_openproject', 'refresh_token'],
-					['admin', 'integration_openproject', 'last_notification_check'],
 					[$this->user1->getUID(), 'integration_openproject', 'token'],
 					[$this->user1->getUID(), 'integration_openproject', 'login'],
 					[$this->user1->getUID(), 'integration_openproject', 'user_id'],
 					[$this->user1->getUID(), 'integration_openproject', 'user_name'],
 					[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
-					[$this->user1->getUID(), 'integration_openproject', 'last_notification_check'],
 				);
 		} else {
 			$configMock

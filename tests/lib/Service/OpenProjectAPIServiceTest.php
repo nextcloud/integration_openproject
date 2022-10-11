@@ -492,7 +492,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
-			->setBody(["_embedded" => ["elements" => [['some' => 'data']]]]);
+			->setBody(["_embedded" => ["elements" => [['_links' => 'data']]]]);
 
 		$this->builder
 			->uponReceiving('a GET request to /notifications')
@@ -502,7 +502,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getNotifications(
 			'testUser'
 		);
-		$this->assertSame([['some' => 'data']], $result);
+		$this->assertSame([['_links' => 'data']], $result);
 	}
 
 	/**

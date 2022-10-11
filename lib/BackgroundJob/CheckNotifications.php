@@ -47,7 +47,7 @@ class CheckNotifications extends TimedJob {
 								LoggerInterface $logger) {
 		parent::__construct($time);
 		// Every 15 minutes
-		$this->setInterval(60 * 15);
+		$this->setInterval(10);
 
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->logger = $logger;
