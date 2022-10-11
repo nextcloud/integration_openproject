@@ -85,29 +85,6 @@ class Notifier implements INotifier {
 		$l = $this->factory->get('integration_openproject', $languageCode);
 
 		switch ($notification->getSubject()) {
-		case 'new_open_tickets':
-			$p = $notification->getSubjectParameters();
-			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
-			$content = $l->t('OpenProject activity');
-			$richSubjectInstance = [
-				'type' => 'file',
-				'id' => 0,
-				'name' => $p['link'],
-				'path' => '',
-				'link' => $p['link'],
-			];
-
-			$notification->setParsedSubject($content)
-				->setParsedMessage('--')
-				->setLink($p['link'] ?? '')
-				->setRichMessage(
-					$l->n('You have %s new notification in {instance}', 'You have %s new notifications in {instance}', $nbNotifications, [$nbNotifications]),
-					[
-						'instance' => $richSubjectInstance,
-					]
-				)
-				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
-			return $notification;
 		case 'op_notification':
 			$p = $notification->getSubjectParameters();
 
