@@ -243,7 +243,10 @@ class OpenProjectAPIService {
 		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {
 			return $result;
-		} elseif (!isset($result['_embedded']['elements'])) {
+		} elseif (
+			!isset($result['_embedded']['elements']) ||
+			!isset($result['_embedded']['elements'][0]['_links'])
+		) {
 			return ['error' => 'Malformed response'];
 		}
 
