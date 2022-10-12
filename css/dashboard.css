@@ -12,3 +12,7 @@ body.theme--dark .icon-openproject {
 .option-open-project > .icon-openproject, .action-open-project > .icon-openproject {
 	height: 100%;
 }
+
+.panel--content .item-list__entry:hover > .avatardiv {
+	border: 1px solid #dbdbdb;
+}
