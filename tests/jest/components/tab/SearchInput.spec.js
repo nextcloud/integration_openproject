@@ -3,12 +3,12 @@ import axios from '@nextcloud/axios'
 import { createLocalVue, mount } from '@vue/test-utils'
 import * as dialogs from '@nextcloud/dialogs'
 
-import SearchInput from '../../../../src/components/tab/SearchInput'
+import SearchInput from '../../../../src/components/tab/SearchInput.vue'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
-import { STATE } from '../../../../src/utils'
+import { STATE } from '../../../../src/utils.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')

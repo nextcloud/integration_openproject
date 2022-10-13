@@ -8,7 +8,7 @@ import axios from '@nextcloud/axios'
 
 const localVue = createLocalVue()
 
-// eslint-disable-next-line no-import-assign
+// eslint-disable-next-line no-import-assign,import/namespace
 initialState.loadState = jest.fn(() => {
 	return {
 		admin_config_ok: true,

@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import FormHeading from '../../../../src/components/admin/FormHeading'
+import FormHeading from '../../../../src/components/admin/FormHeading.vue'
 
 const localVue = createLocalVue()
 
