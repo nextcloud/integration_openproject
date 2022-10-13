@@ -15,12 +15,13 @@ use InvalidArgumentException;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IDismissableNotifier;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCA\OpenProject\AppInfo\Application;
 
-class Notifier implements INotifier {
+class Notifier implements INotifier, IDismissableNotifier {
 
 	/** @var IFactory */
 	protected $factory;
@@ -113,5 +114,16 @@ class Notifier implements INotifier {
 			// Unknown subject => Unknown notification => throw
 			throw new InvalidArgumentException();
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function dismissNotification(INotification $notification): void {
+		if ($notification->getApp() !== Application::APP_ID) {
+			throw new \InvalidArgumentException('Unhandled app');
+		}
+
+		// do some stuff ^^
 	}
 }
