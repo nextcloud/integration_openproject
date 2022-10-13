@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import FieldValue from '../../../../src/components/admin/FieldValue'
+import FieldValue from '../../../../src/components/admin/FieldValue.vue'
 
 const localVue = createLocalVue()
 
