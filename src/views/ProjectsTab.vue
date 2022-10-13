@@ -62,11 +62,11 @@
 </template>
 
 <script>
-import EmptyContent from '../components/tab/EmptyContent'
-import WorkPackage from '../components/tab/WorkPackage'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import SearchInput from '../components/tab/SearchInput'
+import EmptyContent from '../components/tab/EmptyContent.vue'
+import WorkPackage from '../components/tab/WorkPackage.vue'
+import Actions from '@nextcloud/vue/dist/Components/Actions.js'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 
@@ -77,8 +77,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
-import { workpackageHelper } from '../utils/workpackageHelper'
-import { STATE, checkOauthConnectionResult } from '../utils'
+import { workpackageHelper } from '../utils/workpackageHelper.js'
+import { STATE, checkOauthConnectionResult } from '../utils.js'
 
 export default {
 	name: 'ProjectsTab',

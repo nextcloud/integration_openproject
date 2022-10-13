@@ -19,7 +19,7 @@
 				@change="$emit('change', $event.target.value)"
 				@focus="$emit('focus', $event)"
 				@blur="$emit('blur', $event)">
-			<Button v-if="showCopyButton"
+			<NcButton v-if="showCopyButton"
 				class="text-input-copy-value"
 				:disabled="isInputFieldEmpty"
 				:title="copyButtonTooltip"
@@ -28,7 +28,7 @@
 					<ClippyIcon :size="16" />
 				</template>
 				{{ t("integration_openproject", "Copy value") }}
-			</Button>
+			</NcButton>
 		</div>
 		<div v-if="errorMessage || hintText">
 			<div v-if="errorMessage">
@@ -51,9 +51,9 @@
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
-import Button from '@nextcloud/vue/dist/Components/Button'
-import Popover from '@nextcloud/vue/dist/Components/Popover'
-import ClippyIcon from '../icons/ClippyIcon'
+import NcButton from '@nextcloud/vue/dist/Components/Button.js'
+import Popover from '@nextcloud/vue/dist/Components/Popover.js'
+import ClippyIcon from '../icons/ClippyIcon.vue'
 import dompurify from 'dompurify'
 
 const COPY_TIMEOUT = 5000
@@ -61,7 +61,7 @@ const COPY_TIMEOUT = 5000
 export default {
 	name: 'TextInput',
 	components: {
-		Button,
+		NcButton,
 		ClippyIcon,
 		Popover,
 	},

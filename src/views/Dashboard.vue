@@ -34,8 +34,8 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
-import OAuthConnectButton from '../components/OAuthConnectButton'
-import { checkOauthConnectionResult, STATE } from '../utils'
+import OAuthConnectButton from '../components/OAuthConnectButton.vue'
+import { checkOauthConnectionResult, STATE } from '../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 
 export default {

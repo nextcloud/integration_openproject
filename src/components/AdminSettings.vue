@@ -25,21 +25,21 @@
 				@click="isServerHostUrlReadOnly = false"
 				@input="isOpenProjectInstanceValid = null" />
 			<div class="form-actions">
-				<Button v-if="isServerHostFormInView"
+				<NcButton v-if="isServerHostFormInView"
 					data-test-id="reset-server-host-btn"
 					@click="setServerHostFormToEditMode">
 					<template #icon>
 						<PencilIcon :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Edit server information') }}
-				</Button>
-				<Button v-if="isServerHostFormComplete && isServerHostFormInEdit"
+				</NcButton>
+				<NcButton v-if="isServerHostFormComplete && isServerHostFormInEdit"
 					class="mr-2"
 					data-test-id="cancel-edit-server-host-btn"
 					@click="setServerHostFormToViewMode">
 					{{ t('integration_openproject', 'Cancel') }}
-				</Button>
-				<Button v-if="isServerHostFormInEdit"
+				</NcButton>
+				<NcButton v-if="isServerHostFormInEdit"
 					type="primary"
 					data-test-id="submit-server-host-form-btn"
 					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.openproject_instance_url"
@@ -49,7 +49,7 @@
 						<CheckBoldIcon v-else :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
-				</Button>
+				</NcButton>
 			</div>
 		</div>
 		<div class="openproject-oauth-values">
@@ -83,15 +83,15 @@
 					label="OpenProject OAuth client secret"
 					:hint-text="openProjectClientHint" />
 				<div class="form-actions">
-					<Button v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
+					<NcButton v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
 						data-test-id="reset-op-oauth-btn"
 						@click="resetOPOAuthClientValues">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
-					</Button>
-					<Button v-else
+					</NcButton>
+					<NcButton v-else
 						data-test-id="submit-op-oauth-btn"
 						type="primary"
 						:disabled="!state.openproject_client_id || !state.openproject_client_secret"
@@ -101,7 +101,7 @@
 							<CheckBoldIcon v-else :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Save') }}
-					</Button>
+					</NcButton>
 				</div>
 			</div>
 		</div>
@@ -140,7 +140,7 @@
 					with-inspection
 					:value="ncClientSecret" />
 				<div class="form-actions">
-					<Button v-if="isNcOAuthFormInEdit"
+					<NcButton v-if="isNcOAuthFormInEdit"
 						type="primary"
 						:disabled="!ncClientId || !ncClientSecret"
 						data-test-id="submit-nc-oauth-values-form-btn"
@@ -149,19 +149,19 @@
 							<CheckBoldIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Yes, I have copied these values') }}
-					</Button>
-					<Button v-else
+					</NcButton>
+					<NcButton v-else
 						data-test-id="reset-nc-oauth-btn"
 						@click="resetNcOauthValues">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
-					</Button>
+					</NcButton>
 				</div>
 			</div>
 		</div>
-		<Button id="reset-all-app-settings-btn"
+		<NcButton id="reset-all-app-settings-btn"
 			type="error"
 			:disabled="isResetButtonDisabled"
 			@click="resetAllAppValuesConfirmation">
@@ -169,7 +169,7 @@
 				<RestoreIcon :size="20" />
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
-		</Button>
+		</NcButton>
 		<div v-if="isIntegrationComplete" class="default-prefs">
 			<h2>{{ t('integration_openproject', 'Default user settings') }}</h2>
 			<p>
@@ -200,18 +200,18 @@ import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
-import TextInput from './admin/TextInput'
-import FieldValue from './admin/FieldValue'
-import FormHeading from './admin/FormHeading'
-import CheckBox from '../components/settings/CheckBox'
-import SettingsTitle from '../components/settings/SettingsTitle'
-import { F_MODES } from '../utils'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import TextInput from './admin/TextInput.vue'
+import FieldValue from './admin/FieldValue.vue'
+import FormHeading from './admin/FormHeading.vue'
+import CheckBox from '../components/settings/CheckBox.vue'
+import SettingsTitle from '../components/settings/SettingsTitle.vue'
+import { F_MODES } from '../utils.js'
+import NcButton from '@nextcloud/vue/dist/Components/Button.js'
 
 export default {
 	name: 'AdminSettings',
 	components: {
-		Button,
+		NcButton,
 		FieldValue,
 		FormHeading,
 		TextInput,
