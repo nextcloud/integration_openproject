@@ -25,8 +25,8 @@ import LinkPlusIcon from 'vue-material-design-icons/LinkPlus.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
-import OAuthConnectButton from '../OAuthConnectButton'
-import { STATE } from '../../utils'
+import OAuthConnectButton from '../OAuthConnectButton.vue'
+import { STATE } from '../../utils.js'
 
 export default {
 	name: 'EmptyContent',
