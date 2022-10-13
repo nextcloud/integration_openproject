@@ -3,8 +3,8 @@
 	<id>integration_openproject</id>
 	<name>OpenProject Integration</name>
 	<summary>Link Nextcloud files to OpenProject work packages</summary>
-	<description><![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject. 
-	
+	<description><![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject.
+
 On the Nextcloud end, it allows users to:
 
 * Link files and folders with work packages in OpenProject
@@ -35,7 +35,7 @@ For more information on how to set up and use the OpenProject application, pleas
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png</screenshot>
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot2.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="22" max-version="25"/>
+		<nextcloud min-version="22" max-version="26"/>
 	</dependencies>
 	<background-jobs>
 		<job>OCA\OpenProject\BackgroundJob\CheckNotifications</job>
