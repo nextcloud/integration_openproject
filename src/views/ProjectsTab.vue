@@ -40,15 +40,15 @@
 						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
-					<Actions>
-						<ActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
+					<NcActions>
+						<NcActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
 							@click="unlink(workpackage.id, fileInfo.id)">
 							{{ t('integration_openproject', 'Unlink Work Package') }}
 							<template #icon>
 								<LinkOffIcon :size="20" />
 							</template>
-						</ActionButton>
-					</Actions>
+						</NcActionButton>
+					</NcActions>
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== filterWorkpackagesByFileId.length-1 }" />
 			</div>
@@ -64,8 +64,8 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import WorkPackage from '../components/tab/WorkPackage.vue'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
@@ -86,8 +86,8 @@ export default {
 		EmptyContent,
 		SearchInput,
 		WorkPackage,
-		Actions,
-		ActionButton,
+		NcActions,
+		NcActionButton,
 		LoadingIcon,
 		LinkOffIcon,
 	},

@@ -34,12 +34,12 @@
 			<div v-if="errorMessage">
 				<div class="text-input-error-message"
 					v-html="sanitizedErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
-				<Popover v-if="errorMessageDetails">
+				<NcPopover v-if="errorMessageDetails">
 					<template #trigger>
 						<a class="link" href="#">{{ t("integration_openproject", "Details") }}</a>
 					</template>
 					<div v-html="sanitizedErrorMessageDetails" /> <!-- eslint-disable-line vue/no-v-html -->
-				</Popover>
+				</NcPopover>
 			</div>
 			<div v-else
 				class="text-input-hint"
@@ -51,8 +51,8 @@
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
-import NcButton from '@nextcloud/vue/dist/Components/Button.js'
-import Popover from '@nextcloud/vue/dist/Components/Popover.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import ClippyIcon from '../icons/ClippyIcon.vue'
 import dompurify from 'dompurify'
 
@@ -63,7 +63,7 @@ export default {
 	components: {
 		NcButton,
 		ClippyIcon,
-		Popover,
+		NcPopover,
 	},
 	props: {
 		value: {

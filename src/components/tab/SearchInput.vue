@@ -1,6 +1,6 @@
 <template>
 	<div id="searchBar">
-		<Multiselect ref="workPackageMultiSelect"
+		<NcMultiselect ref="workPackageMultiSelect"
 			class="searchInput"
 			:placeholder="placeholder"
 			:options="filterSearchResultsByFileId"
@@ -21,7 +21,7 @@
 			<template #noOptions>
 				{{ noOptionsText }}
 			</template>
-		</Multiselect>
+		</NcMultiselect>
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
@@ -33,7 +33,7 @@
 import debounce from 'lodash/debounce.js'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -46,7 +46,7 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
-		Multiselect,
+		NcMultiselect,
 		WorkPackage,
 	},
 	props: {

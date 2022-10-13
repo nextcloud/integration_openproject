@@ -25,7 +25,7 @@
 		<div class="row">
 			<div v-if="workpackage.assignee" class="row__assignee">
 				<div class="row__assignee__avatar">
-					<Avatar class="item-avatar"
+					<NcAvatar class="item-avatar"
 						:size="23"
 						:url="workpackage.picture"
 						:user="workpackage.assignee"
@@ -40,12 +40,12 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 export default {
 	name: 'WorkPackage',
 	components: {
-		Avatar,
+		NcAvatar,
 	},
 	props: {
 		workpackage: {
