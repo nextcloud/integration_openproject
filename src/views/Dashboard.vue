@@ -1,6 +1,5 @@
 <template>
-	<DashboardWidget :items="items"
-		:item-menu="itemMenu"
+	<NcDashboardWidget :items="items"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
 		:loading="isLoading"
@@ -19,7 +18,7 @@
 				</template>
 			</NcEmptyContent>
 		</template>
-	</DashboardWidget>
+	</NcDashboardWidget>
 </template>
 
 <script>
@@ -27,7 +26,7 @@ import axios from '@nextcloud/axios'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
-import { DashboardWidget } from '@nextcloud/vue-dashboard'
+import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
 import { showError } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -40,7 +39,7 @@ export default {
 	name: 'Dashboard',
 
 	components: {
-		DashboardWidget, NcEmptyContent, OAuthConnectButton, CheckBoldIcon, LinkOffIcon,
+		NcDashboardWidget, NcEmptyContent, OAuthConnectButton, CheckBoldIcon, LinkOffIcon,
 	},
 
 	props: {
