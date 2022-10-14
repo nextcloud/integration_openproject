@@ -231,6 +231,27 @@ class FilesControllerTest extends TestCase {
 		assertSame(403, $result->getStatus());
 	}
 
+	public function testGetFileInfoFileExistingButCannotGetNameInContextOfOwner(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn(
+			[$this->getNodeMock('image/png', 586)]
+		);
+
+		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+		$mountCacheMock->method('getMountsForFileId')
+			->willReturn(
+				[null]
+			);
+
+		$filesController = $this->createFilesController(
+			$folderMock, null, $mountCacheMock
+		);
+
+		$result = $filesController->getFileInfo(586);
+		assertSame($this->fileNameInTheContextOfRequesterResult, $result->getData());
+		assertSame(200, $result->getStatus());
+	}
+
 	public function testGetFilesInfoOneIdRequestedFileInTrash(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')->willReturn([]);
@@ -656,6 +677,25 @@ class FilesControllerTest extends TestCase {
 	];
 
 	/**
+	 * @var array<mixed>
+	 */
+	private array $fileNameInTheContextOfRequesterResult = [
+		'status' => 'OK',
+		'statuscode' => 200,
+		'id' => 586,
+		'name' => 'name-in-the-context-of-requester',
+		'mtime' => 1640008813,
+		'ctime' => 1639906930,
+		'mimetype' => 'image/png',
+		'size' => 200245,
+		'owner_name' => 'Test User',
+		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+		'trashed' => false,
+		'modifier_name' => null,
+		'modifier_id' => null
+	];
+
+	/**
 	 * @param MockObject $folderMock
 	 * @param MockObject|ITrashManager|null $trashManagerMock
 	 * @param MockObject|null $mountCacheMock mock for Files that exist but cannot be accessed by this user
@@ -726,6 +766,7 @@ class FilesControllerTest extends TestCase {
 		$fileMock->method('getMimeType')->willReturn($mimeType);
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
+		$fileMock->method('getName')->willReturn('name-in-the-context-of-requester');
 		return $fileMock;
 	}
 
