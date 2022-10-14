@@ -9,9 +9,11 @@ OC.L10N.register(
     "Save" : "Spara",
     "Reset" : "Återställ",
     "Enable navigation link" : "Aktivera navigeringslänk",
+    "Documentation" : "Dokumentation",
     "Connected as {user}" : "Ansluten som {user}",
     "Incorrect access token" : "Ogiltig åtkomst-token",
     "Copied!" : "Kopierad!",
+    "Details" : "Detaljer",
     "Start typing to search" : "Börja skriva för att söka",
     "Connected accounts" : "Anslutna konton"
 },

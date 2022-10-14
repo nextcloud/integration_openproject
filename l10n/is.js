@@ -8,9 +8,11 @@ OC.L10N.register(
     "Save" : "Vista",
     "Reset" : "Endurstilla",
     "Enable navigation link" : "Virkja flakktengil",
+    "Documentation" : "Hjálparskjöl",
     "Connected as {user}" : "Tengt sem {user}",
     "Incorrect access token" : "Rangt aðgangsteikn",
     "Copied!" : "Afritað!",
+    "Details" : "Details",
     "Start typing to search" : "Skrifaðu hér til að leita",
     "Connected accounts" : "Tengdir aðgangar"
 },

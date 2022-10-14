@@ -10,9 +10,11 @@ OC.L10N.register(
     "Reset" : "Resetiraj",
     "Enable navigation link" : "Omogući navigacijsku poveznicu",
     "Enable unified search for tickets" : "Omogući objedinjeno pretraživanje prijava",
+    "Documentation" : "Dokumentacija",
     "Connected as {user}" : "Povezan kao {user}",
     "Incorrect access token" : "Pogrešan token za pristup",
     "Copied!" : "Kopirano!",
+    "Details" : "Pojedinosti",
     "Start typing to search" : "Počnite unositi tekst za pretraživanje",
     "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:",
     "Connected accounts" : "Povezani računi"

@@ -9,7 +9,9 @@ OC.L10N.register(
     "Save" : "Salvează",
     "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
+    "Documentation" : "Documentație",
     "Copied!" : "S-a copiat!",
+    "Details" : "Detalii",
     "Connected accounts" : "Conturile conectate"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

@@ -9,9 +9,11 @@ OC.L10N.register(
     "Save" : "Tallenna",
     "Reset" : "Palauta",
     "Enable navigation link" : "Näytä navigointipalkissa",
+    "Documentation" : "Dokumentaatio",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
     "Copied!" : "Kopioitu!",
+    "Details" : "Tiedot",
     "Start typing to search" : "Aloita kirjoittaminen hakeaksesi",
     "Connected accounts" : "Yhdistetyt tilit"
 },
