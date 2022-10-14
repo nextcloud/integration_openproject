@@ -7,9 +7,9 @@ exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the
     <textinput-stub value="nc-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-id" class="py-1"></textinput-stub>
     <textinput-stub value="nc-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-secret" class="py-1"></textinput-stub>
     <div class="form-actions">
-      <button-stub type="primary" nativetype="button" data-test-id="submit-nc-oauth-values-form-btn">
+      <ncbutton-stub type="primary" nativetype="button" data-test-id="submit-nc-oauth-values-form-btn">
         Yes, I have copied these values
-      </button-stub>
+      </ncbutton-stub>
     </div>
   </div>
 </div>
@@ -22,9 +22,9 @@ exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete v
     <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
     <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
     <div class="form-actions">
-      <button-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
+      <ncbutton-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
         Replace Nextcloud OAuth values
-      </button-stub>
+      </ncbutton-stub>
     </div>
   </div>
 </div>
@@ -63,7 +63,7 @@ exports[`AdminSettings.vue OpenProject OAuth values form edit mode should show t
         <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
       </div>
     </div>
-    <div class="form-actions"><button data-v-a8d79470="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-a8d79470="" class="button-vue__wrapper"><span data-v-a8d79470="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon" data-v-a8d79470=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></span> <span data-v-a8d79470="" class="button-vue__text">
+    <div class="form-actions"><button data-v-7a8f3349="" type="button" disabled="disabled" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></span> <span data-v-7a8f3349="" class="button-vue__text">
 					Save
 				</span></span></button></div>
   </div>
@@ -95,7 +95,7 @@ exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed
       </div>
       <!---->
     </div>
-    <div class="form-actions"><button data-v-a8d79470="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-a8d79470="" class="button-vue__wrapper"><span data-v-a8d79470="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-a8d79470=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span> <span data-v-a8d79470="" class="button-vue__text">
+    <div class="form-actions"><button data-v-7a8f3349="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span> <span data-v-7a8f3349="" class="button-vue__text">
 					Replace OpenProject OAuth values
 				</span></span></button></div>
   </div>
@@ -118,7 +118,7 @@ exports[`AdminSettings.vue default user configurations form should be visible wh
 `;
 
 exports[`AdminSettings.vue server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
-<button data-v-a8d79470="" type="button" data-test-id="cancel-edit-server-host-btn" class="button-vue mr-2 button-vue--text-only button-vue--vue-secondary"><span data-v-a8d79470="" class="button-vue__wrapper"><!----> <span data-v-a8d79470="" class="button-vue__text">
+<button data-v-7a8f3349="" type="button" data-test-id="cancel-edit-server-host-btn" class="button-vue mr-2 button-vue--text-only button-vue--vue-secondary"><span data-v-7a8f3349="" class="button-vue__wrapper"><!----> <span data-v-7a8f3349="" class="button-vue__text">
 				Cancel
 			</span></span></button>
 `;
@@ -138,9 +138,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -157,9 +155,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">URL is invalid</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -176,9 +172,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">Server replied with an error message, please check the Nextcloud logs</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -195,9 +189,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -214,9 +206,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">Accessing OpenProject servers with local addresses is not allowed.</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -233,9 +223,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -252,9 +240,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
   <div>
     <div>
       <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popover">
-        <div class="trigger" style="display: inline-block;"><a href="#" class="link">Details</a></div>
-      </div>
+      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
     </div>
   </div>
 </div>
@@ -295,7 +281,7 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
 `;
 
 exports[`AdminSettings.vue server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
-<button data-v-a8d79470="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-a8d79470="" class="button-vue__wrapper"><span data-v-a8d79470="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-a8d79470=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-a8d79470="" class="button-vue__text">
+<button data-v-7a8f3349="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-7a8f3349="" class="button-vue__text">
 				Edit server information
 			</span></span></button>
 `;
@@ -316,7 +302,7 @@ exports[`AdminSettings.vue server host url form view mode and completed state sh
     </div>
     <!---->
   </div>
-  <div class="form-actions"><button data-v-a8d79470="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-a8d79470="" class="button-vue__wrapper"><span data-v-a8d79470="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-a8d79470=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-a8d79470="" class="button-vue__text">
+  <div class="form-actions"><button data-v-7a8f3349="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-7a8f3349="" class="button-vue__text">
 				Edit server information
 			</span></span></button>
     <!---->
