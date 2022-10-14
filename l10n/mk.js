@@ -7,9 +7,11 @@ OC.L10N.register(
     "Save" : "Зачувај",
     "Reset" : "Ресетирање",
     "Enable navigation link" : "Овозможи линк за навигација",
+    "Documentation" : "Документација",
     "Connected as {user}" : "Поврзан како {user}",
     "Incorrect access token" : "Неточен токен за пристап",
     "Copied!" : "Копирано!",
+    "Details" : "Детали",
     "Start typing to search" : "Напишете нешто за пребарување",
     "Connected accounts" : "Поврзани сметки"
 },

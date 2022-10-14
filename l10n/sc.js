@@ -10,9 +10,11 @@ OC.L10N.register(
     "Reset" : "Torra a impostare",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
+    "Documentation" : "Documentatzione",
     "Connected as {user}" : "Connètidu comente {user}",
     "Incorrect access token" : "Token de intrada non bàlidu",
     "Copied!" : "Copiados!",
+    "Details" : "Detàllios",
     "Start typing to search" : "Cumintza a iscrìere pro chircare",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
     "Connected accounts" : "Contos connètidos"

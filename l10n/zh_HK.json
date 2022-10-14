@@ -31,7 +31,6 @@
     "Enable navigation link" : "啟用導覽連結",
     "Enable unified search for tickets" : "啟用統一搜尋票證",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
-    "Please introduce a valid OpenProject host name" : "請輸入一個有效的 OpenProject 主機名",
     "Administration > File storages" : "管理 > 檔案存儲",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "以管理員身份轉到您的 OpenProject {htmlLink}，開始設置並在此處複製值。",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "以管理員身份將以下值複製回 OpenProject {htmlLink}。",
@@ -40,8 +39,8 @@
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "您確定要重置此應用程式並刪除所有 Nextcloud 用戶到 OpenProject 的所有設置和所有連接嗎？",
     "Reset OpenProject integration" : "重設 OpenProject 整合",
     "Yes, reset" : "是，重設",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
-    "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
+    "Please introduce a valid OpenProject host name" : "請輸入一個有效的 OpenProject 主機名",
+    "Documentation" : "說明書",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "如果繼續，您將需要使用新的 Nextcloud OAuth 憑據更新 OpenProject 中的設置。 此外，OpenProject 中的所有用戶都需要重新授權訪問其 Nextcloud 帳戶。",
@@ -62,6 +61,7 @@
     "Copied!" : "已複製！",
     "Copy value" : "複製值",
     "Copied to the clipboard" : "已複製到剪貼板",
+    "Details" : "細節",
     "OpenProject integration" : "OpenProject 整合",
     "No connection with OpenProject" : "與 OpenProject 沒有連接",
     "Error connecting to OpenProject" : "連線至 OpenProject 時發生錯誤",
@@ -86,6 +86,8 @@
     "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
     "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖：",
     "Connected accounts" : "已連線的賬號",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "此應用程式可與開源項目管理和協作軟件 OpenProject 無縫集成。 \n\n在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作包連結\n* 查找連結到檔案或資料夾的所有工作包\n* 透過儀表板關注檢視 OpenProject 的通知\n* 使用 Nextcloud 的搜索找相關工作包\n\n在 OpenProject 方面，用戶能夠：\n\n* 查看連結到工作包的所有 Nextcloud 檔案\n* 下載連結檔案或在 Nextcloud 中打開它們進行編輯\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員的 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) 和 [ 用戶指南](https://www.openproject.org/docs/user-guide/nextcloud-integration/)。"
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "此應用程式可與開源項目管理和協作軟件 OpenProject 無縫集成。 \n\n在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作包連結\n* 查找連結到檔案或資料夾的所有工作包\n* 透過儀表板關注檢視 OpenProject 的通知\n* 使用 Nextcloud 的搜索找相關工作包\n\n在 OpenProject 方面，用戶能夠：\n\n* 查看連結到工作包的所有 Nextcloud 檔案\n* 下載連結檔案或在 Nextcloud 中打開它們進行編輯\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員的 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) 和 [ 用戶指南](https://www.openproject.org/docs/user-guide/nextcloud-integration/)。",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
+    "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

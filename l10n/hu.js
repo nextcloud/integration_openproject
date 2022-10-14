@@ -29,7 +29,6 @@ OC.L10N.register(
     "Enable navigation link" : "Navigációs hivatkozás engedélyezése",
     "Enable unified search for tickets" : "Egyesített kereső engedélyezése a jegyekhez",
     "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
-    "Please introduce a valid OpenProject host name" : "Adjon meg egy érvényes OpenProject-gazdagépet",
     "Administration > File storages" : "Adminisztráció > Fájltárolók",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Ugorjon az OpenProjecthez {htmlLink} adminisztrátorként, indítsa el a beállítást és másolja ide az értékeket.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Másolja vissza a következő értékeket az OpenProjectbe {htmlLink} adminisztrátorként.",
@@ -38,8 +37,8 @@ OC.L10N.register(
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Biztos, hogy visszaállítja az alkalmazást és törli az összes Nextcloud-felhasználó beállítását és kapcsolatát az OpenProject felé?",
     "Reset OpenProject integration" : "OpenProject integráció visszaállítása",
     "Yes, reset" : "Igen, visszaállítás",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
-    "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
+    "Please introduce a valid OpenProject host name" : "Adjon meg egy érvényes OpenProject-gazdagépet",
+    "Documentation" : "Dokumentáció",
     "OpenProject admin options saved" : "Az OpenProject rendszergazdai beállításai mentve",
     "Failed to save OpenProject admin options" : "Az OpenProject rendszergazdai beállításainak mentése sikertelen",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ha folytatja, akkor frissítenie kell az OpenProject beállításait a Nextcloud OAuth hitelesítő adatokkal. Továbbá az összes OpenProjectben lévő felhasználónak újból hitelesítenie kell a Nextcloud-fiókjával.",
@@ -58,6 +57,7 @@ OC.L10N.register(
     "Copied!" : "Másolva.",
     "Copy value" : "Érték másolása",
     "Copied to the clipboard" : "Vágólapra másolva",
+    "Details" : "Részletek",
     "OpenProject integration" : "OpenProject integráció",
     "No connection with OpenProject" : "Nincs kapcsolat az OpenProjecttel",
     "Error connecting to OpenProject" : "Hiba történt az OpenProjecthez történő csatlakozáskor",
@@ -82,6 +82,8 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
     "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
     "Connected accounts" : "Kapcsolt fiókok",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Ez az alkalmazás zökkenőmentes integrációt biztosít az OpenProjecttel, a nyílt forráskódú projektmenedzsment- és csoportmunka-szoftverrel.\n\nA következő funkciókat nyújtja a felhasználóknak a Nextcloud oldalán:\n\n* Fájlok és mappák hivatkozása az OpenProject munkacsomagjaiból\n* A fájlhoz vagy mappához kapcsolódó munkacsomagok megtalálása\n* Az OpenProject értesítéseinek megtekintése az irányítópulton\n* Releváns munkacsomagok keresése a Nextcloud keresősávjával\n\nAz OpenProject oldalán a következőket tehetik a felhasználók:\n\n* Megtekinthetik a munkacsomagban hivatkozott, Nextcloudban lévő fájlokat és mappákat\n* Letölthetik a hivatkozott fájlokat vagy megnyithatják szerkesztésre a Nextcloudban\n\nHogy többet tudjon meg az OpenProject alkalmazás beállításának módjáról, kövesse a rendszergazdáknak szóló [integrációbeállítási útmutatót](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) és [a felhasználói kézikönyvet](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Ez az alkalmazás zökkenőmentes integrációt biztosít az OpenProjecttel, a nyílt forráskódú projektmenedzsment- és csoportmunka-szoftverrel.\n\nA következő funkciókat nyújtja a felhasználóknak a Nextcloud oldalán:\n\n* Fájlok és mappák hivatkozása az OpenProject munkacsomagjaiból\n* A fájlhoz vagy mappához kapcsolódó munkacsomagok megtalálása\n* Az OpenProject értesítéseinek megtekintése az irányítópulton\n* Releváns munkacsomagok keresése a Nextcloud keresősávjával\n\nAz OpenProject oldalán a következőket tehetik a felhasználók:\n\n* Megtekinthetik a munkacsomagban hivatkozott, Nextcloudban lévő fájlokat és mappákat\n* Letölthetik a hivatkozott fájlokat vagy megnyithatják szerkesztésre a Nextcloudban\n\nHogy többet tudjon meg az OpenProject alkalmazás beállításának módjáról, kövesse a rendszergazdáknak szóló [integrációbeállítási útmutatót](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) és [a felhasználói kézikönyvet](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
+    "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen"
 },
 "nplurals=2; plural=(n != 1);");

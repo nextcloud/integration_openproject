@@ -31,7 +31,6 @@
     "Enable navigation link" : "Gaitu nabigazio esteka",
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua tiketentzako",
     "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
-    "Please introduce a valid OpenProject host name" : "Mesedez sartu balozko OpenProject ostalari izen bat",
     "Administration > File storages" : "Administrazioa > Fitxategi biltegiak",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Joan zure OpenProject-era {htmlLink} administratzaile gisa eta hasi konfigurazioa eta balioen kopia hemen.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiatu hurrengo balioak OpenProject-era {htmlLink} administratzaile gisa.",
@@ -40,8 +39,8 @@
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Ziur zaude aplikazio hau berrezarri eta Nextcloud-en erabiltzaile guztien konfigurazio eta OpenProject-era konexio guztiak ezabatu nahi dituzula?",
     "Reset OpenProject integration" : "Berezarri OpenProject integrazioa",
     "Yes, reset" : "Yes, berezarri",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
-    "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan",
+    "Please introduce a valid OpenProject host name" : "Mesedez sartu balozko OpenProject ostalari izen bat",
+    "Documentation" : "Dokumentazioa",
     "OpenProject admin options saved" : "OpenProject administratzailearen aukerak gorde dira",
     "Failed to save OpenProject admin options" : "Ezin izan dira gorde OpenProject administratzailearen aukerak",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Jarraitzen baduzu ezarpen hauek OpenProject-en Nextcloud OAuth kredentzial berriekin eguneratu beharko dituzu. Gainera, erabiltzaile guztiek OpenProject konturako sarbidea berriro autorizatu behar dute.",
@@ -62,6 +61,7 @@
     "Copied!" : "Kopiatua!",
     "Copy value" : "Kopiatu balioa",
     "Copied to the clipboard" : "Arbelera kopiatuta",
+    "Details" : "Xehetasunak",
     "OpenProject integration" : "OpenProject integrazioa",
     "No connection with OpenProject" : "Ez dago konexiorik OpenProject-ekin",
     "Error connecting to OpenProject" : "Errore bat gertatu da OpenProject-era konektatzean",
@@ -86,6 +86,8 @@
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
     "Connected accounts" : "Konektatutako kontuak",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Aplikazio honek arazorik gabeko integrazioa ahalbidetzen du kode irekiko proiektuen kudeaketarekin eta OpenProject lankidetza-softwarearekin.\n\nNextcloud muturrean, erabiltzaileak hurrengoa egin dezakete:\n\n* Lotu fitxategiak eta karpetak lan-paketeekin OpenProjecten\n* Aurkitu fitxategi edo karpeta bati lotuta dauden lan-pakete guztiak \n* Ikusi OpenProjecten jakinarazpenak panelaren bidez\n* Lan paketeak bilatu Nextcloud-en bilaketa-barra erabiliz\n\nOpenProject-en amaieran, erabiltzaileak hurrengoa egin dezakete:\n\n* Ikusi Nextcloud lan-pakete bati lotuta dauden fitxategi eta karpeta guztiak\n* Fitxategi estekatuak deskargatu edo Nextcloud-en ireki editatzeko\n\nOpenProject aplikazioa konfiguratu eta erabiltzeko moduari buruzko informazio gehiago nahi izanez gero, ikus [integrazio konfigurazio gida](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) administratzaileentzat eta [erabiltzaile-gida](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
+    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Aplikazio honek arazorik gabeko integrazioa ahalbidetzen du kode irekiko proiektuen kudeaketarekin eta OpenProject lankidetza-softwarearekin.\n\nNextcloud muturrean, erabiltzaileak hurrengoa egin dezakete:\n\n* Lotu fitxategiak eta karpetak lan-paketeekin OpenProjecten\n* Aurkitu fitxategi edo karpeta bati lotuta dauden lan-pakete guztiak \n* Ikusi OpenProjecten jakinarazpenak panelaren bidez\n* Lan paketeak bilatu Nextcloud-en bilaketa-barra erabiliz\n\nOpenProject-en amaieran, erabiltzaileak hurrengoa egin dezakete:\n\n* Ikusi Nextcloud lan-pakete bati lotuta dauden fitxategi eta karpeta guztiak\n* Fitxategi estekatuak deskargatu edo Nextcloud-en ireki editatzeko\n\nOpenProject aplikazioa konfiguratu eta erabiltzeko moduari buruzko informazio gehiago nahi izanez gero, ikus [integrazio konfigurazio gida](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) administratzaileentzat eta [erabiltzaile-gida](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
+    "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

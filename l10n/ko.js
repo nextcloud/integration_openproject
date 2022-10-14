@@ -8,9 +8,11 @@ OC.L10N.register(
     "Cancel" : "취소",
     "Save" : "저장",
     "Reset" : "초기화",
+    "Documentation" : "문서",
     "Connected as {user}" : "{user}로 연결됨",
     "Incorrect access token" : "잘못된 액세스 토큰",
     "Copied!" : "복사 성공!",
+    "Details" : "세부사항",
     "Start typing to search" : "검색어 입력",
     "OAuth access token could not be obtained:" : "OAuth 접근 토큰을 얻을 수 없었습니다: ",
     "Connected accounts" : "계정 연결됨"

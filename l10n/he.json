@@ -6,8 +6,10 @@
     "Save" : "שמירה",
     "Reset" : "איפוס",
     "Enable navigation link" : "הפעלת קישור ניווט",
+    "Documentation" : "תיעוד",
     "Incorrect access token" : "אסימון הגישה שגוי",
     "Copied!" : "הועתק!",
+    "Details" : "פרטים",
     "Start typing to search" : "להתחלת החיפוש יש להקליד",
     "Connected accounts" : "חשבונות מקושרים"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"

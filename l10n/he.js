@@ -8,8 +8,10 @@ OC.L10N.register(
     "Save" : "שמירה",
     "Reset" : "איפוס",
     "Enable navigation link" : "הפעלת קישור ניווט",
+    "Documentation" : "תיעוד",
     "Incorrect access token" : "אסימון הגישה שגוי",
     "Copied!" : "הועתק!",
+    "Details" : "פרטים",
     "Start typing to search" : "להתחלת החיפוש יש להקליד",
     "Connected accounts" : "חשבונות מקושרים"
 },
