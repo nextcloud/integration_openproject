@@ -1,0 +1,9 @@
+{ "translations": {
+    "Cancel" : "Hủy",
+    "Save" : "Lưu",
+    "Reset" : "Đặt lại",
+    "Documentation" : "Tài liệu",
+    "Copied!" : "Đã sao chép!",
+    "Details" : "Chi tiết"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

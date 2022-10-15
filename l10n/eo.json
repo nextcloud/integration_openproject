@@ -1,0 +1,9 @@
+{ "translations": {
+    "Cancel" : "Nuligi",
+    "Save" : "Konservi",
+    "Reset" : "Restarigi",
+    "Documentation" : "Dokumentaro",
+    "Copied!" : "Kopiita!",
+    "Details" : "Detaloj"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

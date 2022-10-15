@@ -1,0 +1,9 @@
+{ "translations": {
+    "Cancel" : "বাতির",
+    "Save" : "সংরক্ষণ",
+    "Reset" : "পূণঃনির্ধানণ",
+    "Documentation" : "নথিবদ্ধকরণ",
+    "Copied!" : "অনুলিপি!",
+    "Details" : "বিসতারিত"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

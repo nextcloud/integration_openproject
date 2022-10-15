@@ -8,7 +8,9 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Save" : "Save",
     "Reset" : "Reset",
+    "Documentation" : "Documentation",
     "Copied!" : "Copied!",
+    "Details" : "Details",
     "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },
 "nplurals=2; plural=(n != 1);");
