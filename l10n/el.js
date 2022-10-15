@@ -10,9 +10,11 @@ OC.L10N.register(
     "Reset" : "Επαναφορά",
     "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
+    "Documentation" : "Τεκμηρίωση",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
     "Copied!" : "Αντιγράφηκαν!",
+    "Details" : "Λεπτομέρειες",
     "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
     "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"

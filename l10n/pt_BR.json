@@ -40,7 +40,15 @@
     "Reset OpenProject integration" : "Redefinir a integração do OpenProject",
     "Yes, reset" : "Sim, redefinir",
     "Please introduce a valid OpenProject host name" : "Introduza um nome de host OpenProject válido",
+    "URL is invalid" : "URL inválido",
+    "The URL should have the form \"https://openproject.org\"" : "A URL deve estar no formato \"https://openproject.org\"",
+    "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Não há nenhuma instância OpenProject na URL, verifique os logs do Nextcloud",
+    "Response:" : "Resposta:",
+    "Server replied with an error message, please check the Nextcloud logs" : "O servidor respondeu com uma mensagem de erro, verifique os logs do Nextcloud",
     "Documentation" : "Documentação",
+    "Accessing OpenProject servers with local addresses is not allowed." : "Acesso a servidores OpenProject com endereços locais não é permitido.",
+    "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,",
+    "Could not connect to the given URL, please check the Nextcloud logs" : "Não foi possível conectar na URL, verifique os logs do Nextcloud",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
     "Failed to save OpenProject admin options" : "Falha ao salvar as opções de administração do OpenProject",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Se você continuar, precisará atualizar as configurações em seu OpenProject com as novas credenciais do Nextcloud OAuth. Além disso, todos os usuários do OpenProject precisarão reautorizar o acesso à sua conta Nextcloud.",
@@ -86,7 +94,6 @@
     "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
     "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
     "Connected accounts" : "Contas conectadas",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Este aplicativo permite a integração perfeita com o software de colaboração e gerenciamento de projetos de código aberto OpenProject.\n\nNo lado Nextcloud, ele permite que os usuários:\n\n* Vincule arquivos e pastas com pacotes de trabalho no OpenProject\n* Encontre todos os pacotes de trabalho vinculados a um arquivo ou pasta\n* Veja as notificações do OpenProject através do painel\n* Pesquise pacotes de trabalho usando a barra de pesquisa do Nextcloud\n\nNo final do OpenProject, os usuários podem:\n\n* Ver todos os arquivos e pastas do Nextcloud vinculados a um pacote de trabalho\n* Baixar arquivos vinculados ou abra-os no Nextcloud para editá-los\n\nPara obter mais informações sobre como configurar e usar o aplicativo OpenProject, consulte o [guia de configuração de integração](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) para administradores e [ o guia do usuário](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "O URL do OpenProject é inválido, forneça um URL no formato \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "Nenhum OpenProject detectado na URL"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"

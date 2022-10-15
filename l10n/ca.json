@@ -36,6 +36,7 @@
     "Reset OpenProject integration" : "Restableix la integració d'OpenProject",
     "Yes, reset" : "Sí, reinicia",
     "Please introduce a valid OpenProject host name" : "Introduïu un nom d'amfitrió d'OpenProject vàlid",
+    "Documentation" : "Documentació",
     "OpenProject admin options saved" : "S'han desat les opcions d'administració de l'OpenProject",
     "Failed to save OpenProject admin options" : "No s'han pogut desar les opcions d'administració d'OpenProject",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Si continueu, haureu d'actualitzar la configuració del vostre OpenProject amb les noves credencials d'OAuth de Nextcloud. A més, tots els usuaris d'OpenProject hauran de tornar a autoritzar l'accés al seu compte Nextcloud.",
@@ -54,6 +55,7 @@
     "Copied!" : "Copiat!",
     "Copy value" : "Copia el valor",
     "Copied to the clipboard" : "S'ha copiat al porta-retalls",
+    "Details" : "Detalls",
     "OpenProject integration" : "Integració OpenProject",
     "No connection with OpenProject" : "No hi ha connexió amb OpenProject",
     "Error connecting to OpenProject" : "Error en connectar-se a OpenProject",
@@ -78,7 +80,6 @@
     "Successfully connected to OpenProject!" : "S'ha connectat correctament a OpenProject!",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
     "Connected accounts" : "Comptes connectats",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Aquesta aplicació permet una integració perfecta amb el programari de col·laboració i gestió de projectes de codi obert OpenProject.\n\nAl costat de Nextcloud, permet als usuaris:\n\n* Enllaçar fitxers i carpetes amb paquets de treball a OpenProject\n* Trobeu tots els paquets de treball enllaçats a un fitxer o una carpeta\n* Consulteu les notificacions d'OpenProject a través del tauler\n* Cerqueu paquets de treball mitjançant la barra de cerca de Nextcloud\n\nAl costat d'OpenProject, els usuaris poden:\n\n* Veure tots els fitxers i carpetes Nextcloud enllaçats a un paquet de treball\n* Baixeu fitxers enllaçats o obrir-los a Nextcloud per editar-los\n\nPer obtenir més informació sobre com configurar i utilitzar l'aplicació OpenProject, consulteu [guia de configuració d'integració](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) per a administradors i [la guia de l'usuari](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "L'URL d'OpenProject no és vàlid. Proporcioneu un URL amb la forma \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

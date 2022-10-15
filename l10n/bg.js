@@ -41,6 +41,7 @@ OC.L10N.register(
     "Reset OpenProject integration" : "Възстановяване/нулиране/ на интегрирането на OpenProject",
     "Yes, reset" : "Да, да се възстанови/нулира/",
     "Please introduce a valid OpenProject host name" : "Моля, въведете валидно име на хост /на сървър/ OpenProject",
+    "Documentation" : "Документация",
     "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
     "Failed to save OpenProject admin options" : "Неуспешно записване на опциите за администратор на OpenProject",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ако продължите, ще трябва да актуализирате настройките във вашия OpenProject с новите идентификационни данни за Nextcloud OAuth. Също така, всички потребители ще трябва повторно да разрешат достъп до техния профил в Nextcloud.",
@@ -61,6 +62,7 @@ OC.L10N.register(
     "Copied!" : "Копирано!",
     "Copy value" : "Копиране на стойност",
     "Copied to the clipboard" : "Копирано в клипборда",
+    "Details" : "Подробности",
     "OpenProject integration" : "Интегриране на OpenProject",
     "No connection with OpenProject" : "Няма връзка с OpenProject",
     "Error connecting to OpenProject" : "Грешка при свързването с OpenProject",
@@ -85,7 +87,6 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
     "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
     "Connected accounts" : "Свързани профили",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Настоящето приложение OpenProject е с отворен код и позволява безпроблемна интеграция за управление на проекти и софтуер за сътрудничество.\n \t\nОт страна на Nextcloud той позволява на потребителите да:\n\n* Свързват файлове и папки с работни пакети в OpenProject\n* Намират всички работни пакети, свързани с файл или папка\n* Преглеждат известия на OpenProject чрез таблото за управление\n* Търсят работни пакети с помощта на лентата за търсене на Nextcloud\n\nОт страна на OpenProject потребителите могат да:\n\n* Преглеждат всички файлове и папки на Nextcloud, свързани с работен пакет\n* Изтеглят свързани файлове или да ги отварят в Nextcloud, за да ги редактират\n\nЗа повече информация за това как да настроите и използвате приложение OpenProject, моля, вижте [ръководството за настройка на интеграцията](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) за администратори и [ръководството за потребителя ](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса"
 },

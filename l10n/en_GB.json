@@ -6,7 +6,9 @@
     "Cancel" : "Cancel",
     "Save" : "Save",
     "Reset" : "Reset",
+    "Documentation" : "Documentation",
     "Copied!" : "Copied!",
+    "Details" : "Details",
     "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

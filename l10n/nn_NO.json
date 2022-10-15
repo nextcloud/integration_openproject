@@ -1,0 +1,9 @@
+{ "translations": {
+    "Cancel" : "Avbryt",
+    "Save" : "Lagre",
+    "Documentation" : "Dokumentasjon",
+    "Copied!" : "Kopiert!",
+    "Details" : "Detaljar",
+    "Connected accounts" : "Tilkopla kontoar"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
