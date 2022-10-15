@@ -30,7 +30,6 @@
     "Enable navigation link" : "Włącz link nawigacyjny",
     "Enable unified search for tickets" : "Włącz ujednolicone wyszukiwanie zgłoszeń",
     "Enable notifications for activity in my work packages" : "Włącz powiadomienia o aktywności w moich pakietach roboczych",
-    "Please introduce a valid OpenProject host name" : "Wprowadź prawidłową nazwę hosta OpenProject",
     "Administration > File storages" : "Administracja > Magazyny plików",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Przejdź do OpenProject {htmlLink} jako administrator i rozpocznij konfigurację oraz skopiuj wartości tutaj.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Skopiuj następujące wartości z powrotem do OpenProject {htmlLink} jako administrator.",
@@ -39,8 +38,8 @@
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Czy na pewno chcesz zresetować tę aplikację i usunąć wszystkie ustawienia oraz wszystkie połączenia wszystkich użytkowników Nextcloud z OpenProject?",
     "Reset OpenProject integration" : "Zresetuj integrację OpenProject",
     "Yes, reset" : "Tak, zresetuj",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject jest nieprawidłowy, podaj adres URL w formie \"https://openproject.org\"",
-    "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject",
+    "Please introduce a valid OpenProject host name" : "Wprowadź prawidłową nazwę hosta OpenProject",
+    "Documentation" : "Dokumentacja",
     "OpenProject admin options saved" : "Zapisano opcje administratora OpenProject",
     "Failed to save OpenProject admin options" : "Nie udało się zapisać opcji administratora OpenProject",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Jeśli będziesz kontynuować, będziesz musiał zaktualizować ustawienia w OpenProject przy użyciu nowych poświadczeń OAuth Nextcloud. Ponadto wszyscy użytkownicy OpenProject będą musieli ponownie autoryzować dostęp do swojego konta Nextcloud.",
@@ -61,6 +60,7 @@
     "Copied!" : "Skopiowano!",
     "Copy value" : "Skopiuj wartość",
     "Copied to the clipboard" : "Skopiowano do schowka",
+    "Details" : "Szczegóły",
     "OpenProject integration" : "Integracja OpenProject",
     "No connection with OpenProject" : "Brak połączenia z OpenProject",
     "Error connecting to OpenProject" : "Błąd podczas łączenia z OpenProject",
@@ -85,6 +85,7 @@
     "Successfully connected to OpenProject!" : "Pomyślnie połączono z OpenProject!",
     "OAuth access token could not be obtained:" : "Nie można uzyskać tokena dostępu OAuth:",
     "Connected accounts" : "Połączone konta",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Aplikacja ta umożliwia bezproblemową integrację z oprogramowaniem OpenProject do zarządzania projektami i współpracy typu open source. Po stronie Nextcloud umożliwia użytkownikom:\n\n* Połączyć pliki i katalogi z pakietami roboczymi w OpenProject\n* Znaleźć wszystkie pakiety robocze połączone z plikiem lub katalogiem\n* Zobaczyć powiadomienia OpenProject za pośrednictwem pulpitu nawigacyjnego\n* Wyszukać pakiety robocze za pomocą paska wyszukiwania Nextcloud\n\nPo stronie OpenProject użytkownicy mogą:\n\n* Zobaczyć wszystkie pliki i katalogi Nextcloud połączone z pakietem roboczym\n* Pobrać połączone pliki lub otworzyć je w Nextcloud, aby edytować\n\nAby uzyskać więcej informacji na temat konfigurowania i korzystania z aplikacji OpenProject, zapoznaj się z [przewodnikiem konfiguracji integracji](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) dla administratorów i z [podręcznikiem użytkownika](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject jest nieprawidłowy, podaj adres URL w formie \"https://openproject.org\"",
+    "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

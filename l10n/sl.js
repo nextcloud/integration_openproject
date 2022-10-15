@@ -10,9 +10,11 @@ OC.L10N.register(
     "Reset" : "Ponastavi",
     "Enable navigation link" : "Omogoči povezave za krmarjenje",
     "Enable unified search for tickets" : "Omogoči enotno iskanje med objavami",
+    "Documentation" : "Dokumentacija",
     "Connected as {user}" : "Povezan je uporabniški račun {user}",
     "Incorrect access token" : "Neveljaven žeton za dostop",
     "Copied!" : "Kopirano!",
+    "Details" : "Podrobnosti",
     "Start typing to search" : "Začnite tipkati za iskanje",
     "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:",
     "Connected accounts" : "Povezani računi"

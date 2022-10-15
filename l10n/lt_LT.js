@@ -8,8 +8,10 @@ OC.L10N.register(
     "Cancel" : "Atšaukti",
     "Save" : "Įrašyti",
     "Reset" : "Atstatyti",
+    "Documentation" : "Dokumentacija",
     "Connected as {user}" : "Prisijungta kaip {user}",
     "Copied!" : "Nukopijuota!",
+    "Details" : "Išsamiau",
     "Start typing to search" : "Norėdami atlikti paiešką, pradėkite rašyti",
     "Connected accounts" : "Prijungtos paskyros"
 },

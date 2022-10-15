@@ -8,8 +8,10 @@ OC.L10N.register(
     "Cancel" : "Avbryt",
     "Save" : "Lagre",
     "Reset" : "Tilbakestill",
+    "Documentation" : "Dokumentasjo",
     "Invalid token" : "Ugyldig polett",
     "Copied!" : "Kopiert!",
+    "Details" : "Detaljer",
     "Start typing to search" : "Start å skrive for å søke",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:"
 },

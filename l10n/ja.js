@@ -8,9 +8,11 @@ OC.L10N.register(
     "Save" : "保存",
     "Reset" : "リセット",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
+    "Documentation" : "ドキュメント",
     "Connected as {user}" : "{user} に接続済み",
     "Incorrect access token" : "正しくないアクセストークン",
     "Copied!" : "コピーしました！",
+    "Details" : "詳細",
     "Start typing to search" : "入力して検索を開始します",
     "Connected accounts" : "接続済みアカウント"
 },

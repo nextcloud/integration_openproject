@@ -31,6 +31,9 @@ OC.L10N.register(
     "Enable navigation link" : "Povoliť navigačný odkaz",
     "Enable unified search for tickets" : "Zapnúť jednotné vyhľadávanie tiketov",
     "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch",
+    "Yes, replace" : "Áno, nahradiť",
+    "Yes, reset" : "Áno, resetovať",
+    "Documentation" : "Dokumentácia",
     "OpenProject admin options saved" : "Nastavenia administrátora OpenProjectu boli uložené",
     "Failed to save OpenProject admin options" : "Nepodarilo sa uložiť nastavenia administrátora OpenProjectu",
     "Connect to OpenProject" : "Pripojiť k OpenProject",
@@ -44,6 +47,7 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "Nepodarilo sa uložiť nastavenia OpenProjectu",
     "Copied!" : "Skopírované!",
     "Copy value" : "Kopírovať hodnotu",
+    "Details" : "Podrobnosti",
     "OpenProject integration" : "OpenProject integrácia",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
@@ -56,7 +60,6 @@ OC.L10N.register(
     "Existing relations:" : "Existujúce vzťahy:",
     "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
     "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:",
-    "Connected accounts" : "Prepojené účty",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject. \n\t\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Táto aplikácia umožňuje bezproblémovú integráciu s open source softvérom na riadenie projektov a spoluprácu OpenProject.\n\nV Nextcloud umožňuje užívateľom:\n* Prepojiť súbory a priečinky s pracovnými balíkmi v OpenProject\n* Nájsť všetky pracovné balíky prepojené so súborom alebo priečinkom\n* Prezerať si upozornenia OpenProject cez dashboard\n* Hľadať pracovné balíky pomocou vyhľadávacieho panela Nextcloud\n\nV OpenProject môžu užívatelia:\n* Zobraziť všetky súbory a priečinky Nextcloud prepojené s pracovným balíkom\n* Sťahovať prepojené súbory alebo ich otvárať v Nextcloud a upravovať ich\n\nPre viac informácií o tom, ako nastaviť a používať aplikáciu OpenProject, nájdete v [sprievodcovi nastavením integrácie](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) pre správcov a [používateľskej príručke ](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
+    "Connected accounts" : "Prepojené účty"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

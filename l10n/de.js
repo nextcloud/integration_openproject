@@ -29,7 +29,6 @@ OC.L10N.register(
     "Enable navigation link" : "Navigations-Link aktivieren",
     "Enable unified search for tickets" : "Einheitliche Suche nach Tickets aktivieren",
     "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
-    "Please introduce a valid OpenProject host name" : "Bitte gebe einen gültigen OpenProject-Hostnamen ein",
     "Administration > File storages" : "Administration > Dateispeicher",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Starte als Administrator das Setup deines OpenProject {htmlLink}  und  und kopiere die Werte hierher",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiere als Administrator die folgenden Werte zurück in das OpenProject {htmlLink}",
@@ -38,8 +37,8 @@ OC.L10N.register(
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Bist du sicher, dass du diese App zurücksetzen und alle Einstellungen und alle Verbindungen aller Nextcloud-Benutzer zu OpenProject löschen möchtest?",
     "Reset OpenProject integration" : "OpenProject-Integration zurücksetzen",
     "Yes, reset" : "Ja, zurücksetzen",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Gib eine URL im Format „https://openproject.org“ an.",
-    "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
+    "Please introduce a valid OpenProject host name" : "Bitte gebe einen gültigen OpenProject-Hostnamen ein",
+    "Documentation" : "Dokumentation",
     "OpenProject admin options saved" : "OpenProject-Administrator-Einstellungen gespeichert",
     "Failed to save OpenProject admin options" : "Fehler beim Speichern der OpenProject-Administrator-Einstellungen",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Wenn du fortfährst, musst du die Einstellungen in deinem OpenProject mit den neuen Nextcloud-OAuth-Anmeldeinformationen aktualisieren. Außerdem müssen alle Benutzer in OpenProject den Zugriff auf ihr Nextcloud-Konto erneut autorisieren.",
@@ -58,6 +57,7 @@ OC.L10N.register(
     "Copied!" : "Kopiert!",
     "Copy value" : "Wert kopieren",
     "Copied to the clipboard" : "In die Zwischenablage kopiert",
+    "Details" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
     "OpenProject integration" : "OpenProject-Einbindung",
     "No connection with OpenProject" : "Keine Verbindung mit OpenProject",
     "Error connecting to OpenProject" : "Fehler bei der Verbindung zu OpenProject",
@@ -81,6 +81,8 @@ OC.L10N.register(
     "Failed to unlink work package" : "Die Verknüpfung zum Arbeitspaket konnte nicht aufgehoben werden",
     "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
     "OAuth access token could not be obtained:" : "OAuth-Zugriffstoken konnte nicht abgerufen werden:",
-    "Connected accounts" : "Verbundene Konten"
+    "Connected accounts" : "Verbundene Konten",
+    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Gib eine URL im Format „https://openproject.org“ an.",
+    "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt"
 },
 "nplurals=2; plural=(n != 1);");

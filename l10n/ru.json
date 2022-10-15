@@ -10,10 +10,12 @@
     "Reset" : "Сброс",
     "Enable navigation link" : "Включить ссылку для навигации",
     "Enable unified search for tickets" : "Включить унифицированный поиск билетов",
+    "Documentation" : "Документация",
     "Connected as {user}" : "Подключено под именем {user}",
     "Incorrect access token" : "Неверный токен доступа",
     "Invalid token" : "Недопустимый токен",
     "Copied!" : "Скопировано!",
+    "Details" : "Свойства",
     "Start typing to search" : "Начините вводить символы для поиска",
     "OAuth access token could not be obtained:" : "Токен доступа OAuth не может быть получен:",
     "Connected accounts" : "Подключённые учётные записи"
