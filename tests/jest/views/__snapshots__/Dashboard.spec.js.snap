@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard.vue should show the notification items in the Dashboard 1`] = `
+Array [
+  Object {
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "17",
+    "mainText": "(5) Create wireframes for new landing page",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - assigned,mentioned",
+    "targetUrl": "http://openproject.org/notifications/details/17/activity/",
+  },
+  Object {
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur Neumann",
+    "avatarUsername": "Artur Neumannz",
+    "id": "18",
+    "mainText": "(1) Contact form",
+    "overlayIconUrl": "",
+    "subText": "Scrum project - mentioned",
+    "targetUrl": "http://openproject.org/notifications/details/18/activity/",
+  },
+  Object {
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUsername": "Admin de DEV userz",
+    "id": "36",
+    "mainText": "(2) write a software",
+    "overlayIconUrl": "",
+    "subText": "Dev-large - assigned",
+    "targetUrl": "http://openproject.org/notifications/details/36/activity/",
+  },
+]
+`;

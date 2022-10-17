@@ -1,8 +1,10 @@
 <template>
 	<DashboardWidget :items="items"
+		:item-menu="itemMenu"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
-		:loading="isLoading">
+		:loading="isLoading"
+		@markAsRead="onMarkAsRead">
 		<template #empty-content>
 			<EmptyContent v-if="emptyContentMessage">
 				<template #icon>
@@ -27,10 +29,9 @@ import axios from '@nextcloud/axios'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
-import { DashboardWidget } from '@nextcloud/vue-dashboard'
-import { showError } from '@nextcloud/dialogs'
+import DashboardWidget from '@nextcloud/vue/dist/Components/DashboardWidget'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
-import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton'
@@ -54,7 +55,7 @@ export default {
 	data() {
 		return {
 			openprojectUrl: null,
-			notifications: [],
+			notifications: {},
 			loop: null,
 			state: STATE.LOADING,
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
@@ -63,6 +64,12 @@ export default {
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
+			itemMenu: {
+				markAsRead: {
+					text: t('integration_openproject', 'Mark as read'),
+					icon: 'icon-checkmark',
+				},
+			},
 		}
 	},
 	computed: {
@@ -76,16 +83,20 @@ export default {
 			return this.openprojectUrl + '/notifications'
 		},
 		items() {
-			return this.notifications.map((n) => {
-				return {
-					id: this.getUniqueKey(n),
+			const notifications = []
+			for (const key in this.notifications) {
+				const n = this.notifications[key]
+				notifications.push({
+					id: n.wpId,
 					targetUrl: this.getNotificationTarget(n),
 					avatarUrl: this.getAuthorAvatarUrl(n),
 					avatarUsername: this.getAuthorShortName(n) + 'z',
 					mainText: this.getTargetTitle(n),
 					subText: this.getSubline(n),
-				}
-			})
+					overlayIconUrl: '',
+				})
+			}
+			return notifications
 		},
 		emptyContentMessage() {
 			if (this.state === STATE.NO_TOKEN) {
@@ -147,10 +158,50 @@ export default {
 			this.loop = setInterval(() => this.fetchNotifications(), 60000)
 		},
 		fetchNotifications() {
-			axios.get(generateUrl('/apps/integration_openproject/notifications')).then((response) => {
+			const notificationsUrl = generateUrl('/apps/integration_openproject/notifications')
+			axios.get(notificationsUrl).then((response) => {
+				const notifications = {}
 				if (Array.isArray(response.data)) {
-					this.notifications = response.data
+					for (let i = 0; i < response.data.length; i++) {
+						const n = response.data[i]
+						const wpId = n._links.resource.href.replace(/.*\//, '')
+						if (notifications[wpId] === undefined) {
+							notifications[wpId] = {
+								wpId,
+								resourceTitle: n._links.resource.title,
+								projectTitle: n._links.project.title,
+								count: 1,
+							}
+						} else {
+							notifications[wpId].count++
+						}
+						if (!(notifications[wpId].reasons instanceof Set)) {
+							notifications[wpId].reasons = new Set()
+						}
+						notifications[wpId].reasons.add(n.reason)
+
+						const userId = n._links?.actor?.href
+							? n._links.actor.href.replace(/.*\//, '')
+							: null
+						if (notifications[wpId].mostRecentActor === undefined) {
+							notifications[wpId].mostRecentActor = {
+								title: n._links.actor.title,
+								id: userId,
+								createdAt: n.createdAt,
+							}
+						} else if (userId !== notifications[wpId].mostRecentActor.id) {
+							if (Date.parse(n.createdAt) > Date.parse(notifications[wpId].mostRecentActor.createdAt)) {
+								notifications[wpId].mostRecentActor = {
+									title: n._links.actor.title,
+									id: userId,
+									createdAt: n.createdAt,
+								}
+							}
+						}
+
+					}
 					this.state = STATE.OK
+					this.notifications = notifications
 				} else {
 					this.state = STATE.ERROR
 					console.debug('notifications API returned invalid data')
@@ -170,49 +221,43 @@ export default {
 			})
 		},
 		getNotificationTarget(n) {
-			const wpId = n._links?.resource?.href
-				? n._links.resource.href.replace(/.*\//, '')
-				: null
-			return wpId
-				? this.openprojectUrl + '/notifications/details/' + wpId + '/activity/'
-				: ''
-		},
-		getUniqueKey(n) {
-			return n.id + ':' + n.updatedAt
+			return this.openprojectUrl + '/notifications/details/' + n.wpId + '/activity/'
 		},
 		getAuthorShortName(n) {
-			return n._links?.actor?.title
-				? n._links.actor.title
+			return n.mostRecentActor.title
+				? n.mostRecentActor.title
 				: undefined
 		},
-		getAuthorFullName(n) {
-			return n.firstname + ' ' + n.lastname
-		},
 		getAuthorAvatarUrl(n) {
-			const userId = n._links?.actor?.href
-				? n._links.actor.href.replace(/.*\//, '')
-				: null
-			const userName = n._links?.actor?.title
-				? n._links.actor.title
-				: null
-			return userId
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + userId + '&' + encodeURIComponent('userName') + '=' + userName
+			return n.mostRecentActor.id
+				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
 				: ''
 		},
-		getNotificationProjectName(n) {
-			return ''
-		},
-		getNotificationContent(n) {
-			return ''
-		},
 		getSubline(n) {
-			return n._links.project.title + ' - ' + t('integration_openproject', n.reason)
+			let reasonsString = ''
+			n.reasons.forEach((value) => {
+				reasonsString = reasonsString + ',' + t('integration_openproject', value)
+			})
+			return n.projectTitle + ' - ' + reasonsString.replace(/^,/, '')
 		},
 		getTargetTitle(n) {
-			return n._links.resource.title
+			return '(' + n.count + ') ' + n.resourceTitle
 		},
-		getFormattedDate(n) {
-			return moment(n.updated_at).format('LLL')
+		onMarkAsRead(item) {
+			const url = generateUrl(
+				'/apps/integration_openproject/work-packages/' + item.id + '/notifications'
+			)
+			axios.delete(url).then((response) => {
+				showSuccess(
+					t('integration_openproject', 'Notifications associated with Work package marked as read')
+				)
+				this.fetchNotifications()
+			}).catch((error) => {
+				showError(
+					t('integration_openproject', 'Failed to mark notifications as read')
+				)
+				console.debug(error)
+			})
 		},
 	},
 }

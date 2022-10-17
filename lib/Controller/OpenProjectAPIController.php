@@ -207,6 +207,33 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * @param int $workpackageId
+	 * @return DataResponse
+	 */
+	public function markNotificationAsRead(int $workpackageId) {
+		if ($this->accessToken === '' || !OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
+				$workpackageId,
+				$this->userId,
+			);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		if ($result['success'] !== true) {
+			return new DataResponse(
+				'could not mark notification as read',
+				Http::STATUS_INTERNAL_SERVER_ERROR
+			);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
 	 * @NoAdminRequired
 	 * @param int $id
 	 * @return DataResponse
