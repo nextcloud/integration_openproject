@@ -142,30 +142,41 @@ class OpenProjectAPIService {
 			'notification_enabled',
 			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')) === '1');
 		if ($accessToken && $notificationEnabled) {
-			$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
-			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : (int)$lastNotificationCheck;
-			$newLastNotificationCheck = time();
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
+			$aggregatedNotifications = [];
 			if (!isset($notifications['error']) && count($notifications) > 0) {
-				$this->config->setUserValue(
-					$userId,
-					Application::APP_ID,
-					'last_notification_check',
-					"$newLastNotificationCheck"
-				);
-				$nbRelevantNotifications = 0;
 				foreach ($notifications as $n) {
-					$createdAt = new DateTime($n['createdAt']);
-					if ($createdAt->getTimestamp() > $lastNotificationCheck) {
-						$nbRelevantNotifications++;
+					$wpId = preg_replace('/.*\//', '', $n['_links']['resource']['href']);
+					if (!array_key_exists($wpId, $aggregatedNotifications)) {
+						$aggregatedNotifications[$wpId] = [
+							'wpId' => $wpId,
+							'resourceTitle' => $n['_links']['resource']['title'],
+							'projectTitle' => $n['_links']['project']['title'],
+							'count' => 1,
+							// TODO according to the docs https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#creating-a-new-notification
+							// links should not be set here
+							'link' => self::sanitizeUrl(
+								$openprojectUrl . '/notifications/details/' . $wpId . '/activity/'
+							)
+						];
+					} else {
+						$aggregatedNotifications[$wpId]['count']++;
 					}
+					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
+					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
 				}
-				if ($nbRelevantNotifications > 0) {
-					$this->sendNCNotification($userId, 'new_open_tickets', [
-						'nbNotifications' => $nbRelevantNotifications,
-						'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
-					]);
+				$manager = $this->notificationManager;
+				$notification = $manager->createNotification();
+				$notification->setApp(Application::APP_ID)
+					->setUser($userId);
+				$manager->markProcessed($notification);
+
+				foreach ($aggregatedNotifications as $n) {
+					$n['reasons'] = array_unique($n['reasons']);
+					$n['actors'] = array_unique($n['actors']);
+					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
+					$this->sendNCNotification($userId, 'op_notification', $n);
 				}
 			}
 		}
@@ -232,7 +243,10 @@ class OpenProjectAPIService {
 		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {
 			return $result;
-		} elseif (!isset($result['_embedded']['elements'])) {
+		} elseif (
+			!isset($result['_embedded']['elements']) ||
+			!isset($result['_embedded']['elements'][0]['_links'])
+		) {
 			return ['error' => 'Malformed response'];
 		}
 

@@ -85,10 +85,10 @@ class Notifier implements INotifier {
 		$l = $this->factory->get('integration_openproject', $languageCode);
 
 		switch ($notification->getSubject()) {
-		case 'new_open_tickets':
+		case 'op_notification':
 			$p = $notification->getSubjectParameters();
-			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
-			$content = $l->t('OpenProject activity');
+
+			// see https://github.com/nextcloud/server/issues/1706 for docs
 			$richSubjectInstance = [
 				'type' => 'file',
 				'id' => 0,
@@ -96,16 +96,37 @@ class Notifier implements INotifier {
 				'path' => '',
 				'link' => $p['link'],
 			];
+			$message = $p['projectTitle'] . ' - ';
+			foreach ($p['reasons'] as $reason) {
+				$message .= $reason . ',';
+			}
+			$message = rtrim($message, ',');
+			$message .= ' ' . $l->t('by') . ' ';
 
-			$notification->setParsedSubject($content)
+			foreach ($p['actors'] as $actor) {
+				$message .= $actor . ',';
+			}
+			$message = rtrim($message, ',');
+			$markAsReadAction = $notification->createAction();
+			$markAsReadAction->setLabel('mark_as_read')
+			->setParsedLabel($l->t('Mark as read'))
+			->setPrimary(true)
+			->setLink($this->url->linkToRouteAbsolute(
+				'integration_openproject.openProjectAPI.markNotificationAsRead',
+				['workpackageId' => $p['wpId']]),
+				'DELETE'
+			);
+
+			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
 				->setLink($p['link'] ?? '')
 				->setRichMessage(
-					$l->n('You have %s new notification in {instance}', 'You have %s new notifications in {instance}', $nbNotifications, [$nbNotifications]),
+					$message,
 					[
 						'instance' => $richSubjectInstance,
 					]
 				)
+				->addParsedAction($markAsReadAction)
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 			return $notification;
 
