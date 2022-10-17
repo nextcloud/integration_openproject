@@ -12,15 +12,17 @@
 namespace OCA\OpenProject\Notification;
 
 use InvalidArgumentException;
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IDismissableNotifier;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCA\OpenProject\AppInfo\Application;
 
-class Notifier implements INotifier {
+class Notifier implements INotifier, IDismissableNotifier {
 
 	/** @var IFactory */
 	protected $factory;
@@ -35,6 +37,11 @@ class Notifier implements INotifier {
 	protected $url;
 
 	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openprojectAPIService;
+
+	/**
 	 * @param IFactory $factory
 	 * @param IUserManager $userManager
 	 * @param INotificationManager $notificationManager
@@ -43,11 +50,13 @@ class Notifier implements INotifier {
 	public function __construct(IFactory $factory,
 								IUserManager $userManager,
 								INotificationManager $notificationManager,
-								IURLGenerator $urlGenerator) {
+								IURLGenerator $urlGenerator,
+								OpenProjectAPIService $openprojectAPIService) {
 		$this->factory = $factory;
 		$this->userManager = $userManager;
 		$this->notificationManager = $notificationManager;
 		$this->url = $urlGenerator;
+		$this->openprojectAPIService = $openprojectAPIService;
 	}
 
 	/**
@@ -107,15 +116,6 @@ class Notifier implements INotifier {
 				$message .= $actor . ',';
 			}
 			$message = rtrim($message, ',');
-			$markAsReadAction = $notification->createAction();
-			$markAsReadAction->setLabel('mark_as_read')
-			->setParsedLabel($l->t('Mark as read'))
-			->setPrimary(true)
-			->setLink($this->url->linkToRouteAbsolute(
-				'integration_openproject.openProjectAPI.markNotificationAsRead',
-				['workpackageId' => $p['wpId']]),
-				'DELETE'
-			);
 
 			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
@@ -126,7 +126,6 @@ class Notifier implements INotifier {
 						'instance' => $richSubjectInstance,
 					]
 				)
-				->addParsedAction($markAsReadAction)
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 			return $notification;
 
@@ -134,5 +133,20 @@ class Notifier implements INotifier {
 			// Unknown subject => Unknown notification => throw
 			throw new InvalidArgumentException();
 		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function dismissNotification(INotification $notification): void {
+		if ($notification->getApp() !== Application::APP_ID) {
+			throw new \InvalidArgumentException('Unhandled app');
+		}
+		$parameters = $notification->getSubjectParameters();
+		$this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
+			$parameters['wpId'],
+			$notification->getUser()
+		);
 	}
 }
