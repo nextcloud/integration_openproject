@@ -13,6 +13,7 @@ namespace OCA\OpenProject\Notification;
 
 use InvalidArgumentException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
@@ -42,6 +43,10 @@ class Notifier implements INotifier, IDismissableNotifier {
 	private $openprojectAPIService;
 
 	/**
+	 * @var IConfig
+	 */
+	private $config;
+	/**
 	 * @param IFactory $factory
 	 * @param IUserManager $userManager
 	 * @param INotificationManager $notificationManager
@@ -51,12 +56,14 @@ class Notifier implements INotifier, IDismissableNotifier {
 								IUserManager $userManager,
 								INotificationManager $notificationManager,
 								IURLGenerator $urlGenerator,
-								OpenProjectAPIService $openprojectAPIService) {
+								OpenProjectAPIService $openprojectAPIService,
+								IConfig $config) {
 		$this->factory = $factory;
 		$this->userManager = $userManager;
 		$this->notificationManager = $notificationManager;
 		$this->url = $urlGenerator;
 		$this->openprojectAPIService = $openprojectAPIService;
+		$this->config = $config;
 	}
 
 	/**
@@ -96,14 +103,19 @@ class Notifier implements INotifier, IDismissableNotifier {
 		switch ($notification->getSubject()) {
 		case 'op_notification':
 			$p = $notification->getSubjectParameters();
-
+			$openprojectUrl = $this->config->getAppValue(
+				Application::APP_ID, 'oauth_instance_url'
+			);
+			$link = OpenProjectAPIService::sanitizeUrl(
+				$openprojectUrl . '/notifications/details/' . $p['wpId'] . '/activity/'
+			);
 			// see https://github.com/nextcloud/server/issues/1706 for docs
 			$richSubjectInstance = [
 				'type' => 'file',
 				'id' => 0,
-				'name' => $p['link'],
+				'name' => $link,
 				'path' => '',
-				'link' => $p['link'],
+				'link' => $link,
 			];
 			$message = $p['projectTitle'] . ' - ';
 			foreach ($p['reasons'] as $reason) {
@@ -119,7 +131,7 @@ class Notifier implements INotifier, IDismissableNotifier {
 
 			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
-				->setLink($p['link'] ?? '')
+				->setLink($link)
 				->setRichMessage(
 					$message,
 					[

@@ -142,7 +142,6 @@ class OpenProjectAPIService {
 			'notification_enabled',
 			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')) === '1');
 		if ($accessToken && $notificationEnabled) {
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
 			$aggregatedNotifications = [];
 			if (!isset($notifications['error']) && count($notifications) > 0) {
@@ -154,11 +153,6 @@ class OpenProjectAPIService {
 							'resourceTitle' => $n['_links']['resource']['title'],
 							'projectTitle' => $n['_links']['project']['title'],
 							'count' => 1,
-							// TODO according to the docs https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#creating-a-new-notification
-							// links should not be set here
-							'link' => self::sanitizeUrl(
-								$openprojectUrl . '/notifications/details/' . $wpId . '/activity/'
-							)
 						];
 					} else {
 						$aggregatedNotifications[$wpId]['count']++;
