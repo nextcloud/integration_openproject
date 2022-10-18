@@ -56,6 +56,7 @@ OC.L10N.register(
     "To add a link, use the search bar above to find the desired work package" : "Pour ajouter un lien, utilisez la barre de recherche ci-dessus pour sélectionner un module de travail",
     "Start typing to search" : "Tapez pour lancer la recherche",
     "No OpenProject account connected" : "Aucun compte OpenProject connecté",
+    "Mark as read" : "Marquer comme lu",
     "No OpenProject notifications!" : "Pas de notification OpenProject !",
     "Failed to get OpenProject notifications" : "Impossible d'obtenir les notifications OpenProject",
     "Existing relations:" : "Relations existantes :",

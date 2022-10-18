@@ -13,6 +13,7 @@ OC.L10N.register(
     "Copied!" : "Копирано!",
     "Details" : "Детали",
     "Start typing to search" : "Напишете нешто за пребарување",
+    "Mark as read" : "Означи како прочитано",
     "Connected accounts" : "Поврзани сметки"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

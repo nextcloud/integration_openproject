@@ -73,6 +73,7 @@
     "No OpenProject account connected" : "Brak połączonego konta OpenProject",
     "Work package linked successfully!" : "Pakiet roboczy został pomyślnie połączony!",
     "Failed to link file to work package" : "Nie udało się połączyć pliku z pakietem roboczym",
+    "Mark as read" : "Oznacz jako przeczytane",
     "No OpenProject notifications!" : "Brak powiadomień OpenProject!",
     "Failed to get OpenProject notifications" : "Nie udało się pobrać powiadomień OpenProject",
     "Existing relations:" : "Istniejące relacje:",

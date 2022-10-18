@@ -13,6 +13,7 @@ OC.L10N.register(
     "Copied!" : "Kopiert!",
     "Details" : "Detaljer",
     "Start typing to search" : "Start å skrive for å søke",
+    "Mark as read" : "Merk som lest",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:"
 },
 "nplurals=2; plural=(n != 1);");

@@ -16,6 +16,7 @@ OC.L10N.register(
     "Copied!" : "已复制！",
     "Details" : "详情",
     "Start typing to search" : "开始输入搜索内容",
+    "Mark as read" : "标为已读",
     "OAuth access token could not be obtained:" : "无法获取 OAuth 访问令牌：",
     "Connected accounts" : "关联账号"
 },

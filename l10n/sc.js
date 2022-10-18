@@ -16,6 +16,7 @@ OC.L10N.register(
     "Copied!" : "Copiados!",
     "Details" : "Detàllios",
     "Start typing to search" : "Cumintza a iscrìere pro chircare",
+    "Mark as read" : "Marca comente lèghidu",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
     "Connected accounts" : "Contos connètidos"
 },
