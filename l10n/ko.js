@@ -14,6 +14,7 @@ OC.L10N.register(
     "Copied!" : "복사 성공!",
     "Details" : "세부사항",
     "Start typing to search" : "검색어 입력",
+    "Mark as read" : "읽은 것으로 표시",
     "OAuth access token could not be obtained:" : "OAuth 접근 토큰을 얻을 수 없었습니다: ",
     "Connected accounts" : "계정 연결됨"
 },

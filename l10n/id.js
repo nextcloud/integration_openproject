@@ -7,6 +7,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentasi",
     "Copied!" : "Tersalin!",
     "Details" : "Detail",
-    "Start typing to search" : "Mulai mengetik untuk mencari"
+    "Start typing to search" : "Mulai mengetik untuk mencari",
+    "Mark as read" : "tandai sudah dibaca"
 },
 "nplurals=1; plural=0;");

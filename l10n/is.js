@@ -14,6 +14,7 @@ OC.L10N.register(
     "Copied!" : "Afritað!",
     "Details" : "Details",
     "Start typing to search" : "Skrifaðu hér til að leita",
+    "Mark as read" : "Merkja sem lesið",
     "Connected accounts" : "Tengdir aðgangar"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

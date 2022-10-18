@@ -16,6 +16,7 @@ OC.L10N.register(
     "Copied!" : "Αντιγράφηκαν!",
     "Details" : "Λεπτομέρειες",
     "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
+    "Mark as read" : "Σήμανση ως αναγνωσμένο",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
     "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"
 },

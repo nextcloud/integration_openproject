@@ -15,6 +15,7 @@ OC.L10N.register(
     "Copied!" : "Kopioitu!",
     "Details" : "Tiedot",
     "Start typing to search" : "Aloita kirjoittaminen hakeaksesi",
+    "Mark as read" : "Merkitse luetuksi",
     "Connected accounts" : "Yhdistetyt tilit"
 },
 "nplurals=2; plural=(n != 1);");

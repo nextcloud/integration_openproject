@@ -55,6 +55,7 @@ OC.L10N.register(
     "Start typing to search" : "Začnite písať pre vyhľadanie",
     "Search for a work package to create a relation" : "Ak chcete vytvoriť súvislosť, vyhľadajte pracovný balík",
     "No OpenProject account connected" : "Nie je pripojený žiadny OpenProject účet",
+    "Mark as read" : "Označiť ako prečítané",
     "No OpenProject notifications!" : "Žiadne notifikácie od OpenProjectu",
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
     "Existing relations:" : "Existujúce vzťahy:",

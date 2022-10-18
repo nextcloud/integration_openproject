@@ -70,6 +70,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "No hi ha cap compte d'OpenProject connectada",
     "Work package linked successfully!" : "El paquet de treball s'ha enllaçat correctament!",
     "Failed to link file to work package" : "No s'ha pogut enllaçar el fitxer amb el paquet de treball",
+    "Mark as read" : "Marca com a llegit",
     "No OpenProject notifications!" : "No hi ha notificacions d'OpenProject!",
     "Failed to get OpenProject notifications" : "No s'han pogut rebre les notificacions d'OpenProject",
     "Existing relations:" : "Relacions existents:",

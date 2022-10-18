@@ -15,6 +15,7 @@ OC.L10N.register(
     "Copied!" : "Copiado!",
     "Details" : "Detalles",
     "Start typing to search" : "Comece a escribir para buscar",
+    "Mark as read" : "Marcar como lido",
     "OAuth access token could not be obtained:" : "Non foi posíbel obter o testemuño de acceso OAuth",
     "Connected accounts" : "Contas conectadas"
 },

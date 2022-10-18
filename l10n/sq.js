@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Rivendos",
     "Documentation" : "Dokumentacioni",
     "Copied!" : "I kopjuar!",
-    "Details" : "Detajet"
+    "Details" : "Detajet",
+    "Mark as read" : "Shënoje si të lexuar"
 },
 "nplurals=2; plural=(n != 1);");

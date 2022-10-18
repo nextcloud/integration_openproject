@@ -84,6 +84,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
     "Work package linked successfully!" : "Çalışma paketinin bağlantısı kuruldu!",
     "Failed to link file to work package" : "Çalışma paketinin bağlantısı kurulamadı",
+    "Mark as read" : "Okunmuş olarak işaretle",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "Failed to get OpenProject notifications" : "OpenProject bildirimleri alınamadı",
     "Existing relations:" : "Var olan ilişkiler:",

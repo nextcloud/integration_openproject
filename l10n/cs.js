@@ -84,6 +84,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nepřipojen žádný OpenProject účet",
     "Work package linked successfully!" : "Balíček práce úspěšně propojen!",
     "Failed to link file to work package" : "Nepodařilo se propojit soubor s balíčkem práce",
+    "Mark as read" : "Označit jako přečtené",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
     "Existing relations:" : "Existující souvislosti:",
