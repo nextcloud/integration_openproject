@@ -280,6 +280,23 @@ exports[`AdminSettings.vue server host url form edit mode submit button should s
 </div>
 `;
 
+exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 9`] = `
+<div class="text-input pb-1">
+  <div class="text-input-label">
+    OpenProject host *
+  </div>
+  <div class="text-input-input-wrapper"><input id="openproject-oauth-instance" type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
+    <!---->
+  </div>
+  <div>
+    <div>
+      <div class="text-input-error-message">The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect.</div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
+
 exports[`AdminSettings.vue server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
 <button data-v-a8d79470="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-a8d79470="" class="button-vue__wrapper"><span data-v-a8d79470="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-a8d79470=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span> <span data-v-a8d79470="" class="button-vue__text">
 				Edit server information

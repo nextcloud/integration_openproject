@@ -349,7 +349,34 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(['result' => 'invalid']);
 		}
 		try {
-			$response = $this->openprojectAPIService->rawRequest('', $url, '');
+			$response = $this->openprojectAPIService->rawRequest(
+				'', $url, '', [], 'GET',
+				['allow_redirects' => false]
+			);
+			$statusCode = $response->getStatusCode();
+			if ($statusCode >= 300 && $statusCode <= 399) {
+				$newLocation = $response->getHeader('Location');
+				if ($newLocation !== '') {
+					return new DataResponse(
+						[
+							'result' => 'redirected',
+							'details' => str_replace('api/v3/', '', $newLocation)
+						]
+					);
+				}
+				$this->logger->error(
+					"Could not connect to the URL '$url'",
+					[
+						'app' => $this->appName,
+					]
+				);
+				return new DataResponse(
+					[
+						'result' => 'unexpected_error',
+						'details' => 'received a redirect status code (' . $statusCode . ') but no "Location" header'
+					]
+				);
+			}
 			$body = (string) $response->getBody();
 			$decodedBody = json_decode($body, true);
 			if (

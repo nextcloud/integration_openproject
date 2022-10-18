@@ -326,6 +326,13 @@ describe('AdminSettings.vue', () => {
 						},
 						expectedDetailsMessage: null,
 					},
+					{
+						data: {
+							result: 'redirected',
+							details: 'https://openproject.org/',
+						},
+						expectedDetailsMessage: null,
+					},
 				])('should set the input to error state and display correct message when the url is invalid', async (testCase) => {
 					dialogs.showError.mockImplementationOnce()
 					jest.spyOn(axios, 'post')
