@@ -14,6 +14,7 @@ OC.L10N.register(
     "Copied!" : "コピーしました！",
     "Details" : "詳細",
     "Start typing to search" : "入力して検索を開始します",
+    "Mark as read" : "既読にする",
     "Connected accounts" : "接続済みアカウント"
 },
 "nplurals=1; plural=0;");

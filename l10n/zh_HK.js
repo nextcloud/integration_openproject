@@ -84,6 +84,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "未連線至 OpenProject 帳號",
     "Work package linked successfully!" : "工作包鏈接成功！",
     "Failed to link file to work package" : "無法將檔案連結到工作包",
+    "Mark as read" : "標為已讀",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
     "Existing relations:" : "現有關係：",

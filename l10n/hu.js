@@ -70,6 +70,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nincs OpenProject-fiók csatlakoztatva",
     "Work package linked successfully!" : "A munkacsomag összekapcsolása sikertelen!",
     "Failed to link file to work package" : "A fájl munkacsomaghoz kapcsolása sikertelen",
+    "Mark as read" : "Megjelölés olvasottként",
     "No OpenProject notifications!" : "Nincsenek OpenProject-értesítések",
     "Failed to get OpenProject notifications" : "Az OpenProject értesítések lekérése sikertelen",
     "Existing relations:" : "Meglévő kapcsolatok:",

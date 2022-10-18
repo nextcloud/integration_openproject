@@ -36,6 +36,7 @@ OC.L10N.register(
     "Start typing to search" : "Inizia a digitare per cercare",
     "Search for a work package to create a relation" : "Cerca un pacchetto di lavoro per creare una relazione",
     "No OpenProject account connected" : "Nessun account OpenProject connesso",
+    "Mark as read" : "Segna come letto",
     "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
     "Existing relations:" : "Relazioni esistenti:",

@@ -25,6 +25,7 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integratie",
     "Unexpected Error" : "Onverwachte fout",
     "Start typing to search" : "Begin met typen om te zoeken",
+    "Mark as read" : "Markeren als gelezen",
     "Existing relations:" : "Bestaande relaties:",
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "Connected accounts" : "Verbonden accounts"
