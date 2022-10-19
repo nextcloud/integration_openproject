@@ -85,6 +85,8 @@
     "Mark as read" : "Označit jako přečtené",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
+    "Notifications associated with Work package marked as read" : "Upozornění související s balíčkem práce označeny jako přečtené",
+    "Failed to mark notifications as read" : "Nepodařilo se označit upozornění jako přečtená",
     "Existing relations:" : "Existující souvislosti:",
     "Unlink Work Package" : "Zrušit propojení s balíčkem práce",
     "Are you sure you want to unlink the work package?" : "Opravdu chcete balíček práce odpojit?",

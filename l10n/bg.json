@@ -73,6 +73,7 @@
     "No OpenProject account connected" : "Няма свързан профил в OpenProject",
     "Work package linked successfully!" : "Работният пакет е свързан успешно!",
     "Failed to link file to work package" : "Неуспешно свързване на файл към работен пакет",
+    "Mark as read" : "Маркиране като прочетено",
     "No OpenProject notifications!" : "Няма известия от OpenProject!",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
     "Existing relations:" : "Съществуващи отношения/връзки/:",
