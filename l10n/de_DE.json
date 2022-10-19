@@ -85,6 +85,8 @@
     "Mark as read" : "Als gelesen markieren",
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
+    "Notifications associated with Work package marked as read" : "Benachrichtigungen im Zusammenhang mit dem als gelesen markierten Arbeitspaket",
+    "Failed to mark notifications as read" : "Benachrichtigungen konnten nicht als gelesen markiert werden",
     "Existing relations:" : "Bestehende Beziehungen:",
     "Unlink Work Package" : "Verknüpfung mit dem Arbeitspaket entfernen",
     "Are you sure you want to unlink the work package?" : "Möchten Sie die Verknüpfung des Arbeitspakets wirklich aufheben?",
