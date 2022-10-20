@@ -14,6 +14,7 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use OCA\Notifications\Handler;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -92,6 +93,8 @@ class OpenProjectAPIService {
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
+	private $handler;
+
 	public function __construct(
 								string $appName,
 								IUserManager $userManager,
@@ -103,7 +106,8 @@ class OpenProjectAPIService {
 								IClientService $clientService,
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory) {
+								ICacheFactory $cacheFactory,
+								Handler $handler) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -114,7 +118,7 @@ class OpenProjectAPIService {
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
-
+		$this->handler = $handler;
 		$this->cache = $cacheFactory->createDistributed();
 	}
 
@@ -164,7 +168,12 @@ class OpenProjectAPIService {
 				$notification = $manager->createNotification();
 				$notification->setApp(Application::APP_ID)
 					->setUser($userId);
-				$manager->markProcessed($notification);
+				$notifications = $this->handler->get($notification);
+				$notificationsToDelete = [];
+				foreach ($notifications as $notificationId => $n) {
+					$notificationsToDelete[] = $notificationId;
+				}
+				$this->handler->deleteIds($notificationsToDelete);
 
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
