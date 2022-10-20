@@ -289,7 +289,7 @@ class OpenProjectAPIService {
 	 */
 	private function searchRequest(string $userId, array $filters): array {
 		$resultsById = [];
-		$sortBy = [['status', 'asc'],['updatedAt', 'desc']];
+		$sortBy = [['updatedAt', 'desc']];
 		$filters[] = [
 			'linkable_to_storage_url' =>
 				['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]
