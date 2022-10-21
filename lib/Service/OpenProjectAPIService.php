@@ -177,7 +177,9 @@ class OpenProjectAPIService {
 				foreach ($notifications as $notificationId => $n) {
 					$notificationsToDelete[] = $notificationId;
 				}
-				$this->handler->deleteIds($notificationsToDelete);
+				if (sizeof($notificationsToDelete) > 0) {
+					$this->handler->deleteIds($notificationsToDelete);
+				}
 
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
