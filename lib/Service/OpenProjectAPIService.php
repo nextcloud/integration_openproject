@@ -165,10 +165,10 @@ class OpenProjectAPIService {
 					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
 				}
 				$manager = $this->notificationManager;
-				$notification = $manager->createNotification();
-				$notification->setApp(Application::APP_ID)
+				$notificationsFilter = $manager->createNotification();
+				$notificationsFilter->setApp(Application::APP_ID)
 					->setUser($userId);
-				$notifications = $this->handler->get($notification);
+				$notifications = $this->handler->get($notificationsFilter);
 				$notificationsToDelete = [];
 				foreach ($notifications as $notificationId => $n) {
 					$notificationsToDelete[] = $notificationId;
