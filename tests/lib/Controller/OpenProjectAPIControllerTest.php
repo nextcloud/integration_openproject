@@ -711,6 +711,67 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 
+	public function testIsValidOpenProjectInstanceRedirect(): void {
+		$response = $this->getMockBuilder(IResponse::class)->getMock();
+		$response->method('getStatusCode')->willReturn(302);
+		$response->method('getHeader')
+			->with('Location')
+			->willReturn('https://openproject.org/api/v3/');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['rawRequest'])
+			->getMock();
+		$service
+			->method('rawRequest')
+			->willReturn($response);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
+		$this->assertSame(
+			[ 'result' => 'redirected', 'details' => 'https://openproject.org/'],
+			$result->getData()
+		);
+	}
+
+	public function testIsValidOpenProjectInstanceRedirectNoLocationHeader(): void {
+		$response = $this->getMockBuilder(IResponse::class)->getMock();
+		$response->method('getStatusCode')->willReturn(302);
+		$response->method('getHeader')
+			->with('Location')
+			->willReturn('');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['rawRequest'])
+			->getMock();
+		$service
+			->method('rawRequest')
+			->willReturn($response);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$result = $controller->isValidOpenProjectInstance('http://openproject.org');
+		$this->assertSame(
+			[
+				'result' => 'unexpected_error',
+				'details' => 'received a redirect status code (302) but no "Location" header'
+			],
+			$result->getData()
+		);
+	}
+
 	/**
 	 * @return array<mixed>
 	 */

@@ -349,18 +349,21 @@ class OpenProjectAPIService {
 	 * @param string $endPoint
 	 * @param array<mixed> $params
 	 * @param string $method
+	 * @param array<mixed> $options further options to be given to Guzzle see https://docs.guzzlephp.org/en/stable/request-options.html
 	 * @return array{error: string} | IResponse
 	 */
 	public function rawRequest(string $accessToken, string $openprojectUrl,
-							   string $endPoint, array $params = [], string $method = 'GET') {
+							   string $endPoint, array $params = [],
+							   string $method = 'GET',
+							   array $options = []
+	) {
 		$url = $openprojectUrl . '/api/v3/' . $endPoint;
-		$options = [
-			'headers' => [
-				'Authorization' => 'Bearer ' . $accessToken,
-				'User-Agent' => 'Nextcloud OpenProject integration',
-			]
-		];
-
+		if (!isset($options['headers']['Authorization'])) {
+			$options['headers']['Authorization'] = 'Bearer ' . $accessToken;
+		}
+		if (!isset($options['headers']['User-Agent'])) {
+			$options['headers']['User-Agent'] = 'Nextcloud OpenProject integration';
+		}
 		if (count($params) > 0) {
 			if ($method === 'GET') {
 				// manage array parameters
@@ -379,10 +382,14 @@ class OpenProjectAPIService {
 				if (isset($params['body'])) {
 					$options['body'] = $params['body'];
 				}
-				$options['headers']['Content-Type'] = 'application/json';
+				if (!isset($options['headers']['Content-Type'])) {
+					$options['headers']['Content-Type'] = 'application/json';
+				}
 			}
 		} elseif ($method === 'DELETE') {
-			$options['headers']['Content-Type'] = 'application/json';
+			if (!isset($options['headers']['Content-Type'])) {
+				$options['headers']['Content-Type'] = 'application/json';
+			}
 		}
 
 		if ($method === 'GET') {

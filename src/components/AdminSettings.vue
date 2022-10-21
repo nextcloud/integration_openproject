@@ -513,6 +513,16 @@ export default {
 					)
 					break
 				}
+				case 'redirected':
+				{
+					const location = response.data.details
+					this.openProjectNotReachableErrorMessage = t(
+						'integration_openproject',
+						'The given URL redirects to \'{location}\'. Please do not use a URL that leads to a redirect.',
+						{ location }
+					)
+					break
+				}
 				case 'unexpected_error':
 				case 'network_error':
 				case 'request_exception':
