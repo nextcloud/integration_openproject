@@ -111,7 +111,7 @@ class OpenProjectAPIService {
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
 								ICacheFactory $cacheFactory,
-								Handler $handler) {
+								Handler $handler = null) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -143,6 +143,10 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	private function checkNotificationsForUser(string $userId): void {
+		if ($this->handler === null) {
+			// notifications app seems not to exist
+			return;
+		}
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue(
 			$userId,
