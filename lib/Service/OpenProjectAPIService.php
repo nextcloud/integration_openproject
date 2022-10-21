@@ -90,11 +90,15 @@ class OpenProjectAPIService {
 	 * @var ICache
 	 */
 	private $cache = null;
+
 	/**
-	 * Service to make requests to OpenProject v3 (JSON) API
+	 * @var Handler
 	 */
 	private $handler;
 
+	/**
+	 * Service to make requests to OpenProject v3 (JSON) API
+	 */
 	public function __construct(
 								string $appName,
 								IUserManager $userManager,

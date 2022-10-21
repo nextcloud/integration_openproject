@@ -38,20 +38,14 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'default_enable_notifications','0'],
-				['integration_openproject', 'oauth_instance_url'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'oauth_instance_url'],
 			)->willReturnOnConsecutiveCalls(
 				'0',
-				'https://openproject',
 				'clientID',
 				'SECRET',
 				'https://openproject',
-				'clientID',
-				'https://openproject'
 			);
 
 		$response = $this->getMockBuilder(IResponse::class)->getMock();
@@ -87,7 +81,6 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'resourceTitle' => 'write a software',
 						'projectTitle' => 'Dev-large',
 						'count' => 2,
-						'link' => 'https://openproject/notifications/details/36/activity',
 						'reasons' => ['assigned'],
 						'actors' => ['Admin de DEV user']
 					]
@@ -99,7 +92,6 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'resourceTitle' => 'Create wireframes for new landing page',
 						'projectTitle' => 'Scrum project',
 						'count' => 5,
-						'link' => 'https://openproject/notifications/details/17/activity',
 						'reasons' => [0 => 'assigned', 3 => 'mentioned'],
 						'actors' => [0 => 'Admin de DEV user', 2 => 'Artur Neumann']
 					]
@@ -111,7 +103,6 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'resourceTitle' => 'Contact form',
 						'projectTitle' => 'Scrum project',
 						'count' => 1,
-						'link' => 'https://openproject/notifications/details/18/activity',
 						'reasons' => ['mentioned'],
 						'actors' => ['Artur Neumann']
 					]
@@ -127,10 +118,6 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 			->expects($this->exactly(3))
 			->method('notify');
 
-		$notificationManagerMock
-			->expects($this->once())
-			->method('markProcessed');
-
 		$service = new OpenProjectAPIService(
 			'integration_openproject',
 			\OC::$server->get(IUserManager::class),
@@ -143,8 +130,8 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 			$this->createMock(\OCP\Files\IRootFolder::class),
 			$this->createMock(\OCP\IURLGenerator::class),
 			$this->createMock(\OCP\ICacheFactory::class),
+			$this->createMock(\OCA\Notifications\Handler::class),
 		);
-
 		$service->checkNotifications();
 	}
 }
