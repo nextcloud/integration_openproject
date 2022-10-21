@@ -403,7 +403,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 							'{"linkable_to_storage_url":'.
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 							']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
+						'sortBy' => '[["updatedAt","desc"]]',
 					]
 			)
 			->willReturn($response);
@@ -426,7 +426,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 							'{"linkable_to_storage_url":'.
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 							']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
+						'sortBy' => '[["updatedAt","desc"]]',
 					]
 				],
 			)
@@ -453,7 +453,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
 							'}'.
 						']',
-						'sortBy' => '[["status","asc"],["updatedAt","desc"]]',
+						'sortBy' => '[["updatedAt","desc"]]',
 					]
 			)
 			->willReturn(
