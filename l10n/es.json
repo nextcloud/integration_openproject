@@ -40,6 +40,7 @@
     "Reset OpenProject integration" : "Reestablecer la integración con OpenProject",
     "Yes, reset" : "Si, reiniciar",
     "Please introduce a valid OpenProject host name" : "Por favor, introduzca un nombre de host de OpenProject válido",
+    "URL is invalid" : "La URL no es válida.",
     "Documentation" : "Documentación",
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
     "Failed to save OpenProject admin options" : "Fallo al guardar las opciones de administración de OpenProject",
