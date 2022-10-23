@@ -50,6 +50,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentace",
     "Accessing OpenProject servers with local addresses is not allowed." : "Přistupování k serverům s lokální adresou není povoleno.",
     "To be able to use an OpenProject server with a local address, " : "Aby bylo možné použít OpenProject server s lokální adresou,",
+    "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Daná URL adresa přesměrovává na „{location}“. Prosím nepoužívejte URL adresy, které vedou na přesměrování.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Nedaří se připojit k dané URL – podívejte se do záznamů událostí (log) v Nextcloud",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
