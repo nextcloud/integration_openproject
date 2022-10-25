@@ -82,7 +82,8 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'projectTitle' => 'Dev-large',
 						'count' => 2,
 						'reasons' => ['assigned'],
-						'actors' => ['Admin de DEV user']
+						'actors' => ['Admin de DEV user'],
+						'updatedAt' => '2022-08-17T10:28:12Z'
 					]
 				],
 				[
@@ -93,7 +94,8 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'projectTitle' => 'Scrum project',
 						'count' => 5,
 						'reasons' => [0 => 'assigned', 3 => 'mentioned'],
-						'actors' => [0 => 'Admin de DEV user', 2 => 'Artur Neumann']
+						'actors' => [0 => 'Admin de DEV user', 2 => 'Artur Neumann'],
+						'updatedAt' => '2022-08-17T10:27:41Z'
 					]
 				],
 				[
@@ -104,7 +106,8 @@ class OpenProjectAPIServiceCheckNotificationsTest extends TestCase {
 						'projectTitle' => 'Scrum project',
 						'count' => 1,
 						'reasons' => ['mentioned'],
-						'actors' => ['Artur Neumann']
+						'actors' => ['Artur Neumann'],
+						'updatedAt' => '2022-08-09T08:00:08Z'
 					]
 				]
 			);
