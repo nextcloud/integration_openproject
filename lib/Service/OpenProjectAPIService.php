@@ -165,9 +165,17 @@ class OpenProjectAPIService {
 							'resourceTitle' => $n['_links']['resource']['title'],
 							'projectTitle' => $n['_links']['project']['title'],
 							'count' => 1,
+							'updatedAt' => $n['updatedAt']
 						];
 					} else {
+						$storedUpdatedAt = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
+						if (\Safe\strtotime($n['updatedAt']) > $storedUpdatedAt) {
+							// currently the code never comes here because the notifications are ordered
+							// by 'updatedAt' but as backup I would keep it
+							$aggregatedNotifications[$wpId]['updatedAt'] = $n['updatedAt'];
+						}
 						$aggregatedNotifications[$wpId]['count']++;
+
 					}
 					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
 					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
@@ -182,7 +190,26 @@ class OpenProjectAPIService {
 					'refresh-notifications-in-progress',
 					'true'
 				);
-				$manager->markProcessed($notificationsFilter);
+				$currentNotifications = $this->handler->get($notificationsFilter);
+				foreach ($currentNotifications as $notificationId => $currentNotification) {
+					$parametersCurrentNotifications = $currentNotification->getSubjectParameters();
+					$wpId = $parametersCurrentNotifications['wpId'];
+					if (isset($aggregatedNotifications[$wpId])) {
+						$currentNotificationUpdateTime = \Safe\strtotime($parametersCurrentNotifications['updatedAt']);
+						$newNotificationUpdateTime = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
+
+						if ($newNotificationUpdateTime <= $currentNotificationUpdateTime) {
+							// nothing changed with any notification associated with that WP
+							// so get rid of it
+							unset($aggregatedNotifications[$wpId]);
+						} else {
+							$manager->markProcessed($currentNotification);
+						}
+					} else { // there are no notifications in OP associated with that WP
+						$manager->markProcessed($currentNotification);
+					}
+
+				}
 
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
