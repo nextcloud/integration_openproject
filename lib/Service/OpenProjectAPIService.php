@@ -176,14 +176,13 @@ class OpenProjectAPIService {
 				$notificationsFilter = $manager->createNotification();
 				$notificationsFilter->setApp(Application::APP_ID)
 					->setUser($userId);
-				$notifications = $this->handler->get($notificationsFilter);
-				$notificationsToDelete = [];
-				foreach ($notifications as $notificationId => $n) {
-					$notificationsToDelete[] = $notificationId;
-				}
-				if (sizeof($notificationsToDelete) > 0) {
-					$this->handler->deleteIds($notificationsToDelete);
-				}
+				$this->config->setUserValue(
+					$userId,
+					Application::APP_ID,
+					'refresh-notifications-in-progress',
+					'true'
+				);
+				$manager->markProcessed($notificationsFilter);
 
 				foreach ($aggregatedNotifications as $n) {
 					$n['reasons'] = array_unique($n['reasons']);
@@ -191,6 +190,12 @@ class OpenProjectAPIService {
 					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
 					$this->sendNCNotification($userId, 'op_notification', $n);
 				}
+				$this->config->setUserValue(
+					$userId,
+					Application::APP_ID,
+					'refresh-notifications-in-progress',
+					'false'
+				);
 			}
 		}
 	}

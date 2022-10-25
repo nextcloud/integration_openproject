@@ -155,10 +155,18 @@ class Notifier implements INotifier, IDismissableNotifier {
 		if ($notification->getApp() !== Application::APP_ID) {
 			throw new \InvalidArgumentException('Unhandled app');
 		}
-		$parameters = $notification->getSubjectParameters();
-		$this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
-			$parameters['wpId'],
-			$notification->getUser()
+		$refreshNotificationsInProgress = $this->config->getUserValue(
+			$notification->getUser(),
+			Application::APP_ID,
+			'refresh-notifications-in-progress',
+			'false'
 		);
+		if ($refreshNotificationsInProgress === 'false') {
+			$parameters = $notification->getSubjectParameters();
+			$this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
+				$parameters['wpId'],
+				$notification->getUser()
+			);
+		}
 	}
 }
