@@ -175,7 +175,6 @@ class OpenProjectAPIService {
 							$aggregatedNotifications[$wpId]['updatedAt'] = $n['updatedAt'];
 						}
 						$aggregatedNotifications[$wpId]['count']++;
-
 					}
 					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
 					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
@@ -208,7 +207,6 @@ class OpenProjectAPIService {
 					} else { // there are no notifications in OP associated with that WP
 						$manager->markProcessed($currentNotification);
 					}
-
 				}
 
 				foreach ($aggregatedNotifications as $n) {
