@@ -290,7 +290,10 @@ class OpenProjectAPIService {
 			return $result;
 		} elseif (
 			!isset($result['_embedded']['elements']) ||
-			!isset($result['_embedded']['elements'][0]['_links'])
+			(   // if there is an element, it also has to contain '_links'
+				isset($result['_embedded']['elements'][0]) &&
+				!isset($result['_embedded']['elements'][0]['_links'])
+			)
 		) {
 			return ['error' => 'Malformed response'];
 		}
