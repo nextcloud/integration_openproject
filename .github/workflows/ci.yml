@@ -25,16 +25,16 @@ jobs:
       openproject:
         image: openproject/community:12
         ports:
-          - 80:80
+          - 8081:80
         env:
           OPENPROJECT_SECRET_KEY_BASE: secret
-          OPENPROJECT_HOST__NAME: localhost:8080
+          OPENPROJECT_HOST__NAME: localhost:8081
           OPENPROJECT_HTTPS: false
           OPENPROJECT_PASSWORD__MIN__LENGTH: 0
           OPENPROJECT_ONBOARDING__ENABLED: false
           OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
           OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
-        
+
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -44,6 +44,9 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: try OpenProject
+        run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
 
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
