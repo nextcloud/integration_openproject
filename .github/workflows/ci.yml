@@ -95,16 +95,16 @@ jobs:
       - name: Install NPM Dependencies
         run: npm install
 
-      - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
-
-      - name: PHP & Vue Unit Tests
-        run: |
-          make phpunit
-          make jsunit
+#      - name: JS Lint
+#        run: npm run lint
+#
+#      - name: Style Lint
+#        run: npm run stylelint
+#
+#      - name: PHP & Vue Unit Tests
+#        run: |
+#          make phpunit
+#          make jsunit
 
       - name: API Tests
         env:
@@ -118,7 +118,7 @@ jobs:
           ./occ a:e integration_openproject
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
-          make api-test
+#          make api-test
 
       - name: wait on OpenProject
         uses: iFaxity/wait-on-action@v1
