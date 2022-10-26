@@ -45,9 +45,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: try OpenProject
-        run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
-
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
         with:
@@ -122,6 +119,9 @@ jobs:
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
           make api-test
+
+      - name: try OpenProject
+        run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
