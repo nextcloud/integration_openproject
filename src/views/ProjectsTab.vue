@@ -99,6 +99,7 @@ export default {
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 		color: null,
+		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 	}),
 	computed: {
 		isLoading() {
@@ -167,19 +168,9 @@ export default {
 			})
 		},
 		async routeToTheWorkPackage(workpackageId, projectId) {
-			let response
-			let openprojectUrl
-			try {
-				response = await axios.get(generateUrl('/apps/integration_openproject/url'))
-			} catch (e) {
-				response = e.response
-			}
-			this.checkForErrorCode(response.status)
-			if (response.status === 200) {
-				openprojectUrl = response.data.replace(/\/+$/, '')
-				const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
-				window.open(workpackageUrl)
-			}
+			const openprojectUrl = this.openprojectUrl.replace(/\/+$/, '')
+			const workpackageUrl = openprojectUrl + '/projects/' + projectId + '/work_packages/' + workpackageId
+			window.open(workpackageUrl)
 		},
 		unlink(workpackageId, fileId) {
 			OC.dialogs.confirmDestructive(

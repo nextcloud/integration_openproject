@@ -103,5 +103,9 @@ class LoadSidebarScript implements IEventListener {
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-error-message', $this->oauthConnectionErrorMessage
 		);
+		$this->initialStateService->provideInitialState(
+			'openproject-url',
+			$this->config->getAppValue(Application::APP_ID, 'oauth_instance_url')
+		);
 	}
 }
