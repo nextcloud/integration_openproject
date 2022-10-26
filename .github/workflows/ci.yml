@@ -120,6 +120,12 @@ jobs:
           cd apps/integration_openproject
           make api-test
 
+      - name: wait on OpenProject
+        uses: iFaxity/wait-on-action@v1
+        with:
+          resource: http://localhost:8081/api/v3/
+          timeout: 10000
+
       - name: try OpenProject
         run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
 
