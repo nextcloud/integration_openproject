@@ -124,7 +124,7 @@ jobs:
         uses: iFaxity/wait-on-action@v1
         with:
           resource: http://localhost:8081/api/v3/
-          timeout: 10000
+          timeout: 240000
 
       - name: try OpenProject
         run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
