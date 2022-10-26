@@ -123,7 +123,7 @@ jobs:
       - name: wait on OpenProject
         uses: iFaxity/wait-on-action@v1
         with:
-          resource: http://localhost:8081/api/v3/
+          resource: http-get://localhost:8081/api/v3/
           timeout: 240000
 
       - name: try OpenProject
