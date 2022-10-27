@@ -85,6 +85,8 @@
     "Mark as read" : "Marcar como lido",
     "No OpenProject notifications!" : "Nenhuma notificação do OpenProject!",
     "Failed to get OpenProject notifications" : "Falha ao receber notificações do OpenProject",
+    "Notifications associated with Work package marked as read" : "Notificações associadas ao pacote de trabalho marcadas como lidas",
+    "Failed to mark notifications as read" : "Falha ao marcar as notificações como lidas",
     "Existing relations:" : "Relações existentes:",
     "Unlink Work Package" : "Desvincular  Pacote de Trabalho",
     "Are you sure you want to unlink the work package?" : "Tem certeza de que deseja desvincular o pacote de trabalho?",
