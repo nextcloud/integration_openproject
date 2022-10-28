@@ -48,6 +48,7 @@
     "Documentation" : "Documentação",
     "Accessing OpenProject servers with local addresses is not allowed." : "Acesso a servidores OpenProject com endereços locais não é permitido.",
     "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,",
+    "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "O URL fornecido redireciona para '{location}'. Por favor, não use um URL que leve a um redirecionamento.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Não foi possível conectar na URL, verifique os logs do Nextcloud",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
     "Failed to save OpenProject admin options" : "Falha ao salvar as opções de administração do OpenProject",
