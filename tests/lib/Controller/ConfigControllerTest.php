@@ -2,6 +2,8 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Authentication\Token\IProvider as IAuthTokenProvider;
+use OC\Authentication\Token\IToken;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
@@ -129,7 +131,7 @@ class ConfigControllerTest extends TestCase {
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
-			'testUser'
+			$this->createMock(IAuthTokenProvider::class), 'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
@@ -193,6 +195,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -226,6 +229,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
@@ -292,6 +296,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -360,6 +365,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -433,6 +439,7 @@ class ConfigControllerTest extends TestCase {
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -513,6 +520,7 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(IAuthTokenProvider::class),
 			'test101'
 		);
 
@@ -735,12 +743,69 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
+			$this->createMock(IAuthTokenProvider::class),
 			'test101'
 		);
 
 		$configController->setAdminConfig($credsToUpdate);
 	}
+	/**
+	 * @return void
+	 */
+	public function testSetAdminConfigFindAndDestroyCorrectToken() {
+		$userManager = \OC::$server->getUserManager();
+		$count = 0;
+		$function = function (IUser $user) use (&$count) {
+			$count++;
+			return null;
+		};
+		$userManager->callForAllUsers($function);
+		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$this->user1 = $userManager->createUser('test101', 'test101');
+		$tokenMock = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock->method('getName')->willReturn('Firefox session');
+		$tokenMock->method('getId')->willReturn(1);
+		$tokenMocks[] = $tokenMock;
+		$tokenMock = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock->method('getName')->willReturn('OpenProject client');
+		$tokenMock->method('getId')->willReturn(2);
+		$tokenMocks[] = $tokenMock;
+		$tokenMock = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock->method('getName')->willReturn('mobile client');
+		$tokenMock->method('getId')->willReturn(3);
+		$tokenMocks[] = $tokenMock;
 
+		$tokenProviderMock = $this->getMockBuilder(IAuthTokenProvider::class)->getMock();
+		$tokenProviderMock->method('getTokenByUser')->willReturn($tokenMocks);
+
+		// expect one call per user and make sure the correct tokeId is selected
+		$tokenProviderMock
+			->expects($this->exactly(2))
+			->method('invalidateTokenById')
+			->withConsecutive(
+				['admin', 2],
+				['test101', 2],
+			);
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$this->createMock(IConfig::class),
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$tokenProviderMock,
+			'test101'
+		);
+
+		$configController->setAdminConfig([
+			'client_id' => '',
+			'client_secret' => '',
+			'oauth_instance_url' => '',
+		]);
+	}
 	/**
 	 * @return void
 	 */
@@ -762,6 +827,7 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
+			$this->createMock(IAuthTokenProvider::class),
 			'test101'
 		);
 

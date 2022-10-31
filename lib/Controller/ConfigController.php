@@ -11,6 +11,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -64,6 +65,9 @@ class ConfigController extends Controller {
 	 */
 	private $oauthService;
 
+	/** @var IAuthTokenProvider */
+	private $tokenProvider;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
@@ -73,6 +77,7 @@ class ConfigController extends Controller {
 								OpenProjectAPIService $openprojectAPIService,
 								LoggerInterface $logger,
 								OauthService $oauthService,
+								IAuthTokenProvider $tokenProvider,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -83,6 +88,7 @@ class ConfigController extends Controller {
 		$this->logger = $logger;
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
+		$this->tokenProvider = $tokenProvider;
 	}
 
 	/**
@@ -341,6 +347,21 @@ class ConfigController extends Controller {
 	}
 
 	private function deleteOauthClient(): void {
+		// this code to invalidate all tokens given out by the oauth client
+		// is just a workaround till https://github.com/nextcloud/server/issues/35068
+		// is fixed in Nextcloud core
+		$this->userManager->callForAllUsers(function (IUser $user) {
+			$tokens = $this->tokenProvider->getTokenByUser($user->getUID());
+
+			foreach ($tokens as $token) {
+				if ($token->getName() === 'OpenProject client') {
+					$this->tokenProvider->invalidateTokenById(
+						$user->getUID(), $token->getId()
+					);
+				}
+			}
+		});
+
 		$oauthClientInternalId = $this->config->getAppValue(
 			Application::APP_ID, 'nc_oauth_client_id', ''
 		);
