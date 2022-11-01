@@ -207,6 +207,7 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
 	 * @param int $workpackageId
 	 * @return DataResponse
 	 */
