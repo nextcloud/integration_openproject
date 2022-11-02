@@ -191,9 +191,8 @@ export default {
 <style lang="scss">
 #searchBar {
 	padding: 10px;
-	position: -webkit-sticky; /* Safari */
 	position: sticky;
-	background-color: white;
+	position: -webkit-sticky; /* Safari */
 	z-index: 1;
 	top: 0;
 	.searchInput {
@@ -202,7 +201,6 @@ export default {
 	.stateMsg {
 		padding: 30px;
 		text-align: center;
-		color: #6d6d6d;
 	}
 	.multiselect {
 		.multiselect__content-wrapper {
@@ -216,17 +214,4 @@ export default {
 		}
 	}
 }
-
-body.theme--dark, body[data-theme-dark] {
-	#searchBar {
-		background-color: #171717;
-	}
-}
-
-body[data-theme-dark-highcontrast] {
-	#searchBar {
-		background-color: black;
-	}
-}
-
 </style>
