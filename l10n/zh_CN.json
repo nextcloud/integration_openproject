@@ -11,6 +11,7 @@
     "Documentation" : "文档",
     "Connected as {user}" : "以 {user} 身份连接",
     "Incorrect access token" : "访问令牌不正确",
+    "Invalid token" : "令牌无效",
     "Copied!" : "已复制！",
     "Details" : "详情",
     "Start typing to search" : "开始输入搜索内容",
