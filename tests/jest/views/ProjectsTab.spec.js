@@ -471,16 +471,12 @@ describe('ProjectsTab.vue', () => {
 	})
 	describe('when the work package is clicked', () => {
 		it('opens work package in open project', async () => {
-			axios.get
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: 'http://openproject',
-				}))
 			window.open = jest.fn()
 			wrapper = mountWrapper()
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
 				fileInfo: { id: 1234 },
+				openprojectUrl: 'http://openproject',
 			})
 			await localVue.nextTick()
 			await wrapper.find(linkedWorkpackageSelector).trigger('click')
