@@ -36,6 +36,7 @@ jobs:
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
+          coverage: xdebug
 
       - name: Get composer cache directory
         id: composer-cache
