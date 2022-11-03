@@ -84,7 +84,7 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return $this->l10n->t('OpenProject notifications');
+		return $this->l10n->t('OpenProject');
 	}
 
 	/**
@@ -98,7 +98,15 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		return 'icon-openproject';
+		$iconClass = 'icon-openproject';
+		$currNcVersion = $this->config->getSystemValue('version', '0.0.0.0');
+
+		switch ($currNcVersion) {
+			case (version_compare($currNcVersion, '25', "<")):
+				return $iconClass . ' nc-before-v24';
+			default:
+				return $iconClass;
+		}
 	}
 
 	/**
