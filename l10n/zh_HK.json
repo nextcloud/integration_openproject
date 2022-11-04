@@ -85,6 +85,8 @@
     "Mark as read" : "標為已讀",
     "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
+    "Notifications associated with Work package marked as read" : "與標記為已讀的 Work 工作包關聯的通知",
+    "Failed to mark notifications as read" : "無法將通知標記為已讀",
     "Existing relations:" : "現有關係：",
     "Unlink Work Package" : "取消 WorkPackage 連結",
     "Are you sure you want to unlink the work package?" : "確定要取消連結工作包嗎？",
