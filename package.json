@@ -16,7 +16,7 @@
 		"stylelint:fix": "stylelint css src --fix",
 		"test:unit": "jest --silent",
 		"test:unit:watch": "jest --watch --no-coverage",
-		"test:e2e": "cucumber-js --require cucumber.conf.js --require tests/acceptance/stepDefinitions/**/*.js --format @cucumber/pretty-formatter"
+		"test:e2e": "cucumber-js --require cucumber.conf.js --require tests/e2e/stepDefinitions/**/*.js --format @cucumber/pretty-formatter"
 	},
 	"repository": {
 		"type": "git",
