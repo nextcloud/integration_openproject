@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Błąd podczas zamiany OAuth",
     "Direct download error" : "Błąd bezpośredniego pobierania",
     "This direct download link is invalid or has expired" : "Bezpośredni link do pobrania jest nieprawidłowy lub wygasł",
-    "OpenProject notifications" : "Powiadomienia OpenProject",
     "OpenProject activity" : "Aktywność OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Masz %s nowe powiadomienie w {instance}","Masz %s nowe powiadomienia w {instance}","Masz %s nowych powiadomień w {instance}","Masz %s nowych powiadomień w {instance}"],
     "Bad HTTP method" : "Zła metoda HTTP",
@@ -87,6 +86,7 @@ OC.L10N.register(
     "Failed to unlink work package" : "Nie udało się odłączyć pakietu roboczego",
     "Successfully connected to OpenProject!" : "Pomyślnie połączono z OpenProject!",
     "OAuth access token could not be obtained:" : "Nie można uzyskać tokena dostępu OAuth:",
+    "OpenProject notifications" : "Powiadomienia OpenProject",
     "Connected accounts" : "Połączone konta",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject jest nieprawidłowy, podaj adres URL w formie \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject"

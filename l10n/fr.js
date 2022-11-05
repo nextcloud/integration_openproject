@@ -6,7 +6,6 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Erreur lors de l'obtention du jeton d'accès OAuth",
     "Error getting OAuth refresh token" : "Erreur à l'obtention du jeton de rafraîchissement OAuth",
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
-    "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Vous avez %s nouvelle notification dans {instance}","Vous avez %s nouvelles notifications dans {instance}","Vous avez %s nouvelles notifications dans {instance}"],
     "Bad HTTP method" : "Mauvaise méthode HTTP",
@@ -67,6 +66,7 @@ OC.L10N.register(
     "Failed to unlink work package" : "Impossible de supprimer le lien vers le module de travail",
     "Successfully connected to OpenProject!" : "Connexion à OpenProject réussie !",
     "OAuth access token could not be obtained:" : "Le jeton d'accès OAuth n'a pas pu être obtenu :",
+    "OpenProject notifications" : "Notifications OpenProject",
     "Connected accounts" : "Comptes connectés"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

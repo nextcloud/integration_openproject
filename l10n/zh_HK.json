@@ -6,7 +6,6 @@
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "Direct download error" : "直接下載錯誤",
     "This direct download link is invalid or has expired" : "此直接下載連結無效或已過期",
-    "OpenProject notifications" : "OpenProject 通告",
     "OpenProject activity" : "OpenProject 活動紀錄",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],
     "Bad HTTP method" : "不正確的 HTTP 方法",
@@ -48,6 +47,7 @@
     "Documentation" : "說明書",
     "Accessing OpenProject servers with local addresses is not allowed." : "不允許使用近端地址訪問 OpenProject 伺服器。",
     "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，",
+    "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "提供的 URL 重定向到“{location}”。 請不要使用導致重定向的 URL。",
     "Could not connect to the given URL, please check the Nextcloud logs" : "無法連接到給定的 URL，請檢查 Nextcloud 記錄",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
@@ -96,6 +96,7 @@
     "Failed to unlink work package" : "取消工作包連結失敗",
     "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
     "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖：",
+    "OpenProject notifications" : "OpenProject 通告",
     "Connected accounts" : "已連線的賬號",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject"

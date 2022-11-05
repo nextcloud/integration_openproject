@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
     "Direct download error" : "Грешка при директно сваляне",
     "This direct download link is invalid or has expired" : "Директната връзка за изтегляне е невалидна или е изтекла",
-    "OpenProject notifications" : "Известия на OpenProject",
     "OpenProject activity" : "Активност на OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Имате %s нови известия в {instance}","Имате %s нови известия в {instance}"],
     "Bad HTTP method" : "Лош HTTP метод",
@@ -99,6 +98,7 @@ OC.L10N.register(
     "Failed to unlink work package" : "Неуспешно прекратяване на връзката на работният пакет",
     "Successfully connected to OpenProject!" : "Успешно свързване с OpenProject!",
     "OAuth access token could not be obtained:" : "Токенът за достъп OAuth не може да бъде получен:",
+    "OpenProject notifications" : "Известия на OpenProject",
     "Connected accounts" : "Свързани профили",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса"
