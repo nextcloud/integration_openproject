@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errorea OAuth trukeak egitean",
     "Direct download error" : "Deskarga zuzen errorea",
     "This direct download link is invalid or has expired" : "Deskarga zuzen esteka hau baliogabea da edo iraungita dago",
-    "OpenProject notifications" : "OpenProject jakinarazpenak",
     "OpenProject activity" : "OpenProject aktibitatea",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
     "Bad HTTP method" : "HTTP metodo okerra",
@@ -90,6 +89,7 @@ OC.L10N.register(
     "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
+    "OpenProject notifications" : "OpenProject jakinarazpenak",
     "Connected accounts" : "Konektatutako kontuak",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
     "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan"

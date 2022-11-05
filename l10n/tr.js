@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
     "Direct download error" : "Doğrudan indirme sorunu",
     "This direct download link is invalid or has expired" : "Bu doğrudan indirme bağlantısı geçersiz ya da geçerlilik süresi dolmuş",
-    "OpenProject notifications" : "OpenProject bildirimleri",
     "OpenProject activity" : "OpenProject işlemleri",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} için %s yeni bildiriminiz var","{instance} için %s yeni bildiriminiz var"],
     "Bad HTTP method" : "HTTP yöntemi hatalı",
@@ -99,6 +98,7 @@ OC.L10N.register(
     "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi",
     "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
     "OAuth access token could not be obtained:" : "OAuth erişim kodu eklenemedi:",
+    "OpenProject notifications" : "OpenProject bildirimleri",
     "Connected accounts" : "Bağlı hesaplar",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı"
