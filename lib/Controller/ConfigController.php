@@ -144,6 +144,7 @@ class ConfigController extends Controller {
 	 * @param array<string, string|null> $values
 	 *
 	 * @return DataResponse
+	 * @throws OpenprojectErrorException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
@@ -192,9 +193,18 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		if ((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
-			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) {
-			$this->userManager->callForAllUsers(function (IUser $user) {
+		if (
+			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) || // when the client information has changed
+			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
+			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null) // when the client info is reset
+		) {
+			$this->userManager->callForAllUsers(function (IUser $user) use ($oldOpenProjectOauthUrl, &$oldClientId, &$oldClientSecret) {
+				$this->revokeUserToken(
+					$oldOpenProjectOauthUrl,
+					$user->getUID(),
+					$oldClientId,
+					$oldClientSecret
+				);
 				$this->clearUserInfo($user->getUID());
 			});
 		}
@@ -374,5 +384,34 @@ class ConfigController extends Controller {
 			'user_id' => $this->userId ?? '',
 			'authorization_header' => $_SERVER['HTTP_AUTHORIZATION'],
 		]);
+	}
+
+	/**
+	 * Revokes the personal OAuth access token for the provided user using the current client information
+	 * Token should be the one provided by the OP OAuth client and stored in the NC database
+	 *
+	 * @param string $userId - user whose OAuth access token is to be revoked
+	 * @param string $opOAuthClientID - OAuth client from where token is to be revoked
+	 * @param string $opOAuthClientSecret - OAuth client secret from where token is to be revoked
+	 *
+	 * @return void
+	 * @throws OpenprojectErrorException
+	 */
+	private function revokeUserToken(
+		string $opUrl,
+		string $userId,
+		string $opOAuthClientID,
+		string $opOAuthClientSecret
+	): void {
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
+
+		if ($opUrl && $opOAuthClientID && $opOAuthClientSecret && $accessToken) {
+			$this->openprojectAPIService->revokeUserOAuthToken(
+				$opUrl,
+				$accessToken,
+				$opOAuthClientID,
+				$opOAuthClientSecret
+			);
+		}
 	}
 }
