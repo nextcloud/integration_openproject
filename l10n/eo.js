@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Restarigi",
     "Documentation" : "Dokumentaro",
     "Copied!" : "Kopiita!",
-    "Details" : "Detaloj"
+    "Details" : "Detaloj",
+    "Start typing to search" : "Ektajpu por serĉi"
 },
 "nplurals=2; plural=(n != 1);");
