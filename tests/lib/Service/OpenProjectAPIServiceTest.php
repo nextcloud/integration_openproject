@@ -204,21 +204,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
 
 		$client = new GuzzleClient();
+		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
+
+		$clientConfigMock
+			->method('getSystemValueBool')
+			->with('allow_local_remote_servers', false)
+			->willReturn(true);
 
 		if (version_compare(OC_Util::getVersionString(), '26') >= 0) {
 			//changed from nextcloud 26
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
-				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$clientConfigMock,                                             // @phpstan-ignore-line
 				$certificateManager,                                           // @phpstan-ignore-line
 				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(IRemoteHostValidator::class)  // @phpstan-ignore-line
+				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
 			);
 		} elseif (version_compare(OC_Util::getVersionString(), '24') >= 0) {
 			//changed from nextcloud 24
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
-				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$clientConfigMock,                                             // @phpstan-ignore-line
 				$certificateManager,                                           // @phpstan-ignore-line
 				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
@@ -226,7 +232,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		} else {
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
-				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$clientConfigMock,                                             // @phpstan-ignore-line
 				$this->createMock(ILogger::class),                             // @phpstan-ignore-line
 				$certificateManager,                                           // @phpstan-ignore-line
 				$client,                                                       // @phpstan-ignore-line
