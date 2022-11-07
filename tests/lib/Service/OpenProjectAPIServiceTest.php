@@ -32,6 +32,7 @@ use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Notification\IManager;
+use OCP\Security\IRemoteHostValidator;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
@@ -204,8 +205,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$client = new GuzzleClient();
 
-		//changed from nextcloud 24
-		if (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+		if (version_compare(OC_Util::getVersionString(), '26') >= 0) {
+			//changed from nextcloud 26
+			// @phpstan-ignore-next-line
+			$ocClient = new Client(
+				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
+				$certificateManager,                                           // @phpstan-ignore-line
+				$client,                                                       // @phpstan-ignore-line
+				$this->createMock(IRemoteHostValidator::class)  // @phpstan-ignore-line
+			);
+		} elseif (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+			//changed from nextcloud 24
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
 				$this->createMock(IConfig::class),                             // @phpstan-ignore-line
