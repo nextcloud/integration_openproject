@@ -8,10 +8,11 @@ class NextcloudLoginPage {
 	}
 
 	async userLogsInNextcloud(username, password) {
-		await pageNC.goto(config.baseUrlNC);
+		await pageNC.goto(config.baseUrlNC)
 		await pageNC.fill(this.usernameSelector, username)
 		await pageNC.fill(this.passwordSelector,password)
 		await pageNC.click(this.submitButtonSelector)
 	}
 }
 module.exports = { NextcloudLoginPage };
+ // export default NextcloudLoginPage
