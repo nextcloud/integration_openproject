@@ -156,7 +156,7 @@ class OpenProjectAPIService {
 		if ($accessToken && $notificationEnabled) {
 			$notifications = $this->getNotifications($userId);
 			$aggregatedNotifications = [];
-			if (!isset($notifications['error']) && count($notifications) > 0) {
+			if (!isset($notifications['error'])) {
 				foreach ($notifications as $n) {
 					$wpId = preg_replace('/.*\//', '', $n['_links']['resource']['href']);
 					if (!array_key_exists($wpId, $aggregatedNotifications)) {
