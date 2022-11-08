@@ -1,6 +1,7 @@
+const {config} = require("../config")
+
 class OpenprojectLoginPage {
 	constructor() {
-		this.opUrl = 'http://localhost:3000'
 		this.openProjectTitle = '//a[@title="Sign in"]'
 		this.usernameSelector = '#username-pulldown'
 		this.passwordSelector = '#password-pulldown'
@@ -8,7 +9,7 @@ class OpenprojectLoginPage {
 	}
 
 	async userLogsInOpenproject(username, password){
-		await pageOP.goto(this.opUrl)
+		await pageOP.goto(config.baseUrlOP)
 		await pageOP.click(this.openProjectTitle)
 		await pageOP.fill(this.usernameSelector, username)
 		await pageOP.fill(this.passwordSelector, password)
@@ -16,4 +17,4 @@ class OpenprojectLoginPage {
 	}
 }
 
-module.exports = { OpenprojectLoginPage };
+module.exports = { OpenprojectLoginPage }

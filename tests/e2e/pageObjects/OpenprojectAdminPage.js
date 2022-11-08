@@ -1,6 +1,5 @@
-//import {NextcloudAdminPage} from "./NextcloudAdminPage";
-
 class OpenprojectAdminPage {
+
 	constructor() {
 		this.openProjectAvatarSelector = '//div[@title="OpenProject Admin"]'
 		this.administratorSettingMenuItemSelector = '//a[contains(@class,"administration-menu-item ")]'
@@ -12,15 +11,13 @@ class OpenprojectAdminPage {
 		this.copyClientIdButtonSelector = '//button[contains(@class,"client-id-copy-button")]'
 		this.copyClientSecretButtonSelector = '//button[contains(@class,"secret-copy-button")]'
 		this.doneContinueSetupButtonSelector = '//a[text() = "Done. Continue setup"]'
-		this.oauthClientIdInputFieldSelectorOP ='#oauth_client_client_id'
-		this.oauthClientSecretInputFieldSelectorOP ='#oauth_client_client_secret'
+		this.oauthClientIdInputFieldSelectorOP = '#oauth_client_client_id'
+		this.oauthClientSecretInputFieldSelectorOP = '#oauth_client_client_secret'
 		this.saveAndCompleteSetupButtonSelector = '//button[text() = "Save and complete setup"]'
-		this.openProjectClientId = ''
-		this.openProjectClientSecret = ''
-		//this.ncAdminPage = new NextcloudAdminPage()
+		this.deleteFileStorageSelector = '.icon-delete'
 	}
 
-	async adminAddsFileStorageHost(name, host){
+	async adminAddsFileStorageHost(name, host) {
 		await pageOP.click(this.openProjectAvatarSelector)
 		await pageOP.click(this.administratorSettingMenuItemSelector)
 		await pageOP.click(this.fileStoragesSelector)
@@ -29,19 +26,30 @@ class OpenprojectAdminPage {
 		await pageOP.fill(this.hostUrlInputFieldSelector, host)
 		await pageOP.click(this.continueSetupButtonSelector)
 	}
-	 async copyOpenProjectOauthCreds(){
+
+	 async copyOpenProjectOauthCreds() {
 		 await pageOP.click(this.copyClientIdButtonSelector)
-		 this.openProjectClientId = await pageOP.evaluate(() => navigator.clipboard.readText())
+		 const openProjectClientId = await pageOP.evaluate(() => navigator.clipboard.readText())
 		 await pageOP.click(this.copyClientSecretButtonSelector)
-		 this.openProjectClientSecret = await pageOP.evaluate(() => navigator.clipboard.readText())
+		 const openProjectClientSecret = await pageOP.evaluate(() => navigator.clipboard.readText())
 		 await pageOP.click(this.doneContinueSetupButtonSelector)
+		 return { client_secret: openProjectClientId, client_id: openProjectClientSecret }
 	 }
 
-	 async pasteNCOauthCreds(){
-		 // await pageOP.fill(this.oauthClientIdInputFieldSelectorOP, this.ncAdminPage.nextcloudClientId)
-		 // await pageOP.fill(this.oauthClientSecretInputFieldSelectorOP, this.ncAdminPage.nextcloudClientSecret)
+	 async pasteNCOauthCreds(ncClientId, ncClientSecret) {
+		 await pageOP.fill(this.oauthClientIdInputFieldSelectorOP, ncClientId)
+		 await pageOP.fill(this.oauthClientSecretInputFieldSelectorOP, ncClientSecret)
 		 await pageOP.click(this.saveAndCompleteSetupButtonSelector)
+	 }
+
+	 async deleteFileStorage() {
+		await pageOP.click(this.deleteFileStorageSelector)
+		 await pageOP.on('dialog', async (dialog) => {
+			 console.log(dialog.message());
+			 await dialog.accept();
+		 });
 	 }
 }
 
 module.exports = { OpenprojectAdminPage };
+
