@@ -98,7 +98,6 @@ class ConfigController extends Controller {
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'last_notification_check');
 	}
 
 	/**

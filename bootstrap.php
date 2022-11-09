@@ -17,6 +17,7 @@ $classLoader->addPsr4("OCA\\OpenProject\\Service\\", __DIR__ . '/lib/Service', t
 $classLoader->addPsr4("OCA\\OpenProject\\Settings\\", __DIR__ . '/lib/Settings', true);
 $classLoader->addPsr4("OCP\\", $serverPath . '/lib/public', true);
 $classLoader->addPsr4("OC\\", $serverPath . '/lib/private', true);
+$classLoader->addPsr4("OCA\\Notifications\\", $serverPath . '/apps/notifications/lib/', true);
 $classLoader->addPsr4("OCA\\Files\\Event\\", $serverPath . '/apps/files/lib/Event', true);
 $classLoader->addPsr4("OCA\\OpenProject\\AppInfo\\", __DIR__ . '/lib/AppInfo', true);
 $classLoader->addPsr4("OCA\\OpenProject\\Controller\\", __DIR__ . '/lib/Controller', true);

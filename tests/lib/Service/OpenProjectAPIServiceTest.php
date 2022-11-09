@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
+use OCA\Notifications\Handler;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
@@ -313,6 +314,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock,
 			$urlGeneratorMock,
 			$this->createMock(ICacheFactory::class),
+			$this->createMock(Handler::class),
 		);
 	}
 
@@ -341,7 +343,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IClientService::class),
 					$this->createMock(IRootFolder::class),
 					$this->createMock(IURLGenerator::class),
-					$cacheFactoryMock
+					$cacheFactoryMock,
+					$this->createMock(Handler::class),
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -508,7 +511,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
-			->setBody(["_embedded" => ["elements" => [['some' => 'data']]]]);
+			->setBody(["_embedded" => ["elements" => [['_links' => 'data']]]]);
 
 		$this->builder
 			->uponReceiving('a GET request to /notifications')
@@ -518,7 +521,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service->getNotifications(
 			'testUser'
 		);
-		$this->assertSame([['some' => 'data']], $result);
+		$this->assertSame([['_links' => 'data']], $result);
 	}
 
 	/**
@@ -1216,6 +1219,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IRootFolder::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ICacheFactory::class),
+			$this->createMock(Handler::class),
 		);
 
 		$response = $service->request('', '', []);

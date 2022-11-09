@@ -12,15 +12,18 @@
 namespace OCA\OpenProject\Notification;
 
 use InvalidArgumentException;
+use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IDismissableNotifier;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCA\OpenProject\AppInfo\Application;
 
-class Notifier implements INotifier {
+class Notifier implements INotifier, IDismissableNotifier {
 
 	/** @var IFactory */
 	protected $factory;
@@ -35,6 +38,15 @@ class Notifier implements INotifier {
 	protected $url;
 
 	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openprojectAPIService;
+
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+	/**
 	 * @param IFactory $factory
 	 * @param IUserManager $userManager
 	 * @param INotificationManager $notificationManager
@@ -43,11 +55,15 @@ class Notifier implements INotifier {
 	public function __construct(IFactory $factory,
 								IUserManager $userManager,
 								INotificationManager $notificationManager,
-								IURLGenerator $urlGenerator) {
+								IURLGenerator $urlGenerator,
+								OpenProjectAPIService $openprojectAPIService,
+								IConfig $config) {
 		$this->factory = $factory;
 		$this->userManager = $userManager;
 		$this->notificationManager = $notificationManager;
 		$this->url = $urlGenerator;
+		$this->openprojectAPIService = $openprojectAPIService;
+		$this->config = $config;
 	}
 
 	/**
@@ -85,23 +101,39 @@ class Notifier implements INotifier {
 		$l = $this->factory->get('integration_openproject', $languageCode);
 
 		switch ($notification->getSubject()) {
-		case 'new_open_tickets':
+		case 'op_notification':
 			$p = $notification->getSubjectParameters();
-			$nbNotifications = (int) ($p['nbNotifications'] ?? 0);
-			$content = $l->t('OpenProject activity');
+			$openprojectUrl = $this->config->getAppValue(
+				Application::APP_ID, 'oauth_instance_url'
+			);
+			$link = OpenProjectAPIService::sanitizeUrl(
+				$openprojectUrl . '/notifications/details/' . $p['wpId'] . '/activity/'
+			);
+			// see https://github.com/nextcloud/server/issues/1706 for docs
 			$richSubjectInstance = [
 				'type' => 'file',
 				'id' => 0,
-				'name' => $p['link'],
+				'name' => $link,
 				'path' => '',
-				'link' => $p['link'],
+				'link' => $link,
 			];
+			$message = $p['projectTitle'] . ' - ';
+			foreach ($p['reasons'] as $reason) {
+				$message .= $reason . ',';
+			}
+			$message = rtrim($message, ',');
+			$message .= ' ' . $l->t('by') . ' ';
 
-			$notification->setParsedSubject($content)
+			foreach ($p['actors'] as $actor) {
+				$message .= $actor . ',';
+			}
+			$message = rtrim($message, ',');
+
+			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
-				->setLink($p['link'] ?? '')
+				->setLink($link)
 				->setRichMessage(
-					$l->n('You have %s new notification in {instance}', 'You have %s new notifications in {instance}', $nbNotifications, [$nbNotifications]),
+					$message,
 					[
 						'instance' => $richSubjectInstance,
 					]
@@ -112,6 +144,29 @@ class Notifier implements INotifier {
 		default:
 			// Unknown subject => Unknown notification => throw
 			throw new InvalidArgumentException();
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function dismissNotification(INotification $notification): void {
+		if ($notification->getApp() !== Application::APP_ID) {
+			throw new \InvalidArgumentException('Unhandled app');
+		}
+		$refreshNotificationsInProgress = $this->config->getUserValue(
+			$notification->getUser(),
+			Application::APP_ID,
+			'refresh-notifications-in-progress',
+			'false'
+		);
+		if ($refreshNotificationsInProgress === 'false') {
+			$parameters = $notification->getSubjectParameters();
+			$this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
+				$parameters['wpId'],
+				$notification->getUser()
+			);
 		}
 	}
 }

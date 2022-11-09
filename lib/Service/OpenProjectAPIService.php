@@ -14,6 +14,7 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use OCA\Notifications\Handler;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -89,6 +90,12 @@ class OpenProjectAPIService {
 	 * @var ICache
 	 */
 	private $cache = null;
+
+	/**
+	 * @var Handler
+	 */
+	private $handler;
+
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -103,7 +110,8 @@ class OpenProjectAPIService {
 								IClientService $clientService,
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory) {
+								ICacheFactory $cacheFactory,
+								Handler $handler = null) {
 		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
@@ -114,7 +122,7 @@ class OpenProjectAPIService {
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
-
+		$this->handler = $handler;
 		$this->cache = $cacheFactory->createDistributed();
 	}
 
@@ -135,6 +143,10 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	private function checkNotificationsForUser(string $userId): void {
+		if ($this->handler === null) {
+			// notifications app seems not to exist
+			return;
+		}
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$notificationEnabled = ($this->config->getUserValue(
 			$userId,
@@ -142,31 +154,73 @@ class OpenProjectAPIService {
 			'notification_enabled',
 			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')) === '1');
 		if ($accessToken && $notificationEnabled) {
-			$lastNotificationCheck = $this->config->getUserValue($userId, Application::APP_ID, 'last_notification_check');
-			$lastNotificationCheck = $lastNotificationCheck === '' ? 0 : (int)$lastNotificationCheck;
-			$newLastNotificationCheck = time();
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 			$notifications = $this->getNotifications($userId);
-			if (!isset($notifications['error']) && count($notifications) > 0) {
+			$aggregatedNotifications = [];
+			if (!isset($notifications['error'])) {
+				foreach ($notifications as $n) {
+					$wpId = preg_replace('/.*\//', '', $n['_links']['resource']['href']);
+					if (!array_key_exists($wpId, $aggregatedNotifications)) {
+						$aggregatedNotifications[$wpId] = [
+							'wpId' => $wpId,
+							'resourceTitle' => $n['_links']['resource']['title'],
+							'projectTitle' => $n['_links']['project']['title'],
+							'count' => 1,
+							'updatedAt' => $n['updatedAt']
+						];
+					} else {
+						$storedUpdatedAt = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
+						if (\Safe\strtotime($n['updatedAt']) > $storedUpdatedAt) {
+							// currently the code never comes here because the notifications are ordered
+							// by 'updatedAt' but as backup I would keep it
+							$aggregatedNotifications[$wpId]['updatedAt'] = $n['updatedAt'];
+						}
+						$aggregatedNotifications[$wpId]['count']++;
+					}
+					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
+					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
+				}
+				$manager = $this->notificationManager;
+				$notificationsFilter = $manager->createNotification();
+				$notificationsFilter->setApp(Application::APP_ID)
+					->setUser($userId);
 				$this->config->setUserValue(
 					$userId,
 					Application::APP_ID,
-					'last_notification_check',
-					"$newLastNotificationCheck"
+					'refresh-notifications-in-progress',
+					'true'
 				);
-				$nbRelevantNotifications = 0;
-				foreach ($notifications as $n) {
-					$createdAt = new DateTime($n['createdAt']);
-					if ($createdAt->getTimestamp() > $lastNotificationCheck) {
-						$nbRelevantNotifications++;
+				$currentNotifications = $this->handler->get($notificationsFilter);
+				foreach ($currentNotifications as $notificationId => $currentNotification) {
+					$parametersCurrentNotifications = $currentNotification->getSubjectParameters();
+					$wpId = $parametersCurrentNotifications['wpId'];
+					if (isset($aggregatedNotifications[$wpId])) {
+						$currentNotificationUpdateTime = \Safe\strtotime($parametersCurrentNotifications['updatedAt']);
+						$newNotificationUpdateTime = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
+
+						if ($newNotificationUpdateTime <= $currentNotificationUpdateTime) {
+							// nothing changed with any notification associated with that WP
+							// so get rid of it
+							unset($aggregatedNotifications[$wpId]);
+						} else {
+							$manager->markProcessed($currentNotification);
+						}
+					} else { // there are no notifications in OP associated with that WP
+						$manager->markProcessed($currentNotification);
 					}
 				}
-				if ($nbRelevantNotifications > 0) {
-					$this->sendNCNotification($userId, 'new_open_tickets', [
-						'nbNotifications' => $nbRelevantNotifications,
-						'link' => self::sanitizeUrl($openprojectUrl . '/notifications')
-					]);
+
+				foreach ($aggregatedNotifications as $n) {
+					$n['reasons'] = array_unique($n['reasons']);
+					$n['actors'] = array_unique($n['actors']);
+					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
+					$this->sendNCNotification($userId, 'op_notification', $n);
 				}
+				$this->config->setUserValue(
+					$userId,
+					Application::APP_ID,
+					'refresh-notifications-in-progress',
+					'false'
+				);
 			}
 		}
 	}
@@ -232,7 +286,13 @@ class OpenProjectAPIService {
 		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {
 			return $result;
-		} elseif (!isset($result['_embedded']['elements'])) {
+		} elseif (
+			!isset($result['_embedded']['elements']) ||
+			(   // if there is an element, it also has to contain '_links'
+				isset($result['_embedded']['elements'][0]) &&
+				!isset($result['_embedded']['elements'][0]['_links'])
+			)
+		) {
 			return ['error' => 'Malformed response'];
 		}
 
