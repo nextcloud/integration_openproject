@@ -1,4 +1,4 @@
-const {Given, When} = require('@cucumber/cucumber')
+const {Given, When, Then} = require('@cucumber/cucumber')
 const { expect } = require("@playwright/test")
 
 const { NextcloudAdminPage } = require("../pageObjects/NextcloudAdminPage");
@@ -49,3 +49,11 @@ When('nextcloud administrator copies the nextcloud oauth credentials',async func
 When('openproject administrator pastes the nextcloud oauth credentials', async function() {
 	await opAdminPageObject.pasteNCOauthCreds(ncClientId,ncClientSecret)
 })
+
+Then('file storage {string} should be listed on the webUI of openproject', async function (name) {
+  await opAdminPageObject.fileStorageShouldBeVisible(name)
+})
+
+Then('the oauth setting from should be completed on the webUI of nextcloud', async function () {
+	await ncAdminPageObject.isDefaultPrefsVisible()
+});

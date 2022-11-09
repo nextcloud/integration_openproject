@@ -1,7 +1,9 @@
+const {expect} = require("@playwright/test");
+
 class OpenprojectAdminPage {
 
 	constructor() {
-		this.openProjectAvatarSelector = '//div[@title="OpenProject Admin"]'
+		this.openProjectAvatarSelector = '//div[@title="Second Admin"]'
 		this.administratorSettingMenuItemSelector = '//a[contains(@class,"administration-menu-item ")]'
 		this.fileStoragesSelector = '//a[@title="File storages"]'
 		this.addNewStoragesSelector = '//a[@class="wp-inline-create--add-link"]'
@@ -14,12 +16,17 @@ class OpenprojectAdminPage {
 		this.oauthClientIdInputFieldSelectorOP = '#oauth_client_client_id'
 		this.oauthClientSecretInputFieldSelectorOP = '#oauth_client_client_secret'
 		this.saveAndCompleteSetupButtonSelector = '//button[text() = "Save and complete setup"]'
-		this.deleteFileStorageSelector = '.icon-delete'
+		this.deleteFileStorageSelector = '//a[contains(@class,"icon-delete") and (@title ="Delete")]'
+		//this.deleteFileStorageSelector = ".icon-delete"
+		this.fileStorageBreadcrumbSelector = '//div[@id="breadcrumb"]//li/a[text()="File storages"]'
+		this.fileStorageNameSelector = '//td[@class="name"]/a'
+		this.skipHintSelector = "//div[contains(@class,'enjoyhint_btn-transparent') and (text() = 'Skip')]"
 	}
 
 	async adminAddsFileStorageHost(name, host) {
 		await pageOP.click(this.openProjectAvatarSelector)
 		await pageOP.click(this.administratorSettingMenuItemSelector)
+		await pageOP.click(this.skipHintSelector)
 		await pageOP.click(this.fileStoragesSelector)
 		await pageOP.click(this.addNewStoragesSelector)
 		await pageOP.fill(this.storageNameInputFieldSelector, name)
@@ -42,8 +49,14 @@ class OpenprojectAdminPage {
 		 await pageOP.click(this.saveAndCompleteSetupButtonSelector)
 	 }
 
+	 async fileStorageShouldBeVisible(name){
+		await pageOP.click(this.fileStorageBreadcrumbSelector)
+	    await expect(pageOP.locator(this.fileStorageNameSelector)).toHaveText(name)
+	 }
+
 	 async deleteFileStorage() {
-		await pageOP.click(this.deleteFileStorageSelector)
+		await expect(pageOP.locator(this.deleteFileStorageSelector)).toBeVisible()
+		await pageOP.locator(this.deleteFileStorageSelector).click()
 		 await pageOP.on('dialog', async (dialog) => {
 			 console.log(dialog.message());
 			 await dialog.accept();

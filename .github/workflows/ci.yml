@@ -21,6 +21,19 @@ jobs:
           - nextcloudVersion: stable24
             phpVersion: 8.1
     runs-on: ubuntu-latest
+    services:
+      openproject:
+        image: openproject/community:12
+        ports:
+          - 8081:80
+        env:
+          OPENPROJECT_SECRET_KEY_BASE: secret
+          OPENPROJECT_HOST__NAME: localhost:8081
+          OPENPROJECT_HTTPS: false
+          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+          OPENPROJECT_ONBOARDING__ENABLED: false
+          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -82,16 +95,16 @@ jobs:
       - name: Install NPM Dependencies
         run: npm install
 
-      - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
-
-      - name: PHP & Vue Unit Tests
-        run: |
-          make phpunit
-          make jsunit
+#      - name: JS Lint
+#        run: npm run lint
+#
+#      - name: Style Lint
+#        run: npm run stylelint
+#
+#      - name: PHP & Vue Unit Tests
+#        run: |
+#          make phpunit
+#          make jsunit
 
       - name: API Tests
         env:
@@ -106,6 +119,17 @@ jobs:
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
           make api-test
+
+      - name: wait on OpenProject
+        uses: iFaxity/wait-on-action@v1
+        with:
+          resource: http-get://localhost:8081/api/v3/
+          timeout: 240000
+      - name: try OpenProject
+        run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
+
+      - name: try Nextcloud
+        run: curl http://localhost:8080/status.php
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}

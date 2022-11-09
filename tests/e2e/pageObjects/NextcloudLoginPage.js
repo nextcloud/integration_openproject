@@ -5,6 +5,7 @@ class NextcloudLoginPage {
 		this.usernameSelector = '#user'
 		this.passwordSelector = '#password'
 		this.submitButtonSelector = '//button[@type="submit"]'
+		this.hintSkipButtonSelector = '//div[contains(@class,"enjoyhint_btn-transparent") and (text() = "Skip")]'
 	}
 
 	async userLogsInNextcloud(username, password) {
@@ -15,4 +16,3 @@ class NextcloudLoginPage {
 	}
 }
 module.exports = { NextcloudLoginPage };
- // export default NextcloudLoginPage

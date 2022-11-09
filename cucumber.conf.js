@@ -4,11 +4,12 @@ const { NextcloudAdminPage } = require("./tests/e2e/pageObjects/NextcloudAdminPa
 const ncAdminPageObject = new NextcloudAdminPage()
 const { OpenprojectAdminPage } = require("./tests/e2e/pageObjects/OpenprojectAdminPage")
 const opAdminPageObject = new OpenprojectAdminPage()
-
+const apiHelper = require('./tests/e2e/helpers/apiHelper')
 
 setDefaultTimeout(60000)
 
 BeforeAll(async function () {
+	await apiHelper.createAdmin()
 	global.browserNC = await chromium.launch({
 		headless: false,
 		slowMo: 1000,

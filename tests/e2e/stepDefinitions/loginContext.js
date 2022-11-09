@@ -11,5 +11,5 @@ Given('nextcloud administrator has logged in using the webUI', async function ()
 });
 
 Given('openproject administrator has logged in openproject using the webUI', async function () {
-	await opLoginPageObject.userLogsInOpenproject('admin','admin')
+	await opLoginPageObject.userLogsInOpenproject('admin2','admin2')
 });

@@ -1,3 +1,5 @@
+const { expect } = require("@playwright/test")
+
 class NextcloudAdminPage {
 
 	constructor() {
@@ -14,6 +16,7 @@ class NextcloudAdminPage {
 		this.submitNCOauthButtonSelector = '[data-test-id="submit-nc-oauth-values-form-btn"]'
 		this.resetAllAppSettingsSelector = '#reset-all-app-settings-btn'
 		this.resetConfirmSelector = '//div[@class="oc-dialog"]//div[contains(@class,"oc-dialog-buttonrow")]//button[text() = "Yes, reset"]'
+		this.defaultPreferenceSelector = '//div[@class="default-prefs"]'
 	}
 
 	async adminNavigatesToAdminOPTab() {
@@ -43,6 +46,10 @@ class NextcloudAdminPage {
 		const nextcloudClientSecret = await pageNC.evaluate(() => navigator.clipboard.readText())
 		await pageNC.click(this.submitNCOauthButtonSelector)
 		return { client_id:nextcloudClientId, client_secret:nextcloudClientSecret }
+	}
+
+    async isDefaultPrefsVisible() {
+		await expect(pageNC.locator(this.defaultPreferenceSelector)).toBeVisible()
 	}
 
 	async resetNCOauthSetUP() {
