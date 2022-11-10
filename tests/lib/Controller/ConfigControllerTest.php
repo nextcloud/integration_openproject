@@ -499,8 +499,8 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
-				'',
-				'',
+				'abc',
+				'def',
 				'123',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
@@ -826,8 +826,8 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testSetAdminConfigForRevokeTokenRequest(array $newConfig): void {
 		$oldAdminConfig = [
-			'client_id' => 'abc',
-			'client_secret' => 'defg',
+			'client_id' => 'some_old_client_id',
+			'client_secret' => 'some_old_client_secret',
 			'oauth_instance_url' => 'http://localhost:3000',
 		];
 		$userTokens = [

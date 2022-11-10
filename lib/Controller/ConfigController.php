@@ -144,7 +144,7 @@ class ConfigController extends Controller {
 	 * @param array<string, string|null> $values
 	 *
 	 * @return DataResponse
-	 * @throws OpenprojectErrorException
+	 * @throws Exception
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
@@ -203,13 +203,23 @@ class ConfigController extends Controller {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
 				$oldOpenProjectOauthUrl, &$oldClientId, &$oldClientSecret
 			) {
-				$this->revokeUserToken(
-					$oldOpenProjectOauthUrl,
-					$user->getUID(),
-					$oldClientId,
-					$oldClientSecret
-				);
-				$this->clearUserInfo($user->getUID());
+				$userUID = $user->getUID();
+				if (!$oldOpenProjectOauthUrl || !$oldClientId || !$oldClientSecret) {
+					throw new Exception('Missing required parameters.'
+						. '\nRequired parameters: '
+						. 'OpenProject Instance URL, OpenProject OAuth Client ID & OpenProject OAuth Client Secret'
+					);
+				}
+				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
+				if ($accessToken) {
+					$this->openprojectAPIService->revokeUserOAuthToken(
+						$oldOpenProjectOauthUrl,
+						$accessToken,
+						$oldClientId,
+						$oldClientSecret
+					);
+				}
+				$this->clearUserInfo($userUID);
 			});
 		}
 
@@ -257,9 +267,9 @@ class ConfigController extends Controller {
 					'could not determine where the OAuth journey ' .
 					'to connect to OpenProject started'
 				);
-				throw new \Exception();
+				throw new Exception();
 			}
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$newUrl = $this->urlGenerator->linkToRoute('files.view.index');
 		}
 
@@ -388,34 +398,5 @@ class ConfigController extends Controller {
 			'user_id' => $this->userId ?? '',
 			'authorization_header' => $_SERVER['HTTP_AUTHORIZATION'],
 		]);
-	}
-
-	/**
-	 * Revokes the personal OAuth access token for the provided user using the current client information
-	 * Token should be the one provided by the OP OAuth client and stored in the NC database
-	 *
-	 * @param string $userId - user whose OAuth access token is to be revoked
-	 * @param string $opOAuthClientID - OAuth client from where token is to be revoked
-	 * @param string $opOAuthClientSecret - OAuth client secret from where token is to be revoked
-	 *
-	 * @return void
-	 * @throws OpenprojectErrorException
-	 */
-	private function revokeUserToken(
-		string $opUrl,
-		string $userId,
-		string $opOAuthClientID,
-		string $opOAuthClientSecret
-	): void {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
-
-		if ($opUrl && $opOAuthClientID && $opOAuthClientSecret && $accessToken) {
-			$this->openprojectAPIService->revokeUserOAuthToken(
-				$opUrl,
-				$accessToken,
-				$opOAuthClientID,
-				$opOAuthClientSecret
-			);
-		}
 	}
 }
