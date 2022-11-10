@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Σφάλμα κατά τη λήψη διακριτικού πρόσβασης OAuth",
     "Error during OAuth exchanges" : "Σφάλμα κατά την ανταλλαγή OAuth",
+    "by" : "από",
     "Bad HTTP method" : "Κακή μέθοδος HTTP",
     "OAuth access token refused" : "Το διακριτικό πρόσβασης OAuth απορρίφθηκε",
     "Cancel" : "Ακύρωση",

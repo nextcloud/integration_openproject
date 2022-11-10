@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Помилка отримання маркера доступу OAuth",
     "Error during OAuth exchanges" : "Помилка під час обміну OAuth",
+    "by" : "від",
     "Bad HTTP method" : "Поганий метод HTTP",
     "OAuth access token refused" : "Маркер доступу OAuth відхилено",
     "OpenProject Integration" : "Інтеграція OpenProject",

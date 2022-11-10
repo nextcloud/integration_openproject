@@ -5,8 +5,6 @@
     "Error during OAuth exchanges" : "S'ha produït un error durant els intercanvis d'OAuth",
     "Direct download error" : "Error de descàrrega directa",
     "This direct download link is invalid or has expired" : "Aquest enllaç de descàrrega directa no és vàlid o ha caducat",
-    "OpenProject activity" : "Activitat OpenProject",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "OpenProject Integration" : "Integració OpenProject",
@@ -80,6 +78,8 @@
     "Successfully connected to OpenProject!" : "S'ha connectat correctament a OpenProject!",
     "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
     "OpenProject notifications" : "Notificacions d'OpenProject",
+    "OpenProject activity" : "Activitat OpenProject",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
     "Connected accounts" : "Comptes connectats",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "L'URL d'OpenProject no és vàlid. Proporcioneu un URL amb la forma \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL"

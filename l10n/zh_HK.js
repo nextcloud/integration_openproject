@@ -8,8 +8,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "Direct download error" : "直接下載錯誤",
     "This direct download link is invalid or has expired" : "此直接下載連結無效或已過期",
-    "OpenProject activity" : "OpenProject 活動紀錄",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],
+    "by" : "由",
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "OpenProject Integration" : "OpenProject 整合",
@@ -99,6 +98,8 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
     "OAuth access token could not be obtained:" : "無法獲得 OAuth 存取權杖：",
     "OpenProject notifications" : "OpenProject 通告",
+    "OpenProject activity" : "OpenProject 活動紀錄",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],
     "Connected accounts" : "已連線的賬號",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject"

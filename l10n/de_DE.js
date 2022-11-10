@@ -8,8 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
     "Direct download error" : "Fehler beim direkten Herunterladen",
     "This direct download link is invalid or has expired" : "Dieser direkte Download-Link ist ungültig oder abgelaufen",
-    "OpenProject activity" : "OpenProject-Aktivitäten",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Sie haben %s neue Benachrichtigung in {instance}","Sie haben %s neue Benachrichtigungen in {instance}"],
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "OAuth access token refused" : "OAuth-Zugriffstoken abgelehnt",
     "OpenProject Integration" : "OpenProject-Einbindung",
@@ -99,6 +97,8 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
     "OAuth access token could not be obtained:" : "OAuth-Zugriffstoken konnte nicht abgerufen werden:",
     "OpenProject notifications" : "OpenProject-Benachrichtigungen",
+    "OpenProject activity" : "OpenProject-Aktivitäten",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Sie haben %s neue Benachrichtigung in {instance}","Sie haben %s neue Benachrichtigungen in {instance}"],
     "Connected accounts" : "Verbundene Konten",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Geben Sie eine URL im Format „https://openproject.org“ an.",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt"
