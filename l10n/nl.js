@@ -4,7 +4,7 @@ OC.L10N.register(
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Fout bij ophalen OAuth access token",
     "Error during OAuth exchanges" : "Fout tijdens OAuth uitwisselingen",
-    "OpenProject activity" : "OpenProject activiteit",
+    "by" : "door",
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
     "OpenProject server" : "OpenProject server",
@@ -28,6 +28,7 @@ OC.L10N.register(
     "Existing relations:" : "Bestaande relaties:",
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "OpenProject notifications" : "OpenProject meldingen",
+    "OpenProject activity" : "OpenProject activiteit",
     "Connected accounts" : "Verbonden accounts"
 },
 "nplurals=2; plural=(n != 1);");

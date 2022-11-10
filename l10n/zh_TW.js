@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "取得 OAuth 存取權杖時發生錯誤",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
+    "by" : "由",
     "Bad HTTP method" : "錯誤的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "Cancel" : "取消",

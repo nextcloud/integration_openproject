@@ -5,7 +5,7 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Errore durante il recupero del token di accesso OAuth",
     "Error getting OAuth refresh token" : "Errore durante il recupero del token di aggiornamento OAuth",
     "Error during OAuth exchanges" : "Errore nello scambio dati OAuth",
-    "OpenProject activity" : "Attività OpenProject",
+    "by" : "di",
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Cancel" : "Annulla",
@@ -42,6 +42,7 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Connesso correttamente a OpenProject!",
     "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:",
     "OpenProject notifications" : "Notifiche OpenProject ",
+    "OpenProject activity" : "Attività OpenProject",
     "Connected accounts" : "Account connessi"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

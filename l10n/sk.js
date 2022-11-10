@@ -8,8 +8,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Chyba počas výmeny OAuth",
     "Direct download error" : "Chyba pri priamom sťahovaní",
     "This direct download link is invalid or has expired" : "Tento priamy odkaz na stiahnutie je neplatný alebo jeho platnosť vypršala",
-    "OpenProject activity" : "OpenProject aktivity",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s oznámenie v {instance}","Máte %s oznámenia v {instance}","Máte %s oznámení v {instance}","Máte %s oznámenia v {instance}"],
+    "by" : "od",
     "Bad HTTP method" : "Zlá metóda HTTP",
     "OAuth access token refused" : "Prístupový token OAuth bol zamietnutý",
     "OpenProject Integration" : "OpenProject integrácia",
@@ -61,6 +60,8 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
     "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:",
     "OpenProject notifications" : "Notifikácie OpenProject",
+    "OpenProject activity" : "OpenProject aktivity",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s oznámenie v {instance}","Máte %s oznámenia v {instance}","Máte %s oznámení v {instance}","Máte %s oznámenia v {instance}"],
     "Connected accounts" : "Prepojené účty"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "OAuth 접근 토큰을 구하는 에러",
     "Error during OAuth exchanges" : "OAuth 교환 중 발생한 에러",
+    "by" : "by",
     "Bad HTTP method" : "옳지 않은 HTTP 메소드",
     "OAuth access token refused" : "OAuth 접근 토큰 거부됐습니다",
     "Cancel" : "취소",

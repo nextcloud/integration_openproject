@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "OAuth アクセストークン取得時のエラー",
     "Error during OAuth exchanges" : "OAuth 通信中のエラー",
+    "by" : "by",
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
     "Cancel" : "キャンセル",
     "Save" : "保存",
