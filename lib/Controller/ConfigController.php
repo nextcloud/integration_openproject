@@ -194,11 +194,15 @@ class ConfigController extends Controller {
 			}
 		}
 		if (
-			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) || // when the client information has changed
+			// when the OP client information has changed
+			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
 			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
-			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null) // when the client info is reset
+			// when the OP client information is for reset
+			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null)
 		) {
-			$this->userManager->callForAllUsers(function (IUser $user) use ($oldOpenProjectOauthUrl, &$oldClientId, &$oldClientSecret) {
+			$this->userManager->callForAllUsers(function (IUser $user) use (
+				$oldOpenProjectOauthUrl, &$oldClientId, &$oldClientSecret
+			) {
 				$this->revokeUserToken(
 					$oldOpenProjectOauthUrl,
 					$user->getUID(),

@@ -635,15 +635,9 @@ class ConfigControllerTest extends TestCase {
 	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
 		$oldCreds, $credsToUpdate, $deleteUserValues, $updateNCOAuthClient
 	) {
-		$userManager = \OC::$server->getUserManager();
-		$count = 0;
-		$function = function (IUser $user) use (&$count) {
-			$count++;
-			return null;
-		};
-		$userManager->callForAllUsers($function);
-		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$userManager = $this->checkForUsersCountBeforeTest();
 		$this->user1 = $userManager->createUser('test101', 'test101');
+
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
 		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
@@ -781,5 +775,130 @@ class ConfigControllerTest extends TestCase {
 
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		$this->assertEquals('Invalid key', $response->getData()['error']);
+	}
+
+	/**
+	 * Runs a check for the users count in the SUT database
+	 * Throws an assertion error if the users count is not "1"
+	 * Returns UserManager instance for further user management
+	 *
+	 * @return IUserManager
+	 */
+	public function checkForUsersCountBeforeTest(): IUserManager {
+		$userManager = \OC::$server->getUserManager();
+		$count = 0;
+		$function = function (IUser $user) use (&$count) {
+			$count++;
+			return null;
+		};
+		$userManager->callForAllUsers($function);
+		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		return $userManager;
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigForRevokeTokenRequestDataProvider(): array {
+		return [
+			[	// while changing the client information
+				[
+					'client_id' => 'client_id_changed',
+					'client_secret' => 'client_secret_changed',
+					'oauth_instance_url' => 'http://localhost:3000',
+				]
+			],
+			[	// while resetting the client information
+				[
+					'client_id' => null,
+					'client_secret' => null,
+					'oauth_instance_url' => null,
+				]
+			]
+		];
+	}
+
+	/**
+	 * @param array<mixed> $newConfig config to be sent with the setAdminConfig function
+	 *
+	 * @returns void
+	 * @dataProvider setAdminConfigForRevokeTokenRequestDataProvider
+	 */
+	public function testSetAdminConfigForRevokeTokenRequest(array $newConfig): void {
+		$oldAdminConfig = [
+			'client_id' => 'abc',
+			'client_secret' => 'defg',
+			'oauth_instance_url' => 'http://localhost:3000',
+		];
+		$userTokens = [
+			'admin' => 'admin_token',
+			'test101' => 'user_token',
+		];
+
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$this->user1 = $userManager->createUser('test101', 'test101');
+
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$userManager = \OC::$server->getUserManager();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oauth_instance_url', ''],
+				['integration_openproject', 'client_id', ''],
+				['integration_openproject', 'client_secret', ''],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldAdminConfig['oauth_instance_url'],
+				$oldAdminConfig['client_id'],
+				$oldAdminConfig['client_secret'],
+			);
+
+		$configMock
+			->method('getUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token', ''],
+				[$this->user1->getUID(), 'integration_openproject', 'token', '']
+			)
+			->willReturnOnConsecutiveCalls(
+				$userTokens['admin'],
+				$userTokens['test101']
+			);
+
+		$configMock
+			->expects($this->exactly(3))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', $newConfig['client_id']],
+				['integration_openproject', 'client_secret', $newConfig['client_secret']],
+				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
+			);
+
+		$apiService
+			->expects($this->exactly(2))
+			->method('revokeUserOAuthToken')
+			->withConsecutive(
+				[$oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+				[$oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+			);
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			'test101'
+		);
+
+		$configController->setAdminConfig($newConfig);
 	}
 }
