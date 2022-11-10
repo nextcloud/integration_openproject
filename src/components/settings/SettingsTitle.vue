@@ -17,26 +17,19 @@ export default {
 	},
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../../css/dashboard.css';
 
 .settings-title {
 	display: flex;
 	align-items: center;
 	.icon-openproject {
-		height: 32px;
+		min-height: 32px;
+		min-width: 32px;
 		background-size: cover;
 	}
 	span {
 		padding-left: 10px;
-	}
-}
-
-body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
-	.settings-title {
-		.icon-openproject {
-			filter: none !important;
-		}
 	}
 }
 </style>

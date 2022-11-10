@@ -1,5 +1,4 @@
 .icon-openproject {
-	margin-top: -4px;
 	background-image: url('../img/app-dark.svg');
 	filter: var(--background-invert-if-dark);
 }
@@ -19,6 +18,7 @@ body.theme--dark .icon-openproject {
 }
 
 .panel > .panel--header .icon-openproject {
+	margin-top: -4px;
 	position: relative;
 }
 
@@ -38,8 +38,8 @@ body.theme--dark .icon-openproject {
 	position: absolute;
 	height: 24px; width: 24px;
 	background-size: 24px;
-	margin-top: 3px;
-	margin-left: 170px;
+	top: 3px;
+	left: 170px;
 	background-image: url('../img/bell-ring.svg');
 }
 
@@ -51,8 +51,8 @@ body.theme--dark .panel > .panel--header .icon-openproject::before {
 	background-image: url('../img/bell-ring-dark.svg');
 }
 
-/* for NC <= v24 the icon needs less margin at left and zero at the top */
+/*for NC <= v24 the icon needs less margin at left and zero at the top */
 .panel > .panel--header .nc-before-v24.icon-openproject::before {
-	margin-left: 120px !important;
-	margin-top: 0 !important
+	top: 28%;
+	left: 180px;
 }
