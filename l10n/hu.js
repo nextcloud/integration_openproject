@@ -7,8 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
     "Direct download error" : "Közvetlen letöltési hiba",
     "This direct download link is invalid or has expired" : "Ez a közvetlen letöltési hivatkozás érvénytelen vagy lejárt",
-    "OpenProject activity" : "OpenProject tevékenység",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
+    "by" : "szerzők:",
     "Bad HTTP method" : "Hibás HTTP metódus",
     "OAuth access token refused" : "Az OAuth hozzáférési token lekérése visszautasítva",
     "OpenProject Integration" : "OpenProject integráció",
@@ -82,6 +81,8 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
     "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
     "OpenProject notifications" : "OpenProject értesítések",
+    "OpenProject activity" : "OpenProject tevékenység",
+    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
     "Connected accounts" : "Kapcsolt fiókok",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
     "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen"

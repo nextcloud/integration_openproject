@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Virhe OAuth-valtuutuksen hakemisessa",
     "Error during OAuth exchanges" : "Virhe OAuth-tunnistautumisessa",
+    "by" : "Kirjoittaja:",
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
     "Cancel" : "Peruuta",

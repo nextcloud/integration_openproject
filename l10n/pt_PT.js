@@ -1,6 +1,9 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Error during OAuth exchanges" : "Erro durante trocas com o OAuth",
+    "by" : "por",
+    "Bad HTTP method" : "Método HTTP incorreto",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
     "Reset" : "Reiniciar",

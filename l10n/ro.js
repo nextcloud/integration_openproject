@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Eroare în obținerea token-ului OAuth",
     "Error during OAuth exchanges" : "Eroare în schimbarea OAuth",
+    "by" : "de",
     "Bad HTTP method" : "Metodă HTTP nepotrivită",
     "OAuth access token refused" : "Token-ul OAuth a fost refuzat",
     "Cancel" : "Anulare",

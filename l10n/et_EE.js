@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "by" : "lisas",
     "Cancel" : "Loobu",
     "Save" : "Salvesta",
     "Reset" : "Lähtesta",

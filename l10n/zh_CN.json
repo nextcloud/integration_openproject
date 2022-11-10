@@ -1,6 +1,7 @@
 { "translations": {
     "Error getting OAuth access token" : "获取 OAUth 访问令牌出错",
     "Error during OAuth exchanges" : "OAuth 交换期间出错",
+    "by" : "由",
     "Bad HTTP method" : "错误的HTTP方法",
     "OAuth access token refused" : "OAuth 访问令牌被拒绝",
     "Cancel" : "取消",

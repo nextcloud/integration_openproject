@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Napaka pri pridobivanju žetona OAuth za dostop",
     "Error during OAuth exchanges" : "Napaka med izmenjavo podatkov OAuth",
+    "by" : "s strani",
     "Bad HTTP method" : "Neustrezen način HTTP",
     "OAuth access token refused" : "Žeton OAuth za dostop je bil zavrnjen",
     "Cancel" : "Prekliči",
