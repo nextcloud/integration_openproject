@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "by" : "gant",
     "Cancel" : "Arrest",
     "Save" : "Enrollañ",
     "Documentation" : "Diellvadur",

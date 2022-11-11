@@ -1,0 +1,11 @@
+OC.L10N.register(
+    "integration_openproject",
+    {
+    "by" : "por",
+    "Cancel" : "Encaboxar",
+    "Save" : "Guardar",
+    "Documentation" : "Documentación",
+    "Copied!" : "¡Copióse!",
+    "Details" : "Detalles"
+},
+"nplurals=2; plural=(n != 1);");
