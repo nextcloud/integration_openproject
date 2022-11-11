@@ -1,0 +1,9 @@
+{ "translations": {
+    "by" : "por",
+    "Cancel" : "Encaboxar",
+    "Save" : "Guardar",
+    "Documentation" : "Documentación",
+    "Copied!" : "¡Copióse!",
+    "Details" : "Detalles"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

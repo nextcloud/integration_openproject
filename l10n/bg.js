@@ -8,6 +8,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
     "Direct download error" : "Грешка при директно сваляне",
     "This direct download link is invalid or has expired" : "Директната връзка за изтегляне е невалидна или е изтекла",
+    "by" : "от",
     "Bad HTTP method" : "Лош HTTP метод",
     "OAuth access token refused" : " Маркерът за достъп OAuth е отказан",
     "OpenProject Integration" : "Интегриране на OpenProject",

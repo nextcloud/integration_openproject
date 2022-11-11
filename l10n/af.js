@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "by" : "deur",
     "Cancel" : "Kanselleer",
     "Save" : "Bewaar",
     "Reset" : "Herstel",
