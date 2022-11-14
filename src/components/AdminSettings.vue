@@ -163,6 +163,7 @@
 		</div>
 		<Button id="reset-all-app-settings-btn"
 			type="error"
+			:disabled="!isIntegrationComplete"
 			@click="resetAllAppValuesConfirmation">
 			<template #icon>
 				<RestoreIcon :size="20" />
