@@ -6,7 +6,7 @@
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
     "Direct download error" : "Doğrudan indirme sorunu",
     "This direct download link is invalid or has expired" : "Bu doğrudan indirme bağlantısı geçersiz ya da geçerlilik süresi dolmuş",
-    "by" : "Kişi:",
+    "by" : "Kaynak:",
     "Bad HTTP method" : "HTTP yöntemi hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "OpenProject Integration" : "OpenProject bütünleştirmesi",
