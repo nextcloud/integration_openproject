@@ -17,17 +17,13 @@ Given('the administrator has navigated to the openproject tab in administrator s
 	await ncAdminPageObject.adminNavigatesToAdminOPTab()
 });
 
-When('openproject administrator adds file storage with following settings', async function (dataTable) {
-	for (const info of dataTable.hashes()) {
-		await opAdminPageObject.adminAddsFileStorageHost(info.name, info.host)
-	}
+When('openproject administrator adds the nextcloud host with name {string} in file storage', async function (name) {
+		await opAdminPageObject.adminAddsFileStorageHost(name)
 })
 
 
-When('nextcloud administrator adds following openproject host', async function (dataTable) {
-	for (const info of dataTable.hashes()) {
-		await ncAdminPageObject.adminAddsOpenProjectHost(info.host)
-	}
+When('nextcloud administrator adds the openproject host', async function () {
+		await ncAdminPageObject.adminAddsOpenProjectHost()
 })
 
 When('openproject administrator copies the openproject oauth credentials', async function() {

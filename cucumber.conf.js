@@ -9,7 +9,7 @@ const apiHelper = require('./tests/e2e/helpers/apiHelper')
 setDefaultTimeout(60000)
 
 BeforeAll(async function () {
-	await apiHelper.createAdmin()
+	// await apiHelper.createAdmin()
 	global.browserNC = await chromium.launch({
 		headless: false,
 		slowMo: 1000,

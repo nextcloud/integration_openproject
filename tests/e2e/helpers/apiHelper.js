@@ -31,4 +31,7 @@ const createAdmin = function () {
 	});
 }
 
+const deleteAdmin = function () {
+
+}
 module.exports = { createAdmin }

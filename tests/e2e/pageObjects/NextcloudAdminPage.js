@@ -1,4 +1,5 @@
 const { expect } = require("@playwright/test")
+const {config} = require("../config")
 
 class NextcloudAdminPage {
 
@@ -25,9 +26,9 @@ class NextcloudAdminPage {
 		await pageNC.locator(this.openProjectTabSelector).last().click()
 	}
 
-	async adminAddsOpenProjectHost(host) {
+	async adminAddsOpenProjectHost() {
 		await pageNC.click(this.openProjectOauthInstanceInputFieldSelector)
-		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, host)
+		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
 		await pageNC.click(this.saveOauthInstanceButtonSelector)
 	}
 

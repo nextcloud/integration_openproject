@@ -1,4 +1,5 @@
 const {expect} = require("@playwright/test");
+const {config} = require("../config");
 
 class OpenprojectAdminPage {
 
@@ -16,21 +17,21 @@ class OpenprojectAdminPage {
 		this.oauthClientIdInputFieldSelectorOP = '#oauth_client_client_id'
 		this.oauthClientSecretInputFieldSelectorOP = '#oauth_client_client_secret'
 		this.saveAndCompleteSetupButtonSelector = '//button[text() = "Save and complete setup"]'
-		this.deleteFileStorageSelector = '//a[contains(@class,"icon-delete") and (@title ="Delete")]'
-		//this.deleteFileStorageSelector = ".icon-delete"
+		//this.deleteFileStorageSelector = '//a[contains(@class,"icon-delete") and (@title ="Delete")]'
+		this.deleteFileStorageSelector = '//li[@class="toolbar-item"]/a//span[text()="Delete"]'
 		this.fileStorageBreadcrumbSelector = '//div[@id="breadcrumb"]//li/a[text()="File storages"]'
 		this.fileStorageNameSelector = '//td[@class="name"]/a'
 		this.skipHintSelector = "//div[contains(@class,'enjoyhint_btn-transparent') and (text() = 'Skip')]"
 	}
 
-	async adminAddsFileStorageHost(name, host) {
+	async adminAddsFileStorageHost(name) {
 		await pageOP.click(this.openProjectAvatarSelector)
 		await pageOP.click(this.administratorSettingMenuItemSelector)
-		await pageOP.click(this.skipHintSelector)
+		// await pageOP.click(this.skipHintSelector)
 		await pageOP.click(this.fileStoragesSelector)
 		await pageOP.click(this.addNewStoragesSelector)
 		await pageOP.fill(this.storageNameInputFieldSelector, name)
-		await pageOP.fill(this.hostUrlInputFieldSelector, host)
+		await pageOP.fill(this.hostUrlInputFieldSelector, config.baseUrlNC)
 		await pageOP.click(this.continueSetupButtonSelector)
 	}
 
@@ -55,11 +56,11 @@ class OpenprojectAdminPage {
 	 }
 
 	 async deleteFileStorage() {
-		await expect(pageOP.locator(this.deleteFileStorageSelector)).toBeVisible()
+		await pageOP.locator(this.fileStorageNameSelector).click()
 		await pageOP.locator(this.deleteFileStorageSelector).click()
 		 await pageOP.on('dialog', async (dialog) => {
 			 console.log(dialog.message());
-			 await dialog.accept();
+			 dialog.accept();
 		 });
 	 }
 }
