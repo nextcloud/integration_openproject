@@ -2,6 +2,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OAuth2\Controller\SettingsController;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
@@ -129,7 +130,7 @@ class ConfigControllerTest extends TestCase {
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
-			'testUser'
+			$this->createMock(SettingsController::class), 'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
@@ -193,6 +194,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -226,6 +228,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
@@ -292,6 +295,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -360,6 +364,7 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(OpenProjectAPIService::class),
 			$loggerMock,
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -433,6 +438,7 @@ class ConfigControllerTest extends TestCase {
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -513,6 +519,7 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
 			'test101'
 		);
 
@@ -639,7 +646,9 @@ class ConfigControllerTest extends TestCase {
 		$this->user1 = $userManager->createUser('test101', 'test101');
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-
+		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
+			->disableOriginalConstructor()
+			->getMock();
 		if ($updateNCOAuthClient) {
 			$configMock
 				->method('getAppValue')
@@ -666,14 +675,14 @@ class ConfigControllerTest extends TestCase {
 					->expects($this->once())
 					->method('setClientRedirectUri')
 					->with(123, $credsToUpdate['oauth_instance_url']);
-				$oauthServiceMock
+				$oauthSettingsControllerMock
 					->expects($this->never())
 					->method('deleteClient');
 			} else { // delete the client
 				$oauthServiceMock
 					->expects($this->never())
 					->method('setClientRedirectUri');
-				$oauthServiceMock
+				$oauthSettingsControllerMock
 					->expects($this->once())
 					->method('deleteClient')
 					->with(123);
@@ -735,12 +744,12 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
+			$oauthSettingsControllerMock,
 			'test101'
 		);
 
 		$configController->setAdminConfig($credsToUpdate);
 	}
-
 	/**
 	 * @return void
 	 */
@@ -762,6 +771,7 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
+			$this->createMock(SettingsController::class),
 			'test101'
 		);
 
