@@ -131,6 +131,9 @@ jobs:
       - name: try Nextcloud
         run: curl http://localhost:8080/status.php
 
+      - name: e2e test
+        run: NEXTCLOUD_HOST='http://localhost:8080' OPENPROJECT_HOST='http://localhost:8081' npm run test:e2e tests/e2e/features/webUI
+
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
