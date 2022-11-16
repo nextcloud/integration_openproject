@@ -316,8 +316,8 @@ export default {
 				 && this.isNcOAuthFormComplete)
 		},
 		isResetButtonDisabled() {
-			return !(this.state.client_id || this.state.client_secret || this.state.oauth_instance_url);
-		}
+			return !(this.state.client_id || this.state.client_secret || this.state.oauth_instance_url)
+		},
 	},
 	created() {
 		this.init()
