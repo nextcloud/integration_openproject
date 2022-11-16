@@ -11,12 +11,10 @@ setDefaultTimeout(60000)
 BeforeAll(async function () {
 	// await apiHelper.createAdmin()
 	global.browserNC = await chromium.launch({
-		headless: false,
-		slowMo: 1000,
+		headless: true,
 	});
 	global.browserOP = await chromium.launch({
-		headless: false,
-		slowMo: 1000,
+		headless: true,
 	});
 });
 
