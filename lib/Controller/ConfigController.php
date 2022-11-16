@@ -132,6 +132,7 @@ class ConfigController extends Controller {
 
 	/**
 	 * set admin config values
+	 * @NoCSRFRequired
 	 *
 	 * @param array<string, string|null> $values
 	 *

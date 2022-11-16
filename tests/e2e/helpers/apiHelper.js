@@ -1,9 +1,9 @@
 const fetch = require('node-fetch')
 const {config} = require("../config")
+const {throwError} = require("@vue/vue2-jest/lib/utils");
 
 const createAdmin = function () {
 	const url = config.baseUrlOP + '/api/v3/users'
-	console.log(url)
 	const data = {
 		"login": "admin2",
 		"password": "admin2",
@@ -21,17 +21,34 @@ const createAdmin = function () {
 			"Authorization": "Basic " + Buffer.from(config.openprojectBasicAuthUser + ":" + config.openprojectBasicAuthPass).toString('base64'),
 			"Content-Type": "application/json"
 		}}).then(function (response){
-		console.log(response.data)
+		console.log(response.status)
 	}).catch(function(error) {
-		console.log(error);
-	}).then(function (response){
-			console.log(response)
-	}).catch(function(error) {
-		console.log(error);
-	});
+		new throwError("Cannot create the admin user" + error.msg)
+	})
 }
 
-const deleteAdmin = function () {
-
+const resetNextcloudOauthSettings = function () {
+	const url = config.baseUrlNC + '/apps/integration_openproject/admin-config'
+	const data = {
+		"values":
+			{
+				"client_id":null,
+				"client_secret":null,
+				"oauth_instance_url":null,
+				"default_enable_navigation":false,
+				"default_enable_notifications":false,
+				"default_enable_unified_search":false
+			}
+	}
+	fetch(url, {
+		method: 'PUT',
+		body: JSON.stringify(data),
+		headers:{
+			"Authorization": "Basic " + Buffer.from('admin' + ":" + 'admin').toString('base64'),
+			"Content-Type": "application/json"
+		}}).then(function (response){
+	}).catch(function(error) {
+		new throwError("Cannot reset the nextcloud settings" + error.msg)
+	})
 }
-module.exports = { createAdmin }
+module.exports = { createAdmin, resetNextcloudOauthSettings }

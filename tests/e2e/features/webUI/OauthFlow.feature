@@ -20,3 +20,6 @@ Feature:
     And openproject administrator pastes the nextcloud oauth credentials
     Then file storage "nextcloud" should be listed on the webUI of openproject
     And the oauth setting from should be completed on the webUI of nextcloud
+#    When administator connects to the openproject through the personal settings
+#    And the user authorizes in open project with username "admin2" and password "admin2"
+#    Then the user should be connected to the openproject

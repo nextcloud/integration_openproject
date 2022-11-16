@@ -35,7 +35,7 @@ Before(async function () {
 });
 
 After(async function () {
-	await ncAdminPageObject.resetNCOauthSetUP()
+	await apiHelper.resetNextcloudOauthSettings()
 	await opAdminPageObject.deleteFileStorage()
 	await global.pageNC.close();
 	await global.contextNC.close();

@@ -10,10 +10,18 @@ class OpenprojectLoginPage {
 
 	async userLogsInOpenproject(username, password){
 		await pageOP.goto(config.baseUrlOP)
-		await pageOP.click(this.openProjectTitle)
-		await pageOP.fill(this.usernameSelector, username)
-		await pageOP.fill(this.passwordSelector, password)
-		await pageOP.click(this.userSignUP)
+		await this.fillUpLoginForm(username,password)
+	}
+
+	async fillUpLoginForm(username,password, nextcloud){
+		let page = null
+		if(nextcloud){
+			page = pageNC
+		} else page = pageOP
+		await page.click(this.openProjectTitle)
+		await page.fill(this.usernameSelector, username)
+		await page.fill(this.passwordSelector, password)
+		await page.click(this.userSignUP)
 	}
 }
 
