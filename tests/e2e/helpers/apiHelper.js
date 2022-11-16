@@ -48,7 +48,7 @@ const resetNextcloudOauthSettings = function () {
 			"Content-Type": "application/json"
 		}}).then(function (response){
 	}).catch(function(error) {
-		new throwError("Cannot reset the nextcloud settings" + error.msg)
+		new throwError("Cannot reset the nextcloud settings" + error)
 	})
 }
 module.exports = { createAdmin, resetNextcloudOauthSettings }

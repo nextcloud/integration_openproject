@@ -9,11 +9,7 @@ Feature:
     And nextcloud administrator has logged in using the webUI
     And the administrator has navigated to the openproject tab in administrator settings
     When openproject administrator adds the nextcloud host with name "nextcloud" in file storage
-#      | name      | host                              |
-#      | nextcloud | http://localhost/nextcloud/master |
     And nextcloud administrator adds the openproject host
-#      | host                  |
-#      | http://localhost:3000 |
     And openproject administrator copies the openproject oauth credentials
     And nextcloud administrator pastes the openproject oauth credentials
     And nextcloud administrator copies the nextcloud oauth credentials

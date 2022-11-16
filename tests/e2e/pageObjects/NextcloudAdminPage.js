@@ -5,7 +5,7 @@ class NextcloudAdminPage {
 
 	constructor() {
 		this.settingsMenuSelector = '//div[@id="settings"]/div[@id="expand"]'
-		this.adminSettingSelector = '[data-id="admin_settings"]'
+		this.adminSettingSelector = '//li[@data-id="admin_settings"]'
 		this.openProjectTabSelector = '//li//a//span[text()="OpenProject"]'
 		this.openProjectOauthInstanceInputFieldSelector = '//div[@id="openproject-oauth-instance"]//div[@class="text-input-input-wrapper"]//input'
 		this.saveOauthInstanceButtonSelector = '[data-test-id="submit-server-host-form-btn"]'
