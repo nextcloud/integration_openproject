@@ -27,7 +27,7 @@ class OpenprojectAdminPage {
 	async adminAddsFileStorageHost(name) {
 		await pageOP.click(this.openProjectAvatarSelector)
 		await pageOP.click(this.administratorSettingMenuItemSelector)
-		// await pageOP.click(this.skipHintSelector)
+		await pageOP.click(this.skipHintSelector)
 		await pageOP.click(this.fileStoragesSelector)
 		await pageOP.click(this.addNewStoragesSelector)
 		await pageOP.fill(this.storageNameInputFieldSelector, name)

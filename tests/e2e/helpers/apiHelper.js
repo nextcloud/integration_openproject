@@ -21,7 +21,6 @@ const createAdmin = function () {
 			"Authorization": "Basic " + Buffer.from(config.openprojectBasicAuthUser + ":" + config.openprojectBasicAuthPass).toString('base64'),
 			"Content-Type": "application/json"
 		}}).then(function (response){
-		console.log(response.status)
 	}).catch(function(error) {
 		new throwError("Cannot create the admin user" + error.msg)
 	})
