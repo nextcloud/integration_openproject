@@ -51,11 +51,11 @@ class LoadSidebarScript implements IEventListener {
 	/**
 	 * @var string "error"|"success"|""
 	 */
-	private $oauthConnectionResult;
+	private $oauthConnectionResult = '';
 	/**
 	 * @var string
 	 */
-	private $oauthConnectionErrorMessage;
+	private $oauthConnectionErrorMessage = '';
 
 	public function __construct(
 		IInitialState $initialStateService,
