@@ -727,78 +727,133 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('reset all app settings button', () => {
-		let wrapper
-		let confirmSpy
+	describe('reset button', () => {
+		describe('reset all app settings', () => {
+			let wrapper
+			let confirmSpy
 
-		const { location } = window
-		delete window.location
-		window.location = { reload: jest.fn() }
-
-		beforeEach(() => {
-			wrapper = getMountedWrapper({
-				state: {
-					oauth_instance_url: 'http://openproject.com',
-					client_id: 'some-client-id-for-op',
-					client_secret: 'some-client-secret-for-op',
-					nc_oauth_client: {
-						clientId: 'something',
-						clientSecret: 'something-else',
+			const { location } = window
+			delete window.location
+			window.location = { reload: jest.fn() }
+			beforeEach(() => {
+				wrapper = getMountedWrapper({
+					state: {
+						oauth_instance_url: 'http://openproject.com',
+						client_id: 'some-client-id-for-op',
+						client_secret: 'some-client-secret-for-op',
+						nc_oauth_client: {
+							clientId: 'something',
+							clientSecret: 'something-else',
+						},
 					},
+				})
+				confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+			})
+			afterEach(() => {
+				jest.clearAllMocks()
+			})
+
+			it('should trigger confirm dialog on click', async () => {
+				const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
+				await resetButton.trigger('click')
+				const expectedConfirmText = 'Are you sure that you want to reset this app '
+					+ 'and delete all settings and all connections of all Nextcloud users to OpenProject?'
+				const expectedConfirmOpts = {
+					cancel: 'Cancel',
+					confirm: 'Yes, reset',
+					confirmClasses: 'error',
+					type: 70,
+				}
+				const expectedConfirmTitle = 'Reset OpenProject integration'
+
+				expect(confirmSpy).toBeCalledTimes(1)
+				expect(confirmSpy).toBeCalledWith(
+					expectedConfirmText,
+					expectedConfirmTitle,
+					expectedConfirmOpts,
+					expect.any(Function),
+					true
+				)
+			})
+
+			it('should reset all settings on confirm', async () => {
+				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+					.mockImplementationOnce(() => Promise.resolve({ data: true }))
+				await wrapper.vm.resetAllAppValues()
+
+				expect(saveOPOptionsSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/admin-config',
+					{
+						values: {
+							client_id: null,
+							client_secret: null,
+							oauth_instance_url: null,
+							default_enable_navigation: false,
+							default_enable_notifications: false,
+							default_enable_unified_search: false,
+						},
+					}
+				)
+				axios.put.mockReset()
+			})
+			it('should reload the window at the end', async () => {
+				await wrapper.vm.resetAllAppValues()
+				await wrapper.vm.$nextTick()
+				expect(window.location.reload).toBeCalledTimes(1)
+				window.location = location
+			})
+
+		})
+
+		it.each([
+			{
+				oauth_instance_url: 'http://openproject.com',
+				client_id: 'some-client-id-for-op',
+				client_secret: 'some-client-secret-for-op',
+			},
+			{
+				oauth_instance_url: 'http://openproject.com',
+				client_id: null,
+				client_secret: null,
+			},
+			{
+				oauth_instance_url: null,
+				client_id: 'some-client-id-for-op',
+				client_secret: 'some-client-secret-for-op',
+			},
+			{
+				oauth_instance_url: null,
+				client_id: null,
+				client_secret: 'some-client-secret-for-op',
+			},
+			{
+				oauth_instance_url: 'http://openproject.com',
+				client_id: null,
+				client_secret: 'some-client-secret-for-op',
+			},
+			{
+				oauth_instance_url: null,
+				client_id: 'some-client-id-for-op',
+				client_secret: null,
+			},
+		])('should not be disabled when any of the Open Project setting is set', (value) => {
+			const wrapper = getMountedWrapper({
+				state: value,
+			})
+			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
+			expect(resetButton.attributes('disabled')).toBe(undefined)
+		})
+
+		it('should be disabled when no Open Project setting is set', async () => {
+			const wrapper = getMountedWrapper({
+				state: {
+					oauth_instance_url: null,
+					client_id: null,
+					client_secret: null,
 				},
 			})
-			confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
-		})
-		afterEach(() => {
-			jest.clearAllMocks()
-		})
-		it('should trigger confirm dialog on click', async () => {
 			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
-			await resetButton.trigger('click')
-			const expectedConfirmText = 'Are you sure that you want to reset this app '
-				+ 'and delete all settings and all connections of all Nextcloud users to OpenProject?'
-			const expectedConfirmOpts = {
-				cancel: 'Cancel',
-				confirm: 'Yes, reset',
-				confirmClasses: 'error',
-				type: 70,
-			}
-			const expectedConfirmTitle = 'Reset OpenProject integration'
-
-			expect(confirmSpy).toBeCalledTimes(1)
-			expect(confirmSpy).toBeCalledWith(
-				expectedConfirmText,
-				expectedConfirmTitle,
-				expectedConfirmOpts,
-				expect.any(Function),
-				true
-			)
-		})
-		it('should reset all settings on confirm', async () => {
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({ data: true }))
-			await wrapper.vm.resetAllAppValues()
-
-			expect(saveOPOptionsSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/admin-config',
-				{
-					values: {
-						client_id: null,
-						client_secret: null,
-						oauth_instance_url: null,
-						default_enable_navigation: false,
-						default_enable_notifications: false,
-						default_enable_unified_search: false,
-					},
-				}
-			)
-			axios.put.mockReset()
-		})
-		it('should reload the window at the end', async () => {
-			await wrapper.vm.resetAllAppValues()
-			await wrapper.vm.$nextTick()
-			expect(window.location.reload).toBeCalledTimes(1)
-			window.location = location
+			expect(resetButton.attributes('disabled')).toBe('disabled')
 		})
 	})
 

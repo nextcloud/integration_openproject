@@ -163,6 +163,7 @@
 		</div>
 		<Button id="reset-all-app-settings-btn"
 			type="error"
+			:disabled="isResetButtonDisabled"
 			@click="resetAllAppValuesConfirmation">
 			<template #icon>
 				<RestoreIcon :size="20" />
@@ -313,6 +314,9 @@ export default {
 			return (this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
 				 && this.isNcOAuthFormComplete)
+		},
+		isResetButtonDisabled() {
+			return !(this.state.client_id || this.state.client_secret || this.state.oauth_instance_url)
 		},
 	},
 	created() {
