@@ -34,6 +34,8 @@ When('openproject administrator copies the openproject oauth credentials', async
 
 When('nextcloud administrator pastes the openproject oauth credentials', async function() {
   await ncAdminPageObject.adminSetsTheOpOauthCreds(opClientId,opClientSecret)
+	opClientId = ''
+	opClientSecret = ''
 })
 
 When('nextcloud administrator copies the nextcloud oauth credentials',async function() {
@@ -44,6 +46,8 @@ When('nextcloud administrator copies the nextcloud oauth credentials',async func
 
 When('openproject administrator pastes the nextcloud oauth credentials', async function() {
 	await opAdminPageObject.pasteNCOauthCreds(ncClientId,ncClientSecret)
+	ncClientSecret = ''
+	ncClientId = ''
 })
 
 Then('file storage {string} should be listed on the webUI of openproject', async function (name) {

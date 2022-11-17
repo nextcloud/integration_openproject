@@ -21,22 +21,25 @@ const createAdmin = function () {
 			"Authorization": "Basic " + Buffer.from(config.openprojectBasicAuthUser + ":" + config.openprojectBasicAuthPass).toString('base64'),
 			"Content-Type": "application/json"
 		}}).then(function (response){
+            if(response.status !== 201){
+				new throwError("Cannot create the admin user")
+			}
 	}).catch(function(error) {
-		new throwError("Cannot create the admin user" + error.msg)
+		new throwError("Cannot create the admin user")
 	})
 }
 
 const resetNextcloudOauthSettings = function () {
-	const url = config.baseUrlNC + '/apps/integration_openproject/admin-config'
+	const url = config.baseUrlNC + '/index.php/apps/integration_openproject/admin-config'
 	const data = {
 		"values":
 			{
 				"client_id":null,
 				"client_secret":null,
-				"oauth_instance_url":null,
 				"default_enable_navigation":false,
 				"default_enable_notifications":false,
-				"default_enable_unified_search":false
+				"default_enable_unified_search":false,
+				"oauth_instance_url":null
 			}
 	}
 	fetch(url, {
@@ -44,8 +47,11 @@ const resetNextcloudOauthSettings = function () {
 		body: JSON.stringify(data),
 		headers:{
 			"Authorization": "Basic " + Buffer.from('admin' + ":" + 'admin').toString('base64'),
-			"Content-Type": "application/json"
+			"Content-Type": "application/json; charset=utf-8"
 		}}).then(function (response){
+			if(response.status !== 200){
+				new throwError("Error while resetting nextcloud oauth setup")
+			}
 	}).catch(function(error) {
 		new throwError("Cannot reset the nextcloud settings" + error)
 	})

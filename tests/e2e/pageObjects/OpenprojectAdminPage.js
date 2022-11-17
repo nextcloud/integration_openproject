@@ -41,7 +41,7 @@ class OpenprojectAdminPage {
 		 await pageOP.click(this.copyClientSecretButtonSelector)
 		 const openProjectClientSecret = await pageOP.evaluate(() => navigator.clipboard.readText())
 		 await pageOP.click(this.doneContinueSetupButtonSelector)
-		 return { client_secret: openProjectClientId, client_id: openProjectClientSecret }
+		 return { client_id: openProjectClientId, client_secret: openProjectClientSecret }
 	 }
 
 	 async pasteNCOauthCreds(ncClientId, ncClientSecret) {

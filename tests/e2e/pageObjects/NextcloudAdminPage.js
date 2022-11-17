@@ -21,8 +21,8 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
-		await pageNC.click(this.settingsMenuSelector)
-		await pageNC.click(this.adminSettingSelector)
+		await pageNC.locator(this.settingsMenuSelector).click()
+		await pageNC.locator(this.adminSettingSelector).click()
 		await pageNC.locator(this.openProjectTabSelector).last().click()
 	}
 

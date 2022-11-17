@@ -1,10 +1,9 @@
-const { Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucumber/cucumber");
-const { chromium } = require("playwright");
-const { NextcloudAdminPage } = require("./tests/e2e/pageObjects/NextcloudAdminPage")
-const ncAdminPageObject = new NextcloudAdminPage()
+const { Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucumber/cucumber")
+const { chromium } = require("playwright")
+const {config} = require("./tests/e2e/config")
+const apiHelper = require('./tests/e2e/helpers/apiHelper')
 const { OpenprojectAdminPage } = require("./tests/e2e/pageObjects/OpenprojectAdminPage")
 const opAdminPageObject = new OpenprojectAdminPage()
-const apiHelper = require('./tests/e2e/helpers/apiHelper')
 
 setDefaultTimeout(60000)
 

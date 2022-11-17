@@ -9,6 +9,7 @@ When('administator connects to the openproject through the personal settings', a
 	await ncPersonalSettingsPage.connectToOpenProjectParsonalSettings()
 })
 
-Then('the user should be connected to the openproject', async function () {
-	await ncPersonalSettingsPage.isConnectedToOpenProject()
+Then('the button with {string} text should be displayed in the webUI', async function (expectedMessage) {
+	const actualMessage = await ncPersonalSettingsPage.isConnectedToOpenProject()
+	await expect(expectedMessage).toBe(actualMessage)
 })

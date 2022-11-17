@@ -20,8 +20,8 @@ class NextcloudPersonalSettingPage {
    }
 
 	async isConnectedToOpenProject() {
-		const test = pageNC.locator(this.openProjectDisconnectButtonSelector).textContent()
-		console.log(test)
+		const text = await pageNC.locator(this.openProjectDisconnectButtonSelector).textContent()
+		return text.trim()
 	}
 
 }
