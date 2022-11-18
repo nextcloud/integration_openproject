@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "S'ha produït un error durant els intercanvis d'OAuth",
     "Direct download error" : "Error de descàrrega directa",
     "This direct download link is invalid or has expired" : "Aquest enllaç de descàrrega directa no és vàlid o ha caducat",
+    "by" : "per",
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "OpenProject Integration" : "Integració OpenProject",
