@@ -6,6 +6,7 @@
     "Error during OAuth exchanges" : "Chyba při výměnách informací v rámci OAuth",
     "Direct download error" : "Chyba přímého stahování",
     "This direct download link is invalid or has expired" : "Tento odkaz pro přímé stažení není platný nebo jeho platnost skončila",
+    "by" : "od",
     "Bad HTTP method" : "Nesprávná HTTP metoda",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "OpenProject Integration" : "Napojení na OpenProject",
