@@ -25,9 +25,11 @@ AfterAll(async function () {
 Before(async function () {
 	global.contextNC = await global.browserNC.newContext()
 	await contextNC.grantPermissions(['clipboard-read','clipboard-write']);
+	// await contextNC.tracing.start({ screenshots: true, snapshots: true });
 	global.pageNC = await global.contextNC.newPage()
 	global.contextOP = await global.browserOP.newContext()
 	await contextOP.grantPermissions(['clipboard-read','clipboard-write']);
+	// await contextNC.tracing.start({ screenshots: true, snapshots: true });
 	global.pageOP = await global.contextOP.newPage()
 });
 
@@ -36,6 +38,8 @@ After(async function () {
 	await opAdminPageObject.deleteFileStorage()
 	await global.pageNC.close();
 	await global.contextNC.close();
+	// await contextNC.tracing.stop({ path: 'trace.zip' });
 	await global.pageOP.close();
 	await global.contextOP.close();
+	// await contextOP.tracing.stop({ path: 'trace.zip' });
 });

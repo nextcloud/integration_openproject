@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
-        phpVersion: [ 7.4, 8.0, 8.1 ]
+        phpVersion: [ 7.4 ]
         exclude:
           - nextcloudVersion: stable22
             phpVersion: 8.1
