@@ -13,6 +13,7 @@ class NextcloudLoginPage {
 		await pageNC.fill(this.usernameSelector, username)
 		await pageNC.fill(this.passwordSelector,password)
 		await pageNC.click(this.submitButtonSelector)
+		await pageNC.waitForSelector(this.skipReccomendedAppsSelector)
 		await pageNC.click(this.skipReccomendedAppsSelector)
 	}
 }

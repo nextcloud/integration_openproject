@@ -5,7 +5,7 @@ const apiHelper = require('./tests/e2e/helpers/apiHelper')
 const { OpenprojectAdminPage } = require("./tests/e2e/pageObjects/OpenprojectAdminPage")
 const opAdminPageObject = new OpenprojectAdminPage()
 
-setDefaultTimeout(60000)
+setDefaultTimeout(100000)
 
 BeforeAll(async function () {
 	await apiHelper.createAdmin()
