@@ -119,15 +119,15 @@ class Notifier implements INotifier, IDismissableNotifier {
 			];
 			$message = $p['projectTitle'] . ' - ';
 			foreach ($p['reasons'] as $reason) {
-				$message .= $reason . ',';
+				$message .= $reason . ', ';
 			}
-			$message = rtrim($message, ',');
+			$message = rtrim($message, ', ');
 			$message .= ' ' . $l->t('by') . ' ';
 
 			foreach ($p['actors'] as $actor) {
-				$message .= $actor . ',';
+				$message .= $actor . ', ';
 			}
-			$message = rtrim($message, ',');
+			$message = rtrim($message, ', ');
 
 			$notification->setParsedSubject('(' . $p['count']. ') ' . $p['resourceTitle'])
 				->setParsedMessage('--')
