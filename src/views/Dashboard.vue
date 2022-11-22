@@ -236,9 +236,9 @@ export default {
 		getSubline(n) {
 			let reasonsString = ''
 			n.reasons.forEach((value) => {
-				reasonsString = reasonsString + ',' + t('integration_openproject', value)
+				reasonsString = reasonsString + ', ' + t('integration_openproject', value)
 			})
-			return n.projectTitle + ' - ' + reasonsString.replace(/^,/, '')
+			return n.projectTitle + ' - ' + reasonsString.replace(/^, /, '')
 		},
 		getTargetTitle(n) {
 			return '(' + n.count + ') ' + n.resourceTitle
