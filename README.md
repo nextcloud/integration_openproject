@@ -62,6 +62,8 @@ Requirements:
 mkdir $HOME/development/custom_apps -p
 cd $HOME/development/custom_apps
 git clone https://github.com/nextcloud/integration_openproject.git
+# install the notifications app as well if you want to test notifications
+git clone https://github.com/nextcloud/notifications.git
 
 # installation & building
 cd integration_openproject
@@ -156,6 +158,8 @@ You can browse as admin to the apps center and enable it using the webUI, or you
 
 ```shell
 docker compose exec --user www-data nextcloud php occ a:e integration_openproject
+# enable the notifications app as well if you've cloned it
+docker compose exec --user www-data nextcloud php occ a:e notifications
 ```
 
 #### Allow local remote servers:
