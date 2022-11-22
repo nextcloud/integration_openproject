@@ -132,7 +132,14 @@ jobs:
         run: curl http://localhost:8080/status.php
 
       - name: e2e test
-        run: npm run test:e2e tests/e2e/features/webUI
+        run: |
+          cd /server
+          npm ci
+          npm run build
+          cd apps/integration_openproject
+          npm ci
+          npm run build
+          npm run test:e2e tests/e2e/features/webUI
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
