@@ -4,7 +4,7 @@ const {config} = require("../config")
 class NextcloudAdminPage {
 
 	constructor() {
-		this.settingsMenuSelector = '//div[@id="settings"]/div[@id="expand"]'
+		this.settingsMenuSelector = '//div[@id="settings"]/div[@class="menutoggle"]'
 		this.adminSettingSelector = '//li[@data-id="admin_settings"]'
 		this.openProjectTabSelector = '//li//a//span[text()="OpenProject"]'
 		this.openProjectOauthInstanceInputFieldSelector = '//div[@id="openproject-oauth-instance"]//div[@class="text-input-input-wrapper"]//input'
@@ -21,6 +21,7 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
+		await pageNC.waitForSelector(this.settingsMenuSelector)
 		await pageNC.locator(this.settingsMenuSelector).click()
 		await pageNC.waitForSelector('.settings-menu')
 		await pageNC.locator(this.adminSettingSelector).click()
