@@ -133,6 +133,7 @@ jobs:
 
       - name: e2e test
         run: |
+          make
           npm run test:e2e tests/e2e/features/webUI
 
       - name: JS Code Coverage Summary Report
