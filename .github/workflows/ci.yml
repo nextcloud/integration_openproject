@@ -84,6 +84,7 @@ jobs:
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
+          ./occ config:system:set allow_local_remote_servers --value 1
           git clone --depth 1 https://github.com/nextcloud/notifications.git -b ${{ matrix.nextcloudVersion }} apps/notifications
 
       - name: PHP stan

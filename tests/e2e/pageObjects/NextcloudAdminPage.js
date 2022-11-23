@@ -33,7 +33,8 @@ class NextcloudAdminPage {
 	}
 
 	async adminAddsOpenProjectHost() {
-		await pageNC.waitForTimeout(1000)
+		await pageNC.waitForTimeout(10000)
+		await pageNC.waitForSelector('//h2[@class="settings-title"]//span[text()="OpenProject integration"]')
 		await pageNC.waitForSelector(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.click(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
