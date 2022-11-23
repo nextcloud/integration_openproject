@@ -21,9 +21,9 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
+		await pageNC.waitForTimeout(10000);
 		await pageNC.waitForSelector(this.settingsMenuSelector)
 		await pageNC.locator(this.settingsMenuSelector).click({force:true})
-		await pageNC.waitForTimeout(10000);
 		await pageNC.waitForSelector('div#settings.openedMenu',{ timeout: 90000 })
 		await pageNC.waitForSelector('//nav[contains(@class,"settings-menu menu")]',{ state: 'visible', timeout: 90000 })
 		await pageNC.locator(this.adminSettingSelector).click({timeout: 90000})
