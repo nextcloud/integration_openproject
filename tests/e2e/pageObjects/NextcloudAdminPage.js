@@ -23,7 +23,7 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
-		await pageNC.waitForTimeout(1000)
+		await pageNC.waitForTimeout(10000)
 		await pageNC.waitForSelector(this.settingsMenuSelector)
 		await pageNC.locator(this.settingsMenuSelector).click()
 		await pageNC.waitForSelector(this.settingsMenuOpenSelector)
