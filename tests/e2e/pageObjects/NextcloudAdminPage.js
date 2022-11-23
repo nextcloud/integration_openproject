@@ -29,13 +29,13 @@ class NextcloudAdminPage {
 		await pageNC.locator(this.settingsMenuSelector).click()
 		await pageNC.waitForSelector(this.settingsMenuOpenSelector)
 		await pageNC.locator(this.adminSettingSelector).click()
+		await pageNC.waitForSelector('#security-warning',{state:"visible", timeout:10000})
 		await pageNC.locator(this.openProjectTabSelector).last().click()
 	}
 
 	async adminAddsOpenProjectHost() {
-		await pageNC.reload()
 		await pageNC.waitForTimeout(10000)
-		await pageNC.waitForSelector('//h2[@class="settings-title"]//span[text()="OpenProject integration"]')
+		await pageNC.waitForSelector('#openproject_prefs',{state:"visible",timeout:10000})
 		await pageNC.waitForSelector(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.click(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
