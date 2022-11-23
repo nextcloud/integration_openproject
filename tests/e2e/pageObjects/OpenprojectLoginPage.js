@@ -1,6 +1,8 @@
-const {config} = require("../config")
+/* global pageOP , pageNC */
+const { config } = require('../config')
 
 class OpenprojectLoginPage {
+
 	constructor() {
 		this.openProjectTitle = '//a[@title="Sign in"]'
 		this.usernameSelector = '#username-pulldown'
@@ -8,14 +10,14 @@ class OpenprojectLoginPage {
 		this.userSignUP = '#login-pulldown'
 	}
 
-	async userLogsInOpenproject(username, password){
+	async userLogsInOpenproject(username, password) {
 		await pageOP.goto(config.baseUrlOP)
-		await this.fillUpLoginForm(username,password)
+		await this.fillUpLoginForm(username, password)
 	}
 
-	async fillUpLoginForm(username,password, nextcloud){
+	async fillUpLoginForm(username, password, nextcloud) {
 		let page = null
-		if(nextcloud){
+		if (nextcloud) {
 			page = pageNC
 		} else page = pageOP
 		await page.click(this.openProjectTitle)
@@ -23,6 +25,7 @@ class OpenprojectLoginPage {
 		await page.fill(this.passwordSelector, password)
 		await page.click(this.userSignUP)
 	}
+
 }
 
 module.exports = { OpenprojectLoginPage }

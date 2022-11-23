@@ -1,10 +1,12 @@
-const { expect } = require("@playwright/test")
-const {config} = require("../config")
+/* global pageNC */
+const { expect } = require('@playwright/test')
+const { config } = require('../config')
 
 class NextcloudAdminPage {
 
 	constructor() {
 		this.settingsMenuSelector = '//div[@id="settings"]/div[@class="menutoggle"]'
+		this.settingsMenuOpenSelector = 'div#settings.openedMenu'
 		this.adminSettingSelector = '//li[@data-id="admin_settings"]'
 		this.openProjectTabSelector = '//li//a//span[text()="OpenProject"]'
 		this.openProjectOauthInstanceInputFieldSelector = '//div[@id="openproject-oauth-instance"]//div[@class="text-input-input-wrapper"]//input'
@@ -21,12 +23,11 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
-		await pageNC.waitForTimeout(10000);
+		await pageNC.waitForTimeout(1000)
 		await pageNC.waitForSelector(this.settingsMenuSelector)
-		await pageNC.locator(this.settingsMenuSelector).click({force:true})
-		await pageNC.waitForSelector('div#settings.openedMenu',{ timeout: 90000 })
-		await pageNC.waitForSelector('//nav[contains(@class,"settings-menu menu")]',{ state: 'visible', timeout: 90000 })
-		await pageNC.locator(this.adminSettingSelector).click({timeout: 90000})
+		await pageNC.locator(this.settingsMenuSelector).click()
+		await pageNC.waitForSelector(this.settingsMenuOpenSelector)
+		await pageNC.locator(this.adminSettingSelector).click()
 		await pageNC.locator(this.openProjectTabSelector).last().click()
 	}
 
@@ -50,10 +51,10 @@ class NextcloudAdminPage {
 		await pageNC.click(this.copyNCOauthSecretdButtonSelector)
 		const nextcloudClientSecret = await pageNC.evaluate(() => navigator.clipboard.readText())
 		await pageNC.click(this.submitNCOauthButtonSelector)
-		return { client_id:nextcloudClientId, client_secret:nextcloudClientSecret }
+		return { client_id: nextcloudClientId, client_secret: nextcloudClientSecret }
 	}
 
-    async isDefaultPrefsVisible() {
+	async isDefaultPrefsVisible() {
 		await expect(pageNC.locator(this.defaultPreferenceSelector)).toBeVisible()
 	}
 
@@ -64,4 +65,4 @@ class NextcloudAdminPage {
 
 }
 
-module.exports = { NextcloudAdminPage };
+module.exports = { NextcloudAdminPage }

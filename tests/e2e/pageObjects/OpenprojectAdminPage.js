@@ -1,5 +1,6 @@
-const {expect} = require("@playwright/test");
-const {config} = require("../config");
+/* global pageOP */
+const { expect } = require('@playwright/test')
+const { config } = require('../config')
 
 class OpenprojectAdminPage {
 
@@ -17,7 +18,6 @@ class OpenprojectAdminPage {
 		this.oauthClientIdInputFieldSelectorOP = '#oauth_client_client_id'
 		this.oauthClientSecretInputFieldSelectorOP = '#oauth_client_client_secret'
 		this.saveAndCompleteSetupButtonSelector = '//button[text() = "Save and complete setup"]'
-		//this.deleteFileStorageSelector = '//a[contains(@class,"icon-delete") and (@title ="Delete")]'
 		this.deleteFileStorageSelector = '//li[@class="toolbar-item"]/a//span[text()="Delete"]'
 		this.fileStorageBreadcrumbSelector = '//div[@id="breadcrumb"]//li/a[text()="File storages"]'
 		this.fileStorageNameSelector = '//td[@class="name"]/a'
@@ -50,7 +50,7 @@ class OpenprojectAdminPage {
 		 await pageOP.click(this.saveAndCompleteSetupButtonSelector)
 	 }
 
-	 async fileStorageShouldBeVisible(name){
+	 async fileStorageShouldBeVisible(name) {
 		await pageOP.click(this.fileStorageBreadcrumbSelector)
 	    await expect(pageOP.locator(this.fileStorageNameSelector)).toHaveText(name)
 	 }
@@ -59,11 +59,10 @@ class OpenprojectAdminPage {
 		await pageOP.locator(this.fileStorageNameSelector).click()
 		await pageOP.locator(this.deleteFileStorageSelector).click()
 		 await pageOP.on('dialog', async (dialog) => {
-			 console.log(dialog.message());
-			 dialog.accept();
-		 });
+			 dialog.accept()
+		 })
 	 }
+
 }
 
-module.exports = { OpenprojectAdminPage };
-
+module.exports = { OpenprojectAdminPage }

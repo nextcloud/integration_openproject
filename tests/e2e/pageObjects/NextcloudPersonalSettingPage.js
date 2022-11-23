@@ -1,7 +1,7 @@
-const { expect } = require("@playwright/test")
-const {config} = require("../config")
+/* global pageNC */
 
 class NextcloudPersonalSettingPage {
+
 	constructor() {
 		this.openProjectTabSelector = '//li//a//span[text()="OpenProject"]'
 		this.oauthConnectButtonSelector = '//button[contains(@class,"oauth-connect--button")]'
@@ -9,15 +9,15 @@ class NextcloudPersonalSettingPage {
 		this.openProjectDisconnectButtonSelector = '//button[contains(@class,"openproject-prefs--disconnect")]//span//span[@class="button-vue__text"]'
 	}
 
-	async connectToOpenProjectParsonalSettings(){
+	async connectToOpenProjectParsonalSettings() {
 		await pageNC.locator(this.openProjectTabSelector).first().click()
 		await pageNC.click(this.oauthConnectButtonSelector)
 
 	}
 
-   async authorizeApiOP(){
+	async authorizeApiOP() {
 	   await pageNC.click(this.opAuthorizeButtonSelector)
-   }
+	}
 
 	async isConnectedToOpenProject() {
 		const text = await pageNC.locator(this.openProjectDisconnectButtonSelector).textContent()
@@ -26,4 +26,4 @@ class NextcloudPersonalSettingPage {
 
 }
 
-module.exports = { NextcloudPersonalSettingPage };
+module.exports = { NextcloudPersonalSettingPage }
