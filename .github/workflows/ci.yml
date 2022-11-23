@@ -11,7 +11,7 @@ jobs:
     name: CI
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
+        nextcloudVersion: [ stable25, master ]
         phpVersion: [ 7.4, 8.0, 8.1 ]
         exclude:
           - nextcloudVersion: stable22

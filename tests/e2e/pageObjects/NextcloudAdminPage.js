@@ -20,6 +20,7 @@ class NextcloudAdminPage {
 		this.resetAllAppSettingsSelector = '#reset-all-app-settings-btn'
 		this.resetConfirmSelector = '//div[@class="oc-dialog"]//div[contains(@class,"oc-dialog-buttonrow")]//button[text() = "Yes, reset"]'
 		this.defaultPreferenceSelector = '//div[@class="default-prefs"]'
+		this.errorMessage='.text-input-error-message'
 	}
 
 	async adminNavigatesToAdminOPTab() {
@@ -32,9 +33,12 @@ class NextcloudAdminPage {
 	}
 
 	async adminAddsOpenProjectHost() {
+		await pageNC.waitForTimeout(1000)
+		await pageNC.waitForSelector(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.click(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
 		await pageNC.click(this.saveOauthInstanceButtonSelector)
+		await expect(pageNC.locator(this.errorMessage)).not.toBeVisible()
 	}
 
 	async adminSetsTheOpOauthCreds(opClientId, opClientSecret) {
