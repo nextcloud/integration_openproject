@@ -4,7 +4,7 @@
 			{{ labelText }}
 		</div>
 		<div class="text-input-input-wrapper">
-			<input :id="id"
+			<input
 				ref="textInput"
 				:value="value"
 				:type="type"
@@ -68,10 +68,6 @@ export default {
 		value: {
 			default: '',
 			type: String,
-		},
-		id: {
-			type: String,
-			required: true,
 		},
 		type: {
 			type: String,

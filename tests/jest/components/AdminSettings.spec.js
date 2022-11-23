@@ -36,9 +36,7 @@ global.navigator = {
 }
 
 const selectors = {
-	oauthInstanceInput: '#openproject-oauth-instance',
-	oauthClientId: '#openproject-client-id',
-	oauthClientSecret: '#openproject-client-secret',
+	oauthInstanceInput: '#openproject-oauth-instance > .text-input-input-wrapper > input',
 	serverHostForm: '.openproject-server-host',
 	opOauthForm: '.openproject-oauth-values',
 	ncOauthForm: '.nextcloud-oauth-values',
@@ -48,8 +46,8 @@ const selectors = {
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
-	opOauthClientIdInput: '#openproject-oauth-client-id',
-	opOauthClientSecretInput: '#openproject-oauth-client-secret',
+	opOauthClientIdInput: '#openproject-oauth-client-id > .text-input-input-wrapper > input',
+	opOauthClientSecretInput: '#openproject-oauth-client-secret > .text-input-input-wrapper > input',
 	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
