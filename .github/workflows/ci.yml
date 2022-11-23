@@ -118,7 +118,7 @@ jobs:
           ./occ a:e integration_openproject
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
-          make api-test
+#          make api-test
 
       - name: wait on OpenProject
         uses: iFaxity/wait-on-action@v1
@@ -133,12 +133,6 @@ jobs:
 
       - name: e2e test
         run: |
-          cd /server
-          npm ci
-          npm run build
-          cd apps/integration_openproject
-          npm ci
-          npm run build
           npm run test:e2e tests/e2e/features/webUI
 
       - name: JS Code Coverage Summary Report
