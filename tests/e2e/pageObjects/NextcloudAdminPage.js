@@ -8,7 +8,7 @@ class NextcloudAdminPage {
 		this.settingsMenuSelector = '//div[@id="settings"]/div[@class="menutoggle"]'
 		this.settingsMenuOpenSelector = 'div#settings.openedMenu'
 		this.adminSettingSelector = '//li[@data-id="admin_settings"]'
-		this.openProjectTabSelector = '//a[@href="/nextcloud_test/index.php/settings/admin/openproject"]'
+		this.openProjectTabSelector = '//li//a//span[text()="OpenProject"]'
 		this.openProjectOauthInstanceInputFieldSelector = '//div[@id="openproject-oauth-instance"]//div[@class="text-input-input-wrapper"]//input'
 		this.saveOauthInstanceButtonSelector = '[data-test-id="submit-server-host-form-btn"]'
 		this.openProjectOauthClientIdSelector = '//div[@id="openproject-oauth-client-id"]//div[@class="text-input-input-wrapper"]//input'
@@ -36,13 +36,15 @@ class NextcloudAdminPage {
 			// It is important to call waitForNavigation before click to set up waiting.
 			pageNC.waitForNavigation(),
 			// Triggers a navigation after a timeout.
-			pageNC.locator(this.openProjectTabSelector),
+			pageNC.locator(this.openProjectTabSelector).last().click()
 		]);
 	}
 
 	async adminAddsOpenProjectHost() {
 		await pageNC.waitForTimeout(20000)
-		// await pageNC.waitForSelector('//h2[@class="settings-title"]//span[text()="OpenProject integration"]',{state:"visible",timeout:50000})
+		await pageNC.waitForSelector('#app-content',10000)
+		await pageNC.waitForSelector('#openproject_prefs',10000)
+		await pageNC.waitForSelector('//h2[@class="settings-title"]//span[text()="OpenProject integration"]',{state:"visible",timeout:50000})
 		await pageNC.waitForSelector(this.openProjectOauthInstanceInputFieldSelector,{state:"visible",timeout:60000})
 		await pageNC.click(this.openProjectOauthInstanceInputFieldSelector)
 		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
