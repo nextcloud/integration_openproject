@@ -137,8 +137,7 @@ jobs:
       - name: e2e test
         id: e2e
         run: |
-          npm ci
-          npm run build
+          make
           ls js
           npm run test:e2e tests/e2e/features/webUI
         continue-on-error: true
