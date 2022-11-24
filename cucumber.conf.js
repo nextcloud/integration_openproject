@@ -8,7 +8,7 @@ const opAdminPageObject = new OpenprojectAdminPage()
 setDefaultTimeout(120000)
 
 BeforeAll(async function () {
-	await apiHelper.createAdmin()
+	// await apiHelper.createAdmin()
 	global.browserNC = await chromium.launch({
 		headless: true,
 	});
@@ -29,7 +29,7 @@ Before(async function () {
 	global.pageNC = await global.contextNC.newPage()
 	global.contextOP = await global.browserOP.newContext()
 	await contextOP.grantPermissions(['clipboard-read','clipboard-write']);
-	await contextNC.tracing.start({ screenshots: true, snapshots: true });
+	await contextOP.tracing.start({ screenshots: true, snapshots: true });
 	global.pageOP = await global.contextOP.newPage()
 });
 
@@ -37,9 +37,10 @@ After(async function () {
 	await apiHelper.resetNextcloudOauthSettings()
 	// await opAdminPageObject.deleteFileStorage()
 	await global.pageNC.close();
-	await global.contextNC.close();
 	await contextNC.tracing.stop({ path: 'tests/report/traceNC.zip' });
+	await global.contextNC.close();
 	await global.pageOP.close();
-	await global.contextOP.close();
 	await contextOP.tracing.stop({ path: 'tests/report/traceOP.zip' });
+	await global.contextOP.close();
+
 });

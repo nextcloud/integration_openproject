@@ -24,20 +24,22 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
-		await pageNC.waitForTimeout(10000)
-		await pageNC.waitForSelector(this.settingsMenuSelector)
-		await pageNC.locator(this.settingsMenuSelector).click()
-		await pageNC.waitForSelector(this.settingsMenuOpenSelector)
-		await pageNC.locator(this.adminSettingSelector).click()
-		await pageNC.waitForSelector('#security-warning',{state:"visible", timeout:10000})
-		await pageNC.waitForSelector(this.openProjectTabSelector,{state:"visible", timeout:10000})
-		await Promise.all([
-			// Waits for the next navigation.
-			// It is important to call waitForNavigation before click to set up waiting.
-			pageNC.waitForNavigation(),
-			// Triggers a navigation after a timeout.
-			pageNC.locator(this.openProjectTabSelector).last().click()
-		]);
+		await pageNC.goto(config.baseUrlNC + '/index.php/settings/admin/openproject')
+		await pageNC.waitForSelector('#openproject_prefs',10000)
+		// await pageNC.waitForTimeout(10000)
+		// await pageNC.waitForSelector(this.settingsMenuSelector)
+		// await pageNC.locator(this.settingsMenuSelector).click()
+		// await pageNC.waitForSelector(this.settingsMenuOpenSelector)
+		// await pageNC.locator(this.adminSettingSelector).click()
+		// await pageNC.waitForSelector('#security-warning',{state:"visible", timeout:10000})
+		// await pageNC.waitForSelector(this.openProjectTabSelector,{state:"visible", timeout:10000})
+		// await Promise.all([
+		// 	// Waits for the next navigation.
+		// 	// It is important to call waitForNavigation before click to set up waiting.
+		// 	pageNC.waitForNavigation(),
+		// 	// Triggers a navigation after a timeout.
+		// 	pageNC.locator(this.openProjectTabSelector).last().click()
+		// ]);
 	}
 
 	async adminAddsOpenProjectHost() {
