@@ -137,9 +137,9 @@ jobs:
       - name: e2e test
         id: e2e
         run: |
+          node -v
           npm ci
           npm run build
-          pwd
           npm run test:e2e tests/e2e/features/webUI
         continue-on-error: true
 

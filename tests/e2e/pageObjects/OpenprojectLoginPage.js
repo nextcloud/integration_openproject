@@ -14,7 +14,7 @@ class OpenprojectLoginPage {
 	async userLogsInOpenproject(username, password) {
 		await pageOP.goto(config.baseUrlOP)
 		await this.fillUpLoginForm(username, password)
-		await  pageOP.waitForSelector(this.quickAddMenuSelector)
+		// await  pageOP.waitForSelector(this.quickAddMenuSelector)
 	}
 
 	async fillUpLoginForm(username, password, nextcloud) {
