@@ -37,10 +37,10 @@ After(async function () {
 	await apiHelper.resetNextcloudOauthSettings()
 	// await opAdminPageObject.deleteFileStorage()
 	await global.pageNC.close();
-	await contextNC.tracing.stop({ path: 'tests/report/traceNC.zip' });
+	await contextNC.tracing.stop({ path: 'tests/e2e/report/traceNC.zip' });
 	await global.contextNC.close();
 	await global.pageOP.close();
-	await contextOP.tracing.stop({ path: 'tests/report/traceOP.zip' });
+	await contextOP.tracing.stop({ path: 'tests/e2e/report/traceOP.zip' });
 	await global.contextOP.close();
 
 });
