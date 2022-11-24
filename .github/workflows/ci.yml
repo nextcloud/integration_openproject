@@ -44,6 +44,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - run: mkdir -p artifacts
+
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
         with:
@@ -133,10 +135,20 @@ jobs:
         run: curl http://localhost:8080/status.php
 
       - name: e2e test
+        id: e2e
         run: |
           npm ci
           npm run build
+          pwd
           npm run test:e2e tests/e2e/features/webUI
+        continue-on-error: true
+
+      - name: Upload tracing artifacts
+        if: steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-tracing
+          path: /home/runner/work/integration_openproject/integration_openproject/tests/report/
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
