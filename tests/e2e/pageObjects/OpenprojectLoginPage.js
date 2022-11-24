@@ -8,11 +8,13 @@ class OpenprojectLoginPage {
 		this.usernameSelector = '#username-pulldown'
 		this.passwordSelector = '#password-pulldown'
 		this.userSignUP = '#login-pulldown'
+		this.quickAddMenuSelector = 'op-quick-add-menu--icon'
 	}
 
 	async userLogsInOpenproject(username, password) {
 		await pageOP.goto(config.baseUrlOP)
 		await this.fillUpLoginForm(username, password)
+		await  pageOP.waitForSelector(this.quickAddMenuSelector)
 	}
 
 	async fillUpLoginForm(username, password, nextcloud) {

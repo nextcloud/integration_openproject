@@ -24,8 +24,7 @@ class NextcloudAdminPage {
 	}
 
 	async adminNavigatesToAdminOPTab() {
-		await pageNC.goto(config.baseUrlNC + '/index.php/settings/user/security')
-		await pageNC.screenshot({ path: 'report/screenshot.png', fullPage: true });
+		await pageNC.goto(config.baseUrlNC + '/index.php/settings/admin/openproject')
 		await pageNC.waitForSelector('#openproject_prefs',10000)
 		// await pageNC.waitForTimeout(10000)
 		// await pageNC.waitForSelector(this.settingsMenuSelector)

@@ -8,7 +8,7 @@ const opAdminPageObject = new OpenprojectAdminPage()
 setDefaultTimeout(120000)
 
 BeforeAll(async function () {
-	// await apiHelper.createAdmin()
+	await apiHelper.createAdmin()
 	global.browserNC = await chromium.launch({
 		headless: true,
 	});
