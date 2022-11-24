@@ -183,16 +183,19 @@ export default {
 						const userId = n._links?.actor?.href
 							? n._links.actor.href.replace(/.*\//, '')
 							: null
-						if (notifications[wpId].mostRecentActor === undefined) {
+						const title = n._links?.actor?.title
+							? n._links.actor.title
+							: null
+						if (notifications[wpId].mostRecentActor === undefined && userId !== null) {
 							notifications[wpId].mostRecentActor = {
-								title: n._links.actor.title,
+								title,
 								id: userId,
 								createdAt: n.createdAt,
 							}
-						} else if (userId !== notifications[wpId].mostRecentActor.id) {
+						} else if (userId !== null && userId !== notifications[wpId].mostRecentActor.id) {
 							if (Date.parse(n.createdAt) > Date.parse(notifications[wpId].mostRecentActor.createdAt)) {
 								notifications[wpId].mostRecentActor = {
-									title: n._links.actor.title,
+									title,
 									id: userId,
 									createdAt: n.createdAt,
 								}
@@ -224,18 +227,23 @@ export default {
 			return this.openprojectUrl + '/notifications/details/' + n.wpId + '/activity/'
 		},
 		getAuthorShortName(n) {
-			return n.mostRecentActor.title
+			return n.mostRecentActor?.title
 				? n.mostRecentActor.title
 				: undefined
 		},
 		getAuthorAvatarUrl(n) {
-			return n.mostRecentActor.id
-				? generateUrl('/apps/integration_openproject/avatar?') + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
-				: ''
+			const url = generateUrl('/apps/integration_openproject/avatar?')
+			return n.mostRecentActor?.id
+				? url + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
+				: url + encodeURIComponent('userName') + '='
 		},
 		getSubline(n) {
 			let reasonsString = ''
 			n.reasons.forEach((value) => {
+				// dateAlert is the only string that is not humanly readable by itself
+				if (value === 'dateAlert') {
+					value = 'Date alert'
+				}
 				reasonsString = reasonsString + ', ' + t('integration_openproject', value)
 			})
 			return n.projectTitle + ' - ' + reasonsString.replace(/^, /, '')

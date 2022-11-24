@@ -6,9 +6,9 @@ Array [
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
     "avatarUsername": "Admin de DEV userz",
     "id": "17",
-    "mainText": "(5) Create wireframes for new landing page",
+    "mainText": "(6) Create wireframes for new landing page",
     "overlayIconUrl": "",
-    "subText": "Scrum project - assigned, mentioned",
+    "subText": "Scrum project - assigned, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   Object {
@@ -19,6 +19,15 @@ Array [
     "overlayIconUrl": "",
     "subText": "Scrum project - mentioned",
     "targetUrl": "http://openproject.org/notifications/details/18/activity/",
+  },
+  Object {
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userName=",
+    "avatarUsername": "undefinedz",
+    "id": "24",
+    "mainText": "(1) Choose a content management system",
+    "overlayIconUrl": "",
+    "subText": "Demo project - Date alert",
+    "targetUrl": "http://openproject.org/notifications/details/24/activity/",
   },
   Object {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
