@@ -147,7 +147,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: e2e-tracing
-          path: /home/runner/work/integration_openproject/integration_openproject/tests/e2e/report/
+          path: server/apps/integration_openproject/tests/e2e/report/
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
