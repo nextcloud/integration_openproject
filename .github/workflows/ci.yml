@@ -137,15 +137,10 @@ jobs:
       - name: e2e test
         id: e2e
         run: |
-<<<<<<< Updated upstream
-          make
-          ls js
-=======
           node -v
           npm ci
           ls /home/runner/work/
           npm run build
->>>>>>> Stashed changes
           npm run test:e2e tests/e2e/features/webUI
         continue-on-error: true
 
