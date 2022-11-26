@@ -21,6 +21,7 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Activer la recherche unifiée pour les tickets",
     "Enable notifications for activity in my work packages" : "Activer les notifications d'activité dans mes work packages",
     "Yes, replace" : "Oui, écraser",
+    "Reset OpenProject integration" : "Réinitialiser l'intégration OpenProject",
     "Yes, reset" : "Oui, ré-initialiser",
     "URL is invalid" : "URL invalide",
     "Response:" : "Réponse :",
