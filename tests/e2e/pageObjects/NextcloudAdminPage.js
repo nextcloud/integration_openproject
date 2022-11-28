@@ -52,6 +52,7 @@ class NextcloudAdminPage {
 		await pageNC.fill(this.openProjectOauthInstanceInputFieldSelector, config.baseUrlOP)
 		await pageNC.click(this.saveOauthInstanceButtonSelector)
 		await expect(pageNC.locator(this.errorMessage)).not.toBeVisible()
+		await pageNC.waitForSelector(this.openProjectOauthClientIdSelector)
 	}
 
 	async adminSetsTheOpOauthCreds(opClientId, opClientSecret) {

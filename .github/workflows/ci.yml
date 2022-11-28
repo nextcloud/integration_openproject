@@ -137,7 +137,9 @@ jobs:
       - name: e2e test
         id: e2e
         run: |
-          cd server/apps/integration_openproject
+          cd server
+          ./occ config:system:get allow_local_remote_servers
+          cd apps/integration_openproject
           make
           npm run test:e2e tests/e2e/features/webUI
         continue-on-error: true

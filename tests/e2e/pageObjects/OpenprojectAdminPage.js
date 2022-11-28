@@ -33,6 +33,7 @@ class OpenprojectAdminPage {
 		await pageOP.fill(this.storageNameInputFieldSelector, name)
 		await pageOP.fill(this.hostUrlInputFieldSelector, config.baseUrlNC)
 		await pageOP.click(this.continueSetupButtonSelector)
+		await pageOP.waitForSelector(this.copyClientIdButtonSelector)
 	}
 
 	 async copyOpenProjectOauthCreds() {
@@ -41,6 +42,7 @@ class OpenprojectAdminPage {
 		 await pageOP.click(this.copyClientSecretButtonSelector)
 		 const openProjectClientSecret = await pageOP.evaluate(() => navigator.clipboard.readText())
 		 await pageOP.click(this.doneContinueSetupButtonSelector)
+		 await pageOP.waitForSelector(this.oauthClientIdInputFieldSelectorOP)
 		 return { client_id: openProjectClientId, client_secret: openProjectClientSecret }
 	 }
 
