@@ -138,7 +138,10 @@ jobs:
         id: e2e
         run: |
           cd server
+          ./occ config:system:set allow_local_remote_servers --value 1
           ./occ config:system:get allow_local_remote_servers
+          ./occ config:system:set overwrite.cli.url --value 'http://localhost:8080'
+          cat config/config.php
           cd apps/integration_openproject
           make
           npm run test:e2e tests/e2e/features/webUI
