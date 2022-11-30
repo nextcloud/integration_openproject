@@ -11,7 +11,6 @@
 
 namespace OCA\OpenProject\Service;
 
-use OCA\OAuth2\Db\AccessTokenMapper;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
@@ -28,20 +27,15 @@ class OauthService {
 	 * @var ClientMapper
 	 */
 	private $clientMapper;
-	/**
-	 * @var AccessTokenMapper
-	 */
-	private $accessTokenMapper;
 
 	/**
 	 * Service to manipulate Nextcloud oauth clients
 	 */
 	public function __construct(ClientMapper $clientMapper,
-								AccessTokenMapper $accessTokenMapper,
-								ISecureRandom $secureRandom) {
+								ISecureRandom $secureRandom
+								) {
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
-		$this->accessTokenMapper = $accessTokenMapper;
 	}
 
 	/**
@@ -104,18 +98,5 @@ class OauthService {
 			'clientId' => $client->getClientIdentifier(),
 			'clientSecret' => $client->getSecret(),
 		];
-	}
-
-	/**
-	 * @param int $id
-	 * @return void
-	 */
-	public function deleteClient(int $id): void {
-		try {
-			$client = $this->clientMapper->getByUid($id);
-			$this->accessTokenMapper->deleteByClientId($id);
-			$this->clientMapper->delete($client);
-		} catch (ClientNotFoundException $e) {
-		}
 	}
 }

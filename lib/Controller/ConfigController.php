@@ -11,6 +11,8 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OAuth2\Controller\SettingsController;
+use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -64,6 +66,10 @@ class ConfigController extends Controller {
 	 */
 	private $oauthService;
 
+	/**
+	 * @var SettingsController
+	 */
+	private $oauthSettingsController;
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
@@ -73,6 +79,7 @@ class ConfigController extends Controller {
 								OpenProjectAPIService $openprojectAPIService,
 								LoggerInterface $logger,
 								OauthService $oauthService,
+								SettingsController $oauthSettingsController,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -83,6 +90,7 @@ class ConfigController extends Controller {
 		$this->logger = $logger;
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
+		$this->oauthSettingsController = $oauthSettingsController;
 	}
 
 	/**
@@ -346,7 +354,10 @@ class ConfigController extends Controller {
 		);
 		if ($oauthClientInternalId !== '') {
 			$id = (int) $oauthClientInternalId;
-			$this->oauthService->deleteClient($id);
+			try {
+				$this->oauthSettingsController->deleteClient($id);
+			} catch (ClientNotFoundException $e) {
+			}
 			$this->config->deleteAppValue(Application::APP_ID, 'nc_oauth_client_id');
 		}
 	}
