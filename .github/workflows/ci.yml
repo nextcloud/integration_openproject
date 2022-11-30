@@ -20,22 +20,21 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable24
             phpVersion: 8.1
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:latest
-    services:
-      openproject:
-        image: openproject/community:12
-        env:
-          OPENPROJECT_SECRET_KEY_BASE: secret
-          OPENPROJECT_HOST__NAME: localhost:8081
-          OPENPROJECT_HTTPS: false
-          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
-          OPENPROJECT_ONBOARDING__ENABLED: false
-          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
-          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
-          HOST: 0.0.0.0
-          OPENPROJECT_DEV_EXTRA_HOSTS: localhost
+    runner-job:
+      runs-on: ubuntu-latest
+      services:
+        openproject:
+          image: openproject/community:12
+          env:
+            OPENPROJECT_SECRET_KEY_BASE: secret
+            OPENPROJECT_HOST__NAME: localhost:8081
+            OPENPROJECT_HTTPS: false
+            OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+            OPENPROJECT_ONBOARDING__ENABLED: false
+            OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+            OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
+            HOST: 0.0.0.0
+            OPENPROJECT_DEV_EXTRA_HOSTS: localhost
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
