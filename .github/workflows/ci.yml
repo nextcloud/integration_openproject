@@ -22,17 +22,26 @@ jobs:
             phpVersion: 8.1
     runs-on: ubuntu-latest
 #    container: ubuntu:latest
+#    services:
+#      openproject:
+#        image: openproject/community:12
+#        env:
+#          OPENPROJECT_SECRET_KEY_BASE: secret
+##          OPENPROJECT_HOST__NAME: localhost:8081
+#          OPENPROJECT_HTTPS: false
+#          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+#          OPENPROJECT_ONBOARDING__ENABLED: false
+#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
     services:
-      openproject:
-        image: openproject/community:12
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
         env:
-          OPENPROJECT_SECRET_KEY_BASE: secret
-#          OPENPROJECT_HOST__NAME: localhost:8081
-          OPENPROJECT_HTTPS: false
-          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
-          OPENPROJECT_ONBOARDING__ENABLED: false
-          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
-          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
+          POSTGRES_PASSWORD: openproject-dev-password
+          POSTGRES_USER: openproject
+          POSTGRES_DB: openproject_dev
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -79,6 +88,14 @@ jobs:
       - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.2'
+          bundler-cache: true
+      - run: |
+          ruby --version
+
       - name: Install PHP Dependencies
         run: |
           sudo apt-get install git
@@ -88,6 +105,15 @@ jobs:
           ./occ maintenance:install --admin-pass=admin
           ./occ config:system:set allow_local_remote_servers --value 1
           git clone --depth 1 https://github.com/nextcloud/notifications.git -b ${{ matrix.nextcloudVersion }} apps/notifications
+          pwd
+
+      - name: setup openproject
+        run: |
+          mkdir ~/dev
+          cd ~/dev
+          pwd
+#          git clone https://github.com/opf/openproject.git
+#          cd openproject
 
 #      - name: PHP stan
 #        run: make phpstan
@@ -128,8 +154,8 @@ jobs:
 #        with:
 #          resource: http-get://localhost/api/v3/
 #          timeout: 240000
-      - name: try OpenProject
-        run: curl http://localhost/api/v3/users -u apiadmin:apiadmin
+#      - name: try OpenProject
+#        run: curl http://localhost/api/v3/users -u apiadmin:apiadmin
 
       - name: try Nextcloud
         run: |
