@@ -25,8 +25,6 @@ jobs:
     services:
       openproject:
         image: openproject/community:12
-        ports:
-          - 8081:80
         env:
           OPENPROJECT_SECRET_KEY_BASE: secret
 #          OPENPROJECT_HOST__NAME: localhost:8081
@@ -83,7 +81,7 @@ jobs:
 
       - name: Install PHP Dependencies
         run: |
-          apt-get install git
+          sudo apt-get install git
           composer install --no-progress --prefer-dist --optimize-autoloader
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
           cd server && git submodule update --init
@@ -125,11 +123,11 @@ jobs:
           cd apps/integration_openproject
 #          make api-test
 
-      - name: wait on OpenProject
-        uses: iFaxity/wait-on-action@v1
-        with:
-          resource: http-get://localhost/api/v3/
-          timeout: 240000
+#      - name: wait on OpenProject
+#        uses: iFaxity/wait-on-action@v1
+#        with:
+#          resource: http-get://localhost/api/v3/
+#          timeout: 240000
       - name: try OpenProject
         run: curl http://localhost/api/v3/users -u apiadmin:apiadmin
 
