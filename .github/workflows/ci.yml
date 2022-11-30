@@ -20,6 +20,7 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable24
             phpVersion: 8.1
+    runs-on: ubuntu-latest
     runner-job:
       runs-on: ubuntu-latest
       services:
