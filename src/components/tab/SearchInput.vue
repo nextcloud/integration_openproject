@@ -195,6 +195,7 @@ export default {
 	position: -webkit-sticky; /* Safari */
 	z-index: 1;
 	top: 0;
+	background: var(--color-main-background);
 	.searchInput {
 		width: 100%;
 	}
