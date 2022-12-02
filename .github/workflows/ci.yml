@@ -11,8 +11,8 @@ jobs:
     name: CI
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
-        phpVersion: [ 7.4, 8.0, 8.1 ]
+        nextcloudVersion: [ master ]
+        phpVersion: [ 7.4 ]
         exclude:
           - nextcloudVersion: stable22
             phpVersion: 8.1
@@ -21,6 +21,27 @@ jobs:
           - nextcloudVersion: stable24
             phpVersion: 8.1
     runs-on: ubuntu-latest
+#    container: ubuntu:latest
+#    services:
+#      openproject:
+#        image: openproject/community:12
+#        env:
+#          OPENPROJECT_SECRET_KEY_BASE: secret
+##          OPENPROJECT_HOST__NAME: localhost:8081
+#          OPENPROJECT_HTTPS: false
+#          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+#          OPENPROJECT_ONBOARDING__ENABLED: false
+#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: openproject-dev-password
+          POSTGRES_USER: openproject
+          POSTGRES_DB: openproject_dev
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -30,6 +51,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - run: mkdir -p artifacts
 
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
@@ -65,33 +88,52 @@ jobs:
       - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.2'
+          bundler-cache: true
+      - run: |
+          ruby --version
+
       - name: Install PHP Dependencies
         run: |
+          sudo apt-get install git
           composer install --no-progress --prefer-dist --optimize-autoloader
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
+          ./occ config:system:set allow_local_remote_servers --value 1
           git clone --depth 1 https://github.com/nextcloud/notifications.git -b ${{ matrix.nextcloudVersion }} apps/notifications
+          pwd
 
-      - name: PHP stan
-        run: make phpstan
+      - name: setup openproject
+        run: |
+          mkdir ~/dev
+          cd ~/dev
+          pwd
+#          git clone https://github.com/opf/openproject.git
+#          cd openproject
 
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+#      - name: PHP stan
+#        run: make phpstan
+
+#      - name: PHP code style
+#        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 
       - name: Install NPM Dependencies
         run: npm install
 
-      - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
-
-      - name: PHP & Vue Unit Tests
-        run: |
-          make phpunit
-          make jsunit
+#      - name: JS Lint
+#        run: npm run lint
+#
+#      - name: Style Lint
+#        run: npm run stylelint
+#
+#      - name: PHP & Vue Unit Tests
+#        run: |
+#          make phpunit
+#          make jsunit
 
       - name: API Tests
         env:
@@ -105,7 +147,41 @@ jobs:
           ./occ a:e integration_openproject
           php -S localhost:8080 2> /dev/null &
           cd apps/integration_openproject
-          make api-test
+#          make api-test
+
+#      - name: wait on OpenProject
+#        uses: iFaxity/wait-on-action@v1
+#        with:
+#          resource: http-get://localhost/api/v3/
+#          timeout: 240000
+#      - name: try OpenProject
+#        run: curl http://localhost/api/v3/users -u apiadmin:apiadmin
+
+      - name: try Nextcloud
+        run: |
+          curl http://localhost:8080/status.php
+          curl --silent 'http://localhost:8080/ocs/v2.php/cloud/capabilities?format=json'-H "OCS-APIREQUEST: 1" | json_pp
+
+      - name: e2e test
+        id: e2e
+        run: |
+          cd server
+          ./occ config:system:set allow_local_remote_servers --value 1
+          ./occ config:system:get allow_local_remote_servers
+          ./occ config:system:set csrf.disabled --value true
+          ./occ config:system:set overwrite.cli.url --value 'http://localhost:8080'
+          cat config/config.php
+          cd apps/integration_openproject
+          make
+          npm run test:e2e tests/e2e/features/webUI
+        continue-on-error: true
+
+      - name: Upload tracing artifacts
+        if: steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-tracing
+          path: server/apps/integration_openproject/tests/e2e/report/
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}

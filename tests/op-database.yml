@@ -1,0 +1,15 @@
+#database.yml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost:5432
+  username: openproject
+  password: openproject-dev-password
+
+development:
+  <<: *default
+  database: openproject_dev
+
+test:
+  <<: *default
+  database: openproject_test
