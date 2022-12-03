@@ -15,7 +15,7 @@ OC.L10N.register(
     "Invalid token" : "Неприпустимий маркер",
     "Copied!" : "Скопійовано!",
     "Details" : "Деталі",
-    "Start typing to search" : "Почніть вводити текст для пошуку",
+    "Start typing to search" : "Що шукаємо?",
     "Mark as read" : "Позначити прочитаним",
     "OAuth access token could not be obtained:" : "Не вдалося отримати маркер доступу OAuth:"
 },
