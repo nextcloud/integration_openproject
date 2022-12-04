@@ -11,6 +11,7 @@ OC.L10N.register(
     "Reset" : "重置",
     "Enable navigation link" : "启用应用图标链接至实例",
     "Enable unified search for tickets" : "启用统一的票证搜索",
+    "URL is invalid" : "URL无效",
     "Documentation" : "文档",
     "Connected as {user}" : "以 {user} 身份连接",
     "Incorrect access token" : "访问令牌不正确",
