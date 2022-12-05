@@ -85,19 +85,17 @@ class PersonalTest extends TestCase {
 				['testUser', 'integration_openproject', 'token'],
 				['testUser', 'integration_openproject', 'user_name'],
 				['testUser', 'integration_openproject', 'search_enabled', '0'],
-				['testUser', 'integration_openproject', 'notification_enabled', '0'],
 				['testUser', 'integration_openproject', 'navigation_enabled', '0'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'some-token',
 				'some-username',
-				'0', '0', '0'
+				'0', '0',
 			);
 		$this->config
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'default_enable_unified_search'],
-				['integration_openproject', 'default_enable_notifications'],
 				['integration_openproject', 'default_enable_navigation'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
@@ -106,7 +104,7 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'oauth_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
-				'0', '0', '0',
+				'0', '0',
 				$clientId,
 				$clientSecret,
 				$oauthInstanceUrl,
@@ -124,7 +122,6 @@ class PersonalTest extends TestCase {
 						'token' => 'some-token',
 						'user_name' => 'some-username',
 						'search_enabled' => false,
-						'notification_enabled' => false,
 						'navigation_enabled' => false,
 						'admin_config_ok' => $adminConfigStatus,
 					]
@@ -148,19 +145,17 @@ class PersonalTest extends TestCase {
 				['testUser', 'integration_openproject', 'token'],
 				['testUser', 'integration_openproject', 'user_name'],
 				['testUser', 'integration_openproject', 'search_enabled', '1'],
-				['testUser', 'integration_openproject', 'notification_enabled', '1'],
 				['testUser', 'integration_openproject', 'navigation_enabled', '1'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'some-token',
 				'some-username',
-				'1', '1', '1'
+				'1', '1',
 			);
 		$this->config
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'default_enable_unified_search'],
-				['integration_openproject', 'default_enable_notifications'],
 				['integration_openproject', 'default_enable_navigation'],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
@@ -169,7 +164,7 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'oauth_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
-				'1', '1', '1',
+				'1', '1',
 				"some-client-id",
 				"some-client-secret",
 				"http://localhost",
@@ -184,7 +179,6 @@ class PersonalTest extends TestCase {
 						'token' => 'some-token',
 						'user_name' => 'some-username',
 						'search_enabled' => true,
-						'notification_enabled' => true,
 						'navigation_enabled' => true,
 						'admin_config_ok' => true,
 					]

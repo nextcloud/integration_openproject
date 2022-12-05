@@ -23,12 +23,10 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
-use OCP\Notification\IManager as INotificationManager;
 use OCP\EventDispatcher\IEventDispatcher;
 
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
-use OCA\OpenProject\Notification\Notifier;
 
 /**
  * Class Application
@@ -52,9 +50,6 @@ class Application extends App implements IBootstrap {
 
 		$container = $this->getContainer();
 		$this->config = $container->get(IConfig::class);
-
-		$manager = $container->get(INotificationManager::class);
-		$manager->registerNotifierService(Notifier::class);
 	}
 
 	public function register(IRegistrationContext $context): void {

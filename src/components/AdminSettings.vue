@@ -184,10 +184,6 @@
 				input-id="default-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
 				@input="setDefaultConfig" />
-			<CheckBox v-model="state.default_enable_notifications"
-				input-id="default-prefs--notifications"
-				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')"
-				@input="setDefaultConfig" />
 		</div>
 	</div>
 </template>
@@ -445,7 +441,6 @@ export default {
 			this.state.client_secret = null
 			this.state.oauth_instance_url = null
 			this.state.default_enable_navigation = false
-			this.state.default_enable_notifications = false
 			this.state.default_enable_unified_search = false
 
 			await this.saveOPOptions()
@@ -552,7 +547,6 @@ export default {
 					client_secret: this.state.client_secret,
 					oauth_instance_url: this.state.oauth_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
-					default_enable_notifications: this.state.default_enable_notifications,
 					default_enable_unified_search: this.state.default_enable_unified_search,
 				},
 			}
@@ -609,7 +603,6 @@ export default {
 			const req = {
 				values: {
 					default_enable_navigation: !!this.state.default_enable_navigation,
-					default_enable_notifications: !!this.state.default_enable_notifications,
 					default_enable_unified_search: !!this.state.default_enable_unified_search,
 				},
 			}

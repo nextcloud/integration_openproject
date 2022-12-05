@@ -14,7 +14,6 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use OCA\Notifications\Handler;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -28,11 +27,8 @@ use OCP\IURLGenerator;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
-use OCP\IUserManager;
-use OCP\IUser;
 use OCP\IAvatarManager;
 use OCP\Http\Client\IClientService;
-use OCP\Notification\IManager as INotificationManager;
 use OCP\Files\NotPermittedException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
@@ -50,10 +46,6 @@ class OpenProjectAPIService {
 	 */
 	private $appName;
 	/**
-	 * @var IUserManager
-	 */
-	private $userManager;
-	/**
 	 * @var IAvatarManager
 	 */
 	private $avatarManager;
@@ -69,10 +61,6 @@ class OpenProjectAPIService {
 	 * @var IConfig
 	 */
 	private $config;
-	/**
-	 * @var INotificationManager
-	 */
-	private $notificationManager;
 	/**
 	 * @var \OCP\Http\Client\IClient
 	 */
@@ -92,169 +80,27 @@ class OpenProjectAPIService {
 	private $cache = null;
 
 	/**
-	 * @var Handler
-	 */
-	private $handler;
-
-	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct(
 								string $appName,
-								IUserManager $userManager,
 								IAvatarManager $avatarManager,
 								LoggerInterface $logger,
 								IL10N $l10n,
 								IConfig $config,
-								INotificationManager $notificationManager,
 								IClientService $clientService,
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory,
-								Handler $handler = null) {
+								ICacheFactory $cacheFactory) {
 		$this->appName = $appName;
-		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->config = $config;
-		$this->notificationManager = $notificationManager;
 		$this->client = $clientService->newClient();
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
-		$this->handler = $handler;
 		$this->cache = $cacheFactory->createDistributed();
-	}
-
-	/**
-	 * triggered by a cron job
-	 * notifies user of their number of new tickets
-	 *
-	 * @return void
-	 */
-	public function checkNotifications(): void {
-		$this->userManager->callForAllUsers(function (IUser $user) {
-			$this->checkNotificationsForUser($user->getUID());
-		});
-	}
-
-	/**
-	 * @param string $userId
-	 * @return void
-	 */
-	private function checkNotificationsForUser(string $userId): void {
-		if ($this->handler === null) {
-			// notifications app seems not to exist
-			return;
-		}
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		$notificationEnabled = ($this->config->getUserValue(
-			$userId,
-			Application::APP_ID,
-			'notification_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')) === '1');
-		if ($accessToken && $notificationEnabled) {
-			$notifications = $this->getNotifications($userId);
-			$aggregatedNotifications = [];
-			if (!isset($notifications['error'])) {
-				foreach ($notifications as $n) {
-					$wpId = preg_replace('/.*\//', '', $n['_links']['resource']['href']);
-					if (!array_key_exists($wpId, $aggregatedNotifications)) {
-						$aggregatedNotifications[$wpId] = [
-							'wpId' => $wpId,
-							'resourceTitle' => $n['_links']['resource']['title'],
-							'projectTitle' => $n['_links']['project']['title'],
-							'count' => 1,
-							'updatedAt' => $n['updatedAt']
-						];
-					} else {
-						$storedUpdatedAt = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
-						if (\Safe\strtotime($n['updatedAt']) > $storedUpdatedAt) {
-							// currently the code never comes here because the notifications are ordered
-							// by 'updatedAt' but as backup I would keep it
-							$aggregatedNotifications[$wpId]['updatedAt'] = $n['updatedAt'];
-						}
-						$aggregatedNotifications[$wpId]['count']++;
-					}
-					$aggregatedNotifications[$wpId]['reasons'][] = $n['reason'];
-					$aggregatedNotifications[$wpId]['actors'][] = $n['_links']['actor']['title'];
-				}
-				$manager = $this->notificationManager;
-				$notificationsFilter = $manager->createNotification();
-				$notificationsFilter->setApp(Application::APP_ID)
-					->setUser($userId);
-				$this->config->setUserValue(
-					$userId,
-					Application::APP_ID,
-					'refresh-notifications-in-progress',
-					'true'
-				);
-				$currentNotifications = $this->handler->get($notificationsFilter);
-				foreach ($currentNotifications as $notificationId => $currentNotification) {
-					$parametersCurrentNotifications = $currentNotification->getSubjectParameters();
-					$wpId = $parametersCurrentNotifications['wpId'];
-					if (isset($aggregatedNotifications[$wpId])) {
-						$currentNotificationUpdateTime = \Safe\strtotime($parametersCurrentNotifications['updatedAt']);
-						$newNotificationUpdateTime = \Safe\strtotime($aggregatedNotifications[$wpId]['updatedAt']);
-
-						if ($newNotificationUpdateTime <= $currentNotificationUpdateTime) {
-							// nothing changed with any notification associated with that WP
-							// so get rid of it
-							unset($aggregatedNotifications[$wpId]);
-						} else {
-							$manager->markProcessed($currentNotification);
-						}
-					} else { // there are no notifications in OP associated with that WP
-						$manager->markProcessed($currentNotification);
-					}
-				}
-
-				foreach ($aggregatedNotifications as $n) {
-					$n['reasons'] = array_unique($n['reasons']);
-					$n['actors'] = array_unique($n['actors']);
-					// TODO can we use https://github.com/nextcloud/notifications/blob/master/docs/notification-workflow.md#defer-and-flush ?
-					$this->sendNCNotification($userId, 'op_notification', $n);
-				}
-				$this->config->setUserValue(
-					$userId,
-					Application::APP_ID,
-					'refresh-notifications-in-progress',
-					'false'
-				);
-			}
-		}
-	}
-
-	/**
-	 * @param array<mixed> $workPackage
-	 * @return int|null
-	 */
-	private function getWPAssigneeOrAuthorId(array $workPackage): ?int {
-		return isset($workPackage['_links'], $workPackage['_links']['assignee'], $workPackage['_links']['assignee']['href'])
-			? (int) preg_replace('/.*\//', '', $workPackage['_links']['assignee']['href'])
-			: (isset($workPackage['_links'], $workPackage['_links']['author'], $workPackage['_links']['author']['href'])
-				? (int) preg_replace('/.*\//', '', $workPackage['_links']['author']['href'])
-				: null);
-	}
-
-	/**
-	 * @param string $userId
-	 * @param string $subject
-	 * @param array<mixed> $params
-	 * @return void
-	 */
-	private function sendNCNotification(string $userId, string $subject, array $params): void {
-		$manager = $this->notificationManager;
-		$notification = $manager->createNotification();
-
-		$notification->setApp(Application::APP_ID)
-			->setUser($userId)
-			->setDateTime(new DateTime())
-			->setObject('dum', 'dum');
-
-		$notification->setSubject($subject, $params);
-
-		$manager->notify($notification);
 	}
 
 	/**

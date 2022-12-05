@@ -50,12 +50,6 @@ class Personal implements ISettings {
 			'search_enabled',
 			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')
 		);
-		$notificationEnabled = $this->config->getUserValue(
-			$this->userId,
-			Application::APP_ID,
-			'notification_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0')
-		);
 		$navigationEnabled = $this->config->getUserValue(
 			$this->userId,
 			Application::APP_ID,
@@ -66,7 +60,6 @@ class Personal implements ISettings {
 		$userConfig = [
 			'token' => $token,
 			'search_enabled' => ($searchEnabled === '1'),
-			'notification_enabled' => ($notificationEnabled === '1'),
 			'navigation_enabled' => ($navigationEnabled === '1'),
 			'user_name' => $userName,
 		];
