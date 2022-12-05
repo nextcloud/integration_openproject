@@ -153,7 +153,6 @@ class ConfigController extends Controller {
 			'client_id',
 			'client_secret',
 			'default_enable_navigation',
-			'default_enable_notifications',
 			'default_enable_unified_search'
 		];
 
