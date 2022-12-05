@@ -757,7 +757,7 @@ class OpenProjectAPIService {
 		$body = $response->getBody();
 		$respCode = $response->getStatusCode();
 		if ($respCode !== 200) {
-			throw new OpenprojectErrorException($body);
+			throw new OpenprojectErrorException('Could not revoke token in OpenProject. Response body: "' .$body . '"');
 		}
 	}
 }

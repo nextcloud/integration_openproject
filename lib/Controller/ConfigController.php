@@ -11,6 +11,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use Exception;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;

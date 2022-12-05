@@ -844,6 +844,7 @@ class ConfigControllerTest extends TestCase {
 		$userManager = \OC::$server->getUserManager();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 
 		$configMock
 			->method('getAppValue')
@@ -896,6 +897,7 @@ class ConfigControllerTest extends TestCase {
 			$apiService,
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
+			$oauthSettingsControllerMock,
 			'test101'
 		);
 
