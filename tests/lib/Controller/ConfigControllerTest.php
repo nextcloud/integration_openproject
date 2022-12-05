@@ -462,7 +462,8 @@ class ConfigControllerTest extends TestCase {
 					'client_id' => '',
 					'client_secret' => '$client_secret',
 					'oauth_instance_url' => 'http://openproject.com',
-				], false
+				],
+				false
 			],
 		];
 	}
@@ -633,7 +634,7 @@ class ConfigControllerTest extends TestCase {
 	 * @dataProvider setAdminConfigClearUserDataChangeNCOauthClientDataProvider
 	 */
 	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
-		$oldCreds, $credsToUpdate, $deleteUserValues, $updateNCOAuthClient
+		array $oldCreds, array $credsToUpdate, bool $deleteUserValues, $updateNCOAuthClient
 	) {
 		$userManager = $this->checkForUsersCountBeforeTest();
 		$this->user1 = $userManager->createUser('test101', 'test101');

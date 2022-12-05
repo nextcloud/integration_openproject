@@ -89,8 +89,9 @@ jobs:
 
       - name: PHP & Vue Unit Tests
         run: |
-          make phpunit
           make jsunit
+          make phpunit
+        continue-on-error: true
 
       - name: API Tests
         env:
