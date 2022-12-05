@@ -18,6 +18,7 @@ OC.L10N.register(
     "Details" : "詳細資訊",
     "Start typing to search" : "開始輸入以搜尋",
     "Mark as read" : "標為已讀",
+    "Unlink" : "取消連結",
     "OAuth access token could not be obtained:" : "無法取得 OAuth 存取權杖：",
     "Connected accounts" : "已連線的帳號"
 },
