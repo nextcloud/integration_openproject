@@ -29,9 +29,6 @@
 					<br v-else>
 				</template>
 			</CheckBox>
-			<CheckBox v-model="state.notification_enabled"
-				input-id="openproject-prefs--notifications"
-				:label="t('integration_openproject', 'Enable notifications for activity in my work packages')" />
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
 	</div>

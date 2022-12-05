@@ -17,7 +17,6 @@ use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
-use OCA\Notifications\Handler;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
@@ -31,8 +30,6 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
-use OCP\IUserManager;
-use OCP\Notification\IManager;
 use OCP\Security\IRemoteHostValidator;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
@@ -304,17 +301,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		return new OpenProjectAPIService(
 			'integration_openproject',
-			$this->createMock(IUserManager::class),
 			$avatarManagerMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IL10N::class),
 			$this->defaultConfigMock,
-			$this->createMock(IManager::class),
 			$clientService,
 			$storageMock,
 			$urlGeneratorMock,
 			$this->createMock(ICacheFactory::class),
-			$this->createMock(Handler::class),
 		);
 	}
 
@@ -334,17 +328,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setConstructorArgs(
 				[
 					'integration_openproject',
-					$this->createMock(IUserManager::class),
 					$this->createMock(IAvatarManager::class),
 					$this->createMock(LoggerInterface::class),
 					$this->createMock(IL10N::class),
 					$this->createMock(IConfig::class),
-					$this->createMock(IManager::class),
 					$this->createMock(IClientService::class),
 					$this->createMock(IRootFolder::class),
 					$this->createMock(IURLGenerator::class),
 					$cacheFactoryMock,
-					$this->createMock(Handler::class),
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1209,17 +1200,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$service = new OpenProjectAPIService(
 			'integration_openproject',
-			$this->createMock(IUserManager::class),
 			$this->createMock(IAvatarManager::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IL10N::class),
 			$configMock,
-			$this->createMock(IManager::class),
 			$clientService,
 			$this->createMock(IRootFolder::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ICacheFactory::class),
-			$this->createMock(Handler::class),
 		);
 
 		$response = $service->request('', '', []);

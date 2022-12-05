@@ -56,7 +56,6 @@ class Admin implements ISettings {
 			'oauth_instance_url' => $oauthUrl,
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
-			'default_enable_notifications' => $this->config->getAppValue(Application::APP_ID, 'default_enable_notifications', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 		];
 

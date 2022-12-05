@@ -114,9 +114,6 @@ exports[`AdminSettings.vue default user configurations form should be visible wh
   <div class="form-check-input"><input id="default-prefs--u-search" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--u-search">
       Enable unified search for tickets
     </label> </div>
-  <div class="form-check-input"><input id="default-prefs--notifications" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--notifications">
-      Enable notifications for activity in my work packages
-    </label> </div>
 </div>
 `;
 
