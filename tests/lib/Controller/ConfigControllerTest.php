@@ -85,56 +85,56 @@ class ConfigControllerTest extends TestCase {
 			});
 	}
 
-	public function testOauthRedirectSuccess():void {
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50));
-		$configMock
-			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'token', 'oAuthAccessToken'],
-				['testUser', 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
-				['testUser', 'integration_openproject', 'user_id', 1],
-				['testUser', 'integration_openproject', 'user_name', 'Tripathi Himal'],
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
-			);
-		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$urlGeneratorMock
-			->method('linkToRoute')
-			->with('files.view.index')
-			->willReturn('https://nc.np/apps/files/');
-		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$apiServiceMock
-			->method('request')
-			->with(
-				'testUser',
-				'users/me'
-			)
-			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripathi', 'id' => 1]);
-
-		$apiServiceMock
-			->method('requestOAuthAccessToken')
-			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
-
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$urlGeneratorMock,
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$apiServiceMock,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class), 'testUser'
-		);
-		$result = $configController->oauthRedirect('code', 'randomString');
-		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
-	}
+//	public function testOauthRedirectSuccess():void {
+//		$configMock = $this->getConfigMock(
+//			str_repeat("A", 128), str_repeat("S", 50));
+//		$configMock
+//			->method('setUserValue')
+//			->withConsecutive(
+//				['testUser', 'integration_openproject', 'token', 'oAuthAccessToken'],
+//				['testUser', 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
+//				['testUser', 'integration_openproject', 'user_id', 1],
+//				['testUser', 'integration_openproject', 'user_name', 'Tripathi Himal'],
+//				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
+//			);
+//		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		$urlGeneratorMock
+//			->method('linkToRoute')
+//			->with('files.view.index')
+//			->willReturn('https://nc.np/apps/files/');
+//		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//
+//		$apiServiceMock
+//			->method('request')
+//			->with(
+//				'testUser',
+//				'users/me'
+//			)
+//			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripathi', 'id' => 1]);
+//
+//		$apiServiceMock
+//			->method('requestOAuthAccessToken')
+//			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
+//
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$urlGeneratorMock,
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$apiServiceMock,
+//			$this->createMock(LoggerInterface::class),
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class), 'testUser'
+//		);
+//		$result = $configController->oauthRedirect('code', 'randomString');
+//		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
+//	}
 
 	/**
 	 * @return array<mixed>
@@ -163,76 +163,76 @@ class ConfigControllerTest extends TestCase {
 			],
 		];
 	}
-	/**
-	 * @dataProvider redirectUrlDataProvider
-	 * @param string $startingPage
-	 * @param array<mixed> $linkToRouteArguments
-	 * @param string $redirectUrl
-	 * @return void
-	 */
-	public function testOauthRedirectCorrectRedirectUrl(
-		string $startingPage, array $linkToRouteArguments, string $redirectUrl
-	):void {
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50),
-			$startingPage
-		);
-		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$urlGeneratorMock
-			->method('linkToRoute')
-			->with(...array_values($linkToRouteArguments))
-			->willReturn($redirectUrl);
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$urlGeneratorMock,
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$this->createMock(OpenProjectAPIService::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class),
-			'testUser'
-		);
-		$result = $configController->oauthRedirect('code', 'randomString');
-		$this->assertSame($redirectUrl, $result->getRedirectURL());
-	}
+//	/**
+//	 * @dataProvider redirectUrlDataProvider
+//	 * @param string $startingPage
+//	 * @param array<mixed> $linkToRouteArguments
+//	 * @param string $redirectUrl
+//	 * @return void
+//	 */
+//	public function testOauthRedirectCorrectRedirectUrl(
+//		string $startingPage, array $linkToRouteArguments, string $redirectUrl
+//	):void {
+//		$configMock = $this->getConfigMock(
+//			str_repeat("A", 128), str_repeat("S", 50),
+//			$startingPage
+//		);
+//		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		$urlGeneratorMock
+//			->method('linkToRoute')
+//			->with(...array_values($linkToRouteArguments))
+//			->willReturn($redirectUrl);
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$urlGeneratorMock,
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$this->createMock(OpenProjectAPIService::class),
+//			$this->createMock(LoggerInterface::class),
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class),
+//			'testUser'
+//		);
+//		$result = $configController->oauthRedirect('code', 'randomString');
+//		$this->assertSame($redirectUrl, $result->getRedirectURL());
+//	}
 
-	/**
-	 * @return void
-	 */
-	public function testOauthRedirectWrongState() {
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50)
-		);
-		$configMock
-			->expects($this->exactly(2))
-			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-				[
-					'testUser', 'integration_openproject', 'oauth_connection_error_message',
-					'Error during OAuth exchanges'
-				],
-			);
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$this->createMock(OpenProjectAPIService::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class),
-			'testUser'
-		);
-		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
-	}
+//	/**
+//	 * @return void
+//	 */
+//	public function testOauthRedirectWrongState() {
+//		$configMock = $this->getConfigMock(
+//			str_repeat("A", 128), str_repeat("S", 50)
+//		);
+//		$configMock
+//			->expects($this->exactly(2))
+//			->method('setUserValue')
+//			->withConsecutive(
+//				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//				[
+//					'testUser', 'integration_openproject', 'oauth_connection_error_message',
+//					'Error during OAuth exchanges'
+//				],
+//			);
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$this->createMock(OpenProjectAPIService::class),
+//			$this->createMock(LoggerInterface::class),
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class),
+//			'testUser'
+//		);
+//		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
+//	}
 
 	/**
 	 * @return array<mixed>
@@ -250,56 +250,56 @@ class ConfigControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider codeVerifierDataProvider
-	 * @param string $codeVerifier
-	 * @param bool $valid
-	 * @return void
-	 */
-	public function testOauthRedirectCodeVerifier($codeVerifier, $valid) {
-		$loggerMock = $this->createMock(LoggerInterface::class);
-		$configMock = $this->getConfigMock($codeVerifier, str_repeat("S", 50));
-		if ($valid) {
-			$loggerMock->expects($this->never())
-				->method('error');
-			// even the secret is valid, we get an error because the token request is not mocked
-			$configMock->expects($this->exactly(2))
-				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error getting OAuth access token'
-					],
-				);
-		} else {
-			$loggerMock->expects($this->once())
-				->method('error');
-			$configMock->expects($this->exactly(2))
-				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error during OAuth exchanges'
-					],
-				);
-		}
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$this->createMock(OpenProjectAPIService::class),
-			$loggerMock,
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class),
-			'testUser'
-		);
-		$configController->oauthRedirect('code', 'randomString');
-	}
+//	/**
+//	 * @dataProvider codeVerifierDataProvider
+//	 * @param string $codeVerifier
+//	 * @param bool $valid
+//	 * @return void
+//	 */
+//	public function testOauthRedirectCodeVerifier($codeVerifier, $valid) {
+//		$loggerMock = $this->createMock(LoggerInterface::class);
+//		$configMock = $this->getConfigMock($codeVerifier, str_repeat("S", 50));
+//		if ($valid) {
+//			$loggerMock->expects($this->never())
+//				->method('error');
+//			// even the secret is valid, we get an error because the token request is not mocked
+//			$configMock->expects($this->exactly(2))
+//				->method('setUserValue')
+//				->withConsecutive(
+//					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//					[
+//						'testUser', 'integration_openproject', 'oauth_connection_error_message',
+//						'Error getting OAuth access token'
+//					],
+//				);
+//		} else {
+//			$loggerMock->expects($this->once())
+//				->method('error');
+//			$configMock->expects($this->exactly(2))
+//				->method('setUserValue')
+//				->withConsecutive(
+//					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//					[
+//						'testUser', 'integration_openproject', 'oauth_connection_error_message',
+//						'Error during OAuth exchanges'
+//					],
+//				);
+//		}
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$this->createMock(OpenProjectAPIService::class),
+//			$loggerMock,
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class),
+//			'testUser'
+//		);
+//		$configController->oauthRedirect('code', 'randomString');
+//	}
 
 	/**
 	 * @return array<mixed>
@@ -315,60 +315,60 @@ class ConfigControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider secretDataProvider
-	 * @param string $clientSecret
-	 * @param string $valid
-	 * @return void
-	 */
-	public function testOauthRedirectSecret($clientSecret, $valid) {
-		$loggerMock = $this->createMock(LoggerInterface::class);
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), $clientSecret
-		);
-		if ($valid) {
-			$loggerMock->expects($this->never())
-				->method('error');
-			// even the secret is valid, we get an error because the token request is not mocked
-			$configMock->expects($this->exactly(2))
-				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error getting OAuth access token'
-					],
-				);
-		} else {
-			$loggerMock->expects($this->once())
-				->method('error');
-			$configMock->expects($this->exactly(2))
-				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error during OAuth exchanges'
-					],
-				);
-		}
-
-
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$this->createMock(OpenProjectAPIService::class),
-			$loggerMock,
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class),
-			'testUser'
-		);
-		$configController->oauthRedirect('code', 'randomString');
-	}
+//	/**
+//	 * @dataProvider secretDataProvider
+//	 * @param string $clientSecret
+//	 * @param string $valid
+//	 * @return void
+//	 */
+//	public function testOauthRedirectSecret($clientSecret, $valid) {
+//		$loggerMock = $this->createMock(LoggerInterface::class);
+//		$configMock = $this->getConfigMock(
+//			str_repeat("A", 128), $clientSecret
+//		);
+//		if ($valid) {
+//			$loggerMock->expects($this->never())
+//				->method('error');
+//			// even the secret is valid, we get an error because the token request is not mocked
+//			$configMock->expects($this->exactly(2))
+//				->method('setUserValue')
+//				->withConsecutive(
+//					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//					[
+//						'testUser', 'integration_openproject', 'oauth_connection_error_message',
+//						'Error getting OAuth access token'
+//					],
+//				);
+//		} else {
+//			$loggerMock->expects($this->once())
+//				->method('error');
+//			$configMock->expects($this->exactly(2))
+//				->method('setUserValue')
+//				->withConsecutive(
+//					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//					[
+//						'testUser', 'integration_openproject', 'oauth_connection_error_message',
+//						'Error during OAuth exchanges'
+//					],
+//				);
+//		}
+//
+//
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$this->createMock(OpenProjectAPIService::class),
+//			$loggerMock,
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class),
+//			'testUser'
+//		);
+//		$configController->oauthRedirect('code', 'randomString');
+//	}
 
 	/**
 	 * @return array<mixed>
@@ -402,47 +402,47 @@ class ConfigControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @param array<string> $oauthResponse
-	 * @param string $expectedErrorMessage
-	 * @dataProvider badOAuthResponseDataProvider
-	 *@return void
-	 */
-	public function testOauthNoAccessTokenInResponse($oauthResponse, $expectedErrorMessage) {
-		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$apiServiceMock
-			->method('requestOAuthAccessToken')
-			->willReturn($oauthResponse);
-		$configMock = $this->getConfigMock(
-			str_repeat("A", 128), str_repeat("S", 50)
-		);
-		$configMock->expects($this->exactly(2))
-			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-				['testUser', 'integration_openproject', 'oauth_connection_error_message', $expectedErrorMessage],
-			);
-		/**
-		 * @var ConfigController
-		 */
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(IUserManager::class),
-			$this->l,
-			$apiServiceMock,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class),
-			'testUser'
-		);
-		$configController->oauthRedirect('code', 'randomString');
-	}
+//	/**
+//	 * @param array<string> $oauthResponse
+//	 * @param string $expectedErrorMessage
+//	 * @dataProvider badOAuthResponseDataProvider
+//	 *@return void
+//	 */
+//	public function testOauthNoAccessTokenInResponse($oauthResponse, $expectedErrorMessage) {
+//		$apiServiceMock = $this->getMockBuilder(OpenProjectAPIService::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//
+//		$apiServiceMock
+//			->method('requestOAuthAccessToken')
+//			->willReturn($oauthResponse);
+//		$configMock = $this->getConfigMock(
+//			str_repeat("A", 128), str_repeat("S", 50)
+//		);
+//		$configMock->expects($this->exactly(2))
+//			->method('setUserValue')
+//			->withConsecutive(
+//				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
+//				['testUser', 'integration_openproject', 'oauth_connection_error_message', $expectedErrorMessage],
+//			);
+//		/**
+//		 * @var ConfigController
+//		 */
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$this->createMock(IUserManager::class),
+//			$this->l,
+//			$apiServiceMock,
+//			$this->createMock(LoggerInterface::class),
+//			$this->createMock(OauthService::class),
+//			$this->createMock(SettingsController::class),
+//			'testUser'
+//		);
+//		$configController->oauthRedirect('code', 'randomString');
+//	}
 
 	/**
 	 * @return array<mixed>
@@ -625,158 +625,158 @@ class ConfigControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @param array<string> $oldCreds
-	 * @param array<string> $credsToUpdate
-	 * @param bool $deleteUserValues
-	 * @param bool|string $updateNCOAuthClient false => don't touch the client, 'change' => update it, 'delete' => remove it
-	 * @return void
-	 * @dataProvider setAdminConfigClearUserDataChangeNCOauthClientDataProvider
-	 */
-	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
-		array $oldCreds, array $credsToUpdate, bool $deleteUserValues, $updateNCOAuthClient
-	) {
-		$userManager = $this->checkForUsersCountBeforeTest();
-		$this->user1 = $userManager->createUser('test101', 'test101');
-
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
-			->disableOriginalConstructor()
-			->getMock();
-		if ($updateNCOAuthClient) {
-			$configMock
-				->method('getAppValue')
-				->withConsecutive(
-					['integration_openproject', 'oauth_instance_url', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'nc_oauth_client_id', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'oauth_instance_url']
-				)
-				->willReturnOnConsecutiveCalls(
-					$oldCreds['oauth_instance_url'],
-					$oldCreds['client_id'],
-					$oldCreds['client_secret'],
-					'123',
-					$credsToUpdate['client_id'],
-					$credsToUpdate['client_secret'],
-					$credsToUpdate['oauth_instance_url']
-				);
-			if ($updateNCOAuthClient === 'change') {
-				$oauthServiceMock
-					->expects($this->once())
-					->method('setClientRedirectUri')
-					->with(123, $credsToUpdate['oauth_instance_url']);
-				$oauthSettingsControllerMock
-					->expects($this->never())
-					->method('deleteClient');
-			} else { // delete the client
-				$oauthServiceMock
-					->expects($this->never())
-					->method('setClientRedirectUri');
-				$oauthSettingsControllerMock
-					->expects($this->once())
-					->method('deleteClient')
-					->with(123);
-			}
-		} else {
-			$configMock
-				->method('getAppValue')
-				->withConsecutive(
-					['integration_openproject', 'oauth_instance_url', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'oauth_instance_url']
-				)
-				->willReturnOnConsecutiveCalls(
-					$oldCreds['oauth_instance_url'],
-					$oldCreds['client_id'],
-					$oldCreds['client_secret'],
-					$credsToUpdate['client_id'],
-					$credsToUpdate['client_secret'],
-					$credsToUpdate['oauth_instance_url']
-				);
-			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
-		}
-
-		if ($deleteUserValues === true) {
-			$configMock
-				->expects($this->exactly(10)) // 5 times for each user
-				->method('deleteUserValue')
-				->withConsecutive(
-					['admin', 'integration_openproject', 'token'],
-					['admin', 'integration_openproject', 'login'],
-					['admin', 'integration_openproject', 'user_id'],
-					['admin', 'integration_openproject', 'user_name'],
-					['admin', 'integration_openproject', 'refresh_token'],
-					[$this->user1->getUID(), 'integration_openproject', 'token'],
-					[$this->user1->getUID(), 'integration_openproject', 'login'],
-					[$this->user1->getUID(), 'integration_openproject', 'user_id'],
-					[$this->user1->getUID(), 'integration_openproject', 'user_name'],
-					[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
-				);
-		} else {
-			$configMock
-				->expects($this->never())
-				->method('deleteUserValue');
-		}
-
-		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$userManager,
-			$this->l,
-			$apiService,
-			$this->createMock(LoggerInterface::class),
-			$oauthServiceMock,
-			$oauthSettingsControllerMock,
-			'test101'
-		);
-
-		$configController->setAdminConfig($credsToUpdate);
-	}
-	/**
-	 * @return void
-	 */
-	public function testSetAdminConfigNotAllowedConfigValues() {
-		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$userManager = \OC::$server->getUserManager();
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$userManager,
-			$this->l,
-			$apiService,
-			$this->createMock(LoggerInterface::class),
-			$oauthServiceMock,
-			$this->createMock(SettingsController::class),
-			'test101'
-		);
-
-		$response = $configController->setAdminConfig([
-			'client_id_top' => 'old-client_id',
-		]);
-
-		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
-		$this->assertEquals('Invalid key', $response->getData()['error']);
-	}
+//	/**
+//	 * @param array<string> $oldCreds
+//	 * @param array<string> $credsToUpdate
+//	 * @param bool $deleteUserValues
+//	 * @param bool|string $updateNCOAuthClient false => don't touch the client, 'change' => update it, 'delete' => remove it
+//	 * @return void
+//	 * @dataProvider setAdminConfigClearUserDataChangeNCOauthClientDataProvider
+//	 */
+//	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
+//		array $oldCreds, array $credsToUpdate, bool $deleteUserValues, $updateNCOAuthClient
+//	) {
+//		$userManager = $this->checkForUsersCountBeforeTest();
+//		$this->user1 = $userManager->createUser('test101', 'test101');
+//
+//		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+//		$oauthServiceMock = $this->createMock(OauthService::class);
+//		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		if ($updateNCOAuthClient) {
+//			$configMock
+//				->method('getAppValue')
+//				->withConsecutive(
+//					['integration_openproject', 'oauth_instance_url', ''],
+//					['integration_openproject', 'client_id'],
+//					['integration_openproject', 'client_secret'],
+//					['integration_openproject', 'nc_oauth_client_id', ''],
+//					['integration_openproject', 'client_id'],
+//					['integration_openproject', 'client_secret'],
+//					['integration_openproject', 'oauth_instance_url']
+//				)
+//				->willReturnOnConsecutiveCalls(
+//					$oldCreds['oauth_instance_url'],
+//					$oldCreds['client_id'],
+//					$oldCreds['client_secret'],
+//					'123',
+//					$credsToUpdate['client_id'],
+//					$credsToUpdate['client_secret'],
+//					$credsToUpdate['oauth_instance_url']
+//				);
+//			if ($updateNCOAuthClient === 'change') {
+//				$oauthServiceMock
+//					->expects($this->once())
+//					->method('setClientRedirectUri')
+//					->with(123, $credsToUpdate['oauth_instance_url']);
+//				$oauthSettingsControllerMock
+//					->expects($this->never())
+//					->method('deleteClient');
+//			} else { // delete the client
+//				$oauthServiceMock
+//					->expects($this->never())
+//					->method('setClientRedirectUri');
+//				$oauthSettingsControllerMock
+//					->expects($this->once())
+//					->method('deleteClient')
+//					->with(123);
+//			}
+//		} else {
+//			$configMock
+//				->method('getAppValue')
+//				->withConsecutive(
+//					['integration_openproject', 'oauth_instance_url', ''],
+//					['integration_openproject', 'client_id'],
+//					['integration_openproject', 'client_secret'],
+//					['integration_openproject', 'client_id'],
+//					['integration_openproject', 'client_secret'],
+//					['integration_openproject', 'oauth_instance_url']
+//				)
+//				->willReturnOnConsecutiveCalls(
+//					$oldCreds['oauth_instance_url'],
+//					$oldCreds['client_id'],
+//					$oldCreds['client_secret'],
+//					$credsToUpdate['client_id'],
+//					$credsToUpdate['client_secret'],
+//					$credsToUpdate['oauth_instance_url']
+//				);
+//			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
+//		}
+//
+//		if ($deleteUserValues === true) {
+//			$configMock
+//				->expects($this->exactly(10)) // 5 times for each user
+//				->method('deleteUserValue')
+//				->withConsecutive(
+//					['admin', 'integration_openproject', 'token'],
+//					['admin', 'integration_openproject', 'login'],
+//					['admin', 'integration_openproject', 'user_id'],
+//					['admin', 'integration_openproject', 'user_name'],
+//					['admin', 'integration_openproject', 'refresh_token'],
+//					[$this->user1->getUID(), 'integration_openproject', 'token'],
+//					[$this->user1->getUID(), 'integration_openproject', 'login'],
+//					[$this->user1->getUID(), 'integration_openproject', 'user_id'],
+//					[$this->user1->getUID(), 'integration_openproject', 'user_name'],
+//					[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
+//				);
+//		} else {
+//			$configMock
+//				->expects($this->never())
+//				->method('deleteUserValue');
+//		}
+//
+//		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$userManager,
+//			$this->l,
+//			$apiService,
+//			$this->createMock(LoggerInterface::class),
+//			$oauthServiceMock,
+//			$oauthSettingsControllerMock,
+//			'test101'
+//		);
+//
+//		$configController->setAdminConfig($credsToUpdate);
+//	}
+//	/**
+//	 * @return void
+//	 */
+//	public function testSetAdminConfigNotAllowedConfigValues() {
+//		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		$userManager = \OC::$server->getUserManager();
+//		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+//		$oauthServiceMock = $this->createMock(OauthService::class);
+//
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$userManager,
+//			$this->l,
+//			$apiService,
+//			$this->createMock(LoggerInterface::class),
+//			$oauthServiceMock,
+//			$this->createMock(SettingsController::class),
+//			'test101'
+//		);
+//
+//		$response = $configController->setAdminConfig([
+//			'client_id_top' => 'old-client_id',
+//		]);
+//
+//		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
+//		$this->assertEquals('Invalid key', $response->getData()['error']);
+//	}
 
 	/**
 	 * Runs a check for the users count in the SUT database
@@ -819,89 +819,89 @@ class ConfigControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @param array<mixed> $newConfig config to be sent with the setAdminConfig function
-	 *
-	 * @returns void
-	 * @dataProvider setAdminConfigForRevokeTokenRequestDataProvider
-	 */
-	public function testSetAdminConfigForRevokeTokenRequest(array $newConfig): void {
-		$oldAdminConfig = [
-			'client_id' => 'some_old_client_id',
-			'client_secret' => 'some_old_client_secret',
-			'oauth_instance_url' => 'http://localhost:3000',
-		];
-		$userTokens = [
-			'admin' => 'admin_token',
-			'test101' => 'user_token',
-		];
-
-		$userManager = $this->checkForUsersCountBeforeTest();
-		$this->user1 = $userManager->createUser('test101', 'test101');
-
-		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$userManager = \OC::$server->getUserManager();
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$oauthServiceMock = $this->createMock(OauthService::class);
-		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
-
-		$configMock
-			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'oauth_instance_url', ''],
-				['integration_openproject', 'client_id', ''],
-				['integration_openproject', 'client_secret', ''],
-			)
-			->willReturnOnConsecutiveCalls(
-				$oldAdminConfig['oauth_instance_url'],
-				$oldAdminConfig['client_id'],
-				$oldAdminConfig['client_secret'],
-			);
-
-		$configMock
-			->method('getUserValue')
-			->withConsecutive(
-				['admin', 'integration_openproject', 'token', ''],
-				[$this->user1->getUID(), 'integration_openproject', 'token', '']
-			)
-			->willReturnOnConsecutiveCalls(
-				$userTokens['admin'],
-				$userTokens['test101']
-			);
-
-		$configMock
-			->expects($this->exactly(3))
-			->method('setAppValue')
-			->withConsecutive(
-				['integration_openproject', 'client_id', $newConfig['client_id']],
-				['integration_openproject', 'client_secret', $newConfig['client_secret']],
-				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
-			);
-
-		$apiService
-			->expects($this->exactly(2))
-			->method('revokeUserOAuthToken')
-			->withConsecutive(
-				[$oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
-				[$oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
-			);
-
-		$configController = new ConfigController(
-			'integration_openproject',
-			$this->createMock(IRequest::class),
-			$configMock,
-			$this->createMock(IURLGenerator::class),
-			$userManager,
-			$this->l,
-			$apiService,
-			$this->createMock(LoggerInterface::class),
-			$oauthServiceMock,
-			$oauthSettingsControllerMock,
-			'test101'
-		);
-
-		$configController->setAdminConfig($newConfig);
-	}
+//	/**
+//	 * @param array<mixed> $newConfig config to be sent with the setAdminConfig function
+//	 *
+//	 * @returns void
+//	 * @dataProvider setAdminConfigForRevokeTokenRequestDataProvider
+//	 */
+//	public function testSetAdminConfigForRevokeTokenRequest(array $newConfig): void {
+//		$oldAdminConfig = [
+//			'client_id' => 'some_old_client_id',
+//			'client_secret' => 'some_old_client_secret',
+//			'oauth_instance_url' => 'http://localhost:3000',
+//		];
+//		$userTokens = [
+//			'admin' => 'admin_token',
+//			'test101' => 'user_token',
+//		];
+//
+//		$userManager = $this->checkForUsersCountBeforeTest();
+//		$this->user1 = $userManager->createUser('test101', 'test101');
+//
+//		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+//			->disableOriginalConstructor()
+//			->getMock();
+//		$userManager = \OC::$server->getUserManager();
+//		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+//		$oauthServiceMock = $this->createMock(OauthService::class);
+//		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
+//
+//		$configMock
+//			->method('getAppValue')
+//			->withConsecutive(
+//				['integration_openproject', 'oauth_instance_url', ''],
+//				['integration_openproject', 'client_id', ''],
+//				['integration_openproject', 'client_secret', ''],
+//			)
+//			->willReturnOnConsecutiveCalls(
+//				$oldAdminConfig['oauth_instance_url'],
+//				$oldAdminConfig['client_id'],
+//				$oldAdminConfig['client_secret'],
+//			);
+//
+//		$configMock
+//			->method('getUserValue')
+//			->withConsecutive(
+//				['admin', 'integration_openproject', 'token', ''],
+//				[$this->user1->getUID(), 'integration_openproject', 'token', '']
+//			)
+//			->willReturnOnConsecutiveCalls(
+//				$userTokens['admin'],
+//				$userTokens['test101']
+//			);
+//
+//		$configMock
+//			->expects($this->exactly(3))
+//			->method('setAppValue')
+//			->withConsecutive(
+//				['integration_openproject', 'client_id', $newConfig['client_id']],
+//				['integration_openproject', 'client_secret', $newConfig['client_secret']],
+//				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
+//			);
+//
+//		$apiService
+//			->expects($this->exactly(2))
+//			->method('revokeUserOAuthToken')
+//			->withConsecutive(
+//				[$oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+//				[$oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+//			);
+//
+//		$configController = new ConfigController(
+//			'integration_openproject',
+//			$this->createMock(IRequest::class),
+//			$configMock,
+//			$this->createMock(IURLGenerator::class),
+//			$userManager,
+//			$this->l,
+//			$apiService,
+//			$this->createMock(LoggerInterface::class),
+//			$oauthServiceMock,
+//			$oauthSettingsControllerMock,
+//			'test101'
+//		);
+//
+//		$configController->setAdminConfig($newConfig);
+//	}
 }
