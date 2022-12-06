@@ -1,7 +1,6 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "by" : "სუბიექტი:",
     "Cancel" : "უარყოფა",
     "Save" : "შენახვა",
     "Reset" : "საწყის მდოგმარეობაში დაბრუნება",

@@ -1,7 +1,6 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "by" : "līdz",
     "Cancel" : "Atcelt",
     "Save" : "Saglabāt",
     "Reset" : "Atiestatīt",

@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
     "Direct download error" : "Fehler beim direkten Herunterladen",
     "This direct download link is invalid or has expired" : "Dieser direkte Download-Link ist ungültig oder abgelaufen",
-    "by" : "von",
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "OAuth access token refused" : "OAuth-Zugriffstoken abgelehnt",
     "OpenProject Integration" : "OpenProject-Einbindung",
@@ -30,7 +29,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Ein neuer Benutzer erhält diese Standardwerte, die auch solange auf die Integrations-App angewendet werden, bis der Benutzer sie ändert.",
     "Enable navigation link" : "Navigations-Link aktivieren",
     "Enable unified search for tickets" : "Einheitliche Suche nach Tickets aktivieren",
-    "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
     "Administration > File storages" : "Administration > Dateispeicher",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Gehen Sie als Administrator zu Ihrem OpenProject {htmlLink} und starten Sie das Setup und kopieren Sie die Werte hierher.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopieren Sie als Administrator die folgenden Werte zurück in das OpenProject {htmlLink}.",
@@ -102,6 +100,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Sie haben %s neue Benachrichtigung in {instance}","Sie haben %s neue Benachrichtigungen in {instance}"],
     "Connected accounts" : "Verbundene Konten",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Geben Sie eine URL im Format „https://openproject.org“ an.",
-    "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt"
+    "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
+    "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren"
 },
 "nplurals=2; plural=(n != 1);");

@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Chyba počas výmeny OAuth",
     "Direct download error" : "Chyba pri priamom sťahovaní",
     "This direct download link is invalid or has expired" : "Tento priamy odkaz na stiahnutie je neplatný alebo jeho platnosť vypršala",
-    "by" : "od",
     "Bad HTTP method" : "Zlá metóda HTTP",
     "OAuth access token refused" : "Prístupový token OAuth bol zamietnutý",
     "OpenProject Integration" : "OpenProject integrácia",
@@ -28,7 +27,6 @@ OC.L10N.register(
     "Default user settings" : "Predvolené nastavenia užívateľa",
     "Enable navigation link" : "Povoliť navigačný odkaz",
     "Enable unified search for tickets" : "Zapnúť jednotné vyhľadávanie tiketov",
-    "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch",
     "Yes, replace" : "Áno, nahradiť",
     "Yes, reset" : "Áno, resetovať",
     "Documentation" : "Dokumentácia",
@@ -62,6 +60,7 @@ OC.L10N.register(
     "OpenProject notifications" : "Notifikácie OpenProject",
     "OpenProject activity" : "OpenProject aktivity",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s oznámenie v {instance}","Máte %s oznámenia v {instance}","Máte %s oznámení v {instance}","Máte %s oznámenia v {instance}"],
-    "Connected accounts" : "Prepojené účty"
+    "Connected accounts" : "Prepojené účty",
+    "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

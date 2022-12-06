@@ -3,7 +3,6 @@
     "Error getting OAuth access token" : "Ошибка получения токена доступа OAuth",
     "Error during OAuth exchanges" : "Ошибка по время обмена OAuth",
     "This direct download link is invalid or has expired" : "Прямая ссылка для загрузки неверна или срок её действия истёк",
-    "by" : "автор",
     "Bad HTTP method" : "Неверный метод HTTP",
     "OAuth access token refused" : "Токен доступа OAuth был отклонен",
     "Cancel" : "Отменить",

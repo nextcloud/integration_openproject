@@ -6,7 +6,6 @@
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "Direct download error" : "直接下載錯誤",
     "This direct download link is invalid or has expired" : "此直接下載連結無效或已過期",
-    "by" : "由",
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "OpenProject Integration" : "OpenProject 整合",
@@ -28,7 +27,6 @@
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "新用戶將收到這些默認值，它們將應用於集成應用程式，直到用戶更改它們。",
     "Enable navigation link" : "啟用導覽連結",
     "Enable unified search for tickets" : "啟用統一搜尋票證",
-    "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
     "Administration > File storages" : "管理 > 檔案存儲",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "以管理員身份轉到您的 OpenProject {htmlLink}，開始設置並在此處複製值。",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "以管理員身份將以下值複製回 OpenProject {htmlLink}。",
@@ -100,6 +98,7 @@
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} 中有 %s 個新通告"],
     "Connected accounts" : "已連線的賬號",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
-    "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject"
+    "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
+    "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

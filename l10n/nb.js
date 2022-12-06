@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Feil ved henting av OAuth tilgangsbevis",
     "Error during OAuth exchanges" : "Feil ved utveksling av OAuth",
-    "by" : "av",
     "Bad HTTP method" : "HTTP-metode er feil",
     "OAuth access token refused" : "OAuth access token ble avslått",
     "Cancel" : "Avbryt",

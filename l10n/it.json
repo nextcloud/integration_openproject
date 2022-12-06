@@ -3,7 +3,6 @@
     "Error getting OAuth access token" : "Errore durante il recupero del token di accesso OAuth",
     "Error getting OAuth refresh token" : "Errore durante il recupero del token di aggiornamento OAuth",
     "Error during OAuth exchanges" : "Errore nello scambio dati OAuth",
-    "by" : "di",
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Cancel" : "Annulla",
@@ -11,7 +10,6 @@
     "Reset" : "Ripristina",
     "Enable navigation link" : "Abilita collegamento di navigazione",
     "Enable unified search for tickets" : "Abilita la ricerca unificata dei ticket",
-    "Enable notifications for activity in my work packages" : "Abilita le notifiche per l'attività nei miei pacchetti di lavoro",
     "Documentation" : "Documentazione",
     "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
@@ -41,6 +39,7 @@
     "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:",
     "OpenProject notifications" : "Notifiche OpenProject ",
     "OpenProject activity" : "Attività OpenProject",
-    "Connected accounts" : "Account connessi"
+    "Connected accounts" : "Account connessi",
+    "Enable notifications for activity in my work packages" : "Abilita le notifiche per l'attività nei miei pacchetti di lavoro"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

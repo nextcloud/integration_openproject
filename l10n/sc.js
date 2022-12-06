@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Errore recuperende su token de intrada OAuth.",
     "Error during OAuth exchanges" : "Errore cuncambiende OAuth",
-    "by" : "dae",
     "Bad HTTP method" : "Mètodu HTTP no bàlidu",
     "OAuth access token refused" : "Token de intrada OAuth refudadu",
     "Cancel" : "Annulla",
