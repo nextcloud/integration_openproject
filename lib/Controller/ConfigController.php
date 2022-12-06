@@ -211,14 +211,14 @@ class ConfigController extends Controller {
 					);
 				}
 				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
-				if ($accessToken) {
-					$this->openprojectAPIService->revokeUserOAuthToken(
-						$oldOpenProjectOauthUrl,
-						$accessToken,
-						$oldClientId,
-						$oldClientSecret
-					);
-				}
+//				if ($accessToken) {
+//					$this->openprojectAPIService->revokeUserOAuthToken(
+//						$oldOpenProjectOauthUrl,
+//						$accessToken,
+//						$oldClientId,
+//						$oldClientSecret
+//					);
+//				}
 				$this->clearUserInfo($userUID);
 			});
 		}
