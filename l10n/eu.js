@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errorea OAuth trukeak egitean",
     "Direct download error" : "Deskarga zuzen errorea",
     "This direct download link is invalid or has expired" : "Deskarga zuzen esteka hau baliogabea da edo iraungita dago",
-    "by" : "Nork",
     "Bad HTTP method" : "HTTP metodo okerra",
     "OAuth access token refused" : "OAuth sarbide tokena ukatua izan da",
     "OpenProject Integration" : "OpenProject integrazioa",
@@ -30,7 +29,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Erabiltzaile berri batek balio lehenetsi hauek jasoko ditu eta integrazio aplikazioan aplikatuko dira erabiltzaileak aldatzen dituen arte.",
     "Enable navigation link" : "Gaitu nabigazio esteka",
     "Enable unified search for tickets" : "Gaitu bilaketa bateratua tiketentzako",
-    "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
     "Administration > File storages" : "Administrazioa > Fitxategi biltegiak",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Joan zure OpenProject-era {htmlLink} administratzaile gisa eta hasi konfigurazioa eta balioen kopia hemen.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiatu hurrengo balioak OpenProject-era {htmlLink} administratzaile gisa.",
@@ -93,6 +91,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
     "Connected accounts" : "Konektatutako kontuak",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
-    "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan"
+    "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan",
+    "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan"
 },
 "nplurals=2; plural=(n != 1);");

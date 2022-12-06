@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
     "Direct download error" : "Közvetlen letöltési hiba",
     "This direct download link is invalid or has expired" : "Ez a közvetlen letöltési hivatkozás érvénytelen vagy lejárt",
-    "by" : "szerzők:",
     "Bad HTTP method" : "Hibás HTTP metódus",
     "OAuth access token refused" : "Az OAuth hozzáférési token lekérése visszautasítva",
     "OpenProject Integration" : "OpenProject integráció",
@@ -30,7 +29,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Egy új felhasználó ezeket az alapértelmezéseket fogja kapni, és addig ez lesz alkalmazva az integrációs alkalmazásra, míg a felhasználó meg nem változtatja őket.",
     "Enable navigation link" : "Navigációs hivatkozás engedélyezése",
     "Enable unified search for tickets" : "Egyesített kereső engedélyezése a jegyekhez",
-    "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
     "Administration > File storages" : "Adminisztráció > Fájltárolók",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Ugorjon az OpenProjecthez {htmlLink} adminisztrátorként, indítsa el a beállítást és másolja ide az értékeket.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Másolja vissza a következő értékeket az OpenProjectbe {htmlLink} adminisztrátorként.",
@@ -102,6 +100,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["%s új értesítése van itt: {instance}","%s új értesítése van itt: {instance}"],
     "Connected accounts" : "Kapcsolt fiókok",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
-    "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen"
+    "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
+    "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez"
 },
 "nplurals=2; plural=(n != 1);");

@@ -6,7 +6,6 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Erreur lors de l'obtention du jeton d'accès OAuth",
     "Error getting OAuth refresh token" : "Erreur à l'obtention du jeton de rafraîchissement OAuth",
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
-    "by" : "par",
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
     "OpenProject Integration" : "Intégration OpenProject",
@@ -19,7 +18,6 @@ OC.L10N.register(
     "Default user settings" : "Paramètres utilisateur par défaut",
     "Enable navigation link" : "Activer le lien de navigation",
     "Enable unified search for tickets" : "Activer la recherche unifiée pour les tickets",
-    "Enable notifications for activity in my work packages" : "Activer les notifications d'activité dans mes work packages",
     "Yes, replace" : "Oui, écraser",
     "Reset OpenProject integration" : "Réinitialiser l'intégration OpenProject",
     "Yes, reset" : "Oui, ré-initialiser",
@@ -69,6 +67,7 @@ OC.L10N.register(
     "OpenProject notifications" : "Notifications OpenProject",
     "OpenProject activity" : "Activité d'OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Vous avez %s nouvelle notification dans {instance}","Vous avez %s nouvelles notifications dans {instance}","Vous avez %s nouvelles notifications dans {instance}"],
-    "Connected accounts" : "Comptes connectés"
+    "Connected accounts" : "Comptes connectés",
+    "Enable notifications for activity in my work packages" : "Activer les notifications d'activité dans mes work packages"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

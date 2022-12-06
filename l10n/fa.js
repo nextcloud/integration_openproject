@@ -1,7 +1,6 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "by" : "با",
     "Cancel" : "لغو",
     "Save" : "ذخیره",
     "Reset" : "بازنشاندن",

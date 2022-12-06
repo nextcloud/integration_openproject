@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Chyba při výměnách informací v rámci OAuth",
     "Direct download error" : "Chyba přímého stahování",
     "This direct download link is invalid or has expired" : "Tento odkaz pro přímé stažení není platný nebo jeho platnost skončila",
-    "by" : "od",
     "Bad HTTP method" : "Nesprávná HTTP metoda",
     "OAuth access token refused" : "OAuth přístupový token odmítnut",
     "OpenProject Integration" : "Napojení na OpenProject",
@@ -30,7 +29,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Nový uživatel obdrží tato výchozí nastavení a ta budou uplatňována na aplikaci pro napojení do té doby, než si uživatel nastavení případně změní.",
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Enable unified search for tickets" : "Zahrnout vyhledávání v požadavcích do celkového sjednoceného vyhledávání",
-    "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích",
     "Administration > File storages" : "Správa → Úložiště souborů",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Přejděte do vámi využívané instance OpenProject {htmlLink} jako správce,  spusťte tam nastavení a hodnoty zkopírujte sem.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Zkopírujte (jako správce) následující hodnoty zpět do OpenProject {htmlLink}.",
@@ -102,6 +100,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s nové upozornění v {instance}","Máte %s nové upozornění v {instance}","Máte %s nových upozornění v {instance}","Máte %s nové upozornění v {instance}"],
     "Connected accounts" : "Propojené účty",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL není platná, zadejte adresu v podobě „https://openproject.org“",
-    "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject"
+    "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
+    "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

@@ -6,7 +6,6 @@
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
     "Direct download error" : "Doğrudan indirme sorunu",
     "This direct download link is invalid or has expired" : "Bu doğrudan indirme bağlantısı geçersiz ya da geçerlilik süresi dolmuş",
-    "by" : "Kaynak:",
     "Bad HTTP method" : "HTTP yöntemi hatalı",
     "OAuth access token refused" : "OAuth erişim kodu reddedildi",
     "OpenProject Integration" : "OpenProject bütünleştirmesi",
@@ -28,7 +27,6 @@
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Yeni bir kullanıcı bu varsayılan ayarları alır ve kullanıcı bunları değiştirene kadar bütünleştirme uygulamasına uygulanır.",
     "Enable navigation link" : "Gezinme bağlantısı kullanılsın",
     "Enable unified search for tickets" : "Destek kayıtları için birleşik arama yapılabilsin",
-    "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
     "Administration > File storages" : "Yönetim > Dosya depolama alanları",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Yönetici olarak OpenProject {htmlLink} bağlantısına gideerek kurulumu başlatın ve değerleri buraya kopyalayın.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Şu değerleri yönetici olarak OpenProject {htmlLink} bağlantısına geri kopyalayın.",
@@ -100,6 +98,7 @@
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["{instance} için %s yeni bildiriminiz var","{instance} için %s yeni bildiriminiz var"],
     "Connected accounts" : "Bağlı hesaplar",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
-    "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı"
+    "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
+    "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

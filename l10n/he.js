@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "שגיאה בקבלת אסימון גישה עם OAuth",
     "Error during OAuth exchanges" : "שגיאה במהלך החלפות OAuth",
-    "by" : "מאת",
     "OAuth access token refused" : "אסימון הגישה ב־OAuth סורב",
     "Cancel" : "ביטול",
     "Save" : "שמירה",
