@@ -1,7 +1,6 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "by" : "por",
     "Cancel" : "Encaboxar",
     "Save" : "Guardar",
     "Documentation" : "Documentación",

@@ -7,7 +7,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "S'ha produït un error durant els intercanvis d'OAuth",
     "Direct download error" : "Error de descàrrega directa",
     "This direct download link is invalid or has expired" : "Aquest enllaç de descàrrega directa no és vàlid o ha caducat",
-    "by" : "per",
     "Bad HTTP method" : "Mètode HTTP incorrecte",
     "OAuth access token refused" : "S'ha rebutjat el testimoni d'accés d'OAuth",
     "OpenProject Integration" : "Integració OpenProject",
@@ -26,7 +25,6 @@ OC.L10N.register(
     "Reset" : "Restableix",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
-    "Enable notifications for activity in my work packages" : "Activa les notificacions d'activitat als meus paquets de treball",
     "Administration > File storages" : "Administració > Emmagatzematge de fitxers",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Aneu al vostre OpenProject {htmlLink} com a administrador i inicieu la configuració i copieu els valors aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Torneu a copiar els valors següents a l'OpenProject {htmlLink} com a administrador.",
@@ -85,6 +83,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
     "Connected accounts" : "Comptes connectats",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "L'URL d'OpenProject no és vàlid. Proporcioneu un URL amb la forma \"https://openproject.org\"",
-    "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL"
+    "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL",
+    "Enable notifications for activity in my work packages" : "Activa les notificacions d'activitat als meus paquets de treball"
 },
 "nplurals=2; plural=(n != 1);");

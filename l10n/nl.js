@@ -4,7 +4,6 @@ OC.L10N.register(
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Fout bij ophalen OAuth access token",
     "Error during OAuth exchanges" : "Fout tijdens OAuth uitwisselingen",
-    "by" : "door",
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
     "OpenProject server" : "OpenProject server",

@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Pogreška pri dohvaćanju tokena za pristup OAuth",
     "Error during OAuth exchanges" : "Pogreška tijekom razmjene radi autentifikacije OAuth",
-    "by" : "od",
     "Bad HTTP method" : "Pogrešna metoda HTTP-a",
     "OAuth access token refused" : "Odbijen token za pristup OAuth",
     "Cancel" : "Odustani",

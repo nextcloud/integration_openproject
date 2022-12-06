@@ -8,7 +8,6 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
     "Direct download error" : "Грешка при директно сваляне",
     "This direct download link is invalid or has expired" : "Директната връзка за изтегляне е невалидна или е изтекла",
-    "by" : "от",
     "Bad HTTP method" : "Лош HTTP метод",
     "OAuth access token refused" : " Маркерът за достъп OAuth е отказан",
     "OpenProject Integration" : "Интегриране на OpenProject",
@@ -30,7 +29,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Всеки нов потребител ще получи тези настройки по подразбиране и те ще бъдат приложени към приложението за интеграция, докато потребителят не ги промени.",
     "Enable navigation link" : "Активиране на връзка за навигация",
     "Enable unified search for tickets" : "Активиране на унифицирано търсене на билети",
-    "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
     "Administration > File storages" : "Администриране > Файлови хранилища",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Отидете на вашия OpenProject {htmlLink} като администратор и стартирайте настройката и копирайте стойностите тук.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Копирайте следните стойности обратно в OpenProject {htmlLink} като администратор.",
@@ -102,6 +100,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Имате %s нови известия в {instance}","Имате %s нови известия в {instance}"],
     "Connected accounts" : "Свързани профили",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
-    "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса"
+    "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
+    "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети"
 },
 "nplurals=2; plural=(n != 1);");
