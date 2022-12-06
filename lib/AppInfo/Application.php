@@ -12,6 +12,7 @@ namespace OCA\OpenProject\AppInfo;
 use Closure;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\SabrePublicPluginListener;
 use OCA\OpenProject\Sabre\CorsPlugin;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -19,6 +20,7 @@ use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\SabrePluginEvent;
+use OCP\SabrePublicPluginEvent;
 use OCP\Util;
 
 use OCP\AppFramework\App;
@@ -62,6 +64,11 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			LoadSidebar::class,
 			LoadSidebarScript::class
+		);
+
+		$context->registerEventListener(
+			SabrePublicPluginEvent::class,
+			SabrePublicPluginListener::class
 		);
 	}
 
