@@ -72,48 +72,48 @@ jobs:
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP stan
-        run: make phpstan
+#      - name: PHP stan
+#        run: make phpstan
 
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+#      - name: PHP code style
+#        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 
-      - name: Install NPM Dependencies
-        run: npm install
+#      - name: Install NPM Dependencies
+#        run: npm install
 
-      - name: JS Lint
-        run: npm run lint
+#      - name: JS Lint
+#        run: npm run lint
 
-      - name: Style Lint
-        run: npm run stylelint
+#      - name: Style Lint
+#        run: npm run stylelint
 
       - name: PHP & Vue Unit Tests
         run: |
           make phpunit
-          make jsunit
+#          make jsunit
 
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://localhost:8080
-        run: |
-          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cd server
-          ./occ a:e activity
-          ./occ a:e integration_openproject
-          php -S localhost:8080 2> /dev/null &
-          cd apps/integration_openproject
-          make api-test
+#      - name: API Tests
+#        env:
+#          NEXTCLOUD_BASE_URL: http://localhost:8080
+#        run: |
+#          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
+#          mkdir -p server/apps/integration_openproject
+#          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
+#          cd server
+#          ./occ a:e activity
+#          ./occ a:e integration_openproject
+#          php -S localhost:8080 2> /dev/null &
+#          cd apps/integration_openproject
+#          make api-test
 
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
+#      - name: JS Code Coverage Summary Report
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+#        uses: romeovs/lcov-reporter-action@v0.3.1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: ./coverage/jest/lcov.info
+#          delete-old-comments: true
+#          title: "JS Code Coverage"
 
       - name: Convert PHP cobertura coverage to lcov
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
@@ -143,12 +143,12 @@ jobs:
           delete-old-comments: true
           title: "PHP Code Coverage"
 
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
-        with:
-          min_coverage: '59'
-          path: './coverage/jest/lcov.info'
+#      - name: JS coverage check
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+#        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+#        with:
+#          min_coverage: '59'
+#          path: './coverage/jest/lcov.info'
 
       - name: PHP coverage check
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
