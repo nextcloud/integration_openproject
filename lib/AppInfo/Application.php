@@ -12,11 +12,13 @@ namespace OCA\OpenProject\AppInfo;
 use Closure;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Sabre\CorsPlugin;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\SabrePluginEvent;
 use OCP\Util;
 
 use OCP\AppFramework\App;
@@ -69,6 +71,11 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
+		});
+
+		$config = $this->config;
+		$dispatcher->addListener('OCA\DAV\Connector\Sabre::addPlugin', function (SabrePluginEvent $event) use ($config) {
+			$event->getServer()->addPlugin(new CorsPlugin($config));
 		});
 	}
 
