@@ -27,6 +27,7 @@ use OCP\AppFramework\Controller;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -144,6 +145,7 @@ class ConfigController extends Controller {
 	 * @param array<string, string|null> $values
 	 *
 	 * @return DataResponse
+	 * @throws OpenprojectErrorException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
@@ -151,7 +153,8 @@ class ConfigController extends Controller {
 			'client_id',
 			'client_secret',
 			'default_enable_navigation',
-			'default_enable_unified_search'
+			'default_enable_unified_search',
+			'default_enable_notifications'
 		];
 
 		// if values contains a key that is not in the allowedKeys array,
@@ -191,10 +194,32 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		if ((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
-			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) {
-			$this->userManager->callForAllUsers(function (IUser $user) {
-				$this->clearUserInfo($user->getUID());
+		if (
+			// when the OP client information has changed
+			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
+			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
+			// when the OP client information is for reset
+			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null)
+		) {
+			$this->userManager->callForAllUsers(function (IUser $user) use (
+				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
+			) {
+				$userUID = $user->getUID();
+				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
+
+				// revoke is possible only when the user has the access token stored in the database
+				// plus, for a successful revoke, the old OP client information is also needed
+				// there may be cases where the software only have host url saved but not the client information
+				// in this case, the token is not revoked and just cleared if present in the database
+				if ($accessToken && $oldOpenProjectOauthUrl && $oldClientId && $oldClientSecret) {
+					$this->openprojectAPIService->revokeUserOAuthToken(
+						$oldOpenProjectOauthUrl,
+						$accessToken,
+						$oldClientId,
+						$oldClientSecret
+					);
+				}
+				$this->clearUserInfo($userUID);
 			});
 		}
 

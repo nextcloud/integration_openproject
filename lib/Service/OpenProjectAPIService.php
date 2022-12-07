@@ -725,4 +725,39 @@ class OpenProjectAPIService {
 		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
 		return $url;
 	}
+
+	/**
+	 * Sends a POST request to the OpenProject API server to revoke an OAuth token for the provided client
+	 *
+	 * @param string $openProjectUrl the url of the openproject instance
+	 * @param string $accessToken the refresh token to be revoked
+	 * @param string $clientId the client id of the OAuth app
+	 * @param string $clientSecret the client secret of the OAuth app
+	 *
+	 * @return void
+	 * @throws OpenprojectErrorException
+	 */
+	public function revokeUserOAuthToken(
+		string $openProjectUrl,
+		string $accessToken,
+		string $clientId,
+		string $clientSecret
+	): void {
+		$options = [
+			'headers' => [
+				'User-Agent' => 'Nextcloud OpenProject integration',
+				'Content-Type' => 'application/x-www-form-urlencoded',
+				'Authorization' => 'Basic ' . \base64_encode($clientId . ':' . $clientSecret)
+			]
+		];
+		$response = $this->client->post(
+			rtrim($openProjectUrl, "/") . '/oauth/revoke' . '?token=' . $accessToken,
+			$options,
+		);
+		$body = $response->getBody();
+		$respCode = $response->getStatusCode();
+		if ($respCode !== 200) {
+			throw new OpenprojectErrorException('Could not revoke token in OpenProject.\nResponse body: "' . $body . '"');
+		}
+	}
 }
