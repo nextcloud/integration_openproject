@@ -365,7 +365,7 @@ describe('AdminSettings.vue', () => {
 					jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({ data: { result: true } }))
 					const setAdminConfigAPISpy = jest.spyOn(axios, 'put')
-						.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
+						.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }))
 
 					const wrapper = getMountedWrapper({
 						state: {
@@ -390,6 +390,11 @@ describe('AdminSettings.vue', () => {
 					}
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(true)
+
+					for (let i = 0; i <= 100; i++) {
+						await wrapper.vm.$nextTick()
+					}
+
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
 					expect(wrapper.vm.isFormCompleted.server).toBe(true)
 					expect(setAdminConfigAPISpy).toBeCalledTimes(1)
@@ -453,7 +458,7 @@ describe('AdminSettings.vue', () => {
 		describe('view mode and completed state', () => {
 			let wrapper, opOAuthForm, resetButton
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({ data: true }))
+				.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }))
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {

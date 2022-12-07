@@ -11,6 +11,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;
@@ -148,6 +149,7 @@ class ConfigController extends Controller {
 	 * @throws OpenprojectErrorException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
+		$oPOAuthTokenRevokeStatus = "success";
 		$allowedKeys = [
 			'oauth_instance_url',
 			'client_id',
@@ -202,7 +204,7 @@ class ConfigController extends Controller {
 			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null)
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
-				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
+				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret, &$oPOAuthTokenRevokeStatus
 			) {
 				$userUID = $user->getUID();
 				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
@@ -212,19 +214,35 @@ class ConfigController extends Controller {
 				// there may be cases where the software only have host url saved but not the client information
 				// in this case, the token is not revoked and just cleared if present in the database
 				if ($accessToken && $oldOpenProjectOauthUrl && $oldClientId && $oldClientSecret) {
-					$this->openprojectAPIService->revokeUserOAuthToken(
-						$oldOpenProjectOauthUrl,
-						$accessToken,
-						$oldClientId,
-						$oldClientSecret
-					);
+					try {
+						$this->openprojectAPIService->revokeUserOAuthToken(
+							$userUID,
+							$oldOpenProjectOauthUrl,
+							$accessToken,
+							$oldClientId,
+							$oldClientSecret
+						);
+					} catch (ConnectException $e) {
+						$oPOAuthTokenRevokeStatus = "connection_error";
+						$this->logger->error(
+							'Error: ' . $e->getMessage(),
+							['app' => Application::APP_ID]
+						);
+					} catch (OpenprojectErrorException $e) {
+						$oPOAuthTokenRevokeStatus = "other_error";
+						$this->logger->error(
+							'Error: ' . $e->getMessage(),
+							['app' => Application::APP_ID]
+						);
+					}
 				}
 				$this->clearUserInfo($userUID);
 			});
 		}
 
 		return new DataResponse([
-			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
+			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
 		]);
 	}
 

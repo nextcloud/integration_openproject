@@ -244,6 +244,7 @@ export default {
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
+			oPOAuthTokenRevokeStatus: null,
 		}
 	},
 	computed: {
@@ -356,6 +357,7 @@ export default {
 		async saveOpenProjectHostUrl() {
 			this.loadingServerHostForm = true
 			await this.validateOpenProjectInstance()
+			console.debug(this.isOpenProjectInstanceValid)
 			if (this.isOpenProjectInstanceValid) {
 				const saved = await this.saveOPOptions()
 				if (saved) {
@@ -552,17 +554,38 @@ export default {
 			}
 			try {
 				const response = await axios.put(url, req)
+				console.debug(response)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
+				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
-				return true
 			} catch (error) {
+				console.debug(error)
+				this.isAdminConfigOk = false
+				this.oPOAuthTokenRevokeStatus = false
 				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
-				return false
+				showError(
+					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
+				)
 			}
+			if (this.oPOAuthTokenRevokeStatus === 'connection_error') {
+				showError(
+					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server')
+				)
+			} else if (this.oPOAuthTokenRevokeStatus === 'other_error') {
+				showError(
+					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
+				)
+			} else if (this.oPOAuthTokenRevokeStatus === 'success') {
+				showSuccess(
+					t('integration_openproject', 'Successfully revoked user(s) OpenProject OAuth access token(s)')
+				)
+			}
+
+			return this.isAdminConfigOk
 		},
 		resetNcOauthValues() {
 			OC.dialogs.confirmDestructive(

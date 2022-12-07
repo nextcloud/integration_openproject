@@ -526,7 +526,10 @@ class ConfigControllerTest extends TestCase {
 		$result = $configController->setAdminConfig($credsToUpdate);
 
 		$this->assertSame(
-			["status" => $adminConfigStatus],
+			[
+				"status" => $adminConfigStatus,
+				"oPOAuthTokenRevokeStatus" => "success"
+			],
 			$result->getData()
 		);
 	}
@@ -883,8 +886,8 @@ class ConfigControllerTest extends TestCase {
 			->expects($this->exactly(2))
 			->method('revokeUserOAuthToken')
 			->withConsecutive(
-				[$oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
-				[$oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+				['admin', $oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+				['test101', $oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
 			);
 
 		$configController = new ConfigController(
