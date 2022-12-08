@@ -54,5 +54,5 @@ body.theme--dark .panel > .panel--header .icon-openproject::before {
 /*for NC <= v24 the icon needs less margin at left and zero at the top */
 .panel > .panel--header .nc-before-v24.icon-openproject::before {
 	top: 28%;
-	left: 180px;
+	left: 195px;
 }
