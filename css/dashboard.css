@@ -39,7 +39,7 @@ body.theme--dark .icon-openproject {
 	height: 24px; width: 24px;
 	background-size: 24px;
 	top: 3px;
-	left: 170px;
+	left: 180px;
 	background-image: url('../img/bell-ring.svg');
 }
 
@@ -54,5 +54,5 @@ body.theme--dark .panel > .panel--header .icon-openproject::before {
 /*for NC <= v24 the icon needs less margin at left and zero at the top */
 .panel > .panel--header .nc-before-v24.icon-openproject::before {
 	top: 28%;
-	left: 180px;
+	left: 195px;
 }
