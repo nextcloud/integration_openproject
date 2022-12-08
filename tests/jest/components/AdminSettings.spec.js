@@ -390,11 +390,6 @@ describe('AdminSettings.vue', () => {
 					}
 
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(true)
-
-					for (let i = 0; i <= 100; i++) {
-						await wrapper.vm.$nextTick()
-					}
-
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
 					expect(wrapper.vm.isFormCompleted.server).toBe(true)
 					expect(setAdminConfigAPISpy).toBeCalledTimes(1)

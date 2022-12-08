@@ -357,7 +357,6 @@ export default {
 		async saveOpenProjectHostUrl() {
 			this.loadingServerHostForm = true
 			await this.validateOpenProjectInstance()
-			console.debug(this.isOpenProjectInstanceValid)
 			if (this.isOpenProjectInstanceValid) {
 				const saved = await this.saveOPOptions()
 				if (saved) {
@@ -542,6 +541,7 @@ export default {
 			}
 		},
 		async saveOPOptions() {
+			let success = false
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			const req = {
 				values: {
@@ -554,38 +554,43 @@ export default {
 			}
 			try {
 				const response = await axios.put(url, req)
-				console.debug(response)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
+				success = true
 			} catch (error) {
-				console.debug(error)
-				this.isAdminConfigOk = false
-				this.oPOAuthTokenRevokeStatus = false
+				this.isAdminConfigOk = null
+				this.oPOAuthTokenRevokeStatus = null
 				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
-				showError(
-					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
-				)
 			}
-			if (this.oPOAuthTokenRevokeStatus === 'connection_error') {
+			this.notifyAboutOPOAuthTokenRevoke()
+			return success
+		},
+		notifyAboutOPOAuthTokenRevoke() {
+			switch (this.oPOAuthTokenRevokeStatus) {
+			case 'connection_error':
 				showError(
 					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server')
 				)
-			} else if (this.oPOAuthTokenRevokeStatus === 'other_error') {
+				break
+			case 'other_error':
 				showError(
 					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
 				)
-			} else if (this.oPOAuthTokenRevokeStatus === 'success') {
+				break
+			case 'success':
 				showSuccess(
 					t('integration_openproject', 'Successfully revoked user(s) OpenProject OAuth access token(s)')
 				)
+				break
+			case '':
+			default:
+				break
 			}
-
-			return this.isAdminConfigOk
 		},
 		resetNcOauthValues() {
 			OC.dialogs.confirmDestructive(
