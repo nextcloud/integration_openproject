@@ -4,15 +4,17 @@ Feature: setup the integration through an API
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
-        "openproject_instance_url": "http://some-host.de",
+      "values" : {
+      "openproject_instance_url": "http://some-host.de",
         "openproject_client_id": "the-client-id",
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false
+        }
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -24,9 +26,9 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
-          "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host\.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
+          "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
    """
@@ -36,15 +38,17 @@ Feature: setup the integration through an API
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
-        "openproject_instance_url": <instance_url>,
-        "openproject_client_id": <openproject_client_id>,
-        "openproject_client_secret": <openproject_client_secret>,
-        "default_enable_navigation": <enable_navigation>,
-        "default_enable_unified_search": <enable_unified_search>
+        "values" : {
+          "openproject_instance_url": <instance_url>,
+          "openproject_client_id": <openproject_client_id>,
+          "openproject_client_secret": <openproject_client_secret>,
+          "default_enable_navigation": <enable_navigation>,
+          "default_enable_unified_search": <enable_unified_search>
+        }
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -58,34 +62,36 @@ Feature: setup the integration through an API
    """
     Examples:
       | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search |
-      | null                  | null      | null          | null              | null                  |
-      | null                  | "id"      | "secret"      | false             | false                 |
-      | "http://some-host.de" | null      | "secret"      | false             | false                 |
-      | "http://some-host.de" | "id"      | null          | false             | false                 |
-      | "http://some-host.de" | "id"      | "secret"      | null              | false                 |
-      | "http://some-host.de" | "id"      | "secret"      | true              | null                  |
-      |                       |           |               |                   |                       |
-      |                       | "id"      | "secret"      | false             | false                 |
-      | "http://some-host.de" |           | "secret"      | false             | false                 |
-      | "http://some-host.de" | "id"      |               | false             | false                 |
-      | "http://some-host.de" | "id"      | "secret"      |                   | false                 |
-      | "http://some-host.de" | "id"      | "secret"      | true              |                       |
-      | "ftp://somehost.de"   | "the-id"  | "secret"      | true              | false                 |
-      | "http://somehost.de"  | false     | "secret"      | true              | false                 |
-      | "http://somehost.de"  | "id"      | false         | true              | false                 |
-      | "http://somehost.de"  | "the-id"  | "secret"      | "a string"        | false                 |
-      | "http://somehost.de"  | "the-id"  | "secret"      | false             | "a string"            |
+      | null                  | null                  | null                      | null              | null                  |
+      | null                  | "id"                  | "secret"                  | false             | false                 |
+      | "http://some-host.de" | null                  | "secret"                  | false             | false                 |
+      | "http://some-host.de" | "id"                  | null                      | false             | false                 |
+      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  |
+      | ""                    | ""                    | ""                        | ""                | ""                    |
+      | ""                    | "id"                  | "secret"                  | false             | false                 |
+      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 |
+      | "http://some-host.de" | "id"                  | ""                        | false             | false                 |
+      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 |
+      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 |
+      | "http://somehost.de"  | "id"                  | false                     | true              | false                 |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            |
 
 
   Scenario Outline: valid update
     When the administrator sends a PUT request to the "setup" endpoint with this data:
       """
       {
-        "<key>": <value>
+        "values": {
+          "<key>": <value>
+        }
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -99,7 +105,7 @@ Feature: setup the integration through an API
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
    """
@@ -116,12 +122,14 @@ Feature: setup the integration through an API
     When the administrator sends a PUT request to the "setup" endpoint with this data:
       """
       {
-        "<key1>": <value1>,
-        "<key2>": <value2>
+        "values": {
+          "<key1>": <value1>,
+          "<key2>": <value2>
+        }
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -135,7 +143,7 @@ Feature: setup the integration through an API
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
    """
@@ -151,11 +159,13 @@ Feature: setup the integration through an API
     When the administrator sends a PUT request to the "setup" endpoint with this data:
       """
       {
-        "<key>": <value>
+        "values": {
+          "<key>": <value>
+        }
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -170,19 +180,19 @@ Feature: setup the integration through an API
     Examples:
       | key                           | value    |
       | openproject_instance_url      | null     |
-      | openproject_instance_url      |          |
+      | openproject_instance_url      | ""       |
       | openproject_instance_url      | false    |
       | openproject_client_id         | null     |
-      | openproject_client_id         |          |
+      | openproject_client_id         | ""       |
       | openproject_client_id         | false    |
       | openproject_client_secret     | null     |
-      | openproject_client_secret     |          |
+      | openproject_client_secret     | ""       |
       | openproject_client_secret     | false    |
       | default_enable_navigation     | null     |
-      | default_enable_navigation     |          |
+      | default_enable_navigation     | ""       |
       | default_enable_navigation     | "string" |
       | default_enable_unified_search | null     |
-      | default_enable_unified_search |          |
+      | default_enable_unified_search | ""       |
       | default_enable_unified_search | "string" |
 
 
@@ -190,12 +200,14 @@ Feature: setup the integration through an API
     When the administrator sends a PUT request to the "setup" endpoint with this data:
       """
       {
-        "<key1>": <value1>,
-        "<key2>": <value2>
+        "values": {
+          "<key1>": <value1>,
+          "<key2>": <value2>
+        }
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response should match
+    And the data of the response with "noOCS" request should match
     """"
     {
     "type": "object",
@@ -211,7 +223,7 @@ Feature: setup the integration through an API
       | key1                      | value1                | key2                          | value2         |
       | openproject_instance_url  | "http://some-host.de" | openproject_client_id         | null           |
       | openproject_instance_url  | "ftp://some-host.de"  | openproject_client_id         | "some id"      |
-      | openproject_client_secret |                       | openproject_client_id         | "client-value" |
+      | openproject_client_secret | ""                    | openproject_client_id         | "client-value" |
       | openproject_client_secret | "secret"              | openproject_client_id         | false          |
       | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       |
       | default_enable_navigation | null                  | default_enable_unified_search | false          |

@@ -344,8 +344,13 @@ class FeatureContext implements Context {
 
 	/**
 	 * @Then the data of the response should match
+	 * @Then the data of the response with :arg1 request should match
+	 *
+	 * @param PyStringNode $schemaString
+	 * @param string|null $requestType
+	 *
 	 */
-	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString): void {
+	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString , ?string $requestType = "OCS"): void {
 		$schemaRawString = $schemaString->getRaw();
 		for ($i = 0; $i < count($this->createdFiles); $i++) {
 			$schemaRawString = str_replace(
@@ -355,8 +360,11 @@ class FeatureContext implements Context {
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		if($requestType === 'OCS') {
+			$responseAsJson = $responseAsJson->ocs->data;
+		}
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson->ocs->data,
+			$responseAsJson,
 			$schema
 		);
 	}
