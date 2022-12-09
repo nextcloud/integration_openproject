@@ -457,6 +457,32 @@ class OpenProjectAPIService {
 	/**
 	 * authenticated request to get status of a work package
 	 *
+	 * @param array<mixed> $values
+	 * @return bool
+	 */
+	public static function validateIntegrationSetupInformation(array $values): bool {
+		foreach ($values as $key => $value) {
+			if ($key == 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
+				return false;
+			}
+			// validating specific two key
+			if($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
+				if(!is_bool($value)) {
+					return false;
+				}
+				continue;
+			}
+			// validate other key
+			if ($value === '' || is_null($value) || is_bool($value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * authenticated request to get status of a work package
+	 *
 	 * @param string $userId
 	 * @param string $statusId
 	 * @return string[]

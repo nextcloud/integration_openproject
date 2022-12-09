@@ -21,6 +21,8 @@ return [
 
 		['name' => 'config#setUpIntegration', 'url' => '/setup', 'verb' => 'POST'],
 
+		['name' => 'config#updateIntegration', 'url' => '/setup', 'verb' => 'PUT'],
+
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#markNotificationAsRead', 'url' => '/work-packages/{workpackageId}/notifications', 'verb' => 'DELETE'],
 		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/url', 'verb' => 'GET'],

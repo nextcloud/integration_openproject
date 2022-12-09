@@ -465,32 +465,64 @@ class ConfigController extends Controller {
 		];
 
 		foreach ($mustHaveKey as $key) {
-			if(!array_key_exists($key, $values)) {
+			if (!array_key_exists($key, $values)) {
 				return new DataResponse([
 					'error' => "invalid key"
-				]);
+				] , Http::STATUS_BAD_REQUEST);
 			}
-			// validating specific two key
-			if($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
-				if(!is_bool($values[$key])) {
-					return new DataResponse([
-						'error' => "invalid data"
-					]);
-				}
-				continue;
-			}
-			// validate other key
-			if ($values[$key] === '' || is_null($values[$key]) || is_bool($values[$key])) {
-				return new DataResponse([
-					'error' => "invalid data"
-				]);
-			}
+		}
+		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
+			return new DataResponse([
+				'error' => "invalid data"
+			] , Http::STATUS_BAD_REQUEST);
 		}
 		// save to the database
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		// return the response
+		return new DataResponse($this->getNextcloudOauthInformation());
+
+	}
+
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * update integration
+	 *
+	 * @param array<string, string|null> $values
+	 *
+	 * @return DataResponse
+	 */
+	public function updateIntegration(array $values): DataResponse {
+		// check empty values
+		$allowedKeys = [
+			'openproject_instance_url',
+			'openproject_client_id',
+			'openproject_client_secret',
+			'default_enable_navigation',
+			'default_enable_unified_search'
+		];
+		// check for allowed keys only
+		foreach ($values as $key => $value) {
+			if (!in_array($key, $allowedKeys)) {
+				return new DataResponse([
+					'error' => $this->l->t('invalid key')
+				], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
+			return new DataResponse([
+				'error' => "invalid data"
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		// save to the database
+		foreach ($values as $key => $value) {
+			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
+		}
 		return new DataResponse($this->getNextcloudOauthInformation());
 
 	}
@@ -506,5 +538,4 @@ class ConfigController extends Controller {
 		unset($clientInfo['id']);
 		return $clientInfo;
 	}
-
 }
