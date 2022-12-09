@@ -19,6 +19,8 @@ return [
 
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 
+		['name' => 'config#setUpIntegration', 'url' => '/setup', 'verb' => 'POST'],
+
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#markNotificationAsRead', 'url' => '/work-packages/{workpackageId}/notifications', 'verb' => 'DELETE'],
 		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/url', 'verb' => 'GET'],

@@ -414,11 +414,7 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		$this->deleteOauthClient();
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
-		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
-		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
-		return new DataResponse($clientInfo);
+		return new DataResponse($this->getNextcloudOauthInformation());
 	}
 
 	private function deleteOauthClient(): void {
@@ -448,4 +444,67 @@ class ConfigController extends Controller {
 			'authorization_header' => $_SERVER['HTTP_AUTHORIZATION'],
 		]);
 	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * set up integration
+	 *
+	 * @param array<string, string|null> $values
+	 *
+	 * @return DataResponse
+	 */
+	public function setUpIntegration(array $values): DataResponse {
+		// check empty values
+		$mustHaveKey = [
+			"openproject_instance_url",
+			"openproject_client_id",
+			"openproject_client_secret",
+			"default_enable_navigation",
+			"default_enable_unified_search",
+		];
+
+		foreach ($mustHaveKey as $key) {
+			if(!array_key_exists($key, $values)) {
+				return new DataResponse([
+					'error' => "invalid key"
+				]);
+			}
+			// validating specific two key
+			if($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
+				if(!is_bool($values[$key])) {
+					return new DataResponse([
+						'error' => "invalid data"
+					]);
+				}
+				continue;
+			}
+			// validate other key
+			if ($values[$key] === '' || is_null($values[$key]) || is_bool($values[$key])) {
+				return new DataResponse([
+					'error' => "invalid data"
+				]);
+			}
+		}
+		// save to the database
+		foreach ($values as $key => $value) {
+			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
+		}
+		// return the response
+		return new DataResponse($this->getNextcloudOauthInformation());
+
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function getNextcloudOauthInformation(): array {
+		$this->deleteOauthClient();
+		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
+		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
+		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
+		unset($clientInfo['id']);
+		return $clientInfo;
+	}
+
 }
