@@ -528,6 +528,33 @@ class ConfigController extends Controller {
 	}
 
 	/**
+	 * @NoCSRFRequired
+	 *
+	 * reset integration
+	 *
+	 *
+	 * @return DataResponse
+	 */
+	public function resetIntegration(): DataResponse {
+		$mustHaveKey = [
+			"openproject_instance_url",
+			"openproject_client_id",
+			"openproject_client_secret",
+			"default_enable_navigation",
+			"default_enable_unified_search",
+		];
+		foreach ($mustHaveKey as $key) {
+			$this->config->setAppValue(Application::APP_ID, $key, '');
+		}
+		// also delete oAuthClient
+		$this->deleteOauthClient();
+		return new DataResponse([
+			"message" => "Delete Successful"
+		]);
+	}
+
+
+	/**
 	 * @return array<mixed>
 	 */
 	public function getNextcloudOauthInformation(): array {

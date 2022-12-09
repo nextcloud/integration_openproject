@@ -20,7 +20,7 @@ return [
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 
 		['name' => 'config#setUpIntegration', 'url' => '/setup', 'verb' => 'POST'],
-
+		['name' => 'config#resetIntegration', 'url' => '/setup', 'verb' => 'DELETE'],
 		['name' => 'config#updateIntegration', 'url' => '/setup', 'verb' => 'PUT'],
 
 		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
