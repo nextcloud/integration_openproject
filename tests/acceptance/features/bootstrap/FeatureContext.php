@@ -350,7 +350,7 @@ class FeatureContext implements Context {
 	 * @param string|null $requestType
 	 *
 	 */
-	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString , ?string $requestType = "OCS"): void {
+	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString, ?string $requestType = "OCS"): void {
 		$schemaRawString = $schemaString->getRaw();
 		for ($i = 0; $i < count($this->createdFiles); $i++) {
 			$schemaRawString = str_replace(
@@ -360,7 +360,7 @@ class FeatureContext implements Context {
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
-		if($requestType === 'OCS') {
+		if ($requestType === 'OCS') {
 			$responseAsJson = $responseAsJson->ocs->data;
 		}
 		JsonAssertions::assertJsonDocumentMatchesSchema(
@@ -562,10 +562,12 @@ class FeatureContext implements Context {
 
 	/**
 	 * @When /^the administrator sends a (PUT|POST) request to the "([^"]*)" endpoint with this data:$/
+	 *
+	 * @return void
 	 */
 	public function theAdministratorSendsARequestToTheEndpointWithThisData(
 		string $method, string $endpoint, PyStringNode $data
-	) {
+	): void {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
 		$headers['Accept'] = 'application/json';

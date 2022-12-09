@@ -468,13 +468,13 @@ class ConfigController extends Controller {
 			if (!array_key_exists($key, $values)) {
 				return new DataResponse([
 					'error' => "invalid key"
-				] , Http::STATUS_BAD_REQUEST);
+				], Http::STATUS_BAD_REQUEST);
 			}
 		}
 		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
 			return new DataResponse([
 				'error' => "invalid data"
-			] , Http::STATUS_BAD_REQUEST);
+			], Http::STATUS_BAD_REQUEST);
 		}
 		// save to the database
 		foreach ($values as $key => $value) {
@@ -482,7 +482,6 @@ class ConfigController extends Controller {
 		}
 		// return the response
 		return new DataResponse($this->getNextcloudOauthInformation());
-
 	}
 
 
@@ -524,7 +523,6 @@ class ConfigController extends Controller {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		return new DataResponse($this->getNextcloudOauthInformation());
-
 	}
 
 	/**

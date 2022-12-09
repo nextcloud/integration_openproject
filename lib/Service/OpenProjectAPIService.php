@@ -466,8 +466,8 @@ class OpenProjectAPIService {
 				return false;
 			}
 			// validating specific two key
-			if($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
-				if(!is_bool($value)) {
+			if ($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
+				if (!is_bool($value)) {
 					return false;
 				}
 				continue;
