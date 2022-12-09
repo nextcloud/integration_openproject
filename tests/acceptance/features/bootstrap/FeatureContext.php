@@ -551,4 +551,19 @@ class FeatureContext implements Context {
 		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
 		return $url;
 	}
+
+	/**
+	 * @When /^the administrator sends a (PUT|POST) request to the "([^"]*)" endpoint with this data:$/
+	 */
+	public function theAdministratorSendsARequestToTheEndpointWithThisData(
+		string $method, string $endpoint, PyStringNode $data
+	) {
+		$fullUrl = $this->getBaseUrl();
+		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
+		$headers['Accept'] = 'application/json';
+		$headers['Content-Type'] = 'application/json';
+		$this->response = $this->sendHttpRequest(
+			$fullUrl, $this->adminUsername, $this->adminPassword, $method, $headers, $data
+		);
+	}
 }
