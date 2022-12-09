@@ -37,8 +37,8 @@ Feature: setup the integration through an API
       """
       {
         "openproject_instance_url": <instance_url>,
-        "openproject_client_id": <client_id>,
-        "openproject_client_secret": <client_secret>,
+        "openproject_client_id": <openproject_client_id>,
+        "openproject_client_secret": <openproject_client_secret>,
         "default_enable_navigation": <enable_navigation>,
         "default_enable_unified_search": <enable_unified_search>
       }
@@ -57,7 +57,7 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | instance_url          | client_id | client_secret | enable_navigation | enable_unified_search |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search |
       | null                  | null      | null          | null              | null                  |
       | null                  | "id"      | "secret"      | false             | false                 |
       | "http://some-host.de" | null      | "secret"      | false             | false                 |

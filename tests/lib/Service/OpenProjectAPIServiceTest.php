@@ -274,14 +274,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->defaultConfigMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
 
 				// for second request after invalid token reply
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				$this->clientId,
@@ -602,8 +602,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setMethod('POST')
 			->setPath('/oauth/token')
 			->setBody(
-				'client_id=' . $this->clientId .
-				'&client_secret=' . $this->clientSecret .
+				'openproject_client_id=' . $this->clientId .
+				'&openproject_client_secret=' . $this->clientSecret .
 				'&grant_type=refresh_token&refresh_token=oAuthRefreshToken'
 			);
 
@@ -920,11 +920,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
 
 		$url = $this->createMock(IURLGenerator::class);
@@ -934,7 +934,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service::getOpenProjectOauthURL($configMock, $url);
 		$this->assertSame(
 			'https://openproject/oauth/authorize?' .
-			'client_id=clientID&' .
+			'openproject_client_id=clientID&' .
 			'redirect_uri=' . urlencode('http://nextcloud.org/index.php/oauth-redirect') .
 			'&response_type=code',
 			$result
@@ -982,9 +982,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url']
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url']
 			)->willReturnOnConsecutiveCalls($clientId, $clientSecret, $oauthInstanceUrl);
 
 		$this->expectException(\Exception::class);
@@ -1178,9 +1178,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				$this->clientId,
@@ -1491,51 +1491,51 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function adminConfigStatusProvider(): array {
 		return [
 			[
-				'client_id' => '',
-				'client_secret' => '',
-				'oauth_instance_url' => '',
+				'openproject_client_id' => '',
+				'openproject_client_secret' => '',
+				'openproject_instance_url' => '',
 				'expected' => false,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => '',
-				'oauth_instance_url' => 'https://openproject',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => '',
+				'openproject_instance_url' => 'https://openproject',
 				'expected' => false,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => '',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => '',
 				'expected' => false,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => 'https://',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => 'https://',
 				'expected' => false,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => 'openproject.com',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => 'openproject.com',
 				'expected' => false,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => 'https://openproject',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => 'https://openproject',
 				'expected' => true,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => 'https://openproject.com/',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => 'https://openproject.com/',
 				'expected' => true,
 			],
 			[
-				'client_id' => 'clientID',
-				'client_secret' => 'clientSecret',
-				'oauth_instance_url' => 'https://openproject.com',
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => 'clientSecret',
+				'openproject_instance_url' => 'https://openproject.com',
 				'expected' => true,
 			],
 		];
@@ -1552,9 +1552,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
 		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));

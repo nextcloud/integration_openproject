@@ -105,7 +105,7 @@ class LoadSidebarScript implements IEventListener {
 		);
 		$this->initialStateService->provideInitialState(
 			'openproject-url',
-			$this->config->getAppValue(Application::APP_ID, 'oauth_instance_url')
+			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
 		);
 	}
 }

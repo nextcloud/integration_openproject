@@ -39,7 +39,7 @@ class ConfigControllerTest extends TestCase {
 
 	/**
 	 * @param string $codeVerifier The string that should be used as code_verifier
-	 * @param string $clientSecret The string that should be used as client_secret
+	 * @param string $clientSecret The string that should be used as openproject_client_secret
 	 * @param string $startingPage JSON encoded string that defines the start of the OAuth journey
 	 * @return IConfig|MockObject
 	 */
@@ -50,11 +50,11 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
 			)->willReturnOnConsecutiveCalls(
 				'clientID', $clientSecret, 'http://openproject.org', 'clientID', 'clientSecret',
 			);
@@ -454,17 +454,17 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				[
-					'client_id' => '$client_id',
-					'client_secret' => '$client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => '$client_id',
+					'openproject_client_secret' => '$client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				true
 			],
 			[
 				[
-					'client_id' => '',
-					'client_secret' => '$client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => '',
+					'openproject_client_secret' => '$client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				], false
 			],
 		];
@@ -485,21 +485,21 @@ class ConfigControllerTest extends TestCase {
 			->expects($this->exactly(3))
 			->method('setAppValue')
 			->withConsecutive(
-				['integration_openproject', 'client_id', $credsToUpdate['client_id']],
-				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
-				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']],
+				['integration_openproject', 'openproject_client_id', $credsToUpdate['openproject_client_id']],
+				['integration_openproject', 'openproject_client_secret', $credsToUpdate['openproject_client_secret']],
+				['integration_openproject', 'openproject_instance_url', $credsToUpdate['openproject_instance_url']]
 			);
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'oauth_instance_url', ''],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url']
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
@@ -507,9 +507,9 @@ class ConfigControllerTest extends TestCase {
 				'',
 				'123',
 				'',
-				$credsToUpdate['client_id'],
-				$credsToUpdate['client_secret'],
-				$credsToUpdate['oauth_instance_url']
+				$credsToUpdate['openproject_client_id'],
+				$credsToUpdate['openproject_client_secret'],
+				$credsToUpdate['openproject_instance_url']
 			);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -539,6 +539,7 @@ class ConfigControllerTest extends TestCase {
 		);
 	}
 
+
 	/**
 	 * @return array<mixed>
 	 */
@@ -546,84 +547,84 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // everything changes so delete user values and change the oAuth Client
 				[
-					'client_id' => 'old-client_id',
-					'client_secret' => 'old-client_secret',
-					'oauth_instance_url' => 'http://old-openproject.com',
+					'openproject_client_id' => 'old-openproject_client_id',
+					'openproject_client_secret' => 'old-openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				true,
 				'change'
 			],
 			[ // only client id changes so delete user values but don't change the oAuth Client
 				[
-					'client_id' => 'old-client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'old-openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				true,
 				false
 			],
 			[ // only client secret changes so delete user values but don't change the oAuth Client
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'old-client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'old-openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				true,
 				false
 			],
-			[ //only the oauth_instance_url changes so don't delete the user values but change the oAuth Client
+			[ //only the openproject_instance_url changes so don't delete the user values but change the oAuth Client
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://old-openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
 				],
 				false,
 				'change'
 			],
 			[ //everything cleared
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://old-openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'client_id' => null,
-					'client_secret' => null,
-					'oauth_instance_url' => null,
+					'openproject_client_id' => null,
+					'openproject_client_secret' => null,
+					'openproject_instance_url' => null,
 				],
 				true,
 				'delete'
 			],
 			[ //everything cleared with empty strings
 				[
-					'client_id' => 'client_id',
-					'client_secret' => 'client_secret',
-					'oauth_instance_url' => 'http://old-openproject.com',
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'client_id' => '',
-					'client_secret' => '',
-					'oauth_instance_url' => '',
+					'openproject_client_id' => '',
+					'openproject_client_secret' => '',
+					'openproject_instance_url' => '',
 				],
 				true,
 				'delete'
@@ -654,24 +655,24 @@ class ConfigControllerTest extends TestCase {
 			$configMock
 				->method('getAppValue')
 				->withConsecutive(
-					['integration_openproject', 'oauth_instance_url', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'oauth_instance_url']
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url']
 				)
 				->willReturnOnConsecutiveCalls(
-					$oldCreds['oauth_instance_url'],
-					$oldCreds['client_id'],
-					$oldCreds['client_secret'],
+					$oldCreds['openproject_instance_url'],
+					$oldCreds['openproject_client_id'],
+					$oldCreds['openproject_client_secret'],
 					'123',
 					'',
-					$credsToUpdate['client_id'],
-					$credsToUpdate['client_secret'],
-					$credsToUpdate['oauth_instance_url']
+					$credsToUpdate['openproject_client_id'],
+					$credsToUpdate['openproject_client_secret'],
+					$credsToUpdate['openproject_instance_url']
 				);
 			if ($updateNCOAuthClient === 'change') {
 				$oauthServiceMock
@@ -694,22 +695,22 @@ class ConfigControllerTest extends TestCase {
 			$configMock
 				->method('getAppValue')
 				->withConsecutive(
-					['integration_openproject', 'oauth_instance_url', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'client_id'],
-					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'oauth_instance_url']
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url']
 				)
 				->willReturnOnConsecutiveCalls(
-					$oldCreds['oauth_instance_url'],
-					$oldCreds['client_id'],
-					$oldCreds['client_secret'],
+					$oldCreds['openproject_instance_url'],
+					$oldCreds['openproject_client_id'],
+					$oldCreds['openproject_client_secret'],
 					'',
-					$credsToUpdate['client_id'],
-					$credsToUpdate['client_secret'],
-					$credsToUpdate['oauth_instance_url']
+					$credsToUpdate['openproject_client_id'],
+					$credsToUpdate['openproject_client_secret'],
+					$credsToUpdate['openproject_instance_url']
 				);
 			$oauthServiceMock->expects($this->never())->method('setClientRedirectUri');
 		}
@@ -781,7 +782,7 @@ class ConfigControllerTest extends TestCase {
 		);
 
 		$response = $configController->setAdminConfig([
-			'client_id_top' => 'old-client_id',
+			'client_id_top' => 'old-openproject_client_id',
 		]);
 
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());

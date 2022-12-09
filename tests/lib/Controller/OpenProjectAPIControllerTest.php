@@ -54,7 +54,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('http://openproject.org');
 	}
 
@@ -906,12 +906,12 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls(
 				'http://openproject.org',
 				'myClientID',
@@ -950,7 +950,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
 		$this->assertMatchesRegularExpression(
 			'/^http:\/\/openproject\.org\/oauth\/authorize\?' .
-			'client_id=myClientID&' .
+			'openproject_client_id=myClientID&' .
 			'redirect_uri=&' .
 			'response_type=code&' .
 			'state=[a-z0-9]{10}&' .

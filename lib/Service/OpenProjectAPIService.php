@@ -232,9 +232,9 @@ class OpenProjectAPIService {
 	 */
 	public function getOpenProjectAvatar(string $userId, string $userName): array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		$this->config->getAppValue(Application::APP_ID, 'client_id');
-		$this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		try {
 			$response = $this->rawRequest($accessToken, $openprojectUrl, 'users/'.$userId.'/avatar');
 			$headers = $response->getHeaders();
@@ -325,9 +325,9 @@ class OpenProjectAPIService {
 							string $endPoint, array $params = [], string $method = 'GET'): array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
@@ -348,8 +348,8 @@ class OpenProjectAPIService {
 				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
 				// try to refresh the token
 				$result = $this->requestOAuthAccessToken($openprojectUrl, [
-					'client_id' => $clientID,
-					'client_secret' => $clientSecret,
+					'openproject_client_id' => $clientID,
+					'openproject_client_secret' => $clientSecret,
 					'grant_type' => 'refresh_token',
 					'refresh_token' => $refreshToken,
 				], 'POST');
@@ -508,7 +508,7 @@ class OpenProjectAPIService {
 	 * @param IConfig $config
 	 * @param IURLGenerator $urlGenerator
 	 * @return string
-	 * generates an oauth url to OpenProject containing client_id & redirect_uri as parameter
+	 * generates an oauth url to OpenProject containing openproject_client_id & redirect_uri as parameter
 	 * please note that the state parameter is still missing, that needs to be generated dynamically
 	 * and saved to the DB before calling the OAuth URI
 	 * @throws Exception
@@ -517,8 +517,8 @@ class OpenProjectAPIService {
 		if (!self::isAdminConfigOk($config)) {
 			throw new \Exception('OpenProject admin config is not valid!');
 		}
-		$clientID = $config->getAppValue(Application::APP_ID, 'client_id');
-		$oauthUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$clientID = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$oauthUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 
 		// remove trailing slash from the oauthUrl if present
 		if (substr($oauthUrl, -1) === '/') {
@@ -527,7 +527,7 @@ class OpenProjectAPIService {
 
 		return $oauthUrl .
 			'/oauth/authorize' .
-			'?client_id=' . $clientID .
+			'?openproject_client_id=' . $clientID .
 			'&redirect_uri=' . urlencode(self::getOauthRedirectUrl($urlGenerator)) .
 			'&response_type=code';
 	}
@@ -701,9 +701,9 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOk(IConfig $config):bool {
-		$clientId = $config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $config->getAppValue(Application::APP_ID, 'client_secret');
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$clientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($oauthInstanceUrl);
 		if (!$checkIfConfigIsSet) {
 			return false;

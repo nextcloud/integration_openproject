@@ -9,7 +9,7 @@
 				is-required
 				class="pb-1"
 				:title="t('integration_openproject', 'OpenProject host')"
-				:value="state.oauth_instance_url" />
+				:value="state.openproject_instance_url" />
 			<TextInput v-else
 				id="openproject-oauth-instance"
 				ref="openproject-oauth-instance-input"
@@ -42,7 +42,7 @@
 				<Button v-if="isServerHostFormInEdit"
 					type="primary"
 					data-test-id="submit-server-host-form-btn"
-					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.oauth_instance_url"
+					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.openproject_instance_url"
 					@click="saveOpenProjectHostUrl">
 					<template #icon>
 						<LoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
@@ -60,11 +60,11 @@
 			<div v-if="isServerHostFormComplete">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
-					:value="state.client_id"
+					:value="state.openproject_client_id"
 					title="OpenProject OAuth client ID" />
 				<TextInput v-else
 					id="openproject-oauth-client-id"
-					v-model="state.client_id"
+					v-model="state.openproject_client_id"
 					class="py-1"
 					is-required
 					label="OpenProject OAuth client ID"
@@ -74,10 +74,10 @@
 					class="pb-1"
 					encrypt-value
 					title="OpenProject OAuth client secret"
-					:value="state.client_secret" />
+					:value="state.openproject_client_secret" />
 				<TextInput v-else
 					id="openproject-oauth-client-secret"
-					v-model="state.client_secret"
+					v-model="state.openproject_client_secret"
 					is-required
 					class="py-1"
 					label="OpenProject OAuth client secret"
@@ -94,7 +94,7 @@
 					<Button v-else
 						data-test-id="submit-op-oauth-btn"
 						type="primary"
-						:disabled="!state.client_id || !state.client_secret"
+						:disabled="!state.openproject_client_id || !state.openproject_client_secret"
 						@click="saveOPOAuthClientValues">
 						<template #icon>
 							<LoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
@@ -292,9 +292,9 @@ export default {
 		adminFileStorageHref() {
 			let hostPart = ''
 			const urlPart = '%sadmin/settings/storages'
-			if (this.state?.oauth_instance_url.endsWith('/')) {
-				hostPart = this.state.oauth_instance_url
-			} else hostPart = this.state.oauth_instance_url + '/'
+			if (this.state?.openproject_instance_url.endsWith('/')) {
+				hostPart = this.state.openproject_instance_url
+			} else hostPart = this.state.openproject_instance_url + '/'
 			return util.format(urlPart, hostPart)
 		},
 		openProjectClientHint() {
@@ -313,7 +313,7 @@ export default {
 				 && this.isNcOAuthFormComplete)
 		},
 		isResetButtonDisabled() {
-			return !(this.state.client_id || this.state.client_secret || this.state.oauth_instance_url)
+			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
 		},
 	},
 	created() {
@@ -322,16 +322,16 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				if (this.state.oauth_instance_url) {
+				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
 				}
-				if (!!this.state.client_id && !!this.state.client_secret) {
+				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
-				if (this.state.oauth_instance_url) {
-					if (!this.state.client_id || !this.state.client_secret) {
+				if (this.state.openproject_instance_url) {
+					if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
 				}
@@ -347,7 +347,7 @@ export default {
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
 			// set the edit variable to the current saved value
-			this.serverHostUrlForEdit = this.state.oauth_instance_url
+			this.serverHostUrlForEdit = this.state.openproject_instance_url
 			this.isOpenProjectInstanceValid = null
 		},
 		setNCOAuthFormToViewMode() {
@@ -360,7 +360,7 @@ export default {
 			if (this.isOpenProjectInstanceValid) {
 				const saved = await this.saveOPOptions()
 				if (saved) {
-					this.state.oauth_instance_url = this.serverHostUrlForEdit
+					this.state.openproject_instance_url = this.serverHostUrlForEdit
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
 					if (!this.isFormCompleted.opOauth) {
@@ -403,8 +403,8 @@ export default {
 		async clearOPOAuthClientValues() {
 			this.formMode.opOauth = F_MODES.EDIT
 			this.isFormCompleted.opOauth = false
-			this.state.client_id = null
-			this.state.client_secret = null
+			this.state.openproject_client_id = null
+			this.state.openproject_client_secret = null
 			const saved = await this.saveOPOptions()
 			if (!saved) {
 				this.formMode.opOauth = F_MODES.VIEW
@@ -438,9 +438,9 @@ export default {
 			this.formMode.server = F_MODES.EDIT
 			this.isFormCompleted.server = false
 
-			this.state.client_id = null
-			this.state.client_secret = null
-			this.state.oauth_instance_url = null
+			this.state.openproject_client_id = null
+			this.state.openproject_client_secret = null
+			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
 
@@ -457,7 +457,7 @@ export default {
 			)
 			if (response.data.result === true) {
 				this.isOpenProjectInstanceValid = true
-				this.state.oauth_instance_url = this.serverHostUrlForEdit
+				this.state.openproject_instance_url = this.serverHostUrlForEdit
 			} else {
 				switch (response.data.result) {
 				case 'invalid':
@@ -545,9 +545,9 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			const req = {
 				values: {
-					client_id: this.state.client_id,
-					client_secret: this.state.client_secret,
-					oauth_instance_url: this.state.oauth_instance_url,
+					openproject_client_id: this.state.openproject_client_id,
+					openproject_client_secret: this.state.openproject_client_secret,
+					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
 				},

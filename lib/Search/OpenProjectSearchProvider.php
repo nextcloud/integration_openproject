@@ -124,7 +124,7 @@ class OpenProjectSearchProvider implements IProvider {
 			? $svgUrl . '?color=ffffff'
 			: $svgUrl . '?color=000000';
 
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 
 		$searchEnabled = $this->config->getUserValue(

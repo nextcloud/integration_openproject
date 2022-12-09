@@ -56,9 +56,9 @@ const selectors = {
 }
 
 const completeIntegrationState = {
-	oauth_instance_url: 'http://openproject.com',
-	client_id: 'some-client-id-for-op',
-	client_secret: 'some-client-secret-for-op',
+	openproject_instance_url: 'http://openproject.com',
+	openproject_client_id: 'some-client-id-for-op',
+	openproject_client_secret: 'some-client-secret-for-op',
 	nc_oauth_client: {
 		clientId: 'something',
 		clientSecret: 'something-else',
@@ -68,7 +68,7 @@ const completeIntegrationState = {
 // eslint-disable-next-line no-import-assign
 initialState.loadState = jest.fn(() => {
 	return {
-		oauth_instance_url: null,
+		openproject_instance_url: null,
 		oauth_client_id: null,
 		oauth_client_secret: null,
 	}
@@ -85,9 +85,9 @@ describe('AdminSettings.vue', () => {
 			[
 				'with empty state',
 				{
-					oauth_instance_url: null,
-					client_id: null,
-					client_secret: null,
+					openproject_instance_url: null,
+					openproject_client_id: null,
+					openproject_client_secret: null,
 					nc_oauth_client: null,
 				},
 				{
@@ -104,9 +104,9 @@ describe('AdminSettings.vue', () => {
 			[
 				'with incomplete OpenProject OAuth values',
 				{
-					oauth_instance_url: 'https://openproject.example.com',
-					client_id: null,
-					client_secret: null,
+					openproject_instance_url: 'https://openproject.example.com',
+					openproject_client_id: null,
+					openproject_client_secret: null,
 					nc_oauth_client: null,
 				},
 				{
@@ -123,9 +123,9 @@ describe('AdminSettings.vue', () => {
 			[
 				'with complete OpenProject OAuth values',
 				{
-					oauth_instance_url: 'https://openproject.example.com',
-					client_id: 'abcd',
-					client_secret: 'abcdefgh',
+					openproject_instance_url: 'https://openproject.example.com',
+					openproject_client_id: 'abcd',
+					openproject_client_secret: 'abcdefgh',
 					nc_oauth_client: null,
 				},
 				{
@@ -142,9 +142,9 @@ describe('AdminSettings.vue', () => {
 			[
 				'with everything but empty OpenProject OAuth values',
 				{
-					oauth_instance_url: 'https://openproject.example.com',
-					client_id: null,
-					client_secret: null,
+					openproject_instance_url: 'https://openproject.example.com',
+					openproject_client_id: null,
+					openproject_client_secret: null,
 					nc_oauth_client: {
 						clientId: 'some-client-id-here',
 						clientSecret: 'some-client-secret-here',
@@ -164,9 +164,9 @@ describe('AdminSettings.vue', () => {
 			[
 				'with a complete admin settings',
 				{
-					oauth_instance_url: 'https://openproject.example.com',
-					client_id: 'client-id-here',
-					client_secret: 'client-id-here',
+					openproject_instance_url: 'https://openproject.example.com',
+					openproject_client_id: 'client-id-here',
+					openproject_client_secret: 'client-id-here',
 					nc_oauth_client: {
 						clientId: 'nc-client-id-here',
 						clientSecret: 'nc-client-secret-here',
@@ -201,7 +201,7 @@ describe('AdminSettings.vue', () => {
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
+						openproject_instance_url: 'http://openproject.com',
 					},
 				})
 				resetButton = wrapper.find(selectors.resetServerHostButton)
@@ -221,7 +221,7 @@ describe('AdminSettings.vue', () => {
 				it('should set the saved url to the edit parameter on click', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://openproject.com',
+							openproject_instance_url: 'http://openproject.com',
 						},
 					})
 					resetButton = wrapper.find(selectors.resetServerHostButton)
@@ -231,7 +231,7 @@ describe('AdminSettings.vue', () => {
 					await resetButton.trigger('click')
 
 					expect(wrapper.vm.serverHostUrlForEdit).toBe('http://openproject.com')
-					expect(wrapper.vm.state.oauth_instance_url).toBe('http://openproject.com')
+					expect(wrapper.vm.state.openproject_instance_url).toBe('http://openproject.com')
 				})
 			})
 		})
@@ -254,7 +254,7 @@ describe('AdminSettings.vue', () => {
 				beforeEach(() => {
 					wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: '',
+							openproject_instance_url: '',
 						},
 					})
 					oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
@@ -369,9 +369,9 @@ describe('AdminSettings.vue', () => {
 
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: '',
-							client_id: null,
-							client_secret: null,
+							openproject_instance_url: '',
+							openproject_client_id: null,
+							openproject_client_secret: null,
 							nc_oauth_client: null,
 						},
 					})
@@ -400,7 +400,7 @@ describe('AdminSettings.vue', () => {
 			describe('disabled state', () => {
 				it.each(['', null])('should set the submit button as disabled when url is empty', (value) => {
 					const wrapper = getWrapper({
-						state: { oauth_instance_url: value },
+						state: { openproject_instance_url: value },
 					})
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
 					const submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
@@ -408,7 +408,7 @@ describe('AdminSettings.vue', () => {
 				})
 				it('should unset the disabled state on input', async () => {
 					const wrapper = getMountedWrapper({
-						state: { oauth_instance_url: '' },
+						state: { openproject_instance_url: '' },
 					})
 					let submitButton
 					const serverHostForm = wrapper.find(selectors.serverHostForm)
@@ -428,7 +428,7 @@ describe('AdminSettings.vue', () => {
 				beforeEach(async () => {
 					wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://openproject.com',
+							openproject_instance_url: 'http://openproject.com',
 						},
 					})
 					await wrapper.setData({
@@ -457,9 +457,9 @@ describe('AdminSettings.vue', () => {
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
-						client_id: 'openproject-client-id',
-						client_secret: 'openproject-client-secret',
+						openproject_instance_url: 'http://openproject.com',
+						openproject_client_id: 'openproject-client-id',
+						openproject_client_secret: 'openproject-client-secret',
 						nc_oauth_client: null,
 					},
 				})
@@ -499,7 +499,7 @@ describe('AdminSettings.vue', () => {
 					await wrapper.vm.clearOPOAuthClientValues()
 
 					expect(saveOPOptionsSpy).toBeCalledTimes(1)
-					expect(wrapper.vm.state.client_id).toBe(null)
+					expect(wrapper.vm.state.openproject_client_id).toBe(null)
 				})
 			})
 		})
@@ -517,9 +517,9 @@ describe('AdminSettings.vue', () => {
 					}))
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
-						client_id: '',
-						client_secret: '',
+						openproject_instance_url: 'http://openproject.com',
+						openproject_client_id: '',
+						openproject_client_secret: '',
 						nc_oauth_client: null,
 					},
 				})
@@ -570,9 +570,9 @@ describe('AdminSettings.vue', () => {
 								.mockImplementationOnce(() => jest.fn())
 							const wrapper = getMountedWrapper({
 								state: {
-									oauth_instance_url: 'http://openproject.com',
-									client_id: '',
-									client_secret: '',
+									openproject_instance_url: 'http://openproject.com',
+									openproject_client_id: '',
+									openproject_client_secret: '',
 									nc_oauth_client: {
 										clientId: 'abcdefg',
 										clientSecret: 'slkjdlkjlkd',
@@ -595,9 +595,9 @@ describe('AdminSettings.vue', () => {
 			it('should show the field values and hide the form', () => {
 				const wrapper = getWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
-						client_id: 'some-client-id-here',
-						client_secret: 'some-client-secret-here',
+						openproject_instance_url: 'http://openproject.com',
+						openproject_client_id: 'some-client-id-here',
+						openproject_client_secret: 'some-client-secret-here',
 						nc_oauth_client: {
 							clientId: 'some-nc-client-id-here',
 							clientSecret: 'some-nc-client-secret-here',
@@ -613,9 +613,9 @@ describe('AdminSettings.vue', () => {
 				it('should trigger the confirm dialog', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://openproject.com',
-							client_id: 'op-client-id',
-							client_secret: 'op-client-secret',
+							openproject_instance_url: 'http://openproject.com',
+							openproject_client_id: 'op-client-id',
+							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
 								clientId: 'nc-clientid',
 								clientSecret: 'nc-clientsecret',
@@ -657,9 +657,9 @@ describe('AdminSettings.vue', () => {
 						}))
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://openproject.com',
-							client_id: 'op-client-id',
-							client_secret: 'op-client-secret',
+							openproject_instance_url: 'http://openproject.com',
+							openproject_client_id: 'op-client-id',
+							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
 								clientId: 'nc-client-id',
 								clientSecret: 'nc-client-secret',
@@ -681,9 +681,9 @@ describe('AdminSettings.vue', () => {
 			it('should show the form and hide the field values', async () => {
 				const wrapper = getWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
-						client_id: 'op-client-id',
-						client_secret: 'op-client-secret',
+						openproject_instance_url: 'http://openproject.com',
+						openproject_client_id: 'op-client-id',
+						openproject_client_secret: 'op-client-secret',
 						nc_oauth_client: {
 							clientId: 'nc-client-id',
 							clientSecret: 'nc-client-secret',
@@ -701,9 +701,9 @@ describe('AdminSettings.vue', () => {
 				it('should set the form to view mode if the oauth values are complete', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
-							oauth_instance_url: 'http://openproject.com',
-							client_id: 'some-client-id-for-op',
-							client_secret: 'some-client-secret-for-op',
+							openproject_instance_url: 'http://openproject.com',
+							openproject_client_id: 'some-client-id-for-op',
+							openproject_client_secret: 'some-client-secret-for-op',
 							nc_oauth_client: {
 								clientId: 'something',
 								clientSecret: 'something-else',
@@ -736,9 +736,9 @@ describe('AdminSettings.vue', () => {
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
-						oauth_instance_url: 'http://openproject.com',
-						client_id: 'some-client-id-for-op',
-						client_secret: 'some-client-secret-for-op',
+						openproject_instance_url: 'http://openproject.com',
+						openproject_client_id: 'some-client-id-for-op',
+						openproject_client_secret: 'some-client-secret-for-op',
 						nc_oauth_client: {
 							clientId: 'something',
 							clientSecret: 'something-else',
@@ -783,9 +783,9 @@ describe('AdminSettings.vue', () => {
 					'http://localhost/apps/integration_openproject/admin-config',
 					{
 						values: {
-							client_id: null,
-							client_secret: null,
-							oauth_instance_url: null,
+							openproject_client_id: null,
+							openproject_client_secret: null,
+							openproject_instance_url: null,
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
 						},
@@ -804,34 +804,34 @@ describe('AdminSettings.vue', () => {
 
 		it.each([
 			{
-				oauth_instance_url: 'http://openproject.com',
-				client_id: 'some-client-id-for-op',
-				client_secret: 'some-client-secret-for-op',
+				openproject_instance_url: 'http://openproject.com',
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
-				oauth_instance_url: 'http://openproject.com',
-				client_id: null,
-				client_secret: null,
+				openproject_instance_url: 'http://openproject.com',
+				openproject_client_id: null,
+				openproject_client_secret: null,
 			},
 			{
-				oauth_instance_url: null,
-				client_id: 'some-client-id-for-op',
-				client_secret: 'some-client-secret-for-op',
+				openproject_instance_url: null,
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
-				oauth_instance_url: null,
-				client_id: null,
-				client_secret: 'some-client-secret-for-op',
+				openproject_instance_url: null,
+				openproject_client_id: null,
+				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
-				oauth_instance_url: 'http://openproject.com',
-				client_id: null,
-				client_secret: 'some-client-secret-for-op',
+				openproject_instance_url: 'http://openproject.com',
+				openproject_client_id: null,
+				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
-				oauth_instance_url: null,
-				client_id: 'some-client-id-for-op',
-				client_secret: null,
+				openproject_instance_url: null,
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: null,
 			},
 		])('should not be disabled when any of the Open Project setting is set', (value) => {
 			const wrapper = getMountedWrapper({
@@ -844,9 +844,9 @@ describe('AdminSettings.vue', () => {
 		it('should be disabled when no Open Project setting is set', async () => {
 			const wrapper = getMountedWrapper({
 				state: {
-					oauth_instance_url: null,
-					client_id: null,
-					client_secret: null,
+					openproject_instance_url: null,
+					openproject_client_id: null,
+					openproject_client_secret: null,
 				},
 			})
 			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
@@ -864,9 +864,9 @@ describe('AdminSettings.vue', () => {
 		it('should not be visible if the integration is not complete', () => {
 			const wrapper = getMountedWrapper({
 				state: {
-					oauth_instance_url: 'http://openproject.com',
-					client_id: 'some-client-id-for-op',
-					client_secret: 'some-client-secret-for-op',
+					openproject_instance_url: 'http://openproject.com',
+					openproject_client_id: 'some-client-id-for-op',
+					openproject_client_secret: 'some-client-secret-for-op',
 					nc_oauth_client: null,
 				},
 			})

@@ -79,7 +79,7 @@ class OpenProjectAPIController extends Controller {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
 		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
-		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $logger;

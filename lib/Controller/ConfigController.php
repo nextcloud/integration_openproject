@@ -150,9 +150,9 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
-			'oauth_instance_url',
-			'client_id',
-			'client_secret',
+			'openproject_instance_url',
+			'openproject_client_id',
+			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search'
 		];
@@ -168,26 +168,26 @@ class ConfigController extends Controller {
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
-			Application::APP_ID, 'oauth_instance_url', ''
+			Application::APP_ID, 'openproject_instance_url', ''
 		);
 		$oldClientId = $this->config->getAppValue(
-			Application::APP_ID, 'client_id', ''
+			Application::APP_ID, 'openproject_client_id', ''
 		);
 		$oldClientSecret = $this->config->getAppValue(
-			Application::APP_ID, 'client_secret', ''
+			Application::APP_ID, 'openproject_client_secret', ''
 		);
 
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		// if the OpenProject OAuth URL has changed
-		if (key_exists('oauth_instance_url', $values)
-			&& $oldOpenProjectOauthUrl !== $values['oauth_instance_url']
+		if (key_exists('openproject_instance_url', $values)
+			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url']
 		) {
 			// delete the existing OAuth client if new OAuth URL is passed empty
 			if (
-				is_null($values['oauth_instance_url']) ||
-				 $values['oauth_instance_url'] === ''
+				is_null($values['openproject_instance_url']) ||
+				 $values['openproject_instance_url'] === ''
 			) {
 				$this->deleteOauthClient();
 			} else {
@@ -196,7 +196,7 @@ class ConfigController extends Controller {
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
 				$this->oauthService->setClientRedirectUri(
-					(int) $oauthClientInternalId, $values['oauth_instance_url']
+					(int) $oauthClientInternalId, $values['openproject_instance_url']
 				);
 			}
 		}
@@ -218,8 +218,8 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
-			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
-			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
+			((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+			(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
 			// when the OP client information is for reset
 			$runningFullReset
 		) {
@@ -288,8 +288,8 @@ class ConfigController extends Controller {
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
 		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$codeVerifier = $this->config->getUserValue(
 			$this->userId, Application::APP_ID, 'code_verifier', false
 		);
@@ -336,7 +336,7 @@ class ConfigController extends Controller {
 		}
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -415,7 +415,7 @@ class ConfigController extends Controller {
 	 */
 	public function autoOauthCreation(): DataResponse {
 		$this->deleteOauthClient();
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
+		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		return new DataResponse($clientInfo);
