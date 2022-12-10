@@ -480,13 +480,12 @@ class ConfigControllerTest extends TestCase {
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
-			->expects($this->exactly(4))
+			->expects($this->exactly(3))
 			->method('setAppValue')
 			->withConsecutive(
 				['integration_openproject', 'client_id', $credsToUpdate['client_id']],
 				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
 				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']],
-				['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false']
 			);
 		$configMock
 			->method('getAppValue')
@@ -495,8 +494,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
-				['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false'],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success'],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
@@ -506,8 +504,7 @@ class ConfigControllerTest extends TestCase {
 				'',
 				'',
 				'123',
-				'true',
-				'success',
+				'',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
@@ -534,7 +531,7 @@ class ConfigControllerTest extends TestCase {
 		$this->assertSame(
 			[
 				'status' => $adminConfigStatus,
-				'oPOAuthTokenRevokeStatus' => 'success',
+				'oPOAuthTokenRevokeStatus' => '',
 			],
 			$result->getData()
 		);
@@ -659,8 +656,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
-					['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false'],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url']
@@ -670,8 +666,7 @@ class ConfigControllerTest extends TestCase {
 					$oldCreds['client_id'],
 					$oldCreds['client_secret'],
 					'123',
-					'true',
-					'success',
+					'',
 					$credsToUpdate['client_id'],
 					$credsToUpdate['client_secret'],
 					$credsToUpdate['oauth_instance_url']
@@ -700,8 +695,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oauth_instance_url', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
-					['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false'],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url']
@@ -710,8 +704,7 @@ class ConfigControllerTest extends TestCase {
 					$oldCreds['oauth_instance_url'],
 					$oldCreds['client_id'],
 					$oldCreds['client_secret'],
-					'true',
-					'success',
+					'',
 					$credsToUpdate['client_id'],
 					$credsToUpdate['client_secret'],
 					$credsToUpdate['oauth_instance_url']
@@ -878,8 +871,9 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'client_id', ''],
 					['integration_openproject', 'client_secret', ''],
 					['integration_openproject', 'nc_oauth_client_id', ''],
-					['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false'],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url'],
@@ -889,8 +883,9 @@ class ConfigControllerTest extends TestCase {
 					$oldAdminConfig['client_id'],
 					$oldAdminConfig['client_secret'],
 					'',
-					'true',
-					'success',
+					'',
+					'',
+					'',
 					$newConfig['client_id'],
 					$newConfig['client_secret'],
 					$newConfig['oauth_instance_url'],
@@ -902,8 +897,9 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oauth_instance_url', ''],
 					['integration_openproject', 'client_id', ''],
 					['integration_openproject', 'client_secret', ''],
-					['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false'],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url'],
@@ -912,8 +908,9 @@ class ConfigControllerTest extends TestCase {
 					$oldAdminConfig['oauth_instance_url'],
 					$oldAdminConfig['client_id'],
 					$oldAdminConfig['client_secret'],
-					'true',
-					'success',
+					'',
+					'',
+					'',
 					$newConfig['client_id'],
 					$newConfig['client_secret'],
 					$newConfig['oauth_instance_url'],
@@ -925,7 +922,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_id', $newConfig['client_id']],
 				['integration_openproject', 'client_secret', $newConfig['client_secret']],
 				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
-				['integration_openproject', 'isOPOAuthTokenRevokePerformed', 'false']
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success']
 			);
 		$configMock
 			->method('getUserValue')
@@ -962,12 +959,11 @@ class ConfigControllerTest extends TestCase {
 				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
 			);
 		$configMock
-			->expects($this->exactly(3))
+			->expects($this->exactly(2))
 			->method('deleteAppValue')
 			->withConsecutive(
 				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-				['integration_openproject', 'isOPOAuthTokenRevokePerformed'],
 			);
 
 
@@ -991,6 +987,6 @@ class ConfigControllerTest extends TestCase {
 		$this->assertArrayHasKey('status', $data);
 		$this->assertEquals($adminConfigStatus, $data['status']);
 		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
-		$this->assertEquals("success", $data['oPOAuthTokenRevokeStatus']);
+		$this->assertEquals("", $data['oPOAuthTokenRevokeStatus']);
 	}
 }
