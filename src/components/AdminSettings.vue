@@ -587,7 +587,6 @@ export default {
 					t('integration_openproject', 'Successfully revoked user(s) OpenProject OAuth access token(s)')
 				)
 				break
-			case '':
 			default:
 				break
 			}

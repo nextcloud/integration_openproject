@@ -756,7 +756,7 @@ class OpenProjectAPIService {
 		try {
 			$response = $this->client->post(
 				rtrim($openProjectUrl, "/") . '/oauth/revoke' . '?token=' . $accessToken,
-				$options,
+				$options
 			);
 			$body = $response->getBody();
 			$respCode = $response->getStatusCode();
