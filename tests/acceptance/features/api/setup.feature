@@ -80,6 +80,86 @@ Feature: setup the integration through an API
       | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            |
 
 
+  Scenario: setup with invalid keys
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+        "values" : {
+          "instance_url": "http://openproject.de",
+          "client_id": "the-client"
+        }
+      }
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid key"}
+      }
+    }
+   """
+
+
+  Scenario Outline: setup with missing keys
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+        "values" : <values>
+      }
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid key"}
+      }
+    }
+   """
+    Examples:
+      | values                                                                                                                                                                                                                      |
+      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false} |
+      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false} |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false} |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false} |
+
+
+  Scenario Outline: setup with data that is not even valid JSON
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      <data>
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid data"}
+      }
+    }
+   """
+    Examples:
+      | data                                                                                                                                                                                          |
+      | "{}"                                                                                                                                                                                          |
+      | {"values": {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false,}} |
+      | {"values": {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}   |
+      | {"values":                                                                                                                                                                                    |
+      | "values"                                                                                                                                                                                      |
+      | ""                                                                                                                                                                                            |
+
   Scenario: non-admin user tries to create the setup
     Given user "Alice" has been created
     When the user "Alice" sends a POST request to the "setup" endpoint with this data:
@@ -202,27 +282,28 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid data$"}
+          "error": {"type": "string", "pattern": "^<error-message>$"}
       }
     }
    """
     Examples:
-      | key                           | value    |
-      | openproject_instance_url      | null     |
-      | openproject_instance_url      | ""       |
-      | openproject_instance_url      | false    |
-      | openproject_client_id         | null     |
-      | openproject_client_id         | ""       |
-      | openproject_client_id         | false    |
-      | openproject_client_secret     | null     |
-      | openproject_client_secret     | ""       |
-      | openproject_client_secret     | false    |
-      | default_enable_navigation     | null     |
-      | default_enable_navigation     | ""       |
-      | default_enable_navigation     | "string" |
-      | default_enable_unified_search | null     |
-      | default_enable_unified_search | ""       |
-      | default_enable_unified_search | "string" |
+      | key                           | value          | error-message |
+      | openproject_instance_url      | null           | invalid data  |
+      | openproject_instance_url      | ""             | invalid data  |
+      | openproject_instance_url      | false          | invalid data  |
+      | openproject_client_id         | null           | invalid data  |
+      | openproject_client_id         | ""             | invalid data  |
+      | openproject_client_id         | false          | invalid data  |
+      | openproject_client_secret     | null           | invalid data  |
+      | openproject_client_secret     | ""             | invalid data  |
+      | openproject_client_secret     | false          | invalid data  |
+      | default_enable_navigation     | null           | invalid data  |
+      | default_enable_navigation     | ""             | invalid data  |
+      | default_enable_navigation     | "string"       | invalid data  |
+      | default_enable_unified_search | null           | invalid data  |
+      | default_enable_unified_search | ""             | invalid data  |
+      | default_enable_unified_search | "string"       | invalid data  |
+      | instance_url                  | "http://op.de" | invalid key   |
 
 
   Scenario Outline: update of multiple values where at least one has invalid data
@@ -256,6 +337,34 @@ Feature: setup the integration through an API
       | openproject_client_secret | "secret"              | openproject_client_id         | false          |
       | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       |
       | default_enable_navigation | null                  | default_enable_unified_search | false          |
+
+
+  Scenario Outline: with data that is not even valid JSON
+    When the administrator sends a PUT request to the "setup" endpoint with this data:
+      """
+      <data>
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid data$"}
+      }
+    }
+   """
+    Examples:
+      | data                                                                |
+      | { "values": { "openproject_instance_url": "http://some-host.de"} }} |
+      | { "values": { "openproject_instance_url": "http://some-host.de"}    |
+      | "values": { "openproject_instance_url": "http://some-host.de"} }    |
+      | { "values":                                                         |
+      | "{}"                                                                |
+      | ""                                                                  |
 
 
   Scenario: non-admin tries to update the setup
