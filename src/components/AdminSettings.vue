@@ -244,6 +244,7 @@ export default {
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
+			oPOAuthTokenRevokeStatus: null,
 		}
 	},
 	computed: {
@@ -540,6 +541,7 @@ export default {
 			}
 		},
 		async saveOPOptions() {
+			let success = false
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			const req = {
 				values: {
@@ -554,14 +556,39 @@ export default {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
+				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
-				return true
+				success = true
 			} catch (error) {
+				this.isAdminConfigOk = null
+				this.oPOAuthTokenRevokeStatus = null
 				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
-				return false
+			}
+			this.notifyAboutOPOAuthTokenRevoke()
+			return success
+		},
+		notifyAboutOPOAuthTokenRevoke() {
+			switch (this.oPOAuthTokenRevokeStatus) {
+			case 'connection_error':
+				showError(
+					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server')
+				)
+				break
+			case 'other_error':
+				showError(
+					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
+				)
+				break
+			case 'success':
+				showSuccess(
+					t('integration_openproject', 'Successfully revoked user(s) OpenProject OAuth access token(s)')
+				)
+				break
+			default:
+				break
 			}
 		},
 		resetNcOauthValues() {

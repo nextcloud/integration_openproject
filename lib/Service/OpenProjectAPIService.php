@@ -725,4 +725,52 @@ class OpenProjectAPIService {
 		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
 		return $url;
 	}
+
+	/**
+	 * Sends a POST request to the OpenProject API server to revoke an OAuth token for the provided client
+	 *
+	 * @param string $userUID the uid of the user to revoke the token for
+	 * @param string $openProjectUrl the url of the openproject instance
+	 * @param string $accessToken the refresh token to be revoked
+	 * @param string $clientId the client id of the OAuth app
+	 * @param string $clientSecret the client secret of the OAuth app
+	 *
+	 * @return void
+	 * @throws OpenprojectErrorException
+	 * @throws ConnectException
+	 */
+	public function revokeUserOAuthToken(
+		string $userUID,
+		string $openProjectUrl,
+		string $accessToken,
+		string $clientId,
+		string $clientSecret
+	): void {
+		$options = [
+			'headers' => [
+				'User-Agent' => 'Nextcloud OpenProject integration',
+				'Content-Type' => 'application/x-www-form-urlencoded',
+				'Authorization' => 'Basic ' . \base64_encode($clientId . ':' . $clientSecret)
+			]
+		];
+		try {
+			$response = $this->client->post(
+				rtrim($openProjectUrl, "/") . '/oauth/revoke' . '?token=' . $accessToken,
+				$options
+			);
+			$body = $response->getBody();
+			$respCode = $response->getStatusCode();
+			if ($respCode !== 200) {
+				throw new OpenprojectErrorException('Failed to revoke token in OpenProject for user "'. $userUID . '".\nResponse body: "' . $body . '"');
+			}
+		} catch (ConnectException $e) {
+			throw new ConnectException(
+				'Could not revoke token in OpenProject for user "' .
+				$userUID . '".\n Message: "' . $e->getMessage() . '"',
+				$e->getRequest()
+			);
+		} catch (ServerException | ClientException | Exception $e) {
+			throw new OpenprojectErrorException('Could not revoke token in OpenProject for user "' . $userUID . '".\n Message: "' . $e->getMessage() . '"');
+		}
+	}
 }

@@ -11,6 +11,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;
@@ -27,6 +28,7 @@ use OCP\AppFramework\Controller;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -144,6 +146,7 @@ class ConfigController extends Controller {
 	 * @param array<string, string|null> $values
 	 *
 	 * @return DataResponse
+	 * @throws OpenprojectErrorException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		$allowedKeys = [
@@ -177,12 +180,18 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
+		// if the OpenProject OAuth URL has changed
 		if (key_exists('oauth_instance_url', $values)
 			&& $oldOpenProjectOauthUrl !== $values['oauth_instance_url']
 		) {
-			if (is_null($values['oauth_instance_url']) || $values['oauth_instance_url'] === '') {
+			// delete the existing OAuth client if new OAuth URL is passed empty
+			if (
+				is_null($values['oauth_instance_url']) ||
+				 $values['oauth_instance_url'] === ''
+			) {
 				$this->deleteOauthClient();
 			} else {
+				// otherwise just change the redirect URI for the existing OAuth client
 				$oauthClientInternalId = $this->config->getAppValue(
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
@@ -191,15 +200,65 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		if ((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
-			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) {
-			$this->userManager->callForAllUsers(function (IUser $user) {
-				$this->clearUserInfo($user->getUID());
+		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
+		if (
+			// when the OP client information has changed
+			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
+			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
+			// when the OP client information is for reset
+			($oldClientSecret && $oldClientId && $values['client_id'] === null && $values['client_secret'] === null)
+		) {
+			$this->userManager->callForAllUsers(function (IUser $user) use (
+				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
+			) {
+				$userUID = $user->getUID();
+				$accessToken = $this->config->getUserValue($userUID, Application::APP_ID, 'token', '');
+
+				// revoke is possible only when the user has the access token stored in the database
+				// plus, for a successful revoke, the old OP client information is also needed
+				// there may be cases where the software only have host url saved but not the client information
+				// in this case, the token is not revoked and just cleared if present in the database
+				if ($accessToken && $oldOpenProjectOauthUrl && $oldClientId && $oldClientSecret) {
+					try {
+						$this->openprojectAPIService->revokeUserOAuthToken(
+							$userUID,
+							$oldOpenProjectOauthUrl,
+							$accessToken,
+							$oldClientId,
+							$oldClientSecret
+						);
+						if (
+							$this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '') === ''
+						) {
+							$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'success');
+						}
+					} catch (ConnectException $e) {
+						$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'connection_error');
+						$this->logger->error(
+							'Error: ' . $e->getMessage(),
+							['app' => Application::APP_ID]
+						);
+					} catch (OpenprojectErrorException $e) {
+						$this->config->setAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', 'other_error');
+						$this->logger->error(
+							'Error: ' . $e->getMessage(),
+							['app' => Application::APP_ID]
+						);
+					}
+				}
+				$this->clearUserInfo($userUID);
 			});
 		}
 
+		// if the revoke has failed at least once, the last status is stored in the database
+		// this is not a neat way to give proper information about the revoke status
+		// TODO: find way to report every user's revoke status
+		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
+		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
+
 		return new DataResponse([
-			"status" => OpenProjectAPIService::isAdminConfigOk($this->config)
+			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
 		]);
 	}
 

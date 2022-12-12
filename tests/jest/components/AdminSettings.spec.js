@@ -365,7 +365,7 @@ describe('AdminSettings.vue', () => {
 					jest.spyOn(axios, 'post')
 						.mockImplementationOnce(() => Promise.resolve({ data: { result: true } }))
 					const setAdminConfigAPISpy = jest.spyOn(axios, 'put')
-						.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
+						.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }))
 
 					const wrapper = getMountedWrapper({
 						state: {
@@ -453,7 +453,7 @@ describe('AdminSettings.vue', () => {
 		describe('view mode and completed state', () => {
 			let wrapper, opOAuthForm, resetButton
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({ data: true }))
+				.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
 			beforeEach(() => {
 				wrapper = getMountedWrapper({
 					state: {
@@ -922,6 +922,60 @@ describe('AdminSettings.vue', () => {
 
 			expect(dialogs.showError).toBeCalledTimes(1)
 			expect(dialogs.showError).toBeCalledWith('Failed to save default user configuration: Some message')
+
+		})
+	})
+
+	describe('revoke OpenProject OAuth token', () => {
+		beforeEach(() => {
+			axios.put.mockReset()
+			dialogs.showSuccess.mockReset()
+			dialogs.showError.mockReset()
+		})
+		it('should show success when revoke status is success', async () => {
+			dialogs.showSuccess
+				.mockImplementationOnce()
+				.mockImplementationOnce()
+			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+				.mockImplementationOnce(
+					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } })
+				)
+			const wrapper = getMountedWrapper({
+				state: completeIntegrationState,
+			})
+			await wrapper.vm.saveOPOptions()
+
+			await localVue.nextTick()
+
+			expect(saveOPOptionsSpy).toBeCalledTimes(1)
+			expect(dialogs.showSuccess).toBeCalledTimes(2)
+			expect(dialogs.showSuccess).toBeCalledWith('OpenProject admin options saved')
+			expect(dialogs.showSuccess).toBeCalledWith('Successfully revoked user(s) OpenProject OAuth access token(s)')
+
+		})
+		it.each([
+			['connection_error', 'Failed to perform revoke request due to connection error with the OpenProject server'],
+			['other_error', 'Failed to revoke some user(s) OpenProject OAuth access token(s)'],
+		])('should show error message on various failure', async (errorCode, errorMessage) => {
+			dialogs.showSuccess
+				.mockImplementationOnce()
+				.mockImplementationOnce()
+			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+				.mockImplementationOnce(
+					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: errorCode } })
+				)
+			const wrapper = getMountedWrapper({
+				state: completeIntegrationState,
+			})
+			await wrapper.vm.saveOPOptions()
+
+			await localVue.nextTick()
+
+			expect(saveOPOptionsSpy).toBeCalledTimes(1)
+			expect(dialogs.showSuccess).toBeCalledTimes(1)
+			expect(dialogs.showError).toBeCalledTimes(1)
+			expect(dialogs.showSuccess).toBeCalledWith('OpenProject admin options saved')
+			expect(dialogs.showError).toBeCalledWith(errorMessage)
 
 		})
 	})

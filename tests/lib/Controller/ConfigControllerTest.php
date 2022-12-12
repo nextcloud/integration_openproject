@@ -2,7 +2,9 @@
 
 namespace OCA\OpenProject\Controller;
 
+use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
@@ -15,6 +17,7 @@ use OCP\AppFramework\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Http\Message\RequestInterface;
 
 class ConfigControllerTest extends TestCase {
 
@@ -484,7 +487,7 @@ class ConfigControllerTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'client_id', $credsToUpdate['client_id']],
 				['integration_openproject', 'client_secret', $credsToUpdate['client_secret']],
-				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']]
+				['integration_openproject', 'oauth_instance_url', $credsToUpdate['oauth_instance_url']],
 			);
 		$configMock
 			->method('getAppValue')
@@ -493,6 +496,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'client_id'],
 				['integration_openproject', 'client_secret'],
 				['integration_openproject', 'oauth_instance_url']
@@ -502,6 +506,7 @@ class ConfigControllerTest extends TestCase {
 				'',
 				'',
 				'123',
+				'',
 				$credsToUpdate['client_id'],
 				$credsToUpdate['client_secret'],
 				$credsToUpdate['oauth_instance_url']
@@ -526,11 +531,13 @@ class ConfigControllerTest extends TestCase {
 		$result = $configController->setAdminConfig($credsToUpdate);
 
 		$this->assertSame(
-			["status" => $adminConfigStatus],
+			[
+				'status' => $adminConfigStatus,
+				'oPOAuthTokenRevokeStatus' => '',
+			],
 			$result->getData()
 		);
 	}
-
 
 	/**
 	 * @return array<mixed>
@@ -635,15 +642,9 @@ class ConfigControllerTest extends TestCase {
 	public function testSetAdminConfigClearUserDataChangeNCOauthClient(
 		$oldCreds, $credsToUpdate, $deleteUserValues, $updateNCOAuthClient
 	) {
-		$userManager = \OC::$server->getUserManager();
-		$count = 0;
-		$function = function (IUser $user) use (&$count) {
-			$count++;
-			return null;
-		};
-		$userManager->callForAllUsers($function);
-		$this->assertSame(1, $count, 'Expected to have only 1 user in the dB before this test');
+		$userManager = $this->checkForUsersCountBeforeTest();
 		$this->user1 = $userManager->createUser('test101', 'test101');
+
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
 		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
@@ -657,6 +658,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url']
@@ -666,6 +668,7 @@ class ConfigControllerTest extends TestCase {
 					$oldCreds['client_id'],
 					$oldCreds['client_secret'],
 					'123',
+					'',
 					$credsToUpdate['client_id'],
 					$credsToUpdate['client_secret'],
 					$credsToUpdate['oauth_instance_url']
@@ -694,6 +697,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oauth_instance_url', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'client_id'],
 					['integration_openproject', 'client_secret'],
 					['integration_openproject', 'oauth_instance_url']
@@ -702,6 +706,7 @@ class ConfigControllerTest extends TestCase {
 					$oldCreds['oauth_instance_url'],
 					$oldCreds['client_id'],
 					$oldCreds['client_secret'],
+					'',
 					$credsToUpdate['client_id'],
 					$credsToUpdate['client_secret'],
 					$credsToUpdate['oauth_instance_url']
@@ -781,5 +786,428 @@ class ConfigControllerTest extends TestCase {
 
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		$this->assertEquals('Invalid key', $response->getData()['error']);
+	}
+
+	/**
+	 * Runs a check for the users count in the SUT database
+	 * Throws an assertion error if the users count is not "1"
+	 *
+	 * @param int $expectedCount
+	 *
+	 * @return IUserManager UserManager instance for further user management
+	 * @throws \Exception
+	 */
+	public function checkForUsersCountBeforeTest($expectedCount = 1): IUserManager {
+		$actualCount = 1;
+		$userManager = \OC::$server->getUserManager();
+		$function = function (IUser $user) use (&$count) {
+			$count++;
+			return null;
+		};
+		$userManager->callForAllUsers($function);
+		$this->assertSame(
+			$actualCount, $expectedCount,
+			'Expected to have only 1 user in the dB before this test'
+		);
+		return $userManager;
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function oPOAuthTokenRevokeDataProvider() {
+		return [
+			[
+				[
+					'client_id' => null,
+					'client_secret' => null,
+					'oauth_instance_url' => null,
+				],
+				false,
+				'reset'
+			],
+			[
+				[
+					'client_id' => 'client_id_changed',
+					'client_secret' => 'client_secret_changed',
+					'oauth_instance_url' => 'http://localhost:3000',
+				],
+				true,
+				'change'
+			]
+		];
+	}
+
+	/**
+	 * @param array<mixed> $newConfig
+	 * @param bool $adminConfigStatus
+	 * @param string $mode
+	 *
+	 * @return void
+	 * @throws OpenprojectErrorException
+	 * @dataProvider oPOAuthTokenRevokeDataProvider
+	 */
+	public function testSetAdminConfigForOPOAuthTokenRevoke($newConfig, $adminConfigStatus, $mode) {
+		$oldAdminConfig = [
+			'client_id' => 'some_old_client_id',
+			'client_secret' => 'some_old_client_secret',
+			'oauth_instance_url' => 'http://localhost:3000',
+		];
+		$userTokens = [
+			'admin' => 'admin_token',
+			'test101' => 'user_token',
+		];
+
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$this->user1 = $userManager->createUser('test101', 'test101');
+
+		$apiService = $this
+			->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
+
+		if ($mode === 'reset') {
+			$configMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'oauth_instance_url', ''],
+					['integration_openproject', 'client_id', ''],
+					['integration_openproject', 'client_secret', ''],
+					['integration_openproject', 'nc_oauth_client_id', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'oauth_instance_url'],
+				)
+				->willReturnOnConsecutiveCalls(
+					$oldAdminConfig['oauth_instance_url'],
+					$oldAdminConfig['client_id'],
+					$oldAdminConfig['client_secret'],
+					'',
+					'',
+					'',
+					'',
+					$newConfig['client_id'],
+					$newConfig['client_secret'],
+					$newConfig['oauth_instance_url'],
+				);
+		} else {
+			$configMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'oauth_instance_url', ''],
+					['integration_openproject', 'client_id', ''],
+					['integration_openproject', 'client_secret', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'client_id'],
+					['integration_openproject', 'client_secret'],
+					['integration_openproject', 'oauth_instance_url'],
+				)
+				->willReturnOnConsecutiveCalls(
+					$oldAdminConfig['oauth_instance_url'],
+					$oldAdminConfig['client_id'],
+					$oldAdminConfig['client_secret'],
+					'',
+					'',
+					'',
+					$newConfig['client_id'],
+					$newConfig['client_secret'],
+					$newConfig['oauth_instance_url'],
+				);
+		}
+		$configMock
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', $newConfig['client_id']],
+				['integration_openproject', 'client_secret', $newConfig['client_secret']],
+				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success']
+			);
+		$configMock
+			->method('getUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token', ''],
+				[$this->user1->getUID(), 'integration_openproject', 'token', '']
+			)
+			->willReturnOnConsecutiveCalls(
+				$userTokens['admin'],
+				$userTokens[$this->user1->getUID()]
+			);
+
+		$apiService
+			->expects($this->exactly(2))
+			->method('revokeUserOAuthToken')
+			->withConsecutive(
+				['admin', $oldAdminConfig['oauth_instance_url'], $userTokens['admin'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+				['test101', $oldAdminConfig['oauth_instance_url'], $userTokens['test101'], $oldAdminConfig['client_id'], $oldAdminConfig['client_secret']],
+			);
+
+		$configMock
+			->expects($this->exactly(10))
+			->method("deleteUserValue")
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+				[$this->user1->getUID(), 'integration_openproject', 'token'],
+				[$this->user1->getUID(), 'integration_openproject', 'login'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_id'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_name'],
+				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
+			);
+		$configMock
+			->expects($this->exactly(2))
+			->method('deleteAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+			);
+
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			'test101'
+		);
+
+		$result = $configController->setAdminConfig($newConfig);
+		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
+		$data = $result->getData();
+		$this->assertArrayHasKey('status', $data);
+		$this->assertEquals($adminConfigStatus, $data['status']);
+		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
+		$this->assertEquals("", $data['oPOAuthTokenRevokeStatus']);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function oPOAuthTokenRevokeErrorDataProvider() {
+		$connectException = new ConnectException('Connection error', $this->createMock(RequestInterface::class));
+		$opException = new OpenprojectErrorException('Other error');
+		return [
+			["connection_error", $connectException, ['Error: Connection error', ['app' => 'integration_openproject']]],
+			["other_error", $opException, ['Error: Other error', ['app' => 'integration_openproject']]]
+		];
+	}
+
+
+	/**
+	 * @param string $errorCode
+	 * @param ConnectException|OpenprojectErrorException $exception
+	 * @param array<mixed> $errMessage
+	 *
+	 * @return void
+	 * @dataProvider oPOAuthTokenRevokeErrorDataProvider
+	 * @throws OpenprojectErrorException
+	 */
+	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
+		$oldAdminConfig = [
+			'client_id' => 'some_old_client_id',
+			'client_secret' => 'some_old_client_secret',
+			'oauth_instance_url' => 'http://localhost:3000',
+		];
+		$newAdminConfig = [
+			'client_id' => '',
+			'client_secret' => '',
+			'oauth_instance_url' => '',
+		];
+		$userTokens = [
+			'admin' => 'admin_token',
+		];
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$apiService = $this
+			->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
+		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
+
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oauth_instance_url', ''],
+				['integration_openproject', 'client_id', ''],
+				['integration_openproject', 'client_secret', ''],
+				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+				['integration_openproject', 'client_id'],
+				['integration_openproject', 'client_secret'],
+				['integration_openproject', 'oauth_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldAdminConfig['oauth_instance_url'],
+				$oldAdminConfig['client_id'],
+				$oldAdminConfig['client_secret'],
+				'',
+				$errorCode,
+				$newAdminConfig['client_id'],
+				$newAdminConfig['client_secret'],
+				$newAdminConfig['oauth_instance_url'],
+			);
+		$configMock
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'client_id', $newAdminConfig['client_id']],
+				['integration_openproject', 'client_secret', $newAdminConfig['client_secret']],
+				['integration_openproject', 'oauth_instance_url', $newAdminConfig['oauth_instance_url']],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', $errorCode],
+			);
+
+		$configMock
+			->method('getUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token', ''],
+			)
+			->willReturnOnConsecutiveCalls(
+				$userTokens['admin'],
+			);
+
+		$loggerInterfaceMock
+			->method("error")
+			->withConsecutive(
+				$errMessage,
+			);
+
+		$apiService
+			->expects($this->exactly(1))
+			->method('revokeUserOAuthToken')
+			->withConsecutive(
+				[
+					'admin',
+					$oldAdminConfig['oauth_instance_url'],
+					$userTokens['admin'],
+					$oldAdminConfig['client_id'],
+					$oldAdminConfig['client_secret']
+				],
+			)
+			->willThrowException($exception);
+
+		$configMock
+			->expects($this->exactly(5))
+			->method("deleteUserValue")
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+			);
+		$configMock
+			->expects($this->exactly(2))
+			->method('deleteAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+			);
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$loggerInterfaceMock,
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			'admin'
+		);
+
+		$result = $configController->setAdminConfig($newAdminConfig);
+		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
+		$data = $result->getData();
+		$this->assertArrayHasKey('status', $data);
+		$this->assertEquals(false, $data['status']);
+		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
+		$this->assertEquals($errorCode, $data['oPOAuthTokenRevokeStatus']);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testOPOAuthTokenRevokeDoesNotOccurIfNoOPOAuthClientHasChanged() {
+		$oldAdminConfig = [
+			'client_id' => 'some_old_client_id',
+			'client_secret' => 'some_old_client_secret',
+			'oauth_instance_url' => 'http://localhost:3000',
+		];
+		$newAdminConfig = $oldAdminConfig;
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$apiService = $this
+			->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
+		$loggerInterfaceMock = $this->createMock(LoggerInterface::class);
+
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oauth_instance_url', ''],
+				['integration_openproject', 'client_id', ''],
+				['integration_openproject', 'client_secret', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', '']
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldAdminConfig['oauth_instance_url'],
+				$oldAdminConfig['client_id'],
+				$oldAdminConfig['client_secret'],
+				''
+			);
+		$configMock
+			->expects($this->exactly(2))
+			->method('deleteAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus']
+			);
+
+		$apiService
+			->expects($this->exactly(0))
+			->method('revokeUserOAuthToken');
+
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$loggerInterfaceMock,
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			'admin'
+		);
+
+		$result = $configController->setAdminConfig($newAdminConfig);
+		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
+		$data = $result->getData();
+		$this->assertArrayHasKey('status', $data);
+		$this->assertEquals(false, $data['status']);
+		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
+		$this->assertEquals("", $data['oPOAuthTokenRevokeStatus']);
 	}
 }
