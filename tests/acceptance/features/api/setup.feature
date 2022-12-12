@@ -14,7 +14,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -47,7 +47,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -95,7 +95,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "403"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -120,7 +120,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -158,7 +158,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "200"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -194,7 +194,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -236,7 +236,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "400"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",
@@ -269,7 +269,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "403"
-    And the data of the response with "noOCS" request should match
+    And the data of the response should match
     """"
     {
     "type": "object",

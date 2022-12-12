@@ -343,14 +343,10 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @Then the data of the response should match
-	 * @Then the data of the response with :arg1 request should match
-	 *
 	 * @param PyStringNode $schemaString
-	 * @param string|null $requestType
-	 *
+	 * @return mixed
 	 */
-	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString, ?string $requestType = "OCS"): void {
+	private function getJSONSchema(PyStringNode $schemaString) {
 		$schemaRawString = $schemaString->getRaw();
 		for ($i = 0; $i < count($this->createdFiles); $i++) {
 			$schemaRawString = str_replace(
@@ -359,13 +355,39 @@ class FeatureContext implements Context {
 		}
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
+		return $schema;
+	}
+
+	/**
+	 * @Then the ocs data of the response should match
+	 *
+	 * @param PyStringNode $schemaString
+	 *
+	 */
+	public function theDataOfTheOCSResponseShouldMatch(
+		PyStringNode $schemaString
+	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
-		if ($requestType === 'OCS') {
-			$responseAsJson = $responseAsJson->ocs->data;
-		}
+		$responseAsJson = $responseAsJson->ocs->data;
 		JsonAssertions::assertJsonDocumentMatchesSchema(
 			$responseAsJson,
-			$schema
+			$this->getJSONSchema($schemaString)
+		);
+	}
+
+	/**
+	 * @Then the data of the response should match
+	 *
+	 * @param PyStringNode $schemaString
+	 *
+	 */
+	public function theDataOfTheResponseShouldMatch(
+		PyStringNode $schemaString
+	): void {
+		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		JsonAssertions::assertJsonDocumentMatchesSchema(
+			$responseAsJson,
+			$this->getJSONSchema($schemaString)
 		);
 	}
 
