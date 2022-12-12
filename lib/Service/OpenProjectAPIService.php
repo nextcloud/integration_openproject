@@ -464,18 +464,18 @@ class OpenProjectAPIService {
 	 */
 	public static function validateIntegrationSetupInformation(array $values): bool {
 		foreach ($values as $key => $value) {
-			if ($key == 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
+			if ($key === 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
 				return false;
 			}
 			// validating specific two key
-			if ($key == 'default_enable_navigation' || $key == 'default_enable_unified_search') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search') {
 				if (!is_bool($value)) {
 					return false;
 				}
 				continue;
 			}
 			// validate other key
-			if ($value === '' || is_null($value) || is_bool($value)) {
+			if ($value === '' || !is_string($value)) {
 				return false;
 			}
 		}

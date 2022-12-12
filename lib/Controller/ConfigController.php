@@ -449,12 +449,10 @@ class ConfigController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * set up integration
-	 *
-	 * @param array<string, string|null> $values
-	 *
 	 * @return DataResponse
+	 *
 	 */
-	public function setUpIntegration(array $values): DataResponse {
+	public function setUpIntegration($values): DataResponse {
 		try {
 			// for POST all the keys must be provided so keyType = mustHaveKeys
 			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'mustHaveKeys'));
@@ -471,11 +469,9 @@ class ConfigController extends Controller {
 	 *
 	 * update integration
 	 *
-	 * @param array<string, string|null> $values
-	 *
 	 * @return DataResponse
 	 */
-	public function updateIntegration(array $values): DataResponse {
+	public function updateIntegration($values): DataResponse {
 		try {
 			// for PUT key information can be optional so keyType = allowedKeys
 			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'allowedKeys'));
@@ -531,15 +527,14 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * set admin config values
+	 * set or update admin config values
 	 *
-	 * @param array<string, string|null> $values
 	 * @param string|null $keyType
 	 * @throws \InvalidArgumentException
 	 *
 	 * @return array<mixed>
 	 */
-	public function setOrUpdateIntegrationSetup(array $values, ?string $keyType = null): array {
+	public function setOrUpdateIntegrationSetup($values, ?string $keyType = null): array {
 		// Open Project key information must me provided for POST request but for PUT key information can be optional
 		$opKeys = [
 			'openproject_instance_url',
@@ -548,6 +543,11 @@ class ConfigController extends Controller {
 			'default_enable_navigation',
 			'default_enable_unified_search'
 		];
+
+		// value is null if the provided data is not in correct json format
+		if ($values === null) {
+			throw new \InvalidArgumentException('invalid data');
+		}
 
 		if ($keyType === 'mustHaveKeys') {
 			foreach ($opKeys as $key) {
