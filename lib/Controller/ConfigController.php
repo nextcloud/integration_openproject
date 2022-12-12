@@ -455,33 +455,14 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setUpIntegration(array $values): DataResponse {
-		// check empty values
-		$mustHaveKey = [
-			"openproject_instance_url",
-			"openproject_client_id",
-			"openproject_client_secret",
-			"default_enable_navigation",
-			"default_enable_unified_search",
-		];
-
-		foreach ($mustHaveKey as $key) {
-			if (!array_key_exists($key, $values)) {
-				return new DataResponse([
-					'error' => "invalid key"
-				], Http::STATUS_BAD_REQUEST);
-			}
-		}
-		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
+		try {
+			// for POST all the keys must be provided so keyType = mustHaveKeys
+			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'mustHaveKeys'));
+		} catch (\Exception $e) {
 			return new DataResponse([
-				'error' => "invalid data"
+				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
 		}
-		// save to the database
-		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
-		}
-		// return the response
-		return new DataResponse($this->getNextcloudOauthInformation());
 	}
 
 
@@ -495,34 +476,14 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function updateIntegration(array $values): DataResponse {
-		// check empty values
-		$allowedKeys = [
-			'openproject_instance_url',
-			'openproject_client_id',
-			'openproject_client_secret',
-			'default_enable_navigation',
-			'default_enable_unified_search'
-		];
-		// check for allowed keys only
-		foreach ($values as $key => $value) {
-			if (!in_array($key, $allowedKeys)) {
-				return new DataResponse([
-					'error' => $this->l->t('invalid key')
-				], Http::STATUS_BAD_REQUEST);
-			}
-		}
-
-		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
+		try {
+			// for PUT all the keys must be provided so keyType = allowedKeys
+			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'allowedKeys'));
+		} catch (\Exception $e) {
 			return new DataResponse([
-				'error' => "invalid data"
+				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
 		}
-
-		// save to the database
-		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
-		}
-		return new DataResponse($this->getNextcloudOauthInformation());
 	}
 
 	/**
@@ -562,5 +523,49 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
+	}
+
+	/**
+	 * set admin config values
+	 *
+	 * @param array<string, string|null> $values
+	 * @param string|null $keyType
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return array<mixed>
+	 */
+	public function setOrUpdateIntegrationSetup(array $values, ?string $keyType = null): array {
+		// Open Project key information must me provided for POST request but for PUT key information can be partially provided.
+		$opKeys = [
+			'openproject_instance_url',
+			'openproject_client_id',
+			'openproject_client_secret',
+			'default_enable_navigation',
+			'default_enable_unified_search'
+		];
+
+		if ($keyType === 'mustHaveKeys') {
+			foreach ($opKeys as $key) {
+				if (!array_key_exists($key, $values)) {
+					throw new \InvalidArgumentException('invalid key');
+				}
+			}
+		} elseif ($keyType === 'allowedKeys') {
+			foreach ($values as $key => $value) {
+				if (!in_array($key, $opKeys)) {
+					throw new \InvalidArgumentException('invalid key');
+				}
+			}
+		}
+
+		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
+			throw new \InvalidArgumentException('invalid data');
+		}
+
+		// save to the database
+		foreach ($values as $key => $value) {
+			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
+		}
+		return $this->getNextcloudOauthInformation();
 	}
 }

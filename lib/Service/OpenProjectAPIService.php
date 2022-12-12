@@ -459,6 +459,8 @@ class OpenProjectAPIService {
 	 *
 	 * @param array<mixed> $values
 	 * @return bool
+	 * @throws \InvalidArgumentException
+	 *
 	 */
 	public static function validateIntegrationSetupInformation(array $values): bool {
 		foreach ($values as $key => $value) {
