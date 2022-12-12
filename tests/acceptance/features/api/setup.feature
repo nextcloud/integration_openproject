@@ -33,7 +33,6 @@ Feature: setup the integration through an API
     }
    """
 
-
   Scenario Outline: setup with invalid data
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
@@ -80,6 +79,36 @@ Feature: setup the integration through an API
       | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 |
       | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            |
 
+
+  Scenario: non-admin user tries to create the setup
+    Given user "Alice" has been created
+    When the user "Alice" sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+      "openproject_instance_url": "http://some-host.de",
+        "openproject_client_id": "the-client-id",
+        "openproject_client_secret": "the-client-secret",
+        "default_enable_navigation": false,
+        "default_enable_unified_search": false
+        }
+      }
+      """
+    Then the HTTP status code should be "403"
+    And the data of the response with "noOCS" request should match
+    """"
+    {
+    "type": "object",
+    "not": {
+      "required": [
+          "nextcloud_oauth_client_name",
+          "openproject_redirect_uri",
+          "nextcloud_client_id",
+          "nextcloud_client_secret"
+        ]
+      }
+    }
+   """
 
   Scenario Outline: valid update
     When the administrator sends a PUT request to the "setup" endpoint with this data:
@@ -227,3 +256,41 @@ Feature: setup the integration through an API
       | openproject_client_secret | "secret"              | openproject_client_id         | false          |
       | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       |
       | default_enable_navigation | null                  | default_enable_unified_search | false          |
+
+
+  Scenario: non-admin tries to update the setup
+    Given user "Alice" has been created
+    When the user "Alice" sends a PUT request to the "setup" endpoint with this data:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de"
+        }
+      }
+      """
+    Then the HTTP status code should be "403"
+    And the data of the response with "noOCS" request should match
+    """"
+    {
+    "type": "object",
+    "not": {
+      "required": [
+          "nextcloud_oauth_client_name",
+          "openproject_redirect_uri",
+          "nextcloud_client_id",
+          "nextcloud_client_secret"
+        ]
+      }
+    }
+   """
+
+
+  Scenario: Reset the integration
+    When the administrator sends a DELETE request to the "setup" endpoint
+    Then the HTTP status code should be "200"
+
+
+  Scenario: Trying to reset the integration as non-admin
+    Given user "Alice" has been created
+    When the user "Alice" sends a DELETE request to the "setup" endpoint
+    Then the HTTP status code should be "403"

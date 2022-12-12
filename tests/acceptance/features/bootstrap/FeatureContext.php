@@ -568,12 +568,72 @@ class FeatureContext implements Context {
 	public function theAdministratorSendsARequestToTheEndpointWithThisData(
 		string $method, string $endpoint, PyStringNode $data
 	): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, $method, $endpoint, $data
+		);
+	}
+
+	/**
+	 * @When /^the administrator sends a (PUT|POST|DELETE) request to the "([^"]*)" endpoint$/
+	 *
+	 * @return void
+	 */
+	public function theAdministratorSendsARequestToTheEndpoint(
+		string $method, string $endpoint
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, $method, $endpoint
+		);
+	}
+
+	/**
+	 * @When /^the user "([^"]*)" sends a (PUT|POST) request to the "([^"]*)" endpoint with this data:$/
+	 *
+	 * @return void
+	 */
+	public function theUserSendsARequestToTheEndpointWithThisData(
+		string $user, string $method, string $endpoint, PyStringNode $data
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user, $this->regularUserPassword, $method, $endpoint, $data
+		);
+	}
+
+	/**
+	 * @When /^the user "([^"]*)" sends a (PUT|POST|DELETE) request to the "([^"]*)" endpoint$/
+	 *
+	 * @return void
+	 */
+	public function theUserSendsARequestToTheEndpoint(
+		string $user, string $method, string $endpoint
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user, $this->regularUserPassword, $method, $endpoint
+		);
+	}
+
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param PyStringNode|null $data
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	private function sendRequestsToAppEndpoint(
+		string $username,
+		string $password,
+		string $method,
+		string $endpoint,
+		PyStringNode $data = null
+	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
 		$headers['Accept'] = 'application/json';
 		$headers['Content-Type'] = 'application/json';
 		$this->response = $this->sendHttpRequest(
-			$fullUrl, $this->adminUsername, $this->adminPassword, $method, $headers, $data
+			$fullUrl, $username, $password, $method, $headers, $data
 		);
 	}
 }
