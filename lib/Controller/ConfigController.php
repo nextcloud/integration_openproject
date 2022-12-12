@@ -414,7 +414,7 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		return new DataResponse($this->getNextcloudOauthInformation());
+		return new DataResponse($this->recreateOauthClientInformation());
 	}
 
 	private function deleteOauthClient(): void {
@@ -477,7 +477,7 @@ class ConfigController extends Controller {
 	 */
 	public function updateIntegration(array $values): DataResponse {
 		try {
-			// for PUT all the keys must be provided so keyType = allowedKeys
+			// for PUT key information can be optional so keyType = allowedKeys
 			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'allowedKeys'));
 		} catch (\Exception $e) {
 			return new DataResponse([
@@ -507,8 +507,13 @@ class ConfigController extends Controller {
 		}
 		// also delete oAuthClient
 		$this->deleteOauthClient();
+
+		// also reset the information from the user
+		$this->userManager->callForAllUsers(function (IUser $user) {
+			$this->clearUserInfo($user->getUID());
+		});
 		return new DataResponse([
-			"message" => "Delete Successful"
+			"message" => "Reset Successful"
 		]);
 	}
 
@@ -516,7 +521,7 @@ class ConfigController extends Controller {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getNextcloudOauthInformation(): array {
+	public function recreateOauthClientInformation(): array {
 		$this->deleteOauthClient();
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
@@ -535,7 +540,7 @@ class ConfigController extends Controller {
 	 * @return array<mixed>
 	 */
 	public function setOrUpdateIntegrationSetup(array $values, ?string $keyType = null): array {
-		// Open Project key information must me provided for POST request but for PUT key information can be partially provided.
+		// Open Project key information must me provided for POST request but for PUT key information can be optional
 		$opKeys = [
 			'openproject_instance_url',
 			'openproject_client_id',
@@ -566,6 +571,6 @@ class ConfigController extends Controller {
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
-		return $this->getNextcloudOauthInformation();
+		return $this->recreateOauthClientInformation();
 	}
 }

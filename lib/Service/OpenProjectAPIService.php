@@ -455,7 +455,7 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * authenticated request to get status of a work package
+	 * validates the provided data for integration setup
 	 *
 	 * @param array<mixed> $values
 	 * @return bool
