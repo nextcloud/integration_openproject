@@ -127,7 +127,8 @@ class OpenProjectAPIService {
 		];
 
 		$params = [
-			'filters' => \Safe\json_encode($filters),
+			'pageSize' => -1,
+			'filters' => \Safe\json_encode($filters)
 		];
 		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {

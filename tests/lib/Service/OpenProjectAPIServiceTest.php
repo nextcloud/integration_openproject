@@ -492,7 +492,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
-			->setQuery("filters=" . \Safe\json_encode([[
+			->setQuery("pageSize=-1&filters=" . \Safe\json_encode([[
 				'readIAN' =>
 					['operator' => '=', 'values' => ['f']]
 			]]))
