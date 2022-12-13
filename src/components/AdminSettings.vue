@@ -113,7 +113,7 @@
 			<div v-if="state.nc_oauth_client">
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-id"
-					v-model="state.nc_oauth_client.clientId"
+					v-model="state.nc_oauth_client.nextcloud_client_id"
 					class="py-1"
 					read-only
 					is-required
@@ -122,11 +122,11 @@
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
 					title="Nextcloud OAuth client ID"
-					:value="state.nc_oauth_client.clientId"
+					:value="state.nc_oauth_client.nextcloud_client_id"
 					is-required />
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-secret"
-					v-model="state.nc_oauth_client.clientSecret"
+					v-model="state.nc_oauth_client.nextcloud_client_secret"
 					class="py-1"
 					read-only
 					is-required
@@ -249,10 +249,10 @@ export default {
 	},
 	computed: {
 		ncClientId() {
-			return this.state.nc_oauth_client?.clientId
+			return this.state.nc_oauth_client?.nextcloud_client_id
 		},
 		ncClientSecret() {
-			return this.state.nc_oauth_client?.clientSecret
+			return this.state.nc_oauth_client?.nextcloud_client_secret
 		},
 		serverHostErrorMessage() {
 			if (

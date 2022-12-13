@@ -348,8 +348,8 @@ class OpenProjectAPIService {
 				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
 				// try to refresh the token
 				$result = $this->requestOAuthAccessToken($openprojectUrl, [
-					'openproject_client_id' => $clientID,
-					'openproject_client_secret' => $clientSecret,
+					'client_id' => $clientID,
+					'client_secret' => $clientSecret,
 					'grant_type' => 'refresh_token',
 					'refresh_token' => $refreshToken,
 				], 'POST');
@@ -555,7 +555,7 @@ class OpenProjectAPIService {
 
 		return $oauthUrl .
 			'/oauth/authorize' .
-			'?openproject_client_id=' . $clientID .
+			'?client_id=' . $clientID .
 			'&redirect_uri=' . urlencode(self::getOauthRedirectUrl($urlGenerator)) .
 			'&response_type=code';
 	}
