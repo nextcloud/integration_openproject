@@ -699,7 +699,6 @@ export default {
 			font-weight: 400 !important;
 			font-size: 14px !important;
 			line-height: 20px !important;
-			color: #333333 !important;
 		}
 	}
 	.form-actions {
