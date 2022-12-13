@@ -154,6 +154,9 @@ jobs:
       - name: try Nextcloud
         run: curl http://localhost:8080/status.php
 
+      - name: try Nextcloud
+        run: curl https://localhost/status.php
+
       - name: try Nextcloud2
         run: curl http://nextcloud:8080/status.php
 
