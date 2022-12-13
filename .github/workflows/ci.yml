@@ -148,17 +148,22 @@ jobs:
           resource: http-get://localhost:8081/api/v3/
           timeout: 240000
 
+      - name: wait on Nextcloud
+        uses: GuillaumeFalourd/wait-sleep-action@v1
+        with:
+          time: '10m'
+
       - name: try OpenProject
         run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
 
       - name: try Nextcloud
-        run: curl http://localhost:8080/status.php
+        run: curl http://localhost:8080/status.php -v
 
       - name: try Nextcloud
-        run: curl https://localhost/status.php
+        run: curl https://localhost/status.php -v
 
       - name: try Nextcloud2
-        run: curl http://nextcloud:8080/status.php
+        run: curl http://nextcloud:8080/status.php -v
 
       - name: try Nextcloud3
         run: curl -k https://nextcloud:8080/status.php
