@@ -47,7 +47,7 @@ jobs:
           HSTS: "off"
 
       nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php81:latest
+        image: ghcr.io/juliushaertl/nextcloud-dev-php80:latest
         env:
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity"
