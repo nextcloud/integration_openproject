@@ -950,7 +950,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$result = $controller->getOpenProjectOauthURLWithStateAndPKCE();
 		$this->assertMatchesRegularExpression(
 			'/^http:\/\/openproject\.org\/oauth\/authorize\?' .
-			'openproject_client_id=myClientID&' .
+			'client_id=myClientID&' .
 			'redirect_uri=&' .
 			'response_type=code&' .
 			'state=[a-z0-9]{10}&' .

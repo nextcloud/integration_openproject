@@ -602,8 +602,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setMethod('POST')
 			->setPath('/oauth/token')
 			->setBody(
-				'openproject_client_id=' . $this->clientId .
-				'&openproject_client_secret=' . $this->clientSecret .
+				'client_id=' . $this->clientId .
+				'&client_secret=' . $this->clientSecret .
 				'&grant_type=refresh_token&refresh_token=oAuthRefreshToken'
 			);
 
@@ -934,7 +934,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $this->service::getOpenProjectOauthURL($configMock, $url);
 		$this->assertSame(
 			'https://openproject/oauth/authorize?' .
-			'openproject_client_id=clientID&' .
+			'client_id=clientID&' .
 			'redirect_uri=' . urlencode('http://nextcloud.org/index.php/oauth-redirect') .
 			'&response_type=code',
 			$result
