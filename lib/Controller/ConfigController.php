@@ -447,8 +447,9 @@ class ConfigController extends Controller {
 
 	/**
 	 * @NoCSRFRequired
-	 *
 	 * set up integration
+	 * @param array<string, string|null> $values
+	 *
 	 * @return DataResponse
 	 *
 	 */
@@ -468,6 +469,9 @@ class ConfigController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * update integration
+	 *
+	 * @param array<string, string|null> $values
+	 *
 	 *
 	 * @return DataResponse
 	 */
@@ -529,6 +533,7 @@ class ConfigController extends Controller {
 	/**
 	 * set or update admin config values
 	 *
+	 *	@param array<string, string|null> $values
 	 * @param string|null $keyType
 	 * @throws \InvalidArgumentException
 	 *
@@ -544,8 +549,7 @@ class ConfigController extends Controller {
 			'default_enable_unified_search'
 		];
 
-		// value is null if the provided data is not in correct json format
-		if ($values === null) {
+		if ($values == null) {
 			throw new \InvalidArgumentException('invalid data');
 		}
 

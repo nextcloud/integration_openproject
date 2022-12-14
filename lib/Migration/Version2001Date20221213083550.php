@@ -50,7 +50,7 @@ class Version2001Date20221213083550 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
 	 * @param Closure(): ISchemaWrapper $schemaClosure
-	 * @param array $options
+	 * @param array<string, string|null> $options
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
