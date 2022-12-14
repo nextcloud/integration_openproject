@@ -155,16 +155,22 @@ jobs:
         run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
 
       - name: try Nextcloud
-        run: curl http://localhost:8080/status.php -v
+        run: curl http://localhost:8080/status.php -v || true
 
       - name: try Nextcloud
-        run: curl https://localhost/status.php -v
+        run: curl https://localhost/status.php -v || true
 
       - name: try Nextcloud2
-        run: curl http://nextcloud:8080/status.php -v
+        run: curl http://nextcloud:8080/status.php -v || true
 
       - name: try Nextcloud3
-        run: curl -k https://nextcloud:8080/status.php
+        run: curl -k https://nextcloud:8080/status.php || true
+
+      - name: try Nextcloud3
+        run: curl -k https://nextcloud/status.php || true
+
+      - name: try Nextcloud4
+        run: curl -k https://proxy/status.php || true
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
