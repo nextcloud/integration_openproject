@@ -240,9 +240,21 @@ export default {
 		getSubline(n) {
 			let reasonsString = ''
 			n.reasons.forEach((value) => {
-				// dateAlert is the only string that is not humanly readable by itself
-				if (value === 'dateAlert') {
+				// rewrite the values that come from the API to be displayed
+				// the same as they are in OP
+				switch (value) {
+				case 'dateAlert':
 					value = 'Date alert'
+					break
+				case 'assigned':
+					value = 'assignee'
+					break
+				case 'responsible':
+					value = 'accountable'
+					break
+				case 'watched':
+					value = 'watcher'
+					break
 				}
 				reasonsString = reasonsString + ', ' + t('integration_openproject', value)
 			})
