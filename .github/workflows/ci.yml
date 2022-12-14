@@ -149,9 +149,7 @@ jobs:
           timeout: 240000
 
       - name: wait on Nextcloud
-        uses: GuillaumeFalourd/wait-sleep-action@v1
-        with:
-          time: '10m'
+        run: until curl -s -f http://localhost:8080/status.php | grep '"installed":true'; do echo .; sleep 10; done
 
       - name: try OpenProject
         run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
