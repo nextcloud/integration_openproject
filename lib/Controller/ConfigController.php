@@ -145,10 +145,10 @@ class ConfigController extends Controller {
 	 *
 	 * @param array<string, string|null> $values
 	 *
-	 * @return DataResponse
-	 * @throws OpenprojectErrorException
+	 * @return array<string, bool|string>
+	 * @throws \Exception
 	 */
-	public function setAdminConfig(array $values): DataResponse {
+	public function setUpIntegrationConfig(array $values): array {
 		$allowedKeys = [
 			'openproject_instance_url',
 			'openproject_client_id',
@@ -161,12 +161,9 @@ class ConfigController extends Controller {
 		// return a response with status code 400 and an error message
 		foreach ($values as $key => $value) {
 			if (!in_array($key, $allowedKeys)) {
-				return new DataResponse([
-					'error' => $this->l->t('Invalid key')
-				], Http::STATUS_BAD_REQUEST);
+				throw new \InvalidArgumentException('Invalid key');
 			}
 		}
-
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'openproject_instance_url', ''
 		);
@@ -187,7 +184,7 @@ class ConfigController extends Controller {
 			// delete the existing OAuth client if new OAuth URL is passed empty
 			if (
 				is_null($values['openproject_instance_url']) ||
-				 $values['openproject_instance_url'] === ''
+				$values['openproject_instance_url'] === ''
 			) {
 				$this->deleteOauthClient();
 			} else {
@@ -196,7 +193,7 @@ class ConfigController extends Controller {
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
 				$this->oauthService->setClientRedirectUri(
-					(int) $oauthClientInternalId, $values['openproject_instance_url']
+					(int)$oauthClientInternalId, $values['openproject_instance_url']
 				);
 			}
 		}
@@ -219,7 +216,7 @@ class ConfigController extends Controller {
 		if (
 			// when the OP client information has changed
 			((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-			(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
+				(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
 			// when the OP client information is for reset
 			$runningFullReset
 		) {
@@ -264,17 +261,35 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($userUID);
 			});
 		}
-
 		// if the revoke has failed at least once, the last status is stored in the database
 		// this is not a neat way to give proper information about the revoke status
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 
-		return new DataResponse([
+		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
-		]);
+		];
+	}
+
+
+	/**
+	 * set admin config values
+	 *
+	 * @param array<string, string|null> $values
+	 *
+	 * @return DataResponse
+	 */
+	public function setAdminConfig(array $values): DataResponse {
+		try {
+			$result = $this->setUpIntegrationConfig($values);
+			return new DataResponse($result);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_BAD_REQUEST);
+		}
 	}
 
 	/**
@@ -495,26 +510,21 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function resetIntegration(): DataResponse {
-		$mustHaveKey = [
-			"openproject_instance_url",
-			"openproject_client_id",
-			"openproject_client_secret",
-			"default_enable_navigation",
-			"default_enable_unified_search",
+		$values = [
+			'openproject_instance_url' => null,
+			'openproject_client_id' => null,
+			'openproject_client_secret' => null,
+			'default_enable_navigation' => null,
+			'default_enable_unified_search' => null
 		];
-		foreach ($mustHaveKey as $key) {
-			$this->config->setAppValue(Application::APP_ID, $key, '');
+		try {
+			$result = $this->setUpIntegrationConfig($values);
+			return new DataResponse($result);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			]);
 		}
-		// also delete oAuthClient
-		$this->deleteOauthClient();
-
-		// also reset the information from the user
-		$this->userManager->callForAllUsers(function (IUser $user) {
-			$this->clearUserInfo($user->getUID());
-		});
-		return new DataResponse([
-			"message" => "Reset Successful"
-		]);
 	}
 
 
