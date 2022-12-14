@@ -60,8 +60,8 @@ const completeIntegrationState = {
 	openproject_client_id: 'some-client-id-for-op',
 	openproject_client_secret: 'some-client-secret-for-op',
 	nc_oauth_client: {
-		clientId: 'something',
-		clientSecret: 'something-else',
+		nextcloud_client_id: 'something',
+		nextcloud_client_secret: 'something-else',
 	},
 }
 
@@ -146,8 +146,8 @@ describe('AdminSettings.vue', () => {
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: {
-						clientId: 'some-client-id-here',
-						clientSecret: 'some-client-secret-here',
+						nextcloud_client_id: 'some-client-id-here',
+						nextcloud_client_secret: 'some-client-secret-here',
 					},
 				},
 				{
@@ -168,8 +168,8 @@ describe('AdminSettings.vue', () => {
 					openproject_client_id: 'client-id-here',
 					openproject_client_secret: 'client-id-here',
 					nc_oauth_client: {
-						clientId: 'nc-client-id-here',
-						clientSecret: 'nc-client-secret-here',
+						nextcloud_client_id: 'nc-client-id-here',
+						nextcloud_client_secret: 'nc-client-secret-here',
 					},
 				},
 				{
@@ -574,14 +574,14 @@ describe('AdminSettings.vue', () => {
 									openproject_client_id: '',
 									openproject_client_secret: '',
 									nc_oauth_client: {
-										clientId: 'abcdefg',
-										clientSecret: 'slkjdlkjlkd',
+										nextcloud_client_id: 'abcdefg',
+										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
 								},
 							})
 							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
 							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
-							// await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
 							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
 						})
 					})
@@ -599,8 +599,8 @@ describe('AdminSettings.vue', () => {
 						openproject_client_id: 'some-client-id-here',
 						openproject_client_secret: 'some-client-secret-here',
 						nc_oauth_client: {
-							clientId: 'some-nc-client-id-here',
-							clientSecret: 'some-nc-client-secret-here',
+							nextcloud_client_id: 'some-nc-client-id-here',
+							nextcloud_client_secret: 'some-nc-client-secret-here',
 						},
 					},
 				})
@@ -617,8 +617,8 @@ describe('AdminSettings.vue', () => {
 							openproject_client_id: 'op-client-id',
 							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
-								clientId: 'nc-clientid',
-								clientSecret: 'nc-clientsecret',
+								nextcloud_client_id: 'nc-clientid',
+								nextcloud_client_secret: 'nc-clientsecret',
 							},
 						},
 					})
@@ -661,8 +661,8 @@ describe('AdminSettings.vue', () => {
 							openproject_client_id: 'op-client-id',
 							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
-								clientId: 'nc-client-id',
-								clientSecret: 'nc-client-secret',
+								nextcloud_client_id: 'nc-client-id',
+								nextcloud_client_secret: 'nc-client-secret',
 							},
 						},
 					})
@@ -685,8 +685,8 @@ describe('AdminSettings.vue', () => {
 						openproject_client_id: 'op-client-id',
 						openproject_client_secret: 'op-client-secret',
 						nc_oauth_client: {
-							clientId: 'nc-client-id',
-							clientSecret: 'nc-client-secret',
+							nextcloud_client_id: 'nc-client-id',
+							nextcloud_client_secret: 'nc-client-secret',
 						},
 					},
 				})
@@ -705,8 +705,8 @@ describe('AdminSettings.vue', () => {
 							openproject_client_id: 'some-client-id-for-op',
 							openproject_client_secret: 'some-client-secret-for-op',
 							nc_oauth_client: {
-								clientId: 'something',
-								clientSecret: 'something-else',
+								nextcloud_client_id: 'something',
+								nextcloud_client_secret: 'something-else',
 							},
 						},
 					})
@@ -740,8 +740,8 @@ describe('AdminSettings.vue', () => {
 						openproject_client_id: 'some-client-id-for-op',
 						openproject_client_secret: 'some-client-secret-for-op',
 						nc_oauth_client: {
-							clientId: 'something',
-							clientSecret: 'something-else',
+							nextcloud_client_id: 'something',
+							nextcloud_client_secret: 'something-else',
 						},
 					},
 				})
