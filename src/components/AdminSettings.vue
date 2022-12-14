@@ -191,7 +191,6 @@
 <script>
 import util from 'util'
 import axios from '@nextcloud/axios'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
