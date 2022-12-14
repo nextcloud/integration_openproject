@@ -559,7 +559,7 @@ class ConfigController extends Controller {
 			'default_enable_unified_search'
 		];
 
-		if($values == null) {
+		if ($values == null) {
 			throw new \InvalidArgumentException('invalid data');
 		}
 
