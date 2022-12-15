@@ -54,7 +54,7 @@ To set up or update the integration following data needs to be provided:
 	}
 	```
 
-2. **Update the integration with a [PUT] request**
+2. **Update the integration with a [PATCH] request**
 
     One or more of the above data needs to be sent to this endpoint
 

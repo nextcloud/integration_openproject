@@ -204,7 +204,7 @@ Feature: setup the integration through an API
    """
 
   Scenario Outline: valid update
-    When the administrator sends a PUT request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
@@ -246,7 +246,7 @@ Feature: setup the integration through an API
 
 
   Scenario Outline: valid update of multiple values at once
-    When the administrator sends a PUT request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
@@ -288,7 +288,7 @@ Feature: setup the integration through an API
 
 
   Scenario Outline: update one value with invalid data
-    When the administrator sends a PUT request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
@@ -335,7 +335,7 @@ Feature: setup the integration through an API
 
 
   Scenario Outline: update of multiple values where at least one has invalid data
-    When the administrator sends a PUT request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
@@ -373,7 +373,7 @@ Feature: setup the integration through an API
 
 
   Scenario Outline: with data that is not even valid JSON
-    When the administrator sends a PUT request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       <data>
       """
@@ -390,7 +390,7 @@ Feature: setup the integration through an API
 
   Scenario: non-admin tries to update the setup
     Given user "Alice" has been created
-    When the user "Alice" sends a PUT request to the "setup" endpoint with this data:
+    When the user "Alice" sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {

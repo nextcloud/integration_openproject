@@ -583,7 +583,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When /^the administrator sends a (PUT|POST) request to the "([^"]*)" endpoint with this data:$/
+	 * @When /^the administrator sends a (PATCH|POST) request to the "([^"]*)" endpoint with this data:$/
 	 *
 	 * @return void
 	 */
@@ -596,7 +596,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When /^the administrator sends a (PUT|POST|DELETE) request to the "([^"]*)" endpoint$/
+	 * @When /^the administrator sends a (PATCH|POST|DELETE) request to the "([^"]*)" endpoint$/
 	 *
 	 * @return void
 	 */
@@ -609,7 +609,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When /^the user "([^"]*)" sends a (PUT|POST) request to the "([^"]*)" endpoint with this data:$/
+	 * @When /^the user "([^"]*)" sends a (PATCH|POST) request to the "([^"]*)" endpoint with this data:$/
 	 *
 	 * @return void
 	 */
