@@ -474,10 +474,11 @@ class ConfigController extends Controller {
 			// for POST all the keys must be provided so keyType = mustHaveKeys
 			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'mustHaveKeys');
 			$status = $this->setUpIntegrationConfig($values);
-			return new DataResponse(array_merge(
-				['openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus']],
-				$this->recreateOauthClientInformation()
-			));
+			$result = $this->recreateOauthClientInformation();
+			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			return new DataResponse($result);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
@@ -503,12 +504,11 @@ class ConfigController extends Controller {
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 			if ($oauthClientInternalId !== '') {
 				$id = (int)$oauthClientInternalId;
-				return new DataResponse(
-					array_merge(
-						['openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus']],
-						$this->oauthService->getClientInfo($id)
-					)
-				);
+				$result = $this->oauthService->getClientInfo($id);
+				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+				}
+				return new DataResponse($result);
 			}
 			return new DataResponse([
 				"error" => 'could not find nextcloud oauth client for openproject'
@@ -538,10 +538,11 @@ class ConfigController extends Controller {
 		];
 		try {
 			$status = $this->setUpIntegrationConfig($values);
-			return new DataResponse([
-				'openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus'],
-				"status" => true
-			]);
+			$result = ["status" => true];
+			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			return new DataResponse($result);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()

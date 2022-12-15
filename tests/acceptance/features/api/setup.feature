@@ -29,6 +29,11 @@ Feature: setup the integration through an API
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -56,6 +61,11 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "error": {"type": "string", "pattern": "^invalid data$"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -100,6 +110,11 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "error": {"type": "string", "pattern": "^invalid key"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -122,6 +137,11 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "error": {"type": "string", "pattern": "^invalid key"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -174,6 +194,11 @@ Feature: setup the integration through an API
           "nextcloud_client_id",
           "nextcloud_client_secret"
         ]
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -203,6 +228,11 @@ Feature: setup the integration through an API
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -241,6 +271,11 @@ Feature: setup the integration through an API
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -271,6 +306,11 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "error": {"type": "string", "pattern": "^<error-message>$"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -314,6 +354,11 @@ Feature: setup the integration through an API
       ],
       "properties": {
           "error": {"type": "string", "pattern": "^invalid data$"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -365,6 +410,11 @@ Feature: setup the integration through an API
           "nextcloud_client_id",
           "nextcloud_client_secret"
         ]
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
       }
     }
    """
@@ -373,6 +423,23 @@ Feature: setup the integration through an API
   Scenario: Reset the integration
     When the administrator sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "status"
+      ],
+      "properties": {
+          "status": {"type": "boolean", "enum": [ true ]}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
+      }
+    }
+   """
 
 
   Scenario: Trying to reset the integration as non-admin
