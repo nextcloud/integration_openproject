@@ -473,8 +473,11 @@ class ConfigController extends Controller {
 		try {
 			// for POST all the keys must be provided so keyType = mustHaveKeys
 			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'mustHaveKeys');
-			$this->setUpIntegrationConfig($values);
-			return new DataResponse($this->recreateOauthClientInformation());
+			$status = $this->setUpIntegrationConfig($values);
+			return new DataResponse(array_merge(
+				['openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus']],
+				$this->recreateOauthClientInformation()
+			));
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()

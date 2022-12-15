@@ -49,7 +49,8 @@ To set up or update the integration following data needs to be provided:
 		"nextcloud_oauth_client_name": <openproject-client>,
 		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
 		"nextcloud_client_id": <nextcloud_client_id>,
-		"nextcloud_client_secret": <nextcloud_client_secret>
+		"nextcloud_client_secret": <nextcloud_client_secret>,
+		"openproject_revocation_status": <openproject_revocation_status>
 	}
 	```
 
