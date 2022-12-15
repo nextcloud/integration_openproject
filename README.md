@@ -22,66 +22,71 @@ Please report issues and bugs here: https://community.openproject.org/projects/n
 - For documentation on how to set up the integration as an administrator, refer to [Nextcloud integration setup](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/).
 
 ## Setting up the integration as an administrator with API
-We have a single API endpoint (/setup) available to set , update and delete the integration.
-1. Set up the whole integration with [POST] request
-We need to provide following open project key information in data
-	- openproject_instance_url
-    - openproject_client_id
-    - openproject_client_id
+We have a single API endpoint (/setup) available to set up, update and reset the integration.
 
-Example curl request to set up whole integration
-```bash
-curl -XPOST -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
--d '{"values":{"openproject_instance_url":<openproject_instance_url>,"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>,"default_enable_navigation":null,"default_enable_unified_search":null}}' \
--H 'Content-Type: application/json' -v
-```
+To set up or update the integration following data needs to be provided:
+- openproject_instance_url
+- openproject_client_id
+- openproject_client_id
+- default_enable_navigation
+- default_enable_unified_search
 
-The response from the above curl request
-```json
-{
-    "nextcloud_oauth_client_name": <openproject-client>,
-    "openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-    "nextcloud_client_id": <nextcloud_client_id>,
-    "nextcloud_client_secret": <nextcloud_client_secret>
-}
-```
 
-2. Update the integration with [PUT] request
-   We can provide any of following open project key information in data to update
-	- openproject_instance_url
-	- openproject_client_id
-	- openproject_client_id
+1. **Set up the whole integration with a [POST] request**
 
-Example curl request to update only `openproject_client_id` and `openproject_client_secret`
-```bash
-curl -XPUT -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
--d '{"values":{"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>}}' \
--H 'Content-Type: application/json' -v
-```
+	We must provide all of the above data for this request.
 
-The response from the above curl request
-```json
-{
-    "nextcloud_oauth_client_name": <openproject-client>,
-    "openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-    "nextcloud_client_id": <nextcloud_client_id>,
-    "nextcloud_client_secret": <nextcloud_client_secret>
-}
-```
+	Example curl request to set up whole integration
+	```bash
+	curl -XPOST -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+	-d '{"values":{"openproject_instance_url":<openproject_instance_url>,"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>,"default_enable_navigation":false,"default_enable_unified_search":false}}' \
+	-H 'Content-Type: application/json' -v
+	```
 
-2. Resetting the whole integration with [DELETE] request
+	The response from the above curl request
+	```json
+	{
+		"nextcloud_oauth_client_name": <openproject-client>,
+		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
+		"nextcloud_client_id": <nextcloud_client_id>,
+		"nextcloud_client_secret": <nextcloud_client_secret>
+	}
+	```
 
-Example curl request to reset whole integration
-```bash
-curl -XDELETE -uadmin:admin http://<nextcloud_host>/index.php/apps/integration_openproject/setup
-```
+2. **Update the integration with a [PUT] request**
 
-The response from the above curl request
-```json
-{
-	"status": true
-}
-```
+    One or more of the above data needs to be sent to this endpoint
+
+	Example curl request to update only `openproject_client_id` and `openproject_client_secret`
+	```bash
+	curl -XPUT -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+	-d '{"values":{"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>}}' \
+	-H 'Content-Type: application/json' -v
+	```
+
+	The response from the above curl request
+	```json
+	{
+		"nextcloud_oauth_client_name": <openproject-client>,
+		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
+		"nextcloud_client_id": <nextcloud_client_id>,
+		"nextcloud_client_secret": <nextcloud_client_secret>
+	}
+	```
+
+2. **Resetting the whole integration with a [DELETE] request**
+
+	Example curl request to reset whole integration
+	```bash
+	curl -XDELETE -uadmin:admin http://<nextcloud_host>/index.php/apps/integration_openproject/setup
+	```
+
+	The response from the above curl request
+	```json
+	{
+		"status": true
+	}
+	```
 
 ## Development
 

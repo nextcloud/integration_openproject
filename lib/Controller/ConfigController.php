@@ -519,7 +519,9 @@ class ConfigController extends Controller {
 		];
 		try {
 			$result = $this->setUpIntegrationConfig($values);
-			return new DataResponse($result);
+			return new DataResponse([
+				"status" => true
+			]);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
