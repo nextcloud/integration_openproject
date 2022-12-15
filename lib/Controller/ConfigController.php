@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
+use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;
@@ -161,7 +162,7 @@ class ConfigController extends Controller {
 		// return a response with status code 400 and an error message
 		foreach ($values as $key => $value) {
 			if (!in_array($key, $allowedKeys)) {
-				throw new \InvalidArgumentException('Invalid key');
+				throw new InvalidArgumentException('Invalid key');
 			}
 		}
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -471,14 +472,15 @@ class ConfigController extends Controller {
 	public function setUpIntegration(array $values): DataResponse {
 		try {
 			// for POST all the keys must be provided so keyType = mustHaveKeys
-			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'mustHaveKeys'));
+			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'mustHaveKeys');
+			$this->setUpIntegrationConfig($values);
+			return new DataResponse($this->recreateOauthClientInformation());
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
 		}
 	}
-
 
 	/**
 	 * @NoCSRFRequired
@@ -493,7 +495,21 @@ class ConfigController extends Controller {
 	public function updateIntegration(array $values): DataResponse {
 		try {
 			// for PUT key information can be optional so keyType = allowedKeys
-			return new DataResponse($this->setOrUpdateIntegrationSetup($values, 'allowedKeys'));
+			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'allowedKeys');
+			$status = $this->setUpIntegrationConfig($values);
+			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			if ($oauthClientInternalId !== '') {
+				$id = (int)$oauthClientInternalId;
+				return new DataResponse(
+					array_merge(
+						['openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus']],
+						$this->oauthService->getClientInfo($id)
+					)
+				);
+			}
+			return new DataResponse([
+				"error" => 'could not find nextcloud oauth client for openproject'
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
@@ -518,14 +534,15 @@ class ConfigController extends Controller {
 			'default_enable_unified_search' => null
 		];
 		try {
-			$result = $this->setUpIntegrationConfig($values);
+			$status = $this->setUpIntegrationConfig($values);
 			return new DataResponse([
+				'openproject_revocation_status' => $status['oPOAuthTokenRevokeStatus'],
 				"status" => true
 			]);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
-			]);
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -540,49 +557,5 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
-	}
-
-	/**
-	 * set or update admin config values
-	 *
-	 *	@param array<string, string> $values
-	 * @param string|null $keyType
-	 * @throws \InvalidArgumentException
-	 *
-	 * @return array<mixed>
-	 */
-	public function setOrUpdateIntegrationSetup(array $values, ?string $keyType = null): array {
-		// Open Project key information must me provided for POST request but for PUT key information can be optional
-		$opKeys = [
-			'openproject_instance_url',
-			'openproject_client_id',
-			'openproject_client_secret',
-			'default_enable_navigation',
-			'default_enable_unified_search'
-		];
-
-		if ($keyType === 'mustHaveKeys') {
-			foreach ($opKeys as $key) {
-				if (!array_key_exists($key, $values)) {
-					throw new \InvalidArgumentException('invalid key');
-				}
-			}
-		} elseif ($keyType === 'allowedKeys') {
-			foreach ($values as $key => $value) {
-				if (!in_array($key, $opKeys)) {
-					throw new \InvalidArgumentException('invalid key');
-				}
-			}
-		}
-
-		if (!OpenProjectAPIService::validateIntegrationSetupInformation($values)) {
-			throw new \InvalidArgumentException('invalid data');
-		}
-
-		// save to the database
-		foreach ($values as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
-		}
-		return $this->recreateOauthClientInformation();
 	}
 }

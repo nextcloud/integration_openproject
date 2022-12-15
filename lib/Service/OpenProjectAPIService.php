@@ -14,6 +14,7 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -462,21 +463,43 @@ class OpenProjectAPIService {
 	 * @throws \InvalidArgumentException
 	 *
 	 */
-	public static function validateIntegrationSetupInformation(array $values): bool {
+	public static function validateIntegrationSetupInformation(array $values, ?string $keyType = null): bool {
+		$opKeys = [
+			'openproject_instance_url',
+			'openproject_client_id',
+			'openproject_client_secret',
+			'default_enable_navigation',
+			'default_enable_unified_search'
+		];
+
+		if ($keyType === 'mustHaveKeys') {
+			foreach ($opKeys as $key) {
+				if (!array_key_exists($key, $values)) {
+					throw new InvalidArgumentException('invalid key');
+				}
+			}
+		} elseif ($keyType === 'allowedKeys') {
+			foreach ($values as $key => $value) {
+				if (!in_array($key, $opKeys)) {
+					throw new InvalidArgumentException('invalid key');
+				}
+			}
+		}
+
 		foreach ($values as $key => $value) {
 			if ($key === 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
-				return false;
+				throw new InvalidArgumentException('invalid data');
 			}
 			// validating specific two key
 			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search') {
 				if (!is_bool($value)) {
-					return false;
+					throw new InvalidArgumentException('invalid data');
 				}
 				continue;
 			}
 			// validate other key
 			if ($value === '' || !is_string($value)) {
-				return false;
+				throw new InvalidArgumentException('invalid data');
 			}
 		}
 		return true;
