@@ -149,7 +149,7 @@ class ConfigController extends Controller {
 	 * @return array<string, bool|string>
 	 * @throws \Exception
 	 */
-	public function setUpIntegrationConfig(array $values): array {
+	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
 			'openproject_instance_url',
 			'openproject_client_id',
@@ -284,7 +284,7 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
-			$result = $this->setUpIntegrationConfig($values);
+			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
 		} catch (\Exception $e) {
 			return new DataResponse([
@@ -471,9 +471,9 @@ class ConfigController extends Controller {
 	 */
 	public function setUpIntegration(array $values): DataResponse {
 		try {
-			// for POST all the keys must be provided so keyType = mustHaveKeys
-			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'mustHaveKeys');
-			$status = $this->setUpIntegrationConfig($values);
+			// for POST all the keys must be mandatory
+			OpenProjectAPIService::validateIntegrationSetupInformation($values);
+			$status = $this->setIntegrationConfig($values);
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
@@ -498,9 +498,9 @@ class ConfigController extends Controller {
 	 */
 	public function updateIntegration(array $values): DataResponse {
 		try {
-			// for PUT key information can be optional so keyType = allowedKeys
-			OpenProjectAPIService::validateIntegrationSetupInformation($values, 'allowedKeys');
-			$status = $this->setUpIntegrationConfig($values);
+			// for PUT key information can be optional (not mandatory)
+			OpenProjectAPIService::validateIntegrationSetupInformation($values, false);
+			$status = $this->setIntegrationConfig($values);
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 			if ($oauthClientInternalId !== '') {
 				$id = (int)$oauthClientInternalId;
@@ -537,7 +537,7 @@ class ConfigController extends Controller {
 			'default_enable_unified_search' => null
 		];
 		try {
-			$status = $this->setUpIntegrationConfig($values);
+			$status = $this->setIntegrationConfig($values);
 			$result = ["status" => true];
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
@@ -554,7 +554,7 @@ class ConfigController extends Controller {
 	/**
 	 * @return array<mixed>
 	 */
-	public function recreateOauthClientInformation(): array {
+	private function recreateOauthClientInformation(): array {
 		$this->deleteOauthClient();
 		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
 		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');

@@ -459,11 +459,13 @@ class OpenProjectAPIService {
 	 * validates the provided data for integration setup
 	 *
 	 * @param array<mixed> $values
+	 * @param bool $allKeysMandatory
+	 *
 	 * @return bool
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 *
 	 */
-	public static function validateIntegrationSetupInformation(array $values, ?string $keyType = null): bool {
+	public static function validateIntegrationSetupInformation(array $values, bool $allKeysMandatory = true): bool {
 		$opKeys = [
 			'openproject_instance_url',
 			'openproject_client_id',
@@ -472,13 +474,13 @@ class OpenProjectAPIService {
 			'default_enable_unified_search'
 		];
 
-		if ($keyType === 'mustHaveKeys') {
+		if ($allKeysMandatory) {
 			foreach ($opKeys as $key) {
 				if (!array_key_exists($key, $values)) {
 					throw new InvalidArgumentException('invalid key');
 				}
 			}
-		} elseif ($keyType === 'allowedKeys') {
+		} else {
 			foreach ($values as $key => $value) {
 				if (!in_array($key, $opKeys)) {
 					throw new InvalidArgumentException('invalid key');
