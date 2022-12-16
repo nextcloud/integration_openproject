@@ -822,6 +822,8 @@ class ConfigControllerTest extends TestCase {
 					'client_id' => null,
 					'client_secret' => null,
 					'oauth_instance_url' => null,
+					'default_enable_navigation' => false,
+					'default_enable_unified_search' => false,
 				],
 				false,
 				'reset'
@@ -831,6 +833,8 @@ class ConfigControllerTest extends TestCase {
 					'client_id' => 'client_id_changed',
 					'client_secret' => 'client_secret_changed',
 					'oauth_instance_url' => 'http://localhost:3000',
+					'default_enable_navigation' => true,
+					'default_enable_unified_search' => true,
 				],
 				true,
 				'change'
@@ -852,6 +856,8 @@ class ConfigControllerTest extends TestCase {
 			'client_id' => 'some_old_client_id',
 			'client_secret' => 'some_old_client_secret',
 			'oauth_instance_url' => 'http://localhost:3000',
+			'default_enable_navigation' => true,
+			'default_enable_unified_search' => true,
 		];
 		$userTokens = [
 			'admin' => 'admin_token',
@@ -894,7 +900,7 @@ class ConfigControllerTest extends TestCase {
 					'',
 					$newConfig['client_id'],
 					$newConfig['client_secret'],
-					$newConfig['oauth_instance_url'],
+					$newConfig['oauth_instance_url']
 				);
 		} else {
 			$configMock
@@ -928,6 +934,8 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'client_id', $newConfig['client_id']],
 				['integration_openproject', 'client_secret', $newConfig['client_secret']],
 				['integration_openproject', 'oauth_instance_url', $newConfig['oauth_instance_url']],
+				['integration_openproject', 'default_enable_navigation', $newConfig['default_enable_navigation']],
+				['integration_openproject', 'default_enable_unified_search', $newConfig['default_enable_unified_search']],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', 'success']
 			);
 		$configMock
