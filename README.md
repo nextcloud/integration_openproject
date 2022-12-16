@@ -60,7 +60,7 @@ To set up or update the integration following data needs to be provided:
 
 	Example curl request to update only `openproject_client_id` and `openproject_client_secret`
 	```bash
-	curl -XPUT -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+	curl -XPATCH -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
 	-d '{"values":{"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>}}' \
 	-H 'Content-Type: application/json' -v
 	```
@@ -90,6 +90,8 @@ To set up or update the integration following data needs to be provided:
 		"openproject_revocation_status": <openproject_revocation_status>
 	}
 	```
+***Note: In the response `openproject_revocation_status` is included only after successfull connection***
+
 
 ## Development
 
