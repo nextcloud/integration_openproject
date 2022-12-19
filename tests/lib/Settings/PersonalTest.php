@@ -97,11 +97,11 @@ class PersonalTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'0', '0',
@@ -157,11 +157,11 @@ class PersonalTest extends TestCase {
 			->withConsecutive(
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'client_secret'],
-				['integration_openproject', 'oauth_instance_url'],
-				['integration_openproject', 'client_id'],
-				['integration_openproject', 'oauth_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'1', '1',

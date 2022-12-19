@@ -93,10 +93,10 @@ class OauthService {
 	private function generateClientInfo(Client $client): array {
 		return [
 			'id' => $client->getId(),
-			'name' => $client->getName(),
-			'redirectUri' => $client->getRedirectUri(),
-			'clientId' => $client->getClientIdentifier(),
-			'clientSecret' => $client->getSecret(),
+			'nextcloud_oauth_client_name' => $client->getName(),
+			'openproject_redirect_uri' => $client->getRedirectUri(),
+			'nextcloud_client_id' => $client->getClientIdentifier(),
+			'nextcloud_client_secret' => $client->getSecret(),
 		];
 	}
 }

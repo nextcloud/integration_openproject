@@ -5,7 +5,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -48,7 +48,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has uploaded file with content "some data" to "/subfolder/file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -91,7 +91,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has deleted file "file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -135,7 +135,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has deleted folder "subfolder"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -178,7 +178,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has uploaded file with content "some data" to "file.txt"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "403"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -212,7 +212,7 @@ Feature: retrieve file information of a single file, using the file ID
     Given user "Alice" has been created
     When user "Brian" gets the information of the file with the id "9999999999999"
     Then the HTTP status code should be "404"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -249,7 +249,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has shared file "/file.txt" with user "Brian"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -284,7 +284,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has shared folder "/to-share" with user "Brian"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -320,7 +320,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has shared file "/to-share/file.txt" with user "Brian"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -355,7 +355,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Brian" has renamed file "/file.txt" to "/renamed.txt"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -391,7 +391,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Brian" has renamed file "/to-share/file.txt" to "/to-share/renamed.txt"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -427,7 +427,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Brian" has renamed file "/to-share/file.txt" to "/moved-out.txt"
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -453,7 +453,7 @@ Feature: retrieve file information of a single file, using the file ID
    """
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "403"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -489,7 +489,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has uploaded file with content "changed data" to "file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -531,7 +531,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "<modifier>" has uploaded file with content "changed data" to "file.txt"
     When user "<retriever>" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -588,7 +588,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Dipak" has uploaded file with content "from D 000" to "file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -634,7 +634,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Dipak" has uploaded file with content "from D 000" to "file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -681,7 +681,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Chandra" has renamed file "file.txt" to "Chandras-file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -723,7 +723,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Chandra" has moved file "file.txt" to "/Chandra-folder/file.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -756,7 +756,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Brian" has been deleted
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -790,7 +790,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Brian" has uploaded file with content "data" to "/folder/new-file.txt"
     When user "Alice" gets the information of the folder "/folder"
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -836,7 +836,7 @@ Feature: retrieve file information of a single file, using the file ID
     And the public has uploaded file "file.txt" with content "changed content" to last created public link
     When user "Alice" gets the information of the file "/folder/file.txt"
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -883,7 +883,7 @@ Feature: retrieve file information of a single file, using the file ID
     And the public has uploaded file "file.txt" with content "changed content" to last created public link
     When user "Alice" gets the information of the file "/folder/file.txt"
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",
@@ -942,7 +942,7 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Alice" has renamed file "/file19.txt" to "/file20.txt"
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
-    And the data of the response should match
+    And the ocs data of the response should match
     """"
     {
     "type": "object",

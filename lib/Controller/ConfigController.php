@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
+use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\IURLGenerator;
@@ -145,14 +146,14 @@ class ConfigController extends Controller {
 	 *
 	 * @param array<string, string|null> $values
 	 *
-	 * @return DataResponse
-	 * @throws OpenprojectErrorException
+	 * @return array<string, bool|string>
+	 * @throws \Exception
 	 */
-	public function setAdminConfig(array $values): DataResponse {
+	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
-			'oauth_instance_url',
-			'client_id',
-			'client_secret',
+			'openproject_instance_url',
+			'openproject_client_id',
+			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search'
 		];
@@ -161,33 +162,30 @@ class ConfigController extends Controller {
 		// return a response with status code 400 and an error message
 		foreach ($values as $key => $value) {
 			if (!in_array($key, $allowedKeys)) {
-				return new DataResponse([
-					'error' => $this->l->t('Invalid key')
-				], Http::STATUS_BAD_REQUEST);
+				throw new InvalidArgumentException('Invalid key');
 			}
 		}
-
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
-			Application::APP_ID, 'oauth_instance_url', ''
+			Application::APP_ID, 'openproject_instance_url', ''
 		);
 		$oldClientId = $this->config->getAppValue(
-			Application::APP_ID, 'client_id', ''
+			Application::APP_ID, 'openproject_client_id', ''
 		);
 		$oldClientSecret = $this->config->getAppValue(
-			Application::APP_ID, 'client_secret', ''
+			Application::APP_ID, 'openproject_client_secret', ''
 		);
 
 		foreach ($values as $key => $value) {
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		// if the OpenProject OAuth URL has changed
-		if (key_exists('oauth_instance_url', $values)
-			&& $oldOpenProjectOauthUrl !== $values['oauth_instance_url']
+		if (key_exists('openproject_instance_url', $values)
+			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url']
 		) {
 			// delete the existing OAuth client if new OAuth URL is passed empty
 			if (
-				is_null($values['oauth_instance_url']) ||
-				 $values['oauth_instance_url'] === ''
+				is_null($values['openproject_instance_url']) ||
+				$values['openproject_instance_url'] === ''
 			) {
 				$this->deleteOauthClient();
 			} else {
@@ -196,7 +194,7 @@ class ConfigController extends Controller {
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
 				$this->oauthService->setClientRedirectUri(
-					(int) $oauthClientInternalId, $values['oauth_instance_url']
+					(int)$oauthClientInternalId, $values['openproject_instance_url']
 				);
 			}
 		}
@@ -218,8 +216,8 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
-			((key_exists('client_id', $values) && $values['client_id'] !== $oldClientId) ||
-			(key_exists('client_secret', $values) && $values['client_secret'] !== $oldClientSecret)) ||
+			((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+				(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
 			// when the OP client information is for reset
 			$runningFullReset
 		) {
@@ -264,17 +262,35 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($userUID);
 			});
 		}
-
 		// if the revoke has failed at least once, the last status is stored in the database
 		// this is not a neat way to give proper information about the revoke status
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 
-		return new DataResponse([
+		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
-		]);
+		];
+	}
+
+
+	/**
+	 * set admin config values
+	 *
+	 * @param array<string, string|null> $values
+	 *
+	 * @return DataResponse
+	 */
+	public function setAdminConfig(array $values): DataResponse {
+		try {
+			$result = $this->setIntegrationConfig($values);
+			return new DataResponse($result);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_BAD_REQUEST);
+		}
 	}
 
 	/**
@@ -288,8 +304,8 @@ class ConfigController extends Controller {
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
 		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$codeVerifier = $this->config->getUserValue(
 			$this->userId, Application::APP_ID, 'code_verifier', false
 		);
@@ -336,7 +352,7 @@ class ConfigController extends Controller {
 		}
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
-			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -414,11 +430,7 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		$this->deleteOauthClient();
-		$opUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url', '');
-		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
-		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
-		return new DataResponse($clientInfo);
+		return new DataResponse($this->recreateOauthClientInformation());
 	}
 
 	private function deleteOauthClient(): void {
@@ -447,5 +459,107 @@ class ConfigController extends Controller {
 			'user_id' => $this->userId ?? '',
 			'authorization_header' => $_SERVER['HTTP_AUTHORIZATION'],
 		]);
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 * set up integration
+	 * @param array<string, string> $values
+	 *
+	 * @return DataResponse
+	 *
+	 */
+	public function setUpIntegration(array $values): DataResponse {
+		try {
+			// for POST all the keys must be mandatory
+			OpenProjectAPIService::validateIntegrationSetupInformation($values);
+			$status = $this->setIntegrationConfig($values);
+			$result = $this->recreateOauthClientInformation();
+			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			return new DataResponse($result);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * update integration
+	 *
+	 * @param array<string, string> $values
+	 *
+	 *
+	 * @return DataResponse
+	 */
+	public function updateIntegration(array $values): DataResponse {
+		try {
+			// for PUT key information can be optional (not mandatory)
+			OpenProjectAPIService::validateIntegrationSetupInformation($values, false);
+			$status = $this->setIntegrationConfig($values);
+			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			if ($oauthClientInternalId !== '') {
+				$id = (int)$oauthClientInternalId;
+				$result = $this->oauthService->getClientInfo($id);
+				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+				}
+				return new DataResponse($result);
+			}
+			return new DataResponse([
+				"error" => 'could not find nextcloud oauth client for openproject'
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * reset integration
+	 *
+	 *
+	 * @return DataResponse
+	 */
+	public function resetIntegration(): DataResponse {
+		$values = [
+			'openproject_instance_url' => null,
+			'openproject_client_id' => null,
+			'openproject_client_secret' => null,
+			'default_enable_navigation' => null,
+			'default_enable_unified_search' => null
+		];
+		try {
+			$status = $this->setIntegrationConfig($values);
+			$result = ["status" => true];
+			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			return new DataResponse($result);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+	/**
+	 * @return array<mixed>
+	 */
+	private function recreateOauthClientInformation(): array {
+		$this->deleteOauthClient();
+		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
+		$clientInfo = $this->oauthService->createNcOauthClient('OpenProject client', rtrim($opUrl, '/') .'/oauth_clients/%s/callback');
+		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
+		unset($clientInfo['id']);
+		return $clientInfo;
 	}
 }

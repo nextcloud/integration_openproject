@@ -38,9 +38,9 @@ class Admin implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 
 		// get automatically created NC oauth client for OP
 		$clientInfo = null;
@@ -51,9 +51,9 @@ class Admin implements ISettings {
 		}
 
 		$adminConfig = [
-			'client_id' => $clientID,
-			'client_secret' => $clientSecret,
-			'oauth_instance_url' => $oauthUrl,
+			'openproject_client_id' => $clientID,
+			'openproject_client_secret' => $clientSecret,
+			'openproject_instance_url' => $oauthUrl,
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',

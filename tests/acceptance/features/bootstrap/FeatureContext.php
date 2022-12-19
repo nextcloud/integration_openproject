@@ -343,9 +343,10 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @Then the data of the response should match
+	 * @param PyStringNode $schemaString
+	 * @return mixed
 	 */
-	public function theDataOfTheResponseShouldMatch(PyStringNode $schemaString): void {
+	private function getJSONSchema(PyStringNode $schemaString) {
 		$schemaRawString = $schemaString->getRaw();
 		for ($i = 0; $i < count($this->createdFiles); $i++) {
 			$schemaRawString = str_replace(
@@ -354,10 +355,39 @@ class FeatureContext implements Context {
 		}
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
+		return $schema;
+	}
+
+	/**
+	 * @Then the ocs data of the response should match
+	 *
+	 * @param PyStringNode $schemaString
+	 *
+	 */
+	public function theDataOfTheOCSResponseShouldMatch(
+		PyStringNode $schemaString
+	): void {
+		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		$responseAsJson = $responseAsJson->ocs->data;
+		JsonAssertions::assertJsonDocumentMatchesSchema(
+			$responseAsJson,
+			$this->getJSONSchema($schemaString)
+		);
+	}
+
+	/**
+	 * @Then the data of the response should match
+	 *
+	 * @param PyStringNode $schemaString
+	 *
+	 */
+	public function theDataOfTheResponseShouldMatch(
+		PyStringNode $schemaString
+	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson->ocs->data,
-			$schema
+			$responseAsJson,
+			$this->getJSONSchema($schemaString)
 		);
 	}
 
@@ -550,5 +580,82 @@ class FeatureContext implements Context {
 		}
 		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
 		return $url;
+	}
+
+	/**
+	 * @When /^the administrator sends a (PATCH|POST) request to the "([^"]*)" endpoint with this data:$/
+	 *
+	 * @return void
+	 */
+	public function theAdministratorSendsARequestToTheEndpointWithThisData(
+		string $method, string $endpoint, PyStringNode $data
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, $method, $endpoint, $data
+		);
+	}
+
+	/**
+	 * @When /^the administrator sends a (PATCH|POST|DELETE) request to the "([^"]*)" endpoint$/
+	 *
+	 * @return void
+	 */
+	public function theAdministratorSendsARequestToTheEndpoint(
+		string $method, string $endpoint
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, $method, $endpoint
+		);
+	}
+
+	/**
+	 * @When /^the user "([^"]*)" sends a (PATCH|POST) request to the "([^"]*)" endpoint with this data:$/
+	 *
+	 * @return void
+	 */
+	public function theUserSendsARequestToTheEndpointWithThisData(
+		string $user, string $method, string $endpoint, PyStringNode $data
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user, $this->regularUserPassword, $method, $endpoint, $data
+		);
+	}
+
+	/**
+	 * @When /^the user "([^"]*)" sends a (PUT|POST|DELETE) request to the "([^"]*)" endpoint$/
+	 *
+	 * @return void
+	 */
+	public function theUserSendsARequestToTheEndpoint(
+		string $user, string $method, string $endpoint
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user, $this->regularUserPassword, $method, $endpoint
+		);
+	}
+
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param PyStringNode|null $data
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	private function sendRequestsToAppEndpoint(
+		string $username,
+		string $password,
+		string $method,
+		string $endpoint,
+		PyStringNode $data = null
+	) {
+		$fullUrl = $this->getBaseUrl();
+		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
+		$headers['Accept'] = 'application/json';
+		$headers['Content-Type'] = 'application/json';
+		$this->response = $this->sendHttpRequest(
+			$fullUrl, $username, $password, $method, $headers, $data
+		);
 	}
 }
