@@ -316,6 +316,14 @@ class FeatureContext implements Context {
 				"%ids[$i]%", (string)$this->createdFiles[$i], $schemaRawString
 			);
 		}
+		$schemaRawString = preg_replace_callback(
+			'/%now\\+(\\d+)s%/',
+			function ($matches) {
+				$result = time() + (int)$matches[1];
+				return (string) $result;
+			},
+			$schemaRawString
+		);
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		return $schema;
@@ -601,6 +609,20 @@ class FeatureContext implements Context {
 	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
 	 */
 	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
+		string $user, string $folderId
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user,
+			$this->regularUserPassword,
+			'GET',
+			'direct-upload?folder_id=' . $folderId
+		);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID "(.*)"$/
+	 */
+	public function userSendsAGETRequestToTheEndpointWithTheId(
 		string $user, string $folderId
 	): void {
 		$this->sendRequestsToAppEndpoint(
