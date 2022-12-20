@@ -244,19 +244,19 @@ export default {
 				// the same as they are in OP
 				switch (value) {
 				case 'dateAlert':
-					value = 'Date alert'
+					value = t('integration_openproject', 'Date alert')
 					break
 				case 'assigned':
-					value = 'assignee'
+					value = t('integration_openproject', 'assignee')
 					break
 				case 'responsible':
-					value = 'accountable'
+					value = t('integration_openproject', 'accountable')
 					break
 				case 'watched':
-					value = 'watcher'
+					value = t('integration_openproject', 'watcher')
 					break
 				}
-				reasonsString = reasonsString + ', ' + t('integration_openproject', value)
+				reasonsString = reasonsString + ', ' + value
 			})
 			return n.projectTitle + ' - ' + reasonsString.replace(/^, /, '')
 		},
