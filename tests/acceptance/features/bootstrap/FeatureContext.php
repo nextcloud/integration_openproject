@@ -609,13 +609,14 @@ class FeatureContext implements Context {
 	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
 	 */
 	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
-		string $user, string $folderId
+		string $user, string $elementName
 	): void {
+		$elementId = $this->getIdOfElement($user, $elementName);
 		$this->sendRequestsToAppEndpoint(
 			$user,
 			$this->regularUserPassword,
 			'GET',
-			'direct-upload?folder_id=' . $folderId
+			'direct-upload?folder_id=' . $elementId
 		);
 	}
 
