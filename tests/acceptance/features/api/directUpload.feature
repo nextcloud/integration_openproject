@@ -18,6 +18,20 @@ Feature: API endpoint for direct upload
       | file_name   | direct-upload token | data      |
       | <file-name> | %last_created%      | some data |
     Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^<file-name>$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
     And the content of file "/<file-name>" for user "Alice" should be "some data"
     Examples:
       | file-name         |
