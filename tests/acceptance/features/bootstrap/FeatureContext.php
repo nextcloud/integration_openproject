@@ -149,18 +149,26 @@ class FeatureContext implements Context {
 	 * @Given user :user has created folder :folder
 	 */
 	public function userHasCreatedFolder(
-		string $user, string $folder
+		string $user, string $folderString
 	):void {
-		$this->response = $this->makeDavRequest(
-			$user,
-			$this->regularUserPassword,
-			"MKCOL",
-			$folder
-		);
-		$this->theHTTPStatusCodeShouldBe(
-			"201",
-			"HTTP status code was not 201 while trying to create folder '$folder' for user '$user'"
-		);
+		$folders = \explode("/", $folderString);
+		$fullFolderString = "";
+		foreach ($folders as $folder) {
+			if ($folder === '') {
+				continue;
+			}
+			$fullFolderString .= "/" . trim($folder);
+			$this->response = $this->makeDavRequest(
+				$user,
+				$this->regularUserPassword,
+				"MKCOL",
+				$fullFolderString
+			);
+			$this->theHTTPStatusCodeShouldBe(
+				"201",
+				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
+			);
+		}
 	}
 
 
@@ -316,6 +324,14 @@ class FeatureContext implements Context {
 				"%ids[$i]%", (string)$this->createdFiles[$i], $schemaRawString
 			);
 		}
+		$schemaRawString = preg_replace_callback(
+			'/%now\\+(\\d+)s%/',
+			function ($matches) {
+				$result = time() + (int)$matches[1];
+				return (string) $result;
+			},
+			$schemaRawString
+		);
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		return $schema;
@@ -594,6 +610,35 @@ class FeatureContext implements Context {
 	): void {
 		$this->sendRequestsToAppEndpoint(
 			$user, $this->regularUserPassword, $method, $endpoint
+		);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
+	 */
+	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
+		string $user, string $elementName
+	): void {
+		$elementId = $this->getIdOfElement($user, $elementName);
+		$this->sendRequestsToAppEndpoint(
+			$user,
+			$this->regularUserPassword,
+			'GET',
+			'direct-upload?folder_id=' . $elementId
+		);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID "(.*)"$/
+	 */
+	public function userSendsAGETRequestToTheEndpointWithTheId(
+		string $user, string $folderId
+	): void {
+		$this->sendRequestsToAppEndpoint(
+			$user,
+			$this->regularUserPassword,
+			'GET',
+			'direct-upload?folder_id=' . $folderId
 		);
 	}
 

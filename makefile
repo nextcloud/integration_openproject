@@ -69,7 +69,7 @@ jsunit:
 
 .PHONY: api-test
 api-test:
-	vendor/bin/behat -c tests/acceptance/config/behat.yml
+	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '~@skip'
 
 .PHONY: test
 test: phpunit  jsunit api-test
