@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Helmich\JsonAssert\JsonAssertions;
 use GuzzleHttp\Client;
@@ -17,17 +18,12 @@ class FeatureContext implements Context {
 	private string $adminUsername = '';
 	private string $adminPassword = '';
 	private string $baseUrl = '';
-	private const SHARE_TYPES = [
-		'user' => 0,
-		'group' => 1,
-		'the public' => 3
-	];
+	private SharingContext $sharingContext;
 	/**
 	 * @var array<int>
 	 */
 	private array $createdFiles = [];
 
-	private string $lastCreatedPublicLink;
 	private ?ResponseInterface $response = null;
 
 	public function getAdminUsername(): string {
@@ -44,6 +40,20 @@ class FeatureContext implements Context {
 
 	public function getBaseUrl(): string {
 		return $this->baseUrl;
+	}
+
+	/**
+	 * @return ResponseInterface|null
+	 */
+	public function getResponse(): ?ResponseInterface {
+		return $this->response;
+	}
+
+	/**
+	 * @param ResponseInterface|null $response
+	 */
+	public function setResponse(?ResponseInterface $response): void {
+		$this->response = $response;
 	}
 
 	public function __construct(
@@ -121,7 +131,7 @@ class FeatureContext implements Context {
 		string $content, string $destination
 	):void {
 		$this->response = $this->makeDavRequest(
-			$this->lastCreatedPublicLink,
+			$this->sharingContext->getLastCreatedPublicLink(),
 			'',
 			"PUT",
 			$destination,
@@ -153,54 +163,7 @@ class FeatureContext implements Context {
 		);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" has shared (?:file|folder) "([^"]*)" with (user|group|the public)\s?"?([^"]*)"?$/
-	 * @throws \Exception
-	 * @throws \GuzzleHttp\Exception\GuzzleException
-	 */
-	public function userHasSharedFileWithUser(
-		string $sharer, string $path, string $shareType, string $shareWith = ''): void {
-		$body['path'] = $path;
-		$body['shareType'] = self::SHARE_TYPES[$shareType];
-		$body['permissions'] = 31;
-		if ($shareType === 'the public') {
-			$shareWithForMessage = $shareType;
-			$body['publicUpload'] = true;
-		} else {
-			$body['shareWith'] = $shareWith;
-			$shareWithForMessage = $shareWith;
-		}
-		$this->response = $this->sendOCSRequest(
-			'/apps/files_sharing/api/v1/shares',
-			'POST',
-			$sharer,
-			$body
-		);
-		$this->theHTTPStatusCodeShouldBe(
-			"200",
-			"HTTP status code was not 200 while sharing '$path' with '$shareWithForMessage'"
-		);
 
-		if ($shareType === 'the public') {
-			$fixPublicLinkPermBody['permissions'] = 15;
-			$shareData = json_decode($this->response->getBody()->getContents());
-			if ($shareData === null) {
-				throw new \Exception('could not JSON decode content of share response');
-			}
-			$shareId = $shareData->ocs->data->id;
-			$this->lastCreatedPublicLink = $shareData->ocs->data->token;
-			$this->response = $this->sendOCSRequest(
-				'/apps/files_sharing/api/v1/shares/' . $shareId,
-				'PUT',
-				$sharer,
-				$fixPublicLinkPermBody
-			);
-			$this->theHTTPStatusCodeShouldBe(
-				"200",
-				"HTTP status code was not 200 while giving upload permissions to public share of '$path'"
-			);
-		}
-	}
 
 	/**
 	 * @Given /^user "([^"]*)" has deleted (?:file|folder) "([^"]*)"$/
@@ -657,5 +620,24 @@ class FeatureContext implements Context {
 		$this->response = $this->sendHttpRequest(
 			$fullUrl, $username, $password, $method, $headers, $data
 		);
+	}
+
+	/**
+	 * This will run before EVERY scenario.
+	 * It will set the properties for this object.
+	 *
+	 * @BeforeScenario
+	 *
+	 * @param BeforeScenarioScope $scope
+	 *
+	 * @return void
+	 */
+	public function before(BeforeScenarioScope $scope):void {
+		// Get the environment
+		$environment = $scope->getEnvironment();
+
+		// Get all the contexts you need in this context
+		/** @phpstan-ignore-next-line */
+		$this->sharingContext = $environment->getContext('SharingContext');
 	}
 }
