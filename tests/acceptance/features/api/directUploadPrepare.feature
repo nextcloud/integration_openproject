@@ -3,18 +3,18 @@ Feature: API endpoint to prepare direct upload
 
   As an OpenProject user
   I want to upload files to Nextcloud from inside OpenProject
-  So that I get my stuff done faster
+  So that I don't need to leave OpenProject, open Nextcloud and then search for the same work package to create a link.
 
   As an OpenProject admin
-  I want the front-end to send the data to Nextcloud
-  So that the server load is minimized
+  I want the OpenProject front-end to send the files directly to Nextcloud
+  So that the long requests for uploading don't block any resources on the OpenProject back-end.
 
   Background:
     Given user "Alice" has been created
 
   Scenario Outline: Get a direct-upload token for a folder
     Given user "Alice" has created folder <folder>
-    When user "Alice" sends a GET request to the direct-upload endpoint with the id of <folder>
+    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of <folder>
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
