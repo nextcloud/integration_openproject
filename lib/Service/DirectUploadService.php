@@ -24,6 +24,74 @@
 
 namespace OCA\OpenProject\Service;
 
-class DirectUploadService {
+use DateTime;
+use OC\Files\Node\File;
+use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IRootFolder;
+use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\Security\ISecureRandom;
 
+class DirectUploadService {
+	/**
+	 * @var IDBConnection
+	 */
+	private $db;
+	/**
+	 * @var IRootFolder
+	 */
+	private $root;
+
+	/**
+	 * @var ISecureRandom
+	 */
+	private $secureRandom;
+
+	/** @var string table name */
+	private $table = 'directUpload';
+	public function __construct(IDBConnection $db,
+								IRootFolder $root,
+								IL10N $l,
+								ISecureRandom $secureRandom) {
+		$this->db = $db;
+		$this->root = $root;
+		$this->l = $l;
+		$this->secureRandom = $secureRandom;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function setInfoInDB(int $folderId, string $userId){
+		$query = $this->db->getQueryBuilder();
+		$token = $this->secureRandom->generate(15, ISecureRandom::CHAR_HUMAN_READABLE);
+		$date = new DateTime();
+		$createdAt = ($date)->getTimestamp();
+		$expriesOn = ($date->modify('+1 hour'))->getTimestamp();
+		try{
+			$query->insert($this->table)
+				->values(
+					[
+						'token' => $query->createNamedParameter($token),
+						'folder_id' => $query->createNamedParameter($folderId),
+						'user_id' => $query->createNamedParameter($userId),
+						'created_at' => $query->createNamedParameter($createdAt),
+						'expires_on' => $query->createNamedParameter($expriesOn),
+					]
+				)
+				->executeStatement();
+			return [
+				'token' => $token,
+				'expires_on' => $expriesOn,
+			];
+		} catch (Exception $e){
+			return [
+				'error' => $this->l->t($e->getMessage())
+			];
+		}
+
+
+	}
 }

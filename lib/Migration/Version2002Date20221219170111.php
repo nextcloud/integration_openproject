@@ -66,7 +66,7 @@ class Version2002Date20221219170111 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 200
 			]);
-			$table->addColumn('folder_id', 'int', [
+			$table->addColumn('folder_id', 'integer', [
 				'notnull' => true,
 				'length' => 200
 			]);
