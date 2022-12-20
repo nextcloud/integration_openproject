@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Érvénytelen kulcs",
     "Error getting OAuth access token" : "Hiba történt az OAuth hozzáférési token lekérése során",
     "Error getting OAuth refresh token" : "Hiba történt az OAuth frissítési token lekérése során",
     "Error during OAuth exchanges" : "Hiba történt az OAuth üzenetváltás során",
@@ -101,6 +100,7 @@ OC.L10N.register(
     "Connected accounts" : "Kapcsolt fiókok",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
     "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
-    "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez"
+    "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
+    "Invalid key" : "Érvénytelen kulcs"
 },
 "nplurals=2; plural=(n != 1);");

@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Nieprawidłowy klucz",
     "Error getting OAuth access token" : "Błąd podczas pobierania tokena dostępu OAuth",
     "Error getting OAuth refresh token" : "Błąd podczas pobierania tokena odświeżania OAuth",
     "Error during OAuth exchanges" : "Błąd podczas zamiany OAuth",
@@ -89,6 +88,7 @@ OC.L10N.register(
     "Connected accounts" : "Połączone konta",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject jest nieprawidłowy, podaj adres URL w formie \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "Pod tym adresem URL nie wykryto OpenProject",
-    "Enable notifications for activity in my work packages" : "Włącz powiadomienia o aktywności w moich pakietach roboczych"
+    "Enable notifications for activity in my work packages" : "Włącz powiadomienia o aktywności w moich pakietach roboczych",
+    "Invalid key" : "Nieprawidłowy klucz"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

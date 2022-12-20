@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Anahtar geçersiz",
     "Error getting OAuth access token" : "OAuth erişim kodu alınırken sorun çıktı",
     "Error getting OAuth refresh token" : "OAuth yenileme kodu alınırken sorun çıktı.",
     "Error during OAuth exchanges" : "OAuth takasında sorun çıktı",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "Bağlı hesaplar",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
-    "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir"
+    "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
+    "Invalid key" : "Anahtar geçersiz"
 },
 "nplurals=2; plural=(n > 1);");

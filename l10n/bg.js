@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Невалиден ключ",
     "Error getting OAuth access token" : "Грешка при получаване на маркер за достъп до OAuth",
     "Error getting OAuth refresh token" : "Грешка при получаване на маркер за опресняване на OAuth",
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "Свързани профили",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
-    "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети"
+    "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
+    "Invalid key" : "Невалиден ключ"
 },
 "nplurals=2; plural=(n != 1);");

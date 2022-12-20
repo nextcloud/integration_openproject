@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Invalid key",
     "Error getting OAuth access token" : "Error getting OAuth access token",
     "Error getting OAuth refresh token" : "Error getting OAuth refresh token",
     "Error during OAuth exchanges" : "Error during OAuth exchanges",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "Connected accounts",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
-    "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages"
+    "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
+    "Invalid key" : "Invalid key"
 },
 "nplurals=2; plural=(n != 1);");

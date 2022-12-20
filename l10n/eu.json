@@ -1,6 +1,5 @@
 { "translations": {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Gako baliogabea",
     "Error getting OAuth access token" : "Errorea OAuth sarbide tokena eskuratzen",
     "Error getting OAuth refresh token" : "Errore bat gertatu da OAuth freskatze-tokena eskuratzean",
     "Error during OAuth exchanges" : "Errorea OAuth trukeak egitean",
@@ -90,6 +89,7 @@
     "Connected accounts" : "Konektatutako kontuak",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
     "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan",
-    "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan"
+    "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
+    "Invalid key" : "Gako baliogabea"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

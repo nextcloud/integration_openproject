@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Ungültiger Schlüssel",
     "Error getting OAuth access token" : "Fehler beim Abrufen des OAuth-Zugriffstokens",
     "Error getting OAuth refresh token" : "Fehler beim Abrufen des OAuth-Aktualisierungstokens",
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "Verbundene Konten",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Geben Sie eine URL im Format „https://openproject.org“ an.",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
-    "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren"
+    "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
+    "Invalid key" : "Ungültiger Schlüssel"
 },
 "nplurals=2; plural=(n != 1);");
