@@ -34,7 +34,7 @@ Feature: API endpoint to prepare direct upload
       | folder                |
       | "/forOpenProject"     |
       | "/folder with spaces" |
-      | "/a/sub/folder        |
+      | "/a/sub/folder"       |
       | "/असजिलो folder"      |
       | "/?&$%?§ folder"      |
 

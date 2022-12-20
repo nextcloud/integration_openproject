@@ -149,18 +149,26 @@ class FeatureContext implements Context {
 	 * @Given user :user has created folder :folder
 	 */
 	public function userHasCreatedFolder(
-		string $user, string $folder
+		string $user, string $folderString
 	):void {
-		$this->response = $this->makeDavRequest(
-			$user,
-			$this->regularUserPassword,
-			"MKCOL",
-			$folder
-		);
-		$this->theHTTPStatusCodeShouldBe(
-			"201",
-			"HTTP status code was not 201 while trying to create folder '$folder' for user '$user'"
-		);
+		$folders = \explode("/", $folderString);
+		$fullFolderString = "";
+		foreach ($folders as $folder) {
+			if ($folder === '') {
+				continue;
+			}
+			$fullFolderString .= "/" . trim($folder);
+			$this->response = $this->makeDavRequest(
+				$user,
+				$this->regularUserPassword,
+				"MKCOL",
+				$fullFolderString
+			);
+			$this->theHTTPStatusCodeShouldBe(
+				"201",
+				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
+			);
+		}
 	}
 
 
