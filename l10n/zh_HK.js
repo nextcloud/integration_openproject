@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "無效的密鑰",
     "Error getting OAuth access token" : "擷取 OAuth 存取權杖時發生錯誤",
     "Error getting OAuth refresh token" : "獲取 OAuth 更新權杖時發生錯誤。",
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "已連線的賬號",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
-    "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告"
+    "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
+    "Invalid key" : "無效的密鑰"
 },
 "nplurals=1; plural=0;");

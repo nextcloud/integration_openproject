@@ -2,7 +2,6 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Neplatná klávesa",
     "Error getting OAuth access token" : "Chyba při získávání OAuth přístupového tokenu",
     "Error getting OAuth refresh token" : "Chyba při získávání OAuth obnovovacího tokenu",
     "Error during OAuth exchanges" : "Chyba při výměnách informací v rámci OAuth",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Connected accounts" : "Propojené účty",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL není platná, zadejte adresu v podobě „https://openproject.org“",
     "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
-    "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích"
+    "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích",
+    "Invalid key" : "Neplatná klávesa"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

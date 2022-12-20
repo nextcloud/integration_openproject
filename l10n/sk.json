@@ -1,6 +1,5 @@
 { "translations": {
     "OpenProject" : "OpenProject",
-    "Invalid key" : "Neplatný kľúč",
     "Error getting OAuth access token" : "Chyba pri získavaní prístupového tokenu OAuth",
     "Error getting OAuth refresh token" : "Chyba pri získavaní obnovovacieho tokenu OAuth",
     "Error during OAuth exchanges" : "Chyba počas výmeny OAuth",
@@ -59,6 +58,7 @@
     "OpenProject activity" : "OpenProject aktivity",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s oznámenie v {instance}","Máte %s oznámenia v {instance}","Máte %s oznámení v {instance}","Máte %s oznámenia v {instance}"],
     "Connected accounts" : "Prepojené účty",
-    "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch"
+    "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch",
+    "Invalid key" : "Neplatný kľúč"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
