@@ -6,8 +6,8 @@ Feature: API endpoint for direct upload
   So that I get my stuff done faster
 
   As an OpenProject admin
-  I want the front-end to send the data to Nextcloud
-  So that the server load is minimized
+  I want the OpenProject front-end to send the files directly to Nextcloud
+  So that the long requests for uploading don't block any resources on the OpenProject back-end.
 
   Background:
     Given user "Alice" has been created
