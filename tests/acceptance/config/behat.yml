@@ -11,3 +11,4 @@ default:
             adminUsername: admin
             adminPassword: admin
             regularUserPassword: 123456
+        - SharingContext:
