@@ -26,6 +26,8 @@ class FeatureContext implements Context {
 
 	private ?ResponseInterface $response = null;
 
+	private string $lastCreatedDirectUploadToken = '';
+
 	public function getAdminUsername(): string {
 		return $this->adminUsername;
 	}
@@ -640,6 +642,28 @@ class FeatureContext implements Context {
 			'GET',
 			'direct-upload?folder_id=' . $folderId
 		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" got a direct-upload token for "(.*)"$/
+	 */
+	public function userGotADirectUploadTokenFor(
+		string $user, string $elementName
+	): void {
+		$elementId = $this->getIdOfElement($user, $elementName);
+		$this->sendRequestsToAppEndpoint(
+			$user,
+			$this->regularUserPassword,
+			'GET',
+			'direct-upload?folder_id=' . $elementId
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		Assert::assertObjectHasAttribute(
+			'token', $responseAsJson,
+			'cannot find token in response'
+		);
+		$this->lastCreatedDirectUploadToken = $responseAsJson->token;
 	}
 
 	/**
