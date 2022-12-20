@@ -598,7 +598,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the id of "(.*)"$/
+	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
 	 */
 	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
 		string $user, string $folderId
