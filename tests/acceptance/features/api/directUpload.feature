@@ -12,6 +12,7 @@ Feature: API endpoint for direct upload
   Background:
     Given user "Alice" has been created
 
+
   Scenario Outline: Send a file to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
     When user "Alice" sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
@@ -32,7 +33,7 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/<file-name>" for user "Alice" should be "some data"
+    And the content of file at <file-name> for user "Alice" should be "some data"
     Examples:
       | file-name         |
       | "textfile0.txt"   |
