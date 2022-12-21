@@ -139,3 +139,8 @@ Feature: API endpoint to prepare direct upload
       }
     }
     """
+
+
+  Scenario: Try to get token as non-existent user
+    When user "test" sends a GET request to the direct-upload endpoint with the ID "123"
+    Then the HTTP status code should be "401"

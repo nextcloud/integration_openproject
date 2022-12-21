@@ -74,7 +74,7 @@ class DirectUploadService {
 		$date = new DateTime();
 		$createdAt = ($date)->getTimestamp();
 		$expriesOn = ($date->modify($this->expiryTime))->getTimestamp();
-		try{
+		try {
 			$query->insert($this->table)
 				->values(
 					[
@@ -90,12 +90,10 @@ class DirectUploadService {
 				'token' => $token,
 				'expires_on' => $expriesOn,
 			];
-		} catch (Exception $e){
+		} catch (Exception $e) {
 			return [
 				'error' => $this->l->t($e->getMessage())
 			];
 		}
-
-
 	}
 }

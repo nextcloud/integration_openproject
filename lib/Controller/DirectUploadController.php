@@ -24,7 +24,6 @@
 
 namespace OCA\OpenProject\Controller;
 
-
 use OC\User\NoUserException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Controller;
@@ -34,14 +33,12 @@ use OCP\DB\Exception;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
-use Psr\Log\LoggerInterface;
 use OCP\Files\FileInfo;
 
-class DirectUploadController extends Controller{
+class DirectUploadController extends Controller {
 	/**
 	 * @var string|null
 	 */
@@ -87,21 +84,25 @@ class DirectUploadController extends Controller{
 		try {
 			$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 			$nodes = $userFolder->getById($folder_id);
+			if (empty($nodes)) {
+				return new DataResponse([
+					'error' => 'folder not found or not enough permissions'
+				], Http::STATUS_NOT_FOUND);
+			}
 			$node = array_shift($nodes);
 			$fileType = $node->getType();
 			if (
 				$node->isCreatable() &&
 				$fileType === FileInfo::TYPE_FOLDER
 			) {
-				$response = $this->directUploadService->getTokenForDirectUpload($folder_id,$this->userId);
+				$response = $this->directUploadService->getTokenForDirectUpload($folder_id, $this->userId);
 				return new DataResponse($response);
-			}
-			else {
+			} else {
 				return new DataResponse([
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-		} catch (Exception|NoUserException|NotPermittedException|NotFoundException $e){
+		} catch (Exception|NoUserException|NotPermittedException|NotFoundException $e) {
 			return new DataResponse([
 				'error' => 'folder not found or not enough permissions'
 			], Http::STATUS_NOT_FOUND);
