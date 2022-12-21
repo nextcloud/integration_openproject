@@ -620,7 +620,9 @@ class FeatureContext implements Context {
 	 * @Then /^the content of file at "([^"]*)" for user "([^"]*)" should be "([^"]*)"$/
 	 *
 	 */
-	public function theContentOfFileAtForUserShouldBe($fileName, $user, $content) {
+	public function theContentOfFileAtForUserShouldBe(
+		string $fileName, string $user, string $content
+	): void {
 		$this->response = $this->makeDavRequest(
 			$user, $this->regularUserPassword, 'GET', $fileName
 		);
