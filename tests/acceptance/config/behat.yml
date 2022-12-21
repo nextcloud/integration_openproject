@@ -12,3 +12,4 @@ default:
             adminPassword: admin
             regularUserPassword: 123456
         - SharingContext:
+        - DirectUploadContext:
