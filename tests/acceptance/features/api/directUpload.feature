@@ -3,7 +3,7 @@ Feature: API endpoint for direct upload
 
   As an OpenProject user
   I want to upload files to Nextcloud from inside OpenProject
-  So that I get my stuff done faster
+  So that I don't need to leave OpenProject, open Nextcloud and then search for the same work package to create a link.
 
   As an OpenProject admin
   I want the OpenProject front-end to send the files directly to Nextcloud
