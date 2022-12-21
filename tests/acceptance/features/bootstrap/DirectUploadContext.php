@@ -11,7 +11,13 @@ class DirectUploadContext implements Context {
 	 * @var FeatureContext
 	 */
 	private $featureContext;
-	private string $lastCreatedDirectUploadToken = '';
+	/**
+	 * @var array<string>
+	 */
+	private array $createdDirectUploadTokens = [];
+	private function getLastCreatedDirectUploadToken():string {
+		return $this->createdDirectUploadTokens[array_key_last($this->createdDirectUploadTokens)];
+	}
 
 	/**
 	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
@@ -34,6 +40,7 @@ class DirectUploadContext implements Context {
 
 	/**
 	 * @Given /^user "([^"]*)" got a direct-upload token for "(.*)"$/
+	 * @When /^user "([^"]*)" gets a direct-upload token for "(.*)"$/
 	 */
 	public function userGotADirectUploadTokenFor(
 		string $user, string $elementName
@@ -48,7 +55,7 @@ class DirectUploadContext implements Context {
 			'token', $responseAsJson,
 			'cannot find token in response'
 		);
-		$this->lastCreatedDirectUploadToken = $responseAsJson->token;
+		$this->createdDirectUploadTokens[] = $responseAsJson->token;
 	}
 
 	/**
@@ -64,7 +71,7 @@ class DirectUploadContext implements Context {
 		string $user, string $endpoint, TableNode $formData): void {
 		$endpoint = str_replace(
 			"%last-created-direct-upload-token%",
-			$this->lastCreatedDirectUploadToken,
+			$this->getLastCreatedDirectUploadToken(),
 			$endpoint
 		);
 		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
@@ -84,6 +91,23 @@ class DirectUploadContext implements Context {
 			$data
 		);
 	}
+
+
+	/**
+	 * @Then /^all direct\-upload tokens should be different$/
+	 */
+	public function allDirectUploadTokensShouldBeDifferent():void {
+		$uniqueTokensArray = array_unique(
+			$this->createdDirectUploadTokens, SORT_STRING
+		);
+		Assert::assertEquals(
+			count($uniqueTokensArray),
+			count($this->createdDirectUploadTokens),
+			"multiple tokens have the same value:\n" .
+			print_r($this->createdDirectUploadTokens, true)
+		);
+	}
+
 
 	private function sendRequestToDirectUploadEndpoint(
 		string $user, string $elementId
