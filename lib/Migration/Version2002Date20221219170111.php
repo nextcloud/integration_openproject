@@ -28,9 +28,7 @@ namespace OCA\OpenProject\Migration;
 
 use Closure;
 use Doctrine\DBAL\Schema\SchemaException;
-use OCA\OpenProject\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
-use OCP\IConfig;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -40,7 +38,7 @@ class Version2002Date20221219170111 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
+	 * @param array<string, string|null> $options
 	 * @return null|ISchemaWrapper
 	 * @throws SchemaException
 	 */

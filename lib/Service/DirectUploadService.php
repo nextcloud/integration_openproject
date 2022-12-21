@@ -25,10 +25,7 @@
 namespace OCA\OpenProject\Service;
 
 use DateTime;
-use OC\Files\Node\File;
 use OCP\DB\Exception;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
@@ -38,10 +35,11 @@ class DirectUploadService {
 	 * @var IDBConnection
 	 */
 	private $db;
+
 	/**
-	 * @var IRootFolder
+	 * @var IL10N
 	 */
-	private $root;
+	private $l;
 
 	/**
 	 * @var ISecureRandom
@@ -50,26 +48,32 @@ class DirectUploadService {
 
 	/** @var string table name */
 	private $table = 'directUpload';
+
+	/** @var string time of token expiration */
+	private $expiryTime = '+1 hour';
+
 	public function __construct(IDBConnection $db,
-								IRootFolder $root,
 								IL10N $l,
 								ISecureRandom $secureRandom) {
 		$this->db = $db;
-		$this->root = $root;
 		$this->l = $l;
 		$this->secureRandom = $secureRandom;
 	}
 
 
 	/**
-	 * @throws Exception
+	 *
+	 * Stores the information in the database and returns token which
+	 * is used for the direct upload and the expiration time for token
+	 *
+	 * @return array<string, int|string>
 	 */
-	public function setInfoInDB(int $folderId, string $userId){
+	public function getTokenForDirectUpload(int $folderId, string $userId): array {
 		$query = $this->db->getQueryBuilder();
-		$token = $this->secureRandom->generate(15, ISecureRandom::CHAR_HUMAN_READABLE);
+		$token = $this->secureRandom->generate(64, ISecureRandom::CHAR_HUMAN_READABLE);
 		$date = new DateTime();
 		$createdAt = ($date)->getTimestamp();
-		$expriesOn = ($date->modify('+1 hour'))->getTimestamp();
+		$expriesOn = ($date->modify($this->expiryTime))->getTimestamp();
 		try{
 			$query->insert($this->table)
 				->values(

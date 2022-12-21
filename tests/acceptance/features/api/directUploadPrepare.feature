@@ -1,4 +1,3 @@
-@skip
 Feature: API endpoint to prepare direct upload
 
   As an OpenProject user
