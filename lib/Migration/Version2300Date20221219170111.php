@@ -53,23 +53,23 @@ class Version2300Date20221219170111 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('token', 'string', [
 				'notnull' => true,
-				'length' => 200
+				'length' => 64
 			]);
-			$table->addColumn('created_at', 'datetime', [
+			$table->addColumn('created_at', 'bigint', [
 				'notnull' => true,
-				'length' => 200
+				'unsigned' => true
 			]);
-			$table->addColumn('expires_on', 'datetime', [
+			$table->addColumn('expires_on', 'bigint', [
 				'notnull' => true,
-				'length' => 200
+				'unsigned' => true
 			]);
-			$table->addColumn('folder_id', 'integer', [
+			$table->addColumn('folder_id', 'bigint', [
 				'notnull' => true,
-				'length' => 200
+				'length' => 20,
 			]);
 			$table->addColumn('user_id', 'string', [
 				'notnull' => true,
-				'length' => 200,
+				'length' => 64,
 			]);
 
 			$table->setPrimaryKey(['id']);
