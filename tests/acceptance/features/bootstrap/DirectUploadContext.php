@@ -2,6 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
 
 class DirectUploadContext implements Context {
@@ -10,7 +11,7 @@ class DirectUploadContext implements Context {
 	 * @var FeatureContext
 	 */
 	private $featureContext;
-	private string $lastCreatedDirectUploadToken;
+	private string $lastCreatedDirectUploadToken = '';
 
 	/**
 	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
@@ -48,6 +49,40 @@ class DirectUploadContext implements Context {
 			'cannot find token in response'
 		);
 		$this->lastCreatedDirectUploadToken = $responseAsJson->token;
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sends a multipart form data POST request to the "([^"]*)" endpoint with:$/
+	 *
+	 * @param string $user
+	 * @param string $endpoint
+	 * @param TableNode<mixed> $formData
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function userSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
+		string $user, string $endpoint, TableNode $formData): void {
+		$endpoint = str_replace(
+			"%last-created-direct-upload-token%",
+			$this->lastCreatedDirectUploadToken,
+			$endpoint
+		);
+		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
+
+		$formDataHash = $formData->getRowsHash();
+		$data = [
+			'name' => 'direct-upload',
+			'contents' => $formDataHash['data'],
+			'filename' => trim($formDataHash['file_name'], '"')
+		];
+
+		$this->featureContext->sendRequestsToAppEndpoint(
+			$user,
+			$this->featureContext->getRegularUserPassword(),
+			'POST',
+			$endpoint,
+			$data
+		);
 	}
 
 	private function sendRequestToDirectUploadEndpoint(

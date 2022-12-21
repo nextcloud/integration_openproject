@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Helmich\JsonAssert\JsonAssertions;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -442,6 +443,7 @@ class FeatureContext implements Context {
 	 * @param string $method
 	 * @param array<mixed>|null $headers
 	 * @param array<mixed>|string|null $body
+	 * @param array<mixed>|null $options
 	 * @return ResponseInterface
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
@@ -451,7 +453,8 @@ class FeatureContext implements Context {
 		string $password,
 		string $method = 'GET',
 		array  $headers = null,
-			   $body = null
+		$body = null,
+		?array $options = []
 	): ResponseInterface {
 		$options['auth'] = [$user, $password];
 		$client = new Client($options);
@@ -474,7 +477,6 @@ class FeatureContext implements Context {
 			$headers,
 			$body
 		);
-
 		try {
 			$response = $client->send($request);
 		} catch (RequestException $ex) {
@@ -618,7 +620,7 @@ class FeatureContext implements Context {
 	 * @param string $password
 	 * @param string $method
 	 * @param string $endpoint
-	 * @param PyStringNode|null $data
+	 * @param PyStringNode|array<mixed>|null $data //array for multipart data
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
@@ -627,15 +629,58 @@ class FeatureContext implements Context {
 		string $password,
 		string $method,
 		string $endpoint,
-		PyStringNode $data = null
+		$data = null
 	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
 		$headers['Accept'] = 'application/json';
-		$headers['Content-Type'] = 'application/json';
+
+		// don't set content-type for multipart requests
+		if (is_array($data)) {
+			$options['multipart'] = [$data];
+			$data = null;
+		} else {
+			$headers['Content-Type'] = 'application/json';
+			$options = [];
+		}
+
 		$this->response = $this->sendHttpRequest(
-			$fullUrl, $username, $password, $method, $headers, $data
+			$fullUrl, $username, $password, $method, $headers, $data, $options
 		);
+	}
+
+	/**
+	 * Verify that the tableNode contains expected rows
+	 *
+	 * @param TableNode<mixed> $table
+	 * @param array<string> $requiredRows
+	 * @param array<string> $allowedRows
+	 *
+	 * taken from https://github.com/owncloud/core/blob/8fa69f84526c7a5a6780b378eeaf9cabb7d46e56/tests/acceptance/features/bootstrap/FeatureContext.php#L3974
+	 * @return void
+	 * @throws Exception
+	 */
+	public function verifyTableNodeRows(TableNode $table, array $requiredRows = [], array $allowedRows = []):void {
+		if (\count($table->getRows()) < 1) {
+			throw new Exception("Table should have at least one row.");
+		}
+		$tableHeaders = $table->getColumn(0);
+		$allowedRows = \array_unique(\array_merge($requiredRows, $allowedRows));
+		if ($requiredRows != []) {
+			foreach ($requiredRows as $element) {
+				if (!\in_array($element, $tableHeaders)) {
+					throw new Exception("Row with name '$element' expected to be in table but not found");
+				}
+			}
+		}
+
+		if ($allowedRows != []) {
+			foreach ($tableHeaders as $element) {
+				if (!\in_array($element, $allowedRows)) {
+					throw new Exception("Row with name '$element' is not allowed in table but found");
+				}
+			}
+		}
 	}
 
 	/**
