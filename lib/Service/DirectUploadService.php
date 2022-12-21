@@ -34,32 +34,33 @@ class DirectUploadService {
 	/**
 	 * @var IDBConnection
 	 */
-	private $db;
+	private IDBConnection $db;
 
 	/**
 	 * @var IL10N
 	 */
-	private $l;
+	private IL10N $l;
 
 	/**
 	 * @var ISecureRandom
 	 */
-	private $secureRandom;
+	private ISecureRandom $secureRandom;
 
 	/** @var string table name */
-	private $table = 'directUpload';
+	private string $table = 'directUpload';
 
 	/** @var string time of token expiration */
-	private $expiryTime = '+1 hour';
+	private string $expiryTime = '+1 hour';
 
-	public function __construct(IDBConnection $db,
-								IL10N $l,
-								ISecureRandom $secureRandom) {
+	public function __construct(
+		IDBConnection $db,
+		IL10N $l,
+		ISecureRandom $secureRandom
+	) {
 		$this->db = $db;
 		$this->l = $l;
 		$this->secureRandom = $secureRandom;
 	}
-
 
 	/**
 	 *
