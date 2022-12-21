@@ -46,10 +46,10 @@ To set up or update the integration following data needs to be provided:
 	The response from the above curl request
 	```json
 	{
-		"nextcloud_oauth_client_name": <openproject-client>,
+		"nextcloud_oauth_client_name": "<openproject-client>",
 		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-		"nextcloud_client_id": <nextcloud_client_id>,
-		"nextcloud_client_secret": <nextcloud_client_secret>,
+		"nextcloud_client_id": "<nextcloud_client_id>",
+		"nextcloud_client_secret": "<nextcloud_client_secret>",
 		"openproject_revocation_status": <openproject_revocation_status>
 	}
 	```
@@ -68,10 +68,10 @@ To set up or update the integration following data needs to be provided:
 	The response from the above curl request
 	```json
 	{
-		"nextcloud_oauth_client_name": <openproject-client>,
+		"nextcloud_oauth_client_name": "<openproject-client>",
 		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-		"nextcloud_client_id": <nextcloud_client_id>,
-		"nextcloud_client_secret": <nextcloud_client_secret>,
+		"nextcloud_client_id": "<nextcloud_client_id>",
+		"nextcloud_client_secret": "<nextcloud_client_secret>",
 		"openproject_revocation_status": <openproject_revocation_status>
 	}
 	```
@@ -343,6 +343,22 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
+
+## Direct upload
+There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
+
+1. **Preparation for direct upload**
+   Send the `GET` request to `direct-upload` end-point with the parameter `folder_id` of the destination folder.
+   ```console
+		curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload?folder_id=<folder_id>
+   ```
+   The response from the above curl request will be
+   ```json
+   {
+	   "token": "<token>",
+	   "expires_on": <some_timestamp>
+   }
+   ```
 
 ### Release:
 
