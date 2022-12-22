@@ -85,3 +85,258 @@ Feature: API endpoint for direct upload
       }
     }
     """
+
+
+  Scenario: Send a file with a filename that already exists (no overwrite parameter)
+    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt     |
+      | data      | changed data |
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^conflict$"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "original data"
+
+
+  Scenario: Folder is deleted before upload happens
+    Given user "Alice" has created folder "/forOP"
+    And user "Alice" got a direct-upload token for "/forOP"
+    And user "Alice" has deleted folder "/forOP"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "404"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^folder not found$"}
+      }
+    }
+    """
+
+
+  Scenario: Folder is deleted and recreated (new fileid) before upload happens
+    Given user "Alice" has created folder "/forOP"
+    And user "Alice" got a direct-upload token for "/forOP"
+    And user "Alice" has deleted folder "/forOP"
+    And user "Alice" has created folder "/forOP"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "404"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^folder not found$"}
+      }
+    }
+    """
+
+
+  Scenario Outline: Folder is renamed before upload happens
+    Given user "Alice" has created folder "/forOP"
+    And user "Alice" has created folder "/secondfolder"
+    And user "Alice" got a direct-upload token for "/forOP"
+    And user "Alice" has renamed folder "/forOP" to "<rename-destination>"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "<rename-destination>/file.txt" for user "Alice" should be "some data"
+    Examples:
+      | rename-destination  |
+      | /renamed            |
+      | /secondfolder/forOP |
+
+
+  Scenario: Upload to a folder that is received by different routes
+    Given user "Brian" has been created
+    And user "Chandra" has been created
+    And user "Dipak" has been created
+    And user "Brian" has created folder "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Brian" has shared folder "/toShare" with user "Chandra" with "all" permissions
+    And user "Brian" has shared folder "/toShare" with user "Dipak" with "all" permissions
+    And user "Chandra" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Dipak" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Alice" got a direct-upload token for "/toShare"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+
+
+  Scenario: set overwrite to false and send file with an existing filename
+    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | overwrite | file.txt |
+      | data      | false     | new data |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file \(1\).txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    And the content of file at "/file (1).txt" for user "Alice" should be "new data"
+
+
+  Scenario: set overwrite to false and send file with an existing filename, also files with that name and suffixed numbers also exist
+    Given user "Alice" has uploaded file with content "data 0" to "/file.txt"
+    Given user "Alice" has uploaded file with content "data 1" to "/file (1).txt"
+    Given user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | overwrite | file.txt |
+      | data      | false     | new data |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file \(3\).txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "data 0"
+    And the content of file at "/file (1).txt" for user "Alice" should be "data 1"
+    And the content of file at "/file (2).txt" for user "Alice" should be "data 2"
+    And the content of file at "/file (3).txt" for user "Alice" should be "new data"
+
+
+  Scenario: set overwrite to false and send file with an existing filename (filename has already a number in brackets)
+    Given user "Alice" has uploaded file with content "original data" to "/file (1).txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | overwrite | file (1).txt |
+      | data      | false     | new data     |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file \(1\)\(1\).txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    And the content of file at "/file (1)(1).txt" for user "Alice" should be "new data"
+
+
+  Scenario: set overwrite to true and send file with an existing filename
+    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | overwrite | file.txt |
+      | data      | true      | new data |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "new data"
+
+
+  Scenario: set overwrite to true and send file with an existing filename, but no permissions to overwrite
+    Given user "Brian" has been created
+    And user "Brian" has uploaded file with content "original data" to "/file.txt"
+    And user "Brian" has shared file "/file.txt" with user "Alice" with "read" permissions
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | overwrite | file.txt |
+      | data      | true      | new data |
+    Then the HTTP status code should be "403"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^not enough permissions$"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "original data"
