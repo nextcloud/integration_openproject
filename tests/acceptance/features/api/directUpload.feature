@@ -15,7 +15,7 @@ Feature: API endpoint for direct upload
 
   Scenario Outline: Send a file to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
-    When user "Alice" sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | <file-name> |
       | data      | some data   |
     Then the HTTP status code should be "200"
@@ -43,7 +43,7 @@ Feature: API endpoint for direct upload
 
   Scenario Outline: Send an invalid filename to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
-    When user "Alice" sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | <file-name> |
       | data      | some data   |
     Then the HTTP status code should be "400"
@@ -69,7 +69,7 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Send an invalid token to the direct-upload endpoint
-    When user "Alice" sends a multipart form data POST request to the "direct-upload/ABCabc123" endpoint with:
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/ABCabc123" endpoint with:
       | file_name | textfile.txt |
       | data      | some data    |
     Then the HTTP status code should be "401"
@@ -85,6 +85,3 @@ Feature: API endpoint for direct upload
       }
     }
     """
-
-
-

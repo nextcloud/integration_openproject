@@ -59,16 +59,16 @@ class DirectUploadContext implements Context {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a multipart form data POST request to the "([^"]*)" endpoint with:$/
+	 * @When /^an anonymous user sends a multipart form data POST request to the "([^"]*)" endpoint with:$/
 	 *
-	 * @param string $user
 	 * @param string $endpoint
 	 * @param TableNode<mixed> $formData
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function userSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
-		string $user, string $endpoint, TableNode $formData): void {
+	public function anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
+		string $endpoint, TableNode $formData
+	): void {
 		$endpoint = str_replace(
 			"%last-created-direct-upload-token%",
 			$this->getLastCreatedDirectUploadToken(),
@@ -84,8 +84,8 @@ class DirectUploadContext implements Context {
 		];
 
 		$this->featureContext->sendRequestsToAppEndpoint(
-			$user,
-			$this->featureContext->getRegularUserPassword(),
+			null,
+			null,
 			'POST',
 			$endpoint,
 			$data
