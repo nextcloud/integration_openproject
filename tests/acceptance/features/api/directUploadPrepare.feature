@@ -144,3 +144,14 @@ Feature: API endpoint to prepare direct upload
   Scenario: Try to get token as non-existent user
     When user "test" sends a GET request to the direct-upload endpoint with the ID "123"
     Then the HTTP status code should be "401"
+
+
+  Scenario: Tokens should be random
+    Given user "Brian" has been created
+    And user "Alice" has created folder "/folder for OpenProject"
+    And user "Brian" has created folder "/folder for OpenProject"
+    When user "Alice" gets a direct-upload token for "/folder for OpenProject"
+    And user "Brian" gets a direct-upload token for "/folder for OpenProject"
+    And user "Alice" gets a direct-upload token for "/"
+    And user "Brian" gets a direct-upload token for "/"
+    Then all direct-upload tokens should be different
