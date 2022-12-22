@@ -231,19 +231,19 @@ Feature: API endpoint for direct upload
         "file_id"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^file \(1\).txt$"},
+          "file_name": {"type": "string", "pattern": "^file \(2\).txt$"},
           "file_id": {"type" : "integer"}
       }
     }
     """
     And the content of file at "/file.txt" for user "Alice" should be "original data"
-    And the content of file at "/file (1).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2).txt" for user "Alice" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename, also files with that name and suffixed numbers also exist
-    Given user "Alice" has uploaded file with content "data 0" to "/file.txt"
-    Given user "Alice" has uploaded file with content "data 1" to "/file (1).txt"
-    Given user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
+    Given user "Alice" has uploaded file with content "data 1" to "/file.txt"
+    And user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
+    And user "Alice" has uploaded file with content "data 3" to "/file (3).txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | overwrite | file.txt |
@@ -258,22 +258,22 @@ Feature: API endpoint for direct upload
         "file_id"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^file \(3\).txt$"},
+          "file_name": {"type": "string", "pattern": "^file \(4\).txt$"},
           "file_id": {"type" : "integer"}
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "data 0"
-    And the content of file at "/file (1).txt" for user "Alice" should be "data 1"
+    And the content of file at "/file.txt" for user "Alice" should be "data 1"
     And the content of file at "/file (2).txt" for user "Alice" should be "data 2"
-    And the content of file at "/file (3).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (3).txt" for user "Alice" should be "data 3"
+    And the content of file at "/file (4).txt" for user "Alice" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename (filename has already a number in brackets)
-    Given user "Alice" has uploaded file with content "original data" to "/file (1).txt"
+    Given user "Alice" has uploaded file with content "original data" to "/file (2).txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file (1).txt |
+      | file_name | overwrite | file (2).txt |
       | data      | false     | new data     |
     Then the HTTP status code should be "200"
     And the data of the response should match
@@ -285,13 +285,13 @@ Feature: API endpoint for direct upload
         "file_id"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^file \(1\)\(1\).txt$"},
+          "file_name": {"type": "string", "pattern": "^file \(2\)\(2\).txt$"},
           "file_id": {"type" : "integer"}
       }
     }
     """
     And the content of file at "/file.txt" for user "Alice" should be "original data"
-    And the content of file at "/file (1)(1).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2)(2).txt" for user "Alice" should be "new data"
 
 
   Scenario: set overwrite to true and send file with an existing filename
