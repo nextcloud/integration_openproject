@@ -387,6 +387,82 @@ class FeatureContext implements Context {
 		return $this->getIdOfElement($user, $destination);
 	}
 
+
+	/**
+	 * @Then the following headers should be set
+	 *
+	 * taken from https://github.com/owncloud/core/blob/3d517563ddddc3e9f22c57e9fd15ba48210553c5/tests/acceptance/features/bootstrap/WebDav.php#L1668-L1708
+	 * @param TableNode $table
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function theFollowingHeadersShouldBeSet(TableNode $table):void {
+		$this->verifyTableNodeColumns(
+			$table,
+			['header', 'value']
+		);
+		foreach ($table->getColumnsHash() as $header) {
+			$headerName = $header['header'];
+			$expectedHeaderValue = $header['value'];
+			$returnedHeader = $this->response->getHeader($headerName);
+
+			if (\is_array($returnedHeader)) {
+				if (empty($returnedHeader)) {
+					throw new Exception(
+						\sprintf(
+							"Missing expected header '%s'",
+							$headerName
+						)
+					);
+				}
+				$headerValue = $returnedHeader[0];
+			} else {
+				$headerValue = $returnedHeader;
+			}
+
+			Assert::assertEquals(
+				$expectedHeaderValue,
+				$headerValue,
+				__METHOD__
+				. " Expected value for header '$headerName' was '$expectedHeaderValue', but got '$headerValue' instead."
+			);
+		}
+	}
+
+	/**
+	 * Verify that the tableNode contains expected headers
+	 * taken from https://github.com/owncloud/core/blob/8fa69f84526c7a5a6780b378eeaf9cabb7d46e56/tests/acceptance/features/bootstrap/FeatureContext.php#L3940-L3971
+	 * @param TableNode $table
+	 * @param array|null $requiredHeader
+	 * @param array|null $allowedHeader
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function verifyTableNodeColumns(TableNode $table, ?array $requiredHeader = [], ?array $allowedHeader = []):void {
+		if (\count($table->getHash()) < 1) {
+			throw new Exception("Table should have at least one row.");
+		}
+		$tableHeaders = $table->getRows()[0];
+		$allowedHeader = \array_unique(\array_merge($requiredHeader, $allowedHeader));
+		if ($requiredHeader != []) {
+			foreach ($requiredHeader as $element) {
+				if (!\in_array($element, $tableHeaders)) {
+					throw new Exception("Row with header '$element' expected to be in table but not found");
+				}
+			}
+		}
+
+		if ($allowedHeader != []) {
+			foreach ($tableHeaders as $element) {
+				if (!\in_array($element, $allowedHeader)) {
+					throw new Exception("Row with header '$element' is not allowed in table but found");
+				}
+			}
+		}
+	}
+
 	public function getIdOfElement(string $user, string $element): int {
 		$propfindResponse = $this->makeDavRequest(
 			$user,
@@ -637,6 +713,7 @@ class FeatureContext implements Context {
 	 * @param string $method
 	 * @param string $endpoint
 	 * @param PyStringNode|array<mixed>|null $data //array for multipart data
+	 * @param array<mixed>|null $headers //array for multipart data
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
@@ -645,14 +722,17 @@ class FeatureContext implements Context {
 		?string $password,
 		string $method,
 		string $endpoint,
-		$data = null
+		$data = null,
+		$headers = null
 	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
-		$headers['Accept'] = 'application/json';
+		if ($headers === null) {
+			$headers['Accept'] = 'application/json';
+		}
 
 		// don't set content-type for multipart requests
-		if (is_array($data)) {
+		if (is_array($data) && $headers === null) {
 			$options['multipart'] = [$data];
 			$data = null;
 		} else {
