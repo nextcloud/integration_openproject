@@ -34,6 +34,7 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use OCP\Security\ISecureRandom;
 
 class DirectUploadController extends Controller {
 	/**
@@ -106,5 +107,35 @@ class DirectUploadController extends Controller {
 				'error' => 'folder not found or not enough permissions'
 			], Http::STATUS_NOT_FOUND);
 		}
+	}
+
+	/**
+	 * preparation for the direct upload
+	 *
+	 * @NoCSRFRequired
+	 * @NoAdminRequired
+	 * @PublicPage
+	 *
+	 * This can be tested with:
+	 * curl -X POST http://my.nc.org/index.php/apps/integration_openproject/direct-upload/<token>
+	 *
+	 * @param string $token
+	 * @param string $file_name
+	 * @param string $data
+	 *
+	 *
+	 * @return array|string
+	 * @throws Exception
+	 */
+	public function directUpload(string $token, string $file_name, string $data) {
+		if(!preg_match("/abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789/u",$token)){
+			return "Invalid token";
+		}
+		$expiration = $this->directUploadService->getTokenInfo($token);
+		if ($expiration === null){
+			return "user associated with this token doesn't exist";
+		}
+		return [$expiration];
+
 	}
 }

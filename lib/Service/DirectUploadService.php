@@ -26,9 +26,11 @@ namespace OCA\OpenProject\Service;
 
 use DateTime;
 use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
+use OCP\IUserManager;
 
 class DirectUploadService {
 	/**
@@ -46,6 +48,11 @@ class DirectUploadService {
 	 */
 	private ISecureRandom $secureRandom;
 
+	/**
+	 * @var IUserManager
+	 */
+	private IUserManager $userManager;
+
 	/** @var string table name */
 	private string $table = 'directUpload';
 
@@ -54,11 +61,13 @@ class DirectUploadService {
 
 	public function __construct(
 		IDBConnection $db,
+		IUserManager $userManager,
 		IL10N $l,
 		ISecureRandom $secureRandom
 	) {
 		$this->db = $db;
 		$this->l = $l;
+		$this->userManager =$userManager;
 		$this->secureRandom = $secureRandom;
 	}
 
@@ -96,5 +105,45 @@ class DirectUploadService {
 				'error' => $this->l->t($e->getMessage())
 			];
 		}
+	}
+
+	/**
+	 *
+	 * Stores the information in the database and returns token which
+	 * is used for the direct upload and the expiration time for token
+	 *
+	 * @param string $token
+	 * @return array|null
+	 * @throws Exception
+	 */
+	public function getTokenInfo(string $token): ?array {
+		$userId = '';
+		$expiration = null;
+		$folderId = null;
+		$created = null;
+		$query = $this->db->getQueryBuilder();
+		$query->select('user_id','created_at','expires_on','folder_id')
+			->from('directUpload')
+			->where(
+				$query->expr()->eq('token', $query->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+			);
+		$req = $query->executeQuery();
+		while ($row = $req->fetch()) {
+			$userId =  $row['user_id'];
+			if($userId === null || !$this->userManager->userExists($userId)){
+				$req->closeCursor();
+				$query->resetQueryParts();
+				return null;
+			}
+			$expiration = (int) $row['expires_on'];
+			$folderId = (int) $row['folder_id'];
+		}
+		$req->closeCursor();
+		$query->resetQueryParts();
+		return [
+			'user_id' =>$userId,
+			'expires_on'=>$expiration,
+			'folder_id'=>$folderId
+		];
 	}
 }
