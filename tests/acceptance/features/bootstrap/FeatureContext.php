@@ -438,8 +438,8 @@ class FeatureContext implements Context {
 
 	/**
 	 * @param string $url
-	 * @param string $user
-	 * @param string $password
+	 * @param string|null $user
+	 * @param string|null $password
 	 * @param string $method
 	 * @param array<mixed>|null $headers
 	 * @param array<mixed>|string|null $body
@@ -449,14 +449,16 @@ class FeatureContext implements Context {
 	 */
 	public function sendHttpRequest(
 		string $url,
-		string $user,
-		string $password,
+		?string $user,
+		?string $password,
 		string $method = 'GET',
 		array  $headers = null,
 		$body = null,
 		?array $options = []
 	): ResponseInterface {
-		$options['auth'] = [$user, $password];
+		if ($user !== null && $password !== null) {
+			$options['auth'] = [$user, $password];
+		}
 		$client = new Client($options);
 		if ($headers === null) {
 			$headers = [];
@@ -630,8 +632,8 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @param string $username
-	 * @param string $password
+	 * @param string|null $username
+	 * @param string|null $password
 	 * @param string $method
 	 * @param string $endpoint
 	 * @param PyStringNode|array<mixed>|null $data //array for multipart data
@@ -639,8 +641,8 @@ class FeatureContext implements Context {
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	public function sendRequestsToAppEndpoint(
-		string $username,
-		string $password,
+		?string $username,
+		?string $password,
 		string $method,
 		string $endpoint,
 		$data = null
