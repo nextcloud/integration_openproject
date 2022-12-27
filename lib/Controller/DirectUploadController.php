@@ -24,16 +24,20 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
 use OCP\IRequest;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use DateTime;
 use OCP\Security\ISecureRandom;
 
 class DirectUploadController extends Controller {
@@ -56,11 +60,17 @@ class DirectUploadController extends Controller {
 	 * @var IRootFolder
 	 */
 	private IRootFolder $rootFolder;
+
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
+		IUserManager $userManager,
 		DirectUploadService $directUploadService,
 		?string $userId
 	) {
@@ -69,6 +79,7 @@ class DirectUploadController extends Controller {
 		$this->directUploadService = $directUploadService;
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
+		$this->userManager = $userManager;
 	}
 
 	/**
@@ -124,18 +135,50 @@ class DirectUploadController extends Controller {
 	 * @param string $data
 	 *
 	 *
-	 * @return array|string
-	 * @throws Exception
+	 * @return DataResponse
 	 */
-	public function directUpload(string $token, string $file_name, string $data) {
-		if(!preg_match("/abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789/u",$token)){
-			return "Invalid token";
+	public function directUpload(string $token, string $file_name, string $contents): DataResponse {
+		$tokenInfo = null;
+		if(strlen($token) !== 64){
+			return new DataResponse([
+				'error' => 'Invalid token. Token should be 64 characters long'
+			],Http::STATUS_BAD_REQUEST);
 		}
-		$expiration = $this->directUploadService->getTokenInfo($token);
-		if ($expiration === null){
-			return "user associated with this token doesn't exist";
+		try{
+			$tokenInfo = $this->directUploadService->getTokenInfo($token);
+			$user = $this->userManager->get($tokenInfo['user_id']);
+			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
+			$nodes = $userFolder->getById($tokenInfo['folder_id']);
+			if (empty($nodes)) {
+				return new DataResponse([
+					'error' => 'folder not found or not enough permissions'
+				], Http::STATUS_NOT_FOUND);
+			}
+			$node = array_shift($nodes);
+			if (
+				$node->isCreatable()
+			) {
+				if($node->nodeExists($file_name)){
+					return new DataResponse([
+						'error' => 'Conflict, file with name '. $file_name .' already exists.',
+					],Http::STATUS_CONFLICT);
+				}
+				$test = $node->newFile($file_name,$contents);
+				$fileId = $test->getId();
+				return new DataResponse([
+					'file_name'=> $file_name,
+					'file_id'=> $fileId
+				],Http::STATUS_CREATED);
+			}
+		}catch (NotPermittedException $e){
+			return new DataResponse([
+				'error' => $e->getMessage()
+			],Http::STATUS_UNAUTHORIZED);
+		} catch (NotFoundException $e){
+			return new DataResponse([
+				'error' =>  $e->getMessage()
+			],Http::STATUS_NOT_FOUND);
 		}
-		return [$expiration];
-
+		return new DataResponse($tokenInfo);
 	}
 }

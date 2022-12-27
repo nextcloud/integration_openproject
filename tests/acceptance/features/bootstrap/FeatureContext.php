@@ -550,7 +550,10 @@ class FeatureContext implements Context {
 			$body = \http_build_query($body, '', '&');
 			$headers['Content-Type'] = 'application/x-www-form-urlencoded';
 		}
-
+var_dump($method,
+	$url,
+	$headers,
+	$body);
 		$request = new Request(
 			$method,
 			$url,

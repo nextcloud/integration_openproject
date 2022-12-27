@@ -25,12 +25,17 @@
 namespace OCA\OpenProject\Service;
 
 use DateTime;
+use OCP\Files\NotFoundException;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\NotPermittedException;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
 use OCP\IUserManager;
+use function PHPUnit\Framework\throwException;
 
 class DirectUploadService {
 	/**
@@ -114,13 +119,25 @@ class DirectUploadService {
 	 *
 	 * @param string $token
 	 * @return array|null
-	 * @throws Exception
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
 	 */
 	public function getTokenInfo(string $token): ?array {
+		$tokenInfo = $this->getTokenInfoFromDB($token);
+		if($tokenInfo['user_id'] === null || !$this->userManager->userExists($tokenInfo['user_id'])){
+			throw new NotPermittedException('unauthorized');
+		}
+		$currentTime = (new DateTime())->getTimestamp();
+		if($currentTime > $tokenInfo['expires_on']){
+			throw new NotFoundException('Invalid token.');
+		}
+		return $tokenInfo;
+	}
+
+	private function getTokenInfoFromDB(string $token): ?array {
 		$userId = '';
 		$expiration = null;
 		$folderId = null;
-		$created = null;
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id','created_at','expires_on','folder_id')
 			->from('directUpload')
@@ -130,11 +147,6 @@ class DirectUploadService {
 		$req = $query->executeQuery();
 		while ($row = $req->fetch()) {
 			$userId =  $row['user_id'];
-			if($userId === null || !$this->userManager->userExists($userId)){
-				$req->closeCursor();
-				$query->resetQueryParts();
-				return null;
-			}
 			$expiration = (int) $row['expires_on'];
 			$folderId = (int) $row['folder_id'];
 		}

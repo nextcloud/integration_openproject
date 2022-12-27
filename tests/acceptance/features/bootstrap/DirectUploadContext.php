@@ -57,6 +57,7 @@ class DirectUploadContext implements Context {
 			'cannot find token in response'
 		);
 		$this->createdDirectUploadTokens[] = $responseAsJson->token;
+		var_dump($responseAsJson->token);
 	}
 
 	/**
@@ -77,9 +78,9 @@ class DirectUploadContext implements Context {
 		$data = [
 			'name' => 'direct-upload',
 			'contents' => $formDataHash['data'],
-			'filename' => trim($formDataHash['file_name'], '"')
+			'file_name' => trim($formDataHash['file_name'], '"')
 		];
-
+		var_dump($data);
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
