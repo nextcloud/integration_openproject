@@ -82,7 +82,7 @@ class DirectUploadController extends Controller {
 	 * @param int $folder_id
 	 * @return DataResponse
 	 */
-	public function prepareDirectUpload(int $folder_id):DataResponse {
+	public function prepareDirectUpload(int $folder_id): DataResponse {
 		try {
 			$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 			$nodes = $userFolder->getById($folder_id);

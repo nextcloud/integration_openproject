@@ -20,22 +20,24 @@ class DirectUploadContext implements Context {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID of "(.*)"$/
+	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload endpoint with the ID of "(.*)"$/
 	 */
 	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
 		string $user, string $elementName
 	): void {
 		$elementId = $this->featureContext->getIdOfElement($user, $elementName);
-		$this->sendRequestToDirectUploadEndpoint($user, (string) $elementId);
+		$data = json_encode(array('folder_id' => $elementId));
+		$this->sendRequestToDirectUploadTokenEndpoint($user, $data);
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a GET request to the direct\-upload endpoint with the ID "(.*)"$/
+	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload endpoint with the ID "(.*)"$/
 	 */
 	public function userSendsAGETRequestToTheEndpointWithTheId(
 		string $user, string $folderId
 	): void {
-		$this->sendRequestToDirectUploadEndpoint($user, $folderId);
+		$data = json_encode(array('folder_id' => $folderId));
+		$this->sendRequestToDirectUploadTokenEndpoint($user, $data);
 	}
 
 	/**
@@ -45,8 +47,7 @@ class DirectUploadContext implements Context {
 	public function userGotADirectUploadTokenFor(
 		string $user, string $elementName
 	): void {
-		$elementId = $this->featureContext->getIdOfElement($user, $elementName);
-		$this->sendRequestToDirectUploadEndpoint($user, (string) $elementId);
+		$this->userSendsAGETRequestToTheEndpointWithTheFileIdOf($user, $elementName);
 		$this->featureContext->theHttpStatusCodeShouldBe(200);
 		$responseAsJson = json_decode(
 			$this->featureContext->getResponse()->getBody()->getContents()
@@ -105,14 +106,15 @@ class DirectUploadContext implements Context {
 	}
 
 
-	private function sendRequestToDirectUploadEndpoint(
-		string $user, string $elementId
+	private function sendRequestToDirectUploadTokenEndpoint(
+		string $user, string $data
 	): void {
 		$this->featureContext->sendRequestsToAppEndpoint(
 			$user,
 			$this->featureContext->getRegularUserPassword(),
-			'GET',
-			'direct-upload?folder_id=' . $elementId
+			'POST',
+			'direct-upload-token',
+			$data
 		);
 	}
 
