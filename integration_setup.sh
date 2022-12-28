@@ -10,6 +10,7 @@
 # OP_ADMIN_PASSWORD=<openproject_admin_password>
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
+# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name>
 
 log_error() {
 	echo -e "\e[31m$1\e[0m"
@@ -27,7 +28,7 @@ log_success() {
 if ! command -v jq &> /dev/null
 then
 	log_error "jq is not installed"
-	log_info "sudo apt install -y jq"
+	log_info "sudo apt install -y jq (ubuntu) or brew install jq (mac)"
     exit 1
 fi
 
@@ -55,7 +56,7 @@ CREATE_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASS
                             -H 'Content-Type: application/json' \
                             -H 'X-Requested-With: XMLHttpRequest' \
                             -d '{
-                            "name": "Nextcloud",
+                            "name": "'${OPENPROJECT_STORAGE_NAME}'",
                             "_links": {
                               "origin": {
                                 "href": "'${NEXTCLOUD_HOST}'"
@@ -66,12 +67,13 @@ CREATE_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASS
                             }
                           }')
 
+# this error checking is done in case for more information
 response_type=$(echo $CREATE_STORAGE_RESPONSE | jq -r "._type")
 if [[ ${response_type} == "Error" ]]; then
 	error_message=$(echo $CREATE_STORAGE_RESPONSE | jq -r ".message")
 	if [[ ${error_message} == "Multiple field constraints have been violated." ]]; then
 		violated_error_messages=$(echo $CREATE_STORAGE_RESPONSE | jq -r "._embedded.errors[].message")
-		log_error "${violated_error_messages}"
+		log_error "'${NEXTCLOUD_HOST}' ${violated_error_messages}"
 		log_info "Try deleting the file storage in openproject and integrate again !!"
    		exit 1
     elif [[ ${error_message} == "You did not provide the correct credentials." ]]; then
@@ -79,7 +81,7 @@ if [[ ${response_type} == "Error" ]]; then
         log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<global_admin_username>  OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<global_admin_password>  foreman start -f Procfile.dev"
        	exit 1
     fi
-    log_error "${error_message}"
+    log_error "Open Project storage name '${OPENPROJECT_STORAGE_NAME}' ${error_message}"
     log_info "Try deleting the file storage in openproject and integrate again !!"
    exit 1
 fi
@@ -90,10 +92,13 @@ openproject_client_id=$(echo $CREATE_STORAGE_RESPONSE | jq -e '._embedded.oauthA
 openproject_client_secret=$(echo $CREATE_STORAGE_RESPONSE | jq -e '._embedded.oauthApplication.clientSecret')
 
 if [ ${storage_id} == null ] || [ ${openproject_client_id} == null ] || [ ${openproject_client_secret} == null ]; then
-  log_error "Response does not contain (storage_id or openproject_client_id or openproject_client_secret)"
+  echo "${CREATE_STORAGE_RESPONSE}" | jq
+  log_error "Response does not contain storage_id (id) or openproject_client_id (clientId) or openproject_client_secret (clientSecret)"
+  log_error "Integration failed :( !!"
   exit 1
 fi
 
+log_info "File Storage creation ${OPENPROJECT_STORAGE_NAME} successful ...."
 
 # api call to set the  openproject_client_id and openproject_client_secret to nextcloud and also get nextcloud_client_id and nextcloud_client_secret
 NEXTCLOUD_INFORMATION_RESPONSE=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} ${INTEGRATION_URL_FOR_SETUP} \
@@ -112,9 +117,13 @@ nextcloud_client_id=$(echo $NEXTCLOUD_INFORMATION_RESPONSE | jq -e ".nextcloud_c
 nextcloud_client_secret=$(echo $NEXTCLOUD_INFORMATION_RESPONSE | jq -e ".nextcloud_client_secret")
 
 if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
-  log_error "Response does not contain (nextcloud_client_id or nextcloud_client_secret)"
+  echo "${NEXTCLOUD_INFORMATION_RESPONSE}" | jq
+  log_error "Response does not contain nextcloud_client_id (nextcloud_client_id) or nextcloud_client_secret(nextcloud_client_secret)"
+  log_error "Integration failed :( !!"
   exit 1
 fi
+
+log_info "Setting up Open project for nextcloud successfull ..."
 
 # api call to set the nextcloud_client_id and nextcloud_client_secret to openproject files storage
 SET_NC_TO_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
@@ -127,12 +136,15 @@ SET_NC_TO_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_P
                                   "clientSecret": '${nextcloud_client_secret}'
                                   }')
 
+log_info "Setting up Nextcloud information on Open project successful ..."
+
 # if there is no error from the last api call then the integration can be declared successful
 
 response_type=$(echo $SET_NC_TO_STORAGE_RESPONSE | jq -r "._type")
 if [ ${nextcloud_client_id} == "Error" ]; then
   error_message=$(echo $SET_NC_TO_STORAGE_RESPONSE | jq -r ".message")
   log_error "${error_message}"
+  log_error "Integration failed :( !!"
   exit 1
 else
 	log_success "Integration Successful :) !!"
