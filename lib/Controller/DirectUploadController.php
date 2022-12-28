@@ -24,6 +24,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\User\NoUserException;
 use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Controller;
@@ -37,8 +38,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
-use DateTime;
-use OCP\Security\ISecureRandom;
 
 class DirectUploadController extends Controller {
 	/**
@@ -132,10 +131,9 @@ class DirectUploadController extends Controller {
 	 *
 	 * @param string $token
 	 * @param string $file_name
-	 * @param string $data
-	 *
-	 *
+	 * @param string $contents
 	 * @return DataResponse
+	 * @throws NoUserException
 	 */
 	public function directUpload(string $token, string $file_name, string $contents): DataResponse {
 		$tokenInfo = null;

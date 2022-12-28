@@ -118,9 +118,12 @@ class DirectUploadService {
 	 * is used for the direct upload and the expiration time for token
 	 *
 	 * @param string $token
-	 * @return array|null
+	 *
+	 * @return array<mixed>
+	 *
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
+	 * @throws Exception
 	 */
 	public function getTokenInfo(string $token): ?array {
 		$tokenInfo = $this->getTokenInfoFromDB($token);
@@ -134,7 +137,18 @@ class DirectUploadService {
 		return $tokenInfo;
 	}
 
-	private function getTokenInfoFromDB(string $token): ?array {
+	/**
+	 *
+	 * Stores the information in the database and returns token which
+	 * is used for the direct upload and the expiration time for token
+	 *
+	 * @param string $token
+	 *
+	 * @return array<mixed>
+	 *
+	 * @throws Exception
+	 */
+	private function getTokenInfoFromDB(string $token): array {
 		$userId = '';
 		$expiration = null;
 		$folderId = null;
