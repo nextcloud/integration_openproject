@@ -6,7 +6,10 @@
 # variables from environment
 # NEXTCLOUD_HOST=<nextcloud_host_url>
 # OPENPROJECT_HOST=<openproject_host_url>
-# PATH_TO_NEXTCLOUD=<path to nextcloud in your local machine>
+# OP_ADMIN_USERNAME=<openproject_admin_username>
+# OP_ADMIN_PASSWORD=<openproject_admin_password>
+# NC_ADMIN_USERNAME=<nextcloud_admin_username>
+# NC_ADMIN_PASSWORD=<nextcloud_admin_password>
 
 log_error() {
 	echo -e "\e[31m$1\e[0m"
@@ -19,6 +22,14 @@ log_info() {
 log_success() {
 	echo -e "\e[32m$1\e[0m"
 }
+
+# making sure that jq is installed
+if ! command -v jq &> /dev/null
+then
+	log_error "jq is not installed"
+	log_info "sudo apt install -y jq"
+    exit 1
+fi
 
 # This urls is are just to check if the nextcloud and openproject has been started or not before running the script
 NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/cron.php)
@@ -37,16 +48,8 @@ elif [[ "$NEXTCLOUD_HOST_STATE" != *"success"* ]]
 	 exit 1
 fi
 
-# making sure that jq is installed
-if ! command -v jq &> /dev/null
-then
-	log_error "jq is not installed"
-	log_info "sudo apt install -y jq"
-    exit 1
-fi
-
 # api call to get openproject_client_id and openproject_client_secret
-CREATE_STORAGE_RESPONSE=$(curl -s -X POST -uapiadmin:apiadmin \
+CREATE_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                             ${OPENPROJECT_BASEURL_FOR_STORAGE} \
                             -H 'accept: application/hal+json' \
                             -H 'Content-Type: application/json' \
@@ -93,7 +96,7 @@ fi
 
 
 # api call to set the  openproject_client_id and openproject_client_secret to nextcloud and also get nextcloud_client_id and nextcloud_client_secret
-NEXTCLOUD_INFORMATION_RESPONSE=$(curl -s -XPOST -uadmin:admin ${INTEGRATION_URL_FOR_SETUP} \
+NEXTCLOUD_INFORMATION_RESPONSE=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} ${INTEGRATION_URL_FOR_SETUP} \
 						   -d '{
 						   "values":{
 								   "openproject_instance_url":"'${OPENPROJECT_HOST}'",
@@ -114,7 +117,7 @@ if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ];
 fi
 
 # api call to set the nextcloud_client_id and nextcloud_client_secret to openproject files storage
-SET_NC_TO_STORAGE_RESPONSE=$(curl -s -X POST -uapiadmin:apiadmin \
+SET_NC_TO_STORAGE_RESPONSE=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                                   ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id}/oauth_client_credentials \
                                   -H 'accept: application/hal+json' \
                                   -H 'Content-Type: application/json' \
