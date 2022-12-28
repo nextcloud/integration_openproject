@@ -13,11 +13,14 @@ Feature: API endpoint for direct upload
     Given user "Alice" has been created
 
 
-  Scenario: Send a file to the direct-upload endpoint
+  Scenario Outline: Send a file to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | <file-name> |
       | data      | some data   |
+    When user "Alice" sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | <file-name> |
+      | data      | some data     |
     Then the HTTP status code should be "201"
     And the data of the response should match
     """"
@@ -33,12 +36,12 @@ Feature: API endpoint for direct upload
       }
     }
     """
-#    And the content of file at textfile0.txt for user "Alice" should be "some data"
-#    Examples:
-#      | file-name         |
-#      | "textfile0.txt"   |
-#      | "असजिलो file"     |
-#      | "?&$%?§ file.txt" |
+    And the content of file at <file-name> for user "Alice" should be "some data"
+    Examples:
+      | file-name         |
+      | "textfile0.txt"   |
+      | "असजिलो file"     |
+      | "?&$%?§ file.txt" |
 
 
   Scenario Outline: Send an invalid filename to the direct-upload endpoint

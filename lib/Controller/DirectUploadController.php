@@ -132,6 +132,7 @@ class DirectUploadController extends Controller {
 	 * @param string $token
 	 * @param string $file_name
 	 * @param string $contents
+	 *
 	 * @return DataResponse
 	 * @throws NoUserException
 	 */
@@ -140,6 +141,12 @@ class DirectUploadController extends Controller {
 		if(strlen($token) !== 64){
 			return new DataResponse([
 				'error' => 'Invalid token. Token should be 64 characters long'
+			],Http::STATUS_BAD_REQUEST);
+		}
+		$fileName = basename($file_name);
+		if(!isset($fileName) || !empty($fileName) || !preg_match('/^[\/\w\-. ]+$/', $fileName)){
+			return new DataResponse([
+				'error' => 'invalid file name'
 			],Http::STATUS_BAD_REQUEST);
 		}
 		try{
@@ -156,15 +163,15 @@ class DirectUploadController extends Controller {
 			if (
 				$node->isCreatable()
 			) {
-				if($node->nodeExists($file_name)){
+				if($node->nodeExists($fileName)){
 					return new DataResponse([
-						'error' => 'Conflict, file with name '. $file_name .' already exists.',
+						'error' => 'Conflict, file with name '. $fileName .' already exists.',
 					],Http::STATUS_CONFLICT);
 				}
-				$test = $node->newFile($file_name,$contents);
+				$test = $node->newFile($fileName,$contents);
 				$fileId = $test->getId();
 				return new DataResponse([
-					'file_name'=> $file_name,
+					'file_name'=> $fileName,
 					'file_id'=> $fileId
 				],Http::STATUS_CREATED);
 			}

@@ -76,11 +76,16 @@ class DirectUploadContext implements Context {
 
 		$formDataHash = $formData->getRowsHash();
 		$data = [
-			'name' => 'direct-upload',
-			'contents' => $formDataHash['data'],
-			'file_name' => trim($formDataHash['file_name'], '"')
-		];
-		var_dump($data);
+			'multipart' => [
+				[
+					'name' => 'file_name',
+					'contents' => trim($formDataHash['file_name'], '"')
+				],
+				[
+					'name' => 'contents',
+					'contents' => $formDataHash['data']
+				]
+			]];
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
