@@ -1,4 +1,3 @@
-@skip
 Feature: API endpoint for direct upload
 
   As an OpenProject user
@@ -16,11 +15,8 @@ Feature: API endpoint for direct upload
   Scenario Outline: Send a file to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | <file-name> |
+      | file_name | "<file-name>" |
       | data      | some data   |
-    When user "Alice" sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | <file-name> |
-      | data      | some data     |
     Then the HTTP status code should be "201"
     And the data of the response should match
     """"
@@ -31,17 +27,17 @@ Feature: API endpoint for direct upload
         "file_id"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^textfile0.txt$"},
+          "file_name": {"type": "string", "pattern": "^<file-name>$"},
           "file_id": {"type" : "integer"}
       }
     }
     """
-    And the content of file at <file-name> for user "Alice" should be "some data"
+    And the content of file at "<file-name>" for user "Alice" should be "some data"
     Examples:
       | file-name         |
-      | "textfile0.txt"   |
-      | "असजिलो file"     |
-      | "?&$%?§ file.txt" |
+      | textfile0.txt   |
+      | असजिलो file    |
+#      | ?&$%?§ file.txt |
 
 
   Scenario Outline: Send an invalid filename to the direct-upload endpoint
@@ -75,6 +71,43 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/ABCabc123" endpoint with:
       | file_name | textfile.txt |
       | data      | some data    |
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^Invalid token. The token should be 64 characters long and in human readable format.$"}
+      }
+    }
+    """
+
+
+  Scenario: Send token with special characters to the direct-upload endpoint
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/WampxL5Z97*CndGwB-qLPfotosDT5mXk7oFyGLa6%nmY35ANtkzT7zDQwYyXrbdC3" endpoint with:
+      | file_name | textfile.txt |
+      | data      | some data    |
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^Invalid token. The token should be 64 characters long and in human readable format.$"}
+      }
+    }
+    """
+
+  Scenario: send a token that doen't exist to the direct-upload endpoint
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/4ojy3w2yqcMeqmfYMjJSfrr9n56wqJdPZPBdsSsiRD4A6SooKaQqqoKnpmGcFBiw" endpoint with:
+      | file_name | textfile.txt |
+      | data      | some data    |
     Then the HTTP status code should be "401"
     And the data of the response should match
     """"
@@ -88,7 +121,6 @@ Feature: API endpoint for direct upload
       }
     }
     """
-
 
   Scenario: Send a file with a filename that already exists (no overwrite parameter)
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
@@ -105,7 +137,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^conflict$"}
+          "error": {"type": "string", "pattern": "^Conflict, file with name file.txt already exists.$"}
       }
     }
     """
@@ -128,7 +160,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^folder not found$"}
+          "error": {"type": "string", "pattern": "^folder not found or not enough permissions$"}
       }
     }
     """
@@ -151,7 +183,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^folder not found$"}
+          "error": {"type": "string", "pattern": "^folder not found or not enough permissions$"}
       }
     }
     """
@@ -165,7 +197,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
@@ -201,7 +233,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
@@ -217,7 +249,7 @@ Feature: API endpoint for direct upload
     }
     """
 
-
+  @skip
   Scenario: set overwrite to false and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -242,7 +274,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
     And the content of file at "/file (2).txt" for user "Alice" should be "new data"
 
-
+  @skip
   Scenario: set overwrite to false and send file with an existing filename, also files with that name and suffixed numbers also exist
     Given user "Alice" has uploaded file with content "data 1" to "/file.txt"
     And user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
@@ -271,7 +303,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file (3).txt" for user "Alice" should be "data 3"
     And the content of file at "/file (4).txt" for user "Alice" should be "new data"
 
-
+  @skip
   Scenario: set overwrite to false and send file with an existing filename (filename has already a number in brackets)
     Given user "Alice" has uploaded file with content "original data" to "/file (2).txt"
     And user "Alice" got a direct-upload token for "/"
@@ -296,7 +328,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
     And the content of file at "/file (2)(2).txt" for user "Alice" should be "new data"
 
-
+  @skip
   Scenario: set overwrite to true and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -320,7 +352,7 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "/file.txt" for user "Alice" should be "new data"
 
-
+  @skip
   Scenario: set overwrite to true and send file with an existing filename, but no permissions to overwrite
     Given user "Brian" has been created
     And user "Brian" has uploaded file with content "original data" to "/file.txt"

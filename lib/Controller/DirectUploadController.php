@@ -24,7 +24,10 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\View;
 use OC\User\NoUserException;
+use OCP\Files\InvalidCharacterInPathException;
+use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Controller;
@@ -38,6 +41,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use OC\Files\Node;
 
 class DirectUploadController extends Controller {
 	/**
@@ -63,7 +67,8 @@ class DirectUploadController extends Controller {
 	/**
 	 * @var IUserManager
 	 */
-	private $userManager;
+	private IUserManager $userManager;
+
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -138,15 +143,10 @@ class DirectUploadController extends Controller {
 	 */
 	public function directUpload(string $token, string $file_name, string $contents): DataResponse {
 		$tokenInfo = null;
-		if(strlen($token) !== 64){
+		$l = preg_match('/^[a-zA-Z0-9]*/',$token);
+		if(strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/',$token)){
 			return new DataResponse([
-				'error' => 'Invalid token. Token should be 64 characters long'
-			],Http::STATUS_BAD_REQUEST);
-		}
-		$fileName = basename($file_name);
-		if(!isset($fileName) || !empty($fileName) || !preg_match('/^[\/\w\-. ]+$/', $fileName)){
-			return new DataResponse([
-				'error' => 'invalid file name'
+				'error' => 'Invalid token. The token should be 64 characters long and in human readable format.'
 			],Http::STATUS_BAD_REQUEST);
 		}
 		try{
@@ -160,22 +160,29 @@ class DirectUploadController extends Controller {
 				], Http::STATUS_NOT_FOUND);
 			}
 			$node = array_shift($nodes);
+			$file_name = trim($file_name);
+			if(empty($file_name)){
+				return new DataResponse([
+					'error' => 'invalid file name'
+				],Http::STATUS_BAD_REQUEST);
+			}
+			$this->scanForInvalidCharacters($file_name,"\\/");
 			if (
 				$node->isCreatable()
 			) {
-				if($node->nodeExists($fileName)){
+				if($node->nodeExists($file_name)){
 					return new DataResponse([
-						'error' => 'Conflict, file with name '. $fileName .' already exists.',
+						'error' => 'Conflict, file with name '. $file_name .' already exists.',
 					],Http::STATUS_CONFLICT);
 				}
-				$test = $node->newFile($fileName,$contents);
+				$test = $node->newFile($file_name,$contents);
 				$fileId = $test->getId();
 				return new DataResponse([
-					'file_name'=> $fileName,
+					'file_name'=> $file_name,
 					'file_id'=> $fileId
 				],Http::STATUS_CREATED);
 			}
-		}catch (NotPermittedException $e){
+		} catch (NotPermittedException $e){
 			return new DataResponse([
 				'error' => $e->getMessage()
 			],Http::STATUS_UNAUTHORIZED);
@@ -183,7 +190,28 @@ class DirectUploadController extends Controller {
 			return new DataResponse([
 				'error' =>  $e->getMessage()
 			],Http::STATUS_NOT_FOUND);
+		} catch (InvalidPathException $e) {
+			return new DataResponse([
+				'error' => 'invalid file name'
+			],Http::STATUS_BAD_REQUEST);
 		}
-		return new DataResponse($tokenInfo);
+	}
+
+	/**
+	 * @param string $fileName
+	 * @param string $invalidChars
+	 * @throws InvalidPathException
+	 */
+	private function scanForInvalidCharacters(string $fileName, string $invalidChars) {
+		foreach (str_split($invalidChars) as $char) {
+			if (strpos($fileName, $char) !== false) {
+				throw new InvalidCharacterInPathException();
+			}
+		}
+
+		$sanitizedFileName = filter_var($fileName, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+		if ($sanitizedFileName !== $fileName) {
+			throw new InvalidCharacterInPathException();
+		}
 	}
 }

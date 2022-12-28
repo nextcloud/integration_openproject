@@ -57,7 +57,6 @@ class DirectUploadContext implements Context {
 			'cannot find token in response'
 		);
 		$this->createdDirectUploadTokens[] = $responseAsJson->token;
-		var_dump($responseAsJson->token);
 	}
 
 	/**
@@ -71,7 +70,9 @@ class DirectUploadContext implements Context {
 	public function anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
 		string $endpoint, TableNode $formData
 	): void {
-		$endpoint = $this->replaceInlineCodes($endpoint);
+		if(str_contains($endpoint,'%last-created-direct-upload-token%')){
+			$endpoint = $this->replaceInlineCodes($endpoint);
+		}
 		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
 
 		$formDataHash = $formData->getRowsHash();
