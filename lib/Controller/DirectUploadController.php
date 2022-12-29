@@ -25,12 +25,12 @@
 namespace OCA\OpenProject\Controller;
 
 use OC\User\NoUserException;
+use \OCP\AppFramework\ApiController;
 use OCA\OpenProject\Service\DatabaseService;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
-use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
@@ -42,7 +42,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
 
-class DirectUploadController extends Controller {
+class DirectUploadController extends ApiController {
 	/**
 	 * @var string|null
 	 */
@@ -83,7 +83,7 @@ class DirectUploadController extends Controller {
 		DatabaseService $databaseService,
 		?string $userId
 	) {
-		parent::__construct($appName, $request);
+		parent::__construct($appName, $request, 'POST');
 		$this->userId = $userId;
 		$this->directUploadService = $directUploadService;
 		$this->user = $userSession->getUser();

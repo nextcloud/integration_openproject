@@ -21,6 +21,7 @@ return [
 
 		['name' => 'directUpload#prepareDirectUpload', 'url' => '/direct-upload-token', 'verb' => 'POST'],
 		['name' => 'directUpload#directUpload', 'url' => '/direct-upload/{token}', 'verb' => 'POST'],
+		['name' => 'directUpload#preflighted_cors', 'url' => '/direct-upload/{token}', 'verb' => 'OPTIONS'],
 
 		['name' => 'config#setUpIntegration', 'url' => '/setup', 'verb' => 'POST'],
 		['name' => 'config#resetIntegration', 'url' => '/setup', 'verb' => 'DELETE'],
