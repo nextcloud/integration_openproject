@@ -34,9 +34,9 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "<file-name>" for user "Alice" should be "some data"
     Examples:
-      | file-name         |
-      | textfile0.txt   |
-      | असजिलो file    |
+      | file-name     |
+      | textfile0.txt |
+      | असजिलो file   |
 #      | ?&$%?§ file.txt |
 
 
@@ -376,7 +376,7 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "/file.txt" for user "Alice" should be "original data"
 
-    
+
   Scenario: CORS preflight request
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends an OPTIONS request to the "direct-upload/%last-created-direct-upload-token%" endpoint with these headers:
@@ -384,7 +384,7 @@ Feature: API endpoint for direct upload
       | Access-Control-Request-Method  | POST                     |
       | Access-Control-Request-Headers | origin, x-requested-with |
       | Origin                         | https://openproject.org  |
-    Then the HTTP status code should be "204"
+    Then the HTTP status code should be "200"
     And the following headers should be set
       | header                       | value                   |
       | Access-Control-Allow-Origin  | https://openproject.org |

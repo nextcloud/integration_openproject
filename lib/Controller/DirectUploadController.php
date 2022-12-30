@@ -175,11 +175,13 @@ class DirectUploadController extends ApiController {
 			if (
 				$node->isCreatable()
 			) {
+				// @phpstan-ignore-next-line
 				if ($node->nodeExists($file_name)) {
 					return new DataResponse([
 						'error' => 'Conflict, file with name '. $file_name .' already exists.',
 					], Http::STATUS_CONFLICT);
 				}
+				// @phpstan-ignore-next-line
 				$test = $node->newFile($file_name, $contents);
 				$fileId = $test->getId();
 				$this->databaseService->deleteToken($token);

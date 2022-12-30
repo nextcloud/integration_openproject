@@ -70,7 +70,7 @@ class DirectUploadContext implements Context {
 	public function anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
 		string $endpoint, TableNode $formData
 	): void {
-		if(str_contains($endpoint,'%last-created-direct-upload-token%')){
+		if (str_contains($endpoint, '%last-created-direct-upload-token%')) {
 			$endpoint = $this->replaceInlineCodes($endpoint);
 		}
 		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
@@ -96,6 +96,31 @@ class DirectUploadContext implements Context {
 		);
 	}
 
+	/**
+	 * @When /^an anonymous user sends an OPTIONS request to the "([^"]*)" endpoint with these headers:$/
+	 *
+	 * @param string $endpoint
+	 * @param TableNode<mixed> $headersTable
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 *
+	 */
+	public function anAnonymousUserSendsAnOptionsRequestToTheEndpointWithTheseHeaders(string $endpoint, TableNode $headersTable) {
+		$endpoint = $this->replaceInlineCodes($endpoint);
+		$this->featureContext->verifyTableNodeColumns($headersTable, ['header', 'value']);
+		$headers = [];
+		foreach ($headersTable as $row) {
+			$headers[$row['header']] = $row ['value'];
+		}
+		$this->featureContext->sendRequestsToAppEndpoint(
+			null,
+			null,
+			'OPTIONS',
+			$endpoint,
+			null,
+			$headers
+		);
+	}
 
 	/**
 	 * @Then /^all direct\-upload tokens should be different$/

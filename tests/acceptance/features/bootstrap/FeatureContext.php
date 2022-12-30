@@ -728,14 +728,14 @@ class FeatureContext implements Context {
 	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
-		if ($headers === null) {
-			$headers['Accept'] = 'application/json';
-		}
+//		if ($headers === null) {
+//			$headers['Accept'] = 'application/json';
+//		}
 
 		// don't set content-type for multipart requests
 		// @phpstan-ignore-next-line
 		if (is_array($data) && $headers === null) {
-			$options['multipart'] = [$data];
+			$options = $data;
 			$data = null;
 		} else {
 			$headers['Content-Type'] = 'application/json';
