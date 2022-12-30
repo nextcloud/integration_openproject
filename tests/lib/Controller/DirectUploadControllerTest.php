@@ -17,7 +17,7 @@ class DirectUploadControllerTest extends TestCase {
 	 */
 	public function testprepareDirectUpload() {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn($this->getNodeMock());
+		$folderMock->method('getById')->willReturn($this->getNodeMock('dir'));
 		$directUploadController = $this->createDirectUploadController($folderMock);
 		$result = $directUploadController->prepareDirectUpload(123);
 		assertSame(
@@ -30,6 +30,26 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testprepareDirectUploadTypeFile(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn($this->getNodeMock('file'));
+		$directUploadController = $this->createDirectUploadController($folderMock);
+		$result = $directUploadController->prepareDirectUpload(123);
+		assertSame(
+			[
+				'error' => 'folder not found or not enough permissions'
+			],
+			$result->getData()
+		);
+		assertSame(404, $result->getStatus());
+	}
+
+//	public function testDirectUpload():void{
+//
+//	}
 	/**
 	 * @param MockObject $folderMock
 	 * @return DirectUploadController
@@ -55,6 +75,11 @@ class DirectUploadControllerTest extends TestCase {
 				'token' => 'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3',
 				'expires_on' => 1671537939
 			]);
+//		$directUploadServiceMock->method('getTokenInfo')->willReturn(
+//			[
+//
+//			]
+//		);
 		return new DirectUploadController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
@@ -70,11 +95,11 @@ class DirectUploadControllerTest extends TestCase {
 
 	/**
 	 *
+	 * @param string $type
 	 * @param int $id
 	 * @return array<mixed>
 	 */
-	private function getNodeMock(int $id = 123
-	): array {
+	private function getNodeMock(string $type, int $id = 123): array {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
@@ -87,7 +112,7 @@ class DirectUploadControllerTest extends TestCase {
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
 		$fileMock->method('getName')->willReturn('name-in-the-context-of-requester');
-		$fileMock->method('getType')->willReturn('dir');
+		$fileMock->method('getType')->willReturn($type);
 		$fileMock->method('isCreatable')->willReturn(true);
 		return [$fileMock];
 	}
