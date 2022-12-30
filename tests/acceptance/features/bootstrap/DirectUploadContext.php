@@ -69,11 +69,7 @@ class DirectUploadContext implements Context {
 	public function anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
 		string $endpoint, TableNode $formData
 	): void {
-		$endpoint = str_replace(
-			"%last-created-direct-upload-token%",
-			$this->getLastCreatedDirectUploadToken(),
-			$endpoint
-		);
+		$endpoint = $this->replaceInlineCodes($endpoint);
 		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
 
 		$formDataHash = $formData->getRowsHash();
@@ -117,6 +113,14 @@ class DirectUploadContext implements Context {
 			$this->featureContext->getRegularUserPassword(),
 			'GET',
 			'direct-upload?folder_id=' . $elementId
+		);
+	}
+
+	private function replaceInlineCodes(string $input): string {
+		return str_replace(
+			"%last-created-direct-upload-token%",
+			$this->getLastCreatedDirectUploadToken(),
+			$input
 		);
 	}
 
