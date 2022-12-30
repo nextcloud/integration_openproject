@@ -714,7 +714,7 @@ class FeatureContext implements Context {
 	 * @param string|null $password
 	 * @param string $method
 	 * @param string $endpoint
-	 * @param array<mixed>|PyStringNode|null $data //array for multipart data
+	 * @param array<mixed>|PyStringNode|null|string $data //array for multipart data
 	 * @param array<mixed>|null $headers //array for multipart data
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
