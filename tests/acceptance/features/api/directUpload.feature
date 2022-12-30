@@ -249,6 +249,28 @@ Feature: API endpoint for direct upload
     }
     """
 
+  Scenario: Use the same token after one successful upload
+    Given user "Alice" got a direct-upload token for "/"
+    And an anonymous user has sent a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | testfile.txt |
+      | data      | some data    |
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "401"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^unauthorized$"}
+      }
+    }
+    """
+
   @skip
   Scenario: set overwrite to false and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"

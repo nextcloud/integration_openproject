@@ -97,6 +97,20 @@ class DirectUploadContext implements Context {
 	}
 
 	/**
+	 * @Given /^an anonymous user has sent a multipart form data POST request to the "([^"]*)" endpoint with:$/
+	 *
+	 * @param string $endpoint
+	 * @param TableNode<mixed> $formData
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function anAnonymousUserHasSentAMultipartFormDataPostRequestToTheEndpointWith(string $endpoint, TableNode $formData): void {
+		$this->anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith($endpoint, $formData);
+		$this->featureContext->theHTTPStatusCodeShouldBe(201);
+	}
+
+
+	/**
 	 * @When /^an anonymous user sends an OPTIONS request to the "([^"]*)" endpoint with these headers:$/
 	 *
 	 * @param string $endpoint
