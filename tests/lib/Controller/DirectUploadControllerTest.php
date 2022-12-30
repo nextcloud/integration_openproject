@@ -68,6 +68,11 @@ class DirectUploadControllerTest extends TestCase {
 		);
 	}
 
+	/**
+	 *
+	 * @param int $id
+	 * @return array<mixed>
+	 */
 	private function getNodeMock(int $id = 123
 	): array {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
