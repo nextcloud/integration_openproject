@@ -392,7 +392,7 @@ class FeatureContext implements Context {
 	 * @Then the following headers should be set
 	 *
 	 * taken from https://github.com/owncloud/core/blob/3d517563ddddc3e9f22c57e9fd15ba48210553c5/tests/acceptance/features/bootstrap/WebDav.php#L1668-L1708
-	 * @param TableNode $table
+	 * @param TableNode<mixed> $table
 	 *
 	 * @return void
 	 * @throws Exception
@@ -417,7 +417,9 @@ class FeatureContext implements Context {
 					);
 				}
 				$headerValue = $returnedHeader[0];
-			} else {
+			}
+			// @phpstan-ignore-next-line
+			else {
 				$headerValue = $returnedHeader;
 			}
 
@@ -433,9 +435,9 @@ class FeatureContext implements Context {
 	/**
 	 * Verify that the tableNode contains expected headers
 	 * taken from https://github.com/owncloud/core/blob/8fa69f84526c7a5a6780b378eeaf9cabb7d46e56/tests/acceptance/features/bootstrap/FeatureContext.php#L3940-L3971
-	 * @param TableNode $table
-	 * @param array|null $requiredHeader
-	 * @param array|null $allowedHeader
+	 * @param TableNode<mixed> $table
+	 * @param array<mixed>|null $requiredHeader
+	 * @param array<mixed>|null $allowedHeader
 	 *
 	 * @return void
 	 * @throws Exception
@@ -712,16 +714,16 @@ class FeatureContext implements Context {
 	 * @param string|null $password
 	 * @param string $method
 	 * @param string $endpoint
-	 * @param PyStringNode|array<mixed>|null $data //array for multipart data
+	 * @param array<mixed>|PyStringNode|null $data //array for multipart data
 	 * @param array<mixed>|null $headers //array for multipart data
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	public function sendRequestsToAppEndpoint(
-		?string $username,
-		?string $password,
-		string $method,
-		string $endpoint,
+		?string            $username,
+		?string            $password,
+		string             $method,
+		string             $endpoint,
 		$data = null,
 		$headers = null
 	) {
@@ -732,6 +734,7 @@ class FeatureContext implements Context {
 		}
 
 		// don't set content-type for multipart requests
+		// @phpstan-ignore-next-line
 		if (is_array($data) && $headers === null) {
 			$options['multipart'] = [$data];
 			$data = null;
