@@ -20,9 +20,9 @@ class DirectUploadContext implements Context {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload endpoint with the ID of "(.*)"$/
+	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload\-token endpoint with the ID of "(.*)"$/
 	 */
-	public function userSendsAGETRequestToTheEndpointWithTheFileIdOf(
+	public function userSendsAPOSTRequestToTheEndpointWithTheFileIdOf(
 		string $user, string $elementName
 	): void {
 		$elementId = $this->featureContext->getIdOfElement($user, $elementName);
@@ -31,9 +31,9 @@ class DirectUploadContext implements Context {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload endpoint with the ID "(.*)"$/
+	 * @When /^user "([^"]*)" sends a POST request to the direct\-upload\-token endpoint with the ID "(.*)"$/
 	 */
-	public function userSendsAGETRequestToTheEndpointWithTheId(
+	public function userSendsAPOSTRequestToTheEndpointWithTheId(
 		string $user, string $folderId
 	): void {
 		$data = json_encode(array('folder_id' => $folderId));
@@ -47,7 +47,7 @@ class DirectUploadContext implements Context {
 	public function userGotADirectUploadTokenFor(
 		string $user, string $elementName
 	): void {
-		$this->userSendsAGETRequestToTheEndpointWithTheFileIdOf($user, $elementName);
+		$this->userSendsAPOSTRequestToTheEndpointWithTheFileIdOf($user, $elementName);
 		$this->featureContext->theHttpStatusCodeShouldBe(200);
 		$responseAsJson = json_decode(
 			$this->featureContext->getResponse()->getBody()->getContents()
