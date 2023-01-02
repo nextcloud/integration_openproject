@@ -733,9 +733,8 @@ class FeatureContext implements Context {
 //		}
 
 		// don't set content-type for multipart requests
-		// @phpstan-ignore-next-line
 		if (is_array($data) && $headers === null) {
-			$options = $data;
+			$options['multipart'] = [$data];
 			$data = null;
 		} else {
 			$headers['Content-Type'] = 'application/json';

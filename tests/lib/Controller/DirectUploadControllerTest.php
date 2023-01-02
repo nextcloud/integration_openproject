@@ -3,7 +3,6 @@
 namespace OCA\OpenProject\Controller;
 
 use OCP\IRequest;
-use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use OCA\OpenProject\Service\DatabaseService;
@@ -47,9 +46,39 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
-//	public function testDirectUpload():void{
-//
-//	}
+	/**
+	 * @return array<mixed>
+	 */
+	public function directUploadInvalidTokenDataProvider() {
+		return [
+			[
+				'msnjsdba'
+			],
+			[
+				'CyeKfQaJpEgBHTMnCJBCiXWEWWr9fddSzSte3fNWo9tfFmwnn5fkEa9o2i3$%w2qg'
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider directUploadInvalidTokenDataProvider
+	 *  @param string $token
+	 * @return void
+	 */
+	public function testDirectUploadInvalidToken(string $token):void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn($this->getNodeMock('folder'));
+		$directUploadController = $this->createDirectUploadController($folderMock);
+		$result = $directUploadController->directUpload($token);
+		assertSame(
+			[
+				'error' => 'Invalid token.'
+			],
+			$result->getData()
+		);
+		assertSame(400, $result->getStatus());
+	}
+
 	/**
 	 * @param MockObject $folderMock
 	 * @return DirectUploadController
@@ -75,21 +104,32 @@ class DirectUploadControllerTest extends TestCase {
 				'token' => 'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3',
 				'expires_on' => 1671537939
 			]);
-//		$directUploadServiceMock->method('getTokenInfo')->willReturn(
-//			[
-//
-//			]
-//		);
+
+		$directUploadServiceMock->method('getTokenInfo')->willReturn(
+			[
+				'user_id' => 'testUser',
+				'expires_on' => 1671537939,
+				'folder_id' => 123
+
+			]
+		);
+		$userManagerMock = $this->getMockBuilder('OCP\IUserManager')->disableOriginalConstructor()->getMock();
+		$userManagerMock->method('get')->willReturn($userMock);
+
+		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
+		$requestMock->method('getUploadedFile')->willReturn([
+			'name' => 'file.txt',
+			'tmp_name' => '/tmp/andjashd'
+		]);
 		return new DirectUploadController(
 			'integration_openproject',
-			$this->createMock(IRequest::class),
+			$requestMock,
 			$storageMock,
 			$userSessionMock,
-			$this->createMock(IUserManager::class),
+			$userManagerMock,
 			$directUploadServiceMock,
 			$this->createMock(DatabaseService::class),
-			'testUser'
-
+			'testUser',
 		);
 	}
 
@@ -104,16 +144,15 @@ class DirectUploadControllerTest extends TestCase {
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 
-		$fileMock = $this->createMock('\OCP\Files\FileInfo');
-		$fileMock->method('getId')->willReturn($id);
-		$fileMock->method('getOwner')->willReturn($ownerMock);
-		$fileMock->method('getSize')->willReturn(200245);
-		$fileMock->method('getMimeType')->willReturn('httpd/unix-directory');
-		$fileMock->method('getCreationTime')->willReturn(1639906930);
-		$fileMock->method('getMTime')->willReturn(1640008813);
-		$fileMock->method('getName')->willReturn('name-in-the-context-of-requester');
-		$fileMock->method('getType')->willReturn($type);
-		$fileMock->method('isCreatable')->willReturn(true);
-		return [$fileMock];
+		$fileMock = $this->createMock('\OCP\Files\File');
+		$fileMock->method('getId')->willReturn(123);
+
+		$folderMock = $this->createMock('\OCP\Files\Folder');
+		$folderMock->method('getId')->willReturn($id);
+		$folderMock->method('getType')->willReturn($type);
+		$folderMock->method('isCreatable')->willReturn(true);
+		$folderMock->method('nodeExists')->willReturn(false);
+		$folderMock->method('newFile')->willReturn($fileMock);
+		return [$folderMock];
 	}
 }

@@ -41,6 +41,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use OCP\Files\Folder;
 
 class DirectUploadController extends ApiController {
 	/**
@@ -72,6 +73,11 @@ class DirectUploadController extends ApiController {
 	 * @var IUserManager
 	 */
 	private IUserManager $userManager;
+
+	/**
+	 * @var Folder
+	 */
+	private Folder $node;
 
 	public function __construct(
 		string $appName,
@@ -110,10 +116,10 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$node = array_shift($nodes);
-			$fileType = $node->getType();
+			$this->node = array_shift($nodes);
+			$fileType = $this->node->getType();
 			if (
-				$node->isCreatable() &&
+				$this->node->isCreatable() &&
 				$fileType === FileInfo::TYPE_FOLDER
 			) {
 				$response = $this->directUploadService->getTokenForDirectUpload($folder_id, $this->userId);
@@ -147,13 +153,14 @@ class DirectUploadController extends ApiController {
 	 *
 	 * @return DataResponse
 	 */
-	public function directUpload(string $token, string $file_name, string $contents):DataResponse {
+	public function directUpload(string $token):DataResponse {
 		$fileId = null;
+		$directUploadFile = $this->request->getUploadedFile('direct_upload');
+		$fileName = trim($directUploadFile['name']);
+		$tmpPath = $directUploadFile['tmp_name'];
 		try {
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
-				return new DataResponse([
-					'error' => 'Invalid token. The token should be 64 characters long and in human readable format.'
-				], Http::STATUS_BAD_REQUEST);
+				throw new NotFoundException('Invalid token.');
 			}
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
@@ -164,25 +171,22 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$node = array_shift($nodes);
-			$file_name = trim($file_name);
-			if (empty($file_name)) {
+			$this->node = array_shift($nodes);
+			if (empty($fileName)) {
 				return new DataResponse([
 					'error' => 'invalid file name'
 				], Http::STATUS_BAD_REQUEST);
 			}
-			$this->scanForInvalidCharacters($file_name, "\\/");
+			$this->scanForInvalidCharacters($fileName, "\\/");
 			if (
-				$node->isCreatable()
+				$this->node->isCreatable()
 			) {
-				// @phpstan-ignore-next-line
-				if ($node->nodeExists($file_name)) {
+				if ($this->node->nodeExists($fileName)) {
 					return new DataResponse([
-						'error' => 'Conflict, file with name '. $file_name .' already exists.',
+						'error' => 'Conflict, file with name '. $fileName .' already exists.',
 					], Http::STATUS_CONFLICT);
 				}
-				// @phpstan-ignore-next-line
-				$test = $node->newFile($file_name, $contents);
+				$test = $this->node->newFile($fileName, fopen($tmpPath, 'r'));
 				$fileId = $test->getId();
 				$this->databaseService->deleteToken($token);
 			}
@@ -204,7 +208,7 @@ class DirectUploadController extends ApiController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse([
-			'file_name' => $file_name,
+			'file_name' => $fileName,
 			'file_id' => $fileId
 		], Http::STATUS_CREATED);
 	}

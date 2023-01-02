@@ -71,7 +71,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/ABCabc123" endpoint with:
       | file_name | textfile.txt |
       | data      | some data    |
-    Then the HTTP status code should be "400"
+    Then the HTTP status code should be "404"
     And the data of the response should match
     """"
     {
@@ -80,7 +80,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^Invalid token. The token should be 64 characters long and in human readable format.$"}
+          "error": {"type": "string", "pattern": "^Invalid token.$"}
       }
     }
     """
@@ -90,7 +90,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/WampxL5Z97*CndGwB-qLPfotosDT5mXk7oFyGLa6%nmY35ANtkzT7zDQwYyXrbdC3" endpoint with:
       | file_name | textfile.txt |
       | data      | some data    |
-    Then the HTTP status code should be "400"
+    Then the HTTP status code should be "404"
     And the data of the response should match
     """"
     {
@@ -99,7 +99,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^Invalid token. The token should be 64 characters long and in human readable format.$"}
+          "error": {"type": "string", "pattern": "^Invalid token.$"}
       }
     }
     """
