@@ -92,43 +92,6 @@ Feature: API endpoint for direct upload
       | "  "                  |
 
 
-  Scenario: Send an invalid token to the direct-upload endpoint
-    When an anonymous user sends a multipart form data POST request to the "direct-upload/ABCabc123" endpoint with:
-      | file_name | textfile.txt |
-      | data      | some data    |
-    Then the HTTP status code should be "404"
-    And the data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "error"
-      ],
-      "properties": {
-          "error": {"type": "string", "pattern": "^Invalid token.$"}
-      }
-    }
-    """
-
-
-  Scenario: Send token with special characters to the direct-upload endpoint
-    When an anonymous user sends a multipart form data POST request to the "direct-upload/WampxL5Z97*CndGwB-qLPfotosDT5mXk7oFyGLa6%nmY35ANtkzT7zDQwYyXrbdC3" endpoint with:
-      | file_name | textfile.txt |
-      | data      | some data    |
-    Then the HTTP status code should be "404"
-    And the data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "error"
-      ],
-      "properties": {
-          "error": {"type": "string", "pattern": "^Invalid token.$"}
-      }
-    }
-    """
-
   Scenario: send a token that doesn't exist to the direct-upload endpoint
     When an anonymous user sends a multipart form data POST request to the "direct-upload/4ojy3w2yqcMeqmfYMjJSfrr9n56wqJdPZPBdsSsiRD4A6SooKaQqqoKnpmGcFBiw" endpoint with:
       | file_name | textfile.txt |

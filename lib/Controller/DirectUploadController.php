@@ -133,7 +133,7 @@ class DirectUploadController extends ApiController {
 	}
 
 	/**
-	 * preparation for the direct upload
+	 * direct upload
 	 *
 	 * @CORS
 	 * @NoCSRFRequired
