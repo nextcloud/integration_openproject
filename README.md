@@ -94,13 +94,13 @@ To set up or update the integration following data needs to be provided:
 
 ## Setting up the integration with shell script
 
-we have `integration_setup.sh` to set up the whole integration with just one command.
+`integration_setup.sh` sets up the whole integration with just one command.
 
-Prerequisite needed for using the shell script.
+Prerequisites needed for using the shell script.
 1. "OpenProject" is set up and running
 2. "Nextcloud" is set up and running
-3. The "OpenProject Integration" app is installed (enabled).
-4. The credentials of the OpenProject global user are present
+3. The "OpenProject Integration" app is installed and enabled in Nextcloud.
+4. The credentials of the OpenProject global user are known
 5. In "Nextcloud" we already have set up an admin with credentials.
 
 Once all the above pre-conditions are met we can run the shell script to integrate with the following command.
@@ -113,6 +113,8 @@ NC_ADMIN_USERNAME=<nextcloud_admin_username> NC_ADMIN_PASSWORD=<nextcloud_admin_
 OPENPROJECT_STORAGE_NAME=<files_storage_name> \                          
 bash integration_setup.sh
 ```
+
+***Note: these credentials are only used by the script to do the setup. They are not stored/remembered.***
 
 ## Development
 
