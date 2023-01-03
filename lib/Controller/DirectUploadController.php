@@ -76,9 +76,6 @@ class DirectUploadController extends Controller {
 	 * @NoCSRFRequired
 	 * @NoAdminRequired
 	 *
-	 * This can be tested with:
-	 * curl -u USER:PASSWD http://my.nc.org/index.php/apps/integration_openproject/direct-upload?folder_id=<folder_id>
-	 *
 	 * @param int $folder_id
 	 * @return DataResponse
 	 */

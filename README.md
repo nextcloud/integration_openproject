@@ -350,7 +350,7 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
 1. **Preparation for direct upload**
    Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
    ```console
-		 curl -X POST -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d {"folder_id": <folder_id>}
+   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
    ```
    The response from the above curl request will be
    ```json
