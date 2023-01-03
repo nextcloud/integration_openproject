@@ -41,7 +41,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
-use OCP\Files\Folder;
 
 class DirectUploadController extends ApiController {
 	/**
@@ -74,10 +73,6 @@ class DirectUploadController extends ApiController {
 	 */
 	private IUserManager $userManager;
 
-	/**
-	 * @var Folder
-	 */
-	private Folder $folderNode;
 
 	public function __construct(
 		string $appName,
@@ -116,11 +111,11 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$this->folderNode = array_shift($nodes);  // @phpstan-ignore-line
-			$fileType = $this->folderNode->getType();  // @phpstan-ignore-line
+			$folderNode = array_shift($nodes);  // @phpstan-ignore-line
+			$fileType = $folderNode->getType();  // @phpstan-ignore-line
 			// @phpstan-ignore-next-line
 			if (
-				$this->folderNode->isCreatable() &&
+				$folderNode->isCreatable() &&
 				$fileType === FileInfo::TYPE_FOLDER
 			) {
 				$response = $this->directUploadService->getTokenForDirectUpload($folder_id, $this->userId);
@@ -168,17 +163,17 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$this->folderNode = array_shift($nodes);  // @phpstan-ignore-line
+			$folderNode = array_shift($nodes);  // @phpstan-ignore-line
 			if (
-				$this->folderNode->isCreatable()  // @phpstan-ignore-line
+				$folderNode->isCreatable()  // @phpstan-ignore-line
 			) {
 				// @phpstan-ignore-next-line
-				if ($this->folderNode->nodeExists($fileName)) {
+				if ($folderNode->nodeExists($fileName)) {
 					return new DataResponse([
 						'error' => 'Conflict, file with name '. $fileName .' already exists.',
 					], Http::STATUS_CONFLICT);
 				}
-				$test = $this->folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+				$test = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
 				$fileId = $test->getId();
 				$this->databaseService->deleteToken($token);
 			}
