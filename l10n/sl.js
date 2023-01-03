@@ -15,7 +15,7 @@ OC.L10N.register(
     "Incorrect access token" : "Neveljaven žeton za dostop",
     "Copied!" : "Kopirano!",
     "Details" : "Podrobnosti",
-    "Start typing to search" : "Začnite tipkati za iskanje",
+    "Start typing to search" : "Vpišite niz za iskanje …",
     "Mark as read" : "Označi kot prebrano",
     "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:",
     "Connected accounts" : "Povezani računi"
