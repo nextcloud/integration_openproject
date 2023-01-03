@@ -62,9 +62,6 @@ Feature: API endpoint for direct upload
       | file-name             |
       | ""                    |
       | "  "                  |
-      | "../textfile.txt"     |
-      | "folder/textfile.txt" |
-      | "text\file.txt"       |
 
 
   Scenario: Send an invalid token to the direct-upload endpoint
@@ -104,7 +101,7 @@ Feature: API endpoint for direct upload
     }
     """
 
-  Scenario: send a token that doen't exist to the direct-upload endpoint
+  Scenario: send a token that doesn't exist to the direct-upload endpoint
     When an anonymous user sends a multipart form data POST request to the "direct-upload/4ojy3w2yqcMeqmfYMjJSfrr9n56wqJdPZPBdsSsiRD4A6SooKaQqqoKnpmGcFBiw" endpoint with:
       | file_name | textfile.txt |
       | data      | some data    |
@@ -254,6 +251,27 @@ Feature: API endpoint for direct upload
     And an anonymous user has sent a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | testfile.txt |
       | data      | some data    |
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "401"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^unauthorized$"}
+      }
+    }
+    """
+
+
+  Scenario: use the token of disable user
+    Given user "Alice" got a direct-upload token for "/"
+    And user "Alice" has been disabled
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |

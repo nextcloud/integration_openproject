@@ -94,6 +94,16 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given user :user has been disabled
+	 */
+	public function userHasBeenDisabled(string $user):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/disable', 'PUT', $this->getAdminUsername()
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
 	 * @Given user :user has been created with display-name :displayName
 	 */
 	public function userHasBeenCreatedWithDisplayName(string $user, string $displayName):void {

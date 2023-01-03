@@ -77,7 +77,7 @@ class DirectUploadController extends ApiController {
 	/**
 	 * @var Folder
 	 */
-	private Folder $node;
+	private Folder $folderNode;
 
 	public function __construct(
 		string $appName,
@@ -116,10 +116,11 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$this->node = array_shift($nodes);
-			$fileType = $this->node->getType();
+			$this->folderNode = array_shift($nodes);  // @phpstan-ignore-line
+			$fileType = $this->folderNode->getType();  // @phpstan-ignore-line
+			// @phpstan-ignore-next-line
 			if (
-				$this->node->isCreatable() &&
+				$this->folderNode->isCreatable() &&
 				$fileType === FileInfo::TYPE_FOLDER
 			) {
 				$response = $this->directUploadService->getTokenForDirectUpload($folder_id, $this->userId);
@@ -144,24 +145,20 @@ class DirectUploadController extends ApiController {
 	 * @NoAdminRequired
 	 * @PublicPage
 	 *
-	 * This can be tested with:
-	 * curl -X POST http://my.nc.org/index.php/apps/integration_openproject/direct-upload/<token>
-	 *
 	 * @param string $token
-	 * @param string $file_name
-	 * @param string $contents
 	 *
 	 * @return DataResponse
 	 */
 	public function directUpload(string $token):DataResponse {
-		$fileId = null;
-		$directUploadFile = $this->request->getUploadedFile('direct_upload');
-		$fileName = trim($directUploadFile['name']);
-		$tmpPath = $directUploadFile['tmp_name'];
 		try {
+			$fileId = null;
+			$directUploadFile = $this->request->getUploadedFile('file');
+			$fileName = trim($directUploadFile['name']);
+			$tmpPath = $directUploadFile['tmp_name'];
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				throw new NotFoundException('Invalid token.');
 			}
+			$this->scanForInvalidCharacters($fileName, "\\/");
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
@@ -171,22 +168,17 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$this->node = array_shift($nodes);
-			if (empty($fileName)) {
-				return new DataResponse([
-					'error' => 'invalid file name'
-				], Http::STATUS_BAD_REQUEST);
-			}
-			$this->scanForInvalidCharacters($fileName, "\\/");
+			$this->folderNode = array_shift($nodes);  // @phpstan-ignore-line
 			if (
-				$this->node->isCreatable()
+				$this->folderNode->isCreatable()  // @phpstan-ignore-line
 			) {
-				if ($this->node->nodeExists($fileName)) {
+				// @phpstan-ignore-next-line
+				if ($this->folderNode->nodeExists($fileName)) {
 					return new DataResponse([
 						'error' => 'Conflict, file with name '. $fileName .' already exists.',
 					], Http::STATUS_CONFLICT);
 				}
-				$test = $this->node->newFile($fileName, fopen($tmpPath, 'r'));
+				$test = $this->folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
 				$fileId = $test->getId();
 				$this->databaseService->deleteToken($token);
 			}
@@ -219,6 +211,10 @@ class DirectUploadController extends ApiController {
 	 * @throws InvalidPathException
 	 */
 	private function scanForInvalidCharacters(string $fileName, string $invalidChars):void {
+		if (empty($fileName)) {
+			throw new InvalidCharacterInPathException();
+		}
+
 		foreach (str_split($invalidChars) as $char) {
 			if (strpos($fileName, $char) !== false) {
 				throw new InvalidCharacterInPathException();

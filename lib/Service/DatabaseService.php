@@ -78,7 +78,7 @@ class DatabaseService {
 	 */
 	public function getTokenInfoFromDB(string $token): array {
 		$userId = '';
-		$expiration = null;
+		$expiresOn = null;
 		$folderId = null;
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id', 'created_at', 'expires_on', 'folder_id')
@@ -89,14 +89,14 @@ class DatabaseService {
 		$req = $query->executeQuery();
 		while ($row = $req->fetch()) {
 			$userId = $row['user_id'];
-			$expiration = (int) $row['expires_on'];
+			$expiresOn = (int) $row['expires_on'];
 			$folderId = (int) $row['folder_id'];
 		}
 		$req->closeCursor();
 		$query->resetQueryParts();
 		return [
 			'user_id' => $userId,
-			'expires_on' => $expiration,
+			'expires_on' => $expiresOn,
 			'folder_id' => $folderId
 		];
 	}

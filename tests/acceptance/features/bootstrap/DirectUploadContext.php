@@ -77,7 +77,7 @@ class DirectUploadContext implements Context {
 
 		$formDataHash = $formData->getRowsHash();
 		$data = [
-			'name' => 'direct-upload',
+			'name' => 'file',
 			'contents' => $formDataHash['data'],
 			'filename' => trim($formDataHash['file_name'], '"')
 		];

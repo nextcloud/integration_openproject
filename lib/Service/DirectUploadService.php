@@ -95,8 +95,7 @@ class DirectUploadService {
 
 	/**
 	 *
-	 * Stores the information in the database and returns token which
-	 * is used for the direct upload and the expiration time for token
+	 * gets the information regarding a particular token
 	 *
 	 * @param string $token
 	 *
@@ -108,7 +107,8 @@ class DirectUploadService {
 	 */
 	public function getTokenInfo(string $token): ?array {
 		$tokenInfo = $this->databaseService->getTokenInfoFromDB($token);
-		if ($tokenInfo['user_id'] === null || !$this->userManager->userExists($tokenInfo['user_id'])) {
+		$userId = $this->userManager->get($tokenInfo['user_id']);
+		if ($tokenInfo['user_id'] === null || !$this->userManager->userExists($tokenInfo['user_id']) || !$userId->isEnabled()) {
 			throw new NotPermittedException('unauthorized');
 		}
 		$currentTime = (new DateTime())->getTimestamp();
