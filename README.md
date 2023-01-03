@@ -348,9 +348,9 @@ npm run watch
 There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
 
 1. **Preparation for direct upload**
-   Send the `GET` request to `direct-upload` end-point with the parameter `folder_id` of the destination folder.
+   Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
    ```console
-		curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload?folder_id=<folder_id>
+   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
    ```
    The response from the above curl request will be
    ```json

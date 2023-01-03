@@ -19,7 +19,7 @@ return [
 
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 
-		['name' => 'directUpload#prepareDirectUpload', 'url' => '/direct-upload', 'verb' => 'GET'],
+		['name' => 'directUpload#prepareDirectUpload', 'url' => '/direct-upload-token', 'verb' => 'POST'],
 
 		['name' => 'config#setUpIntegration', 'url' => '/setup', 'verb' => 'POST'],
 		['name' => 'config#resetIntegration', 'url' => '/setup', 'verb' => 'DELETE'],

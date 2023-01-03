@@ -13,7 +13,7 @@ Feature: API endpoint to prepare direct upload
 
   Scenario Outline: Get a direct-upload token for a folder
     Given user "Alice" has created folder <folder>
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of <folder>
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of <folder>
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -39,7 +39,7 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get a direct-upload token for the root folder
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of "/"
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/"
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -61,7 +61,7 @@ Feature: API endpoint to prepare direct upload
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
     And user "Brian" has shared folder "/toShare" with user "Alice" with "<permissions>" permissions
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of "/toShare"
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -88,7 +88,7 @@ Feature: API endpoint to prepare direct upload
 
   Scenario: Try to get a direct-upload token for a file
     Given user "Alice" has uploaded file with content "some data" to "/file.txt"
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of "/file.txt"
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/file.txt"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -105,7 +105,7 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get a direct-upload token for a non existing folder-id
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID "999999999"
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID "999999999"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -125,7 +125,7 @@ Feature: API endpoint to prepare direct upload
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
     And user "Brian" has shared folder "/toShare" with user "Alice" with "read+update+delete+share" permissions
-    When user "Alice" sends a GET request to the direct-upload endpoint with the ID of "/toShare"
+    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -142,7 +142,7 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get token as non-existent user
-    When user "test" sends a GET request to the direct-upload endpoint with the ID "123"
+    When user "test" sends a POST request to the direct-upload-token endpoint with the ID "123"
     Then the HTTP status code should be "401"
 
 
