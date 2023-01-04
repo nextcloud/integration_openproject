@@ -94,6 +94,16 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given user :user has been disabled
+	 */
+	public function userHasBeenDisabled(string $user):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/disable', 'PUT', $this->getAdminUsername()
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
 	 * @Given user :user has been created with display-name :displayName
 	 */
 	public function userHasBeenCreatedWithDisplayName(string $user, string $displayName):void {
@@ -104,10 +114,10 @@ class FeatureContext implements Context {
 	 * @Given user :user has been deleted
 	 */
 	public function userHasBeenDeleted(string $user):void {
-		$this->sendOCSRequest(
+		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
-		$this->theHttpStatusCodeShouldBe(204);
+		$this->theHttpStatusCodeShouldBe(200);
 	}
 
 	/**
@@ -550,7 +560,6 @@ class FeatureContext implements Context {
 			$body = \http_build_query($body, '', '&');
 			$headers['Content-Type'] = 'application/x-www-form-urlencoded';
 		}
-
 		$request = new Request(
 			$method,
 			$url,
@@ -729,12 +738,8 @@ class FeatureContext implements Context {
 	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
-		if ($headers === null) {
-			$headers['Accept'] = 'application/json';
-		}
 
 		// don't set content-type for multipart requests
-		// @phpstan-ignore-next-line
 		if (is_array($data) && $headers === null) {
 			$options['multipart'] = [$data];
 			$data = null;

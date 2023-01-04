@@ -25,16 +25,14 @@
 namespace OCA\OpenProject\Service;
 
 use DateTime;
+use OCP\Files\NotFoundException;
 use OCP\DB\Exception;
-use OCP\IDBConnection;
+use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
+use OCP\IUserManager;
 
 class DirectUploadService {
-	/**
-	 * @var IDBConnection
-	 */
-	private IDBConnection $db;
 
 	/**
 	 * @var IL10N
@@ -46,55 +44,77 @@ class DirectUploadService {
 	 */
 	private ISecureRandom $secureRandom;
 
-	/** @var string table name */
-	private string $table = 'directUpload';
+	/**
+	 * @var IUserManager
+	 */
+	private IUserManager $userManager;
+
+	/**
+	 * @var DatabaseService
+	 */
+	private DatabaseService $databaseService;
 
 	/** @var string time of token expiration */
 	private string $expiryTime = '+1 hour';
 
 	public function __construct(
-		IDBConnection $db,
+		IUserManager $userManager,
 		IL10N $l,
-		ISecureRandom $secureRandom
+		ISecureRandom $secureRandom,
+		DatabaseService $databaseService
 	) {
-		$this->db = $db;
 		$this->l = $l;
+		$this->userManager = $userManager;
 		$this->secureRandom = $secureRandom;
+		$this->databaseService = $databaseService;
 	}
 
 	/**
 	 *
-	 * Stores the information in the database and returns token which
-	 * is used for the direct upload and the expiration time for token
+	 * gets token which is used for the direct upload and the expiration time for token
 	 *
 	 * @return array<string, int|string>
 	 */
 	public function getTokenForDirectUpload(int $folderId, string $userId): array {
-		$query = $this->db->getQueryBuilder();
 		$token = $this->secureRandom->generate(64, ISecureRandom::CHAR_HUMAN_READABLE);
 		$date = new DateTime();
 		$createdAt = ($date)->getTimestamp();
-		$expriesOn = ($date->modify($this->expiryTime))->getTimestamp();
+		$expiresOn = ($date->modify($this->expiryTime))->getTimestamp();
 		try {
-			$query->insert($this->table)
-				->values(
-					[
-						'token' => $query->createNamedParameter($token),
-						'folder_id' => $query->createNamedParameter($folderId),
-						'user_id' => $query->createNamedParameter($userId),
-						'created_at' => $query->createNamedParameter($createdAt),
-						'expires_on' => $query->createNamedParameter($expriesOn),
-					]
-				)
-				->executeStatement();
+			$this->databaseService->setInfoForDirectUpload($token, $folderId, $userId, $createdAt, $expiresOn);
 			return [
 				'token' => $token,
-				'expires_on' => $expriesOn,
+				'expires_on' => $expiresOn,
 			];
 		} catch (Exception $e) {
 			return [
 				'error' => $this->l->t($e->getMessage())
 			];
 		}
+	}
+
+	/**
+	 *
+	 * gets the information regarding a particular token
+	 *
+	 * @param string $token
+	 *
+	 * @return array<mixed>
+	 *
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 * @throws Exception
+	 */
+	public function getTokenInfo(string $token): ?array {
+		$tokenInfo = $this->databaseService->getTokenInfoFromDB($token);
+		$userId = $this->userManager->get($tokenInfo['user_id']);
+		if ($tokenInfo['user_id'] === null || !$this->userManager->userExists($tokenInfo['user_id']) || !$userId->isEnabled()) {
+			throw new NotPermittedException('unauthorized');
+		}
+		$currentTime = (new DateTime())->getTimestamp();
+		if ($currentTime > $tokenInfo['expires_on']) {
+			throw new NotFoundException('invalid token');
+		}
+		return $tokenInfo;
 	}
 }

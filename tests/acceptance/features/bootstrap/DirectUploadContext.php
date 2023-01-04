@@ -75,11 +75,10 @@ class DirectUploadContext implements Context {
 
 		$formDataHash = $formData->getRowsHash();
 		$data = [
-			'name' => 'direct-upload',
+			'name' => 'file',
 			'contents' => $formDataHash['data'],
 			'filename' => trim($formDataHash['file_name'], '"')
 		];
-
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
@@ -89,6 +88,45 @@ class DirectUploadContext implements Context {
 		);
 	}
 
+	/**
+	 * @Given /^an anonymous user has sent a multipart form data POST request to the "([^"]*)" endpoint with:$/
+	 *
+	 * @param string $endpoint
+	 * @param TableNode<mixed> $formData
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function anAnonymousUserHasSentAMultipartFormDataPostRequestToTheEndpointWith(string $endpoint, TableNode $formData): void {
+		$this->anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith($endpoint, $formData);
+		$this->featureContext->theHTTPStatusCodeShouldBe(201);
+	}
+
+
+	/**
+	 * @When /^an anonymous user sends an OPTIONS request to the "([^"]*)" endpoint with these headers:$/
+	 *
+	 * @param string $endpoint
+	 * @param TableNode<mixed> $headersTable
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 *
+	 */
+	public function anAnonymousUserSendsAnOptionsRequestToTheEndpointWithTheseHeaders(string $endpoint, TableNode $headersTable) {
+		$endpoint = $this->replaceInlineCodes($endpoint);
+		$this->featureContext->verifyTableNodeColumns($headersTable, ['header', 'value']);
+		$headers = [];
+		foreach ($headersTable as $row) {
+			$headers[$row['header']] = $row ['value'];
+		}
+		$this->featureContext->sendRequestsToAppEndpoint(
+			null,
+			null,
+			'OPTIONS',
+			$endpoint,
+			null,
+			$headers
+		);
+	}
 
 	/**
 	 * @Then /^all direct\-upload tokens should be different$/
@@ -119,11 +157,15 @@ class DirectUploadContext implements Context {
 	}
 
 	private function replaceInlineCodes(string $input): string {
-		return str_replace(
-			"%last-created-direct-upload-token%",
-			$this->getLastCreatedDirectUploadToken(),
-			$input
-		);
+		if (str_contains($input, '%last-created-direct-upload-token%')) {
+			return str_replace(
+				"%last-created-direct-upload-token%",
+				$this->getLastCreatedDirectUploadToken(),
+				$input
+			);
+		} else {
+			return $input;
+		}
 	}
 
 	/**

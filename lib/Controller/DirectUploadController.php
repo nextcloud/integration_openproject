@@ -24,18 +24,25 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\User\NoUserException;
+use \OCP\AppFramework\ApiController;
+use OCA\OpenProject\Service\DatabaseService;
+use OCP\Files\InvalidCharacterInPathException;
+use OCP\Files\InvalidPathException;
+use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
-use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
 use OCP\IRequest;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
 
-class DirectUploadController extends Controller {
+class DirectUploadController extends ApiController {
 	/**
 	 * @var string|null
 	 */
@@ -47,6 +54,11 @@ class DirectUploadController extends Controller {
 	private DirectUploadService $directUploadService;
 
 	/**
+	 * @var DatabaseService
+	 */
+	private DatabaseService $databaseService;
+
+	/**
 	 * @var IUser|null
 	 */
 	private ?IUser $user;
@@ -55,19 +67,30 @@ class DirectUploadController extends Controller {
 	 * @var IRootFolder
 	 */
 	private IRootFolder $rootFolder;
+
+	/**
+	 * @var IUserManager
+	 */
+	private IUserManager $userManager;
+
+
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
+		IUserManager $userManager,
 		DirectUploadService $directUploadService,
+		DatabaseService $databaseService,
 		?string $userId
 	) {
-		parent::__construct($appName, $request);
+		parent::__construct($appName, $request, 'POST');
 		$this->userId = $userId;
 		$this->directUploadService = $directUploadService;
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
+		$this->userManager = $userManager;
+		$this->databaseService = $databaseService;
 	}
 
 	/**
@@ -105,6 +128,94 @@ class DirectUploadController extends Controller {
 			return new DataResponse([
 				'error' => 'folder not found or not enough permissions'
 			], Http::STATUS_NOT_FOUND);
+		}
+	}
+
+	/**
+	 * direct upload
+	 *
+	 * @CORS
+	 * @NoCSRFRequired
+	 * @NoAdminRequired
+	 * @PublicPage
+	 *
+	 * @param string $token
+	 *
+	 * @return DataResponse
+	 */
+	public function directUpload(string $token):DataResponse {
+		try {
+			$fileId = null;
+			$directUploadFile = $this->request->getUploadedFile('file');
+			$fileName = trim($directUploadFile['name']);
+			$tmpPath = $directUploadFile['tmp_name'];
+			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
+				throw new NotFoundException('invalid token');
+			}
+			$this->scanForInvalidCharacters($fileName, "\\/");
+			$tokenInfo = $this->directUploadService->getTokenInfo($token);
+			$user = $this->userManager->get($tokenInfo['user_id']);
+			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
+			$nodes = $userFolder->getById($tokenInfo['folder_id']);
+			if (empty($nodes)) {
+				throw new NotFoundException('folder not found or not enough permissions');
+			}
+			$folderNode = array_shift($nodes);
+			if (
+				$folderNode->isCreatable()
+			) {
+				// @phpstan-ignore-next-line
+				if ($folderNode->nodeExists($fileName)) {
+					return new DataResponse([
+						'error' => 'conflict, file name already exists',
+					], Http::STATUS_CONFLICT);
+				}
+				$test = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+				$fileId = $test->getId();
+				$this->databaseService->deleteToken($token);
+			}
+		} catch (NotPermittedException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_UNAUTHORIZED);
+		} catch (NotFoundException | NoUserException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_NOT_FOUND);
+		} catch (InvalidPathException $e) {
+			return new DataResponse([
+				'error' => 'invalid file name'
+			], Http::STATUS_BAD_REQUEST);
+		} catch (Exception $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse([
+			'file_name' => $fileName,
+			'file_id' => $fileId
+		], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @param string $fileName
+	 * @param string $invalidChars
+	 * @throws InvalidPathException
+	 */
+	private function scanForInvalidCharacters(string $fileName, string $invalidChars):void {
+		if (empty($fileName)) {
+			throw new InvalidCharacterInPathException();
+		}
+
+		foreach (str_split($invalidChars) as $char) {
+			if (strpos($fileName, $char) !== false) {
+				throw new InvalidCharacterInPathException();
+			}
+		}
+
+		$sanitizedFileName = filter_var($fileName, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+		if ($sanitizedFileName !== $fileName) {
+			throw new InvalidCharacterInPathException();
 		}
 	}
 }
