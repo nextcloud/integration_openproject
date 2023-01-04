@@ -158,9 +158,7 @@ class DirectUploadController extends ApiController {
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 			$nodes = $userFolder->getById($tokenInfo['folder_id']);
 			if (empty($nodes)) {
-				return new DataResponse([
-					'error' => 'folder not found or not enough permissions'
-				], Http::STATUS_NOT_FOUND);
+				throw new NotFoundException('folder not found or not enough permissions');
 			}
 			$folderNode = array_shift($nodes);
 			if (
@@ -191,7 +189,7 @@ class DirectUploadController extends ApiController {
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
-			], Http::STATUS_BAD_REQUEST);
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse([
 			'file_name' => $fileName,
