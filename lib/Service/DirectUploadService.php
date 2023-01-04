@@ -113,7 +113,7 @@ class DirectUploadService {
 		}
 		$currentTime = (new DateTime())->getTimestamp();
 		if ($currentTime > $tokenInfo['expires_on']) {
-			throw new NotFoundException('Invalid token.');
+			throw new NotFoundException('invalid token');
 		}
 		return $tokenInfo;
 	}

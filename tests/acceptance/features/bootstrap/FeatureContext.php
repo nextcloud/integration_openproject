@@ -114,10 +114,10 @@ class FeatureContext implements Context {
 	 * @Given user :user has been deleted
 	 */
 	public function userHasBeenDeleted(string $user):void {
-		$this->sendOCSRequest(
+		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
-		$this->theHttpStatusCodeShouldBe(204);
+		$this->theHttpStatusCodeShouldBe(200);
 	}
 
 	/**
@@ -738,9 +738,6 @@ class FeatureContext implements Context {
 	) {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
-//		if ($headers === null) {
-//			$headers['Accept'] = 'application/json';
-//		}
 
 		// don't set content-type for multipart requests
 		if (is_array($data) && $headers === null) {

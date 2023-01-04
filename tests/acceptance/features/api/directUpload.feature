@@ -15,34 +15,6 @@ Feature: API endpoint for direct upload
   Scenario Outline: Send a file to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | "<file-name>" |
-      | data      | some data   |
-    Then the HTTP status code should be "201"
-    And the data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "file_name",
-        "file_id"
-      ],
-      "properties": {
-          "file_name": {"type": "string", "pattern": "^<pattern>$"},
-          "file_id": {"type" : "integer"}
-      }
-    }
-    """
-    And the content of file at "<file-name>" for user "Alice" should be "some data"
-    Examples:
-      | file-name       | pattern                     |
-      | textfile0.txt   | textfile0\\.txt             |
-      | असजिलो file     | असजिलो file                 |
-      | ?&$%?§ file.txt | \\?\\&\\$\\%\\?§ file\\.txt |
-
-
-  Scenario Outline: Send valid file-names to the direct-upload endpoint
-    Given user "Alice" got a direct-upload token for "/"
-    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | "<valid-file-name>" |
       | data      | some data   |
     Then the HTTP status code should be "201"
@@ -62,10 +34,13 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "<file-name>" for user "Alice" should be "some data"
     Examples:
-      | valid-file-name     | file-name    | pattern        |
-      | ../textfile.txt     | textfile.txt | textfile\\.txt |
-      | folder/testfile.txt | testfile.txt | testfile\\.txt |
-      | text\file.txt       | file.txt     | file\\.txt     |
+      | valid-file-name     | file-name       | pattern                     |
+      | textfile0.txt       | textfile0.txt   | textfile0\\.txt             |
+      | असजिलो file         | असजिलो file     | असजिलो file                 |
+      | ?&$%?§ file.txt     | ?&$%?§ file.txt | \\?\\&\\$\\%\\?§ file\\.txt |
+      | ../textfile.txt     | textfile.txt    | textfile\\.txt              |
+      | folder/testfile.txt | testfile.txt    | testfile\\.txt              |
+      | text\file.txt       | file.txt        | file\\.txt                  |
 
 
   Scenario Outline: Send an invalid filename to the direct-upload endpoint
@@ -110,6 +85,7 @@ Feature: API endpoint for direct upload
     }
     """
 
+
   Scenario: Send a file with a filename that already exists (no overwrite parameter)
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -125,7 +101,7 @@ Feature: API endpoint for direct upload
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^Conflict, file with name file.txt already exists.$"}
+          "error": {"type": "string", "pattern": "^conflict, file name already exists$"}
       }
     }
     """
@@ -260,9 +236,30 @@ Feature: API endpoint for direct upload
     """
 
 
-  Scenario: use the token of disable user
+  Scenario: use a token created by a user that was disabled after creating the token
     Given user "Alice" got a direct-upload token for "/"
     And user "Alice" has been disabled
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "401"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^unauthorized$"}
+      }
+    }
+    """
+
+
+  Scenario: use a token created by a user that was deleted after creating the token
+    Given user "Alice" got a direct-upload token for "/"
+    And user "Alice" has been deleted
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |

@@ -93,7 +93,7 @@ class DirectUploadControllerTest extends TestCase {
 		$result = $directUploadController->directUpload($token);
 		assertSame(
 			[
-				'error' => 'Invalid token.'
+				'error' => 'invalid token'
 			],
 			$result->getData()
 		);

@@ -111,11 +111,10 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$folderNode = array_shift($nodes);  // @phpstan-ignore-line
-			$fileType = $folderNode->getType();  // @phpstan-ignore-line
-			// @phpstan-ignore-next-line
+			$node = array_shift($nodes);
+			$fileType = $node->getType();
 			if (
-				$folderNode->isCreatable() &&
+				$node->isCreatable() &&
 				$fileType === FileInfo::TYPE_FOLDER
 			) {
 				$response = $this->directUploadService->getTokenForDirectUpload($folder_id, $this->userId);
@@ -125,7 +124,7 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-		} catch (Exception | NotPermittedException |NoUserException $e) {
+		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => 'folder not found or not enough permissions'
 			], Http::STATUS_NOT_FOUND);
@@ -151,7 +150,7 @@ class DirectUploadController extends ApiController {
 			$fileName = trim($directUploadFile['name']);
 			$tmpPath = $directUploadFile['tmp_name'];
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
-				throw new NotFoundException('Invalid token.');
+				throw new NotFoundException('invalid token');
 			}
 			$this->scanForInvalidCharacters($fileName, "\\/");
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
@@ -163,14 +162,14 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-			$folderNode = array_shift($nodes);  // @phpstan-ignore-line
+			$folderNode = array_shift($nodes);
 			if (
-				$folderNode->isCreatable()  // @phpstan-ignore-line
+				$folderNode->isCreatable()
 			) {
 				// @phpstan-ignore-next-line
 				if ($folderNode->nodeExists($fileName)) {
 					return new DataResponse([
-						'error' => 'Conflict, file with name '. $fileName .' already exists.',
+						'error' => 'conflict, file name already exists',
 					], Http::STATUS_CONFLICT);
 				}
 				$test = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
