@@ -20,6 +20,7 @@ class FeatureContext implements Context {
 	private string $adminPassword = '';
 	private string $baseUrl = '';
 	private SharingContext $sharingContext;
+	private DirectUploadContext $directUploadContext;
 	/**
 	 * @var array<int>
 	 */
@@ -330,19 +331,7 @@ class FeatureContext implements Context {
 	 */
 	private function getJSONSchema(PyStringNode $schemaString) {
 		$schemaRawString = $schemaString->getRaw();
-		for ($i = 0; $i < count($this->createdFiles); $i++) {
-			$schemaRawString = str_replace(
-				"%ids[$i]%", (string)$this->createdFiles[$i], $schemaRawString
-			);
-		}
-		$schemaRawString = preg_replace_callback(
-			'/%now\\+(\\d+)s%/',
-			function ($matches) {
-				$result = time() + (int)$matches[1];
-				return (string) $result;
-			},
-			$schemaRawString
-		);
+		$schemaRawString = $this->replaceInlineCodes($schemaRawString);
 		$schema = json_decode($schemaRawString);
 		Assert::assertNotNull($schema, 'schema is not valid JSON');
 		return $schema;
@@ -440,6 +429,30 @@ class FeatureContext implements Context {
 				. " Expected value for header '$headerName' was '$expectedHeaderValue', but got '$headerValue' instead."
 			);
 		}
+	}
+
+	public function replaceInlineCodes(string $input): string {
+		for ($i = 0; $i < count($this->createdFiles); $i++) {
+			$input = str_replace(
+				"%ids[$i]%", (string)$this->createdFiles[$i], $input
+			);
+		}
+
+		$input = preg_replace_callback(
+			'/%now\\+(\\d+)s%/',
+			function ($matches) {
+				$result = time() + (int)$matches[1];
+				return (string) $result;
+			},
+			$input
+		);
+
+		$input = str_replace(
+				"%last-created-direct-upload-token%",
+				$this->directUploadContext->getLastCreatedDirectUploadToken(),
+				$input
+			);
+		return $input;
 	}
 
 	/**
@@ -804,5 +817,7 @@ class FeatureContext implements Context {
 		// Get all the contexts you need in this context
 		/** @phpstan-ignore-next-line */
 		$this->sharingContext = $environment->getContext('SharingContext');
+		/** @phpstan-ignore-next-line */
+		$this->directUploadContext = $environment->getContext('DirectUploadContext');
 	}
 }
