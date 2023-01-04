@@ -255,6 +255,12 @@ export default {
 				case 'watched':
 					value = t('integration_openproject', 'watcher')
 					break
+				case 'commented':
+					value = t('integration_openproject', 'commented')
+					break
+				case 'mentioned':
+					value = t('integration_openproject', 'mentioned')
+					break
 				}
 				reasonsString = reasonsString + ', ' + value
 			})
