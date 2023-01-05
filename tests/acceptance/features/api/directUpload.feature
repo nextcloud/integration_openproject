@@ -282,8 +282,9 @@ Feature: API endpoint for direct upload
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file.txt |
-      | data      | false     | new data |
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | false    |
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -309,8 +310,9 @@ Feature: API endpoint for direct upload
     And user "Alice" has uploaded file with content "data 3" to "/file (3).txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file.txt |
-      | data      | false     | new data |
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | false    |
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -336,8 +338,9 @@ Feature: API endpoint for direct upload
     Given user "Alice" has uploaded file with content "original data" to "/file (2).txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file (2).txt |
-      | data      | false     | new data     |
+      | file_name | file (2).txt |
+      | data      | new data     |
+      | overwrite | false        |
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -361,8 +364,9 @@ Feature: API endpoint for direct upload
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file.txt |
-      | data      | true      | new data |
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | true     |
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -387,8 +391,9 @@ Feature: API endpoint for direct upload
     And user "Brian" has shared file "/file.txt" with user "Alice" with "read" permissions
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | overwrite | file.txt |
-      | data      | true      | new data |
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | true     |
     Then the HTTP status code should be "403"
     And the data of the response should match
     """"

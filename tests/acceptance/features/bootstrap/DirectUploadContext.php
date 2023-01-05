@@ -75,14 +75,26 @@ class DirectUploadContext implements Context {
 		string $endpoint, TableNode $formData
 	): void {
 		$endpoint = $this->featureContext->replaceInlineCodes($endpoint);
-		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
+		$this->featureContext->verifyTableNodeRows(
+			$formData,
+			['file_name', 'data'],
+			['overwrite']
+		);
 
 		$formDataHash = $formData->getRowsHash();
 		$data = [
-			'name' => 'file',
-			'contents' => $formDataHash['data'],
-			'filename' => trim($formDataHash['file_name'], '"')
+			[
+				'name' => 'file',
+				'contents' => $formDataHash['data'],
+				'filename' => trim($formDataHash['file_name'], '"')
+			],
 		];
+		if (isset($formDataHash['overwrite'])) {
+			$data[] = [
+				'name' => 'overwrite',
+				'contents' => $formDataHash['overwrite']
+			];
+		}
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
