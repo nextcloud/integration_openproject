@@ -179,9 +179,9 @@ class DirectUploadController extends ApiController {
 					return new DataResponse([
 						'file_name' => $fileName,
 						'file_id' => $fileId
-					], Http::STATUS_CREATED);
+					], Http::STATUS_OK);
 
-				} else if($folderNode->nodeExists($fileName) && !$overwrite){
+				} else if($folderNode->nodeExists($fileName) && $overwrite === false){
 					// get unique name for duplicate file with number suffix
 					$fileName = $folderNode->getNonExistingName($fileName);
 				}
