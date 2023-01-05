@@ -45,6 +45,8 @@ jobs:
           DHPARAM_GENERATION: "false"
           HTTPS_METHOD: "noredirect"
           HSTS: "off"
+        volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
 
       nextcloud:
         image: ghcr.io/juliushaertl/nextcloud-dev-php80:latest
