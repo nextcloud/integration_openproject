@@ -147,6 +147,12 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			$overwrite = $this->request->getParam('overwrite');
+			if(isset($overwrite)){
+				$overwrite = $overwrite === 'true';
+			} else {
+				$overwrite = null;
+			}
 			$fileName = trim($directUploadFile['name']);
 			$tmpPath = $directUploadFile['tmp_name'];
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
@@ -164,14 +170,30 @@ class DirectUploadController extends ApiController {
 			if (
 				$folderNode->isCreatable()
 			) {
+				if($folderNode->nodeExists($fileName) && $overwrite){
+					$file = $folderNode->get($fileName);
+					// overwrite the file
+					$file->putContent(fopen($tmpPath, 'r'));
+					$fileId = $file->getId();
+					$this->databaseService->deleteToken($token);
+					return new DataResponse([
+						'file_name' => $fileName,
+						'file_id' => $fileId
+					], Http::STATUS_CREATED);
+
+				} else if($folderNode->nodeExists($fileName) && !$overwrite){
+					// get unique name for duplicate file with number suffix
+					$fileName = $folderNode->getNonExistingName($fileName);
+				}
 				// @phpstan-ignore-next-line
-				if ($folderNode->nodeExists($fileName)) {
+				else if($folderNode->nodeExists($fileName)){
 					return new DataResponse([
 						'error' => 'conflict, file name already exists',
 					], Http::STATUS_CONFLICT);
 				}
-				$test = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
-				$fileId = $test->getId();
+
+				$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+				$fileId = $fileInfo->getId();
 				$this->databaseService->deleteToken($token);
 			}
 		} catch (NotPermittedException $e) {
