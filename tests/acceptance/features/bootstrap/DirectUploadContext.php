@@ -15,8 +15,12 @@ class DirectUploadContext implements Context {
 	 * @var array<string>
 	 */
 	private array $createdDirectUploadTokens = [];
-	private function getLastCreatedDirectUploadToken():string {
-		return $this->createdDirectUploadTokens[array_key_last($this->createdDirectUploadTokens)];
+	public function getLastCreatedDirectUploadToken(): ?string {
+		$lastKey = array_key_last($this->createdDirectUploadTokens);
+		if ($lastKey !== null) {
+			return $this->createdDirectUploadTokens[$lastKey];
+		}
+		return null;
 	}
 
 	/**
@@ -70,7 +74,7 @@ class DirectUploadContext implements Context {
 	public function anonymousUserSendsAMultipartFormDataPOSTRequestToTheEndpointWith(
 		string $endpoint, TableNode $formData
 	): void {
-		$endpoint = $this->replaceInlineCodes($endpoint);
+		$endpoint = $this->featureContext->replaceInlineCodes($endpoint);
 		$this->featureContext->verifyTableNodeRows($formData, ['file_name', 'data']);
 
 		$formDataHash = $formData->getRowsHash();
@@ -112,7 +116,7 @@ class DirectUploadContext implements Context {
 	 *
 	 */
 	public function anAnonymousUserSendsAnOptionsRequestToTheEndpointWithTheseHeaders(string $endpoint, TableNode $headersTable) {
-		$endpoint = $this->replaceInlineCodes($endpoint);
+		$endpoint = $this->featureContext->replaceInlineCodes($endpoint);
 		$this->featureContext->verifyTableNodeColumns($headersTable, ['header', 'value']);
 		$headers = [];
 		foreach ($headersTable as $row) {
@@ -154,18 +158,6 @@ class DirectUploadContext implements Context {
 			'direct-upload-token',
 			$data
 		);
-	}
-
-	private function replaceInlineCodes(string $input): string {
-		if (str_contains($input, '%last-created-direct-upload-token%')) {
-			return str_replace(
-				"%last-created-direct-upload-token%",
-				$this->getLastCreatedDirectUploadToken(),
-				$input
-			);
-		} else {
-			return $input;
-		}
 	}
 
 	/**
