@@ -21,6 +21,8 @@ jobs:
           - nextcloudVersion: stable24
             phpVersion: 8.1
     runs-on: ubuntu-latest
+    # Docker Hub image that `build` executes in
+    container: ubuntu:latest
     services:
       openproject:
         image: openproject/community:12
