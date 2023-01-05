@@ -356,8 +356,8 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
-    And the content of file at "/file (2)(2).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2).txt" for user "Alice" should be "original data"
+    And the content of file at "/file (3).txt" for user "Alice" should be "new data"
 
 
   Scenario: set overwrite to true and send file with an existing filename
@@ -384,7 +384,7 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "/file.txt" for user "Alice" should be "new data"
 
-  
+
   Scenario: set overwrite to true and send file with an existing filename, but no permissions to overwrite
     Given user "Brian" has been created
     And user "Brian" has uploaded file with content "original data" to "/file.txt"

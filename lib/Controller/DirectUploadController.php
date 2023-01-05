@@ -148,7 +148,7 @@ class DirectUploadController extends ApiController {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
 			$overwrite = $this->request->getParam('overwrite');
-			if(isset($overwrite)){
+			if (isset($overwrite)) {
 				$overwrite = $overwrite === 'true';
 			} else {
 				$overwrite = null;
@@ -170,8 +170,14 @@ class DirectUploadController extends ApiController {
 			if (
 				$folderNode->isCreatable()
 			) {
-				if($folderNode->nodeExists($fileName) && $overwrite){
-					$file = $folderNode->get($fileName);
+				// @phpstan-ignore-next-line
+				if ($folderNode->nodeExists($fileName) && $overwrite) {
+					$file = $folderNode->get($fileName); // @phpstan-ignore-line
+					if (!$file->isUpdateable()) {
+						return new DataResponse([
+							'error' => "not enough permissions"
+						], Http::STATUS_FORBIDDEN);
+					}
 					// overwrite the file
 					$file->putContent(fopen($tmpPath, 'r'));
 					$fileId = $file->getId();
@@ -180,13 +186,13 @@ class DirectUploadController extends ApiController {
 						'file_name' => $fileName,
 						'file_id' => $fileId
 					], Http::STATUS_OK);
-
-				} else if($folderNode->nodeExists($fileName) && $overwrite === false){
+				} // @phpstan-ignore-next-line
+				elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
 					// get unique name for duplicate file with number suffix
-					$fileName = $folderNode->getNonExistingName($fileName);
+					$fileName = $folderNode->getNonExistingName($fileName); // @phpstan-ignore-line
 				}
 				// @phpstan-ignore-next-line
-				else if($folderNode->nodeExists($fileName)){
+				elseif ($folderNode->nodeExists($fileName)) {
 					return new DataResponse([
 						'error' => 'conflict, file name already exists',
 					], Http::STATUS_CONFLICT);
