@@ -105,6 +105,8 @@ Prerequisites needed for using the shell script.
 
 Once all the above pre-conditions are met we can run the shell script to integrate with the following command.
 
+The following bash command has an environment variable `OPENPROJECT_STORAGE_NAME` which will be the storage name to store the oauth information in open project required for integration.
+
 ```bash
 NEXTCLOUD_HOST=<nextcloud_host_url> \                      
 OPENPROJECT_HOST=<openproject_host_url> \

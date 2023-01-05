@@ -10,7 +10,7 @@
 # OP_ADMIN_PASSWORD=<openproject_admin_password>
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
-# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name>
+# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth information in open project required for integration.
 
 log_error() {
 	echo -e "\e[31m$1\e[0m"
