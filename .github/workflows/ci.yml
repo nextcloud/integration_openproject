@@ -53,9 +53,6 @@ jobs:
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity"
           VIRTUAL_HOST: "nextcloud"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-        ports:
-          - 8080:80
-
 
     steps:
       - name: Cancel previous runs
@@ -149,22 +146,13 @@ jobs:
           timeout: 240000
 
       - name: wait on Nextcloud
-        run: until curl -s -f http://localhost:8080/status.php | grep '"installed":true'; do echo .; sleep 10; done
+        run: until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
 
       - name: try OpenProject
-        run: curl http://localhost:8081/api/v3/users -u apiadmin:apiadmin
-
-      - name: try Nextcloud
-        run: curl http://localhost:8080/status.php -v || true
-
-      - name: try Nextcloud
-        run: curl https://localhost/status.php -v || true
+        run: curl http://openproject/api/v3/users -u apiadmin:apiadmin
 
       - name: try Nextcloud2
-        run: curl http://nextcloud:8080/status.php -v || true
-
-      - name: try Nextcloud3
-        run: curl -k https://nextcloud:8080/status.php || true
+        run: curl http://nextcloud/status.php -v || true
 
       - name: try Nextcloud3
         run: curl -k https://nextcloud/status.php || true
