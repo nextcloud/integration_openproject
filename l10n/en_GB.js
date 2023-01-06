@@ -108,6 +108,8 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
-    "Invalid key" : "Invalid key"
+    "Invalid key" : "Invalid key",
+    "commented" : "commented",
+    "mentioned" : "mentioned"
 },
 "nplurals=2; plural=(n != 1);");
