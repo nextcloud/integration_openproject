@@ -109,7 +109,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
-			$userId, $userName
+			$userId, $userName, $this->userId
 		);
 		$response = new DataDownloadResponse(
 			$result['avatar'], 'avatar', $result['type'] ?? ''
