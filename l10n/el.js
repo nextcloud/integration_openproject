@@ -18,6 +18,8 @@ OC.L10N.register(
     "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
     "Mark as read" : "Σήμανση ως αναγνωσμένο",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
-    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"
+    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
+    "commented" : "σχολίασε",
+    "mentioned" : "ανέφερε"
 },
 "nplurals=2; plural=(n != 1);");
