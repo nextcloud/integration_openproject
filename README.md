@@ -118,6 +118,36 @@ bash integration_setup.sh
 
 ***Note: these credentials are only used by the script to do the setup. They are not stored/remembered.***
 
+## Direct upload
+There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
+
+1. **Preparation for direct upload**
+   Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
+   ```console
+   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
+   ```
+   The response from the above curl request will be
+   ```json
+   {
+	   "token": "<token>",
+	   "expires_on": <some_timestamp>
+   }
+   ```
+
+	2. **Direct upload**
+	   Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint
+   ```console
+   curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+   --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
+   ```
+   The response from the above curl request will be
+   ```json
+   {
+    	"file_name": "<file_name>",
+    	"file_id": <file_id>
+   }  
+   ```
+
 ## Development
 
 Develop using docker compose
@@ -368,36 +398,6 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
-
-## Direct upload
-There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
-
-1. **Preparation for direct upload**
-   Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
-   ```console
-   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
-   ```
-   The response from the above curl request will be
-   ```json
-   {
-	   "token": "<token>",
-	   "expires_on": <some_timestamp>
-   }
-   ```
-   
-   2. **Direct upload**
-      Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint 
-   ```console
-   curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
-   --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
-   ```
-   The response from the above curl request will be
-   ```json
-   {
-    	"file_name": "<file_name>",
-    	"file_id": <file_id>
-   }  
-   ```      
 
 ### Release:
 
