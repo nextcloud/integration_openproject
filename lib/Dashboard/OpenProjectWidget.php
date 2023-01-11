@@ -126,7 +126,7 @@ class OpenProjectWidget implements IWidget {
 		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
 
 		$oauthConnectionResult = $this->config->getUserValue(
-			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 		);
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
@@ -135,7 +135,7 @@ class OpenProjectWidget implements IWidget {
 			'oauth-connection-result', $oauthConnectionResult
 		);
 		$oauthConnectionErrorMessage = $this->config->getUserValue(
-			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message', ''
 		);
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'

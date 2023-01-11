@@ -51,11 +51,11 @@ class LoadSidebarScript implements IEventListener {
 	/**
 	 * @var string "error"|"success"|""
 	 */
-	private $oauthConnectionResult;
+	private $oauthConnectionResult = '';
 	/**
 	 * @var string
 	 */
-	private $oauthConnectionErrorMessage;
+	private $oauthConnectionErrorMessage = '';
 
 	public function __construct(
 		IInitialState $initialStateService,
@@ -67,13 +67,13 @@ class LoadSidebarScript implements IEventListener {
 		$user = $userSession->getUser();
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
 			$this->oauthConnectionResult = $this->config->getUserValue(
-				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
+				$user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 			);
 			$this->config->deleteUserValue(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_result'
 			);
 			$this->oauthConnectionErrorMessage = $this->config->getUserValue(
-				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
+				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message', ''
 			);
 			$this->config->deleteUserValue(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
