@@ -34,62 +34,63 @@ To set up or update the integration following data needs to be provided:
 
 1. **Set up the whole integration with a [POST] request**
 
-	We must provide all of the above data for this request.
+   We must provide all of the above data for this request.
 
-	Example curl request to set up whole integration
-	```bash
-	curl -XPOST -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
-	-d '{"values":{"openproject_instance_url":<openproject_instance_url>,"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>,"default_enable_navigation":false,"default_enable_unified_search":false}}' \
-	-H 'Content-Type: application/json' -v
-	```
+   Example curl request to set up whole integration
+   ```bash
+   curl -XPOST -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+   -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false}}' \
+   -H 'Content-Type: application/json' -v
+   ```
 
-	The response from the above curl request
-	```json
-	{
-		"nextcloud_oauth_client_name": "<openproject-client>",
-		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-		"nextcloud_client_id": "<nextcloud_client_id>",
-		"nextcloud_client_secret": "<nextcloud_client_secret>",
-		"openproject_revocation_status": <openproject_revocation_status>
-	}
-	```
+   The response from the above curl request
+   ```json
+   {
+       "nextcloud_oauth_client_name": "<openproject-client>",
+       "openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
+       "nextcloud_client_id": "<nextcloud_client_id>",
+       "nextcloud_client_secret": "<nextcloud_client_secret>",
+       "openproject_revocation_status": "<openproject_revocation_status>"
+   }
+   ```
 
 2. **Update the integration with a [PATCH] request**
 
     One or more of the above data needs to be sent to this endpoint
 
-	Example curl request to update only `openproject_client_id` and `openproject_client_secret`
-	```bash
-	curl -XPATCH -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
-	-d '{"values":{"openproject_client_id":<openproject_client_id>,"openproject_client_secret":<openproject_client_secret>}}' \
-	-H 'Content-Type: application/json' -v
-	```
+   Example curl request to update only `openproject_client_id`
+   and `openproject_client_secret`
+   ```bash
+   curl -XPATCH -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+   -d '{"values":{"openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>"}}' \
+   -H 'Content-Type: application/json' -v
+   ```
 
-	The response from the above curl request
-	```json
-	{
-		"nextcloud_oauth_client_name": "<openproject-client>",
-		"openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
-		"nextcloud_client_id": "<nextcloud_client_id>",
-		"nextcloud_client_secret": "<nextcloud_client_secret>",
-		"openproject_revocation_status": <openproject_revocation_status>
-	}
-	```
+   The response from the above curl request
+   ```json
+   {
+       "nextcloud_oauth_client_name": "<openproject-client>",
+       "openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
+       "nextcloud_client_id": "<nextcloud_client_id>",
+       "nextcloud_client_secret": "<nextcloud_client_secret>",
+       "openproject_revocation_status": "<openproject_revocation_status>"
+   }
+   ```
 
-2. **Resetting the whole integration with a [DELETE] request**
+3. **Resetting the whole integration with a [DELETE] request**
 
-	Example curl request to reset whole integration
-	```bash
-	curl -XDELETE -uadmin:admin http://<nextcloud_host>/index.php/apps/integration_openproject/setup
-	```
+   Example curl request to reset whole integration
+   ```bash
+   curl -XDELETE -uadmin:admin http://<nextcloud_host>/index.php/apps/integration_openproject/setup
+   ```
 
-	The response from the above curl request
-	```json
-	{
-		"status": true,
-		"openproject_revocation_status": <openproject_revocation_status>
-	}
-	```
+   The response from the above curl request
+   ```json
+   {
+       "status": true,
+       "openproject_revocation_status": "<openproject_revocation_status>"
+   }
+   ```
 ***Note: In the response `openproject_revocation_status` is included only after successfull connection***
 
 ## Setting up the integration with shell script
@@ -117,6 +118,36 @@ bash integration_setup.sh
 ```
 
 ***Note: these credentials are only used by the script to do the setup. They are not stored/remembered.***
+
+## Direct upload
+There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
+
+1. **Preparation for direct upload**
+   Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
+   ```console
+   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
+   ```
+   The response from the above curl request will be
+   ```json
+   {
+       "token": "<token>",
+       "expires_on": <some_timestamp>
+   }
+   ```
+
+2. **Direct upload**
+   Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint
+   ```console
+   curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+   --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
+   ```
+   The response from the above curl request will be
+   ```json
+   {
+       "file_name": "<file_name>",
+       "file_id": <file_id>
+   }  
+   ```
 
 ## Development
 
@@ -368,36 +399,6 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
-
-## Direct upload
-There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
-
-1. **Preparation for direct upload**
-   Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
-   ```console
-   curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
-   ```
-   The response from the above curl request will be
-   ```json
-   {
-	   "token": "<token>",
-	   "expires_on": <some_timestamp>
-   }
-   ```
-   
-   2. **Direct upload**
-      Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint 
-   ```console
-   curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
-   --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
-   ```
-   The response from the above curl request will be
-   ```json
-   {
-    	"file_name": "<file_name>",
-    	"file_id": <file_id>
-   }  
-   ```      
 
 ### Release:
 
