@@ -33,7 +33,9 @@ then
 fi
 
 # These URLs are just to check if the nextcloud and openproject instances have been started or not before running the script
-NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/cron.php)
+NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
+NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
+NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
 OPENPROJECT_HOST_STATE=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                           ${OPENPROJECT_HOST}/api/v3/configuration | jq -r "._type")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
@@ -44,9 +46,10 @@ if [[ ${OPENPROJECT_HOST_STATE} != "Configuration" ]]
 then
 	log_error "Open Project Host has not been started !!"
 	exit 1
-elif [[ "$NEXTCLOUD_HOST_STATE" != *"success"* ]]
- then
-	log_error "Nextcloud Host has not been started !!"
+fi
+if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]
+then
+	log_error "Nextcloud Host has not been started or is in maintenance mode !!"
 	exit 1
 fi
 
