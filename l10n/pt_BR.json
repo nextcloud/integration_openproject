@@ -47,6 +47,9 @@
     "Could not connect to the given URL, please check the Nextcloud logs" : "Não foi possível conectar na URL, verifique os logs do Nextcloud",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
     "Failed to save OpenProject admin options" : "Falha ao salvar as opções de administração do OpenProject",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Falha ao realizar solicitação de revogação devido a erro de conexão com o servidor OpenProject",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Falha ao revogar alguns tokens de acesso OpenProject OAuth do(s) usuário(s)",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Usuário(s) revogado(s) com sucesso OpenProject OAuth access token(s)",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Se você continuar, precisará atualizar as configurações em seu OpenProject com as novas credenciais do Nextcloud OAuth. Além disso, todos os usuários do OpenProject precisarão reautorizar o acesso à sua conta Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Falha ao criar cliente OAuth Nextcloud",
     "Default user configuration saved" : "Configuração de usuário padrão salva",
@@ -81,6 +84,10 @@
     "Mark as read" : "Marcar como lido",
     "No OpenProject notifications!" : "Nenhuma notificação do OpenProject!",
     "Failed to get OpenProject notifications" : "Falha ao receber notificações do OpenProject",
+    "Date alert" : "Alerta de data",
+    "assignee" : "cessionário",
+    "accountable" : "responsável",
+    "watcher" : "observador",
     "Notifications associated with Work package marked as read" : "Notificações associadas ao pacote de trabalho marcadas como lidas",
     "Failed to mark notifications as read" : "Falha ao marcar as notificações como lidas",
     "Existing relations:" : "Relações existentes:",
@@ -99,6 +106,8 @@
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "O URL do OpenProject é inválido, forneça um URL no formato \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "Nenhum OpenProject detectado na URL",
     "Enable notifications for activity in my work packages" : "Habilitar notificações de atividade em meus pacotes de trabalho",
-    "Invalid key" : "Chave inválida"
+    "Invalid key" : "Chave inválida",
+    "commented" : "comentado",
+    "mentioned" : "mencionado"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
