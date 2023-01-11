@@ -138,7 +138,7 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
 2. **Direct upload**
    Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint
    ```console
-   curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+   curl -XPOST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
    --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
    ```
    The response from the above curl request will be
