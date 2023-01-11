@@ -421,18 +421,18 @@ Feature: API endpoint for direct upload
     And the data of the response should match
     """"
     {
-    "type":"object",
-    "not":{
-       "required": [
+    "type": "object",
+    "not": {
+      "required": [
           "file_name",
           "file_id"
         ]
-     },
-     "required": [
-      "error"
-    ],
-    "properties": {
-        "error": {"type": "string", "pattern": "^invalid overwrite value$"}
+      },
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid overwrite value$"}
       }
     }
     """
@@ -444,6 +444,7 @@ Feature: API endpoint for direct upload
       | null      |
       |           |
       | rubbish   |
+
 
   Scenario: CORS preflight request
     Given user "Alice" got a direct-upload token for "/"
