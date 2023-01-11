@@ -410,7 +410,6 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
 
 
-  @skip
   Scenario Outline: set overwrite to an invalid value
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -422,18 +421,18 @@ Feature: API endpoint for direct upload
     And the data of the response should match
     """"
     {
-    "type": "object",
-    "not": {
-      "required": [
+    "type":"object",
+    "not":{
+       "required": [
           "file_name",
           "file_id"
-        ],
-      }
-    "required": [
-        "error"
-      ],
-      "properties": {
-          "error": {"type": "string", "pattern": "^invalid overwrite value$"}
+        ]
+     },
+     "required": [
+      "error"
+    ],
+    "properties": {
+        "error": {"type": "string", "pattern": "^invalid overwrite value$"}
       }
     }
     """

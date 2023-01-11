@@ -25,6 +25,8 @@
 namespace OCA\OpenProject\Controller;
 
 use OC\User\NoUserException;
+use InvalidArgumentException;
+use OC\ForbiddenException;
 use \OCP\AppFramework\ApiController;
 use OCA\OpenProject\Service\DatabaseService;
 use OCP\Files\InvalidCharacterInPathException;
@@ -147,9 +149,14 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			$acceptedOverwriteValues = ['true','True','false','False'];
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
-				$overwrite = $overwrite === 'true';
+				if (in_array($overwrite, $acceptedOverwriteValues)) {
+					$overwrite = $overwrite === 'true';
+				} else {
+					throw new InvalidArgumentException('invalid overwrite value');
+				}
 			} else {
 				$overwrite = null;
 			}
@@ -174,9 +181,7 @@ class DirectUploadController extends ApiController {
 				if ($folderNode->nodeExists($fileName) && $overwrite) {
 					$file = $folderNode->get($fileName); // @phpstan-ignore-line
 					if (!$file->isUpdateable()) {
-						return new DataResponse([
-							'error' => "not enough permissions"
-						], Http::STATUS_FORBIDDEN);
+						throw new ForbiddenException('not enough permissions');
 					}
 					// overwrite the file
 					$file->putContent(fopen($tmpPath, 'r'));
@@ -210,10 +215,14 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage()
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidPathException $e) {
+		} catch (InvalidPathException | InvalidArgumentException $e) {
 			return new DataResponse([
-				'error' => 'invalid file name'
+				'error' => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
+		} catch (ForbiddenException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_FORBIDDEN);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
@@ -232,18 +241,18 @@ class DirectUploadController extends ApiController {
 	 */
 	private function scanForInvalidCharacters(string $fileName, string $invalidChars):void {
 		if (empty($fileName)) {
-			throw new InvalidCharacterInPathException();
+			throw new InvalidCharacterInPathException('invalid file name');
 		}
 
 		foreach (str_split($invalidChars) as $char) {
 			if (strpos($fileName, $char) !== false) {
-				throw new InvalidCharacterInPathException();
+				throw new InvalidCharacterInPathException('invalid file name');
 			}
 		}
 
 		$sanitizedFileName = filter_var($fileName, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
 		if ($sanitizedFileName !== $fileName) {
-			throw new InvalidCharacterInPathException();
+			throw new InvalidCharacterInPathException('invalid file name');
 		}
 	}
 }
