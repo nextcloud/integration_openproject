@@ -122,7 +122,7 @@ bash integration_setup.sh
 ## Direct upload
 There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload first we need to get the `token` which is then used for direct upload.
 
-1. **Preparation for direct upload**
+1. **Preparation for direct upload**:
    Send the `POST` request to `direct-upload-token` end-point with data `folder_id` of the destination folder.
    ```console
    curl -u USER:PASSWD http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload-token -d '{"folder_id":<folder_id>}' -H'Content-Type: application/json'
@@ -135,19 +135,53 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
    }
    ```
 
-2. **Direct upload**
-   Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint
-   ```console
-   curl -XPOST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
-   --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
-   ```
-   The response from the above curl request will be
-   ```json
-   {
-       "file_name": "<file_name>",
-       "file_id": <file_id>
-   }  
-   ```
+2. **Direct upload**:
+   Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint. The API takes and optional parameter `overwrite`.
+   1. **Direct upload without overwrite parameter**:
+   If the `overwrite` parameter is not set at all only the file with non-existing name is uploaded and a conflict error is thrown in case the file already exists.
+         ```console
+          curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+          --form 'file=@"<path-of-file>"' -H'Content-Type: multipart/form-data'
+        ```
+      
+        The response from the above curl request will be
+        ```json
+        {
+          "file_name": "<file_name>",
+          "file_id": <file_id>
+        }  
+       ```
+   
+   2. **Direct upload with overwrite parameter**:
+   The overwrite parameter can be either set to `true` or `false`.
+      1. **overwrite set to false**: 
+      If the parameter is set to `false` and a file with the name already exists, a new file will be uploaded with existing name having a number suffix.
+	     ```console
+          curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+          --form 'file=@"<path-of-file>"' --form 'overwrite="false"' -H'Content-Type: multipart/form-data' 
+		 ```
+
+	      The response from the above curl request will be
+	      ```json
+	      {
+	      "file_name": "<file_name>(some-number)",
+	      "file_id": <file_id>
+	      }  
+	      ```
+      2. **overwrite set to true**:
+      If the parameter is set to `true` and a file with the name already exists, the existing file will be overwritten.
+		 ```console
+		 curl-X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+		 --form 'file=@"<path-of-file>"' --form 'overwrite="true"' -H'Content-Type: multipart/form-data'
+		 ```
+
+	      The response from the above curl request will be
+	      ```json
+	      {
+	      "file_name": "<file_name>",
+	      "file_id": <file_id>
+	      }  
+	      ```
 
 ## Development
 
