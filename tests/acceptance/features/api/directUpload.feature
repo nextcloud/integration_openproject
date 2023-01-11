@@ -410,6 +410,42 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
 
 
+  @skip
+  Scenario Outline: set overwrite to an invalid value
+    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt    |
+      | data      | new data    |
+      | overwrite | <overwrite> |
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "not": {
+      "required": [
+          "file_name",
+          "file_id"
+        ],
+      }
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid overwrite value$"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    Examples:
+      | overwrite |
+      | 1         |
+      | 0         |
+      | null      |
+      |           |
+      | rubbish   |
+
   Scenario: CORS preflight request
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends an OPTIONS request to the "direct-upload/%last-created-direct-upload-token%" endpoint with these headers:
