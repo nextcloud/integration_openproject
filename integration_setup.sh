@@ -44,15 +44,16 @@ INTEGRATION_URL_FOR_SETUP=${NEXTCLOUD_HOST}/index.php/apps/integration_openproje
 # check if both instances are started or not
 if [[ ${OPENPROJECT_HOST_STATE} != "Configuration" ]]
 then
-	log_error "OpenProject Host has not been started !!"
+	log_error "OpenProject host cannot be reached!!"
 	exit 1
 fi
 if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]
 then
-	log_error "Nextcloud Host has not been started or is in maintenance mode !!"
+	log_error "Nextcloud host cannot be reached or is in maintenance mode!!"
 	exit 1
 fi
 
+log_info "Creating file storage in OpenProject ..."
 # api call to get openproject_client_id and openproject_client_secret
 create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                             ${OPENPROJECT_BASEURL_FOR_STORAGE} \
@@ -98,12 +99,13 @@ openproject_client_secret=$(echo $create_storage_response | jq -e '._embedded.oa
 if [ ${storage_id} == null ] || [ ${openproject_client_id} == null ] || [ ${openproject_client_secret} == null ]; then
 	echo "${create_storage_response}" | jq
 	log_error "Response does not contain storage_id (id) or openproject_client_id (clientId) or openproject_client_secret (clientSecret)"
-	log_error "Integration failed :( !!"
+	log_error "Setup of the integration failed :( !!"
 	exit 1
 fi
 
-log_info "File Storage creation ${OPENPROJECT_STORAGE_NAME} successful ...."
+log_info "success!"
 
+log_info "Setting up OpenProject integration in Nextcloud..."
 # api call to set the  openproject_client_id and openproject_client_secret to nextcloud and also get nextcloud_client_id and nextcloud_client_secret
 nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} ${INTEGRATION_URL_FOR_SETUP} \
 						   -d '{
@@ -124,12 +126,13 @@ nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextclo
 if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
 	echo "${nextcloud_information_response}" | jq
 	log_error "Response does not contain nextcloud_client_id (nextcloud_client_id) or nextcloud_client_secret(nextcloud_client_secret)"
-	log_error "Integration failed :( !!"
+	log_error "Setup of the integration failed :( !!"
 	exit 1
 fi
 
-log_info "Setting up OpenProject for Nextcloud successful ..."
+log_info "success!"
 
+log_info "Setting up Nextcloud integration in OpenProject..."
 # api call to set the nextcloud_client_id and nextcloud_client_secret to OpenProject files storage
 set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                                   ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id}/oauth_client_credentials \
@@ -141,7 +144,6 @@ set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_
                                   "clientSecret": '${nextcloud_client_secret}'
                                   }')
 
-log_info "Setting up Nextcloud information on OpenProject successful ..."
 
 # if there is no error from the last api call then the integration can be declared successful
 
@@ -149,8 +151,9 @@ response_type=$(echo $set_nextcloud_to_storage_response | jq -r "._type")
 if [ ${nextcloud_client_id} == "Error" ]; then
 	error_message=$(echo $set_nextcloud_to_storage_response | jq -r ".message")
 	log_error "${error_message}"
-	log_error "Integration failed :( !!"
+	log_error "Setup of the integration failed :( !!"
 	exit 1
-else
-	log_success "Integration Successful :) !!"
 fi
+
+log_info "success!"
+log_success "Setup of the integration was successful :) !!"
