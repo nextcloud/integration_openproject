@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This bash script is to set up the whole `openproject_integration` app integration
-# To run this script the `nextcloud` and OpenProject instances must be running
+# To run this script the Nextcloud and OpenProject instances must be running
 
 # variables from environment
 # NEXTCLOUD_HOST=<nextcloud_host_url>
@@ -32,7 +32,7 @@ then
 	exit 1
 fi
 
-# These URLs are just to check if the nextcloud and OpenProject instances have been started or not before running the script
+# These URLs are just to check if the Nextcloud and OpenProject instances have been started or not before running the script
 NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
 NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
@@ -106,7 +106,7 @@ fi
 log_info "success!"
 
 log_info "Setting up OpenProject integration in Nextcloud..."
-# api call to set the  openproject_client_id and openproject_client_secret to nextcloud and also get nextcloud_client_id and nextcloud_client_secret
+# api call to set the  openproject_client_id and openproject_client_secret to Nextcloud and also get nextcloud_client_id and nextcloud_client_secret
 nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} ${INTEGRATION_URL_FOR_SETUP} \
 						   -d '{
 						   "values":{
