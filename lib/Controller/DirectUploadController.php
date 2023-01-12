@@ -43,6 +43,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use Sabre\DAV\Exception\Conflict;
 
 class DirectUploadController extends ApiController {
 	/**
@@ -149,11 +150,12 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
-			$acceptedOverwriteValues = ['true','True','false','False'];
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
+				$acceptedOverwriteValues = ['true','false'];
+				$overwrite = strtolower($overwrite);
 				if (in_array($overwrite, $acceptedOverwriteValues)) {
-					$overwrite = $overwrite === 'true' || $overwrite === 'True' ;
+					$overwrite = $overwrite === 'true';
 				} else {
 					throw new InvalidArgumentException('invalid overwrite value');
 				}
@@ -180,6 +182,9 @@ class DirectUploadController extends ApiController {
 				// @phpstan-ignore-next-line
 				if ($folderNode->nodeExists($fileName) && $overwrite) {
 					$file = $folderNode->get($fileName); // @phpstan-ignore-line
+					if ($file->getType() === FileInfo::TYPE_FOLDER) {
+						throw new Conflict('overwrite is not allowed on non-files');
+					}
 					if (!$file->isUpdateable()) {
 						throw new ForbiddenException('not enough permissions');
 					}
@@ -198,9 +203,7 @@ class DirectUploadController extends ApiController {
 				}
 				// @phpstan-ignore-next-line
 				elseif ($folderNode->nodeExists($fileName)) {
-					return new DataResponse([
-						'error' => 'conflict, file name already exists',
-					], Http::STATUS_CONFLICT);
+					throw new Conflict('conflict, file name already exists');
 				}
 
 				$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
@@ -223,6 +226,10 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage()
 			], Http::STATUS_FORBIDDEN);
+		} catch (Conflict $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+			], Http::STATUS_CONFLICT);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()

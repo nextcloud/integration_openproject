@@ -16,7 +16,7 @@ Feature: API endpoint for direct upload
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | "<valid-file-name>" |
-      | data      | some data   |
+      | data      | some data           |
     Then the HTTP status code should be "201"
     And the data of the response should match
     """"
@@ -62,9 +62,9 @@ Feature: API endpoint for direct upload
     }
     """
     Examples:
-      | file-name             |
-      | ""                    |
-      | "  "                  |
+      | file-name |
+      | ""        |
+      | "  "      |
 
 
   Scenario: send a token that doesn't exist to the direct-upload endpoint
@@ -458,3 +458,105 @@ Feature: API endpoint for direct upload
       | header                       | value                   |
       | Access-Control-Allow-Origin  | https://openproject.org |
       | Access-Control-Allow-Methods | POST                    |
+
+
+  Scenario Outline: set overwrite and send a new file
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt    |
+      | data      | new data    |
+      | overwrite | <overwrite> |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "new data"
+    Examples:
+      | overwrite |
+      | true      |
+      | false     |
+
+
+  Scenario: set overwrite to true and send a file with existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | true     |
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "not": {
+      "required": [
+          "file_name",
+          "file_id"
+        ]
+      },
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^overwrite is not allowed on non-files$"}
+      }
+    }
+    """
+
+
+  Scenario: set overwrite to false and send a file with existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | false    |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file \\(2\\)\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file (2).txt" for user "Alice" should be "new data"
+
+
+  Scenario: don't set override and send a file with existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^conflict, file name already exists$"}
+      }
+    }
+    """
