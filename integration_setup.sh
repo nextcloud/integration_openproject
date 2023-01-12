@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This bash script is to set up the whole `openproject_integration` app integration
-# To run this script the `nextcloud` and `openproject` instances must be running
+# To run this script the `nextcloud` and OpenProject instances must be running
 
 # variables from environment
 # NEXTCLOUD_HOST=<nextcloud_host_url>
@@ -10,7 +10,7 @@
 # OP_ADMIN_PASSWORD=<openproject_admin_password>
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
-# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth information in open project required for integration.
+# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth information in OpenProject required for integration.
 
 log_error() {
 	echo -e "\e[31m$1\e[0m"
@@ -32,7 +32,7 @@ then
 	exit 1
 fi
 
-# These URLs are just to check if the nextcloud and openproject instances have been started or not before running the script
+# These URLs are just to check if the nextcloud and OpenProject instances have been started or not before running the script
 NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
 NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
@@ -44,7 +44,7 @@ INTEGRATION_URL_FOR_SETUP=${NEXTCLOUD_HOST}/index.php/apps/integration_openproje
 # check if both instances are started or not
 if [[ ${OPENPROJECT_HOST_STATE} != "Configuration" ]]
 then
-	log_error "Open Project Host has not been started !!"
+	log_error "OpenProject Host has not been started !!"
 	exit 1
 fi
 if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]
@@ -78,15 +78,15 @@ if [[ ${response_type} == "Error" ]]; then
 	if [[ ${error_message} == "Multiple field constraints have been violated." ]]; then
 		violated_error_messages=$(echo $create_storage_response | jq -r "._embedded.errors[].message")
 		log_error "'${NEXTCLOUD_HOST}' ${violated_error_messages}"
-		log_info "Try deleting the file storage in openproject and integrate again !!"
+		log_info "Try deleting the file storage in OpenProject and integrate again !!"
 		exit 1
 	elif [[ ${error_message} == "You did not provide the correct credentials." ]]; then
-		log_error "Unauthorized !!! Try running Open Project with the environment variables below"
+		log_error "Unauthorized !!! Try running OpenProject with the environment variables below"
 		log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<global_admin_username>  OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<global_admin_password>  foreman start -f Procfile.dev"
 		exit 1
 	fi
-	log_error "Open Project storage name '${OPENPROJECT_STORAGE_NAME}' ${error_message}"
-	log_info "Try deleting the file storage in openproject and integrate again !!"
+	log_error "OpenProject storage name '${OPENPROJECT_STORAGE_NAME}' ${error_message}"
+	log_info "Try deleting the file storage in OpenProject and integrate again !!"
 	exit 1
 fi
 
@@ -128,9 +128,9 @@ if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ];
 	exit 1
 fi
 
-log_info "Setting up Open project for Nextcloud successful ..."
+log_info "Setting up OpenProject for Nextcloud successful ..."
 
-# api call to set the nextcloud_client_id and nextcloud_client_secret to openproject files storage
+# api call to set the nextcloud_client_id and nextcloud_client_secret to OpenProject files storage
 set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                                   ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id}/oauth_client_credentials \
                                   -H 'accept: application/hal+json' \
