@@ -191,7 +191,6 @@ class DirectUploadController extends ApiController {
 					// overwrite the file
 					$file->putContent(fopen($tmpPath, 'r'));
 					$fileId = $file->getId();
-					$this->databaseService->deleteToken($token);
 					return new DataResponse([
 						'file_name' => $fileName,
 						'file_id' => $fileId
@@ -205,10 +204,8 @@ class DirectUploadController extends ApiController {
 				elseif ($folderNode->nodeExists($fileName)) {
 					throw new Conflict('conflict, file name already exists');
 				}
-
 				$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
 				$fileId = $fileInfo->getId();
-				$this->databaseService->deleteToken($token);
 			}
 		} catch (NotPermittedException $e) {
 			return new DataResponse([
