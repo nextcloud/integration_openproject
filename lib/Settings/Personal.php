@@ -77,7 +77,7 @@ class Personal implements ISettings {
 			'oauth-connection-result', $oauthConnectionResult
 		);
 		$oauthConnectionErrorMessage = $this->config->getUserValue(
-			$this->userId, Application::APP_ID, 'oauth_connection_error_message'
+			$this->userId, Application::APP_ID, 'oauth_connection_error_message', ''
 		);
 		$this->config->deleteUserValue(
 			$this->userId, Application::APP_ID, 'oauth_connection_error_message'

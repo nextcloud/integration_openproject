@@ -688,7 +688,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath('/api/v3/users/userWithAvatar/avatar')
+			->setPath('/api/v3/users/openProjectUserWithAvatar/avatar')
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -703,10 +703,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'userWithAvatar');
+		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
 		$result = $service->getOpenProjectAvatar(
-			'userWithAvatar',
-			'Me'
+			'openProjectUserWithAvatar',
+			'Me',
+			'NCuser'
 		);
 		$this->assertArrayHasKey('avatar', $result);
 		$this->assertArrayHasKey('type', $result);
@@ -721,7 +722,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
-			->setPath('/api/v3/users/testUser/avatar')
+			->setPath('/api/v3/users/openProjectUser/avatar')
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -734,8 +735,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$result = $this->service->getOpenProjectAvatar(
-			'testUser',
-			'Me'
+			'openProjectUser',
+			'Me',
+			'testUser'
 		);
 		$this->assertArrayHasKey('avatar', $result);
 		//make sure its an image, if something else is returned it will throw an exception

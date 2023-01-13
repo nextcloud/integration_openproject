@@ -224,28 +224,35 @@ class OpenProjectAPIService {
 	/**
 	 * authenticated request to get an image from openproject
 	 *
-	 * @param string $userId
-	 * @param string $userName
+	 * @param string $openprojectUserId
+	 * @param string $openprojectUserName
+	 * @param string $nextcloudUserId
 	 * @return array{avatar: string, type?: string}
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
 	 */
-	public function getOpenProjectAvatar(string $userId, string $userName): array {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+	public function getOpenProjectAvatar(
+		string $openprojectUserId,
+		string $openprojectUserName,
+		string $nextcloudUserId
+	): array {
+		$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
 		$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		try {
-			$response = $this->rawRequest($accessToken, $openprojectUrl, 'users/'.$userId.'/avatar');
+			$response = $this->rawRequest(
+				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar'
+			);
 			$headers = $response->getHeaders();
 			return [
 				'avatar' => $response->getBody(),
 				'type' => implode(',', $headers['Content-Type']),
 			];
 		} catch (ServerException | ClientException | ConnectException | Exception $e) {
-			$this->logger->debug('Error while getting OpenProject avatar for user ' . $userId . ': ' . $e->getMessage(), ['app' => $this->appName]);
-			$avatar = $this->avatarManager->getGuestAvatar($userName);
+			$this->logger->debug('Error while getting OpenProject avatar for user ' . $openprojectUserId . ': ' . $e->getMessage(), ['app' => $this->appName]);
+			$avatar = $this->avatarManager->getGuestAvatar($openprojectUserName);
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];
 		}
