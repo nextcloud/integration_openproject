@@ -28,7 +28,6 @@ use OC\User\NoUserException;
 use InvalidArgumentException;
 use OC\ForbiddenException;
 use \OCP\AppFramework\ApiController;
-use OCA\OpenProject\Service\DatabaseService;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
@@ -57,11 +56,6 @@ class DirectUploadController extends ApiController {
 	private DirectUploadService $directUploadService;
 
 	/**
-	 * @var DatabaseService
-	 */
-	private DatabaseService $databaseService;
-
-	/**
 	 * @var IUser|null
 	 */
 	private ?IUser $user;
@@ -84,7 +78,6 @@ class DirectUploadController extends ApiController {
 		IUserSession $userSession,
 		IUserManager $userManager,
 		DirectUploadService $directUploadService,
-		DatabaseService $databaseService,
 		?string $userId
 	) {
 		parent::__construct($appName, $request, 'POST');
@@ -93,7 +86,6 @@ class DirectUploadController extends ApiController {
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->userManager = $userManager;
-		$this->databaseService = $databaseService;
 	}
 
 	/**
