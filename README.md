@@ -134,6 +134,7 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
        "expires_on": <some_timestamp>
    }
    ```
+   > Note: The token is one-time only.
 
 2. **Direct upload**:
    Send multipart form data POST request to `direct-upload` end-point to upload the file with `token` acquired from preparation endpoint. The API takes and optional parameter `overwrite`.
