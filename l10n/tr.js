@@ -90,6 +90,8 @@ OC.L10N.register(
     "assignee" : "atanan",
     "accountable" : "sorumlu",
     "watcher" : "izleyen",
+    "commented" : "yorum yapmış",
+    "mentioned" : "anmış",
     "Notifications associated with Work package marked as read" : "Okunmuş olarak işaretlenmiş İş paketi ile ilişkili bildirimler",
     "Failed to mark notifications as read" : "Bildirimler okunmuş olarak işaretlenemedi",
     "Existing relations:" : "Var olan ilişkiler:",
@@ -108,8 +110,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
     "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
-    "Invalid key" : "Anahtar geçersiz",
-    "commented" : "yorum yapmış",
-    "mentioned" : "anmış"
+    "Invalid key" : "Anahtar geçersiz"
 },
 "nplurals=2; plural=(n > 1);");

@@ -17,9 +17,9 @@ OC.L10N.register(
     "Details" : "Λεπτομέρειες",
     "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
     "Mark as read" : "Σήμανση ως αναγνωσμένο",
-    "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
-    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
     "commented" : "σχολίασε",
-    "mentioned" : "ανέφερε"
+    "mentioned" : "ανέφερε",
+    "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
+    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"
 },
 "nplurals=2; plural=(n != 1);");
