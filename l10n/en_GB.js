@@ -90,6 +90,8 @@ OC.L10N.register(
     "assignee" : "assignee",
     "accountable" : "accountable",
     "watcher" : "watcher",
+    "commented" : "commented",
+    "mentioned" : "mentioned",
     "Notifications associated with Work package marked as read" : "Notifications associated with Work package marked as read",
     "Failed to mark notifications as read" : "Failed to mark notifications as read",
     "Existing relations:" : "Existing relations:",
@@ -108,8 +110,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
-    "Invalid key" : "Invalid key",
-    "commented" : "commented",
-    "mentioned" : "mentioned"
+    "Invalid key" : "Invalid key"
 },
 "nplurals=2; plural=(n != 1);");
