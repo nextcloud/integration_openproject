@@ -88,6 +88,8 @@
     "assignee" : "zugewiesen",
     "accountable" : "verantwortlich",
     "watcher" : "Beobachter",
+    "commented" : "kommentiert",
+    "mentioned" : "erwähnt",
     "Notifications associated with Work package marked as read" : "Benachrichtigungen im Zusammenhang mit dem als gelesen markierten Arbeitspaket",
     "Failed to mark notifications as read" : "Benachrichtigungen konnten nicht als gelesen markiert werden",
     "Existing relations:" : "Bestehende Verbindungen:",
@@ -106,8 +108,6 @@
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Gib eine URL im Format „https://openproject.org“ an.",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
     "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
-    "Invalid key" : "Ungültiger Schlüssel",
-    "commented" : "kommentiert",
-    "mentioned" : "erwähnt"
+    "Invalid key" : "Ungültiger Schlüssel"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

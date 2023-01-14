@@ -90,6 +90,8 @@ OC.L10N.register(
     "assignee" : "受讓人",
     "accountable" : "應負責任的",
     "watcher" : "觀眾",
+    "commented" : "已留言",
+    "mentioned" : "已提及",
     "Notifications associated with Work package marked as read" : "與標記為已讀的 Work 工作包關聯的通知",
     "Failed to mark notifications as read" : "無法將通知標記為已讀",
     "Existing relations:" : "現有關係：",
@@ -108,8 +110,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
-    "Invalid key" : "無效的密鑰",
-    "commented" : "已留言",
-    "mentioned" : "已提及"
+    "Invalid key" : "無效的密鑰"
 },
 "nplurals=1; plural=0;");
