@@ -13,8 +13,8 @@ OC.L10N.register(
     "Copied!" : "S-a copiat!",
     "Details" : "Detalii",
     "Mark as read" : "Marchează ca citit",
-    "Connected accounts" : "Conturile conectate",
     "commented" : "comentat",
-    "mentioned" : "menționat"
+    "mentioned" : "menționat",
+    "Connected accounts" : "Conturile conectate"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

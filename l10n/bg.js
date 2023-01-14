@@ -90,6 +90,8 @@ OC.L10N.register(
     "assignee" : "получател",
     "accountable" : "oтговорник",
     "watcher" : "наблюдател",
+    "commented" : "коментира/но/",
+    "mentioned" : "споменато",
     "Notifications associated with Work package marked as read" : "Известия, свързани с Работен пакет са маркирани, като прочетени",
     "Failed to mark notifications as read" : "Неуспешно отбелязване на известия като прочетени",
     "Existing relations:" : "Съществуващи отношения/връзки/:",
@@ -108,8 +110,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
-    "Invalid key" : "Невалиден ключ",
-    "commented" : "коментира/но/",
-    "mentioned" : "споменато"
+    "Invalid key" : "Невалиден ключ"
 },
 "nplurals=2; plural=(n != 1);");

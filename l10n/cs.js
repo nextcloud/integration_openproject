@@ -90,6 +90,8 @@ OC.L10N.register(
     "assignee" : "řešitel",
     "accountable" : "odpovědnost",
     "watcher" : "sledující",
+    "commented" : "okomentováno",
+    "mentioned" : "zmíněno",
     "Notifications associated with Work package marked as read" : "Upozornění související s balíčkem práce označeny jako přečtené",
     "Failed to mark notifications as read" : "Nepodařilo se označit upozornění jako přečtená",
     "Existing relations:" : "Existující souvislosti:",
