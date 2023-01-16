@@ -45,8 +45,8 @@ class Version2300Date20221219170111 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('directUpload')) {
-			$table = $schema->createTable('directUpload');
+		if (!$schema->hasTable('direct_upload')) {
+			$table = $schema->createTable('direct_upload');
 			$table->addColumn('id', 'integer', [
 				'autoincrement' => true,
 				'notnull' => true,
