@@ -488,7 +488,7 @@ Feature: API endpoint for direct upload
       | false     |
 
 
-  Scenario: set overwrite to true and send a file with existing folder name
+  Scenario: set overwrite to true and send a file with an existing folder name
     Given user "Alice" has created folder "file.txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
@@ -516,7 +516,7 @@ Feature: API endpoint for direct upload
     """
 
 
-  Scenario: set overwrite to false and send a file with existing folder name
+  Scenario: set overwrite to false and send a file with an existing folder name
     Given user "Alice" has created folder "file.txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
@@ -541,7 +541,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file (2).txt" for user "Alice" should be "new data"
 
 
-  Scenario: don't set override and send a file with existing folder name
+  Scenario: don't set overwrite and send a file with an existing folder name
     Given user "Alice" has created folder "file.txt"
     And user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
