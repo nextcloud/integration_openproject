@@ -169,12 +169,12 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
 	          "file_id": <file_id>
 	      }  
 	      ```
-      2. **overwrite set to true**:
-         If the parameter is set to `true` and a file with the name already exists, the existing file will be overwritten.
 
-		   ```console
-		   curl -X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
-		   --form 'file=@"<path-of-file>"' --form 'overwrite="true"' -H'Content-Type: multipart/form-data'
+      2. **overwrite set to true**: 
+         If the parameter is set to `true` and a file with the name already exists, the existing file will be overwritten.
+	      ```console
+         curl -X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
+         --form 'file=@"<path-of-file>"' --form 'overwrite="true"' -H'Content-Type: multipart/form-data' 
 		   ```
 
 	      The response from the above curl request will be
