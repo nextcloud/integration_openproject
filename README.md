@@ -157,33 +157,33 @@ There's an end-point `direct-upload` available which can be used for direct-uplo
       The overwrite parameter can be either set to `true` or `false`.
       1. **overwrite set to false**: 
          If the parameter is set to `false` and a file with the name already exists, a new file will be uploaded with existing name having a number suffix.
-	      ```console
+          ```console
          curl -X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
          --form 'file=@"<path-of-file>"' --form 'overwrite="false"' -H'Content-Type: multipart/form-data' 
-		   ```
+           ```
 
-	      The response from the above curl request will be
-	      ```json
-	      {
-	          "file_name": "<file_name>(some-number)",
-	          "file_id": <file_id>
-	      }  
-	      ```
+          The response from the above curl request will be
+          ```json
+          {
+              "file_name": "<file_name>(some-number)",
+              "file_id": <file_id>
+          }
+          ```
 
       2. **overwrite set to true**: 
          If the parameter is set to `true` and a file with the name already exists, the existing file will be overwritten.
-	      ```console
+          ```console
          curl -X POST 'http://<nextcloud_host>/index.php/apps/integration_openproject/direct-upload/<token>' \
          --form 'file=@"<path-of-file>"' --form 'overwrite="true"' -H'Content-Type: multipart/form-data' 
-		   ```
+           ```
 
-	      The response from the above curl request will be
-	      ```json
-	      {
-	          "file_name": "<file_name>",
-	          "file_id": <file_id>
-	      }  
-	      ```
+          The response from the above curl request will be
+          ```json
+          {
+              "file_name": "<file_name>",
+              "file_id": <file_id>
+          }
+          ```
 
 ## Development
 
