@@ -93,7 +93,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('integration_openproject/**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Read package.json node and npm engines version
