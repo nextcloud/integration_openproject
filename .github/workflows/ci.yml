@@ -45,7 +45,7 @@ jobs:
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
-          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+          - /home/runner/work/integration_openproject:/var/www/html/apps-shared
 
     steps:
       - name: Cancel previous runs
