@@ -43,7 +43,6 @@ jobs:
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
-          VIRTUAL_HOST: "nextcloud"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
