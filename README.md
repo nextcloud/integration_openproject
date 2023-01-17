@@ -410,6 +410,7 @@ npm run watch
    2. Protect that new branch the same way as `master`
    3. On the release branch update the version in `appinfo/info.xml`
    4. Do QA and fixes of bugs in the release branch
+   5. Merge the release branch into the `master` branch, to get all good changes also into the current development
 
 ##### b. In case of a patch version
 
