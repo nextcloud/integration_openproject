@@ -47,8 +47,6 @@ jobs:
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
-        options:
-          "--name nextcloud"
 
     steps:
       - name: Cancel previous runs
@@ -99,7 +97,6 @@ jobs:
         run: |
           php -v
           php -m
-          docker ps -a
           composer install --no-progress --prefer-dist --optimize-autoloader
           apt-get -y install git
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
