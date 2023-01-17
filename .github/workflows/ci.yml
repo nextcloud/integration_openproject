@@ -42,7 +42,7 @@ jobs:
         env:
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity, integration_openproject"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           VIRTUAL_HOST: "nextcloud"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
