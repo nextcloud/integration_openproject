@@ -45,6 +45,7 @@ jobs:
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+          VIRTUAL_HOST: "nextcloud"
         volumes:
           - /home/runner/work/integration_openproject:/var/www/html/apps-shared
 
