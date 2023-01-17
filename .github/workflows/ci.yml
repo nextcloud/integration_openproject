@@ -65,6 +65,7 @@ jobs:
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer, phpunit
+          extensions: gd
           coverage: xdebug
 
       - name: Get composer cache directory
