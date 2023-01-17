@@ -12,15 +12,37 @@ jobs:
     strategy:
       matrix:
         nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
-        phpVersion: [ 7.4, 8.0, 8.1 ]
+        phpVersionMajor: [ 7, 8 ]
+        phpVersionMinor: [ 4, 0, 1 ]
         exclude:
           - nextcloudVersion: stable22
-            phpVersion: 8.1
+            phpVersionMajor: 8
+            phpVersionMinor: 1
           - nextcloudVersion: stable23
-            phpVersion: 8.1
+            phpVersionMajor: 8
+            phpVersionMinor: 1
           - nextcloudVersion: stable24
-            phpVersion: 8.1
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+          - phpVersionMajor: 7
+            phpVersionMinor: 0
+          - phpVersionMajor: 7
+            phpVersionMinor: 1
+          - phpVersionMajor: 8
+            phpVersionMinor: 4
     runs-on: ubuntu-latest
+    container: ubuntu:latest
+    services:
+      nextcloud:
+        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ matrix.phpVersionMajor }}{{ matrix.phpVersionMinor }}:latest
+        env:
+          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+          NEXTCLOUD_AUTOINSTALL: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity"
+          VIRTUAL_HOST: "nextcloud"
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+        volumes:
+          - /__w/integration_openproject/integration_openproject:/var/www/html/apps-shared
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -31,10 +53,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup PHP ${{ matrix.phpVersion }}
+      - name: Setup PHP ${{ matrix.phpVersionMajor }}.{{ matrix.phpVersionMinor }}
         uses: shivammathur/setup-php@2.23.0
         with:
-          php-version: ${{ matrix.phpVersion }}
+          php-version: ${{ matrix.phpVersionMajor }}.{{ matrix.phpVersionMinor }}
           tools: composer, phpunit
           coverage: xdebug
 
@@ -94,20 +116,12 @@ jobs:
 
       - name: API Tests
         env:
-          NEXTCLOUD_BASE_URL: http://localhost:8080
+          NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
-          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cd server
-          ./occ a:e activity
-          ./occ a:e integration_openproject
-          php -S localhost:8080 2> /dev/null &
-          cd apps/integration_openproject
           make api-test
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersionMajor == '7' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -116,7 +130,7 @@ jobs:
           title: "JS Code Coverage"
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersionMajor == '7' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.0.3
         with:
           reports: './coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -135,7 +149,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersionMajor == '7' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -144,14 +158,14 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersionMajor == '7' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '59'
           path: './coverage/jest/lcov.info'
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersionMajor == '7' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '57'
