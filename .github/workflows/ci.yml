@@ -65,7 +65,7 @@ jobs:
           all_but_latest: true
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout
+      - name: Checkout integration app
         uses: actions/checkout@v2
         with:
           path: integration_openproject
@@ -75,6 +75,14 @@ jobs:
         with:
           repository: nextcloud/activity
           path: activity
+          ref: ${{ matrix.nextcloudVersion }}
+
+      - name: Checkout NC server
+        uses: actions/checkout@v2
+        with:
+          repository: nextcloud/server
+          path: server
+          submodules: recursive
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
@@ -116,12 +124,7 @@ jobs:
 
       - name: Install PHP Dependencies
         run: |
-          php -v
-          php -m
           composer install --no-progress --prefer-dist --optimize-autoloader
-          apt-get -y install git
-          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
-          cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
       - name: PHP stan
