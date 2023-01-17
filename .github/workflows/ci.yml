@@ -16,6 +16,10 @@ jobs:
         phpVersionMinor: [ 4, 0, 1 ]
         exclude:
           - nextcloudVersion: stable22
+          - nextcloudVersion: stable23
+          - nextcloudVersion: stable24
+          - nextcloudVersion: master
+          - nextcloudVersion: stable22
             phpVersionMajor: 8
             phpVersionMinor: 1
           - nextcloudVersion: stable23
@@ -38,11 +42,12 @@ jobs:
         env:
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity, integration_openproject"
           VIRTUAL_HOST: "nextcloud"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
-          - /__w/integration_openproject/integration_openproject:/var/www/html/apps-shared
+          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -113,6 +118,9 @@ jobs:
         run: |
           make phpunit
           make jsunit
+
+      - name: wait for Nextcloud be installed
+        run: until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
 
       - name: API Tests
         env:
