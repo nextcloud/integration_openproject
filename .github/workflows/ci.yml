@@ -40,12 +40,18 @@ jobs:
       nextcloud:
         image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
         env:
+          SQL: pgsql
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
         volumes:
           - /home/runner/work/integration_openproject:/var/www/html/apps-shared
+
+      database-postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres
 
     steps:
       - name: Cancel previous runs
