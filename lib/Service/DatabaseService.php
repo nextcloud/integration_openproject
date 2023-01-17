@@ -35,7 +35,7 @@ class DatabaseService {
 
 
 	/** @var string table name */
-	private string $table = 'directUpload';
+	private string $table = 'direct_upload';
 
 
 	public function __construct(

@@ -32,7 +32,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version2300Date20221219170111 extends SimpleMigrationStep {
+class Version2310Date20230116153411 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -45,8 +45,14 @@ class Version2300Date20221219170111 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('directUpload')) {
-			$table = $schema->createTable('directUpload');
+		// in case the previous migration created this table we drop them
+		if ($schema->hasTable('directUpload')) {
+			$schema->dropTable('directUpload');
+		} elseif ($schema->hasTable('directupload')) {
+			$schema->dropTable('directupload');
+		}
+		if (!$schema->hasTable('direct_upload')) {
+			$table = $schema->createTable('direct_upload');
 			$table->addColumn('id', 'integer', [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -73,7 +79,7 @@ class Version2300Date20221219170111 extends SimpleMigrationStep {
 			]);
 
 			$table->setPrimaryKey(['id']);
-			$table->addIndex(['token'], 'directUpload_token_index');
+			$table->addIndex(['token'], 'direct_upload_token_index');
 		}
 		return $schema;
 	}
