@@ -63,14 +63,12 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          path: integration_openproject
 
       - name: Checkout activity app
         uses: actions/checkout@v2
         with:
           repository: nextcloud/activity
-          path: activity
+          path: ../activity
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
