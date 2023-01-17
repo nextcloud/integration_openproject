@@ -50,6 +50,7 @@ jobs:
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "postgres"
+          WITH_REDIS: "YES"
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
@@ -57,6 +58,9 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_PASSWORD: postgres
+
+      redis:
+        image: redis:7
 
     steps:
       - name: Cancel previous runs
