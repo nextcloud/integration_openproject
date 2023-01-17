@@ -25,8 +25,9 @@
 namespace OCA\OpenProject\Controller;
 
 use OC\User\NoUserException;
+use InvalidArgumentException;
+use OC\ForbiddenException;
 use \OCP\AppFramework\ApiController;
-use OCA\OpenProject\Service\DatabaseService;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
@@ -41,6 +42,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Files\FileInfo;
+use Sabre\DAV\Exception\Conflict;
 
 class DirectUploadController extends ApiController {
 	/**
@@ -52,11 +54,6 @@ class DirectUploadController extends ApiController {
 	 * @var DirectUploadService
 	 */
 	private DirectUploadService $directUploadService;
-
-	/**
-	 * @var DatabaseService
-	 */
-	private DatabaseService $databaseService;
 
 	/**
 	 * @var IUser|null
@@ -81,7 +78,6 @@ class DirectUploadController extends ApiController {
 		IUserSession $userSession,
 		IUserManager $userManager,
 		DirectUploadService $directUploadService,
-		DatabaseService $databaseService,
 		?string $userId
 	) {
 		parent::__construct($appName, $request, 'POST');
@@ -90,7 +86,6 @@ class DirectUploadController extends ApiController {
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->userManager = $userManager;
-		$this->databaseService = $databaseService;
 	}
 
 	/**
@@ -147,6 +142,18 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			$overwrite = $this->request->getParam('overwrite');
+			if (isset($overwrite)) {
+				$acceptedOverwriteValues = ['true','false'];
+				$overwrite = strtolower($overwrite);
+				if (in_array($overwrite, $acceptedOverwriteValues)) {
+					$overwrite = $overwrite === 'true';
+				} else {
+					throw new InvalidArgumentException('invalid overwrite value');
+				}
+			} else {
+				$overwrite = null;
+			}
 			$fileName = trim($directUploadFile['name']);
 			$tmpPath = $directUploadFile['tmp_name'];
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
@@ -165,14 +172,32 @@ class DirectUploadController extends ApiController {
 				$folderNode->isCreatable()
 			) {
 				// @phpstan-ignore-next-line
-				if ($folderNode->nodeExists($fileName)) {
+				if ($folderNode->nodeExists($fileName) && $overwrite) {
+					$file = $folderNode->get($fileName); // @phpstan-ignore-line
+					if ($file->getType() === FileInfo::TYPE_FOLDER) {
+						throw new Conflict('overwrite is not allowed on non-files');
+					}
+					if (!$file->isUpdateable()) {
+						throw new ForbiddenException('not enough permissions');
+					}
+					// overwrite the file
+					$file->putContent(fopen($tmpPath, 'r'));
+					$fileId = $file->getId();
 					return new DataResponse([
-						'error' => 'conflict, file name already exists',
-					], Http::STATUS_CONFLICT);
+						'file_name' => $fileName,
+						'file_id' => $fileId
+					], Http::STATUS_OK);
+				} // @phpstan-ignore-next-line
+				elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
+					// get unique name for duplicate file with number suffix
+					$fileName = $folderNode->getNonExistingName($fileName); // @phpstan-ignore-line
 				}
-				$test = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
-				$fileId = $test->getId();
-				$this->databaseService->deleteToken($token);
+				// @phpstan-ignore-next-line
+				elseif ($folderNode->nodeExists($fileName)) {
+					throw new Conflict('conflict, file name already exists');
+				}
+				$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+				$fileId = $fileInfo->getId();
 			}
 		} catch (NotPermittedException $e) {
 			return new DataResponse([
@@ -182,10 +207,18 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage()
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidPathException $e) {
+		} catch (InvalidPathException | InvalidArgumentException $e) {
 			return new DataResponse([
-				'error' => 'invalid file name'
+				'error' => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
+		} catch (ForbiddenException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_FORBIDDEN);
+		} catch (Conflict $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+			], Http::STATUS_CONFLICT);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
@@ -204,18 +237,18 @@ class DirectUploadController extends ApiController {
 	 */
 	private function scanForInvalidCharacters(string $fileName, string $invalidChars):void {
 		if (empty($fileName)) {
-			throw new InvalidCharacterInPathException();
+			throw new InvalidCharacterInPathException('invalid file name');
 		}
 
 		foreach (str_split($invalidChars) as $char) {
 			if (strpos($fileName, $char) !== false) {
-				throw new InvalidCharacterInPathException();
+				throw new InvalidCharacterInPathException('invalid file name');
 			}
 		}
 
 		$sanitizedFileName = filter_var($fileName, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
 		if ($sanitizedFileName !== $fileName) {
-			throw new InvalidCharacterInPathException();
+			throw new InvalidCharacterInPathException('invalid file name');
 		}
 	}
 }

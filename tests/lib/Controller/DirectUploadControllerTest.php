@@ -26,7 +26,6 @@ namespace OCA\OpenProject\Controller;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use OCA\OpenProject\Service\DatabaseService;
 use function PHPUnit\Framework\assertSame;
 
 class DirectUploadControllerTest extends TestCase {
@@ -149,7 +148,6 @@ class DirectUploadControllerTest extends TestCase {
 			$userSessionMock,
 			$userManagerMock,
 			$directUploadServiceMock,
-			$this->createMock(DatabaseService::class),
 			'testUser',
 		);
 	}

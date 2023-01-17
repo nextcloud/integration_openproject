@@ -94,6 +94,7 @@ class DatabaseService {
 		}
 		$req->closeCursor();
 		$query->resetQueryParts();
+		$this->deleteToken($token);
 		return [
 			'user_id' => $userId,
 			'expires_on' => $expiresOn,

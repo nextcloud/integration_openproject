@@ -16,7 +16,7 @@ Feature: API endpoint for direct upload
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | "<valid-file-name>" |
-      | data      | some data   |
+      | data      | some data           |
     Then the HTTP status code should be "201"
     And the data of the response should match
     """"
@@ -62,9 +62,9 @@ Feature: API endpoint for direct upload
     }
     """
     Examples:
-      | file-name             |
-      | ""                    |
-      | "  "                  |
+      | file-name |
+      | ""        |
+      | "  "      |
 
 
   Scenario: send a token that doesn't exist to the direct-upload endpoint
@@ -277,7 +277,7 @@ Feature: API endpoint for direct upload
     }
     """
 
-  @skip
+
   Scenario: set overwrite to false and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -285,7 +285,7 @@ Feature: API endpoint for direct upload
       | file_name | file.txt |
       | data      | new data |
       | overwrite | false    |
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
@@ -303,7 +303,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
     And the content of file at "/file (2).txt" for user "Alice" should be "new data"
 
-  @skip
+
   Scenario: set overwrite to false and send file with an existing filename, also files with that name and suffixed numbers also exist
     Given user "Alice" has uploaded file with content "data 1" to "/file.txt"
     And user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
@@ -313,7 +313,7 @@ Feature: API endpoint for direct upload
       | file_name | file.txt |
       | data      | new data |
       | overwrite | false    |
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
@@ -333,7 +333,7 @@ Feature: API endpoint for direct upload
     And the content of file at "/file (3).txt" for user "Alice" should be "data 3"
     And the content of file at "/file (4).txt" for user "Alice" should be "new data"
 
-  @skip
+
   Scenario: set overwrite to false and send file with an existing filename (filename has already a number in brackets)
     Given user "Alice" has uploaded file with content "original data" to "/file (2).txt"
     And user "Alice" got a direct-upload token for "/"
@@ -341,7 +341,7 @@ Feature: API endpoint for direct upload
       | file_name | file (2).txt |
       | data      | new data     |
       | overwrite | false        |
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "201"
     And the data of the response should match
     """"
     {
@@ -351,15 +351,15 @@ Feature: API endpoint for direct upload
         "file_id"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^file \\(2\\)\\(2\\)\\.txt$"},
+          "file_name": {"type": "string", "pattern": "^file \\(3\\)\\.txt$"},
           "file_id": {"type" : "integer"}
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
-    And the content of file at "/file (2)(2).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2).txt" for user "Alice" should be "original data"
+    And the content of file at "/file (3).txt" for user "Alice" should be "new data"
 
-  @skip
+
   Scenario: set overwrite to true and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -384,7 +384,7 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "/file.txt" for user "Alice" should be "new data"
 
-  @skip
+
   Scenario: set overwrite to true and send file with an existing filename, but no permissions to overwrite
     Given user "Brian" has been created
     And user "Brian" has uploaded file with content "original data" to "/file.txt"
@@ -410,7 +410,6 @@ Feature: API endpoint for direct upload
     And the content of file at "/file.txt" for user "Alice" should be "original data"
 
 
-  @skip
   Scenario Outline: set overwrite to an invalid value
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"
     And user "Alice" got a direct-upload token for "/"
@@ -427,8 +426,8 @@ Feature: API endpoint for direct upload
       "required": [
           "file_name",
           "file_id"
-        ],
-      }
+        ]
+      },
     "required": [
         "error"
       ],
@@ -446,6 +445,7 @@ Feature: API endpoint for direct upload
       |           |
       | rubbish   |
 
+
   Scenario: CORS preflight request
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends an OPTIONS request to the "direct-upload/%last-created-direct-upload-token%" endpoint with these headers:
@@ -458,3 +458,105 @@ Feature: API endpoint for direct upload
       | header                       | value                   |
       | Access-Control-Allow-Origin  | https://openproject.org |
       | Access-Control-Allow-Methods | POST                    |
+
+
+  Scenario Outline: set overwrite and send a new file
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt    |
+      | data      | new data    |
+      | overwrite | <overwrite> |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "new data"
+    Examples:
+      | overwrite |
+      | true      |
+      | false     |
+
+
+  Scenario: set overwrite to true and send a file with an existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | true     |
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "not": {
+      "required": [
+          "file_name",
+          "file_id"
+        ]
+      },
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^overwrite is not allowed on non-files$"}
+      }
+    }
+    """
+
+
+  Scenario: set overwrite to false and send a file with an existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | false    |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file \\(2\\)\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file (2).txt" for user "Alice" should be "new data"
+
+
+  Scenario: don't set overwrite and send a file with an existing folder name
+    Given user "Alice" has created folder "file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^conflict, file name already exists$"}
+      }
+    }
+    """
