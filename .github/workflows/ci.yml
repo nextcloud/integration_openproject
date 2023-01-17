@@ -36,6 +36,10 @@ jobs:
             phpVersionMinor: 4
     runs-on: ubuntu-latest
     container: ubuntu:latest
+    defaults:
+      run:
+        working-directory: integration_openproject
+
     services:
       nextcloud:
         image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
@@ -47,7 +51,7 @@ jobs:
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "postgres"
         volumes:
-          - /home/runner/work/integration_openproject:/var/www/html/apps-shared
+          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
       database-postgres:
         image: postgres:latest
