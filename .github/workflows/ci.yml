@@ -95,6 +95,7 @@ jobs:
       - name: Install PHP Dependencies
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
+          apt-get install git
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
