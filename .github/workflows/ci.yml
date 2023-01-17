@@ -34,7 +34,7 @@ jobs:
     container: ubuntu:latest
     services:
       nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ matrix.phpVersionMajor }}{{ matrix.phpVersionMinor }}:latest
+        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
         env:
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
@@ -53,10 +53,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup PHP ${{ matrix.phpVersionMajor }}.{{ matrix.phpVersionMinor }}
+      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@2.23.0
         with:
-          php-version: ${{ matrix.phpVersionMajor }}.{{ matrix.phpVersionMinor }}
+          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer, phpunit
           coverage: xdebug
 
