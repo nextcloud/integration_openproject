@@ -102,7 +102,7 @@ jobs:
         with:
           fallbackNode: '^14'
           fallbackNpm: '^7'
-          path: integration_openproject/package.json
+          path: integration_openproject
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
         uses: actions/setup-node@v2
