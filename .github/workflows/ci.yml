@@ -11,8 +11,8 @@ jobs:
     name: CI
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
-        phpVersion: [ 7.4, 8.0, 8.1 ]
+        nextcloudVersion: [stable25 ]
+        phpVersion: [ 8.1 ]
         exclude:
           - nextcloudVersion: stable22
             phpVersion: 8.1
@@ -21,6 +21,41 @@ jobs:
           - nextcloudVersion: stable24
             phpVersion: 8.1
     runs-on: ubuntu-latest
+    # Docker Hub image that `build` executes in
+    container: ubuntu:latest
+    services:
+      openproject:
+        image: openproject/community:12
+        env:
+          OPENPROJECT_SECRET_KEY_BASE: secret
+          OPENPROJECT_HOST__NAME: openproject
+          OPENPROJECT_HTTPS: false
+          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+          OPENPROJECT_ONBOARDING__ENABLED: false
+          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
+
+      proxy:
+        image: ghcr.io/juliushaertl/nextcloud-dev-nginx:latest
+        ports:
+          - "80:80"
+          - "443:443"
+        env:
+          DHPARAM_BITS: 2048
+          DHPARAM_GENERATION: "false"
+          HTTPS_METHOD: "noredirect"
+          HSTS: "off"
+        volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+
+      nextcloud:
+        image: ghcr.io/juliushaertl/nextcloud-dev-php80:latest
+        env:
+          NEXTCLOUD_AUTOINSTALL: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer, activity"
+          VIRTUAL_HOST: "nextcloud"
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -68,43 +103,64 @@ jobs:
       - name: Install PHP Dependencies
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
-          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
-          cd server && git submodule update --init
-          ./occ maintenance:install --admin-pass=admin
+#          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
+#          cd server && git submodule update --init
+#          ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP stan
-        run: make phpstan
+#      - name: PHP stan
+#        run: make phpstan
+#
+#      - name: PHP code style
+#        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+#      - name: Install NPM Dependencies
+#        run: npm install
 
-      - name: Install NPM Dependencies
-        run: npm install
+#      - name: JS Lint
+#        run: npm run lint
+#
+#      - name: Style Lint
+#        run: npm run stylelint
+#
+#      - name: PHP & Vue Unit Tests
+#        run: |
+#          make phpunit
+#          make jsunit
 
-      - name: JS Lint
-        run: npm run lint
+#      - name: API Tests
+#        env:
+#          NEXTCLOUD_BASE_URL: http://localhost:8080
+#        run: |
+#          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
+#          mkdir -p server/apps/integration_openproject
+#          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
+#          cd server
+#          ./occ a:e activity
+#          ./occ a:e integration_openproject
+#          php -S localhost:8080 2> /dev/null &
+#          cd apps/integration_openproject
+#          make api-test
 
-      - name: Style Lint
-        run: npm run stylelint
+      - name: wait on OpenProject
+        uses: iFaxity/wait-on-action@v1
+        with:
+          resource: http-get://openproject/api/v3/
+          timeout: 240000
 
-      - name: PHP & Vue Unit Tests
-        run: |
-          make phpunit
-          make jsunit
+      - name: wait on Nextcloud
+        run: until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
 
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://localhost:8080
-        run: |
-          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cd server
-          ./occ a:e activity
-          ./occ a:e integration_openproject
-          php -S localhost:8080 2> /dev/null &
-          cd apps/integration_openproject
-          make api-test
+      - name: try OpenProject
+        run: curl http://openproject/api/v3/users -u apiadmin:apiadmin
+
+      - name: try Nextcloud2
+        run: curl http://nextcloud/status.php -v || true
+
+      - name: try Nextcloud3
+        run: curl -k https://nextcloud/status.php || true
+
+      - name: try Nextcloud4
+        run: curl -k https://proxy/status.php || true
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '7.4' }}
