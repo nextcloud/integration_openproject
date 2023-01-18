@@ -148,13 +148,11 @@ jobs:
           make phpunit
           make jsunit
 
-      - name: wait for Nextcloud be installed
-        run: until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
-
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
+          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
 
       - name: JS Code Coverage Summary Report
