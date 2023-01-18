@@ -87,7 +87,7 @@ OC.L10N.register(
     "No OpenProject notifications!" : "Keine OpenProject-Benachrichtigungen!",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
     "Date alert" : "Datums-Erinnerung",
-    "assignee" : "zugewiesen",
+    "assignee" : "Zugewiesene",
     "accountable" : "verantwortlich",
     "watcher" : "Beobachter",
     "commented" : "kommentiert",
