@@ -178,12 +178,12 @@ jobs:
       nextcloud:
         image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
         env:
-          SQL: pgsql
+          SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "postgres"
+          VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
@@ -192,6 +192,15 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nextcloud
+
+      database-mysql:
+        image: mariadb:10.5
+        env:
+          MYSQL_ROOT_PASSWORD: 'nextcloud'
+          MYSQL_PASSWORD: 'nextcloud'
+          MYSQL_USER: 'nextcloud'
+          MYSQL_DATABASE: 'nextcloud'
 
       redis:
         image: redis:7
