@@ -16,10 +16,6 @@ jobs:
         phpVersionMinor: [ 4, 0, 1 ]
         exclude:
           - nextcloudVersion: stable22
-          - nextcloudVersion: stable23
-          - nextcloudVersion: stable24
-          - nextcloudVersion: master
-          - nextcloudVersion: stable22
             phpVersionMajor: 8
             phpVersionMinor: 1
           - nextcloudVersion: stable23
