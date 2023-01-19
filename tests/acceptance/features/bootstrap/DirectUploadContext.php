@@ -117,6 +117,24 @@ class DirectUploadContext implements Context {
 		$this->featureContext->theHTTPStatusCodeShouldBe(201);
 	}
 
+	/**
+	 * @Given /^the quota of user "([^"]*)" has been set to "([^"]*)"$/
+	 */
+	public function theQuotaOfUserHasBeenSetTo(string $user, string $quota):void {
+		$body = [
+			'key' => 'quota',
+			'value' => $quota,
+		];
+		$response = $this->featureContext->sendOCSRequest(
+			"/cloud/users/$user",
+			"PUT",
+			$this->featureContext->getAdminUsername(),
+			$body
+		);
+		$this->featureContext->theHttpStatusCodeShouldBe(
+			200, "could not set quota", $response
+		);
+	}
 
 	/**
 	 * @When /^an anonymous user sends an OPTIONS request to the "([^"]*)" endpoint with these headers:$/

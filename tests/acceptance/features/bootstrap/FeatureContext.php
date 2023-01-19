@@ -92,6 +92,7 @@ class FeatureContext implements Context {
 			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 		);
 		$this->theHttpStatusCodeShouldBe(200);
+		$this->userHasDeletedFile($user, "welcome.txt");
 	}
 
 	/**
@@ -296,11 +297,17 @@ class FeatureContext implements Context {
 	 *
 	 * @param int|int[]|string|string[] $expectedStatusCode
 	 * @param string|null $message
+	 * @param ResponseInterface $response
 	 *
 	 * @return void
 	 */
-	public function theHTTPStatusCodeShouldBe($expectedStatusCode, ?string $message = ""): void {
-		$actualStatusCode = $this->response->getStatusCode();
+	public function theHTTPStatusCodeShouldBe(
+		$expectedStatusCode, ?string $message = "", $response = null
+	): void {
+		if ($response === null) {
+			$response = $this->response;
+		}
+		$actualStatusCode = $response->getStatusCode();
 		if (\is_array($expectedStatusCode)) {
 			if ($message === "") {
 				$message = "HTTP status code $actualStatusCode is not one of the expected values " .
