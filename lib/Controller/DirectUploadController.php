@@ -176,12 +176,11 @@ class DirectUploadController extends ApiController {
 			 */
 			$folderNode = array_shift($nodes);
 			$freeSpace = $folderNode->getFreeSpace();
-			$fileSize = \Safe\filesize($tmpPath);
 
 			// this is also true if we try to overwrite
 			// to overwrite a file we need enough free quota for the new data
 			// otherwise `putContent()` fails
-			if ($fileSize > $freeSpace) {
+			if ($directUploadFile['size'] > $freeSpace) {
 				throw new NotEnoughSpaceException('insufficient quota');
 			}
 			if (
