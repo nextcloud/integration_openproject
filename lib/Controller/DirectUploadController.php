@@ -29,6 +29,7 @@ use OC\Files\Node\Folder;
 use OC\User\NoUserException;
 use InvalidArgumentException;
 use OC\ForbiddenException;
+use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
 use \OCP\AppFramework\ApiController;
 use OCP\Files\File;
 use OCP\Files\InvalidCharacterInPathException;
@@ -146,6 +147,11 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			if (empty($directUploadFile['tmp_name']) || $directUploadFile['error'] === 1) {
+				throw new OpenprojectFileNotUploadedException(
+					'File was not uploaded. upload_max_filesize exceeded?'
+				);
+			}
 			$tmpPath = $directUploadFile['tmp_name'];
 			$fileName = trim($directUploadFile['name']);
 			if (Filesystem::isFileBlacklisted($fileName)) {
@@ -245,6 +251,11 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage(),
 			], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (OpenprojectFileNotUploadedException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+				'upload_limit' => \OC_Helper::uploadLimit()
+			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()

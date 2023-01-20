@@ -121,11 +121,50 @@ class DirectUploadControllerTest extends TestCase {
 	}
 
 	/**
+	 * @return array<int, array<int, int|string>>
+	 */
+	public function fileNotUploadedDataProvider() {
+		return [
+			['', 1],
+			['some name', 1],
+			['', 0],
+		];
+	}
+	/**
+	 * @param string $tmpName
+	 * @param int $error
+	 * @return void
+	 * @dataProvider fileNotUploadedDataProvider
+	 */
+	public function testDirectUploadFileNotUploaded(string $tmpName, int $error):void {
+		$nodeMock = $this->getNodeMock('folder');
+
+		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			$userFolderMock, 100, ''
+		);
+		$result = $directUploadController->directUpload(
+			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+		);
+		$resultArray = $result->getData();
+		assertSame(
+			'File was not uploaded. upload_max_filesize exceeded?',
+			$resultArray['error']
+		);
+		self::assertIsInt($resultArray['upload_limit']);
+		assertSame(413, $result->getStatus());
+	}
+
+	/**
 	 * @param MockObject $folderMock
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
-		MockObject $folderMock, int $uploadedFileSize = 9999
+		MockObject $folderMock,
+		int $uploadedFileSize = 9999,
+		string $uploadedFileTmpName = '/tmp/andjashd',
+		int $uploadedFileError = 0
 	): DirectUploadController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -159,8 +198,9 @@ class DirectUploadControllerTest extends TestCase {
 		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
 		$requestMock->method('getUploadedFile')->willReturn([
 			'name' => 'file.txt',
-			'tmp_name' => '/tmp/andjashd',
-			'size' => $uploadedFileSize
+			'tmp_name' => $uploadedFileTmpName,
+			'size' => $uploadedFileSize,
+			'error' => $uploadedFileError
 		]);
 		return new DirectUploadController(
 			'integration_openproject',
