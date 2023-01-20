@@ -146,6 +146,7 @@ class DirectUploadController extends ApiController {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
 			$tmpPath = $directUploadFile['tmp_name'];
+			$fileName = trim($directUploadFile['name']);
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
@@ -158,7 +159,6 @@ class DirectUploadController extends ApiController {
 			} else {
 				$overwrite = null;
 			}
-			$fileName = trim($directUploadFile['name']);
 
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				throw new NotFoundException('invalid token');
