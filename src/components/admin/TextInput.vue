@@ -174,7 +174,6 @@ export default {
 		font-weight: 700;
 		font-size: .875rem;
 		line-height: 1.25rem;
-		color: #333333;
 	}
 
 	&-messages {
@@ -217,14 +216,6 @@ export default {
 		outline: none;
 		box-shadow: none !important;
 		border: 1px solid grey !important;
-	}
-}
-
-body[data-theme-dark-highcontrast], body[data-theme-dark], body.theme--dark {
-	.text-input {
-		&-label {
-			filter: invert(100%);
-		}
 	}
 }
 </style>
