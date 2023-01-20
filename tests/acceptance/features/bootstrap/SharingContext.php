@@ -10,7 +10,7 @@ class SharingContext implements Context {
 	 */
 	private $featureContext;
 	private string $lastCreatedPublicLink;
-
+	private int $lastCreatedShareId;
 	private const SHARE_TYPES = [
 		'user' => 0,
 		'group' => 1,
@@ -63,18 +63,20 @@ class SharingContext implements Context {
 			"HTTP status code was not 200 while sharing '$path' with '$shareWithForMessage'"
 		);
 
+		$shareData = json_decode(
+			$this->featureContext->getResponse()->getBody()->getContents()
+		);
+		if ($shareData === null) {
+			throw new \Exception('could not JSON decode content of share response');
+		}
+		$this->lastCreatedShareId = $shareData->ocs->data->id;
+
 		if ($shareType === 'the public') {
 			$fixPublicLinkPermBody['permissions'] = 15;
-			$shareData = json_decode(
-				$this->featureContext->getResponse()->getBody()->getContents()
-			);
-			if ($shareData === null) {
-				throw new \Exception('could not JSON decode content of share response');
-			}
-			$shareId = $shareData->ocs->data->id;
+
 			$this->lastCreatedPublicLink = $shareData->ocs->data->token;
 			$response = $this->featureContext->sendOCSRequest(
-				'/apps/files_sharing/api/v1/shares/' . $shareId,
+				'/apps/files_sharing/api/v1/shares/' . $this->lastCreatedShareId,
 				'PUT',
 				$sharer,
 				$fixPublicLinkPermBody
@@ -85,6 +87,27 @@ class SharingContext implements Context {
 				"HTTP status code was not 200 while giving upload permissions to public share of '$path'"
 			);
 		}
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has changed the share permissions of last created share to "([^"]*)"$/
+	 */
+	public function userHasChangedTheSharePermissionsOfLastCreatedShareTo(
+		string $sharer, string $permissionsString
+	):void {
+		$body['permissions'] = $this->getPermissionSum($permissionsString);
+
+		$response = $this->featureContext->sendOCSRequest(
+			'/apps/files_sharing/api/v1/shares/' . $this->lastCreatedShareId,
+			'PUT',
+			$sharer,
+			$body
+		);
+		$this->featureContext->theHTTPStatusCodeShouldBe(
+			"200",
+			"could not change share permissions",
+			$response
+		);
 	}
 
 	/**
