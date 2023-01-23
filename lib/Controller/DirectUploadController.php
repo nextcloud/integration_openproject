@@ -24,12 +24,15 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\Node\Folder;
 use OC\User\NoUserException;
 use InvalidArgumentException;
 use OC\ForbiddenException;
 use \OCP\AppFramework\ApiController;
+use OCP\Files\File;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidPathException;
+use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Http;
@@ -142,6 +145,8 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			$tmpPath = $directUploadFile['tmp_name'];
+			$fileName = trim($directUploadFile['name']);
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
@@ -154,8 +159,7 @@ class DirectUploadController extends ApiController {
 			} else {
 				$overwrite = null;
 			}
-			$fileName = trim($directUploadFile['name']);
-			$tmpPath = $directUploadFile['tmp_name'];
+
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				throw new NotFoundException('invalid token');
 			}
@@ -167,12 +171,26 @@ class DirectUploadController extends ApiController {
 			if (empty($nodes)) {
 				throw new NotFoundException('folder not found or not enough permissions');
 			}
+			/**
+			 * @var Folder $folderNode
+			 */
 			$folderNode = array_shift($nodes);
+			$freeSpace = $folderNode->getFreeSpace();
+
+			// this is also true if we try to overwrite
+			// to overwrite a file we need enough free quota for the new data
+			// otherwise `putContent()` fails
+			if ($directUploadFile['size'] > $freeSpace) {
+				throw new NotEnoughSpaceException('insufficient quota');
+			}
 			if (
 				$folderNode->isCreatable()
 			) {
 				// @phpstan-ignore-next-line
 				if ($folderNode->nodeExists($fileName) && $overwrite) {
+					/**
+					 * @var File $file
+					 */
 					$file = $folderNode->get($fileName); // @phpstan-ignore-line
 					if ($file->getType() === FileInfo::TYPE_FOLDER) {
 						throw new Conflict('overwrite is not allowed on non-files');
@@ -219,6 +237,10 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage(),
 			], Http::STATUS_CONFLICT);
+		} catch (NotEnoughSpaceException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+			], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()

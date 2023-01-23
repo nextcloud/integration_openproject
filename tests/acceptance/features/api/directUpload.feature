@@ -560,3 +560,145 @@ Feature: API endpoint for direct upload
       }
     }
     """
+
+
+  Scenario: Upload a file that just fits into the users quota
+    Given the quota of user "Alice" has been set to "10 B"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | textfile0.txt |
+      | data      | 1234567890    |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^textfile0\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "textfile0.txt" for user "Alice" should be "1234567890"
+
+
+  Scenario: Upload a file exceeding the users quota
+    Given the quota of user "Alice" has been set to "9 B"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 1234567890 |
+    Then the HTTP status code should be "507"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^insufficient quota$"}
+      }
+    }
+    """
+
+
+  Scenario: Upload a file into a folder, exceeding the users quota
+    Given the quota of user "Alice" has been set to "9 B"
+    And user "Alice" has created folder "/forOP"
+    And user "Alice" got a direct-upload token for "/forOP"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 1234567890 |
+    Then the HTTP status code should be "507"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^insufficient quota$"}
+      }
+    }
+    """
+
+
+  Scenario: Upload a file into a shared folder exceeding the quota of the user sharing the folder
+    Given user "Brian" has been created
+    And the quota of user "Alice" has been set to "10 B"
+    And the quota of user "Brian" has been set to "9 B"
+    And user "Brian" has created folder "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Alice" got a direct-upload token for "/toShare"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 1234567890 |
+    Then the HTTP status code should be "507"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^insufficient quota$"}
+      }
+    }
+    """
+
+
+  Scenario: overwrite an existing file with content that fits the quota. Needed quota is sizeof(old data)+sizeof(new data)
+    Given the quota of user "Alice" has been set to "20 B"
+    And user "Alice" has uploaded file with content "1234567890" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+      | overwrite | true       |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "0987654321"
+
+
+  Scenario: try to overwrite an existing file with content that exceeds the quota. Needed quota is sizeof(old data)+sizeof(new data)
+    Given the quota of user "Alice" has been set to "19 B"
+    And user "Alice" has uploaded file with content "1234567890" to "/file.txt"
+    And user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+      | overwrite | true       |
+    Then the HTTP status code should be "507"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^insufficient quota$"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "1234567890"

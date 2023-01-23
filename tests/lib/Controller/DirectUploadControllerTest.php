@@ -99,12 +99,33 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
+	public function testDirectUploadNotEnoughSpace():void {
+		$nodeMock = $this->getNodeMock('folder');
+		$nodeMock[0]->method('getFreeSpace')->willReturn(100);
+
+		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			$userFolderMock, 101
+		);
+		$result = $directUploadController->directUpload(
+			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+		);
+		assertSame(
+			[
+				'error' => 'insufficient quota'
+			],
+			$result->getData()
+		);
+		assertSame(507, $result->getStatus());
+	}
+
 	/**
 	 * @param MockObject $folderMock
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
-		MockObject $folderMock
+		MockObject $folderMock, int $uploadedFileSize = 9999
 	): DirectUploadController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -130,7 +151,6 @@ class DirectUploadControllerTest extends TestCase {
 				'user_id' => 'testUser',
 				'expires_on' => 1671537939,
 				'folder_id' => 123
-
 			]
 		);
 		$userManagerMock = $this->getMockBuilder('OCP\IUserManager')->disableOriginalConstructor()->getMock();
@@ -139,7 +159,8 @@ class DirectUploadControllerTest extends TestCase {
 		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
 		$requestMock->method('getUploadedFile')->willReturn([
 			'name' => 'file.txt',
-			'tmp_name' => '/tmp/andjashd'
+			'tmp_name' => '/tmp/andjashd',
+			'size' => $uploadedFileSize
 		]);
 		return new DirectUploadController(
 			'integration_openproject',
