@@ -24,6 +24,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\Filesystem;
 use OC\Files\Node\Folder;
 use OC\User\NoUserException;
 use InvalidArgumentException;
@@ -147,6 +148,9 @@ class DirectUploadController extends ApiController {
 			$directUploadFile = $this->request->getUploadedFile('file');
 			$tmpPath = $directUploadFile['tmp_name'];
 			$fileName = trim($directUploadFile['name']);
+			if (Filesystem::isFileBlacklisted($fileName)) {
+				throw new ForbiddenException('invalid file name');
+			}
 			$overwrite = $this->request->getParam('overwrite');
 			if (isset($overwrite)) {
 				$acceptedOverwriteValues = ['true','false'];
