@@ -24,9 +24,15 @@ declare(strict_types=1);
  */
 namespace OCA\OpenProject\Search;
 
+use OC\Files\Filesystem;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataDisplayResponse;
+use OCP\AppFramework\Http\NotFoundResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\IL10N;
 use OCP\IConfig;
 use OCP\IURLGenerator;
@@ -114,8 +120,17 @@ class OpenProjectSearchProvider implements IProvider {
 		$term = $query->getTerm();
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
+		$theme = $this->config->getUserValue($user->getUID(), 'accessibility', 'theme');
+		$thumbnailUrl = ($theme === 'dark')?
+			$this->getSvgFromApp('app')
+			: $this->getSvgFromApp('app','000000');
+//		$thumbnailUrl = ($theme === 'dark')
+//			? $svgUrl . '?color=ffffff'
+//			: $svgUrl . '?color=000000';
 
-		$thumbnailUrl = $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
+//		$thumbnailUrl = ($theme === 'dark')
+//			? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
+//			: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
 
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
@@ -197,5 +212,65 @@ class OpenProjectSearchProvider implements IProvider {
 	 */
 	protected function getThumbnailUrl(array $entry, string $thumbnailUrl): string {
 		return '';
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param string $fileName
+	 * @param string $color
+	 */
+	public function getSvgFromApp(string $fileName, string $color = 'ffffff') {
+		try {
+			$appPath = $this->appManager->getAppPath(Application::APP_ID);
+		} catch (AppPathNotFoundException $e) {
+			return new NotFoundResponse();
+		}
+
+		$path = $appPath . "/img/$fileName.svg";
+		return $this->getSvg($path, $color, $fileName);
+	}
+
+	private function getSvg(string $path, string $color, string $fileName) {
+		if (!Filesystem::isValidPath($path)) {
+			return new NotFoundResponse();
+		}
+
+		if (!file_exists($path)) {
+			return new NotFoundResponse();
+		}
+
+		$svg = file_get_contents($path);
+
+		if ($svg === null) {
+			return new NotFoundResponse();
+		}
+
+		$svg = $this->colorizeSvg($svg, $color);
+
+//		$response = new DataDisplayResponse($svg, Http::STATUS_OK, ['Content-Type' => 'image/svg+xml']);
+//
+//		// Set cache control
+//		$ttl = 31536000;
+//		$response->cacheFor($ttl);
+
+		return $svg;
+	}
+
+	public function colorizeSvg(string $svg, string $color): string {
+		if (!preg_match('/^[0-9a-f]{3,6}$/i', $color)) {
+			// Prevent not-sane colors from being written into the SVG
+			$color = '000';
+		}
+
+		// add fill (fill is not present on black elements)
+		$fillRe = '/<((circle|rect|path)((?!fill)[a-z0-9 =".\-#():;,])+)\/>/mi';
+		$svg = preg_replace($fillRe, '<$1 fill="#' . $color . '"/>', $svg);
+
+		// replace any fill or stroke colors
+		$svg = preg_replace('/stroke="#([a-z0-9]{3,6})"/mi', 'stroke="#' . $color . '"', $svg);
+		$svg = preg_replace('/fill="#([a-z0-9]{3,6})"/mi', 'fill="#' . $color . '"', $svg);
+		return $svg;
 	}
 }
