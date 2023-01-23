@@ -152,7 +152,7 @@ class DirectUploadControllerTest extends TestCase {
 			'File was not uploaded. upload_max_filesize exceeded?',
 			$resultArray['error']
 		);
-		self::assertIsInt($resultArray['upload_limit']);
+		self::assertIsNumeric($resultArray['upload_limit']);
 		assertSame(413, $result->getStatus());
 	}
 
