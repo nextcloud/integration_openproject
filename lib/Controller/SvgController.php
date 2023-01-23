@@ -3,6 +3,7 @@
 namespace OCA\OpenProject\Controller;
 
 use OCP\App\IAppManager;
+use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\Controller;
 use OCP\IRequest;
 use OC\Files\Filesystem;
@@ -11,6 +12,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\Response;
+
 class SvgController extends Controller {
 
 	/**
@@ -20,19 +22,8 @@ class SvgController extends Controller {
 
 	public function __construct(string $appName,
 								IRequest $request,
-								IAppManager $appManager){
+								IAppManager $appManager) {
 		parent::__construct($appName, $request);
-//		$this->config = $config;
-//		$this->shareManager = $shareManager;
-//		$this->userManager = $userManager;
-//		$this->trans = $trans;
-//		$this->billMapper = $billMapper;
-//		$this->projectService = $projectService;
-//		$this->activityManager = $activityManager;
-//		$this->dbconnection = $dbconnection;
-//		$this->root = $root;
-//		$this->userId = $userId;
-//		$this->initialStateService = $initialStateService;
 		$this->appManager = $appManager;
 	}
 
@@ -43,6 +34,7 @@ class SvgController extends Controller {
 	 * @NoCSRFRequired
 	 * @param string $fileName
 	 * @param string $color
+	 * @return NotFoundResponse|Response
 	 */
 	public function getSvgFromApp(string $fileName, string $color = 'ffffff') {
 		try {
@@ -52,10 +44,10 @@ class SvgController extends Controller {
 		}
 
 		$path = $appPath . "/img/$fileName.svg";
-		return $this->getSvg($path, $color, $fileName);
+		return $this->getSvg($path, $color);
 	}
 
-	private function getSvg(string $path, string $color, string $fileName) {
+	private function getSvg(string $path, string $color): Response {
 		if (!Filesystem::isValidPath($path)) {
 			return new NotFoundResponse();
 		}
@@ -66,7 +58,7 @@ class SvgController extends Controller {
 
 		$svg = file_get_contents($path);
 
-		if ($svg === null) {
+		if (empty($svg)) {
 			return new NotFoundResponse();
 		}
 
@@ -78,7 +70,7 @@ class SvgController extends Controller {
 		$ttl = 31536000;
 		$response->cacheFor($ttl);
 
-		return $svg;
+		return $response;
 	}
 
 	public function colorizeSvg(string $svg, string $color): string {
@@ -96,5 +88,4 @@ class SvgController extends Controller {
 		$svg = preg_replace('/fill="#([a-z0-9]{3,6})"/mi', 'fill="#' . $color . '"', $svg);
 		return $svg;
 	}
-
 }
