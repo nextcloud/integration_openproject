@@ -147,13 +147,14 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
+			$fileName = trim($directUploadFile['name']);
+			$this->scanForInvalidCharacters($fileName, "\\/");
 			if (empty($directUploadFile['tmp_name']) || $directUploadFile['error'] === 1) {
 				throw new OpenprojectFileNotUploadedException(
 					'File was not uploaded. upload_max_filesize exceeded?'
 				);
 			}
 			$tmpPath = $directUploadFile['tmp_name'];
-			$fileName = trim($directUploadFile['name']);
 			if (Filesystem::isFileBlacklisted($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
@@ -173,7 +174,6 @@ class DirectUploadController extends ApiController {
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				throw new NotFoundException('invalid token');
 			}
-			$this->scanForInvalidCharacters($fileName, "\\/");
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());

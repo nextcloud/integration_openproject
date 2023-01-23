@@ -142,7 +142,7 @@ class DirectUploadControllerTest extends TestCase {
 		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
-			$userFolderMock, 100, ''
+			$userFolderMock, 100, $tmpName, $error
 		);
 		$result = $directUploadController->directUpload(
 			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
