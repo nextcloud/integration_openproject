@@ -20,6 +20,8 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable24
             phpVersion: 8.1
+          - nextcloudVersion: master
+            phpVersion: 7.4
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous runs
