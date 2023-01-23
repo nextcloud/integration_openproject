@@ -34,6 +34,7 @@ use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
+use OC_Util;
 
 class OpenProjectSearchProvider implements IProvider {
 
@@ -114,12 +115,18 @@ class OpenProjectSearchProvider implements IProvider {
 		$term = $query->getTerm();
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
-		$themes = json_decode($this->config->getUserValue($user->getUID(), 'theming', 'enabled-themes'));
-
-		$thumbnailUrl = (in_array('dark', $themes) || in_array('dark-highcontrast', $themes))
-			? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
-			: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
-
+		if (version_compare(OC_Util::getVersionString(), '25') < 0) {
+			$theme = $this->config->getUserValue($user->getUID(), 'accessibility', 'theme');
+			$thumbnailUrl = ($theme === 'dark')
+				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
+				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
+			;
+		} else {
+			$themes = json_decode($this->config->getUserValue($user->getUID(), 'theming', 'enabled-themes'));
+			$thumbnailUrl = (in_array('dark', $themes) || in_array('dark-highcontrast', $themes))
+				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
+				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
+		}
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 
