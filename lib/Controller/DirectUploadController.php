@@ -33,6 +33,7 @@ use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
 use \OCP\AppFramework\ApiController;
 use OCP\Files\File;
 use OCP\Files\InvalidCharacterInPathException;
+use OCP\Files\InvalidContentException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
@@ -255,6 +256,10 @@ class DirectUploadController extends ApiController {
 				'error' => $e->getMessage(),
 				'upload_limit' => \OC_Helper::uploadLimit()
 			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (InvalidContentException $e) { // files_antivirus throws this exception
+			return new DataResponse([
+				'error' => $e->getMessage()
+			], Http::STATUS_UNSUPPORTED_MEDIA_TYPE);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
