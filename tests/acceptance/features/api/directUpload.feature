@@ -702,3 +702,23 @@ Feature: API endpoint for direct upload
     }
     """
     And the content of file at "/file.txt" for user "Alice" should be "1234567890"
+
+
+  Scenario: Try to upload a file with a blacklisted file name
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | .htaccess              |
+      | data      | <IfModule mod_alias.c> |
+    Then the HTTP status code should be "403"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid file name$"}
+      }
+    }
+    """
