@@ -89,15 +89,8 @@ export default {
 		font-size: 1rem;
 		text-align: center;
 		font-weight: 400;
-		color: #333333;
 		padding: 0 18px;
 		line-height: 1.4rem;
-	}
-}
-
-body[data-theme-dark], body[data-theme-dark-highcontrast], body.theme--dark {
-	.oauth-connect--message {
-		filter: invert(100%);
 	}
 }
 </style>

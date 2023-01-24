@@ -1,5 +1,6 @@
 <template>
 	<NcDashboardWidget :items="items"
+		:item-menu="itemMenu"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
 		:loading="isLoading"
@@ -27,8 +28,7 @@ import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
-import { showError } from '@nextcloud/dialogs'
-import moment from '@nextcloud/moment'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import { loadState } from '@nextcloud/initial-state'
 import OAuthConnectButton from '../components/OAuthConnectButton.vue'
