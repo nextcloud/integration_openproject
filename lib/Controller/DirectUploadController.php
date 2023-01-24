@@ -29,6 +29,7 @@ use OC\Files\Node\Folder;
 use OC\User\NoUserException;
 use InvalidArgumentException;
 use OC\ForbiddenException;
+use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
 use \OCP\AppFramework\ApiController;
 use OCP\Files\File;
 use OCP\Files\InvalidCharacterInPathException;
@@ -146,8 +147,14 @@ class DirectUploadController extends ApiController {
 		try {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
-			$tmpPath = $directUploadFile['tmp_name'];
 			$fileName = trim($directUploadFile['name']);
+			$this->scanForInvalidCharacters($fileName, "\\/");
+			if (empty($directUploadFile['tmp_name']) || $directUploadFile['error'] === 1) {
+				throw new OpenprojectFileNotUploadedException(
+					'File was not uploaded. upload_max_filesize exceeded?'
+				);
+			}
+			$tmpPath = $directUploadFile['tmp_name'];
 			if (Filesystem::isFileBlacklisted($fileName)) {
 				throw new ForbiddenException('invalid file name');
 			}
@@ -167,7 +174,6 @@ class DirectUploadController extends ApiController {
 			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
 				throw new NotFoundException('invalid token');
 			}
-			$this->scanForInvalidCharacters($fileName, "\\/");
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
@@ -245,6 +251,11 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage(),
 			], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (OpenprojectFileNotUploadedException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+				'upload_limit' => \OC_Helper::uploadLimit()
+			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
