@@ -23,6 +23,8 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCP\Files\Folder;
+use OCP\Files\InvalidContentException;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -156,6 +158,26 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(413, $result->getStatus());
 	}
 
+	public function testDirectUploadFileInvalidContentException():void {
+		$nodeMock = $this->getNodeMock('folder');
+		$tmpFileName = '/tmp/integration_openproject_unit_test';
+		\Safe\touch($tmpFileName);
+		$nodeMock[0]->method('newFile')->will($this->throwException(new InvalidContentException('Virus detected')));
+		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			$userFolderMock, 0, $tmpFileName);
+		$result = $directUploadController->directUpload(
+			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+		);
+		$resultArray = $result->getData();
+		assertSame(
+			'Virus detected',
+			$resultArray['error']
+		);
+		assertSame(415, $result->getStatus());
+	}
+
 	/**
 	 * @param MockObject $folderMock
 	 * @return DirectUploadController
@@ -217,7 +239,7 @@ class DirectUploadControllerTest extends TestCase {
 	 *
 	 * @param string $type
 	 * @param int $id
-	 * @return array<mixed>
+	 * @return array<MockObject|Folder>
 	 */
 	private function getNodeMock(string $type, int $id = 123): array {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
