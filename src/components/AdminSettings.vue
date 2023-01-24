@@ -191,10 +191,10 @@
 <script>
 import util from 'util'
 import axios from '@nextcloud/axios'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import '@nextcloud/dialogs/styles/toast.scss'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'

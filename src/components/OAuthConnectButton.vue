@@ -16,6 +16,7 @@ import axios from '@nextcloud/axios'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import Button from '@nextcloud/vue/dist/Components/Button'
 

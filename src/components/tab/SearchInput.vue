@@ -36,6 +36,7 @@ import { generateUrl } from '@nextcloud/router'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import WorkPackage from './WorkPackage'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper'
 import { STATE } from '../../utils'
 
