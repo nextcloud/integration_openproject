@@ -706,14 +706,4 @@ export default {
 		padding: 15px 0;
 	}
 }
-
-body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	#openproject_prefs {
-		.button-vue {
-			&__text {
-				color: #fff !important;
-			}
-		}
-	}
-}
 </style>
