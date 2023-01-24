@@ -120,9 +120,8 @@ class OpenProjectSearchProvider implements IProvider {
 			$thumbnailUrl = ($theme === 'dark')
 				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
 				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
-			;
 		} else {
-			$themes = json_decode($this->config->getUserValue($user->getUID(), 'theming', 'enabled-themes'));
+			$themes = json_decode($this->config->getUserValue($user->getUID(), 'theming', 'enabled-themes', '["default"]'));
 			$thumbnailUrl = (in_array('dark', $themes) || in_array('dark-highcontrast', $themes))
 				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
 				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
