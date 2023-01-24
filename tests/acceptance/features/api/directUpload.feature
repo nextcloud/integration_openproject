@@ -277,6 +277,57 @@ Feature: API endpoint for direct upload
     }
     """
 
+  Scenario: send file to a share without create permissions
+    Given user "Brian" has been created
+    And user "Brian" has created folder "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has changed the share permissions of last created share to "read+update+delete+share"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+    Then the HTTP status code should be "403"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^not enough permissions$"}
+      }
+    }
+    """
+
+  Scenario: overwrite a file to a share without create but with update permissions
+    Given user "Brian" has been created
+    And user "Brian" has created folder "/toShare"
+    And user "Brian" has uploaded file with content "original data" to "/toShare/file.txt"
+    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has changed the share permissions of last created share to "read+update+delete+share"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt |
+      | data      | new data |
+      | overwrite | true     |
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/toShare/file.txt" for user "Alice" should be "new data"
+
 
   Scenario: set overwrite to false and send file with an existing filename
     Given user "Alice" has uploaded file with content "original data" to "/file.txt"

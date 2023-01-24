@@ -185,6 +185,9 @@ class DirectUploadController extends ApiController {
 			 * @var Folder $folderNode
 			 */
 			$folderNode = array_shift($nodes);
+			if (!$folderNode->isCreatable() && !$overwrite) {
+				throw new ForbiddenException('not enough permissions');
+			}
 			$freeSpace = $folderNode->getFreeSpace();
 
 			// this is also true if we try to overwrite
@@ -193,40 +196,36 @@ class DirectUploadController extends ApiController {
 			if ($directUploadFile['size'] > $freeSpace) {
 				throw new NotEnoughSpaceException('insufficient quota');
 			}
-			if (
-				$folderNode->isCreatable()
-			) {
-				// @phpstan-ignore-next-line
-				if ($folderNode->nodeExists($fileName) && $overwrite) {
-					/**
-					 * @var File $file
-					 */
-					$file = $folderNode->get($fileName); // @phpstan-ignore-line
-					if ($file->getType() === FileInfo::TYPE_FOLDER) {
-						throw new Conflict('overwrite is not allowed on non-files');
-					}
-					if (!$file->isUpdateable()) {
-						throw new ForbiddenException('not enough permissions');
-					}
-					// overwrite the file
-					$file->putContent(fopen($tmpPath, 'r'));
-					$fileId = $file->getId();
-					return new DataResponse([
-						'file_name' => $fileName,
-						'file_id' => $fileId
-					], Http::STATUS_OK);
-				} // @phpstan-ignore-next-line
-				elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
-					// get unique name for duplicate file with number suffix
-					$fileName = $folderNode->getNonExistingName($fileName); // @phpstan-ignore-line
+			// @phpstan-ignore-next-line
+			if ($folderNode->nodeExists($fileName) && $overwrite) {
+				/**
+				 * @var File $file
+				 */
+				$file = $folderNode->get($fileName); // @phpstan-ignore-line
+				if ($file->getType() === FileInfo::TYPE_FOLDER) {
+					throw new Conflict('overwrite is not allowed on non-files');
 				}
-				// @phpstan-ignore-next-line
-				elseif ($folderNode->nodeExists($fileName)) {
-					throw new Conflict('conflict, file name already exists');
+				if (!$file->isUpdateable()) {
+					throw new ForbiddenException('not enough permissions');
 				}
-				$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
-				$fileId = $fileInfo->getId();
+				// overwrite the file
+				$file->putContent(fopen($tmpPath, 'r'));
+				$fileId = $file->getId();
+				return new DataResponse([
+					'file_name' => $fileName,
+					'file_id' => $fileId
+				], Http::STATUS_OK);
+			} // @phpstan-ignore-next-line
+			elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
+				// get unique name for duplicate file with number suffix
+				$fileName = $folderNode->getNonExistingName($fileName); // @phpstan-ignore-line
 			}
+			// @phpstan-ignore-next-line
+			elseif ($folderNode->nodeExists($fileName)) {
+				throw new Conflict('conflict, file name already exists');
+			}
+			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+			$fileId = $fileInfo->getId();
 		} catch (NotPermittedException $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
