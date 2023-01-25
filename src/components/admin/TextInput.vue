@@ -50,6 +50,7 @@
 <script>
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
+import '@nextcloud/dialogs/styles/toast.scss'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import ClippyIcon from '../icons/ClippyIcon'
