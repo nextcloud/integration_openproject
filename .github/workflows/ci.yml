@@ -162,6 +162,8 @@ jobs:
           - nextcloudVersion: stable24
             phpVersionMajor: 8
             phpVersionMinor: 1
+          - nextcloudVersion: master
+            phpVersionMajor: 7
           - phpVersionMajor: 7
             phpVersionMinor: 0
           - phpVersionMajor: 7
