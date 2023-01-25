@@ -20,6 +20,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - nextcloud:/var/www/html
+      - apache-config:/etc/apache2
       - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
     networks:
       - internal
@@ -36,6 +37,7 @@ services:
     restart: always
     volumes:
       - nextcloud:/var/www/html
+      - apache-config:/etc/apache2
     networks:
       - internal
     entrypoint: /cron.sh
@@ -45,6 +47,7 @@ services:
 volumes:
   db:
   nextcloud:
+  apache-config:
 
 networks:
   internal:
