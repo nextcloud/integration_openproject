@@ -92,7 +92,12 @@ class FeatureContext implements Context {
 			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 		);
 		$this->theHttpStatusCodeShouldBe(200);
-		$this->userHasDeletedFile($user, "welcome.txt");
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"DELETE",
+			"welcome.txt"
+		);
 	}
 
 	/**
