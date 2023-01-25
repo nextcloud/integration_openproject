@@ -68,6 +68,21 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
+	public function testprepareDirectUploadException(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->will($this->throwException(new \Exception('something bad happened')));
+		$directUploadController = $this->createDirectUploadController($folderMock);
+		$result = $directUploadController->prepareDirectUpload(123);
+		assertSame(
+			[
+				'error' => 'folder not found or not enough permissions'
+			],
+			$result->getData()
+		);
+		assertSame(404, $result->getStatus());
+	}
+
 	/**
 	 * @return array<mixed>
 	 */
@@ -158,11 +173,27 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame(413, $result->getStatus());
 	}
 
-	public function testDirectUploadFileInvalidContentException():void {
+	/**
+	 * @return array<int, array<int, int|string>>
+	 */
+	public function newFileExceptionsDataProvider() {
+		return [
+			[new InvalidContentException('Virus detected'), 'Virus detected', 415],
+			[new \Exception('could not upload'), 'could not upload', 500],
+		];
+	}
+
+	/**
+	 * @return void
+	 * @dataProvider newFileExceptionsDataProvider
+	 */
+	public function testDirectUploadException(
+		\Exception $exception, string $expectedErrorMessage, int $expectedStatusCode
+	):void {
 		$nodeMock = $this->getNodeMock('folder');
 		$tmpFileName = '/tmp/integration_openproject_unit_test';
 		\Safe\touch($tmpFileName);
-		$nodeMock[0]->method('newFile')->will($this->throwException(new InvalidContentException('Virus detected')));
+		$nodeMock[0]->method('newFile')->will($this->throwException($exception));
 		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
 		$directUploadController = $this->createDirectUploadController(
@@ -172,10 +203,10 @@ class DirectUploadControllerTest extends TestCase {
 		);
 		$resultArray = $result->getData();
 		assertSame(
-			'Virus detected',
+			$expectedErrorMessage,
 			$resultArray['error']
 		);
-		assertSame(415, $result->getStatus());
+		assertSame($expectedStatusCode, $result->getStatus());
 	}
 
 	/**

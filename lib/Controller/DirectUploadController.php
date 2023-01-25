@@ -40,7 +40,6 @@ use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\DB\Exception;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IRequest;
@@ -125,7 +124,7 @@ class DirectUploadController extends ApiController {
 					'error' => 'folder not found or not enough permissions'
 				], Http::STATUS_NOT_FOUND);
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => 'folder not found or not enough permissions'
 			], Http::STATUS_NOT_FOUND);
@@ -260,7 +259,7 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $e->getMessage()
 			], Http::STATUS_UNSUPPORTED_MEDIA_TYPE);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $e->getMessage()
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
