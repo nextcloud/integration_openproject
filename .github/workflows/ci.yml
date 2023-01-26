@@ -191,7 +191,7 @@ jobs:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
       database-postgres:
-        image: postgres:latest
+        image: postgres:14
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nextcloud
