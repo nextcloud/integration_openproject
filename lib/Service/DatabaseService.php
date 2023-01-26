@@ -24,7 +24,6 @@
 
 namespace OCA\OpenProject\Service;
 
-use DateTime;
 use OCP\DB\Exception;
 use OCP\IDBConnection;
 
@@ -109,10 +108,9 @@ class DatabaseService {
 	 */
 	public function deleteExpiredTokens(): void {
 		$query = $this->db->getQueryBuilder();
-		$date = new DateTime();
 		$query->delete($this->table)
 			->where(
-				$query->expr()->lt('expires_on', $query->createNamedParameter(($date)->getTimestamp()))
+				$query->expr()->lt('expires_on', $query->createNamedParameter(time()))
 			);
 		$query->execute();
 	}
