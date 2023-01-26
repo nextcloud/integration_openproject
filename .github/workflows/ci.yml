@@ -249,6 +249,5 @@ jobs:
           NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
-          counter=0; until [ $(curl -s -f http://nextcloud/status.php | grep '"installed":true') ] || [ $counter -gt 12 ] ; do echo .; sleep 10; counter=$((counter+1)); done
-          if [ $counter -gt 12 ]; then exit 1; fi
+          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
