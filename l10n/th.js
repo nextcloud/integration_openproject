@@ -3,7 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "ยกเลิก",
     "Save" : "บันทึก",
-    "Reset" : "ตั้งค่าใหม่",
+    "Reset" : "รีเซ็ต",
     "Documentation" : "เอกสารประกอบ",
     "Connected as {user}" : "เชื่อมต่อเป็น {user} แล้ว",
     "Copied!" : "คัดลอกแล้ว!",
