@@ -230,9 +230,8 @@ jobs:
         uses: shivammathur/setup-php@2.23.0
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-          tools: composer, phpunit
-          extensions: gd, pdo_sqlite
-          coverage: xdebug
+          tools: composer
+          extensions: intl
 
       - name: Get composer cache directory
         id: composer-cache
