@@ -823,6 +823,8 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function before(BeforeScenarioScope $scope):void {
+		setlocale(LC_ALL, 'C.utf8');
+
 		// Get the environment
 		$environment = $scope->getEnvironment();
 
