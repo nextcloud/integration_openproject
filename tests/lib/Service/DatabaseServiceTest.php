@@ -42,17 +42,17 @@ class DatabaseServiceTest extends TestCase {
 	private array $unexpiredDirectUploadInfo = [
 		[
 			"token" => 'unExpiredToken1',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 		[
 			"token" => 'unExpiredToken2',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 		[
 			"token" => 'unExpiredToken3',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 
@@ -66,17 +66,17 @@ class DatabaseServiceTest extends TestCase {
 	private array $expiredDirectUploadInfo = [
 		[
 			"token" => 'expiredToken1',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 		[
 			"token" => 'expiredToken2',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 		[
 			"token" => 'expiredToken3',
-			"folderId" => '1',
+			"folderId" => 1,
 			"userId" => 'u1',
 		],
 
@@ -86,7 +86,7 @@ class DatabaseServiceTest extends TestCase {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		/** @var DatabaseService $c databaseService */
+		/** @var DatabaseService $databaseService */
 		$databaseService = $c->get(DatabaseService::class);
 		$this->databaseService = $databaseService;
 	}
@@ -102,6 +102,7 @@ class DatabaseServiceTest extends TestCase {
 
 	/**
 	 * @throws Exception
+	 * @return array<mixed>
 	 */
 	public function getAllTokensFromTable(): array {
 		$tokens = [];
@@ -122,7 +123,7 @@ class DatabaseServiceTest extends TestCase {
 	 * @throws Exception
 	 */
 	public function testDeleteSingleExpiredToken(): void {
-		$this->databaseService->setInfoForDirectUpload("expiredToken", "40", "u1", time(), time() - 1000);
+		$this->databaseService->setInfoForDirectUpload("expiredToken", 1, "u1", time(), time() - 1000);
 		$this->databaseService->deleteExpiredTokens();
 		$token = $this->getAllTokensFromTable();
 		self::assertEquals(0, sizeof($token));
@@ -148,7 +149,7 @@ class DatabaseServiceTest extends TestCase {
 	 * @throws Exception
 	 */
 	public function testDeleteSingleUnExpiredToken(): void {
-		$this->databaseService->setInfoForDirectUpload("unExpiredToken", "40", "u1", time(), time() + 1000);
+		$this->databaseService->setInfoForDirectUpload("unExpiredToken", 1, "u1", time(), time() + 1000);
 		$this->databaseService->deleteExpiredTokens();
 		$token = $this->getAllTokensFromTable();
 		self::assertSame('unExpiredToken', $token[0]);
@@ -177,10 +178,10 @@ class DatabaseServiceTest extends TestCase {
 	 * @throws Exception
 	 */
 	public function testDeleteMultipleExpiredAndUnexpiredTokens(): void {
-		foreach ( $this->expiredDirectUploadInfo as $info) {
+		foreach ($this->expiredDirectUploadInfo as $info) {
 			$this->databaseService->setInfoForDirectUpload($info['token'], $info['folderId'], $info['userId'], time(), time() - 1000);
 		}
-		foreach ( $this->unexpiredDirectUploadInfo as $info) {
+		foreach ($this->unexpiredDirectUploadInfo as $info) {
 			$this->databaseService->setInfoForDirectUpload($info['token'], $info['folderId'], $info['userId'], time(), time() + 1000);
 		}
 		$this->databaseService->deleteExpiredTokens();
