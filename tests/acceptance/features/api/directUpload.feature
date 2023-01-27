@@ -307,18 +307,16 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
-    Then the HTTP status code should be "201"
+    Then the HTTP status code should be "404"
     And the data of the response should match
-    """"
+   """"
     {
     "type": "object",
     "required": [
-        "file_name",
-        "file_id"
+        "error"
       ],
       "properties": {
-          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
-          "file_id": {"type" : "integer"}
+          "error": {"type": "string", "pattern": "^folder not found or not enough permissions$"}
       }
     }
     """
@@ -778,8 +776,8 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "123456789012345"
-    And the content of file at "/file.txt" for user "Brian" should be "123456789012345"
+    And the content of file at "/toShare/file.txt" for user "Alice" should be "123456789012345"
+    And the content of file at "/toShare/file.txt" for user "Brian" should be "123456789012345"
 
 
   Scenario: overwrite an existing file with content that fits the quota. Needed quota is sizeof(old data)+sizeof(new data)
@@ -850,3 +848,28 @@ Feature: API endpoint for direct upload
       }
     }
     """
+
+
+  Scenario: upload a hidden file
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | .hidden     |
+      | data      | hidden file |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^\\.hidden$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/.hidden" for user "Alice" should be "hidden file"
+
+

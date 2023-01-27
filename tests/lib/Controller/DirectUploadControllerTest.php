@@ -211,6 +211,9 @@ class DirectUploadControllerTest extends TestCase {
 
 	/**
 	 * @param MockObject $folderMock
+	 * @param int $uploadedFileSize
+	 * @param string $uploadedFileTmpName
+	 * @param int $uploadedFileError
 	 * @return DirectUploadController
 	 */
 	private function createDirectUploadController(
@@ -262,6 +265,7 @@ class DirectUploadControllerTest extends TestCase {
 			$userSessionMock,
 			$userManagerMock,
 			$directUploadServiceMock,
+			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
 			'testUser',
 		);
 	}
