@@ -199,12 +199,11 @@ class DirectUploadController extends ApiController {
 			if ($directUploadFile['size'] > $freeSpace) {
 				throw new NotEnoughSpaceException('insufficient quota');
 			}
-			// @phpstan-ignore-next-line
 			if ($folderNode->nodeExists($fileName) && $overwrite) {
 				/**
 				 * @var File $file
 				 */
-				$file = $folderNode->get($fileName); // @phpstan-ignore-line
+				$file = $folderNode->get($fileName);
 				if ($file->getType() === FileInfo::TYPE_FOLDER) {
 					throw new Conflict('overwrite is not allowed on non-files');
 				}
@@ -218,16 +217,13 @@ class DirectUploadController extends ApiController {
 					'file_name' => $fileName,
 					'file_id' => $fileId
 				], Http::STATUS_OK);
-			} // @phpstan-ignore-next-line
-			elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
+			} elseif ($folderNode->nodeExists($fileName) && $overwrite === false) {
 				// get unique name for duplicate file with number suffix
-				$fileName = $folderNode->getNonExistingName($fileName); // @phpstan-ignore-line
-			}
-			// @phpstan-ignore-next-line
-			elseif ($folderNode->nodeExists($fileName)) {
+				$fileName = $folderNode->getNonExistingName($fileName);
+			} elseif ($folderNode->nodeExists($fileName)) {
 				throw new Conflict('conflict, file name already exists');
 			}
-			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r')); // @phpstan-ignore-line
+			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r'));
 			$fileId = $fileInfo->getId();
 		} catch (NotPermittedException $e) {
 			return new DataResponse([
