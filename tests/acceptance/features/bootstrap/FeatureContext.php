@@ -92,7 +92,12 @@ class FeatureContext implements Context {
 			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 		);
 		$this->theHttpStatusCodeShouldBe(200);
-		$this->userHasDeletedFile($user, "welcome.txt");
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"DELETE",
+			"welcome.txt"
+		);
 	}
 
 	/**
@@ -818,6 +823,8 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function before(BeforeScenarioScope $scope):void {
+		setlocale(LC_ALL, 'C.utf8');
+
 		// Get the environment
 		$environment = $scope->getEnvironment();
 

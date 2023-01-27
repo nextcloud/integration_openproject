@@ -7,8 +7,8 @@ on:
 name: CI
 
 jobs:
-  build:
-    name: CI
+  unittest-linting:
+    name: unit tests and linting
     strategy:
       matrix:
         nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
@@ -94,20 +94,6 @@ jobs:
           make phpunit
           make jsunit
 
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://localhost:8080
-        run: |
-          git clone --depth 1 https://github.com/nextcloud/activity.git -b ${{ matrix.nextcloudVersion }} server/apps/activity
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cd server
-          ./occ a:e activity
-          ./occ a:e integration_openproject
-          php -S localhost:8080 2> /dev/null &
-          cd apps/integration_openproject
-          make api-test
-
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
@@ -158,3 +144,110 @@ jobs:
         with:
           min_coverage: '57'
           path: './coverage/php/lcov.info'
+  api-tests:
+    name: API tests
+    strategy:
+      matrix:
+        nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
+        phpVersionMajor: [ 7, 8 ]
+        phpVersionMinor: [ 4, 1 ]
+        database: [pgsql, mysql]
+        exclude:
+          - nextcloudVersion: stable22
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+          - nextcloudVersion: stable23
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+          - nextcloudVersion: stable24
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+          - nextcloudVersion: master
+            phpVersionMajor: 7
+          - phpVersionMajor: 7
+            phpVersionMinor: 0
+          - phpVersionMajor: 7
+            phpVersionMinor: 1
+          - phpVersionMajor: 8
+            phpVersionMinor: 4
+    runs-on: ubuntu-latest
+    container: ubuntu:latest
+    defaults:
+      run:
+        working-directory: integration_openproject
+
+    services:
+      nextcloud:
+        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
+        env:
+          SQL: ${{ matrix.database }}
+          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+          NEXTCLOUD_AUTOINSTALL: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity integration_openproject"
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+          VIRTUAL_HOST: "nextcloud"
+          WITH_REDIS: "YES"
+        volumes:
+          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+
+      database-postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nextcloud
+
+      database-mysql:
+        image: mariadb:10.5
+        env:
+          MYSQL_ROOT_PASSWORD: 'nextcloud'
+          MYSQL_PASSWORD: 'nextcloud'
+          MYSQL_USER: 'nextcloud'
+          MYSQL_DATABASE: 'nextcloud'
+
+      redis:
+        image: redis:7
+
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          all_but_latest: true
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: integration_openproject
+
+      - name: Checkout activity app
+        uses: actions/checkout@v2
+        with:
+          repository: nextcloud/activity
+          path: activity
+          ref: ${{ matrix.nextcloudVersion }}
+
+      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+        uses: shivammathur/setup-php@2.23.0
+        with:
+          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+          tools: composer
+          extensions: intl
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://nextcloud
+        run: |
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+          make api-test
