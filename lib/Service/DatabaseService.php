@@ -31,7 +31,7 @@ class DatabaseService {
 	/**
 	 * @var IDBConnection
 	 */
-	private IDBConnection $db;
+	public IDBConnection $db;
 
 
 	/** @var string table name */
