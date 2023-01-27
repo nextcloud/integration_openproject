@@ -235,6 +235,28 @@ Feature: API endpoint for direct upload
     }
     """
 
+  Scenario: Use the same token after one unsuccessful upload
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | ""        |
+      | data      | some data |
+    Then the HTTP status code should be "400"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "401"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^unauthorized$"}
+      }
+    }
+    """
 
   Scenario: use a token created by a user that was disabled after creating the token
     Given user "Alice" got a direct-upload token for "/"
@@ -276,6 +298,31 @@ Feature: API endpoint for direct upload
       }
     }
     """
+
+
+  Scenario: use a token created by a user that was deleted and recreated after creating the token
+    Given user "Alice" got a direct-upload token for "/"
+    And user "Alice" has been deleted
+    And user "Alice" has been created
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt  |
+      | data      | some data |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+
 
   Scenario: send file to a share without create permissions
     Given user "Brian" has been created
@@ -327,6 +374,7 @@ Feature: API endpoint for direct upload
     }
     """
     And the content of file at "/toShare/file.txt" for user "Alice" should be "new data"
+    And the content of file at "/toShare/file.txt" for user "Brian" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename
@@ -703,6 +751,35 @@ Feature: API endpoint for direct upload
       }
     }
     """
+
+
+  Scenario: Upload a file into a shared folder exceeding the quota of sharee but not that of sharer
+    Given user "Brian" has been created
+    And the quota of user "Alice" has been set to "10 B"
+    And the quota of user "Brian" has been set to "20 B"
+    And user "Brian" has created folder "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Alice" got a direct-upload token for "/toShare"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt        |
+      | data      | 123456789012345 |
+    Then the HTTP status code should be "201"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "file_name",
+        "file_id"
+      ],
+      "properties": {
+          "file_name": {"type": "string", "pattern": "^file\\.txt$"},
+          "file_id": {"type" : "integer"}
+      }
+    }
+    """
+    And the content of file at "/file.txt" for user "Alice" should be "123456789012345"
+    And the content of file at "/file.txt" for user "Brian" should be "123456789012345"
 
 
   Scenario: overwrite an existing file with content that fits the quota. Needed quota is sizeof(old data)+sizeof(new data)

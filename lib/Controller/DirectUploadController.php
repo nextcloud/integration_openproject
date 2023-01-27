@@ -38,6 +38,7 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
 use OCA\OpenProject\Service\DirectUploadService;
+use OCA\OpenProject\Service\DatabaseService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\IRootFolder;
@@ -61,6 +62,10 @@ class DirectUploadController extends ApiController {
 	private DirectUploadService $directUploadService;
 
 	/**
+	 * @var DatabaseService
+	 */
+	private DatabaseService $databaseService;
+	/**
 	 * @var IUser|null
 	 */
 	private ?IUser $user;
@@ -83,6 +88,7 @@ class DirectUploadController extends ApiController {
 		IUserSession $userSession,
 		IUserManager $userManager,
 		DirectUploadService $directUploadService,
+		DatabaseService $databaseService,
 		?string $userId
 	) {
 		parent::__construct($appName, $request, 'POST');
@@ -91,6 +97,7 @@ class DirectUploadController extends ApiController {
 		$this->user = $userSession->getUser();
 		$this->rootFolder = $rootFolder;
 		$this->userManager = $userManager;
+		$this->databaseService = $databaseService;
 	}
 
 	/**
@@ -145,6 +152,11 @@ class DirectUploadController extends ApiController {
 	 */
 	public function directUpload(string $token):DataResponse {
 		try {
+			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
+				$this->databaseService->deleteToken($token);
+				throw new NotFoundException('invalid token');
+			}
+			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
 			if (empty($directUploadFile)) {
@@ -173,11 +185,6 @@ class DirectUploadController extends ApiController {
 			} else {
 				$overwrite = null;
 			}
-
-			if (strlen($token) !== 64 || !preg_match('/^[a-zA-Z0-9]*/', $token)) {
-				throw new NotFoundException('invalid token');
-			}
-			$tokenInfo = $this->directUploadService->getTokenInfo($token);
 			$user = $this->userManager->get($tokenInfo['user_id']);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 			$nodes = $userFolder->getById($tokenInfo['folder_id']);
