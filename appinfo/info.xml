@@ -38,7 +38,7 @@ For more information on how to set up and use the OpenProject application, pleas
 		<nextcloud min-version="22" max-version="26"/>
 	</dependencies>
 	<background-jobs>
-		<job>OCA\OpenProject\BackgroundJob\CheckNotifications</job>
+		<job>OCA\OpenProject\BackgroundJob\RemoveExpiredDirectUploadTokens</job>
 	</background-jobs>
 	<settings>
 		<admin>OCA\OpenProject\Settings\Admin</admin>

@@ -31,7 +31,7 @@ class DatabaseService {
 	/**
 	 * @var IDBConnection
 	 */
-	private IDBConnection $db;
+	public IDBConnection $db;
 
 
 	/** @var string table name */
@@ -100,6 +100,19 @@ class DatabaseService {
 			'expires_on' => $expiresOn,
 			'folder_id' => $folderId
 		];
+	}
+
+	/**
+	 *
+	 * @throws Exception
+	 */
+	public function deleteExpiredTokens(): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->table)
+			->where(
+				$query->expr()->lt('expires_on', $query->createNamedParameter(time()))
+			);
+		$query->execute();
 	}
 
 	/**
