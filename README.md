@@ -22,6 +22,9 @@ Please report issues and bugs here: https://community.openproject.org/projects/n
 - For documentation on how to set up the integration as an administrator, refer to [Nextcloud integration setup](https://openproject.org/docs/system-admin-guide/integrations/nextcloud/).
 
 ## Setting up the integration as an administrator with API
+
+***Note: Setting up the integration can only be done by admin user but not a normal user***
+
 We have a single API endpoint (/setup) available to set up, update and reset the integration.
 
 To set up or update the integration following data needs to be provided:
@@ -38,7 +41,7 @@ To set up or update the integration following data needs to be provided:
 
    Example curl request to set up whole integration
    ```bash
-   curl -XPOST -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+   curl -XPOST -u<nextcloud_admin_username>:<nextcloud_admin_password>  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
    -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false}}' \
    -H 'Content-Type: application/json' -v
    ```
@@ -61,7 +64,7 @@ To set up or update the integration following data needs to be provided:
    Example curl request to update only `openproject_client_id`
    and `openproject_client_secret`
    ```bash
-   curl -XPATCH -uadmin:admin  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
+   curl -XPATCH -u<nextcloud_admin_username>:<nextcloud_admin_password>  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
    -d '{"values":{"openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>"}}' \
    -H 'Content-Type: application/json' -v
    ```
@@ -81,7 +84,7 @@ To set up or update the integration following data needs to be provided:
 
    Example curl request to reset whole integration
    ```bash
-   curl -XDELETE -uadmin:admin http://<nextcloud_host>/index.php/apps/integration_openproject/setup
+   curl -XDELETE -u<nextcloud_admin_username>:<nextcloud_admin_password> http://<nextcloud_host>/index.php/apps/integration_openproject/setup -v
    ```
 
    The response from the above curl request
