@@ -79,7 +79,7 @@ class DirectUploadController extends ApiController {
 	 * @var IUserManager
 	 */
 	private IUserManager $userManager;
-
+	private IUserSession $userSession;
 
 	public function __construct(
 		string $appName,
@@ -98,6 +98,7 @@ class DirectUploadController extends ApiController {
 		$this->rootFolder = $rootFolder;
 		$this->userManager = $userManager;
 		$this->databaseService = $databaseService;
+		$this->userSession = $userSession;
 	}
 
 	/**
@@ -186,6 +187,7 @@ class DirectUploadController extends ApiController {
 				$overwrite = null;
 			}
 			$user = $this->userManager->get($tokenInfo['user_id']);
+			$this->userSession->setUser($user);
 			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 			$nodes = $userFolder->getById($tokenInfo['folder_id']);
 			if (empty($nodes)) {
