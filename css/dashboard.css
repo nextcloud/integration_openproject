@@ -22,10 +22,6 @@ body.theme--dark .icon-openproject {
 	position: relative;
 }
 
-.panel--content > div {
-	height: 100%;
-}
-
 .panel--content .empty-content {
 	margin: 0 !important;
 	height: 100%;
