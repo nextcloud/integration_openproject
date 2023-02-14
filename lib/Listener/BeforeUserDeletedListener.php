@@ -24,39 +24,28 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\OpenProject\Migration;
 
-use OCP\DB\ISchemaWrapper;
-use OCP\IConfig;
-use OCP\IUserManager;
-use OCP\Migration\IOutput;
-use OCP\Migration\SimpleMigrationStep;
-use OCP\Security\ISecureRandom;
+namespace OCA\OpenProject\Listener;
+use OC\ForbiddenException;
+use OCP\User\Events\BeforeUserDeletedEvent;
 
-class Version2400Date20230214145250 extends SimpleMigrationStep {
-	/**
-	 * @var IUserManager
-	 */
-	private $userManager;
+
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
+
+class BeforeUserDeletedListener implements IEventListener {
+
 
 	/**
-	 * @var ISecureRandom
+	 * @throws ForbiddenException
 	 */
-	private ISecureRandom $secureRandom;
-
-	public function __construct(IUserManager $userManager, ISecureRandom $secureRandom) {
-		$this->userManager = $userManager;
-		$this->secureRandom = $secureRandom;
-	}
-
-	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options)
-	{
-		$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-		$username = 'openproject';
-			if(!$this->userManager->userExists($username)){
-				$this->userManager->createUser($username , $password);
+	public function handle(Event $event): void {
+			if (!($event instanceof BeforeUserDeletedEvent)) {
+				return;
 			}
-		return null;
-	}
-
+			$user = $event->getUser();
+			if ($user === 'openproject'){
+				throw new ForbiddenException('User openproject cannot be deleted');
+			}
+		}
 }

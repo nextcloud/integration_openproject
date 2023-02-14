@@ -11,6 +11,7 @@ namespace OCA\OpenProject\AppInfo;
 
 use Closure;
 use OCA\Files\Event\LoadSidebar;
+use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -24,7 +25,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\EventDispatcher\IEventDispatcher;
-
+use OCP\User\Events\BeforeUserDeletedEvent;
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
 
@@ -59,7 +60,8 @@ class Application extends App implements IBootstrap {
 		// register sidebar tab
 		$context->registerEventListener(
 			LoadSidebar::class,
-			LoadSidebarScript::class
+			LoadSidebarScript::class,
+			BeforeUserDeletedListener::class
 		);
 	}
 
@@ -69,6 +71,9 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
+		});
+		$dispatcher->addListener('OCP\User\Events\BeforeUserDeletedEvent', function (){
+
 		});
 	}
 
