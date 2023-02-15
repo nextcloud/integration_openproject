@@ -28,6 +28,7 @@ namespace OCA\OpenProject\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use Closure;
+use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -39,14 +40,18 @@ class Version2400Date20230214145250 extends SimpleMigrationStep {
 	 */
 	private $userManager;
 
+	/** @var IGroupManager */
+	private $groupManager;
+
 	/**
 	 * @var ISecureRandom
 	 */
 	private ISecureRandom $secureRandom;
 
-	public function __construct(IUserManager $userManager, ISecureRandom $secureRandom) {
+	public function __construct(IUserManager $userManager, ISecureRandom $secureRandom, IGroupManager $groupManager) {
 		$this->userManager = $userManager;
 		$this->secureRandom = $secureRandom;
+		$this->groupManager = $groupManager;
 	}
 	/**
 	 * @param IOutput $output
@@ -56,9 +61,13 @@ class Version2400Date20230214145250 extends SimpleMigrationStep {
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-		$username = 'openproject';
-		if (!$this->userManager->userExists($username)) {
-			$this->userManager->createUser($username, $password);
+		$name = 'openproject';
+		if (!$this->userManager->userExists($name)) {
+			$this->userManager->createUser($name, $password);
+		}
+
+		if (!$this->groupManager->groupExists($name)) {
+			$this->groupManager->createGroup($name);
 		}
 		return null;
 	}
