@@ -28,6 +28,7 @@ namespace OCA\OpenProject\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use Closure;
+use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
@@ -48,10 +49,16 @@ class Version2400Date20230214145250 extends SimpleMigrationStep {
 	 */
 	private ISecureRandom $secureRandom;
 
-	public function __construct(IUserManager $userManager, ISecureRandom $secureRandom, IGroupManager $groupManager) {
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
+	public function __construct(IUserManager $userManager, ISecureRandom $secureRandom, IGroupManager $groupManager, ISubAdmin $subAdminManager) {
 		$this->userManager = $userManager;
 		$this->secureRandom = $secureRandom;
 		$this->groupManager = $groupManager;
+		$this->subAdminManager = $subAdminManager;
 	}
 	/**
 	 * @param IOutput $output
@@ -67,7 +74,10 @@ class Version2400Date20230214145250 extends SimpleMigrationStep {
 		}
 
 		if (!$this->groupManager->groupExists($name)) {
-			$this->groupManager->createGroup($name);
+			$group = $this->groupManager->createGroup($name);
+			$user = $this->userManager->get($name);
+			$group->addUser($user);
+			$this->subAdminManager->createSubAdmin($user, $group);
 		}
 		return null;
 	}
