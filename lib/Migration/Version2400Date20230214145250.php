@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Migration;
 
 use OCP\DB\ISchemaWrapper;
-use OCP\IConfig;
+use Closure;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -48,15 +48,18 @@ class Version2400Date20230214145250 extends SimpleMigrationStep {
 		$this->userManager = $userManager;
 		$this->secureRandom = $secureRandom;
 	}
-
-	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options)
-	{
+	/**
+	 * @param IOutput $output
+	 * @param Closure(): ISchemaWrapper $schemaClosure
+	 * @param array<string, string|null> $options
+	 * @return null|ISchemaWrapper
+	 */
+	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 		$username = 'openproject';
-			if(!$this->userManager->userExists($username)){
-				$this->userManager->createUser($username , $password);
-			}
+		if (!$this->userManager->userExists($username)) {
+			$this->userManager->createUser($username, $password);
+		}
 		return null;
 	}
-
 }

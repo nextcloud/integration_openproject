@@ -27,23 +27,23 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
-use OCP\User\Events\BeforeUserDeletedEvent;
+use OC\User\LoginException;
+use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
-class BeforeUserDeletedListener implements IEventListener {
+class BeforeUserLoggedInListener implements IEventListener {
 
 
 	/**
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof BeforeUserDeletedEvent)) {
+		if (!($event instanceof BeforeUserLoggedInEvent)) {
 			return;
 		}
-		$user = $event->getUser();
-		if ($user->getUID() === 'openproject') {
-			throw new \Exception('User openproject cannot be deleted');
+		if ($event->getUsername() === 'openproject') {
+			throw new LoginException('Cannot login with this user');
 		}
 	}
 }

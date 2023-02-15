@@ -12,12 +12,14 @@ namespace OCA\OpenProject\AppInfo;
 use Closure;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
+use OCA\OpenProject\Listener\BeforeUserLoggedInListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\Util;
 
 use OCP\AppFramework\App;
@@ -60,8 +62,7 @@ class Application extends App implements IBootstrap {
 		// register sidebar tab
 		$context->registerEventListener(
 			LoadSidebar::class,
-			LoadSidebarScript::class,
-			BeforeUserDeletedListener::class
+			LoadSidebarScript::class
 		);
 	}
 
@@ -72,9 +73,8 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
 		});
-		$dispatcher->addListener('OCP\User\Events\BeforeUserDeletedEvent', function (){
-
-		});
+		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
+		$dispatcher->addServiceListener(BeforeUserLoggedInEvent::class, BeforeUserLoggedInListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {
