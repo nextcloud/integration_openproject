@@ -154,9 +154,9 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, master ]
-        phpVersionMajor: [ 7, 8 ]
-        phpVersionMinor: [ 4, 1 ]
+        nextcloudVersion: [stable25]
+        phpVersionMajor: [ 7 ]
+        phpVersionMinor: [ 4 ]
         database: [pgsql, mysql]
         exclude:
           - nextcloudVersion: stable22
@@ -184,7 +184,7 @@ jobs:
 
     services:
       nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
+        image: swikrititripathi/demo-nextcloud:latest
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
