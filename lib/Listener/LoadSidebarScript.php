@@ -29,6 +29,7 @@ namespace OCA\OpenProject\Listener;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -57,13 +58,20 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	private $oauthConnectionErrorMessage = '';
 
+	/**
+	 * @var IAppManager
+	 */
+	protected $appManager;
+
 	public function __construct(
 		IInitialState $initialStateService,
 		IConfig $config,
-		IUserSession $userSession
+		IUserSession $userSession,
+		IAppManager $appManager
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
+		$this->appManager = $appManager;
 		$user = $userSession->getUser();
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
 			$this->oauthConnectionResult = $this->config->getUserValue(
@@ -83,6 +91,9 @@ class LoadSidebarScript implements IEventListener {
 
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadSidebar)) {
+			return;
+		}
+		if (!$this->appManager->isEnabledForUser(Application::APP_ID)) {
 			return;
 		}
 		$currentVersion = implode('.', Util::getVersion());
