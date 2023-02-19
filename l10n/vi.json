@@ -1,4 +1,5 @@
 { "translations": {
+    "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
     "Cancel" : "Hủy",
     "Save" : "Lưu",
     "Reset" : "Đặt lại",
