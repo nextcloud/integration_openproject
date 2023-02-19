@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
     "Cancel" : "Hủy",
     "Save" : "Lưu",
     "Reset" : "Đặt lại",
