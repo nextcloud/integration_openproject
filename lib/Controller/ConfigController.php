@@ -225,7 +225,7 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		if (key_exists('openproject_group_folder', $values) && $values['openproject_group_folder']){
+		if (key_exists('openproject_group_folder', $values) && $values['openproject_group_folder']) {
 			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 			$name = 'openproject';
 			if (!$this->userManager->userExists($name)) {
@@ -238,9 +238,9 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 			} else {
-				$group =$this->groupManager->get($name);
+				$group = $this->groupManager->get($name);
 				$user = $this->userManager->get($name);
-				if(!$this->subAdminManager->isSubAdminOfGroup($user,$group)){
+				if (!$this->subAdminManager->isSubAdminOfGroup($user, $group)) {
 					$this->subAdminManager->createSubAdmin($user, $group);
 				}
 			}

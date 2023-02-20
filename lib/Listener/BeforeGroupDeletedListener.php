@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2023 Swikriti Tripathi <swikriti@jankaritech.com>
  *
- * @author Your name <swikriti@jankaritech.com>
+ * @author Swikriti Tripathi <swikriti@jankaritech.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -30,8 +30,18 @@ namespace OCA\OpenProject\Listener;
 use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use Psr\Log\LoggerInterface;
 
 class BeforeGroupDeletedListener implements IEventListener {
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
+	public function __construct(LoggerInterface $logger) {
+		$this->logger = $logger;
+	}
 
 
 	/**
@@ -41,8 +51,10 @@ class BeforeGroupDeletedListener implements IEventListener {
 		if (!($event instanceof BeforeGroupDeletedEvent)) {
 			return;
 		}
+
 		$group = $event->getGroup();
 		if ($group->getGID() === 'openproject') {
+			$this->logger->info('Group openproject cannot be deleted');
 			throw new \Exception('Group openproject cannot be deleted');
 		}
 	}

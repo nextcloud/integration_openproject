@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2023 Swikriti Tripathi <swikriti@jankaritech.com>
  *
- * @author Your name <swikriti@jankaritech.com>
+ * @author Swikriti Tripathi <swikriti@jankaritech.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -31,8 +31,18 @@ use OC\User\LoginException;
 use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use Psr\Log\LoggerInterface;
 
 class BeforeUserLoggedInListener implements IEventListener {
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
+	public function __construct(LoggerInterface $logger) {
+		$this->logger = $logger;
+	}
 
 
 	/**
@@ -43,6 +53,7 @@ class BeforeUserLoggedInListener implements IEventListener {
 			return;
 		}
 		if ($event->getUsername() === 'openproject') {
+			$this->logger->info('Cannot login with this user');
 			throw new LoginException('Cannot login with this user');
 		}
 	}

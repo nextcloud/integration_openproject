@@ -27,18 +27,22 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
-use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\User\Events\UserChangedEvent;
 use Psr\Log\LoggerInterface;
 
-class BeforeUserDeletedListener implements IEventListener {
+class UserChangedListener implements IEventListener {
 
 	/**
 	 * @var LoggerInterface
 	 */
 	private $logger;
 
+
+	/**
+	 * @param LoggerInterface $logger
+	 */
 	public function __construct(LoggerInterface $logger) {
 		$this->logger = $logger;
 	}
@@ -47,13 +51,20 @@ class BeforeUserDeletedListener implements IEventListener {
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof BeforeUserDeletedEvent)) {
+		if (!($event instanceof UserChangedEvent)) {
 			return;
 		}
-		$user = $event->getUser();
-		if ($user->getUID() === 'openproject') {
-			$this->logger->info('User openproject cannot be deleted');
-			throw new \Exception('User openproject cannot be deleted');
+		$name = 'openproject';
+		if ($event->getUser()->getUID() === $name) {
+			$feature = $event->getFeature();
+			if ($feature === 'enabled' && !$event->getValue()) {
+				$this->logger->info('User openproject cannot be disabled');
+				throw new \Exception('User openproject cannot be disabled');
+			}
+			if ($feature === 'displayName' || $feature === 'avatar' && $event->getValue() !== $name) {
+				$event->getUser()->setDisplayName($name);
+				$this->logger->info('User openproject cannot be renamed');
+			}
 		}
 	}
 }
