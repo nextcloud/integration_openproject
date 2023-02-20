@@ -15,6 +15,8 @@ use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCP\Group\ISubAdmin;
+use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -30,6 +32,7 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -73,6 +76,23 @@ class ConfigController extends Controller {
 	 * @var SettingsController
 	 */
 	private $oauthSettingsController;
+
+	/**
+	 * @var IGroupManager
+	 */
+	private $groupManager;
+
+	/**
+	 * @var ISecureRandom
+	 */
+	private ISecureRandom $secureRandom;
+
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
@@ -83,6 +103,9 @@ class ConfigController extends Controller {
 								LoggerInterface $logger,
 								OauthService $oauthService,
 								SettingsController $oauthSettingsController,
+								IGroupManager $groupManager,
+								ISecureRandom $secureRandom,
+								ISubAdmin $subAdminManager,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -94,6 +117,9 @@ class ConfigController extends Controller {
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
 		$this->oauthSettingsController = $oauthSettingsController;
+		$this->groupManager = $groupManager;
+		$this->secureRandom = $secureRandom;
+		$this->subAdminManager = $subAdminManager;
 	}
 
 	/**
@@ -155,7 +181,8 @@ class ConfigController extends Controller {
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',
-			'default_enable_unified_search'
+			'default_enable_unified_search',
+			'openproject_group_folder'
 		];
 
 		// if values contains a key that is not in the allowedKeys array,
@@ -196,6 +223,26 @@ class ConfigController extends Controller {
 				$this->oauthService->setClientRedirectUri(
 					(int)$oauthClientInternalId, $values['openproject_instance_url']
 				);
+			}
+		}
+		if (key_exists('openproject_group_folder', $values) && $values['openproject_group_folder']){
+			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+			$name = 'openproject';
+			if (!$this->userManager->userExists($name)) {
+				$this->userManager->createUser($name, $password);
+			}
+
+			if (!$this->groupManager->groupExists($name)) {
+				$group = $this->groupManager->createGroup($name);
+				$user = $this->userManager->get($name);
+				$group->addUser($user);
+				$this->subAdminManager->createSubAdmin($user, $group);
+			} else {
+				$group =$this->groupManager->get($name);
+				$user = $this->userManager->get($name);
+				if(!$this->subAdminManager->isSubAdminOfGroup($user,$group)){
+					$this->subAdminManager->createSubAdmin($user, $group);
+				}
 			}
 		}
 		$runningFullReset = (
