@@ -11,7 +11,9 @@ namespace OCA\OpenProject\AppInfo;
 
 use Closure;
 use OCA\Files\Event\LoadSidebar;
+use OCA\OpenProject\Listener\BeforeNodeDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
@@ -55,11 +57,13 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerDashboardWidget(OpenProjectWidget::class);
 		$context->registerSearchProvider(OpenProjectSearchProvider::class);
-
 		// register sidebar tab
 		$context->registerEventListener(
 			LoadSidebar::class,
 			LoadSidebarScript::class
+		);
+		$context->registerEventListener(
+			BeforeNodeDeletedEvent::class, BeforeNodeDeletedListener::class
 		);
 	}
 
