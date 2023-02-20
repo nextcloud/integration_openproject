@@ -34,7 +34,6 @@ use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
-use OC_Util;
 
 class OpenProjectSearchProvider implements IProvider {
 
@@ -115,17 +114,6 @@ class OpenProjectSearchProvider implements IProvider {
 		$term = $query->getTerm();
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
-		if (version_compare(OC_Util::getVersionString(), '25') < 0) {
-			$theme = $this->config->getUserValue($user->getUID(), 'accessibility', 'theme');
-			$thumbnailUrl = ($theme === 'dark')
-				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
-				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
-		} else {
-			$themes = json_decode($this->config->getUserValue($user->getUID(), 'theming', 'enabled-themes', '["default"]'));
-			$thumbnailUrl = (in_array('dark', $themes) || in_array('dark-highcontrast', $themes))
-				? $this->urlGenerator->imagePath(Application::APP_ID, 'app.svg')
-				: $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
-		}
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 
@@ -145,9 +133,9 @@ class OpenProjectSearchProvider implements IProvider {
 		}
 
 		// @phpstan-ignore-next-line array_map supports also lambda functions
-		$formattedResults = array_map(function (array $entry) use ($thumbnailUrl, $openprojectUrl): OpenProjectSearchResultEntry {
+		$formattedResults = array_map(function (array $entry) use ($openprojectUrl): OpenProjectSearchResultEntry {
 			return new OpenProjectSearchResultEntry(
-				$thumbnailUrl,
+				$this->getOpenProjectUserAvatarUrl($entry),
 				$this->getMainText($entry),
 				$this->getSubline($entry),
 				$this->getLinkToOpenProject($entry, $openprojectUrl),
@@ -168,7 +156,35 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getMainText(array $entry): string {
-		return $entry['subject'];
+		$workPackageType = isset($entry['_links'], $entry['_links']['type'], $entry['_links']['type']['title'])
+			? strtoupper($entry['_links']['type']['title'])
+			: '';
+		$subject = $entry['subject'] ?? '';
+		return $workPackageType . ": " . $subject;
+	}
+
+	/**
+	 * @param array<mixed> $entry
+	 * @return string
+	 */
+	protected function getOpenProjectUserAvatarUrl(array $entry): string {
+		$userIdURL = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['href'])
+			? $entry['_links']['assignee']['href']
+			: '';
+		$userName = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['title'])
+			? $entry['_links']['assignee']['title']
+			: '';
+		$userId = preg_replace('/.*\//', "", $userIdURL);
+		return $this->urlGenerator->getAbsoluteURL(
+			'index.php/apps/integration_openproject/avatar?' .
+			"userId" .
+			'=' .
+			$userId .
+			'&' .
+			"userName" .
+			'=' .
+			$userName
+		);
 	}
 
 	/**
@@ -176,13 +192,14 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getSubline(array $entry): string {
-		$description = isset($entry['description'], $entry['description']['raw'])
-			? $entry['description']['raw']
-			: '';
+		$workPackageID = $entry['id'] ?? '';
 		$status = isset($entry['_links'], $entry['_links']['status'], $entry['_links']['status']['title'])
 			? '[' . $entry['_links']['status']['title'] . '] '
 			: '';
-		return $status . $description;
+		$projectTitle = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['title'])
+			? $entry['_links']['project']['title']
+			: '';
+		return "#" . $workPackageID . " " . $status . $projectTitle;
 	}
 
 	/**
