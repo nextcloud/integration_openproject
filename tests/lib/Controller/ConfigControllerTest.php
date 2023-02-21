@@ -7,20 +7,20 @@ use OCA\OAuth2\Controller\SettingsController;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\Group\ISubAdmin;
 use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUser;
 use OCP\AppFramework\Http;
-use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
+use OCP\Security\ISecureRandom;
+use OCP\IGroupManager;
+use OCP\Group\ISubAdmin;
 
 class ConfigControllerTest extends TestCase {
 
@@ -139,7 +139,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
@@ -206,7 +207,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame($redirectUrl, $result->getRedirectURL());
@@ -242,7 +244,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
 	}
@@ -311,7 +314,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
 	}
@@ -382,7 +386,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
 	}
@@ -458,7 +463,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
 	}
@@ -543,7 +549,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'testUser'
+			$this->createMock(ISubAdmin::class),
+			'test101'
 		);
 
 		$result = $configController->setAdminConfig($credsToUpdate);
@@ -735,7 +742,7 @@ class ConfigControllerTest extends TestCase {
 
 		if ($deleteUserValues === true) {
 			$configMock
-				->expects($this->exactly(15)) // 5 times for each user
+				->expects($this->exactly(10)) // 5 times for each user
 				->method('deleteUserValue')
 				->withConsecutive(
 					['admin', 'integration_openproject', 'token'],
@@ -743,11 +750,6 @@ class ConfigControllerTest extends TestCase {
 					['admin', 'integration_openproject', 'user_id'],
 					['admin', 'integration_openproject', 'user_name'],
 					['admin', 'integration_openproject', 'refresh_token'],
-					['openproject', 'integration_openproject', 'token'],
-					['openproject', 'integration_openproject', 'login'],
-					['openproject', 'integration_openproject', 'user_id'],
-					['openproject', 'integration_openproject', 'user_name'],
-					['openproject', 'integration_openproject', 'refresh_token'],
 					[$this->user1->getUID(), 'integration_openproject', 'token'],
 					[$this->user1->getUID(), 'integration_openproject', 'login'],
 					[$this->user1->getUID(), 'integration_openproject', 'user_id'],
@@ -776,7 +778,8 @@ class ConfigControllerTest extends TestCase {
 			$oauthSettingsControllerMock,
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'test101'
+			$this->createMock(ISubAdmin::class),
+			'test101'
 		);
 
 		$configController->setAdminConfig($credsToUpdate);
@@ -805,7 +808,8 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(SettingsController::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'test101'
+			$this->createMock(ISubAdmin::class),
+			'test101'
 		);
 
 		$response = $configController->setAdminConfig([
@@ -884,10 +888,11 @@ class ConfigControllerTest extends TestCase {
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
+			'default_enable_navigation' => true,
+			'default_enable_unified_search' => true,
 		];
 		$userTokens = [
 			'admin' => 'admin_token',
-			'openproject' => 'openproject_token',
 			'test101' => 'user_token',
 		];
 
@@ -912,7 +917,6 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'nc_oauth_client_id', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
@@ -922,7 +926,6 @@ class ConfigControllerTest extends TestCase {
 					$oldAdminConfig['openproject_instance_url'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
-					'',
 					'',
 					'',
 					'',
@@ -941,7 +944,6 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
@@ -950,7 +952,6 @@ class ConfigControllerTest extends TestCase {
 					$oldAdminConfig['openproject_instance_url'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
-					'',
 					'',
 					'',
 					'',
@@ -973,26 +974,23 @@ class ConfigControllerTest extends TestCase {
 			->method('getUserValue')
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token', ''],
-				['openproject', 'integration_openproject', 'token', ''],
 				[$this->user1->getUID(), 'integration_openproject', 'token', '']
 			)
 			->willReturnOnConsecutiveCalls(
 				$userTokens['admin'],
-				$userTokens['openproject'],
 				$userTokens[$this->user1->getUID()]
 			);
 
 		$apiService
-			->expects($this->exactly(3))
+			->expects($this->exactly(2))
 			->method('revokeUserOAuthToken')
 			->withConsecutive(
 				['admin', $oldAdminConfig['openproject_instance_url'], $userTokens['admin'], $oldAdminConfig['openproject_client_id'], $oldAdminConfig['openproject_client_secret']],
-				['openproject', $oldAdminConfig['openproject_instance_url'], $userTokens['openproject'], $oldAdminConfig['openproject_client_id'], $oldAdminConfig['openproject_client_secret']],
 				['test101', $oldAdminConfig['openproject_instance_url'], $userTokens['test101'], $oldAdminConfig['openproject_client_id'], $oldAdminConfig['openproject_client_secret']],
 			);
 
 		$configMock
-			->expects($this->exactly(15))
+			->expects($this->exactly(10))
 			->method("deleteUserValue")
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token'],
@@ -1000,11 +998,6 @@ class ConfigControllerTest extends TestCase {
 				['admin', 'integration_openproject', 'user_id'],
 				['admin', 'integration_openproject', 'user_name'],
 				['admin', 'integration_openproject', 'refresh_token'],
-				['openproject', 'integration_openproject', 'token'],
-				['openproject', 'integration_openproject', 'login'],
-				['openproject', 'integration_openproject', 'user_id'],
-				['openproject', 'integration_openproject', 'user_name'],
-				['openproject', 'integration_openproject', 'refresh_token'],
 				[$this->user1->getUID(), 'integration_openproject', 'token'],
 				[$this->user1->getUID(), 'integration_openproject', 'login'],
 				[$this->user1->getUID(), 'integration_openproject', 'user_id'],
@@ -1033,7 +1026,8 @@ class ConfigControllerTest extends TestCase {
 			$oauthSettingsControllerMock,
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'test101'
+			$this->createMock(ISubAdmin::class),
+			'test101'
 		);
 
 		$result = $configController->setAdminConfig($newConfig);
@@ -1080,7 +1074,6 @@ class ConfigControllerTest extends TestCase {
 		];
 		$userTokens = [
 			'admin' => 'admin_token',
-			'openproject' => 'openproject_token'
 		];
 		$userManager = $this->checkForUsersCountBeforeTest();
 		$apiService = $this
@@ -1127,11 +1120,9 @@ class ConfigControllerTest extends TestCase {
 			->method('getUserValue')
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token', ''],
-				['openproject', 'integration_openproject', 'token', ''],
 			)
 			->willReturnOnConsecutiveCalls(
 				$userTokens['admin'],
-				$userTokens['openproject'],
 			);
 
 		$loggerInterfaceMock
@@ -1141,7 +1132,7 @@ class ConfigControllerTest extends TestCase {
 			);
 
 		$apiService
-			->expects($this->exactly(2))
+			->expects($this->exactly(1))
 			->method('revokeUserOAuthToken')
 			->withConsecutive(
 				[
@@ -1151,18 +1142,11 @@ class ConfigControllerTest extends TestCase {
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret']
 				],
-				[
-					'openproject',
-					$oldAdminConfig['openproject_instance_url'],
-					$userTokens['openproject'],
-					$oldAdminConfig['openproject_client_id'],
-					$oldAdminConfig['openproject_client_secret']
-				],
 			)
 			->willThrowException($exception);
 
 		$configMock
-			->expects($this->exactly(10))
+			->expects($this->exactly(5))
 			->method("deleteUserValue")
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token'],
@@ -1170,11 +1154,6 @@ class ConfigControllerTest extends TestCase {
 				['admin', 'integration_openproject', 'user_id'],
 				['admin', 'integration_openproject', 'user_name'],
 				['admin', 'integration_openproject', 'refresh_token'],
-				['openproject', 'integration_openproject', 'token'],
-				['openproject', 'integration_openproject', 'login'],
-				['openproject', 'integration_openproject', 'user_id'],
-				['openproject', 'integration_openproject', 'user_name'],
-				['openproject', 'integration_openproject', 'refresh_token'],
 			);
 		$configMock
 			->expects($this->exactly(2))
@@ -1196,7 +1175,8 @@ class ConfigControllerTest extends TestCase {
 			$oauthSettingsControllerMock,
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'admin'
+			$this->createMock(ISubAdmin::class),
+			'admin'
 		);
 
 		$result = $configController->setAdminConfig($newAdminConfig);
@@ -1267,7 +1247,8 @@ class ConfigControllerTest extends TestCase {
 			$oauthSettingsControllerMock,
 			$this->createMock(IGroupManager::class),
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(ISubAdmin::class), 'admin'
+			$this->createMock(ISubAdmin::class),
+			'admin'
 		);
 
 		$result = $configController->setAdminConfig($newAdminConfig);
