@@ -417,7 +417,7 @@ export default {
 		},
 		async setOPFolder() {
 			this.openProjectGroupFolder = true
-			const saved = await this.saveOPOptions()
+			const result = await this.saveOPOptions()
 		},
 		resetAllAppValuesConfirmation() {
 			OC.dialogs.confirmDestructive(
@@ -558,7 +558,7 @@ export default {
 					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
-					openproject_group_folder: this.openProjectGroupFolder,
+					setup_group_folder: this.openProjectGroupFolder,
 				},
 			}
 			try {

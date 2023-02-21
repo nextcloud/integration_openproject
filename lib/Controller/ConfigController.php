@@ -13,6 +13,7 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
+use mysql_xdevapi\Exception;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\Group\ISubAdmin;
@@ -34,6 +35,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
+use Sabre\DAV\Exception\Conflict;
 
 class ConfigController extends Controller {
 
@@ -182,9 +184,9 @@ class ConfigController extends Controller {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'openproject_group_folder'
+			'setup_group_folder'
 		];
-
+		$OPUserAndGroupCreated = false;
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
 		foreach ($values as $key => $value) {
@@ -225,25 +227,17 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		if (key_exists('openproject_group_folder', $values) && $values['openproject_group_folder']) {
-			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-			$name = 'openproject';
-			if (!$this->userManager->userExists($name)) {
-				$this->userManager->createUser($name, $password);
-			}
-
-			if (!$this->groupManager->groupExists($name)) {
-				$group = $this->groupManager->createGroup($name);
-				$user = $this->userManager->get($name);
-				$group->addUser($user);
-				$this->subAdminManager->createSubAdmin($user, $group);
-			} else {
-				$group = $this->groupManager->get($name);
-				$user = $this->userManager->get($name);
-				if (!$this->subAdminManager->isSubAdminOfGroup($user, $group)) {
+		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
+				$isSystemReady = $this->isSystemReadyForGroupFolderSetUp();
+				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+				$name = 'openproject';
+				if ($isSystemReady){
+					$user = $this->userManager->createUser($name, $password);
+					$group = $this->groupManager->createGroup($name);
+					$group->addUser($user);
 					$this->subAdminManager->createSubAdmin($user, $group);
+					$OPUserAndGroupCreated = true;
 				}
-			}
 		}
 		$runningFullReset = (
 
@@ -317,7 +311,8 @@ class ConfigController extends Controller {
 
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
+			"groupFolder" => $OPUserAndGroupCreated
 		];
 	}
 
@@ -333,13 +328,33 @@ class ConfigController extends Controller {
 		try {
 			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
-		} catch (\Exception $e) {
+		} catch (Conflict $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
+		}
+		catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_BAD_REQUEST);
 		}
 	}
 
+	private function isSystemReadyForGroupFolderSetUp(): bool {
+		$name = 'openproject';
+		if($this->userManager->userExists($name) && $this->groupManager->groupExists($name)){
+			$group = $this->groupManager->get($name);
+			$user = $this->userManager->get($name);
+			if (!$this->subAdminManager->isSubAdminOfGroup($user, $group)) {
+				$group->addUser($user);
+				$this->subAdminManager->createSubAdmin($user, $group);
+			}
+			return false;
+		} else if($this->userManager->userExists($name) || $this->groupManager->groupExists($name)){
+			throw new Conflict('User or Group openproject already exists, please rename or remove the existing user or group openproject to proceed');
+		}
+		return true;
+	}
 	/**
 	 * receive oauth code and get oauth access token
 	 * @NoAdminRequired

@@ -61,10 +61,6 @@ class UserChangedListener implements IEventListener {
 				$this->logger->info('User openproject cannot be disabled');
 				throw new \Exception('User openproject cannot be disabled');
 			}
-			if ($feature === 'displayName' || $feature === 'avatar' && $event->getValue() !== $name) {
-				$event->getUser()->setDisplayName($name);
-				$this->logger->info('User openproject cannot be renamed');
-			}
 		}
 	}
 }
