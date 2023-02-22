@@ -161,9 +161,6 @@
 				</div>
 			</div>
 		</div>
-		<Button id="openproject-folder"
-				@click="setOPFolder"
-		>{{ t('integration_openproject', 'Create Openproject Group folder') }}</Button>
 		<Button id="reset-all-app-settings-btn"
 			type="error"
 			:disabled="isResetButtonDisabled"
@@ -248,7 +245,6 @@ export default {
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
-			openProjectGroupFolder: false,
 		}
 	},
 	computed: {
@@ -415,10 +411,6 @@ export default {
 				this.isFormCompleted.opOauth = true
 			}
 		},
-		async setOPFolder() {
-			this.openProjectGroupFolder = true
-			const result = await this.saveOPOptions()
-		},
 		resetAllAppValuesConfirmation() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
@@ -558,7 +550,6 @@ export default {
 					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
-					setup_group_folder: this.openProjectGroupFolder,
 				},
 			}
 			try {

@@ -500,7 +500,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}

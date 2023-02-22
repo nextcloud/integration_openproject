@@ -9,7 +9,8 @@ Feature: setup the integration through an API
         "openproject_client_id": "the-client-id",
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
-        "default_enable_unified_search": false
+        "default_enable_unified_search": false,
+        "setup_group_folder": false
         }
       }
       """
@@ -47,7 +48,8 @@ Feature: setup the integration through an API
           "openproject_client_id": <openproject_client_id>,
           "openproject_client_secret": <openproject_client_secret>,
           "default_enable_navigation": <enable_navigation>,
-          "default_enable_unified_search": <enable_unified_search>
+          "default_enable_unified_search": <enable_unified_search>,
+          "setup_group_folder": <setup_group_folder>
         }
       }
       """
@@ -70,24 +72,24 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search |
-      | null                  | null                  | null                      | null              | null                  |
-      | null                  | "id"                  | "secret"                  | false             | false                 |
-      | "http://some-host.de" | null                  | "secret"                  | false             | false                 |
-      | "http://some-host.de" | "id"                  | null                      | false             | false                 |
-      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  |
-      | ""                    | ""                    | ""                        | ""                | ""                    |
-      | ""                    | "id"                  | "secret"                  | false             | false                 |
-      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 |
-      | "http://some-host.de" | "id"                  | ""                        | false             | false                 |
-      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    |
-      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 |
-      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 |
-      | "http://somehost.de"  | "id"                  | false                     | true              | false                 |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_group_folder |
+      | null                  | null                  | null                      | null              | null                  | null               |
+      | null                  | "id"                  | "secret"                  | false             | false                 | false              |
+      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              |
+      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                 |
+      | ""                    | ""                    | ""                        | ""                | ""                    | false              |
+      | ""                    | "id"                  | "secret"                  | false             | false                 | false              |
+      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false              |
+      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false              |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"         |
+      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false              |
+      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false              |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false              |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false              |
 
 
   Scenario: setup with invalid keys
@@ -146,11 +148,11 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | values                                                                                                                                                                                                                      |
-      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false} |
-      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false} |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false} |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false} |
+      | values                                                                                                                                                                                                           |
+      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                         |
+      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false }   |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false}           |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_group_folder": false} |
 
 
   Scenario Outline: setup with data that is not even valid JSON
@@ -178,7 +180,8 @@ Feature: setup the integration through an API
         "openproject_client_id": "the-client-id",
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
-        "default_enable_unified_search": false
+        "default_enable_unified_search": false,
+        "setup_group_folder": false
         }
       }
       """
@@ -446,3 +449,56 @@ Feature: setup the integration through an API
     Given user "Alice" has been created
     When the user "Alice" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
+
+
+  Scenario: openproject group setup
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+      "openproject_instance_url": "http://some-host.de",
+        "openproject_client_id": "the-client-id",
+        "openproject_client_secret": "the-client-secret",
+        "default_enable_navigation": false,
+        "default_enable_unified_search": false,
+        "setup_group_folder": true
+        }
+      }
+      """
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "nextcloud_oauth_client_name",
+        "openproject_redirect_uri",
+        "nextcloud_client_id",
+        "nextcloud_client_secret"
+      ],
+      "properties": {
+          "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
+          "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
+          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
+      }
+    }
+   """
+    And user "openproject" should be present in the server
+    And group "openproject" should be present in the server
+    And user "openproject" should be the subadmin of the group "openproject"
+    When the administrator deletes the user "openproject"
+    Then the HTTP status code should be 500
+    And user "openproject" should be present in the server
+    When the administrator deletes the group "openproject"
+    Then the HTTP status code should be 500
+    And group "openproject" should be present in the server
+    When the administrator disables the user "openproject"
+    Then the HTTP status code should be 500
+
+
