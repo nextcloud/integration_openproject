@@ -140,7 +140,7 @@ class OpenProjectSearchProvider implements IProvider {
 				$this->getSubline($entry),
 				$this->getLinkToOpenProject($entry, $openprojectUrl),
 				'',
-				false
+				true
 			);
 		}, $searchResults);
 
