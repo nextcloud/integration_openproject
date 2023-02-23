@@ -112,7 +112,7 @@ class OpenProjectAPIService {
 	/**
 	 * @var ISubAdmin
 	 */
-	private ISubAdmin $subAdminManager;
+	private $subAdminManager;
 
 	private string $openProjectEntitiesName = 'openproject';
 
@@ -908,6 +908,7 @@ class OpenProjectAPIService {
 		}
 		return false;
 	}
+
 	private function isGroupfoldersAppEnabled(): bool {
 		return (
 			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
