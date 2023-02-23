@@ -4,17 +4,36 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\ForbiddenException;
+use OCP\HintException;
+use OCP\Lock\LockedException;
 use Psr\Log\LoggerInterface;
+use OCP\IUserSession;
 
 class BeforeNodeDeletedListener implements IEventListener {
 	private $logger;
 
-	public function __construct(LoggerInterface $logger) {
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openprojectAPIService;
+
+	/**
+	 * @var IUserSession
+	 */
+	private $userSession;
+	public function __construct(
+		LoggerInterface $logger,
+		OpenProjectAPIService $openprojectAPIService,
+		IUserSession $userSession
+	) {
 		$this->logger = $logger;
+		$this->openprojectAPIService = $openprojectAPIService;
+		$this->userSession = $userSession;
 	}
 
 	/**
@@ -24,10 +43,15 @@ class BeforeNodeDeletedListener implements IEventListener {
 		if (!($event instanceof BeforeNodeDeletedEvent)) {
 			return;
 		}
-		if ($event->getNode()->getParent()->getPath() === 'openproject') {
-			throw new ForbiddenException(
+		$currentUserId = $this->userSession->getUser()->getUID();
+		if (
+			$this->openprojectAPIService->isGroupFolderSetup() &&
+			$event->getNode()->getParent()->getPath() === "/$currentUserId/files/openproject" &&
+			$this->userSession->getUser()->getUID() !== 'openproject'
+		) {
+			throw new HintException(
 				'project folders cannot be deleted',
-				false
+				'project folders cannot be deleted'
 			);
 		}
 	}

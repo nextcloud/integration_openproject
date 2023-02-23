@@ -15,16 +15,22 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use OCA\GroupFolders\Folder\FolderManager;
+use OCP\App\IAppManager;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IDBConnection;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
@@ -81,6 +87,36 @@ class OpenProjectAPIService {
 	private $cache = null;
 
 	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
+	/**
+	 * Service to make requests to OpenProject v3 (JSON) API
+	 */
+
+	/**
+	 * @var IDBConnection
+	 */
+	private $dbConnection;
+
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
+
+	/**
+	 * @var IGroupManager
+	 */
+	private $groupManager;
+
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
+	private string $openProjectEntitiesName = 'openproject';
+
+	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct(
@@ -92,7 +128,12 @@ class OpenProjectAPIService {
 								IClientService $clientService,
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory) {
+								ICacheFactory $cacheFactory,
+								IAppManager $appManager,
+								IDBConnection $dbConnection,
+								IUserManager $userManager,
+								IGroupManager $groupManager,
+								ISubAdmin $subAdminManager) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -102,6 +143,11 @@ class OpenProjectAPIService {
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
 		$this->cache = $cacheFactory->createDistributed();
+		$this->appManager = $appManager;
+		$this->dbConnection = $dbConnection;
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+		$this->subAdminManager = $subAdminManager;
 	}
 
 	/**
@@ -833,5 +879,42 @@ class OpenProjectAPIService {
 		} catch (ServerException | ClientException | Exception $e) {
 			throw new OpenprojectErrorException('Could not revoke token in OpenProject for user "' . $userUID . '".\n Message: "' . $e->getMessage() . '"');
 		}
+	}
+
+	/**
+	 * returns true if the group-folder setup is completed
+	 * @return bool
+	 */
+	public function isGroupFolderSetup(): bool {
+		return (
+			$this->userManager->userExists($this->openProjectEntitiesName) &&
+			$this->groupManager->groupExists($this->openProjectEntitiesName) &&
+			$this->subAdminManager->isSubAdminOfGroup(
+				$this->userManager->get($this->openProjectEntitiesName),
+				$this->groupManager->get($this->openProjectEntitiesName),
+			) &&
+			$this->isOpenProjectGroupfolderCreated() &&
+			$this->isGroupfoldersAppEnabled()
+		);
+	}
+
+	private function isOpenProjectGroupfolderCreated(): bool {
+		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		$folders = $groupfoldersFolderManager->getAllFolders();
+		foreach ($folders as $folder) {
+			if ($folder['mount_point'] === $this->openProjectEntitiesName) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private function isGroupfoldersAppEnabled(): bool {
+		return (
+			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
+			$this->appManager->isEnabledForUser(
+				'groupfolders',
+				$this->openProjectEntitiesName
+			)
+		);
 	}
 }
