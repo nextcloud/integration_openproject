@@ -493,10 +493,10 @@ Feature: setup the integration through an API
     And group "openproject" should be present in the server
     And user "openproject" should be the subadmin of the group "openproject"
     When the administrator deletes the user "openproject"
-    Then the HTTP status code should be 500
+    Then the HTTP status code should be 400
     And user "openproject" should be present in the server
     When the administrator deletes the group "openproject"
-    Then the HTTP status code should be 500
+    Then the HTTP status code should be 400
     And group "openproject" should be present in the server
     When the administrator disables the user "openproject"
-    Then the HTTP status code should be 500
+    Then the HTTP status code should be 400

@@ -31,6 +31,7 @@ use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 
 class BeforeGroupDeletedListener implements IEventListener {
 
@@ -55,7 +56,7 @@ class BeforeGroupDeletedListener implements IEventListener {
 		$group = $event->getGroup();
 		if ($group->getGID() === 'openproject') {
 			$this->logger->info('Group openproject cannot be deleted');
-			throw new \Exception('Group openproject cannot be deleted');
+			throw new OCSBadRequestException();
 		}
 	}
 }
