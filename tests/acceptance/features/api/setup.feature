@@ -500,5 +500,3 @@ Feature: setup the integration through an API
     And group "openproject" should be present in the server
     When the administrator disables the user "openproject"
     Then the HTTP status code should be 500
-
-

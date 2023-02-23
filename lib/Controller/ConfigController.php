@@ -15,6 +15,8 @@ use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCA\OpenProject\Exception\OpenprojectGroupAlreadyExistsException;
+use OCA\OpenProject\Exception\OpenprojectUserAlreadyExistsException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -34,7 +36,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
-use Sabre\DAV\Exception\Conflict;
 
 class ConfigController extends Controller {
 
@@ -93,6 +94,7 @@ class ConfigController extends Controller {
 	 */
 	private ISubAdmin $subAdminManager;
 
+	private string $name = 'openproject';
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -228,10 +230,9 @@ class ConfigController extends Controller {
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->isSystemReadyForGroupFolderSetUp();
 			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-			$name = 'openproject';
 			if ($isSystemReady) {
-				$user = $this->userManager->createUser($name, $password);
-				$group = $this->groupManager->createGroup($name);
+				$user = $this->userManager->createUser($this->name, $password);
+				$group = $this->groupManager->createGroup($this->name);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 			}
@@ -324,10 +325,14 @@ class ConfigController extends Controller {
 		try {
 			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
-		} catch (Conflict $e) {
+		} catch (OpenprojectErrorException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
-			], Http::STATUS_CONFLICT);
+			], Http::STATUS_BAD_REQUEST);
+		} catch (OpenprojectUserAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -335,21 +340,22 @@ class ConfigController extends Controller {
 		}
 	}
 
+	/**
+	 * @throws OpenprojectUserAlreadyExistsException
+	 * @throws OpenprojectGroupAlreadyExistsException
+	 * @throws OpenprojectErrorException
+	 */
 	private function isSystemReadyForGroupFolderSetUp(): bool {
-		$name = 'openproject';
-		if ($this->userManager->userExists($name) && $this->groupManager->groupExists($name)) {
-			$group = $this->groupManager->get($name);
-			$user = $this->userManager->get($name);
-			if (!$this->subAdminManager->isSubAdminOfGroup($user, $group)) {
-				$group->addUser($user);
-				$this->subAdminManager->createSubAdmin($user, $group);
-			}
-			return false;
-		} elseif ($this->userManager->userExists($name) || $this->groupManager->groupExists($name)) {
-			throw new Conflict('User or Group openproject already exists, please rename or remove the existing user or group openproject to proceed');
+		if ($this->userManager->userExists($this->name) && $this->groupManager->groupExists($this->name)) {
+			throw new OpenprojectErrorException('user and group openproject already exists');
+		} elseif ($this->userManager->userExists($this->name)) {
+			throw new OpenprojectUserAlreadyExistsException('user openproject already exists');
+		} elseif ($this->groupManager->groupExists($this->name)) {
+			throw new OpenprojectGroupAlreadyExistsException('group openproject already exists');
 		}
 		return true;
 	}
+
 	/**
 	 * receive oauth code and get oauth access token
 	 * @NoAdminRequired

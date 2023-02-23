@@ -31,6 +31,7 @@ use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;
+use OCP\DB\Exception;
 
 class BeforeUserDeletedListener implements IEventListener {
 
@@ -53,7 +54,7 @@ class BeforeUserDeletedListener implements IEventListener {
 		$user = $event->getUser();
 		if ($user->getUID() === 'openproject') {
 			$this->logger->info('User openproject cannot be deleted');
-			throw new \Exception('User openproject cannot be deleted');
+			throw new Exception('User openproject cannot be deleted', 400);
 		}
 	}
 }
