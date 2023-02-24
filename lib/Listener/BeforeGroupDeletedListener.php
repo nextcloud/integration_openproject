@@ -32,6 +32,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;
 use OCP\AppFramework\OCS\OCSBadRequestException;
+use OCA\OpenProject\AppInfo\Application;
 
 class BeforeGroupDeletedListener implements IEventListener {
 
@@ -54,7 +55,7 @@ class BeforeGroupDeletedListener implements IEventListener {
 		}
 
 		$group = $event->getGroup();
-		if ($group->getGID() === 'openproject') {
+		if ($group->getGID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 			$this->logger->info('Group openproject cannot be deleted');
 			throw new OCSBadRequestException();
 		}

@@ -5,7 +5,7 @@ namespace OCA\OpenProject\Exception;
 use Exception;
 use Throwable;
 
-class OpenprojectUserAlreadyExistsException extends Exception {
+class OpenprojectUserOrGroupAlreadyExistsException extends Exception {
 
 	/**
 	 * @param string $message

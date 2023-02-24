@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\EventDispatcher\Event;
@@ -52,7 +53,7 @@ class BeforeUserDeletedListener implements IEventListener {
 			return;
 		}
 		$user = $event->getUser();
-		if ($user->getUID() === 'openproject') {
+		if ($user->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 			$this->logger->info('User openproject cannot be deleted');
 			throw new OCSBadRequestException();
 		}

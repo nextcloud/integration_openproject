@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserChangedEvent;
@@ -55,8 +56,8 @@ class UserChangedListener implements IEventListener {
 		if (!($event instanceof UserChangedEvent)) {
 			return;
 		}
-		$name = 'openproject';
-		if ($event->getUser()->getUID() === $name) {
+
+		if ($event->getUser()->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 			$feature = $event->getFeature();
 			if ($feature === 'enabled' && !$event->getValue()) {
 				$this->logger->info('User openproject cannot be disabled');

@@ -15,8 +15,7 @@ use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
-use OCA\OpenProject\Exception\OpenprojectGroupAlreadyExistsException;
-use OCA\OpenProject\Exception\OpenprojectUserAlreadyExistsException;
+use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -93,8 +92,6 @@ class ConfigController extends Controller {
 	 * @var ISubAdmin
 	 */
 	private ISubAdmin $subAdminManager;
-
-	private string $name = 'openproject';
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -228,11 +225,11 @@ class ConfigController extends Controller {
 			}
 		}
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
-			$isSystemReady = $this->isSystemReadyForGroupFolderSetUp();
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 			if ($isSystemReady) {
-				$user = $this->userManager->createUser($this->name, $password);
-				$group = $this->groupManager->createGroup($this->name);
+				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 			}
@@ -325,35 +322,15 @@ class ConfigController extends Controller {
 		try {
 			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
-		} catch (OpenprojectErrorException $e) {
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
-			], Http::STATUS_BAD_REQUEST);
-		} catch (OpenprojectUserAlreadyExistsException $e) {
-			return new DataResponse([
-				'error' => $this->l->t($e->getMessage()),
-			], Http::STATUS_BAD_REQUEST);
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_BAD_REQUEST);
 		}
-	}
-
-	/**
-	 * @throws OpenprojectUserAlreadyExistsException
-	 * @throws OpenprojectGroupAlreadyExistsException
-	 * @throws OpenprojectErrorException
-	 */
-	private function isSystemReadyForGroupFolderSetUp(): bool {
-		if ($this->userManager->userExists($this->name) && $this->groupManager->groupExists($this->name)) {
-			throw new OpenprojectErrorException('user and group openproject already exists');
-		} elseif ($this->userManager->userExists($this->name)) {
-			throw new OpenprojectUserAlreadyExistsException('user openproject already exists');
-		} elseif ($this->groupManager->groupExists($this->name)) {
-			throw new OpenprojectGroupAlreadyExistsException('group openproject already exists');
-		}
-		return true;
 	}
 
 	/**
@@ -542,6 +519,10 @@ class ConfigController extends Controller {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 			}
 			return new DataResponse($result);
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
@@ -576,6 +557,10 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				"error" => 'could not find nextcloud oauth client for openproject'
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()

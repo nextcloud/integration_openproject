@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Listener;
 
 use OC\User\LoginException;
+use OCA\OpenProject\AppInfo\Application;
 use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -52,7 +53,7 @@ class BeforeUserLoggedInListener implements IEventListener {
 		if (!($event instanceof BeforeUserLoggedInEvent)) {
 			return;
 		}
-		if ($event->getUsername() === 'openproject') {
+		if (strtolower($event->getUsername()) === strtolower(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			$this->logger->info('Cannot login with this user');
 			throw new LoginException('Cannot login with this user');
 		}

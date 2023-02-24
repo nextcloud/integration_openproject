@@ -450,8 +450,8 @@ Feature: setup the integration through an API
     When the user "Alice" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
 
-
-  Scenario: openproject group setup
+  # this test wil not pass locally if your system already has a `OpenProject` user/group setup
+  Scenario: OpenProject group/user setup
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -489,14 +489,14 @@ Feature: setup the integration through an API
       }
     }
    """
-    And user "openproject" should be present in the server
-    And group "openproject" should be present in the server
-    And user "openproject" should be the subadmin of the group "openproject"
-    When the administrator deletes the user "openproject"
+    And user "OpenProject" should be present in the server
+    And group "OpenProject" should be present in the server
+    And user "OpenProject" should be the subadmin of the group "OpenProject"
+    When the administrator deletes the user "OpenProject"
     Then the HTTP status code should be 400
-    And user "openproject" should be present in the server
-    When the administrator deletes the group "openproject"
+    And user "OpenProject" should be present in the server
+    When the administrator deletes the group "OpenProject"
     Then the HTTP status code should be 400
-    And group "openproject" should be present in the server
-    When the administrator disables the user "openproject"
+    And group "OpenProject" should be present in the server
+    When the administrator disables the user "OpenProject"
     Then the HTTP status code should be 400
