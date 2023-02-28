@@ -888,20 +888,26 @@ class OpenProjectAPIService {
 		}
 		return true;
 	}
+
 	public function createGroupfolder(): void {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
 		);
 
 		// this also works if the group does not exist
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->addApplicableGroup(
 			$folderId, Application::OPEN_PROJECT_ENTITIES_NAME
 		);
 
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->setFolderACL($folderId, true);
 
 		// this also works if the user does not exist
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->setManageACL(
 			$folderId,
 			'user',
@@ -911,7 +917,9 @@ class OpenProjectAPIService {
 	}
 
 	private function isOpenProjectGroupfolderCreated(): bool {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folders = $groupfoldersFolderManager->getAllFolders();
 		foreach ($folders as $folder) {
 			if ($folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME) {
