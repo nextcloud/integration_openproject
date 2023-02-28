@@ -13,6 +13,10 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
+use OC\AppFramework\Utility\QueryNotFoundException;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IToken;
+use OC\OCS\Exception;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
@@ -33,8 +37,10 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
+use OC\Authentication\Token\IProvider;
+use OCP\Security\ISecureRandom;
+use OCP\EventDispatcher\IEventDispatcher;
 
 class ConfigController extends Controller {
 
@@ -106,6 +112,9 @@ class ConfigController extends Controller {
 								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
 								ISubAdmin $subAdminManager,
+								IProvider $tokenProvider,
+								ISecureRandom $random,
+								IEventDispatcher $eventDispatcher,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -120,6 +129,9 @@ class ConfigController extends Controller {
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
 		$this->subAdminManager = $subAdminManager;
+		$this->tokenProvider = $tokenProvider;
+		$this->random = $random;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -226,7 +238,9 @@ class ConfigController extends Controller {
 		}
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
-			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+			// $password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+//			 Todo remove this password
+			$password = "12345";
 			if ($isSystemReady) {
 				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
@@ -515,6 +529,8 @@ class ConfigController extends Controller {
 			OpenProjectAPIService::validateIntegrationSetupInformation($values);
 			$status = $this->setIntegrationConfig($values);
 			$result = $this->recreateOauthClientInformation();
+			$appPasswordToken = $this->generateAppPasswordTokenForUser();
+			$result['openproject_user_app_token'] = $appPasswordToken;
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 			}
@@ -609,5 +625,32 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
+	}
+
+	/**
+	 * @return string
+	 */
+	private function generateAppPasswordTokenForUser(): string {
+		// TODO do not use this process
+		$this->config->setAppValue(Application::APP_ID, 'openproject_user_app_password', '');
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// since password is not known
+		$password = null;
+		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$generatedToken = $this->tokenProvider->generateToken(
+			$token,
+			$user->getUID(),
+			$user->getUID(),
+			$password,
+			$appName,
+			IToken::PERMANENT_TOKEN,
+			IToken::DO_NOT_REMEMBER
+		);
+		$this->eventDispatcher->dispatchTyped(
+			new AppPasswordCreatedEvent($generatedToken)
+		);
+		$this->config->setAppValue(Application::APP_ID, 'openproject_user_app_password', $token);
+		return $token;
 	}
 }
