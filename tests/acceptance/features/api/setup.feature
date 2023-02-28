@@ -492,6 +492,10 @@ Feature: setup the integration through an API
     And user "OpenProject" should be present in the server
     And group "OpenProject" should be present in the server
     And user "OpenProject" should be the subadmin of the group "OpenProject"
+    And groupfolder "OpenProject" should be present in the server
+    And groupfolder "OpenProject" should be assigned to the group "OpenProject" with all permissions
+    And groupfolder "OpenProject" should have advance permissions enabled
+    And groupfolder "OpenProject" should be managed by the user "OpenProject"
     When the administrator deletes the user "OpenProject"
     Then the HTTP status code should be 400
     And user "OpenProject" should be present in the server

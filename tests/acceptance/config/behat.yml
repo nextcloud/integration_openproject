@@ -13,3 +13,4 @@ default:
             regularUserPassword: 123456
         - SharingContext:
         - DirectUploadContext:
+        - GroupfoldersContext:
