@@ -19,6 +19,7 @@ use OC\Http\Client\Client;
 use OC_Util;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCP\App\IAppManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -27,6 +28,7 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -312,7 +314,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$urlGeneratorMock,
 			$this->createMock(ICacheFactory::class),
 			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class)
+			$this->createMock(IGroupManager::class),
+			$this->createMock(IAppManager::class),
+			$this->createMock(IDBConnection::class)
 		);
 	}
 
@@ -341,7 +345,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IURLGenerator::class),
 					$cacheFactoryMock,
 					$this->createMock(IUserManager::class),
-					$this->createMock(IGroupManager::class)
+					$this->createMock(IGroupManager::class),
+					$this->createMock(IAppManager::class),
+					$this->createMock(IDBConnection::class)
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1217,7 +1223,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ICacheFactory::class),
 			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class)
+			$this->createMock(IGroupManager::class),
+			$this->createMock(IAppManager::class),
+			$this->createMock(IDBConnection::class)
 		);
 
 		$response = $service->request('', '', []);

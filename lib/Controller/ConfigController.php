@@ -15,7 +15,7 @@ use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
-use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
+use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -232,6 +232,7 @@ class ConfigController extends Controller {
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
+				$this->openprojectAPIService->createGroupfolder();
 			}
 		}
 		$runningFullReset = (
@@ -303,7 +304,6 @@ class ConfigController extends Controller {
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
-
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
@@ -322,7 +322,7 @@ class ConfigController extends Controller {
 		try {
 			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
-		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
@@ -519,7 +519,7 @@ class ConfigController extends Controller {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 			}
 			return new DataResponse($result);
-		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
@@ -557,7 +557,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				"error" => 'could not find nextcloud oauth client for openproject'
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
-		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);

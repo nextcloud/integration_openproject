@@ -5,7 +5,11 @@ namespace OCA\OpenProject\Exception;
 use Exception;
 use Throwable;
 
-class OpenprojectUserOrGroupAlreadyExistsException extends Exception {
+/**
+ * thrown in the case when any entity, that is needed for the groupfolders setup,
+ * already exists
+ */
+class OpenprojectGroupfolderSetupConflictException extends Exception {
 
 	/**
 	 * @param string $message

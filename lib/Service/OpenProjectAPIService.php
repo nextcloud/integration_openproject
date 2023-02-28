@@ -15,7 +15,9 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
-use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
+use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
+use OCA\GroupFolders\Folder\FolderManager;
+use OCP\App\IAppManager;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -25,6 +27,7 @@ use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IGroupManager;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -94,8 +97,17 @@ class OpenProjectAPIService {
 	private $groupManager;
 
 	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
+	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
+
+	/**
+	 * @var IDBConnection
+	 */
+	private $dbConnection;
 	public function __construct(
 								string $appName,
 								IAvatarManager $avatarManager,
@@ -107,7 +119,9 @@ class OpenProjectAPIService {
 								IURLGenerator $urlGenerator,
 								ICacheFactory $cacheFactory,
 								IUserManager $userManager,
-								IGroupManager $groupManager) {
+								IGroupManager $groupManager,
+								IAppManager $appManager,
+								IDBConnection $dbConnection) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -119,6 +133,8 @@ class OpenProjectAPIService {
 		$this->cache = $cacheFactory->createDistributed();
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
+		$this->appManager = $appManager;
+		$this->dbConnection = $dbConnection;
 	}
 
 	/**
@@ -854,14 +870,65 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @throws OpenprojectUserOrGroupAlreadyExistsException
+	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
+		} else if (!$this->isGroupfoldersAppEnabled()) {
+			throw new \Exception('groupfolders app is not enabled');
+		} else if ($this->isOpenProjectGroupfolderCreated()) {
+			throw new OpenprojectGroupfolderSetupConflictException(
+				'a groupfolder with the name "' .
+				Application::OPEN_PROJECT_ENTITIES_NAME .
+				'" already exists'
+			);
 		}
 		return true;
+	}
+	public function createGroupfolder(): void {
+		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		$folderId = $groupfoldersFolderManager->createFolder(
+			Application::OPEN_PROJECT_ENTITIES_NAME
+		);
+
+		// this also works if the group does not exist
+		$groupfoldersFolderManager->addApplicableGroup(
+			$folderId, Application::OPEN_PROJECT_ENTITIES_NAME
+		);
+
+		$groupfoldersFolderManager->setFolderACL($folderId, true);
+
+		// this also works if the user does not exist
+		$groupfoldersFolderManager->setManageACL(
+			$folderId,
+			'user',
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			true
+		);
+	}
+
+	private function isOpenProjectGroupfolderCreated(): bool {
+		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		$folders = $groupfoldersFolderManager->getAllFolders();
+		foreach ($folders as $folder) {
+			if ($folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function isGroupfoldersAppEnabled(): bool {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		return (
+			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
+			$this->appManager->isEnabledForUser(
+			'groupfolders',
+			$user
+			)
+		);
 	}
 }
