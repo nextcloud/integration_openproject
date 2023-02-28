@@ -11,7 +11,11 @@ namespace OCA\OpenProject\AppInfo;
 
 use Closure;
 use OCA\Files\Event\LoadSidebar;
+use OCA\OpenProject\Listener\BeforeUserDeletedListener;
+use OCA\OpenProject\Listener\BeforeUserLoggedInListener;
+use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\UserChangedListener;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
@@ -24,7 +28,10 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\EventDispatcher\IEventDispatcher;
-
+use OCP\User\Events\BeforeUserDeletedEvent;
+use OCP\User\Events\BeforeUserLoggedInEvent;
+use OCP\Group\Events\BeforeGroupDeletedEvent;
+use OCP\User\Events\UserChangedEvent;
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
 
@@ -35,6 +42,7 @@ use OCA\OpenProject\Search\OpenProjectSearchProvider;
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
+	public const  OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
 	/**
 	 * @var mixed
 	 */
@@ -70,6 +78,10 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
 		});
+		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
+		$dispatcher->addServiceListener(BeforeUserLoggedInEvent::class, BeforeUserLoggedInListener::class);
+		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
+		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {

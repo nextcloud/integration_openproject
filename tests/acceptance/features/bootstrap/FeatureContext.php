@@ -79,9 +79,7 @@ class FeatureContext implements Context {
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
 		// delete the user if it exists
-		$this->sendOCSRequest(
-			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
-		);
+		$this->theAdministratorDeletesTheUser($user);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
@@ -104,9 +102,7 @@ class FeatureContext implements Context {
 	 * @Given user :user has been disabled
 	 */
 	public function userHasBeenDisabled(string $user):void {
-		$this->response = $this->sendOCSRequest(
-			'/cloud/users/' . $user . '/disable', 'PUT', $this->getAdminUsername()
-		);
+		$this->theAdministratorDisablesTheUser($user);
 		$this->theHttpStatusCodeShouldBe(200);
 	}
 
@@ -121,11 +117,68 @@ class FeatureContext implements Context {
 	 * @Given user :user has been deleted
 	 */
 	public function userHasBeenDeleted(string $user):void {
+		$this->theAdministratorDeletesTheUser($user);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
+	 * @When the administrator deletes the user :user
+	 */
+	public function theAdministratorDeletesTheUser(string $user):void {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
+	}
+
+	/**
+	 * @When the administrator deletes the group :group
+	 */
+	public function theAdministratorDeletesTheGroup(string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/groups/' . $group, 'DELETE', $this->getAdminUsername()
+		);
+	}
+
+	/**
+	 * @When the administrator disables the user :user
+	 */
+	public function theAdministratorDisablesTheUser(string $user):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/disable', 'PUT', $this->getAdminUsername()
+		);
+	}
+
+	/**
+	 * @Then user :user should be present in the server
+	 */
+	public function userShouldBePresentInTheServer(string $user):void {
+		$this->response = $this->sendOCSRequest('/cloud/users/'. $user, 'GET', $this->getAdminUsername());
 		$this->theHttpStatusCodeShouldBe(200);
 	}
+
+	/**
+	 * @Then group :group should be present in the server
+	 */
+	public function groupShouldBePresentInTheServer(string $group):void {
+		$this->response = $this->sendOCSRequest('/cloud/groups/'. $group, 'GET', $this->getAdminUsername());
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
+	 * @Then user :user should be the subadmin of the group :group
+	 */
+	public function userShouldBeTheSubadminOfTheGroup(string $user, string $group):void {
+		$response = $this->sendOCSRequest('/cloud/users/'. $user, 'GET', $this->getAdminUsername());
+		$responseAsJson = json_decode($response->getBody()->getContents());
+		$responseAsJson = $responseAsJson->ocs->data->subadmin;
+		Assert::assertNotNull($responseAsJson, 'the response is null');
+		Assert::assertContainsEquals(
+			$group,
+			$responseAsJson,
+			"User $user is not the subadmin of group $group"
+		);
+	}
+
 
 	/**
 	 * @Given user :user has uploaded file with content :content to :destination

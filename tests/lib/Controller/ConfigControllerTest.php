@@ -18,6 +18,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
+use OCP\Security\ISecureRandom;
+use OCP\IGroupManager;
+use OCP\Group\ISubAdmin;
 
 class ConfigControllerTest extends TestCase {
 
@@ -133,7 +136,11 @@ class ConfigControllerTest extends TestCase {
 			$apiServiceMock,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
-			$this->createMock(SettingsController::class), 'testUser'
+			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
 		$this->assertSame('https://nc.np/apps/files/', $result->getRedirectURL());
@@ -198,6 +205,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'testUser'
 		);
 		$result = $configController->oauthRedirect('code', 'randomString');
@@ -232,6 +242,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'stateNotSameAsSaved');
@@ -299,6 +312,9 @@ class ConfigControllerTest extends TestCase {
 			$loggerMock,
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -368,6 +384,9 @@ class ConfigControllerTest extends TestCase {
 			$loggerMock,
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -442,6 +461,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'testUser'
 		);
 		$configController->oauthRedirect('code', 'randomString');
@@ -525,6 +547,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(OauthService::class),
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'test101'
 		);
 
@@ -751,6 +776,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
 			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'test101'
 		);
 
@@ -778,6 +806,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
 			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'test101'
 		);
 
@@ -993,6 +1024,9 @@ class ConfigControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$oauthServiceMock,
 			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'test101'
 		);
 
@@ -1139,6 +1173,9 @@ class ConfigControllerTest extends TestCase {
 			$loggerInterfaceMock,
 			$oauthServiceMock,
 			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'admin'
 		);
 
@@ -1208,6 +1245,9 @@ class ConfigControllerTest extends TestCase {
 			$loggerInterfaceMock,
 			$oauthServiceMock,
 			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
 			'admin'
 		);
 

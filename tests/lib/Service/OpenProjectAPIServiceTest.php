@@ -27,9 +27,11 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use OCP\Security\IRemoteHostValidator;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
@@ -309,6 +311,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock,
 			$urlGeneratorMock,
 			$this->createMock(ICacheFactory::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class)
 		);
 	}
 
@@ -336,6 +340,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IRootFolder::class),
 					$this->createMock(IURLGenerator::class),
 					$cacheFactoryMock,
+					$this->createMock(IUserManager::class),
+					$this->createMock(IGroupManager::class)
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1210,6 +1216,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IRootFolder::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ICacheFactory::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class)
 		);
 
 		$response = $service->request('', '', []);

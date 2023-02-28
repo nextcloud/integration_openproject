@@ -15,6 +15,9 @@ use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
+use OCP\Group\ISubAdmin;
+use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -30,6 +33,7 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -73,6 +77,22 @@ class ConfigController extends Controller {
 	 * @var SettingsController
 	 */
 	private $oauthSettingsController;
+
+	/**
+	 * @var IGroupManager
+	 */
+	private $groupManager;
+
+	/**
+	 * @var ISecureRandom
+	 */
+	private ISecureRandom $secureRandom;
+
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
@@ -83,6 +103,9 @@ class ConfigController extends Controller {
 								LoggerInterface $logger,
 								OauthService $oauthService,
 								SettingsController $oauthSettingsController,
+								IGroupManager $groupManager,
+								ISecureRandom $secureRandom,
+								ISubAdmin $subAdminManager,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -94,6 +117,9 @@ class ConfigController extends Controller {
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
 		$this->oauthSettingsController = $oauthSettingsController;
+		$this->groupManager = $groupManager;
+		$this->secureRandom = $secureRandom;
+		$this->subAdminManager = $subAdminManager;
 	}
 
 	/**
@@ -155,9 +181,9 @@ class ConfigController extends Controller {
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',
-			'default_enable_unified_search'
+			'default_enable_unified_search',
+			'setup_group_folder'
 		];
-
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
 		foreach ($values as $key => $value) {
@@ -196,6 +222,16 @@ class ConfigController extends Controller {
 				$this->oauthService->setClientRedirectUri(
 					(int)$oauthClientInternalId, $values['openproject_instance_url']
 				);
+			}
+		}
+		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+			$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+			if ($isSystemReady) {
+				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+				$group->addUser($user);
+				$this->subAdminManager->createSubAdmin($user, $group);
 			}
 		}
 		$runningFullReset = (
@@ -270,7 +306,7 @@ class ConfigController extends Controller {
 
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 		];
 	}
 
@@ -286,6 +322,10 @@ class ConfigController extends Controller {
 		try {
 			$result = $this->setIntegrationConfig($values);
 			return new DataResponse($result);
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -479,6 +519,10 @@ class ConfigController extends Controller {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 			}
 			return new DataResponse($result);
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
@@ -513,6 +557,10 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				"error" => 'could not find nextcloud oauth client for openproject'
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage()),
+			], Http::STATUS_CONFLICT);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()

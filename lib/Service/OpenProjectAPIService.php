@@ -15,6 +15,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -23,8 +24,10 @@ use OCP\Files\NotFoundException;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
@@ -81,6 +84,16 @@ class OpenProjectAPIService {
 	private $cache = null;
 
 	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
+
+	/**
+	 * @var IGroupManager
+	 */
+	private $groupManager;
+
+	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 	public function __construct(
@@ -92,7 +105,9 @@ class OpenProjectAPIService {
 								IClientService $clientService,
 								IRootFolder $storage,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory) {
+								ICacheFactory $cacheFactory,
+								IUserManager $userManager,
+								IGroupManager $groupManager) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -102,6 +117,8 @@ class OpenProjectAPIService {
 		$this->storage = $storage;
 		$this->urlGenerator = $urlGenerator;
 		$this->cache = $cacheFactory->createDistributed();
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 	}
 
 	/**
@@ -478,7 +495,8 @@ class OpenProjectAPIService {
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',
-			'default_enable_unified_search'
+			'default_enable_unified_search',
+			'setup_group_folder'
 		];
 
 		if ($allKeysMandatory) {
@@ -500,7 +518,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -833,5 +851,17 @@ class OpenProjectAPIService {
 		} catch (ServerException | ClientException | Exception $e) {
 			throw new OpenprojectErrorException('Could not revoke token in OpenProject for user "' . $userUID . '".\n Message: "' . $e->getMessage() . '"');
 		}
+	}
+
+	/**
+	 * @throws OpenprojectUserOrGroupAlreadyExistsException
+	 */
+	public function isSystemReadyForGroupFolderSetUp(): bool {
+		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
+		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
+		}
+		return true;
 	}
 }

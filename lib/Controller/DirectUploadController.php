@@ -181,7 +181,7 @@ class DirectUploadController extends ApiController {
 				if (in_array($overwrite, $acceptedOverwriteValues)) {
 					$overwrite = $overwrite === 'true';
 				} else {
-					throw new InvalidArgumentException('invalid overwrite value');
+					throw new \InvalidArgumentException('invalid overwrite value');
 				}
 			} else {
 				$overwrite = null;
