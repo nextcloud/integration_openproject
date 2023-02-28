@@ -5,6 +5,7 @@ OC.L10N.register(
     "Save" : "Save",
     "Reset" : "إعادة الضبط",
     "Documentation" : "الدليل",
+    "Invalid token" : "علامة غير صالحة",
     "Copied!" : "تم النسخ!",
     "Details" : "التفاصيل",
     "Start typing to search" : "اكتب هنا للبحث",
