@@ -488,7 +488,7 @@ Feature: setup the integration through an API
         ]
       }
     }
-   """
+    """
     And user "OpenProject" should be present in the server
     And group "OpenProject" should be present in the server
     And user "OpenProject" should be the subadmin of the group "OpenProject"
@@ -496,6 +496,40 @@ Feature: setup the integration through an API
     And groupfolder "OpenProject" should be assigned to the group "OpenProject" with all permissions
     And groupfolder "OpenProject" should have advance permissions enabled
     And groupfolder "OpenProject" should be managed by the user "OpenProject"
+    # the next step is only for the tests, because that user has a random password
+    Given the administrator has changed the password of "OpenProject" to the default testing password
+    Then user "OpenProject" should have a folder called "OpenProject"
+
+    # folders inside the OpenProject folder can only be deleted/renamed by the OpenProject user
+    Given user "Alice" has been created
+    And user "Alice" has been added to the group "OpenProject"
+    And user "OpenProject" has created folder "/OpenProject/project-abc"
+    Then user "Alice" should have a folder called "OpenProject/project-abc"
+    When user "Alice" deletes folder "/OpenProject/project-abc"
+    Then the HTTP status code should be 500
+    When user "Alice" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
+    Then the HTTP status code should be 500
+    When user "OpenProject" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
+    Then the HTTP status code should be 201
+    When user "OpenProject" deletes folder "/OpenProject/project-123"
+    Then the HTTP status code should be 204
+
+    # folders 2 levels down inside the OpenProject folder can be deleted by any user even if the parrent is also called "OpenProject"
+    Given user "OpenProject" has created folder "/OpenProject/OpenProject/project-abc"
+    When user "Alice" renames folder "/OpenProject/OpenProject/project-abc" to "/OpenProject/OpenProject/project-123"
+    Then the HTTP status code should be 201
+    When user "Alice" deletes folder "/OpenProject/OpenProject/project-123"
+    Then the HTTP status code should be 204
+
+    # a user, who is not in the OpenProject group can delete/rename items inside a folder that is called OpenProject
+    Given user "Brian" has been created
+    And user "Brian" has created folder "/OpenProject/project-abc"
+    When user "Brian" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
+    Then the HTTP status code should be 201
+    When user "Brian" deletes folder "/OpenProject/project-123"
+    Then the HTTP status code should be 204
+
+    # check deleting / disabling the OpenProject user/group
     When the administrator deletes the user "OpenProject"
     Then the HTTP status code should be 400
     And user "OpenProject" should be present in the server

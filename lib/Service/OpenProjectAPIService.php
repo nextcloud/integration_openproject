@@ -889,6 +889,20 @@ class OpenProjectAPIService {
 		return true;
 	}
 
+	/**
+	 * returns true if the group-folder setup is completed
+	 *
+	 * @return bool
+	 */
+	public function isGroupFolderSetup(): bool {
+		return (
+			$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
+			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
+			$this->isGroupfoldersAppEnabled() &&
+			$this->isOpenProjectGroupfolderCreated()
+		);
+	}
+
 	public function createGroupfolder(): void {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = new FolderManager($this->dbConnection);

@@ -65,6 +65,16 @@ class GroupfoldersContext implements Context {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" should have a folder called "([^"]*)"$/
+	 */
+	public function userShouldHaveAFolderCalled(string $user, string $folderName): void {
+		Assert::assertIsInt(
+			$this->featureContext->getIdOfElement($user, $folderName),
+			"folder $folderName does not exist"
+		);
+	}
+
+	/**
 	 * @param string $mountpoint
 	 * @return array<mixed>
 	 */
