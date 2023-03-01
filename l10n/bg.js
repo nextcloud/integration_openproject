@@ -110,6 +110,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
-    "Invalid key" : "Невалиден ключ"
+    "Invalid key" : "Невалиден ключ",
+    "folder not found or not enough permissions" : "не е намерена папка или няма достатъчно права"
 },
 "nplurals=2; plural=(n != 1);");
