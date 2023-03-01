@@ -110,6 +110,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Geben Sie eine URL im Format „https://openproject.org“ an.",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
     "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
-    "Invalid key" : "Ungültiger Schlüssel"
+    "Invalid key" : "Ungültiger Schlüssel",
+    "folder not found or not enough permissions" : "Ordner nicht gefunden oder unzureichende Berechtigungen"
 },
 "nplurals=2; plural=(n != 1);");

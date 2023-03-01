@@ -108,6 +108,7 @@
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
-    "Invalid key" : "Invalid key"
+    "Invalid key" : "Invalid key",
+    "folder not found or not enough permissions" : "folder not found or insufficient permissions"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
