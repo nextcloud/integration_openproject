@@ -25,6 +25,7 @@ namespace OCA\OpenProject\Controller;
 
 use OCP\Files\Folder;
 use OCP\Files\InvalidContentException;
+use OCP\IL10N;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +33,10 @@ use function PHPUnit\Framework\assertSame;
 
 class DirectUploadControllerTest extends TestCase {
 
+	/**
+	 * @var IL10N
+	 */
+	private $l;
 
 	/**
 	 * @return void
@@ -241,6 +246,13 @@ class DirectUploadControllerTest extends TestCase {
 				'expires_on' => 1671537939
 			]);
 
+		$this->l = $this->createMock(IL10N::class);
+		$this->l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($string, $args) {
+				return vsprintf($string, $args);
+			});
+
 		$directUploadServiceMock->method('getTokenInfo')->willReturn(
 			[
 				'user_id' => 'testUser',
@@ -266,6 +278,7 @@ class DirectUploadControllerTest extends TestCase {
 			$userManagerMock,
 			$directUploadServiceMock,
 			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
+			$this->l,
 			'testUser',
 		);
 	}

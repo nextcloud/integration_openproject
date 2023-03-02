@@ -43,6 +43,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -79,8 +80,17 @@ class DirectUploadController extends ApiController {
 	 * @var IUserManager
 	 */
 	private IUserManager $userManager;
+
+	/**
+	 * @var IUserSession
+	 */
 	private IUserSession $userSession;
 
+	/**
+	 * @var IL10N
+	 */
+
+	private $l;
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -89,6 +99,7 @@ class DirectUploadController extends ApiController {
 		IUserManager $userManager,
 		DirectUploadService $directUploadService,
 		DatabaseService $databaseService,
+		IL10N  $l,
 		?string $userId
 	) {
 		parent::__construct($appName, $request, 'POST');
@@ -99,6 +110,7 @@ class DirectUploadController extends ApiController {
 		$this->userManager = $userManager;
 		$this->databaseService = $databaseService;
 		$this->userSession = $userSession;
+		$this->l = $l;
 	}
 
 	/**
@@ -116,7 +128,7 @@ class DirectUploadController extends ApiController {
 			$nodes = $userFolder->getById($folder_id);
 			if (empty($nodes)) {
 				return new DataResponse([
-					'error' => 'folder not found or not enough permissions'
+					'error' => $this->l->t('folder not found or not enough permissions')
 				], Http::STATUS_NOT_FOUND);
 			}
 			$node = array_shift($nodes);
@@ -129,12 +141,12 @@ class DirectUploadController extends ApiController {
 				return new DataResponse($response);
 			} else {
 				return new DataResponse([
-					'error' => 'folder not found or not enough permissions'
+					'error' => $this->l->t('folder not found or not enough permissions')
 				], Http::STATUS_NOT_FOUND);
 			}
 		} catch (\Exception $e) {
 			return new DataResponse([
-				'error' => 'folder not found or not enough permissions'
+				'error' => $this->l->t('folder not found or not enough permissions')
 			], Http::STATUS_NOT_FOUND);
 		}
 	}
@@ -236,40 +248,40 @@ class DirectUploadController extends ApiController {
 			$fileId = $fileInfo->getId();
 		} catch (NotPermittedException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_UNAUTHORIZED);
 		} catch (NotFoundException | NoUserException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
 		} catch (InvalidPathException | InvalidArgumentException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_BAD_REQUEST);
 		} catch (ForbiddenException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_FORBIDDEN);
 		} catch (Conflict $e) {
 			return new DataResponse([
-				'error' => $e->getMessage(),
+				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
 		} catch (NotEnoughSpaceException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage(),
+				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (OpenprojectFileNotUploadedException $e) {
 			return new DataResponse([
-				'error' => $e->getMessage(),
+				'error' => $this->l->t($e->getMessage()),
 				'upload_limit' => \OC_Helper::uploadLimit()
 			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidContentException $e) { // files_antivirus throws this exception
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_UNSUPPORTED_MEDIA_TYPE);
 		} catch (\Exception $e) {
 			return new DataResponse([
-				'error' => $e->getMessage()
+				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse([
