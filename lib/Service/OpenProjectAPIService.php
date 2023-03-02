@@ -496,16 +496,20 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_group_folder',
 		];
 
 		if ($allKeysMandatory) {
+			if(array_key_exists('reset_app_password', $values)) {
+				throw new InvalidArgumentException('invalid key');
+			}
 			foreach ($opKeys as $key) {
 				if (!array_key_exists($key, $values)) {
 					throw new InvalidArgumentException('invalid key');
 				}
 			}
 		} else {
+			$opKeys[] = 'reset_app_password';
 			foreach ($values as $key => $value) {
 				if (!in_array($key, $opKeys)) {
 					throw new InvalidArgumentException('invalid key');
@@ -518,7 +522,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'reset_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -855,13 +859,27 @@ class OpenProjectAPIService {
 
 	/**
 	 * @throws OpenprojectUserOrGroupAlreadyExistsException
+	 * @throws Exception
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
+		} elseif (!$this->isAllOtherSetupOkay()) {
+			// just making it work for now
+			throw new OpenprojectUserOrGroupAlreadyExistsException('Other set up is not okay');
 		}
+		return true;
+	}
+
+	/**
+	 * dummy function to make it work
+	 *
+	 * @return bool
+	 */
+	public function isAllOtherSetupOkay(): bool {
+		// TODO rebase needed for this function
 		return true;
 	}
 }

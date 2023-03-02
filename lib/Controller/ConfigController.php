@@ -192,7 +192,8 @@ class ConfigController extends Controller {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_group_folder',
+			'reset_app_password'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -235,33 +236,30 @@ class ConfigController extends Controller {
 			}
 		}
 		$appPasswordToken = '';
-		if (key_exists('setup_group_folder', $values)) {
-			$isSystemReady = false;
-			try {
+		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 				$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 				// $password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 				// Todo remove this password
 				$password = "12345";
-				if ($isSystemReady && $values['setup_group_folder'] === true) {
+				if ($isSystemReady) {
 					$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
 					$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 					$group->addUser($user);
 					$this->subAdminManager->createSubAdmin($user, $group);
 					// create app password when the user is created
-					// also create a key to store the id of the generated user app token so that it can be deleted and updated.
+					// this is made to delete token during update and reset
 					$this->config->setAppValue(Application::APP_ID, 'app_password_token_id', '');
 					$appPasswordToken = $this->generateAppPasswordTokenForUser();
 				}
-			} catch (OpenprojectUserOrGroupAlreadyExistsException $e) {
-				//TODO need to ask if we need to provide separeate value to update and delete while resetting
-				// this section reach out when we have already created the op user with app password and op group
-				// now since we need to be able to update the app password
-				// we do things for update here
-				if ($values['setup_group_folder']) {
-					$appPasswordToken = $this->generateAppPasswordTokenForUser();
-				}
-			}
 		}
+
+		// TODO
+		// this condition applies only when user and group with along with app password is created
+		// code to for updating the app password token
+		if(key_exists('setup_group_folder', $values) && key_exists('reset_app_password', $values) && $values['setup_group_folder'] === false && $values['reset_app_password']) {
+			$appPasswordToken = $this->generateAppPasswordTokenForUser();
+		}
+
 		$runningFullReset = (
 
 			$oldClientSecret &&
