@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
     "Direct download error" : "直接下載錯誤",
     "This direct download link is invalid or has expired" : "此直接下載連結無效或已過期",
+    "folder not found or not enough permissions" : "找不到資料夾或權限不足",
     "Bad HTTP method" : "不正確的 HTTP 方法",
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "OpenProject Integration" : "OpenProject 整合",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
-    "Invalid key" : "無效的密鑰",
-    "folder not found or not enough permissions" : "找不到資料夾或權限不足"
+    "Invalid key" : "無效的密鑰"
 },
 "nplurals=1; plural=0;");
