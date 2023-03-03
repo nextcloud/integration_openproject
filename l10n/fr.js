@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Erreur pendant les échanges OAuth",
     "Direct download error" : "Erreur de téléchargement direct",
     "This direct download link is invalid or has expired" : "Ce lien de téléchargement direct est invalide ou a expiré",
+    "folder not found or not enough permissions" : "dossier introuvable ou permissions insuffisantes",
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "OAuth access token refused" : "Jeton d'accès OAuth refusé",
     "OpenProject Integration" : "Intégration OpenProject",
