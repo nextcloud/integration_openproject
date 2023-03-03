@@ -15,6 +15,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
@@ -903,7 +904,12 @@ class OpenProjectAPIService {
 		);
 	}
 
-	public function createGroupfolder(): void {
+	/**
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 * @throws NoUserException
+	 */
+	public function createGroupfolder(): int {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
@@ -928,6 +934,14 @@ class OpenProjectAPIService {
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			true
 		);
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$this->config->setAppValue(
+			Application::APP_ID,
+			'openproject_groupfolder_id',
+			(string)$openProjectFolder->getId()
+		);
+		return $openProjectFolder->getId();
 	}
 
 	private function isOpenProjectGroupfolderCreated(): bool {

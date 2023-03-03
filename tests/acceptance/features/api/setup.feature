@@ -480,7 +480,8 @@ Feature: setup the integration through an API
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "openproject_groupfolder_id": {"type": "integer"}
       },
       "not": {
       "required": [
@@ -514,7 +515,7 @@ Feature: setup the integration through an API
     When user "OpenProject" deletes folder "/OpenProject/project-123"
     Then the HTTP status code should be 204
 
-    # folders 2 levels down inside the OpenProject folder can be deleted by any user even if the parrent is also called "OpenProject"
+    # folders 2 levels down inside the OpenProject folder can be deleted by any user even if the parent is also called "OpenProject"
     Given user "OpenProject" has created folder "/OpenProject/OpenProject/project-abc"
     When user "Alice" renames folder "/OpenProject/OpenProject/project-abc" to "/OpenProject/OpenProject/project-123"
     Then the HTTP status code should be 201
@@ -538,3 +539,83 @@ Feature: setup the integration through an API
     And group "OpenProject" should be present in the server
     When the administrator disables the user "OpenProject"
     Then the HTTP status code should be 400
+
+    # resending setup request will fail
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+        "openproject_instance_url": "http://some-host.de",
+        "openproject_client_id": "the-client-id",
+        "openproject_client_secret": "the-client-secret",
+        "default_enable_navigation": false,
+        "default_enable_unified_search": false,
+        "setup_group_folder": true
+        }
+      }
+      """
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^user \"OpenProject\" already exists$"}
+      }
+    }
+    """
+
+    # sending a PATCH request with setup_group_folder=true will also fail
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+        "setup_group_folder": true
+        }
+      }
+      """
+    Then the HTTP status code should be "409"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^user \"OpenProject\" already exists$"}
+      }
+    }
+    """
+
+    # but other values can be updated by sending a PATCH request
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+        "default_enable_navigation": true
+        }
+      }
+      """
+    Then the HTTP status code should be "200"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "nextcloud_oauth_client_name",
+        "openproject_redirect_uri",
+        "nextcloud_client_id",
+        "nextcloud_client_secret"
+      ],
+      "properties": {
+          "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
+          "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
+          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+      }
+    }
+    """

@@ -10,6 +10,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
+use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
@@ -28,14 +29,21 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 	 * @var IUserSession
 	 */
 	private $userSession;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
 	public function __construct(
 		OpenProjectAPIService $openprojectAPIService,
 		IUserSession $userSession,
-		IGroupManager $groupManager
+		IGroupManager $groupManager,
+		IConfig $config
 	) {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
+		$this->config = $config;
 	}
 
 	public function handle(Event $event): void {
@@ -49,7 +57,10 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		$currentUserId = $this->userSession->getUser()->getUID();
 		if (
 			$this->openprojectAPIService->isGroupFolderSetup() &&
-			$parentNode->getPath() === "/$currentUserId/files/" . Application::OPEN_PROJECT_ENTITIES_NAME &&
+			$parentNode->getId() === (int)$this->config->getAppValue(
+				Application::APP_ID,
+				'openproject_groupfolder_id',
+			) &&
 			$currentUserId !== Application::OPEN_PROJECT_ENTITIES_NAME &&
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
 		) {
