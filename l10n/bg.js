@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Грешка по време на обмен на OAuth",
     "Direct download error" : "Грешка при директно сваляне",
     "This direct download link is invalid or has expired" : "Директната връзка за изтегляне е невалидна или е изтекла",
+    "folder not found or not enough permissions" : "не е намерена папка или няма достатъчно права",
     "Bad HTTP method" : "Лош HTTP метод",
     "OAuth access token refused" : " Маркерът за достъп OAuth е отказан",
     "OpenProject Integration" : "Интегриране на OpenProject",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
-    "Invalid key" : "Невалиден ключ",
-    "folder not found or not enough permissions" : "не е намерена папка или няма достатъчно права"
+    "Invalid key" : "Невалиден ключ"
 },
 "nplurals=2; plural=(n != 1);");
