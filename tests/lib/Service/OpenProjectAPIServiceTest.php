@@ -33,6 +33,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IRemoteHostValidator;
 use PhpPact\Consumer\InteractionBuilder;
@@ -42,6 +43,18 @@ use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
+
+/**
+ * overriding the class_exists method, so that the unit tests always pass,
+ * no matter if the activity app is enabled or not
+ */
+function class_exists(string $className): bool {
+	if ($className === '\OCA\GroupFolders\Folder\FolderManager') {
+		return true;
+	} else {
+		return \class_exists($className);
+	}
+}
 
 class OpenProjectAPIServiceTest extends TestCase {
 	/**
@@ -323,14 +336,30 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @param array<string> $onlyMethods
 	 * @param ICacheFactory|null $cacheFactoryMock
+	 * @param IUserManager|null $userManagerMock
+	 * @param IGroupManager|null $groupManagerMock
+	 * @param IAppManager|null $appManagerMock
 	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private function getServiceMock(
-		array $onlyMethods = ['request'], $cacheFactoryMock = null
+		array $onlyMethods = ['request'],
+		$cacheFactoryMock = null,
+		$userManagerMock = null,
+		$groupManagerMock = null,
+		$appManagerMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($cacheFactoryMock === null) {
 			$cacheFactoryMock = $this->createMock(ICacheFactory::class);
+		}
+		if ($userManagerMock === null) {
+			$userManagerMock = $this->createMock(IUserManager::class);
+		}
+		if ($groupManagerMock === null) {
+			$groupManagerMock = $this->createMock(IGroupManager::class);
+		}
+		if ($appManagerMock === null) {
+			$appManagerMock = $this->createMock(IAppManager::class);
 		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
@@ -344,9 +373,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IRootFolder::class),
 					$this->createMock(IURLGenerator::class),
 					$cacheFactoryMock,
-					$this->createMock(IUserManager::class),
-					$this->createMock(IGroupManager::class),
-					$this->createMock(IAppManager::class),
+					$userManagerMock,
+					$groupManagerMock,
+					$appManagerMock,
 					$this->createMock(IDBConnection::class)
 				])
 			->onlyMethods($onlyMethods)
@@ -1233,6 +1262,47 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
 
+	public function testIsGroupFolderSetup(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with('OpenProject')
+			->willReturn(true);
+		$userManagerMock
+			->method('get')
+			->with('OpenProject')
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with('OpenProject')
+			->willReturn(true);
+
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(true);
+
+		$service = $this->getServiceMock(
+			['isOpenProjectGroupfolderCreated'],
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock
+		);
+
+		// mocking this function because it has dependencies that are hard to mock
+		// FolderManager cannot be given to the constructor, because it might not exists
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(true);
+		$this->assertTrue($service->isGroupFolderSetup());
+	}
 	public function testLinkWorkPackageToFilePact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest

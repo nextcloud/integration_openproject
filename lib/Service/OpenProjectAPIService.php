@@ -944,7 +944,7 @@ class OpenProjectAPIService {
 		return $openProjectFolder->getId();
 	}
 
-	private function isOpenProjectGroupfolderCreated(): bool {
+	public function isOpenProjectGroupfolderCreated(): bool {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
@@ -957,7 +957,7 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-	private function isGroupfoldersAppEnabled(): bool {
+	public function isGroupfoldersAppEnabled(): bool {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		return (
 			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
