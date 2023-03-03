@@ -12,7 +12,6 @@ namespace OCA\OpenProject\AppInfo;
 use Closure;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
-use OCA\OpenProject\Listener\BeforeUserLoggedInListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
@@ -29,7 +28,6 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\User\Events\BeforeUserDeletedEvent;
-use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
@@ -79,7 +77,6 @@ class Application extends App implements IBootstrap {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
 		});
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
-		$dispatcher->addServiceListener(BeforeUserLoggedInEvent::class, BeforeUserLoggedInListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 	}
