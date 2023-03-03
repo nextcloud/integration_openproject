@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Error during OAuth exchanges",
     "Direct download error" : "Direct download error",
     "This direct download link is invalid or has expired" : "This direct download link is invalid or has expired",
+    "folder not found or not enough permissions" : "folder not found or insufficient permissions",
     "Bad HTTP method" : "Bad HTTP method",
     "OAuth access token refused" : "OAuth access token refused",
     "OpenProject Integration" : "OpenProject Integration",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
-    "Invalid key" : "Invalid key",
-    "folder not found or not enough permissions" : "folder not found or insufficient permissions"
+    "Invalid key" : "Invalid key"
 },
 "nplurals=2; plural=(n != 1);");

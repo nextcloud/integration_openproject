@@ -7,6 +7,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
     "Direct download error" : "Fehler beim direkten Herunterladen",
     "This direct download link is invalid or has expired" : "Dieser direkte Download-Link ist ungültig oder abgelaufen",
+    "folder not found or not enough permissions" : "Ordner nicht gefunden oder unzureichende Berechtigungen",
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "OAuth access token refused" : "OAuth-Zugriffstoken abgelehnt",
     "OpenProject Integration" : "OpenProject-Einbindung",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Die OpenProject-URL ist ungültig. Geben Sie eine URL im Format „https://openproject.org“ an.",
     "No OpenProject detected at the URL" : "Kein OpenProject unter dieser URL erkannt",
     "Enable notifications for activity in my work packages" : "Benachrichtigungen für Aktivitäten in meinen Arbeitspaketen aktivieren",
-    "Invalid key" : "Ungültiger Schlüssel",
-    "folder not found or not enough permissions" : "Ordner nicht gefunden oder unzureichende Berechtigungen"
+    "Invalid key" : "Ungültiger Schlüssel"
 },
 "nplurals=2; plural=(n != 1);");
