@@ -5,6 +5,7 @@
     "Error during OAuth exchanges" : "Fehler beim OAuth-Austausch",
     "Direct download error" : "Fehler beim direkten Herunterladen",
     "This direct download link is invalid or has expired" : "Dieser direkte Download-Link ist ungültig oder abgelaufen.",
+    "folder not found or not enough permissions" : "Ordner nicht gefunden oder unzureichende Berechtigungen",
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "OAuth access token refused" : "OAuth-Zugriffstoken abgelehnt",
     "OpenProject Integration" : "OpenProject-Einbindung",
