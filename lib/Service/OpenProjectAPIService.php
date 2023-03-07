@@ -15,7 +15,11 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IProvider;
+use OC\Authentication\Token\IToken;
 use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -29,6 +33,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 use OCP\IAvatarManager;
@@ -38,6 +43,8 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
+use OCP\Group\ISubAdmin;
+
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
@@ -93,6 +100,8 @@ class OpenProjectAPIService {
 	 */
 	private $groupManager;
 
+	private $subAdminManager;
+
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -107,6 +116,10 @@ class OpenProjectAPIService {
 								IURLGenerator $urlGenerator,
 								ICacheFactory $cacheFactory,
 								IUserManager $userManager,
+								ISubAdmin $subAdminManager,
+								IProvider $tokenProvider,
+								ISecureRandom $random,
+								IEventDispatcher $eventDispatcher,
 								IGroupManager $groupManager) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -119,6 +132,10 @@ class OpenProjectAPIService {
 		$this->cache = $cacheFactory->createDistributed();
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
+		$this->subAdminManager = $subAdminManager;
+		$this->tokenProvider = $tokenProvider;
+		$this->random = $random;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -862,15 +879,64 @@ class OpenProjectAPIService {
 	 * @throws Exception
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
-		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
-		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
-		} elseif (!$this->isAllOtherSetupOkay()) {
-			// just making it work for now
-			throw new OpenprojectUserOrGroupAlreadyExistsException('Other set up is not okay');
+//		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+//			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
+//		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+//			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
+//		} elseif (!$this->isAllOtherSetupOkay()) {
+//			// just making it work for now
+//			throw new OpenprojectUserOrGroupAlreadyExistsException('Other set up is not okay');
+//		}
+
+		if(!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && !$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->isAllOtherSetupOkay())
+		{
+			// $password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+			// Todo remove this password
+			$password = "12345";
+			$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+			$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+			$group->addUser($user);
+			$this->subAdminManager->createSubAdmin($user, $group);
+			// this is created once
+			// net to figure it out if migration step is needed
+			$this->config->setAppValue(Application::APP_ID, 'openproject_system_password', '');
+			$this->generateAppPasswordTokenForUser();
+
 		}
+
 		return true;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function generateAppPasswordTokenForUser(): void {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// since password is not known
+		$password = null;
+		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$previousTokenId = $this->config->getAppValue(Application::APP_ID, 'app_password_token_id', '');
+		if($previousTokenId !== '') {
+			// if we have already created token then we need delete
+			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $previousTokenId);
+		}
+		$generatedToken = $this->tokenProvider->generateToken(
+			$token,
+			$user->getUID(),
+			$user->getUID(),
+			$password,
+			$appName,
+			IToken::TEMPORARY_TOKEN,
+			IToken::DO_NOT_REMEMBER
+		);
+		$tokenId = $generatedToken->getId();
+		$this->eventDispatcher->dispatchTyped(
+			new AppPasswordCreatedEvent($generatedToken)
+		);
+		// saving it since we can replace the app password token. Also can be used for while resetting the entire integration
+		$this->config->setAppValue(Application::APP_ID, 'app_password_token_id', $tokenId);
+		$this->config->setAppValue(Application::APP_ID, 'openproject_system_password', $token);
 	}
 
 	/**

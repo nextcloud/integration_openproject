@@ -235,29 +235,24 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		$appPasswordToken = '';
+
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
-				$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
-				// $password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-				// Todo remove this password
-				$password = "12345";
-				if ($isSystemReady) {
-					$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-					$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-					$group->addUser($user);
-					$this->subAdminManager->createSubAdmin($user, $group);
-					// create app password when the user is created
-					// this is made to delete token during update and reset
-					$this->config->setAppValue(Application::APP_ID, 'app_password_token_id', '');
-					$appPasswordToken = $this->generateAppPasswordTokenForUser();
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+			if ($isSystemReady) {
+				// check if the app password is already there for the openproject user
+				// if not then create one
+				$oldAppPassword = $this->config->getAppValue(Application::APP_ID, 'openproject_system_password', '');
+				if($oldAppPassword !== '') {
+					$this->openprojectAPIService->generateAppPasswordTokenForUser();
 				}
+			}
 		}
 
 		// TODO
 		// this condition applies only when user and group with along with app password is created
 		// code to for updating the app password token
 		if(key_exists('setup_group_folder', $values) && key_exists('reset_app_password', $values) && $values['setup_group_folder'] === false && $values['reset_app_password']) {
-			$appPasswordToken = $this->generateAppPasswordTokenForUser();
+			$this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
 
 		$runningFullReset = (
@@ -275,6 +270,19 @@ class ConfigController extends Controller {
 			$values['openproject_client_secret'] === null
 
 		);
+
+		if($runningFullReset && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) {
+			//TODO discuss
+			// this part is when we reset the whole integration
+			// this removes the openproject system password
+			$app_token_id = $this->config->getAppValue(Application::APP_ID, 'app_password_token_id', '');
+			if($app_token_id !== '') {
+				$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $app_token_id);
+				$this->config->deleteAppValue(Application::APP_ID, 'openproject_system_password');
+				$this->config->deleteAppValue(Application::APP_ID, 'app_password_token_id');
+			}
+		}
+
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
@@ -329,10 +337,11 @@ class ConfigController extends Controller {
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
+		$openproject_system_password = $this->config->getAppValue(Application::APP_ID, 'openproject_system_password', '');
 
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"openproject_user_app_password" => $appPasswordToken,
+			"openproject_user_app_password" => $openproject_system_password,
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 		];
 	}
@@ -615,7 +624,8 @@ class ConfigController extends Controller {
 			'openproject_client_id' => null,
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
-			'default_enable_unified_search' => null
+			'default_enable_unified_search' => null,
+			"reset_app_password" => null
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);
@@ -642,37 +652,5 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
-	}
-
-	/**
-	 * @return string
-	 */
-	private function generateAppPasswordTokenForUser(): string {
-		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
-		// since password is not known
-		$password = null;
-		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
-		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
-		$previousTokenId = $this->config->getAppValue(Application::APP_ID, 'app_password_token_id', '');
-		if($previousTokenId !== '') {
-			// if we have already created token then we need delete
-			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $previousTokenId);
-		}
-		$generatedToken = $this->tokenProvider->generateToken(
-			$token,
-			$user->getUID(),
-			$user->getUID(),
-			$password,
-			$appName,
-			IToken::TEMPORARY_TOKEN,
-			IToken::DO_NOT_REMEMBER
-		);
-		$tokenId = $generatedToken->getId();
-		$this->eventDispatcher->dispatchTyped(
-			new AppPasswordCreatedEvent($generatedToken)
-		);
-		// saving it since we can replace the app password token. Also can be used for while resetting the entire integration
-		$this->config->setAppValue(Application::APP_ID, 'app_password_token_id', $tokenId);
-		return $token;
 	}
 }

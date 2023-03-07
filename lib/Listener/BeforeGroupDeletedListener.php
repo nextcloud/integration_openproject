@@ -50,14 +50,14 @@ class BeforeGroupDeletedListener implements IEventListener {
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-//		if (!($event instanceof BeforeGroupDeletedEvent)) {
-//			return;
-//		}
-//
-//		$group = $event->getGroup();
-//		if ($group->getGID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-//			$this->logger->info('Group openproject cannot be deleted');
-//			throw new OCSBadRequestException();
-//		}
+		if (!($event instanceof BeforeGroupDeletedEvent)) {
+			return;
+		}
+
+		$group = $event->getGroup();
+		if ($group->getGID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+			$this->logger->info('Group openproject cannot be deleted');
+			throw new OCSBadRequestException();
+		}
 	}
 }
