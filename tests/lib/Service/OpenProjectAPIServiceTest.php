@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\ConnectException;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
+use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\App\IAppManager;
@@ -40,6 +41,7 @@ use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
@@ -94,7 +96,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private $fileLinksPath = '/api/v3/file_links';
 
 	/**
-	 * @var IConfig|\PHPUnit\Framework\MockObject\MockObject
+	 * @var IConfig|MockObject
 	 */
 	private $defaultConfigMock;
 	/**
@@ -339,7 +341,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IUserManager|null $userManagerMock
 	 * @param IGroupManager|null $groupManagerMock
 	 * @param IAppManager|null $appManagerMock
-	 * @return OpenProjectAPIService|\PHPUnit\Framework\MockObject\MockObject
+	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
 		array $onlyMethods = ['request'],
@@ -1261,6 +1263,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedError, $response['error']);
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
+	/**
+	 * @param string $mountPoint
+	 *
+	 * @return FolderManager | MockObject
+	 */
+	public function getFolderManagerMock(string $mountPoint = 'OpenProject'): FolderManager {
+		$folderManagerMock = $this->getMockBuilder(FolderManager::class)->disableOriginalConstructor()->getMock();
+		$folderManagerMock
+			->method('getAllFolders')
+			->willReturn([ 0 => [
+				'id' => 123,
+				'mount_point' => $mountPoint,
+				'groups' => 123,
+				'quota' => 1234,
+				'size' => 0,
+				'acl' => true
+			]]);
+		return $folderManagerMock;
+	}
 
 	public function testIsGroupFolderSetup(): void {
 		$userMock = $this->createMock(IUser::class);
@@ -1290,19 +1311,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getServiceMock(
-			['isOpenProjectGroupfolderCreated'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock
 		);
-
-		// mocking this function because it has dependencies that are hard to mock
-		// FolderManager cannot be given to the constructor, because it might not exists
-		$service->method('isOpenProjectGroupfolderCreated')
-			->willReturn(true);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
 		$this->assertTrue($service->isGroupFolderSetup());
 	}
+
 	public function testIsGroupFolderSetupUserDoesNotExist(): void {
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
@@ -1331,17 +1351,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getServiceMock(
-			['isOpenProjectGroupfolderCreated'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock
 		);
-
-		// mocking this function because it has dependencies that are hard to mock
-		// FolderManager cannot be given to the constructor, because it might not exists
-		$service->method('isOpenProjectGroupfolderCreated')
-			->willReturn(true);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isGroupFolderSetup());
 	}
 
@@ -1373,17 +1391,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(false);
 
 		$service = $this->getServiceMock(
-			['isOpenProjectGroupfolderCreated'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock
 		);
-
-		// mocking this function because it has dependencies that are hard to mock
-		// FolderManager cannot be given to the constructor, because it might not exists
-		$service->method('isOpenProjectGroupfolderCreated')
-			->willReturn(true);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isGroupFolderSetup());
 	}
 
@@ -1415,20 +1431,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getServiceMock(
-			['isOpenProjectGroupfolderCreated'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock
 		);
-
-		// mocking this function because it has dependencies that are hard to mock
-		// FolderManager cannot be given to the constructor, because it might not exists
-		$service->method('isOpenProjectGroupfolderCreated')
-			->willReturn(true);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isGroupFolderSetup());
 	}
-
 
 	public function testIsGroupFolderSetupGroupFolderNotCreated(): void {
 		$userMock = $this->createMock(IUser::class);
@@ -1458,19 +1471,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getServiceMock(
-			['isOpenProjectGroupfolderCreated'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock
 		);
-
-		// mocking this function because it has dependencies that are hard to mock
-		// FolderManager cannot be given to the constructor, because it might not exists
-		$service->method('isOpenProjectGroupfolderCreated')
-			->willReturn(false);
+		$folderManagerMock = $this->getFolderManagerMock('testFolder');
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isGroupFolderSetup());
 	}
+
 	public function testLinkWorkPackageToFilePact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest

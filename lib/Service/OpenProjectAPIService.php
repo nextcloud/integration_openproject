@@ -944,9 +944,14 @@ class OpenProjectAPIService {
 		return $openProjectFolder->getId();
 	}
 
+	public function getGroupFolderManager(): FolderManager {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		return new FolderManager($this->dbConnection);
+	}
+
 	public function isOpenProjectGroupfolderCreated(): bool {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		$groupfoldersFolderManager = $this->getGroupFolderManager();
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folders = $groupfoldersFolderManager->getAllFolders();
 		foreach ($folders as $folder) {
