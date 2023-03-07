@@ -93,9 +93,11 @@ jobs:
 
       - name: PHP & Vue Unit Tests
         run: |
+          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
+          ./occ a:e groupfolders
           ./occ a:e integration_openproject
           cd apps/integration_openproject
           make phpunit
