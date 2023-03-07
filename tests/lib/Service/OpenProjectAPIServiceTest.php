@@ -1303,6 +1303,174 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 		$this->assertTrue($service->isGroupFolderSetup());
 	}
+	public function testIsGroupFolderSetupUserDoesNotExist(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with('OpenProject')
+			->willReturn(false);
+		$userManagerMock
+			->method('get')
+			->with('OpenProject')
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with('OpenProject')
+			->willReturn(true);
+
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(true);
+
+		$service = $this->getServiceMock(
+			['isOpenProjectGroupfolderCreated'],
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock
+		);
+
+		// mocking this function because it has dependencies that are hard to mock
+		// FolderManager cannot be given to the constructor, because it might not exists
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(true);
+		$this->assertFalse($service->isGroupFolderSetup());
+	}
+
+	public function testIsGroupFolderSetupGroupFolderAppNotEnabled(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with('OpenProject')
+			->willReturn(true);
+		$userManagerMock
+			->method('get')
+			->with('OpenProject')
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with('OpenProject')
+			->willReturn(true);
+
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(false);
+
+		$service = $this->getServiceMock(
+			['isOpenProjectGroupfolderCreated'],
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock
+		);
+
+		// mocking this function because it has dependencies that are hard to mock
+		// FolderManager cannot be given to the constructor, because it might not exists
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(true);
+		$this->assertFalse($service->isGroupFolderSetup());
+	}
+
+	public function testIsGroupFolderSetupGroupDoesNotExist(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with('OpenProject')
+			->willReturn(true);
+		$userManagerMock
+			->method('get')
+			->with('OpenProject')
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with('OpenProject')
+			->willReturn(false);
+
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(true);
+
+		$service = $this->getServiceMock(
+			['isOpenProjectGroupfolderCreated'],
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock
+		);
+
+		// mocking this function because it has dependencies that are hard to mock
+		// FolderManager cannot be given to the constructor, because it might not exists
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(true);
+		$this->assertFalse($service->isGroupFolderSetup());
+	}
+
+
+	public function testIsGroupFolderSetupGroupFolderNotCreated(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with('OpenProject')
+			->willReturn(false);
+		$userManagerMock
+			->method('get')
+			->with('OpenProject')
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with('OpenProject')
+			->willReturn(true);
+
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(true);
+
+		$service = $this->getServiceMock(
+			['isOpenProjectGroupfolderCreated'],
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock
+		);
+
+		// mocking this function because it has dependencies that are hard to mock
+		// FolderManager cannot be given to the constructor, because it might not exists
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(false);
+		$this->assertFalse($service->isGroupFolderSetup());
+	}
 	public function testLinkWorkPackageToFilePact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
