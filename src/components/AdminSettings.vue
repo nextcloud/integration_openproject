@@ -161,6 +161,50 @@
 				</div>
 			</div>
 		</div>
+		<div>
+			<FormHeading index="4"
+					 :title="t('integration_openproject', 'OpenProject system user password')"
+					 :is-complete="isOPSystemPasswordFormComplete"
+					 :is-disabled="isOPSystemPasswordInDisableMode"
+			/>
+			<div v-if="state.openproject_system_password && isNcOAuthFormComplete">
+				<TextInput v-if="isOpSystemPasswordFormInEdit"
+						   id="openproject-system-password"
+						   v-model="state.openproject_system_password"
+						   class="py-1"
+						   read-only
+						   is-required
+						   with-copy-btn label="OpenProject application password"
+						   :hint-text="nextcloudClientHint" />
+				<FieldValue v-else
+							title="OpenProject application password"
+							:value="state.openproject_system_password"
+							is-required
+							hideValue
+							/>
+				<div class="form-actions">
+					<Button v-if="isOpSystemPasswordFormInEdit"
+							type="primary"
+							:disabled="!opSystemPassword"
+							data-test-id="submit-op-system-password-form-btn"
+							@click="setOPSytemPasswordToViewMode">
+					<template #icon>
+						<CheckBoldIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Yes, I have copied these values') }}
+					</Button>
+					<Button v-else
+							data-test-id="reset-op-system-password"
+							@click="resetOPSystemPassword">
+					<template #icon>
+							<AutoRenewIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Replace password') }}
+					</Button>
+
+				</div>
+			</div>
+		</div>
 		<Button id="reset-all-app-settings-btn"
 			type="error"
 			:disabled="isResetButtonDisabled"
@@ -231,9 +275,10 @@ export default {
 				server: F_MODES.EDIT,
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
+				opSystemPassword: F_MODES.DISABLE
 			},
 			isFormCompleted: {
-				server: false, opOauth: false, ncOauth: false,
+				server: false, opOauth: false, ncOauth: false, opSystemPassword: false
 			},
 			loadingServerHostForm: false,
 			loadingOPOauthForm: false,
@@ -245,6 +290,7 @@ export default {
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
+			// oPSystemPassword: null
 		}
 	},
 	computed: {
@@ -253,6 +299,9 @@ export default {
 		},
 		ncClientSecret() {
 			return this.state.nc_oauth_client?.nextcloud_client_secret
+		},
+		opSystemPassword() {
+			return this.state.openproject_system_password
 		},
 		serverHostErrorMessage() {
 			if (
@@ -267,6 +316,9 @@ export default {
 		},
 		isOPOAuthFormComplete() {
 			return this.isFormCompleted.opOauth
+		},
+		isOPSystemPasswordFormComplete() {
+			return this.isFormCompleted.opSystemPassword
 		},
 		isNcOAuthFormComplete() {
 			return this.isFormCompleted.ncOauth
@@ -283,11 +335,17 @@ export default {
 		isNcOAuthFormInEdit() {
 			return this.formMode.ncOauth === F_MODES.EDIT
 		},
+		isOpSystemPasswordFormInEdit() {
+			return this.formMode.opSystemPassword === F_MODES.EDIT
+		},
 		isOPOAuthFormInDisableMode() {
 			return this.formMode.opOauth === F_MODES.DISABLE
 		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
+		},
+		isOPSystemPasswordInDisableMode() {
+			return this.formMode.opSystemPassword === F_MODES.DISABLE
 		},
 		adminFileStorageHref() {
 			let hostPart = ''
@@ -308,9 +366,12 @@ export default {
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
-			return (this.isServerHostFormComplete
+			return (
+				this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
-				 && this.isNcOAuthFormComplete)
+				 && this.isNcOAuthFormComplete
+				 &&	this.isOPSystemPasswordFormComplete
+			)
 		},
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
@@ -322,6 +383,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				console.log(this.state)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -339,6 +401,10 @@ export default {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
 				}
+				if (this.state.openproject_system_password) {
+					this.formMode.opSystemPassword = F_MODES.VIEW
+					this.isFormCompleted.opSystemPassword = true
+				}
 			}
 		},
 		setServerHostFormToViewMode() {
@@ -353,6 +419,10 @@ export default {
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
+		},
+		setOPSytemPasswordToViewMode() {
+			this.formMode.opSystemPassword = F_MODES.VIEW
+			this.isFormCompleted.opSystemPassword = true
 		},
 		async saveOpenProjectHostUrl() {
 			this.loadingServerHostForm = true
@@ -434,6 +504,8 @@ export default {
 			// editor mode so that we can update the form fields with null values
 			// also, form completeness should be set to false
 			this.formMode.opOauth = F_MODES.EDIT
+			// look for another method not to use this one
+			this.formMode.opSystemPassword = F_MODES.DISABLE
 			this.isFormCompleted.opOauth = false
 			this.formMode.server = F_MODES.EDIT
 			this.isFormCompleted.server = false
@@ -549,18 +621,23 @@ export default {
 					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
+					setup_group_folder: (this.formMode.opOauth === F_MODES.EDIT),
+					reset_app_password: (this.formMode.opSystemPassword === F_MODES.EDIT) ? true : (this.state.openproject_client_id === null && this.state.openproject_client_secret === null && this.state.openproject_instance_url === null) ? null : false
 				},
 			}
 			try {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
+				// this.oPSystemPassword = response.data?.openproject_user_app_password
+				this.state.openproject_system_password = response.data?.openproject_user_app_password
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
 			} catch (error) {
 				this.isAdminConfigOk = null
 				this.oPOAuthTokenRevokeStatus = null
+				// this.oPSystemPassword = null
 				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
@@ -608,6 +685,30 @@ export default {
 				},
 				true
 			)
+		},
+		resetOPSystemPassword() {
+			OC.dialogs.confirmDestructive(
+				t('integration_openproject', 'If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account.'),
+				t('integration_openproject', 'Replace Nextcloud OAuth values'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'Yes, replace'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				async (result) => {
+					if (result) {
+						await this.createNewAppPassword()
+					}
+				},
+				true
+			)
+		},
+		async createNewAppPassword () {
+			this.formMode.opSystemPassword = F_MODES.EDIT
+			this.isFormCompleted.opSystemPassword = false
+			await this.saveOPOptions();
+			console.log("yes button is working!!!")
 		},
 		createNCOAuthClient() {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')

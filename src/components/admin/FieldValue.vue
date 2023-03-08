@@ -44,6 +44,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		hideValue: {
+			type: Boolean,
+			default: false,
+		},
 		withInspection: {
 			type: Boolean,
 			default: false,
@@ -56,9 +60,12 @@ export default {
 		encryptedValue() {
 			return this.value.substring(0, 8) + '*'.repeat(15)
 		},
+		doNotShowValue() {
+			return '*'.repeat(25)
+		},
 		valueContent() {
-			return (this.encryptValue && !this.inspect)
-				? this.encryptedValue
+			return (this.encryptValue && !this.inspect) ? this.encryptedValue
+				: (this.hideValue && !this.inspect) ? this.doNotShowValue
 				: this.value
 		},
 	},

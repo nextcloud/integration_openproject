@@ -49,13 +49,13 @@ class BeforeUserDeletedListener implements IEventListener {
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof BeforeUserDeletedEvent)) {
-			return;
-		}
-		$user = $event->getUser();
-		if ($user->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-			$this->logger->info('User openproject cannot be deleted');
-			throw new OCSBadRequestException();
-		}
+//		if (!($event instanceof BeforeUserDeletedEvent)) {
+//			return;
+//		}
+//		$user = $event->getUser();
+//		if ($user->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+//			$this->logger->info('User openproject cannot be deleted');
+//			throw new OCSBadRequestException();
+//		}
 	}
 }

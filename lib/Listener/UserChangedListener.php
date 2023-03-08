@@ -53,16 +53,16 @@ class UserChangedListener implements IEventListener {
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof UserChangedEvent)) {
-			return;
-		}
-
-		if ($event->getUser()->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-			$feature = $event->getFeature();
-			if ($feature === 'enabled' && !$event->getValue()) {
-				$this->logger->info('User openproject cannot be disabled');
-				throw new OCSBadRequestException();
-			}
-		}
+//		if (!($event instanceof UserChangedEvent)) {
+//			return;
+//		}
+//
+//		if ($event->getUser()->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+//			$feature = $event->getFeature();
+//			if ($feature === 'enabled' && !$event->getValue()) {
+//				$this->logger->info('User openproject cannot be disabled');
+//				throw new OCSBadRequestException();
+//			}
+//		}
 	}
 }

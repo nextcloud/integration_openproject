@@ -242,7 +242,7 @@ class ConfigController extends Controller {
 				// check if the app password is already there for the openproject user
 				// if not then create one
 				$oldAppPassword = $this->config->getAppValue(Application::APP_ID, 'openproject_system_password', '');
-				if($oldAppPassword !== '') {
+				if($oldAppPassword === '') {
 					$this->openprojectAPIService->generateAppPasswordTokenForUser();
 				}
 			}
