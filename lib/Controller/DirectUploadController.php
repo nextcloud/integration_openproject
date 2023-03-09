@@ -173,7 +173,9 @@ class DirectUploadController extends ApiController {
 			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
 			if (empty($directUploadFile)) {
-				throw new InvalidCharacterInPathException('invalid file name');
+				throw new OpenprojectFileNotUploadedException(
+					'File was not uploaded. post_max_size exceeded?'
+				);
 			}
 			$fileName = trim($directUploadFile['name']);
 			$this->scanForInvalidCharacters($fileName, "\\/");
