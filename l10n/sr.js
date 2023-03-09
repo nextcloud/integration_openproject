@@ -9,6 +9,7 @@ OC.L10N.register(
     "Save" : "Сачувај",
     "Reset" : "Ресетуј",
     "Documentation" : "Документација",
+    "Invalid token" : "Неисправан жетон",
     "Copied!" : "Копирано!",
     "Details" : "Детаљи",
     "Start typing to search" : "Почните да куцате да бисте претраживали",
