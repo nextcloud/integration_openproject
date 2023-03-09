@@ -944,6 +944,7 @@ class OpenProjectAPIService {
 		return $openProjectFolder->getId();
 	}
 
+	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 	public function getGroupFolderManager(): FolderManager {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		return new FolderManager($this->dbConnection);

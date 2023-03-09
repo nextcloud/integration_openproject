@@ -1263,13 +1263,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedError, $response['error']);
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
-	/**
-	 * @param string $mountPoint
-	 *
-	 * @return FolderManager | MockObject
-	 */
-	public function getFolderManagerMock(string $mountPoint = 'OpenProject'): FolderManager {
+
+	public function getFolderManagerMock(string $mountPoint = 'OpenProject'): MockObject {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock = $this->getMockBuilder(FolderManager::class)->disableOriginalConstructor()->getMock();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock
 			->method('getAllFolders')
 			->willReturn([ 0 => [
