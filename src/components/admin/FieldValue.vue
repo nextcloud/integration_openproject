@@ -61,12 +61,14 @@ export default {
 			return this.value.substring(0, 8) + '*'.repeat(15)
 		},
 		doNotShowValue() {
-			return '*'.repeat(25)
+			return '*'.repeat(23)
 		},
 		valueContent() {
-			return (this.encryptValue && !this.inspect) ? this.encryptedValue
-				: (this.hideValue && !this.inspect) ? this.doNotShowValue
-				: this.value
+			return (this.encryptValue && !this.inspect)
+				? this.encryptedValue
+				: (this.hideValue && !this.inspect)
+					? this.doNotShowValue
+					: this.value
 		},
 	},
 	methods: {
