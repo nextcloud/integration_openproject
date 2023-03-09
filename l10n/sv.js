@@ -16,6 +16,7 @@ OC.L10N.register(
     "Details" : "Detaljer",
     "Start typing to search" : "Börja skriva för att söka",
     "Mark as read" : "Markera som läst",
+    "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:",
     "Connected accounts" : "Anslutna konton"
 },
 "nplurals=2; plural=(n != 1);");
