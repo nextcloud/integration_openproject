@@ -167,10 +167,10 @@
 					 :is-complete="isOPSystemPasswordFormComplete"
 					 :is-disabled="isOPSystemPasswordInDisableMode"
 			/>
-			<div v-if="state.openproject_system_password && isNcOAuthFormComplete">
+			<div v-if="isNcOAuthFormComplete">
 				<TextInput v-if="isOpSystemPasswordFormInEdit"
 						   id="openproject-system-password"
-						   v-model="state.openproject_system_password"
+						   v-model="oPSystemPassword"
 						   class="py-1"
 						   read-only
 						   is-required
@@ -185,7 +185,7 @@
 				<div class="form-actions">
 					<Button v-if="isOpSystemPasswordFormInEdit"
 							type="primary"
-							:disabled="!opSystemPassword"
+							:disabled="!oPSystemPassword"
 							data-test-id="submit-op-system-password-form-btn"
 							@click="setOPSytemPasswordToViewMode">
 					<template #icon>
@@ -290,7 +290,7 @@ export default {
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
-			// oPSystemPassword: null
+			oPSystemPassword: null
 		}
 	},
 	computed: {
@@ -419,6 +419,7 @@ export default {
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
+			this.formMode.opSystemPassword = F_MODES.EDIT
 		},
 		setOPSytemPasswordToViewMode() {
 			this.formMode.opSystemPassword = F_MODES.VIEW
@@ -629,15 +630,14 @@ export default {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
-				// this.oPSystemPassword = response.data?.openproject_user_app_password
-				this.state.openproject_system_password = response.data?.openproject_user_app_password
+				this.oPSystemPassword = response.data?.openproject_user_app_password
+				// this.state.openproject_system_password = response.data?.openproject_user_app_password
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
 			} catch (error) {
 				this.isAdminConfigOk = null
 				this.oPOAuthTokenRevokeStatus = null
-				// this.oPSystemPassword = null
 				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')

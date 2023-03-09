@@ -280,6 +280,7 @@ class ConfigController extends Controller {
 				$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $app_token_id);
 				$this->config->deleteAppValue(Application::APP_ID, 'openproject_system_password');
 				$this->config->deleteAppValue(Application::APP_ID, 'app_password_token_id');
+				$this->config->deleteAppValue(Application::APP_ID, 'reset_app_password');
 			}
 		}
 
@@ -625,6 +626,7 @@ class ConfigController extends Controller {
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
+			"setup_group_folder" => false,
 			"reset_app_password" => null
 		];
 		try {
