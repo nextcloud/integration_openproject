@@ -897,30 +897,19 @@ class OpenProjectAPIService {
 			$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 			$group->addUser($user);
 			$this->subAdminManager->createSubAdmin($user, $group);
-			// this is created once
-			// net to figure it out if migration step is needed
-			$this->config->setAppValue(Application::APP_ID, 'openproject_system_password', '');
-			$this->generateAppPasswordTokenForUser();
-
 		}
 
 		return true;
 	}
 
 	/**
-	 * @return void
+	 * @return string
 	 */
-	public function generateAppPasswordTokenForUser(): void {
+	public function generateAppPasswordTokenForUser(): string {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
-		// since password is not known
 		$password = null;
 		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
 		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
-		$previousTokenId = $this->config->getAppValue(Application::APP_ID, 'app_password_token_id', '');
-		if($previousTokenId !== '') {
-			// if we have already created token then we need delete
-			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $previousTokenId);
-		}
 		$generatedToken = $this->tokenProvider->generateToken(
 			$token,
 			$user->getUID(),
@@ -930,13 +919,10 @@ class OpenProjectAPIService {
 			IToken::TEMPORARY_TOKEN,
 			IToken::DO_NOT_REMEMBER
 		);
-		$tokenId = $generatedToken->getId();
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
 		);
-		// saving it since we can replace the app password token. Also can be used for while resetting the entire integration
-		$this->config->setAppValue(Application::APP_ID, 'app_password_token_id', $tokenId);
-		$this->config->setAppValue(Application::APP_ID, 'openproject_system_password', $token);
+		return $token;
 	}
 
 	/**
@@ -947,5 +933,36 @@ class OpenProjectAPIService {
 	public function isAllOtherSetupOkay(): bool {
 		// TODO rebase needed for this function
 		return true;
+	}
+
+	/**
+	 * Deletes the created app password for user OpenProject
+	 *
+	 * @return void
+	 */
+	public function deleteAppPassword(): void {
+		// TODO rebase needed for this function
+		$token_id = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
+		$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token_id);
+		$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
+	}
+
+	/**
+	 * Deletes the old app password token and creates new one user OpenProject
+	 *
+	 * @return string
+	 */
+	public function replaceAppPasswordToken(): string {
+		$this->deleteAppPassword();
+		return $this->generateAppPasswordTokenForUser();
+	}
+
+	/**
+	 * check if app password for user OpenProject is already created
+	 *
+	 * @return bool
+	 */
+	public function hasAppPasswordAlready(): bool {
+		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
 }

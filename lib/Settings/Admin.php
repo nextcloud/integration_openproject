@@ -2,6 +2,7 @@
 
 namespace OCA\OpenProject\Settings;
 
+use OC\Authentication\Token\IProvider;
 use OCA\OpenProject\Service\OauthService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -26,12 +27,16 @@ class Admin implements ISettings {
 	 */
 	private $oauthService;
 
+	private $tokenProvider;
+
 	public function __construct(IConfig $config,
 								OauthService $oauthService,
+								IProvider $tokenProvider,
 								IInitialState $initialStateService) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
+		$this->tokenProvider = $tokenProvider;
 	}
 
 	/**
@@ -50,6 +55,9 @@ class Admin implements ISettings {
 			$clientInfo = $this->oauthService->getClientInfo($id);
 		}
 
+		// We only need a single app password for user OpenProject
+		$appPasswordCount = sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME));
+
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
@@ -57,7 +65,7 @@ class Admin implements ISettings {
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
-			'openproject_system_password' => $this->config->getAppValue(Application::APP_ID, 'openproject_system_password', '')
+			'app_password_set' => ($appPasswordCount === 1)
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

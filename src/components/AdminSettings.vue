@@ -166,10 +166,10 @@
 				:title="t('integration_openproject', 'OpenProject system user password')"
 				:is-complete="isOPSystemPasswordFormComplete"
 				:is-disabled="isOPSystemPasswordInDisableMode" />
-			<div v-if="state.openproject_system_password">
+			<div v-if="state.app_password_set">
 				<TextInput v-if="isOpSystemPasswordFormInEdit"
 					id="openproject-system-password"
-					v-model="state.openproject_system_password"
+					v-model="oPSystemPassword"
 					class="py-1"
 					read-only
 					is-required
@@ -177,10 +177,11 @@
 					label="OpenProject application password"
 					:hint-text="nextcloudClientHint" />
 				<FieldValue v-else
-					title="OpenProject application password"
-					:value="state.openproject_system_password"
+					title="OpenProject System Password"
 					is-required
-					hide-value />
+					hide-value
+					with-inspection
+					value="" />
 				<div class="form-actions">
 					<Button v-if="isOpSystemPasswordFormInEdit"
 						type="primary"
@@ -288,7 +289,7 @@ export default {
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
-			oPSystemPassword: true,
+			oPSystemPassword: null,
 		}
 	},
 	computed: {
@@ -299,7 +300,7 @@ export default {
 			return this.state.nc_oauth_client?.nextcloud_client_secret
 		},
 		opSystemPassword() {
-			return this.state.openproject_system_password
+			return this.state.app_password_set
 		},
 		serverHostErrorMessage() {
 			if (
@@ -396,7 +397,7 @@ export default {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
 				}
-				if (this.state.openproject_system_password) {
+				if (this.state.app_password_set) {
 					this.formMode.opSystemPassword = F_MODES.VIEW
 					this.isFormCompleted.opSystemPassword = true
 				}
@@ -414,10 +415,9 @@ export default {
 		setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			this.showSystemPasswordDiv = true
-			if (!this.state.openproject_system_password) {
+			if (this.state.app_password_set === false && this.oPSystemPassword !== null) {
+				this.state.app_password_set = true
 				this.formMode.opSystemPassword = F_MODES.EDIT
-				this.state.openproject_system_password = this.oPSystemPassword
 			}
 		},
 		setOPSytemPasswordToViewMode() {
@@ -629,11 +629,7 @@ export default {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
-				if (!this.state.openproject_system_password) {
-					this.oPSystemPassword = response.data?.openproject_user_app_password
-				} else {
-					this.state.openproject_system_password = response.data?.openproject_user_app_password
-				}
+				this.oPSystemPassword = response.data?.openproject_user_app_password
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
