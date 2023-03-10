@@ -16,14 +16,20 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use OC\User\NoUserException;
+use OCA\GroupFolders\ACL\ACLManager;
+use OCA\GroupFolders\ACL\RuleManager;
+use OCA\GroupFolders\ACL\UserMapping\UserMappingManager;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
+use OCP\Constants;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -101,6 +107,14 @@ class OpenProjectAPIService {
 	 * @var IAppManager
 	 */
 	private $appManager;
+
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
+	private IEventDispatcher $eventDispatcher;
+
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -122,7 +136,9 @@ class OpenProjectAPIService {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								IAppManager $appManager,
-								IDBConnection $dbConnection) {
+								IDBConnection $dbConnection,
+								ISubAdmin $subAdminManager,
+								IEventDispatcher $eventDispatcher) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -136,6 +152,8 @@ class OpenProjectAPIService {
 		$this->groupManager = $groupManager;
 		$this->appManager = $appManager;
 		$this->dbConnection = $dbConnection;
+		$this->subAdminManager = $subAdminManager;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -874,18 +892,22 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
-		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
-		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
-		} elseif (!$this->isGroupfoldersAppEnabled()) {
-			throw new \Exception('groupfolders app is not enabled');
-		} elseif ($this->isOpenProjectGroupfolderCreated()) {
-			throw new OpenprojectGroupfolderSetupConflictException(
-				'a groupfolder with the name "' .
-				Application::OPEN_PROJECT_ENTITIES_NAME .
-				'" already exists'
-			);
+		if ($this->isGroupFolderSetup()) {
+			throw new OpenprojectGroupfolderSetupConflictException('group folder setup is already completed');
+		} else {
+			if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
+			} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
+			} elseif (!$this->isGroupfoldersAppEnabled()) {
+				throw new \Exception('groupfolders app is not enabled');
+			} elseif ($this->isOpenProjectGroupfolderCreated()) {
+				throw new OpenprojectGroupfolderSetupConflictException(
+					'a groupfolder with the name "' .
+					Application::OPEN_PROJECT_ENTITIES_NAME .
+					'" already exists'
+				);
+			}
 		}
 		return true;
 	}
@@ -900,7 +922,9 @@ class OpenProjectAPIService {
 			$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
 			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
 			$this->isGroupfoldersAppEnabled() &&
-			$this->isOpenProjectGroupfolderCreated()
+			$this->isOpenProjectGroupfolderCreated() &&
+			$this->isUserPartOfAndAdminOfGroup() &&
+			$this->isACLSetUp()
 		);
 	}
 
@@ -972,5 +996,38 @@ class OpenProjectAPIService {
 			$user
 			)
 		);
+	}
+
+	private function isUserPartOfAndAdminOfGroup():bool {
+		if ($this->groupManager->isInGroup(
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			Application::OPEN_PROJECT_ENTITIES_NAME
+			) &&
+			$this->subAdminManager->isSubAdminOfGroup(
+				$this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME),
+				$this->groupManager->get(Application::OPEN_PROJECT_ENTITIES_NAME)
+			)) {
+			return true;
+		}
+		return false;
+	}
+
+	private function isACLSetUp():bool {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$userMappingManager = new UserMappingManager($this->groupManager, $this->userManager);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$ruleManager = new RuleManager($this->dbConnection, $userMappingManager, $this->eventDispatcher);
+		$rootFolder = $this->storage;
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$aclManager = new ACLManager($ruleManager, $user, function () use ($rootFolder) {
+			return $rootFolder;
+		});
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$permissions = $aclManager->getACLPermissionsForPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		if ($permissions === Constants::PERMISSION_ALL) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -21,9 +21,11 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\App\IAppManager;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IClientService;
 use OCP\IAvatarManager;
 use OCP\ICache;
@@ -331,7 +333,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IEventDispatcher::class)
 		);
 	}
 
@@ -1256,7 +1260,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IEventDispatcher::class)
 		);
 
 		$response = $service->request('', '', []);

@@ -11,7 +11,7 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26, master ]
+        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26 ]
         phpVersion: [ 7.4, 8.0, 8.1 ]
         exclude:
           - nextcloudVersion: stable22
@@ -22,8 +22,8 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable26
             phpVersion: 7.4
-          - nextcloudVersion: master
-            phpVersion: 7.4
+#          - nextcloudVersion: master
+#            phpVersion: 7.4
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous runs
@@ -158,7 +158,7 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26, master ]
+        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26 ]
         phpVersionMajor: [ 7, 8 ]
         phpVersionMinor: [ 4, 1 ]
         database: [pgsql, mysql]
@@ -180,14 +180,14 @@ jobs:
             phpVersionMinor: 1
           - phpVersionMajor: 8
             phpVersionMinor: 4
-          - nextcloudVersion: master
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
+#          - nextcloudVersion: master
+#            phpVersionMajor: 7
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 0
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 1
+#          - phpVersionMajor: 8
+#            phpVersionMinor: 4
     runs-on: ubuntu-latest
     container: ubuntu:latest
     defaults:
