@@ -45,7 +45,6 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "伺服器回覆錯誤信息，請查看 Nextcloud 記錄",
     "Documentation" : "說明書",
     "Accessing OpenProject servers with local addresses is not allowed." : "不允許使用近端地址訪問 OpenProject 伺服器。",
-    "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "提供的 URL 重定向到“{location}”。 請不要使用導致重定向的 URL。",
     "Could not connect to the given URL, please check the Nextcloud logs" : "無法連接到給定的 URL，請檢查 Nextcloud 記錄",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
@@ -111,6 +110,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URL 無效，請提供格式為 “https://openproject.org” 的 URL",
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
-    "Invalid key" : "無效的密鑰"
+    "Invalid key" : "無效的密鑰",
+    "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，"
 },
 "nplurals=1; plural=0;");

@@ -44,7 +44,6 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "O servidor respondeu com uma mensagem de erro, verifique os logs do Nextcloud",
     "Documentation" : "Documentação",
     "Accessing OpenProject servers with local addresses is not allowed." : "Acesso a servidores OpenProject com endereços locais não é permitido.",
-    "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "O URL fornecido redireciona para '{location}'. Por favor, não use um URL que leve a um redirecionamento.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Não foi possível conectar na URL, verifique os logs do Nextcloud",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
@@ -110,6 +109,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "O URL do OpenProject é inválido, forneça um URL no formato \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "Nenhum OpenProject detectado na URL",
     "Enable notifications for activity in my work packages" : "Habilitar notificações de atividade em meus pacotes de trabalho",
-    "Invalid key" : "Chave inválida"
+    "Invalid key" : "Chave inválida",
+    "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

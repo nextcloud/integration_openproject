@@ -43,7 +43,6 @@
     "Server replied with an error message, please check the Nextcloud logs" : "Sunucu bir hata iletisi ile yanıt verdi. Lütfen Nextcloud günlüklerini denetleyin",
     "Documentation" : "Belgeler",
     "Accessing OpenProject servers with local addresses is not allowed." : "Yerel adreslerle OpenProject sunucularına erişilmesine izin verilmiyor.",
-    "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Belirtilen adres '{location}' adresine yönlendiriyor. Lütfen yönlendirmeye yol açan bir adres kullanmayın.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Verilen adres ile bağlantı kurulamadı. Lütfen Nextcloud günlüklerini denetleyin",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
@@ -109,6 +108,7 @@
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject adresi geçersiz. \"https://openproject.org\" biçiminde bir adres yazın",
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
     "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
-    "Invalid key" : "Anahtar geçersiz"
+    "Invalid key" : "Anahtar geçersiz",
+    "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
