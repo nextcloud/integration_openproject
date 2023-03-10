@@ -45,7 +45,6 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "Сървърът отговори със съобщение за грешка, моля, проверете дневниците/журнали/ на Nextcloud",
     "Documentation" : "Документация",
     "Accessing OpenProject servers with local addresses is not allowed." : "Не е разрешен достъпът до сървърите на OpenProject с локални адреси.",
-    "To be able to use an OpenProject server with a local address, " : "За да можете да използвате сървър на OpenProject с локален адрес, ",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Даденият URL адрес се пренасочва към '{location}'. Моля, не използвайте URL адрес, който води до пренасочване.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Неуспешно свързване с дадения URL адрес, моля, проверете дневниците/журнали/ на Nextcloud",
     "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
@@ -111,6 +110,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL адресът на OpenProject е невалиден, предоставете URL в следната форма „https://openproject.org“",
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
-    "Invalid key" : "Невалиден ключ"
+    "Invalid key" : "Невалиден ключ",
+    "To be able to use an OpenProject server with a local address, " : "За да можете да използвате сървър на OpenProject с локален адрес, "
 },
 "nplurals=2; plural=(n != 1);");
