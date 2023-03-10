@@ -44,7 +44,6 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "A kiszolgáló hibaüzenettel válaszolt, ellenőrizze a Nextcloud naplóit",
     "Documentation" : "Dokumentáció",
     "Accessing OpenProject servers with local addresses is not allowed." : "Az OpenProject kiszolgálók helyek címekkel történő elérése nem engedélyezett.",
-    "To be able to use an OpenProject server with a local address, " : "Egy OpenProject kiszolgáló helyi címmel történő használatához,",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "A megadott webcím ide irányít át: „{location}”. Ne használjon olyan webcímet, amely átirányításhoz vezet.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Nem sikerült a megadott webcímhez kapcsolódni, ellenőrizze a Nextcloud naplóit",
     "OpenProject admin options saved" : "Az OpenProject rendszergazdai beállításai mentve",
@@ -110,6 +109,7 @@ OC.L10N.register(
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "Az OpenProject webcím érvénytelen, adjon meg egy ilyen formátumú webcímet: „https://openproject.org”",
     "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
     "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
-    "Invalid key" : "Érvénytelen kulcs"
+    "Invalid key" : "Érvénytelen kulcs",
+    "To be able to use an OpenProject server with a local address, " : "Egy OpenProject kiszolgáló helyi címmel történő használatához,"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,12 +1,14 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject server" : "مُخدّم أوبن بروجكت",
     "Cancel" : "إلغاء",
     "Save" : "Save",
     "Reset" : "إعادة الضبط",
     "Documentation" : "الدليل",
     "Invalid token" : "علامة غير صالحة",
     "Copied!" : "تم النسخ!",
+    "Copied to the clipboard" : "تم النسخ إلى الحافطة",
     "Details" : "التفاصيل",
     "Start typing to search" : "اكتب هنا للبحث",
     "Mark as read" : "تمييز كمقروء"
