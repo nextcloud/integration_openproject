@@ -226,8 +226,9 @@ class ConfigController extends Controller {
 			}
 		}
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
+			$isGroupFolderSetup = $this->openprojectAPIService->isGroupFolderSetup();
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
-			if ($isSystemReady) {
+			if (!$isGroupFolderSetup && $isSystemReady) {
 				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);

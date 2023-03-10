@@ -892,22 +892,18 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
-		if ($this->isGroupFolderSetup()) {
-			throw new OpenprojectGroupfolderSetupConflictException('group folder setup is already completed');
-		} else {
-			if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-				throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
-			} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-				throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
-			} elseif (!$this->isGroupfoldersAppEnabled()) {
-				throw new \Exception('groupfolders app is not enabled');
-			} elseif ($this->isOpenProjectGroupfolderCreated()) {
-				throw new OpenprojectGroupfolderSetupConflictException(
+		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
+		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
+		} elseif (!$this->isGroupfoldersAppEnabled()) {
+			throw new \Exception('groupfolders app is not enabled');
+		} elseif ($this->isOpenProjectGroupfolderCreated()) {
+			throw new OpenprojectGroupfolderSetupConflictException(
 					'a groupfolder with the name "' .
 					Application::OPEN_PROJECT_ENTITIES_NAME .
 					'" already exists'
 				);
-			}
 		}
 		return true;
 	}
@@ -1012,7 +1008,7 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-	private function isACLSetUp():bool {
+	public function isACLSetUp():bool {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$userMappingManager = new UserMappingManager($this->groupManager, $this->userManager);
