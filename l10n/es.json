@@ -43,7 +43,6 @@
     "Server replied with an error message, please check the Nextcloud logs" : "El servidor respondió con un mensaje de error, por favor, compruebe los registros de Nextcloud",
     "Documentation" : "Documentación",
     "Accessing OpenProject servers with local addresses is not allowed." : "Acceder a servidores OpenProject con direcciones locales no está permitido.",
-    "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "El URL proporcionado redirige a '{location}', Por favor, no utilice un URL que lleve a una redirección.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "No fue posible conectarse a la URL proporcionada, por favor, compruebe los registros de Nextcloud",
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
@@ -109,6 +108,7 @@
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "La URL de OpenProject no es válida, proporcione una URL con el formato \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No se ha detectado ningún OpenProject en la URL",
     "Enable notifications for activity in my work packages" : "Activar notificaciones de actividad en mis paquetes de trabajo",
-    "Invalid key" : "Llave inválida"
+    "Invalid key" : "Llave inválida",
+    "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
