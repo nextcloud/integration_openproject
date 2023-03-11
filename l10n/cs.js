@@ -45,6 +45,7 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "Server odpověděl chybovým hlášením – podívejte se do záznamů událostí (log) v Nextcloud",
     "Documentation" : "Dokumentace",
     "Accessing OpenProject servers with local addresses is not allowed." : "Přistupování k serverům s lokální adresou není povoleno.",
+    "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Pokud chcete použít OpenProject server s místní adresou, zapněte nastavení `allow_local_remote_servers`. {htmlLink}.",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Daná URL adresa přesměrovává na „{location}“. Prosím nepoužívejte URL adresy, které vedou na přesměrování.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Nedaří se připojit k dané URL – podívejte se do záznamů událostí (log) v Nextcloud",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",

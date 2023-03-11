@@ -76,6 +76,7 @@ OC.L10N.register(
     "Mark as read" : "Markatu irakurritako gisa",
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
     "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan",
+    "assignee" : "esleitua",
     "commented" : "iruzkinduta",
     "mentioned" : "aipatuta",
     "Existing relations:" : "Dauden harremanak:",
