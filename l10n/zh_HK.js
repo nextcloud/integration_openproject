@@ -45,6 +45,7 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "伺服器回覆錯誤信息，請查看 Nextcloud 記錄",
     "Documentation" : "說明書",
     "Accessing OpenProject servers with local addresses is not allowed." : "不允許使用近端地址訪問 OpenProject 伺服器。",
+    "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "要能夠使用具有近端地址的 OpenProject 伺服器，請啟用“allow_local_remote_servers” 設置。{html鏈接}。",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "提供的 URL 重定向到“{location}”。 請不要使用導致重定向的 URL。",
     "Could not connect to the given URL, please check the Nextcloud logs" : "無法連接到給定的 URL，請檢查 Nextcloud 記錄",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
