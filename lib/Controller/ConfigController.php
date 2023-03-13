@@ -526,6 +526,7 @@ class ConfigController extends Controller {
 			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
+			$this->recreateOauthClientInformation();
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
