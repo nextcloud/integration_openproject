@@ -45,6 +45,7 @@ OC.L10N.register(
     "Server replied with an error message, please check the Nextcloud logs" : "Sunucu bir hata iletisi ile yanıt verdi. Lütfen Nextcloud günlüklerini denetleyin",
     "Documentation" : "Belgeler",
     "Accessing OpenProject servers with local addresses is not allowed." : "Yerel adreslerle OpenProject sunucularına erişilmesine izin verilmiyor.",
+    "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "OpenProject sunucusunu yerel bir adres ile kullanabilmek için `allow_local_remote_servers` seçeneğini etkinleştirin. {htmlLink}.",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Belirtilen adres '{location}' adresine yönlendiriyor. Lütfen yönlendirmeye yol açan bir adres kullanmayın.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Verilen adres ile bağlantı kurulamadı. Lütfen Nextcloud günlüklerini denetleyin",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
