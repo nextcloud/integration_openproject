@@ -43,6 +43,7 @@
     "Server replied with an error message, please check the Nextcloud logs" : "El servidor respondió con un mensaje de error, por favor, compruebe los registros de Nextcloud",
     "Documentation" : "Documentación",
     "Accessing OpenProject servers with local addresses is not allowed." : "Acceder a servidores OpenProject con direcciones locales no está permitido.",
+    "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Para utilizar un servidor de OpenProject con una dirección local, habilite la configuración `allow_local_remote_servers`. {htmlLink}.",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "El URL proporcionado redirige a '{location}', Por favor, no utilice un URL que lleve a una redirección.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "No fue posible conectarse a la URL proporcionada, por favor, compruebe los registros de Nextcloud",
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
