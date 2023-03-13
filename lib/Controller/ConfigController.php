@@ -174,6 +174,7 @@ class ConfigController extends Controller {
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
+	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
