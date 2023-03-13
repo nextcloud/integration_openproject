@@ -43,10 +43,10 @@ Feature: API endpoint for direct upload
       | text\file.txt       | file.txt        | file\\.txt                  |
 
 
-  Scenario Outline: Send an invalid filename to the direct-upload endpoint
+  Scenario: Send an invalid filename to the direct-upload endpoint
     Given user "Alice" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
-      | file_name | <file-name> |
+      | file_name | "         " |
       | data      | some data   |
     Then the HTTP status code should be "400"
     And the data of the response should match
@@ -61,10 +61,28 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    Examples:
-      | file-name |
-      | ""        |
-      | "  "      |
+
+  Scenario: Send an empty filename to the direct-upload endpoint or exceed max_post_size
+    # we cannot distinguish both cases
+    Given user "Alice" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | ""          |
+      | data      | some data   |
+    Then the HTTP status code should be "413"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error",
+        "upload_limit"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^File was not uploaded\\. post_max_size exceeded\\?$"},
+          "upload_limit": {"type": "integer"}
+      }
+    }
+    """
 
 
   Scenario: send a token that doesn't exist to the direct-upload endpoint
@@ -240,7 +258,7 @@ Feature: API endpoint for direct upload
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""        |
       | data      | some data |
-    Then the HTTP status code should be "400"
+    Then the HTTP status code should be "413"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
