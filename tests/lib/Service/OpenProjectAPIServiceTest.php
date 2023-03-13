@@ -347,6 +347,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IUserManager|null $userManagerMock
 	 * @param IGroupManager|null $groupManagerMock
 	 * @param IAppManager|null $appManagerMock
+	 * @param ISubAdmin| null $subAdminManagerMock
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -354,7 +355,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$cacheFactoryMock = null,
 		$userManagerMock = null,
 		$groupManagerMock = null,
-		$appManagerMock = null
+		$appManagerMock = null,
+		$subAdminManagerMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($cacheFactoryMock === null) {
@@ -368,6 +370,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		}
 		if ($appManagerMock === null) {
 			$appManagerMock = $this->createMock(IAppManager::class);
+		}
+		if ($subAdminManagerMock === null) {
+			$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
@@ -385,7 +390,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$groupManagerMock,
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
-					$this->createMock(ISubAdmin::class),
+					$subAdminManagerMock,
 					$this->createMock(IEventDispatcher::class)
 				])
 			->onlyMethods($onlyMethods)
@@ -1313,15 +1318,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 		$groupManagerMock
 			->method('get')
-			->with('OpenProject')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($groupMock);
 		$groupManagerMock
 			->method('isInGroup')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn(true);
 
-		$subAdminManager = $this->getMockBuilder(ISubAdmin::class)->getMock();
-		$subAdminManager
+		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
+		$subAdminManagerMock
 			->method('isSubAdminOfGroup')
 			->with($userMock, $groupMock)
 			->willReturn(true);
@@ -1338,7 +1343,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			$userManagerMock,
 			$groupManagerMock,
-			$appManagerMock
+			$appManagerMock,
+			$subAdminManagerMock
 		);
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
