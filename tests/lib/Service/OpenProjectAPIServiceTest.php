@@ -1279,7 +1279,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
 
-	public function getFolderManagerMock(string $mountPoint = Application::OPEN_PROJECT_ENTITIES_NAME): MockObject {
+	public function getFolderManagerMock(
+		string $mountPoint = Application::OPEN_PROJECT_ENTITIES_NAME,
+		bool $acl = true,
+		bool $canManageACL = true,
+		int $permission = 31): MockObject {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock = $this->getMockBuilder(FolderManager::class)->disableOriginalConstructor()->getMock();
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
@@ -1288,11 +1292,26 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn([ 0 => [
 				'id' => 123,
 				'mount_point' => $mountPoint,
-				'groups' => 123,
+				'groups' => Application::OPEN_PROJECT_ENTITIES_NAME,
 				'quota' => 1234,
 				'size' => 0,
-				'acl' => true
+				'acl' => $acl
 			]]);
+		$folderManagerMock
+			->method('canManageACL')
+			->willReturn($canManageACL);
+		$folderManagerMock
+			->method('getFolderByPath')
+			->with($mountPoint)
+			->willReturn(123);
+		$folderManagerMock
+			->method('getFolderAclEnabled')
+			->with(123)
+			->willReturn($acl);
+		$folderManagerMock
+			->method('getFolderPermissionsForUser')
+			->willReturn($permission);
+
 		return $folderManagerMock;
 	}
 
@@ -1339,7 +1358,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getServiceMock(
-			['getGroupFolderManager','isACLSetUp'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
@@ -1349,7 +1368,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
-		$service->method('isACLSetUp')->willReturn(true);
 		$this->assertTrue($service->isGroupFolderSetup());
 	}
 
@@ -1359,13 +1377,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function groupFolderNotSetUpDataProvider() {
 		return [
-			[false,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,false,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,true,false,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,true,true,false,true,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,true,true,true,false,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true],
-			[true,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,false]
+			[false,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,true],
+			[true,false,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,true],
+			[true,true,false,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,true],
+			[true,true,true,false,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,true],
+			[true,true,true,true,false,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,true],
+			[true,true,true,true,true,"test_path",true,31,true],
+			[true,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,false,31,true],
+			[true,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,17,true],
+			[true,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,true,31,false]
 		];
 	}
 
@@ -1377,7 +1397,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param bool $userIsAdminOfGroup
 	 * @param bool $groupFolderAppEnabled
 	 * @param string $groupFolderPath
-	 * @param bool $userHasFullPermission
+	 * @param bool $isACLEnabled
+	 * @param int $permission
+	 * @param bool $canUserManageACL
 	 * @dataProvider  groupFolderNotSetUpDataProvider
 	 *
 	 */
@@ -1388,7 +1410,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		bool $userIsAdminOfGroup,
 		bool $groupFolderAppEnabled,
 		string $groupFolderPath,
-		bool $userHasFullPermission
+		bool $isACLEnabled,
+		int $permission,
+		bool $canUserManageACL
 	): void {
 		$userMock = $this->createMock(IUser::class);
 		$groupMock = $this->createMock(IGroup::class);
@@ -1418,8 +1442,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($userIsMemberOfGroup);
 
-		$subAdminManager = $this->getMockBuilder(ISubAdmin::class)->getMock();
-		$subAdminManager
+		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
+		$subAdminManagerMock
 			->method('isSubAdminOfGroup')
 			->with($userMock, $groupMock)
 			->willReturn($userIsAdminOfGroup);
@@ -1432,16 +1456,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn($groupFolderAppEnabled);
 
 		$service = $this->getServiceMock(
-			['getGroupFolderManager','isACLSetUp'],
+			['getGroupFolderManager'],
 			null,
 			$userManagerMock,
 			$groupManagerMock,
-			$appManagerMock
+			$appManagerMock,
+			$subAdminManagerMock
 		);
-		$folderManagerMock = $this->getFolderManagerMock($groupFolderPath);
+		$folderManagerMock = $this->getFolderManagerMock($groupFolderPath, $isACLEnabled, $canUserManageACL, $permission);
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
-		$service->method('isACLSetUp')->willReturn($userHasFullPermission);
 		$this->assertFalse($service->isGroupFolderSetup());
 	}
 

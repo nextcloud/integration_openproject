@@ -914,13 +914,22 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isGroupFolderSetup(): bool {
+		$a = $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$b = $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$c = $this->isUserPartOfAndAdminOfGroup();
+		$d = $this->isGroupfoldersAppEnabled();
+		$e = $this->isACLEnabled();
+		$f = $this->hasOpenProjectUserFullPermissions();
+		$g = $this->canOPUserManageACL();
 		return (
 			$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
 			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
+			$this->isUserPartOfAndAdminOfGroup() &&
 			$this->isGroupfoldersAppEnabled() &&
 			$this->isOpenProjectGroupfolderCreated() &&
-			$this->isUserPartOfAndAdminOfGroup() &&
-			$this->isACLSetUp()
+			$this->isACLEnabled() &&
+			$this->hasOpenProjectUserFullPermissions() &&
+			$this->canOPUserManageACL()
 		);
 	}
 
@@ -983,6 +992,31 @@ class OpenProjectAPIService {
 		return false;
 	}
 
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function isACLEnabled():bool {
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$groupFolderManager = $this->getGroupFolderManager();
+		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
+		return $groupFolderManager->getFolderAclEnabled($folderId);
+	}
+
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function canOPUserManageACL() : bool {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$groupFolderManager = $this->getGroupFolderManager();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		return $groupFolderManager->canManageACL($folderId, $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME));
+	}
+
 	public function isGroupfoldersAppEnabled(): bool {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		return (
@@ -1008,19 +1042,26 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-	public function isACLSetUp():bool {
+	public function hasOpenProjectUserFullPermissions():bool {
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$groupFolderManager = $this->getGroupFolderManager();
+		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$userMappingManager = new UserMappingManager($this->groupManager, $this->userManager);
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$ruleManager = new RuleManager($this->dbConnection, $userMappingManager, $this->eventDispatcher);
-		$rootFolder = $this->storage;
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$aclManager = new ACLManager($ruleManager, $user, function () use ($rootFolder) {
-			return $rootFolder;
-		});
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$permissions = $aclManager->getACLPermissionsForPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$permissions = $groupFolderManager->getFolderPermissionsForUser($user, $folderId);
+
+//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+//		$userMappingManager = new UserMappingManager($this->groupManager, $this->userManager);
+//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+//		$ruleManager = new RuleManager($this->dbConnection, $userMappingManager, $this->eventDispatcher);
+//		$rootFolder = $this->storage;
+//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+//		$aclManager = new ACLManager($ruleManager, $user, function () use ($rootFolder) {
+//			return $rootFolder;
+//		});
+//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+//		$permissions = $aclManager->getACLPermissionsForPath(Application::OPEN_PROJECT_ENTITIES_NAME);
 		if ($permissions === Constants::PERMISSION_ALL) {
 			return true;
 		}
