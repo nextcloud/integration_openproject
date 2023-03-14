@@ -391,7 +391,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
 					$subAdminManagerMock,
-					$this->createMock(IEventDispatcher::class)
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1271,7 +1270,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IEventDispatcher::class)
 		);
 
 		$response = $service->request('', '', []);

@@ -16,14 +16,10 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use OC\User\NoUserException;
-use OCA\GroupFolders\ACL\ACLManager;
-use OCA\GroupFolders\ACL\RuleManager;
-use OCA\GroupFolders\ACL\UserMapping\UserMappingManager;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
 use OCP\Constants;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -113,7 +109,6 @@ class OpenProjectAPIService {
 	 */
 	private ISubAdmin $subAdminManager;
 
-	private IEventDispatcher $eventDispatcher;
 
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
@@ -137,8 +132,7 @@ class OpenProjectAPIService {
 								IGroupManager $groupManager,
 								IAppManager $appManager,
 								IDBConnection $dbConnection,
-								ISubAdmin $subAdminManager,
-								IEventDispatcher $eventDispatcher) {
+								ISubAdmin $subAdminManager) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -153,7 +147,6 @@ class OpenProjectAPIService {
 		$this->appManager = $appManager;
 		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
-		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -893,9 +886,9 @@ class OpenProjectAPIService {
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('user "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('user '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('group "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('group '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
 			throw new \Exception('groupfolders app is not enabled');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
@@ -914,13 +907,6 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isGroupFolderSetup(): bool {
-		$a = $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$b = $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$c = $this->isUserPartOfAndAdminOfGroup();
-		$d = $this->isGroupfoldersAppEnabled();
-		$e = $this->isACLEnabled();
-		$f = $this->hasOpenProjectUserFullPermissions();
-		$g = $this->canOPUserManageACL();
 		return (
 			$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
 			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
@@ -1050,18 +1036,6 @@ class OpenProjectAPIService {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$permissions = $groupFolderManager->getFolderPermissionsForUser($user, $folderId);
-
-//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-//		$userMappingManager = new UserMappingManager($this->groupManager, $this->userManager);
-//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-//		$ruleManager = new RuleManager($this->dbConnection, $userMappingManager, $this->eventDispatcher);
-//		$rootFolder = $this->storage;
-//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-//		$aclManager = new ACLManager($ruleManager, $user, function () use ($rootFolder) {
-//			return $rootFolder;
-//		});
-//		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-//		$permissions = $aclManager->getACLPermissionsForPath(Application::OPEN_PROJECT_ENTITIES_NAME);
 		if ($permissions === Constants::PERMISSION_ALL) {
 			return true;
 		}
