@@ -913,7 +913,6 @@ class OpenProjectAPIService {
 			$this->isUserPartOfAndAdminOfGroup() &&
 			$this->isGroupfoldersAppEnabled() &&
 			$this->isOpenProjectGroupfolderCreated() &&
-			$this->isACLEnabled() &&
 			$this->hasOpenProjectUserFullPermissions() &&
 			$this->canOPUserManageACL()
 		);
@@ -981,21 +980,10 @@ class OpenProjectAPIService {
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function isACLEnabled():bool {
-		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$groupFolderManager = $this->getGroupFolderManager();
-		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
-		return $groupFolderManager->getFolderAclEnabled($folderId);
-	}
-
-	/**
-	 * @throws \OCP\DB\Exception
-	 */
 	public function canOPUserManageACL() : bool {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupFolderManager = $this->getGroupFolderManager();
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
@@ -1029,12 +1017,16 @@ class OpenProjectAPIService {
 	}
 
 	public function hasOpenProjectUserFullPermissions():bool {
+		//todo has op group full permissions
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupFolderManager = $this->getGroupFolderManager();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		// $groups = $groupFolderManager
 		$permissions = $groupFolderManager->getFolderPermissionsForUser($user, $folderId);
 		if ($permissions === Constants::PERMISSION_ALL) {
 			return true;
