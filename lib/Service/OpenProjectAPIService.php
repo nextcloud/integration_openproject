@@ -1017,7 +1017,6 @@ class OpenProjectAPIService {
 	}
 
 	public function hasOpenProjectUserFullPermissions():bool {
-		//todo has op group full permissions
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
@@ -1026,7 +1025,6 @@ class OpenProjectAPIService {
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		// $groups = $groupFolderManager
 		$permissions = $groupFolderManager->getFolderPermissionsForUser($user, $folderId);
 		if ($permissions === Constants::PERMISSION_ALL) {
 			return true;
