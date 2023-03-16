@@ -885,9 +885,9 @@ class OpenProjectAPIService {
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('user '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('group '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
 			throw new \Exception('groupfolders app is not enabled');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
