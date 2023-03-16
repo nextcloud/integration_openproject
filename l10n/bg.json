@@ -43,6 +43,7 @@
     "Server replied with an error message, please check the Nextcloud logs" : "Сървърът отговори със съобщение за грешка, моля, проверете дневниците/журнали/ на Nextcloud",
     "Documentation" : "Документация",
     "Accessing OpenProject servers with local addresses is not allowed." : "Не е разрешен достъпът до сървърите на OpenProject с локални адреси.",
+    "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "За да можете да използвате сървър на OpenProject с локален адрес, активирайте настройката `allow_local_remote_servers`. {htmlLink}.",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "Даденият URL адрес се пренасочва към '{location}'. Моля, не използвайте URL адрес, който води до пренасочване.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Неуспешно свързване с дадения URL адрес, моля, проверете дневниците/журнали/ на Nextcloud",
     "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
