@@ -6,6 +6,7 @@ OC.L10N.register(
     "Save" : "Lưu",
     "Reset" : "Đặt lại",
     "Documentation" : "Tài liệu",
+    "Connected as {user}" : "Kết nối bởi {user}",
     "Copied!" : "Đã sao chép!",
     "Details" : "Chi tiết",
     "Mark as read" : "Đánh dấu đã đọc"
