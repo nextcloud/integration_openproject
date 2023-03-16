@@ -19,7 +19,6 @@ use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
-use OCP\Constants;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -913,7 +912,7 @@ class OpenProjectAPIService {
 			$this->isUserPartOfAndAdminOfGroup() &&
 			$this->isGroupfoldersAppEnabled() &&
 			$this->isOpenProjectGroupfolderCreated() &&
-			$this->hasOpenProjectUserFullPermissions() &&
+			$this->hasOpenProjectGroupFullPermissions() &&
 			$this->canOPUserManageACL()
 		);
 	}
@@ -1016,17 +1015,16 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-	public function hasOpenProjectUserFullPermissions():bool {
+	public function hasOpenProjectGroupFullPermissions():bool {
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupFolderManager = $this->getGroupFolderManager();
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
-		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$permissions = $groupFolderManager->getFolderPermissionsForUser($user, $folderId);
-		if ($permissions === Constants::PERMISSION_ALL) {
+		$groups = $groupFolderManager->searchGroups($folderId);
+		if (in_array(Application::OPEN_PROJECT_ENTITIES_NAME, array_column($groups, 'gid'))) {
 			return true;
 		}
 		return false;

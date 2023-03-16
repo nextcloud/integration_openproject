@@ -195,17 +195,14 @@ class ConfigController extends Controller {
 		$openProjectGroupFolderFileId = null;
 
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
-			$isGroupFolderSetup = $this->openprojectAPIService->isGroupFolderSetup();
-			if (!$isGroupFolderSetup) {
-				$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
-				if ($isSystemReady) {
-					$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-					$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-					$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-					$group->addUser($user);
-					$this->subAdminManager->createSubAdmin($user, $group);
-					$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
-				}
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+			if ($isSystemReady) {
+				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+				$group->addUser($user);
+				$this->subAdminManager->createSubAdmin($user, $group);
+				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
 
