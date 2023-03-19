@@ -13,7 +13,7 @@ OC.L10N.register(
     "Documentation" : "Documentación",
     "Connected as {user}" : "Conectado como {user}",
     "Incorrect access token" : "Testemuño de acceso incorrecto",
-    "Invalid token" : "Token non válido",
+    "Invalid token" : "Testemuño non válido",
     "Copied!" : "Copiado!",
     "Details" : "Detalles",
     "Start typing to search" : "Comece a escribir para buscar",
