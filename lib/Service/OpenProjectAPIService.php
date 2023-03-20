@@ -16,6 +16,7 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use OC\User\NoUserException;
+use OC_Util;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
@@ -986,8 +987,12 @@ class OpenProjectAPIService {
 		$groupFolderManager = $this->getGroupFolderManager();
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
+		$userId = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		if (version_compare(OC_Util::getVersionString(), '22.2.10', '<=')) {
+			$userId = Application::OPEN_PROJECT_ENTITIES_NAME;
+		}
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		return $groupFolderManager->canManageACL($folderId, $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME));
+		return $groupFolderManager->canManageACL($folderId, $userId);
 	}
 
 	public function isGroupfoldersAppEnabled(): bool {
