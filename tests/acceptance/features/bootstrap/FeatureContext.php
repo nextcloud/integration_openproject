@@ -99,6 +99,19 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given user :user has been added to the group :group
+	 */
+	public function userHasBeenAddedToGroup(string $user, string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/groups',
+			'POST',
+			$this->getAdminUsername(),
+			['groupid' => $group]
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
 	 * @Given user :user has been disabled
 	 */
 	public function userHasBeenDisabled(string $user):void {
@@ -146,6 +159,22 @@ class FeatureContext implements Context {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user . '/disable', 'PUT', $this->getAdminUsername()
 		);
+	}
+
+	/**
+	 * @Given the administrator has changed the password of :user to the default testing password
+	 */
+	public function theAdministratorChangesPassword(string $user):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user,
+			'PUT',
+			$this->getAdminUsername(),
+			[
+				'key' => 'password',
+				'value' => $this->getRegularUserPassword()
+			]
+		);
+		$this->theHttpStatusCodeShouldBe(200);
 	}
 
 	/**
@@ -236,7 +265,7 @@ class FeatureContext implements Context {
 				$fullFolderString
 			);
 			$this->theHTTPStatusCodeShouldBe(
-				"201",
+				["201","405"], // 405 is returned if the folder already exists
 				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
 			);
 		}
@@ -261,9 +290,21 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @Given /^user "([^"]*)" has (?:renamed|moved) (?:file|folder) "([^"]*)" to "([^"]*)"$/
+	 * @When /^user "([^"]*)" deletes (?:file|folder) "([^"]*)"$/
 	 */
-	public function userHasRenamedFile(string $user, string $src, string $dst):void {
+	public function userDeletesFile(string $user, string $path):void {
+		$this->response = $this->makeDavRequest(
+			$user,
+			$this->regularUserPassword,
+			"DELETE",
+			$path
+		);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" (?:renames|moves) (?:file|folder) "([^"]*)" to "([^"]*)"$/
+	 */
+	public function userRenamesFile(string $user, string $src, string $dst):void {
 		$davPath = self::getDavPath($user);
 		$fullDstUrl = self::sanitizeUrl($this->getBaseUrl() . $davPath . $dst);
 		$this->response = $this->makeDavRequest(
@@ -273,6 +314,13 @@ class FeatureContext implements Context {
 			$src,
 			["Destination" => $fullDstUrl]
 		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has (?:renamed|moved) (?:file|folder) "([^"]*)" to "([^"]*)"$/
+	 */
+	public function userHasRenamedFile(string $user, string $src, string $dst):void {
+		$this->userRenamesFile($user, $src, $dst);
 		$this->theHTTPStatusCodeShouldBe(
 			"201",
 			"HTTP status code was not 201 while moving '$src' to '$dst'"

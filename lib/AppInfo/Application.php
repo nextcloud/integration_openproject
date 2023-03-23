@@ -11,10 +11,13 @@ namespace OCA\OpenProject\AppInfo;
 
 use Closure;
 use OCA\Files\Event\LoadSidebar;
+use OCA\OpenProject\Listener\BeforeNodeInsideOpenProjectGroupfilderChangedListener;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
+use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
+use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
@@ -66,6 +69,12 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			LoadSidebar::class,
 			LoadSidebarScript::class
+		);
+		$context->registerEventListener(
+			BeforeNodeDeletedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
+		);
+		$context->registerEventListener(
+			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
 	}
 

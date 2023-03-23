@@ -15,16 +15,22 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
-use OCA\OpenProject\Exception\OpenprojectUserOrGroupAlreadyExistsException;
+use OC\User\NoUserException;
+use OC_Util;
+use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
+use OCA\GroupFolders\Folder\FolderManager;
+use OCP\App\IAppManager;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IGroupManager;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -94,8 +100,24 @@ class OpenProjectAPIService {
 	private $groupManager;
 
 	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
+
+	/**
+	 * @var ISubAdmin
+	 */
+	private ISubAdmin $subAdminManager;
+
+
+	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
+
+	/**
+	 * @var IDBConnection
+	 */
+	private $dbConnection;
 	public function __construct(
 								string $appName,
 								IAvatarManager $avatarManager,
@@ -107,7 +129,10 @@ class OpenProjectAPIService {
 								IURLGenerator $urlGenerator,
 								ICacheFactory $cacheFactory,
 								IUserManager $userManager,
-								IGroupManager $groupManager) {
+								IGroupManager $groupManager,
+								IAppManager $appManager,
+								IDBConnection $dbConnection,
+								ISubAdmin $subAdminManager) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -119,6 +144,9 @@ class OpenProjectAPIService {
 		$this->cache = $cacheFactory->createDistributed();
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
+		$this->appManager = $appManager;
+		$this->dbConnection = $dbConnection;
+		$this->subAdminManager = $subAdminManager;
 	}
 
 	/**
@@ -854,14 +882,157 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @throws OpenprojectUserOrGroupAlreadyExistsException
+	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('user "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectUserOrGroupAlreadyExistsException('group "OpenProject" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
+		} elseif (!$this->isGroupfoldersAppEnabled()) {
+			throw new \Exception('groupfolders app is not enabled');
+		} elseif ($this->isOpenProjectGroupfolderCreated()) {
+			throw new OpenprojectGroupfolderSetupConflictException(
+					'a groupfolder with the name "' .
+					Application::OPEN_PROJECT_ENTITIES_NAME .
+					'" already exists'
+				);
 		}
 		return true;
+	}
+
+	/**
+	 * returns true if the group-folder setup is completed
+	 *
+	 * @return bool
+	 */
+	public function isGroupFolderSetup(): bool {
+		return (
+			$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
+			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
+			$this->isUserPartOfAndAdminOfGroup() &&
+			$this->isGroupfoldersAppEnabled() &&
+			$this->isOpenProjectGroupfolderCreated() &&
+			$this->hasOpenProjectGroupFullPermissions() &&
+			$this->canOPUserManageACL()
+		);
+	}
+
+	/**
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 * @throws NoUserException
+	 */
+	public function createGroupfolder(): int {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$folderId = $groupfoldersFolderManager->createFolder(
+			Application::OPEN_PROJECT_ENTITIES_NAME
+		);
+
+		// this also works if the group does not exist
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager->addApplicableGroup(
+			$folderId, Application::OPEN_PROJECT_ENTITIES_NAME
+		);
+
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager->setFolderACL($folderId, true);
+
+		// this also works if the user does not exist
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager->setManageACL(
+			$folderId,
+			'user',
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			true
+		);
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$this->config->setAppValue(
+			Application::APP_ID,
+			'openproject_groupfolder_id',
+			(string)$openProjectFolder->getId()
+		);
+		return $openProjectFolder->getId();
+	}
+
+	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+	public function getGroupFolderManager(): FolderManager {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		return new FolderManager($this->dbConnection);
+	}
+
+	public function isOpenProjectGroupfolderCreated(): bool {
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = $this->getGroupFolderManager();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$folders = $groupfoldersFolderManager->getAllFolders();
+		foreach ($folders as $folder) {
+			if ($folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function canOPUserManageACL() : bool {
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupFolderManager = $this->getGroupFolderManager();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
+		$userId = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		if (version_compare(OC_Util::getVersionString(), '22.2.10', '<=')) {
+			// for version 22 and lower, `canManageACL` function takes string not IUser
+			$userId = Application::OPEN_PROJECT_ENTITIES_NAME;
+		}
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		return $groupFolderManager->canManageACL($folderId, $userId);
+	}
+
+	public function isGroupfoldersAppEnabled(): bool {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		return (
+			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
+			$this->appManager->isEnabledForUser(
+			'groupfolders',
+			$user
+			)
+		);
+	}
+
+	private function isUserPartOfAndAdminOfGroup():bool {
+		if ($this->groupManager->isInGroup(
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			Application::OPEN_PROJECT_ENTITIES_NAME
+			) &&
+			$this->subAdminManager->isSubAdminOfGroup(
+				$this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME),
+				$this->groupManager->get(Application::OPEN_PROJECT_ENTITIES_NAME)
+			)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function hasOpenProjectGroupFullPermissions():bool {
+		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$openProjectFolder = $userFolder->getFullPath(Application::OPEN_PROJECT_ENTITIES_NAME);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupFolderManager = $this->getGroupFolderManager();
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groups = $groupFolderManager->searchGroups($folderId);
+		if (in_array(Application::OPEN_PROJECT_ENTITIES_NAME, array_column($groups, 'gid'))) {
+			return true;
+		}
+		return false;
 	}
 }
