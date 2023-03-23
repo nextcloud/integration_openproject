@@ -1351,10 +1351,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->
-		method('getFullPath')->
-		with(Application::OPEN_PROJECT_ENTITIES_NAME)->
-		willReturn('OpenProject/files/OpenProject');
+		$folderMock
+			->method('getFullPath')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn('OpenProject/files/OpenProject');
+
 		$storageMock = $this->getMockBuilder(IRootFolder::class)->getMock();
 		$storageMock->method('getUserFolder')->with(Application::OPEN_PROJECT_ENTITIES_NAME)->willReturn($folderMock);
 		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();

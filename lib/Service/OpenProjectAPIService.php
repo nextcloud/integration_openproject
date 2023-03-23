@@ -989,6 +989,7 @@ class OpenProjectAPIService {
 		$folderId = $groupFolderManager->getFolderByPath($openProjectFolder);
 		$userId = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		if (version_compare(OC_Util::getVersionString(), '22.2.10', '<=')) {
+			// for version 22 and lower, `canManageACL` function takes string not IUser
 			$userId = Application::OPEN_PROJECT_ENTITIES_NAME;
 		}
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
