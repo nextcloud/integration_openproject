@@ -40,3 +40,11 @@ export const F_MODES = {
 	EDIT: 1,
 	DISABLE: 2,
 }
+
+export const FORM = {
+	SERVER: 0,
+	OP_OAUTH: 1,
+	NC_OAUTH: 2,
+	GROUP_FOLDER: 3,
+	APP_PASSWORD: 4,
+}

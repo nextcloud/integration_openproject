@@ -32,6 +32,11 @@ class FeatureContext implements Context {
 	 */
 	private array $createdFiles = [];
 
+	/**
+	 * @var array<string>
+	 */
+	private array $createdAppPasswords = [];
+
 	private ?ResponseInterface $response = null;
 
 	public function getAdminUsername(): string {
@@ -797,6 +802,53 @@ class FeatureContext implements Context {
 		$this->sendRequestsToAppEndpoint(
 			$this->adminUsername, $this->adminPassword, $method, $endpoint, $data
 		);
+		if (isset(json_decode($data->getRaw())->values->setup_app_password) && json_decode($data->getRaw())->values->setup_app_password) {
+			$responseAsJson = json_decode(
+				$this->response->getBody()->getContents()
+			);
+			if (isset($responseAsJson->openproject_user_app_password)) {
+				$this->createdAppPasswords[] = $responseAsJson->openproject_user_app_password;
+			}
+			$this->response->getBody()->rewind();
+		}
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sends a "([^"]*)" request to "([^"]*)" using (current|old|new) app password$/
+	 *
+	 * @param string $user
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param string $appPassword
+	 * @throws Exception
+	 */
+	public function theUserSendsRequestTo(string $user, string $method, string $endpoint, string $appPassword) : void {
+		if ($appPassword === 'current' || $appPassword === 'old') {
+			$appPassword = $this->createdAppPasswords[0];
+		} else {
+			$appPassword = $this->createdAppPasswords[1];
+		}
+		$this->response = $this->sendHttpRequest(
+			self::sanitizeUrl($this->getBaseUrl() . $endpoint), $user, $appPassword, $method
+		);
+	}
+
+
+	/**
+	 * @Then the newly generated app password should be different from the previous one
+	 *
+	 * @return void
+	 */
+	public function theAppPasswordShouldBeDifferent(): void {
+		$uniqueAppPasswordArray = array_unique(
+			$this->createdAppPasswords
+		);
+		Assert::assertEquals(
+			count($uniqueAppPasswordArray),
+			count($this->createdAppPasswords),
+			"App password has the same value:\n" .
+			print_r($this->createdAppPasswords, true)
+		);
 	}
 
 	/**
@@ -954,5 +1006,6 @@ class FeatureContext implements Context {
 		foreach ($this->createdUsers as $userData) {
 			$this->theAdministratorDeletesTheUser($userData['userid']);
 		}
+		$this->createdAppPasswords = [];
 	}
 }

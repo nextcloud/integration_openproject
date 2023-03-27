@@ -39,6 +39,7 @@ return [
 		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/file-links/{id}', 'verb' => 'DELETE'],
 		['name' => 'openProjectAPI#isValidOpenProjectInstance', 'url' => '/is-valid-op-instance', 'verb' => 'POST'],
 		['name' => 'openProjectAPI#getOpenProjectOauthURLWithStateAndPKCE', 'url' => '/op-oauth-url', 'verb' => 'GET'],
+		['name' => 'openProjectAPI#getGroupFolderSetupStatus', 'url' => '/group-folder-status', 'verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],

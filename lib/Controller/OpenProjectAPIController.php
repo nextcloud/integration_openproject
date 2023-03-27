@@ -525,4 +525,17 @@ class OpenProjectAPIController extends Controller {
 		$base64url = strtr($base64, '+/', '-_');
 		return ($base64url);
 	}
+
+	/**
+	 * check if the group folder set up is already setup or not
+	 *
+	 * @return DataResponse
+	 */
+	public function getGroupFolderSetupStatus(): DataResponse {
+		return new DataResponse(
+			[
+				'result' => $this->openprojectAPIService->isGroupFolderSetup()
+			]
+		);
+	}
 }
