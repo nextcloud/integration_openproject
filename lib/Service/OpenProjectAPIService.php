@@ -1103,12 +1103,10 @@ class OpenProjectAPIService {
 	 */
 	public function deleteAppPassword(): void {
 		// TODO rebase needed for this function
-		try {
+		if(sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1) {
 			$token_id = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
 			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token_id);
 			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
-		} catch (Exception $e) {
-			// when we try to delete the app password when there is no app password
 		}
 	}
 

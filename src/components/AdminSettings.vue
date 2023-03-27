@@ -161,7 +161,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="projectfolders-and-password">
+		<div class="managecd-projectfolders-and-password">
 			<FormHeading index="4"
 				:is-managed-project-heading="true"
 				:is-complete="state.app_password_set ? true : oPSystemPassword !== null"
@@ -170,33 +170,46 @@
 				:is-disabled="isManagedGroupFolderSetUpInDisableMode" />
 			<div v-if="state.default_managed_folders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
-					<CheckboxRadioSwitch type="switch" :checked="state.managed_folder_state" @update:checked="changeGroupFolderSetUpState">
-						<label>Automatically managed folders</label>
+					<CheckboxRadioSwitch type="switch" :checked="this.isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
+						<b>Automatically managed folders</b>
 					</CheckboxRadioSwitch>
-					<div v-if="state.managed_folder_state === false" class="complete-without-groupfolders">
-						<p class="checkbox-information">
-							We recommend using this functionality but is not mandatory. Please activate in case you want to use the automatic creation and management of project folders.
+					<div v-if="isGroupfolderSetupAutomaticallyReady === false" class="complete-without-groupfolders">
+						<p class="managed-folder-description">
+							{{
+								t('integration_openproject', 'We recommend using this functionality but is not mandatory. Please activate in case you want to use the automatic creation and management of project folders.')
+							}}
 						</p>
-						<Button type="primary"
-							data-test-id="complete-without-projectfolders-form-btn"
-							@click="completeIntegrationWithoutGroupFolderSetUp">
-							<template #icon>
-								<CheckBoldIcon :size="20" />
-							</template>
-							{{ t('integration_openproject', 'Complete without project folders') }}
-						</Button>
+						<div class="form-actions">
+							<Button type="primary"
+									data-test-id="complete-without-projectfolders-form-btn"
+									@click="completeIntegrationWithoutGroupFolderSetUp">
+								<template #icon>
+									<CheckBoldIcon :size="20"/>
+								</template>
+								{{
+									t('integration_openproject', this.iskeepCurrentCompleteWithoutIntegration)
+								}}
+							</Button>
+						</div>
+
 					</div>
 					<div v-else>
-						<p class="checkbox-information">
-							Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permission
+						<p class="managed-folder-description">
+							{{
+								t('integration_openproject', 'Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permission.')
+							}}
 						</p>
-						<div class="groupfolder-information">
-							<label>OpenProject user, group and folder</label>
-							<p class="checkbox-information">
-								For automatically managing project folders, this app needs to setup a special group folde, assigned to a group and managed by a folder,each called "OpenProject".<br>
-								The app will never delete files or folders, even if you deactivate this later
-							</p>
-						</div>
+						<br>
+						<b>OpenProject OAuth client ID</b>
+						<p class="managed-folder-description">
+							{{
+								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folde, assigned to a group and managed by a folder,each called "OpenProject".')
+							}} <br>
+							{{
+								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
+							}}
+						</p>
+
 						<div v-if="groupFolderSetUpError">
 							<p class="groupfolder-error">
 								{{ groupFolderSetUpError }}
@@ -211,7 +224,7 @@
 									<LoadingIcon v-if="loadingSetUpGroupFolder" class="loading-spinner" :size="20" />
 									<CheckBoldIcon v-else :size="20" />
 								</template>
-								{{ t('integration_openproject', 'Setup OpenProject user,group and folder') }}
+								{{ t('integration_openproject', this.iskeepCurrentCompleteIntegration) }}
 							</Button>
 							<Button v-else-if="groupFolderSetUpError"
 								type="primary"
@@ -225,7 +238,7 @@
 					</div>
 				</div>
 				<div v-else>
-					<label>Automatic managed folders</label>: {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? "Active" : "Inactive" }}
+					<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					<div class="form-actions">
 						<Button
 							data-test-id="reset-server-host-btn"
@@ -361,7 +374,7 @@ export default {
 				server: false, opOauth: false, ncOauth: false, opSystemPassword: false, managedGroupFolderSetUp: false,
 			},
 			loadingServerHostForm: false,
-			oadingSetUpGroupFolder: false,
+			loadingSetUpGroupFolder: false,
 			loadingOPOauthForm: false,
 			isOpenProjectInstanceValid: null,
 			openProjectNotReachableErrorMessage: null,
@@ -375,6 +388,8 @@ export default {
 			isGroupfolderSetupAutomaticallyReady: null,
 			groupFolderSetUpError: null,
 			isManagedFolderActive: null,
+			iskeepCurrentCompleteWithoutIntegration: 'Keep Current Change',
+			iskeepCurrentCompleteIntegration: 'Setup OpenProject user,group and folder',
 		}
 	},
 	computed: {
@@ -475,6 +490,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				console.log(this.state)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -499,12 +515,15 @@ export default {
 				if (this.state.app_password_set) {
 					this.formMode.opSystemPassword = F_MODES.VIEW
 					this.isFormCompleted.opSystemPassword = true
+					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 				}
 				// condition for active and inactive for managed project folders
 				if (this.state.managed_folder_state) {
 					this.isManagedFolderActive = false
+					this.isGroupfolderSetupAutomaticallyReady = true
 				} else if (this.state.default_managed_folders === true) {
 					this.isManagedFolderActive = false
+					this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
 				}
 			}
 		},
@@ -520,12 +539,18 @@ export default {
 		setManagedGroupFolderSetUpToEditMode() {
 			this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 			this.isFormCompleted.managedGroupFolderSetUp = false
+			this.isGroupfolderSetupAutomaticallyReady = this.state.managed_folder_state
 			this.isManagedFolderActive = false
 		},
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
+			if (this.state.default_managed_folders === false && this.isGroupfolderSetupAutomaticallyReady === null) {
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
+				this.isGroupfolderSetupAutomaticallyReady = false
+			}
 			if (this.state.default_managed_folders === false) {
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 				this.state.default_managed_folders = true
 				await this.saveOPOptions()
@@ -537,12 +562,24 @@ export default {
 		},
 		changeGroupFolderSetUpState() {
 			this.isGroupfolderSetupAutomaticallyReady = !this.isGroupfolderSetupAutomaticallyReady
-			this.state.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
+			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+				this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
+			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === false) {
+				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+			} else if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === false) {
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
+			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+				this.iskeepCurrentCompleteIntegration = 'Setup OpenProject user,group and folder'
+			}
+
 		},
 		async checkForErrorOrSetUpOpenProjectGroupFolders() {
 			this.loadingSetUpGroupFolder = true
-			this.state.managed_folder_state = true
-			await this.saveOPOptions()
+			const success = await this.saveOPOptions()
+			if (success) {
+				this.state.managed_folder_state = true
+				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+			}
 			if (this.groupFolderSetUpError === null) {
 				this.isFormCompleted.managedGroupFolderSetUp = true
 				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
@@ -642,7 +679,7 @@ export default {
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
 			this.state.default_managed_folders = false
-			this.state.managed_folder_state = false
+			this.isGroupfolderSetupAutomaticallyReady = false
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -739,9 +776,38 @@ export default {
 				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
 			}
 		},
+		appPassword() {
+			const restAppPassword = false
+			if (this.isGroupfolderSetupAutomaticallyReady === false) {
+				// case for deletion
+				return null
+			} else if (this.isOpSystemPasswordFormInEdit) {
+				// case for new app password we set it true
+				return true
+			} else if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
+				// in case of whole reset
+				return null
+			} else if (this.state.openproject_instance_url === null || this.state.openproject_client_secret === null || this.state.openproject_client_id === null) {
+				return false
+			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+				return true
+			}
+			return restAppPassword
+		},
+		setUpGroupFolder() {
+			if(this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+				return false
+			}
+			if(this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+				return true
+			}
+			return false
+		},
 		async saveOPOptions() {
 			let success = false
 			const url = generateUrl('/apps/integration_openproject/admin-config')
+			const appPassword = this.appPassword()
+			const groupFolderSetUp = this.setUpGroupFolder()
 			const req = {
 				values: {
 					openproject_client_id: this.state.openproject_client_id,
@@ -749,14 +815,10 @@ export default {
 					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
-					setup_group_folder: (this.isGroupfolderSetupAutomaticallyReady === true),
+					setup_group_folder: groupFolderSetUp,
 					default_managed_folders: this.state.default_managed_folders,
-					managed_folder_state: this.state.managed_folder_state,
-					reset_app_password: (this.isGroupfolderSetupAutomaticallyReady || this.isOpSystemPasswordFormInEdit)
-						? true
-						: (this.state.openproject_client_id === null && this.state.openproject_client_secret === null && this.state.openproject_instance_url === null)
-							? null
-							: this.isGroupfolderSetupAutomaticallyReady === false ? null : this.isGroupfolderSetupAutomaticallyReady === null ? false : null,
+					managed_folder_state: this.isGroupfolderSetupAutomaticallyReady,
+					reset_app_password: appPassword
 				},
 			}
 			try {
@@ -826,17 +888,25 @@ export default {
 		async completeIntegrationWithoutGroupFolderSetUp() {
 			this.isFormCompleted.managedGroupFolderSetUp = true
 			this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
+			this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
 			if (!this.state.app_password_set) {
-				this.state.managed_folder_state = false
-				// this.state.app_password_set = false
-				this.isManagedFolderActive = this.state.managed_folder_state
-				await this.saveOPOptions()
+				const success = await this.saveOPOptions()
+				if (success) {
+					this.state.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
+					this.isManagedFolderActive = this.state.managed_folder_state
+				}
+
 			} else {
 				// the value of this null will help in the deletion of the app password
 				// since the integration is done without the groupfolder setup and the app password must be deleted
-				this.state.managed_folder_state = false
-				this.state.app_password_set = false
-				await this.saveOPOptions()
+				const success = await this.saveOPOptions()
+				if (success) {
+					this.state.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
+					this.state.app_password_set = false
+					this.isFormCompleted.opSystemPassword = false
+					this.formMode.opSystemPassword = F_MODES.DISABLE
+				}
+
 			}
 		},
 		resetOPSystemPassword() {
@@ -907,17 +977,8 @@ export default {
 	right: 22px;
 }
 
-.checkbox-information {
-	opacity: 80%;
-	font-size: 13.5px;
-}
-label {
-	font-weight: 700;
-	font-size: .875rem;
-	line-height: 1.25rem;
-}
-.groupfolder-information {
-	margin-top: 15px;
+.managed-folder-description {
+	 font-weight: 400;
 }
 
 #openproject_prefs {

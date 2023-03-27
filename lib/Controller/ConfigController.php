@@ -623,7 +623,7 @@ class ConfigController extends Controller {
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
 			"reset_app_password" => null,
-			"managed_folder_state" => null,
+			"managed_folder_state" => false,
 			"default_managed_folders" => null
 		];
 		try {
