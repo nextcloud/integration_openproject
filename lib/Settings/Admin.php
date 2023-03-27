@@ -10,6 +10,7 @@ use OCP\Settings\ISettings;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OC\Authentication\Token\IProvider;
 
 class Admin implements ISettings {
 
@@ -28,10 +29,12 @@ class Admin implements ISettings {
 
 	public function __construct(IConfig $config,
 								OauthService $oauthService,
+								IProvider $tokenProvider,
 								IInitialState $initialStateService) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
+		$this->tokenProvider = $tokenProvider;
 	}
 
 	/**
@@ -49,6 +52,8 @@ class Admin implements ISettings {
 			$id = (int)$oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);
 		}
+		// We only need a single app password for user OpenProject
+		$appPasswordCount = sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME));
 
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
@@ -57,6 +62,9 @@ class Admin implements ISettings {
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
+			'app_password_set' => ($appPasswordCount === 1),
+			'default_managed_folders' => $this->config->getAppValue(Application::APP_ID, 'default_managed_folders', '0') === '1',
+			'managed_folder_state' => $this->config->getAppValue(Application::APP_ID, 'managed_folder_state', '0') === '1',
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

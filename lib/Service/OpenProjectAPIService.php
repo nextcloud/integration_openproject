@@ -45,6 +45,11 @@ use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
 use OCP\Files\IMimeTypeLoader;
 use OC_Util;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IProvider;
+use OC\Authentication\Token\IToken;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Security\ISecureRandom;
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
@@ -124,6 +129,9 @@ class OpenProjectAPIService {
 	 */
 
 
+	private IProvider $tokenProvider;
+	private ISecureRandom $random;
+	private IEventDispatcher $eventDispatcher;
 	public function __construct(
 								string $appName,
 								IAvatarManager $avatarManager,
@@ -138,6 +146,9 @@ class OpenProjectAPIService {
 								IGroupManager $groupManager,
 								IAppManager $appManager,
 								IDBConnection $dbConnection,
+								IProvider $tokenProvider,
+								ISecureRandom $random,
+								IEventDispatcher $eventDispatcher,
 								ISubAdmin $subAdminManager,
 								IMimeTypeLoader $mimeTypeLoader
 	) {
@@ -156,6 +167,9 @@ class OpenProjectAPIService {
 		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
 		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->tokenProvider = $tokenProvider;
+		$this->random = $random;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -534,16 +548,22 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_group_folder',
+			'default_managed_folders',
+			'managed_folder_state'
 		];
 
 		if ($allKeysMandatory) {
 			foreach ($opKeys as $key) {
+				if(array_key_exists('reset_app_password', $values)) {
+					throw new InvalidArgumentException('invalid key');
+				}
 				if (!array_key_exists($key, $values)) {
 					throw new InvalidArgumentException('invalid key');
 				}
 			}
 		} else {
+			$opKeys[] = 'reset_app_password';
 			foreach ($values as $key => $value) {
 				if (!in_array($key, $opKeys)) {
 					throw new InvalidArgumentException('invalid key');
@@ -556,7 +576,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder') {
+			if ($key === 'default_enable_navigation' || $key === 'managed_folder_state' || $key === 'default_managed_folders' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'reset_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -1052,4 +1072,63 @@ class OpenProjectAPIService {
 		}
 		return false;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function generateAppPasswordTokenForUser(): string {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$password = null;
+		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$generatedToken = $this->tokenProvider->generateToken(
+			$token,
+			$user->getUID(),
+			$user->getUID(),
+			$password,
+			$appName,
+			IToken::TEMPORARY_TOKEN,
+			IToken::DO_NOT_REMEMBER
+		);
+		$this->eventDispatcher->dispatchTyped(
+			new AppPasswordCreatedEvent($generatedToken)
+		);
+		return $token;
+	}
+
+	/**
+	 * Deletes the created app password for user OpenProject
+	 *
+	 * @return void
+	 */
+	public function deleteAppPassword(): void {
+		// TODO rebase needed for this function
+		try {
+			$token_id = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
+			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token_id);
+			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
+		} catch (Exception $e) {
+			// when we try to delete the app password when there is no app password
+		}
+	}
+
+	/**
+	 * Deletes the old app password token and creates new one user OpenProject
+	 *
+	 * @return string
+	 */
+	public function replaceAppPasswordToken(): string {
+		$this->deleteAppPassword();
+		return $this->generateAppPasswordTokenForUser();
+	}
+
+	/**
+	 * check if app password for user OpenProject is already created
+	 *
+	 * @return bool
+	 */
+	public function hasAppPasswordAlready(): bool {
+		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
+	}
+
 }

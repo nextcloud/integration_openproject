@@ -183,7 +183,10 @@ class ConfigController extends Controller {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_group_folder',
+			'reset_app_password',
+			'default_managed_folders',
+			'managed_folder_state'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -193,7 +196,7 @@ class ConfigController extends Controller {
 			}
 		}
 		$openProjectGroupFolderFileId = null;
-
+		$app_password = null;
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			if ($isSystemReady) {
@@ -203,7 +206,19 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				// when all the thing is ready then create the app password for the openproject user
+				if (!$this->openprojectAPIService->hasAppPasswordAlready()) {
+					$app_password = $this->openprojectAPIService->generateAppPasswordTokenForUser();
+				}
 			}
+		}
+
+		// TODO
+		// this condition applies only when user and group with along with app password is created
+		// code to for updating the app password token
+		$groupFolderID = $this->config->getAppValue(Application::APP_ID, 'openproject_groupfolder_id', '');
+		if(key_exists('reset_app_password', $values) && $values['reset_app_password'] && $groupFolderID !== '') {
+			$app_password = $this->openprojectAPIService->replaceAppPasswordToken();
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -255,6 +270,14 @@ class ConfigController extends Controller {
 			$values['openproject_client_secret'] === null
 
 		);
+
+		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
+		if($runningFullReset && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) {
+			$this->openprojectAPIService->deleteAppPassword();
+		} else if($values['managed_folder_state'] === false && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) {
+			$this->openprojectAPIService->deleteAppPassword();
+		}
+
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
@@ -312,7 +335,8 @@ class ConfigController extends Controller {
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
-			"oPGroupFolderFileId" => $openProjectGroupFolderFileId
+			"oPGroupFolderFileId" => $openProjectGroupFolderFileId,
+			"openproject_user_app_password" => $app_password,
 		];
 	}
 
@@ -527,6 +551,9 @@ class ConfigController extends Controller {
 			if ($status['oPGroupFolderFileId'] !== null) {
 				$result['openproject_groupfolder_id'] = $status['oPGroupFolderFileId'];
 			}
+			if($status['openproject_user_app_password'] !== null) {
+				$result['openproject_user_app_password'] = $status['openproject_user_app_password'];
+			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
@@ -561,6 +588,9 @@ class ConfigController extends Controller {
 				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 				}
+				if($status['openproject_user_app_password'] !== null) {
+					$result['openproject_user_app_password'] = $status['openproject_user_app_password'];
+				}
 				return new DataResponse($result);
 			}
 			return new DataResponse([
@@ -591,7 +621,10 @@ class ConfigController extends Controller {
 			'openproject_client_id' => null,
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
-			'default_enable_unified_search' => null
+			'default_enable_unified_search' => null,
+			"reset_app_password" => null,
+			"managed_folder_state" => null,
+			"default_managed_folders" => null
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);

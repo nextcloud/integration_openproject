@@ -4,6 +4,9 @@
 		<div v-if="isComplete" class="complete">
 			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
 		</div>
+		<div v-else-if="isManagedProjectHeading && isManagedFolderInActive" class="managed-folder-inactive">
+			<MinusIcon fill-color="#FFFFFF" :size="12" />
+		</div>
 		<div v-else class="index">
 			{{ index }}
 		</div>
@@ -16,11 +19,12 @@
 <script>
 
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
-
+import MinusIcon from 'vue-material-design-icons/Minus.vue'
 export default {
 	name: 'FormHeading',
 	components: {
 		CheckBoldIcon,
+		MinusIcon,
 	},
 	props: {
 		index: {
@@ -36,6 +40,14 @@ export default {
 			default: false,
 		},
 		isComplete: {
+			type: Boolean,
+			default: false,
+		},
+		isManagedFolderInActive: {
+			type: Boolean,
+			default: false,
+		},
+		isManagedProjectHeading: {
 			type: Boolean,
 			default: false,
 		},
@@ -58,6 +70,16 @@ export default {
 		width: 16px;
 		border-radius: 50%;
 		background-color: var(--color-success);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.managed-folder-inactive {
+		height: 16px;
+		width: 16px;
+		border-radius: 50%;
+		background: #555555;
 		display: flex;
 		justify-content: center;
 		align-items: center;
