@@ -164,13 +164,13 @@
 		<div class="managecd-projectfolders-and-password">
 			<FormHeading index="4"
 				:is-managed-project-heading="true"
-				:is-complete="state.app_password_set ? true : oPSystemPassword !== null"
+				:is-complete="isManagedGroupFolderSetUpFormInEdit ? false : state.app_password_set ? true : oPSystemPassword !== null"
 				:title="t('integration_openproject', 'Managed project folders (recommended)')"
 				:is-managed-folder-in-active="(isManagedGroupFolderSetUpFormInEdit) ? false : isManagedFolderActive === false && state.managed_folder_state === false"
 				:is-disabled="isManagedGroupFolderSetUpInDisableMode" />
 			<div v-if="state.default_managed_folders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
-					<CheckboxRadioSwitch type="switch" :checked="this.isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
+					<CheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
 						<b>Automatically managed folders</b>
 					</CheckboxRadioSwitch>
 					<div v-if="isGroupfolderSetupAutomaticallyReady === false" class="complete-without-groupfolders">
@@ -181,17 +181,16 @@
 						</p>
 						<div class="form-actions">
 							<Button type="primary"
-									data-test-id="complete-without-projectfolders-form-btn"
-									@click="completeIntegrationWithoutGroupFolderSetUp">
+								data-test-id="complete-without-projectfolders-form-btn"
+								@click="completeIntegrationWithoutGroupFolderSetUp">
 								<template #icon>
-									<CheckBoldIcon :size="20"/>
+									<CheckBoldIcon :size="20" />
 								</template>
 								{{
-									t('integration_openproject', this.iskeepCurrentCompleteWithoutIntegration)
+									t('integration_openproject', iskeepCurrentCompleteWithoutIntegration)
 								}}
 							</Button>
 						</div>
-
 					</div>
 					<div v-else>
 						<p class="managed-folder-description">
@@ -224,7 +223,7 @@
 									<LoadingIcon v-if="loadingSetUpGroupFolder" class="loading-spinner" :size="20" />
 									<CheckBoldIcon v-else :size="20" />
 								</template>
-								{{ t('integration_openproject', this.iskeepCurrentCompleteIntegration) }}
+								{{ t('integration_openproject', iskeepCurrentCompleteIntegration) }}
 							</Button>
 							<Button v-else-if="groupFolderSetUpError"
 								type="primary"
@@ -490,7 +489,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				console.log(this.state)
+				// console.log(this.state)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -795,10 +794,10 @@ export default {
 			return restAppPassword
 		},
 		setUpGroupFolder() {
-			if(this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return false
 			}
-			if(this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}
 			return false
@@ -818,7 +817,7 @@ export default {
 					setup_group_folder: groupFolderSetUp,
 					default_managed_folders: this.state.default_managed_folders,
 					managed_folder_state: this.isGroupfolderSetupAutomaticallyReady,
-					reset_app_password: appPassword
+					reset_app_password: appPassword,
 				},
 			}
 			try {
