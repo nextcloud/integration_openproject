@@ -208,11 +208,12 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
 							}}
 						</p>
-
-						<div v-if="groupFolderSetUpError">
-							<p class="groupfolder-error">
-								{{ groupFolderSetUpError }}
-							</p>
+						<div v-if="groupFolderSetUpError" class="group-folder-error">
+							<div class="group-folder-error-alert">
+								<AlertCircleOutline fill-color="#FF0000" size="26"/>
+								<b class="group-folder-error-alert-message">The group folder app is not installed</b>
+							</div>
+							<p>{{t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')}}</p>
 						</div>
 						<div class="form-actions">
 							<Button v-if="groupFolderSetUpError === null"
@@ -341,6 +342,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -357,6 +359,7 @@ export default {
 		RestoreIcon,
 		CheckBox,
 		CheckboxRadioSwitch,
+		AlertCircleOutline
 	},
 	data() {
 		return {
@@ -983,6 +986,20 @@ export default {
 
 .managed-folder-description {
 	 font-weight: 400;
+}
+
+.group-folder-error {
+	&-alert {
+		display: flex;
+		justify-content: start;
+		align-items: center;
+		padding-top: 15px;
+
+		&-message {
+			padding-left: 4px;
+		}
+	}
+	color: var(--color-error);
 }
 
 #openproject_prefs {
