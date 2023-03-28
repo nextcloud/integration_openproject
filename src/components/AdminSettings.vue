@@ -253,7 +253,7 @@
 		</div>
 		<div v-if="state.managed_folder_state">
 			<FormHeading index="5"
-				:title="t('integration_openproject', 'OpenProject system user password')"
+				:title="t('integration_openproject', 'Project folders application connection')"
 				:is-complete="isOPSystemPasswordFormComplete"
 				:is-disabled="isOPSystemPasswordInDisableMode" />
 			<div v-if="state.app_password_set">
@@ -264,10 +264,10 @@
 					read-only
 					is-required
 					with-copy-btn
-					label="OpenProject application password"
-					:hint-text="nextcloudClientHint" />
+					label="Application password*"
+					:hint-text="projectFolderAppPasswordHint" />
 				<FieldValue v-else
-					title="OpenProject System Password"
+					title="Application password"
 					is-required
 					hide-value
 					with-inspection
@@ -281,7 +281,7 @@
 						<template #icon>
 							<CheckBoldIcon :size="20" />
 						</template>
-						{{ t('integration_openproject', 'Yes, I have copied these values') }}
+						{{ t('integration_openproject', 'Done, complete setup') }}
 					</Button>
 					<Button v-else
 						data-test-id="reset-op-system-password"
@@ -289,7 +289,7 @@
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
-						{{ t('integration_openproject', 'Replace password') }}
+						{{ t('integration_openproject', 'Replace application password') }}
 					</Button>
 				</div>
 			</div>
@@ -388,7 +388,7 @@ export default {
 			groupFolderSetUpError: null,
 			isManagedFolderActive: null,
 			iskeepCurrentCompleteWithoutIntegration: 'Keep Current Change',
-			iskeepCurrentCompleteIntegration: 'Setup OpenProject user,group and folder',
+			iskeepCurrentCompleteIntegration: 'Setup OpenProject user, group and folder',
 		}
 	},
 	computed: {
@@ -472,6 +472,11 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		projectFolderAppPasswordHint() {
+			const linkText = t('integration_openproject', 'Administration > File storages')
+			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'This value will not be accessible again after you clicking save. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
@@ -545,11 +550,11 @@ export default {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
 			if (this.state.default_managed_folders === false && this.isGroupfolderSetupAutomaticallyReady === null) {
-				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.isGroupfolderSetupAutomaticallyReady = false
 			}
 			if (this.state.default_managed_folders === false) {
-				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 				this.state.default_managed_folders = true
 				await this.saveOPOptions()
@@ -566,9 +571,9 @@ export default {
 			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === false) {
 				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 			} else if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === false) {
-				this.iskeepCurrentCompleteWithoutIntegration = 'Complete Integration without groupfolders'
+				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
-				this.iskeepCurrentCompleteIntegration = 'Setup OpenProject user,group and folder'
+				this.iskeepCurrentCompleteIntegration = 'Setup OpenProject user, group and folder'
 			}
 
 		},
@@ -910,8 +915,8 @@ export default {
 		},
 		resetOPSystemPassword() {
 			OC.dialogs.confirmDestructive(
-				t('integration_openproject', 'If you proceed old password for the OpenProject user will be deleted and you will receive a new system user password.'),
-				t('integration_openproject', 'Replace OpenProject system user password'),
+				t('integration_openproject', 'If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.'),
+				t('integration_openproject', 'Replace application password for project folders application connection'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
 					confirm: t('integration_openproject', 'Yes, replace'),
