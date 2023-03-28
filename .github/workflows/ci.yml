@@ -11,11 +11,9 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26, master ]
+        nextcloudVersion: [ stable23, stable24, stable25, stable26, master ]
         phpVersion: [ 7.4, 8.0, 8.1 ]
         exclude:
-          - nextcloudVersion: stable22
-            phpVersion: 8.1
           - nextcloudVersion: stable23
             phpVersion: 8.1
           - nextcloudVersion: stable24
@@ -158,14 +156,11 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26, master ]
+        nextcloudVersion: [ stable23, stable24, stable25, stable26, master ]
         phpVersionMajor: [ 7, 8 ]
         phpVersionMinor: [ 4, 1 ]
         database: [pgsql, mysql]
         exclude:
-          - nextcloudVersion: stable22
-            phpVersionMajor: 8
-            phpVersionMinor: 1
           - nextcloudVersion: stable23
             phpVersionMajor: 8
             phpVersionMinor: 1

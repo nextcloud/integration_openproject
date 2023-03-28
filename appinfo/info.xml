@@ -35,7 +35,7 @@ For more information on how to set up and use the OpenProject application, pleas
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png</screenshot>
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot2.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="22" max-version="27"/>
+		<nextcloud min-version="23" max-version="27"/>
 	</dependencies>
 	<background-jobs>
 		<job>OCA\OpenProject\BackgroundJob\RemoveExpiredDirectUploadTokens</job>
