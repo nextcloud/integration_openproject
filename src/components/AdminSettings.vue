@@ -239,8 +239,10 @@
 						</div>
 					</div>
 				</div>
-				<div v-else>
-					<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
+				<div class="managed-folder-status" v-else>
+					<div class="managed-folder-status-value">
+						<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
+					</div>
 					<div class="form-actions">
 						<Button
 							data-test-id="reset-server-host-btn"
@@ -1059,6 +1061,11 @@ export default {
 
 .managed-folder-description {
 	 font-weight: 400;
+}
+
+.managed-folder-status-value {
+	padding: 6px 0;
+
 }
 
 .group-folder-error {
