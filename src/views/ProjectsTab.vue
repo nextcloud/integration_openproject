@@ -40,15 +40,15 @@
 						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
 						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
-					<Actions>
-						<ActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
+					<NcActions>
+						<NcActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
 							@click="unlink(workpackage.id, fileInfo.id)">
 							{{ t('integration_openproject', 'Unlink Work Package') }}
 							<template #icon>
 								<LinkOffIcon :size="20" />
 							</template>
-						</ActionButton>
-					</Actions>
+						</NcActionButton>
+					</NcActions>
 				</div>
 				<div :class="{ 'workpackage-seperator': index !== filterWorkpackagesByFileId.length-1 }" />
 			</div>
@@ -62,11 +62,11 @@
 </template>
 
 <script>
-import EmptyContent from '../components/tab/EmptyContent'
-import WorkPackage from '../components/tab/WorkPackage'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import SearchInput from '../components/tab/SearchInput'
+import EmptyContent from '../components/tab/EmptyContent.vue'
+import WorkPackage from '../components/tab/WorkPackage.vue'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 
@@ -77,8 +77,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
-import { workpackageHelper } from '../utils/workpackageHelper'
-import { STATE, checkOauthConnectionResult } from '../utils'
+import { workpackageHelper } from '../utils/workpackageHelper.js'
+import { STATE, checkOauthConnectionResult } from '../utils.js'
 
 export default {
 	name: 'ProjectsTab',
@@ -86,8 +86,8 @@ export default {
 		EmptyContent,
 		SearchInput,
 		WorkPackage,
-		Actions,
-		ActionButton,
+		NcActions,
+		NcActionButton,
 		LoadingIcon,
 		LinkOffIcon,
 	},

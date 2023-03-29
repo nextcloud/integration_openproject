@@ -22,8 +22,8 @@
 
 import Vue from 'vue'
 
-import './bootstrap'
-import ProjectsTab from './views/ProjectsTab'
+import './bootstrap.js'
+import ProjectsTab from './views/ProjectsTab.vue'
 
 // Init OpenProject Tab Service
 if (!window.OCA.OpenProject) {

@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import TextInput from '../../../../src/components/admin/TextInput'
+import TextInput from '../../../../src/components/admin/TextInput.vue'
 
 const localVue = createLocalVue()
 

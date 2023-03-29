@@ -3,12 +3,12 @@ import axios from '@nextcloud/axios'
 import { createLocalVue, mount } from '@vue/test-utils'
 import * as dialogs from '@nextcloud/dialogs'
 
-import SearchInput from '../../../../src/components/tab/SearchInput'
+import SearchInput from '../../../../src/components/tab/SearchInput.vue'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
-import { STATE } from '../../../../src/utils'
+import { STATE } from '../../../../src/utils.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -57,7 +57,7 @@ describe('SearchInput.vue', () => {
 	const workPackageStubSelector = 'workpackage-stub'
 	const inputSelector = '.multiselect__input'
 	const assigneeSelector = '.filterAssignee'
-	const loadingIconSelector = '.icon-loading-small'
+	const loadingIconSelector = '.multiselect__spinner'
 	const multiSelectItemSelector = '.multiselect__option'
 
 	afterEach(() => {
@@ -376,13 +376,13 @@ describe('SearchInput.vue', () => {
 		describe('loading icon', () => {
 			it('should be displayed when the wrapper is in "loading" state', async () => {
 				wrapper = mountSearchInput()
-				let loadingIcon = wrapper.find(loadingIconSelector)
-				expect(loadingIcon.exists()).toBeFalsy()
+				const loadingIcon = wrapper.find(loadingIconSelector)
+				expect(loadingIcon.attributes().style).toBe('display: none;')
 				await wrapper.setData({
 					state: STATE.LOADING,
 				})
-				loadingIcon = wrapper.find(loadingIconSelector)
-				expect(loadingIcon.exists()).toBeTruthy()
+				await localVue.nextTick()
+				expect(wrapper.find(loadingIconSelector).exists()).toBeFalsy()
 			})
 		})
 

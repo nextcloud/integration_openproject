@@ -1,4 +1,4 @@
-import './bootstrap'
+import './bootstrap.js'
 
 OCA.Files.fileActions.registerAction({
 	name: 'open-project',

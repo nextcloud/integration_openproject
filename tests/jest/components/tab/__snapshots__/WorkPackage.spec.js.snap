@@ -22,7 +22,7 @@ exports[`WorkPackage.vue shows work packages information 1`] = `
   <div class="row">
     <div class="row__assignee">
       <div class="row__assignee__avatar">
-        <avatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="23" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></avatar-stub>
+        <ncavatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="23" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></ncavatar-stub>
       </div>
       <div class="row__assignee__assignee">
         test

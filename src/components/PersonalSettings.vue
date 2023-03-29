@@ -6,12 +6,12 @@
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<Button class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+			<NcButton class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
 				{{ t('integration_openproject', 'Disconnect from OpenProject') }}
-			</Button>
+			</NcButton>
 		</div>
 		<br>
 		<div v-if="connected" class="openproject-prefs--form">
@@ -42,19 +42,18 @@ import CloseIcon from 'vue-material-design-icons/Close.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import InformationVariant from 'vue-material-design-icons/InformationVariant.vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
-import SettingsTitle from '../components/settings/SettingsTitle'
-import OAuthConnectButton from './OAuthConnectButton'
-import CheckBox from './settings/CheckBox'
+import SettingsTitle from '../components/settings/SettingsTitle.vue'
+import OAuthConnectButton from './OAuthConnectButton.vue'
+import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
-import { checkOauthConnectionResult } from '../utils'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import { checkOauthConnectionResult } from '../utils.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, Button, CloseIcon, CheckIcon, InformationVariant, CheckBox,
+		SettingsTitle, OAuthConnectButton, NcButton, CloseIcon, CheckIcon, InformationVariant, CheckBox,
 	},
 
 	data() {

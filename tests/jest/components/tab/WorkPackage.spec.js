@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 
-import WorkPackage from '../../../../src/components/tab/WorkPackage'
+import WorkPackage from '../../../../src/components/tab/WorkPackage.vue'
 import workPackagesSearchResponse from '../../fixtures/workPackagesSearchResponse.json'
 
 const localVue = createLocalVue()
