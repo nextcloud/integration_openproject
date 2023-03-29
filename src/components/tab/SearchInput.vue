@@ -206,6 +206,7 @@ export default {
 	}
 	.multiselect {
 		.multiselect__content-wrapper {
+			border-radius: var(--border-radius-large);
 			.multiselect__content {
 				.multiselect__element {
 					span {
