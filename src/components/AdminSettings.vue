@@ -208,12 +208,12 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
 							}}
 						</p>
-						<div v-if="groupFolderSetUpError" class="group-folder-error">
+						<div v-if="groupFolderSetUpError !== null" class="group-folder-error">
 							<div class="group-folder-error-alert">
-								<AlertCircleOutline fill-color="#FF0000" size="26"/>
-								<b class="group-folder-error-alert-message">The group folder app is not installed</b>
+								<AlertCircleOutline fill-color="#FF0000" :size="26" />
+								<b class="group-folder-error-alert-message">{{groupFolderSetUpErrorMessage}}</b>
 							</div>
-							<p>{{t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')}}</p>
+							<p>{{groupFolderSetUpErrorMessageDescription}}</p>
 						</div>
 						<div class="form-actions">
 							<Button v-if="groupFolderSetUpError === null"
@@ -228,9 +228,11 @@
 							</Button>
 							<Button v-else-if="groupFolderSetUpError"
 								type="primary"
-								data-test-id="complete-with-projectfolders-form-btn">
+								data-test-id="complete-with-projectfolders-form-btn"
+								@click="checkForErrorOrSetUpOpenProjectGroupFolders">
 								<template #icon>
-									<CheckBoldIcon :size="20" />
+									<LoadingIcon v-if="loadingSetUpGroupFolder" class="loading-spinner" :size="20" />
+									<RestoreIcon v-else :size="20" />
 								</template>
 								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
 							</Button>
@@ -252,7 +254,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="state.managed_folder_state">
+		<div v-if="state.app_password_set">
 			<FormHeading index="5"
 				:title="t('integration_openproject', 'Project folders application connection')"
 				:is-complete="isOPSystemPasswordFormComplete"
@@ -343,6 +345,7 @@ import { F_MODES } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -359,7 +362,8 @@ export default {
 		RestoreIcon,
 		CheckBox,
 		CheckboxRadioSwitch,
-		AlertCircleOutline
+		AlertCircleOutline,
+		ReloadIcon
 	},
 	data() {
 		return {
@@ -480,6 +484,31 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'This value will not be accessible again after you clicking save. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		groupFolderSetUpErrorMessageDescription() {
+			switch (this.groupFolderSetUpError) {
+				case 1 :
+					return t('integration_openproject', 'Please make sure to rename the user or completely delete the previous one or deactivate the automatically managed folders.')
+				case 2 :
+					return t('integration_openproject', 'Please make sure to rename the group or completely delete the previous one or deactivate the automatically managed folders.')
+				case 3 :
+					return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
+				case 4 :
+					return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+			}
+		},
+		groupFolderSetUpErrorMessage() {
+
+			switch (this.groupFolderSetUpError) {
+				case 1 :
+					return t('integration_openproject', 'The user name "OpenProject" already exists')
+				case 2 :
+					return t('integration_openproject', 'The group name "OpenProject" already exists')
+				case 3 :
+					return t('integration_openproject', 'The group folder name "OpenProject" integration already exists')
+				case 4 :
+					return t('integration_openproject', 'The group folder app is not installed')
+			}
+		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
@@ -586,8 +615,6 @@ export default {
 			if (success) {
 				this.state.managed_folder_state = true
 				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-			}
-			if (this.groupFolderSetUpError === null) {
 				this.isFormCompleted.managedGroupFolderSetUp = true
 				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 				this.formMode.opSystemPassword = F_MODES.EDIT
@@ -802,12 +829,30 @@ export default {
 			return restAppPassword
 		},
 		setUpGroupFolder() {
-			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+			console.log(this.formMode.server === F_MODES.EDIT)
+			console.log(this.isFormCompleted.ncOauth)
+			console.log(this.isFormCompleted.opOauth)
+			if(this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
+				console.log("1")
 				return false
 			}
-			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if(this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
+				console.log("2")
 				return true
 			}
+			if(this.formMode.opSystemPassword === F_MODES.EDIT) {
+				console.log("3")
+				return false
+			}
+			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+				console.log("4")
+				return true
+			}
+			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+				console.log("5")
+				return true
+			}
+			console.log("3")
 			return false
 		},
 		async saveOPOptions() {
@@ -844,13 +889,41 @@ export default {
 			} catch (error) {
 				this.isAdminConfigOk = null
 				this.oPOAuthTokenRevokeStatus = null
-				console.error(error)
+				// catch the error response from the group folder response only
+				// since the response message is to be dispaled in the UI
+				const isGroupFolderError = this.isGroupFolderError(error)
+				if(isGroupFolderError !== null) {
+					// save the error message
+					this.groupFolderSetUpError = isGroupFolderError
+				} else {
+					console.error(error)
+				}
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
 			}
 			this.notifyAboutOPOAuthTokenRevoke()
 			return success
+		},
+		isGroupFolderError(errorResponse) {
+			console.log(errorResponse.response.data.error)
+			const errorMessage = errorResponse.response.data.error
+			// TODO ask
+			// We have check the error message regarding the groupfolder setup and ignore other error
+			switch (errorMessage) {
+				case 'user "OpenProject" already exists' :
+					return 1
+				case 'group "OpenProject" already exists' :
+					return 2
+				case 'a groupfolder with the name "OpenProject" already exists' :
+					return 3
+				case 'groupfolders app is not enabled' :
+					return 4
+				default :
+					break
+			}
+			// console.error(errorResponse)
+			return null
 		},
 		notifyAboutOPOAuthTokenRevoke() {
 			switch (this.oPOAuthTokenRevokeStatus) {
