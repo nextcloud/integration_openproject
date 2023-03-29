@@ -102,7 +102,7 @@ jobs:
           make jsunit
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable26' && matrix.phpVersion == '8.1' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
           title: "JS Code Coverage"
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable26' && matrix.phpVersion == '8.1' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.0.3
         with:
           reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -130,7 +130,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable26' && matrix.phpVersion == '8.1' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -139,14 +139,14 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable26' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '59'
           path: './server/apps/integration_openproject/coverage/jest/lcov.info'
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable26' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: '57'
