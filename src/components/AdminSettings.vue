@@ -505,8 +505,7 @@ export default {
 					)
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
-						'To be able to use an OpenProject server with a local address, '
-						+ 'enable the `allow_local_remote_servers` setting. {htmlLink}.',
+						'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
 						{ htmlLink },
 						null,
 						{ escape: false, sanitize: false }
