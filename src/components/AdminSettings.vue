@@ -211,9 +211,9 @@
 						<div v-if="groupFolderSetUpError !== null" class="group-folder-error">
 							<div class="group-folder-error-alert">
 								<AlertCircleOutline fill-color="#FF0000" :size="26" />
-								<b class="group-folder-error-alert-message">{{groupFolderSetUpErrorMessage}}</b>
+								<b class="group-folder-error-alert-message">{{ groupFolderSetUpErrorMessage }}</b>
 							</div>
-							<p>{{groupFolderSetUpErrorMessageDescription}}</p>
+							<p>{{ groupFolderSetUpErrorMessageDescription }}</p>
 						</div>
 						<div class="form-actions">
 							<Button v-if="groupFolderSetUpError === null"
@@ -239,7 +239,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="managed-folder-status" v-else>
+				<div v-else class="managed-folder-status">
 					<div class="managed-folder-status-value">
 						<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
@@ -365,7 +365,7 @@ export default {
 		CheckBox,
 		CheckboxRadioSwitch,
 		AlertCircleOutline,
-		ReloadIcon
+		ReloadIcon,
 	},
 	data() {
 		return {
@@ -488,27 +488,27 @@ export default {
 		},
 		groupFolderSetUpErrorMessageDescription() {
 			switch (this.groupFolderSetUpError) {
-				case 1 :
-					return t('integration_openproject', 'Please make sure to rename the user or completely delete the previous one or deactivate the automatically managed folders.')
-				case 2 :
-					return t('integration_openproject', 'Please make sure to rename the group or completely delete the previous one or deactivate the automatically managed folders.')
-				case 3 :
-					return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
-				case 4 :
-					return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+			case 1 :
+				return t('integration_openproject', 'Please make sure to rename the user or completely delete the previous one or deactivate the automatically managed folders.')
+			case 2 :
+				return t('integration_openproject', 'Please make sure to rename the group or completely delete the previous one or deactivate the automatically managed folders.')
+			case 3 :
+				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
+			case 4 :
+				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
 			}
 		},
 		groupFolderSetUpErrorMessage() {
 
 			switch (this.groupFolderSetUpError) {
-				case 1 :
-					return t('integration_openproject', 'The user name "OpenProject" already exists')
-				case 2 :
-					return t('integration_openproject', 'The group name "OpenProject" already exists')
-				case 3 :
-					return t('integration_openproject', 'The group folder name "OpenProject" integration already exists')
-				case 4 :
-					return t('integration_openproject', 'The group folder app is not installed')
+			case 1 :
+				return t('integration_openproject', 'The user name "OpenProject" already exists')
+			case 2 :
+				return t('integration_openproject', 'The group name "OpenProject" already exists')
+			case 3 :
+				return t('integration_openproject', 'The group folder name "OpenProject" integration already exists')
+			case 4 :
+				return t('integration_openproject', 'The group folder app is not installed')
 			}
 		},
 		isIntegrationComplete() {
@@ -831,30 +831,21 @@ export default {
 			return restAppPassword
 		},
 		setUpGroupFolder() {
-			console.log(this.formMode.server === F_MODES.EDIT)
-			console.log(this.isFormCompleted.ncOauth)
-			console.log(this.isFormCompleted.opOauth)
-			if(this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
-				console.log("1")
+			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
 				return false
 			}
-			if(this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
-				console.log("2")
+			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
 				return true
 			}
-			if(this.formMode.opSystemPassword === F_MODES.EDIT) {
-				console.log("3")
+			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
-				console.log("4")
 				return true
 			}
 			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
-				console.log("5")
 				return true
 			}
-			console.log("3")
 			return false
 		},
 		async saveOPOptions() {
@@ -894,7 +885,7 @@ export default {
 				// catch the error response from the group folder response only
 				// since the response message is to be dispaled in the UI
 				const isGroupFolderError = this.isGroupFolderError(error)
-				if(isGroupFolderError !== null) {
+				if (isGroupFolderError !== null) {
 					// save the error message
 					this.groupFolderSetUpError = isGroupFolderError
 				} else {
@@ -908,21 +899,20 @@ export default {
 			return success
 		},
 		isGroupFolderError(errorResponse) {
-			console.log(errorResponse.response.data.error)
 			const errorMessage = errorResponse.response.data.error
 			// TODO ask
 			// We have check the error message regarding the groupfolder setup and ignore other error
 			switch (errorMessage) {
-				case 'user "OpenProject" already exists' :
-					return 1
-				case 'group "OpenProject" already exists' :
-					return 2
-				case 'a groupfolder with the name "OpenProject" already exists' :
-					return 3
-				case 'groupfolders app is not enabled' :
-					return 4
-				default :
-					break
+			case 'user "OpenProject" already exists' :
+				return 1
+			case 'group "OpenProject" already exists' :
+				return 2
+			case 'a groupfolder with the name "OpenProject" already exists' :
+				return 3
+			case 'groupfolders app is not enabled' :
+				return 4
+			default :
+				break
 			}
 			// console.error(errorResponse)
 			return null
