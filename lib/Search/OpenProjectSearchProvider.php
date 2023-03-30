@@ -114,7 +114,7 @@ class OpenProjectSearchProvider implements IProvider {
 		$term = $query->getTerm();
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
-		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$openprojectUrl = OpenProjectAPIService::sanitizeUrl($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 
 		$searchEnabled = $this->config->getUserValue(
