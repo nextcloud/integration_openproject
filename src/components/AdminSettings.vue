@@ -347,7 +347,6 @@ import { F_MODES } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -365,7 +364,6 @@ export default {
 		CheckBox,
 		CheckboxRadioSwitch,
 		AlertCircleOutline,
-		ReloadIcon,
 	},
 	data() {
 		return {
@@ -398,6 +396,7 @@ export default {
 			isManagedFolderActive: null,
 			iskeepCurrentCompleteWithoutIntegration: 'Keep Current Change',
 			iskeepCurrentCompleteIntegration: 'Setup OpenProject user, group and folder',
+			groupFolderStatus: null
 		}
 	},
 	computed: {
@@ -496,10 +495,11 @@ export default {
 				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
 			case 4 :
 				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+			default:
+				return ''
 			}
 		},
 		groupFolderSetUpErrorMessage() {
-
 			switch (this.groupFolderSetUpError) {
 			case 1 :
 				return t('integration_openproject', 'The user name "OpenProject" already exists')
@@ -509,6 +509,8 @@ export default {
 				return t('integration_openproject', 'The group folder name "OpenProject" integration already exists')
 			case 4 :
 				return t('integration_openproject', 'The group folder app is not installed')
+			default:
+				return ''
 			}
 		},
 		isIntegrationComplete() {
@@ -528,7 +530,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				// console.log(this.state)
+				console.log(this.state)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -583,15 +585,15 @@ export default {
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			if (this.state.default_managed_folders === false && this.isGroupfolderSetupAutomaticallyReady === null) {
-				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
-				this.isGroupfolderSetupAutomaticallyReady = false
-			}
 			if (this.state.default_managed_folders === false) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
-				this.state.default_managed_folders = true
-				await this.saveOPOptions()
+				// this api is to set the this.state.default_managed_folders = true to database in order to make the managed project folder visible
+				const result = await this.saveOPOptions()
+				if (result) {
+					this.state.default_managed_folders = true
+					this.isGroupfolderSetupAutomaticallyReady = true
+				}
 			}
 		},
 		setOPSytemPasswordToViewMode() {
@@ -613,13 +615,38 @@ export default {
 		},
 		async checkForErrorOrSetUpOpenProjectGroupFolders() {
 			this.loadingSetUpGroupFolder = true
-			const success = await this.saveOPOptions()
-			if (success) {
+			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
+			if(this.groupFolderStatus) {
+				//TODO remove this comment and make it short
+				// it means all the thing is already set up so we donot need to do anything
+				// but we can have a case where app password is not there and we need to reset the app password incase we shift from inactive to active managed folder
+				if(!this.state.app_password_set) {
+					// we will get the app password this api request
+					const success = await this.saveOPOptions()
+					if(success) {
+						this.state.managed_folder_state = true
+						this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+						this.isFormCompleted.managedGroupFolderSetUp = true
+						this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
+						this.formMode.opSystemPassword = F_MODES.EDIT
+					}
+				}
 				this.state.managed_folder_state = true
 				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 				this.isFormCompleted.managedGroupFolderSetUp = true
 				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-				this.formMode.opSystemPassword = F_MODES.EDIT
+				// this.formMode.opSystemPassword = F_MODES.EDIT
+
+			} else {
+				// we will check for the error makgin the setup_group_folder === true
+				const success = await this.saveOPOptions()
+				if (success) {
+					this.state.managed_folder_state = true
+					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+					this.isFormCompleted.managedGroupFolderSetUp = true
+					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
+					this.formMode.opSystemPassword = F_MODES.EDIT
+				}
 			}
 			this.loadingSetUpGroupFolder = false
 		},
@@ -824,6 +851,7 @@ export default {
 				// in case of whole reset
 				return null
 			} else if (this.state.openproject_instance_url === null || this.state.openproject_client_secret === null || this.state.openproject_client_id === null) {
+				// incase when replacing any of the above values
 				return false
 			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
@@ -838,6 +866,9 @@ export default {
 				return true
 			}
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
+				return false
+			}
+			if(this.groupFolderStatus === true) {
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
@@ -897,6 +928,11 @@ export default {
 			}
 			this.notifyAboutOPOAuthTokenRevoke()
 			return success
+		},
+		async checkIfGroupFolderIsAlreadyReadyForSetup() {
+			const url = generateUrl('/apps/integration_openproject/group-folder-status')
+			const response = await axios.get(url)
+			return response.data.result;
 		},
 		isGroupFolderError(errorResponse) {
 			const errorMessage = errorResponse.response.data.error
