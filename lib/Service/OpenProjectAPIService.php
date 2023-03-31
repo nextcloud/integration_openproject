@@ -932,6 +932,22 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @throws OpenprojectGroupfolderSetupConflictException
+	 */
+	public function isSystemReadyForGroupFolderSetUpForUI(): bool {
+		if (!$this->isGroupfoldersAppEnabled()) {
+			throw new \Exception('The group folder app is not installed');
+		} elseif ($this->isOpenProjectGroupfolderCreated()) {
+			throw new OpenprojectGroupfolderSetupConflictException(
+				'The group folder name ' .
+				Application::OPEN_PROJECT_ENTITIES_NAME .
+				' integration already exists'
+			);
+		}
+		return true;
+	}
+
+	/**
 	 * returns true if the group-folder setup is completed
 	 *
 	 * @return bool
@@ -1044,7 +1060,7 @@ class OpenProjectAPIService {
 		);
 	}
 
-	private function isUserPartOfAndAdminOfGroup():bool {
+	public function isUserPartOfAndAdminOfGroup():bool {
 		if ($this->groupManager->isInGroup(
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			Application::OPEN_PROJECT_ENTITIES_NAME

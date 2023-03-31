@@ -199,7 +199,7 @@
 							}}
 						</p>
 						<br>
-						<b>OpenProject OAuth client ID</b>
+						<b>OpenProject user, group and folder</b>
 						<p class="managed-folder-description">
 							{{
 								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folde, assigned to a group and managed by a folder,each called "OpenProject".')
@@ -211,7 +211,7 @@
 						<div v-if="groupFolderSetUpError !== null" class="group-folder-error">
 							<div class="group-folder-error-alert">
 								<AlertCircleOutline fill-color="#FF0000" :size="26" />
-								<b class="group-folder-error-alert-message">{{ groupFolderSetUpErrorMessage }}</b>
+								<b class="group-folder-error-alert-message">{{ this.groupFolderSetUpError }}</b>
 							</div>
 							<p>{{ groupFolderSetUpErrorMessageDescription }}</p>
 						</div>
@@ -487,28 +487,10 @@ export default {
 		},
 		groupFolderSetUpErrorMessageDescription() {
 			switch (this.groupFolderSetUpError) {
-			case 1 :
-				return t('integration_openproject', 'Please make sure to rename the user or completely delete the previous one or deactivate the automatically managed folders.')
-			case 2 :
-				return t('integration_openproject', 'Please make sure to rename the group or completely delete the previous one or deactivate the automatically managed folders.')
-			case 3 :
+			case 'The group folder name OpenProject integration already exists' :
 				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
-			case 4 :
+			case 'The group folder app is not installed' :
 				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
-			default:
-				return ''
-			}
-		},
-		groupFolderSetUpErrorMessage() {
-			switch (this.groupFolderSetUpError) {
-			case 1 :
-				return t('integration_openproject', 'The user name "OpenProject" already exists')
-			case 2 :
-				return t('integration_openproject', 'The group name "OpenProject" already exists')
-			case 3 :
-				return t('integration_openproject', 'The group folder name "OpenProject" integration already exists')
-			case 4 :
-				return t('integration_openproject', 'The group folder app is not installed')
 			default:
 				return ''
 			}
@@ -630,12 +612,13 @@ export default {
 						this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 						this.formMode.opSystemPassword = F_MODES.EDIT
 					}
+					this.groupFolderSetUpError = null
 				}
 				this.state.managed_folder_state = true
 				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 				this.isFormCompleted.managedGroupFolderSetUp = true
 				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-				// this.formMode.opSystemPassword = F_MODES.EDIT
+				this.groupFolderSetUpError = null
 
 			} else {
 				// we will check for the error makgin the setup_group_folder === true
@@ -645,7 +628,10 @@ export default {
 					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 					this.isFormCompleted.managedGroupFolderSetUp = true
 					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-					this.formMode.opSystemPassword = F_MODES.EDIT
+					if((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
+						this.formMode.opSystemPassword = F_MODES.EDIT
+					}
+					this.groupFolderSetUpError = null
 				}
 			}
 			this.loadingSetUpGroupFolder = false
@@ -918,7 +904,8 @@ export default {
 				const isGroupFolderError = this.isGroupFolderError(error)
 				if (isGroupFolderError !== null) {
 					// save the error message
-					this.groupFolderSetUpError = isGroupFolderError
+					console.log("This is error message " + error.response.data.error)
+					this.groupFolderSetUpError = error.response.data.error
 				} else {
 					console.error(error)
 				}
@@ -939,14 +926,10 @@ export default {
 			// TODO ask
 			// We have check the error message regarding the groupfolder setup and ignore other error
 			switch (errorMessage) {
-			case 'user "OpenProject" already exists' :
+			case 'The group folder app is not installed' :
 				return 1
-			case 'group "OpenProject" already exists' :
+			case 'The group folder name OpenProject integration already exists' :
 				return 2
-			case 'a groupfolder with the name "OpenProject" already exists' :
-				return 3
-			case 'groupfolders app is not enabled' :
-				return 4
 			default :
 				break
 			}

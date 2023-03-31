@@ -198,14 +198,24 @@ class ConfigController extends Controller {
 		$openProjectGroupFolderFileId = null;
 		$app_password = null;
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
-			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUpForUI();
 			if ($isSystemReady) {
-				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-				$group->addUser($user);
-				$this->subAdminManager->createSubAdmin($user, $group);
-				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				if(!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+					$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+					$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+				}
+				if(!$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+					$this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+				}
+				if(!$this->openprojectAPIService->isUserPartOfAndAdminOfGroup()) {
+					$group = $this->groupManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+					$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+					$group->addUser($user);
+					$this->subAdminManager->createSubAdmin($user, $group);
+				}
+				if(!$this->openprojectAPIService->isOpenProjectGroupfolderCreated()) {
+					$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				}
 				// when all the thing is ready then create the app password for the openproject user
 				if (!$this->openprojectAPIService->hasAppPasswordAlready()) {
 					$app_password = $this->openprojectAPIService->generateAppPasswordTokenForUser();
