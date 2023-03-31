@@ -15,3 +15,7 @@ vendor/
 tests/pact/
 docker-compose.override.yml
 .env
+
+# VSCode
+.vscode
+*.code-workspace
