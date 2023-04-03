@@ -243,7 +243,9 @@ class FilesController extends OCSController {
 				'owner_id' => $owner->getUID(),
 				'trashed' => $trashed,
 				'modifier_name' => $modifierName,
-				'modifier_id' => $modifierId
+				'modifier_id' => $modifierId,
+				'dav_permissions' => DavUtil::_getDavPermissions_($file),
+				'path' => $internalPath
 			];
 		}
 
