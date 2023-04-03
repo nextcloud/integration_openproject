@@ -35,6 +35,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
 use Throwable;
+use OCP\Files\DavUtil;
 
 class FilesController extends OCSController {
 
@@ -244,7 +245,7 @@ class FilesController extends OCSController {
 				'trashed' => $trashed,
 				'modifier_name' => $modifierName,
 				'modifier_id' => $modifierId,
-				'dav_permissions' => DavUtil::_getDavPermissions_($file),
+				'dav_permissions' => DavUtil::getDavPermissions($file),
 				'path' => $internalPath
 			];
 		}
