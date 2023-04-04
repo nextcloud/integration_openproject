@@ -31,10 +31,10 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@2.23.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
@@ -52,14 +52,14 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.2
+        uses: skjnldsv/read-package-engines-version-actions@v2.1
         id: versions
         with:
           fallbackNode: '^14'
           fallbackNpm: '^7'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
           cache: 'npm'
@@ -228,26 +228,26 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: integration_openproject
 
       - name: Checkout activity app
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: nextcloud/activity
           path: activity
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Checkout groupfolders app
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: nextcloud/groupfolders
           path: groupfolders
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@2.23.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
