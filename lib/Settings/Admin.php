@@ -27,7 +27,15 @@ class Admin implements ISettings {
 	 */
 	private $oauthService;
 
+	/**
+	 * @var OpenProjectAPIService
+	 */
 	private $openProjectAPIService;
+
+	/**
+	 * @var IProvider
+	 */
+	private $tokenProvider;
 
 	public function __construct(IConfig $config,
 								OauthService $oauthService,

@@ -272,9 +272,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if($runningFullReset && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) {
-			$this->openprojectAPIService->deleteAppPassword();
-		} else if($values['managed_folder_state'] === false && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) {
+		if(($runningFullReset && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) || ($values['managed_folder_state'] !== true && $values['reset_app_password'] === null)) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
 
@@ -623,7 +621,7 @@ class ConfigController extends Controller {
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
 			"reset_app_password" => null,
-			"managed_folder_state" => false,
+			"managed_folder_state" => null,
 			"default_managed_folders" => null
 		];
 		try {
