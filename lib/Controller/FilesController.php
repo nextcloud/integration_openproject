@@ -216,7 +216,7 @@ class FilesController extends OCSController {
 				);
 				$internalPath = $file->getName();
 			}
-
+			$path = $file->getInternalPath();
 			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
 				$modifierId = $modifier->getUID();
@@ -246,7 +246,7 @@ class FilesController extends OCSController {
 				'modifier_name' => $modifierName,
 				'modifier_id' => $modifierId,
 				'dav_permissions' => DavUtil::getDavPermissions($file),
-				'path' => $internalPath
+				'path' => $path,
 			];
 		}
 
