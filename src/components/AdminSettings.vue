@@ -173,9 +173,9 @@
 			/>
 			<div v-if="state.default_managed_folders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
-					<CheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
+					<NcCheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
 						<b>Automatically managed folders</b>
-					</CheckboxRadioSwitch>
+					</NcCheckboxRadioSwitch>
 					<div v-if="isGroupfolderSetupAutomaticallyReady === false" class="complete-without-groupfolders">
 						<p class="managed-folder-description">
 							{{
@@ -183,7 +183,7 @@
 							}}
 						</p>
 						<div class="form-actions">
-							<Button type="primary"
+							<NcButton type="primary"
 								data-test-id="complete-without-projectfolders-form-btn"
 								@click="completeIntegrationWithoutGroupFolderSetUp">
 								<template #icon>
@@ -192,7 +192,7 @@
 								{{
 									t('integration_openproject', iskeepCurrentCompleteWithoutIntegration)
 								}}
-							</Button>
+							</NcButton>
 						</div>
 					</div>
 					<div v-else>
@@ -213,7 +213,7 @@
 						</p>
 						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="this.groupFolderSetUpErrorMessageDescription" :group-folder-set-up-error="this.groupFolderSetUpError" />
 						<div class="form-actions">
-							<Button v-if="groupFolderSetUpError === null"
+							<NcButton v-if="groupFolderSetUpError === null"
 								type="primary"
 								data-test-id="complete-with-projectfolders-form-btn"
 								@click="checkForErrorOrSetUpOpenProjectGroupFolders">
@@ -222,8 +222,8 @@
 									<CheckBoldIcon v-else :size="20" />
 								</template>
 								{{ t('integration_openproject', iskeepCurrentCompleteIntegration) }}
-							</Button>
-							<Button v-else-if="groupFolderSetUpError"
+							</NcButton>
+							<NcButton v-else-if="groupFolderSetUpError"
 								type="primary"
 								data-test-id="complete-with-projectfolders-form-btn"
 								@click="checkForErrorOrSetUpOpenProjectGroupFolders">
@@ -232,7 +232,7 @@
 									<RestoreIcon v-else :size="20" />
 								</template>
 								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
-							</Button>
+							</NcButton>
 						</div>
 					</div>
 				</div>
@@ -245,14 +245,14 @@
 						group-folder-set-up-error-message-description="Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders."
 						group-folder-set-up-error="The group folder app is not installed" />
 					<div class="form-actions">
-						<Button
+						<NcButton
 							data-test-id="reset-server-host-btn"
 							@click="setManagedGroupFolderSetUpToEditMode">
 							<template #icon>
 								<PencilIcon :size="20" />
 							</template>
 							{{ t('integration_openproject', 'Edit managed project folders') }}
-						</Button>
+						</NcButton>
 					</div>
 				</div>
 			</div>
@@ -279,7 +279,7 @@
 					with-inspection
 					value="" />
 				<div class="form-actions">
-					<Button v-if="isOpSystemPasswordFormInEdit"
+					<NcButton v-if="isOpSystemPasswordFormInEdit"
 						type="primary"
 						:disabled="!opSystemPassword"
 						data-test-id="submit-op-system-password-form-btn"
@@ -288,15 +288,15 @@
 							<CheckBoldIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Done, complete setup') }}
-					</Button>
-					<Button v-else
+					</NcButton>
+					<NcButton v-else
 						data-test-id="reset-op-system-password"
 						@click="resetOPSystemPassword">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Replace application password') }}
-					</Button>
+					</NcButton>
 				</div>
 			</div>
 		</div>
@@ -346,8 +346,7 @@ import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch'
 import ManagedFolderError from "./admin/ManagedFolderError.vue";
 export default {
 	name: 'AdminSettings',
@@ -363,8 +362,7 @@ export default {
 		AutoRenewIcon,
 		RestoreIcon,
 		CheckBox,
-		CheckboxRadioSwitch,
-		AlertCircleOutline,
+		NcCheckboxRadioSwitch,
 		ManagedFolderError
 	},
 	data() {
