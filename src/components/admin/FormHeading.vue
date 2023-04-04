@@ -32,7 +32,7 @@ export default {
 	components: {
 		CheckBoldIcon,
 		MinusThickIcon,
-		ExclamationThickIcon
+		ExclamationThickIcon,
 	},
 	props: {
 		index: {

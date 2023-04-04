@@ -166,11 +166,10 @@
 				:is-managed-project-heading="true"
 				:title="t('integration_openproject', 'Managed project folders (recommended)')"
 				:is-managed-folder-in-active="(isManagedGroupFolderSetUpFormInEdit) ? false : isManagedFolderActive === false && state.managed_folder_state === false"
-				:is-group-folder-setup-correct="this.isGroupFolderStatusCorrect"
-				:is-complete="isManagedGroupFolderSetUpFormInEdit ? false : this.state.app_password_set ? true : oPSystemPassword !== null"
+				:is-group-folder-setup-correct="isGroupFolderStatusCorrect"
+				:is-complete="isManagedGroupFolderSetUpFormInEdit ? false : state.app_password_set ? true : oPSystemPassword !== null"
 				:is-disabled="isManagedGroupFolderSetUpInDisableMode"
-				:show-managed-folder-main-error="this.state.app_password_set"
-			/>
+				:show-managed-folder-main-error="state.app_password_set" />
 			<div v-if="state.default_managed_folders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
 					<NcCheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
@@ -211,7 +210,7 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
 							}}
 						</p>
-						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="this.groupFolderSetUpErrorMessageDescription" :group-folder-set-up-error="this.groupFolderSetUpError" />
+						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription" :group-folder-set-up-error="groupFolderSetUpError" />
 						<div class="form-actions">
 							<NcButton v-if="groupFolderSetUpError === null"
 								type="primary"
@@ -241,7 +240,7 @@
 						<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
 					<ManagedFolderError
-						v-if="state.app_password_set && !this.isGroupFolderSetupCorrect"
+						v-if="state.app_password_set && !isGroupFolderSetupCorrect"
 						group-folder-set-up-error-message-description="Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders."
 						group-folder-set-up-error="The group folder app is not installed" />
 					<div class="form-actions">
@@ -346,8 +345,8 @@ import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch'
-import ManagedFolderError from "./admin/ManagedFolderError.vue";
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import ManagedFolderError from './admin/ManagedFolderError.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -363,7 +362,7 @@ export default {
 		RestoreIcon,
 		CheckBox,
 		NcCheckboxRadioSwitch,
-		ManagedFolderError
+		ManagedFolderError,
 	},
 	data() {
 		return {
@@ -397,7 +396,7 @@ export default {
 			iskeepCurrentCompleteWithoutIntegration: 'Keep Current Change',
 			iskeepCurrentCompleteIntegration: 'Setup OpenProject user, group and folder',
 			groupFolderStatus: null,
-			isGroupFolderSetupCorrect: null
+			isGroupFolderSetupCorrect: null,
 		}
 	},
 	computed: {
@@ -464,11 +463,12 @@ export default {
 			return this.formMode.opSystemPassword === F_MODES.DISABLE
 		},
 		isGroupFolderStatusCorrect() {
-			if(this.state.app_password_set === true) {
-				if(this.isGroupFolderSetupCorrect === false) {
+			if (this.state.app_password_set === true && this.formMode.managedGroupFolderSetUp !== F_MODES.EDIT) {
+				if (this.isGroupFolderSetupCorrect === false) {
 					return false
 				}
 			}
+			return true
 		},
 		adminFileStorageHref() {
 			let hostPart = ''
@@ -524,7 +524,6 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				console.log(this.state)
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
@@ -551,6 +550,10 @@ export default {
 					this.formMode.opSystemPassword = F_MODES.VIEW
 					this.isFormCompleted.opSystemPassword = true
 					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+				} else {
+					// this is the case when user is deleted and app password is gone but the state.managed_folder_state in the database is still true
+					// we make it false untill user make it true while setting up the managed group folders
+					this.state.managed_folder_state = false
 				}
 
 				// condition for active and inactive for managed project folders
@@ -580,14 +583,14 @@ export default {
 		},
 		async setManagedGroupFolderSetupToViewMode() {
 			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
-			if(this.groupFolderStatus) {
-				//TODO remove this comment and make it short
+			if (this.groupFolderStatus) {
+				// TODO remove this comment and make it short
 				// it means all the thing is already set up so we donot need to do anything
 				// but we can have a case where app password is not there and we need to reset the app password incase we shift from inactive to active managed folder
-				if(!this.state.app_password_set) {
+				if (!this.state.app_password_set) {
 					// we will get the app password this api request
 					const success = await this.saveOPOptions()
-					if(success) {
+					if (success) {
 						this.formMode.opSystemPassword = F_MODES.EDIT
 						this.groupFolderSetUpError = null
 					}
@@ -607,7 +610,7 @@ export default {
 					this.isFormCompleted.managedGroupFolderSetUp = true
 					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					this.isGroupFolderSetupCorrect = true
-					if((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
+					if ((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
 						this.formMode.opSystemPassword = F_MODES.EDIT
 					}
 					this.groupFolderSetUpError = null
@@ -868,7 +871,7 @@ export default {
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
 				return false
 			}
-			if(this.groupFolderStatus === true) {
+			if (this.groupFolderStatus === true) {
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
@@ -918,7 +921,6 @@ export default {
 				const isGroupFolderError = this.isGroupFolderError(error)
 				if (isGroupFolderError !== null) {
 					// save the error message
-					console.log("This is error message " + error.response.data.error)
 					this.groupFolderSetUpError = error.response.data.error
 				} else {
 					console.error(error)
@@ -933,7 +935,7 @@ export default {
 		async checkIfGroupFolderIsAlreadyReadyForSetup() {
 			const url = generateUrl('/apps/integration_openproject/group-folder-status')
 			const response = await axios.get(url)
-			return response.data.result;
+			return response.data.result
 		},
 		isGroupFolderError(errorResponse) {
 			const errorMessage = errorResponse.response.data.error

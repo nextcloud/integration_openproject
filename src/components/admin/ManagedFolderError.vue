@@ -2,19 +2,18 @@
 	<div class="group-folder-error">
 		<div class="group-folder-error-alert">
 			<AlertCircleOutline fill-color="#FF0000" :size="26" />
-			<b class="group-folder-error-alert-message">{{ this.groupFolderSetUpError }}</b>
+			<b class="group-folder-error-alert-message">{{ groupFolderSetUpError }}</b>
 		</div>
-		<p>{{ this.groupFolderSetUpErrorMessageDescription }}</p>
+		<p>{{ groupFolderSetUpErrorMessageDescription }}</p>
 	</div>
 </template>
 <script>
 
-import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
-import AlertCircleOutline from "vue-material-design-icons/AlertCircleOutline.vue";
+import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 export default {
 	name: 'ManagedFolderError',
 	components: {
-		AlertCircleOutline
+		AlertCircleOutline,
 	},
 	props: {
 		groupFolderSetUpError: {
