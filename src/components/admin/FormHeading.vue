@@ -1,17 +1,23 @@
 <template>
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
-		<div v-if="isComplete" class="complete">
-			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
-		</div>
-		<div v-else-if="isManagedProjectHeading && isManagedFolderInActive" class="managed-folder-inactive">
+		<div v-if="isManagedProjectHeading && isManagedFolderInActive" class="managed-folder-inactive">
 			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
+		</div>
+		<div v-else-if="!isGroupFolderSetupCorrect" class="group-folder-setup-status">
+			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
+		</div>
+		<div v-else-if="isComplete" class="complete">
+			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else class="index">
 			{{ index }}
 		</div>
 		<div class="title"
-			:class="{'green-text': isComplete}">
+			:class="{
+				'green-text': isComplete,
+				'red-text': !isGroupFolderSetupCorrect
+			}">
 			{{ title }}
 		</div>
 	</div>
@@ -20,11 +26,13 @@
 
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import MinusThickIcon from 'vue-material-design-icons/MinusThick.vue'
+import ExclamationThickIcon from 'vue-material-design-icons/ExclamationThick.vue'
 export default {
 	name: 'FormHeading',
 	components: {
 		CheckBoldIcon,
 		MinusThickIcon,
+		ExclamationThickIcon
 	},
 	props: {
 		index: {
@@ -51,6 +59,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isGroupFolderSetupCorrect: {
+			type: Boolean,
+			default: true,
+		},
 	},
 }
 </script>
@@ -65,11 +77,25 @@ export default {
 		color: var(--color-success);
 	}
 
+	.red-text {
+		color: var(--color-error);
+	}
+
 	.complete {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
 		background-color: var(--color-success);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.group-folder-setup-status {
+		height: 16px;
+		width: 16px;
+		border-radius: 50%;
+		background-color: var(--color-error);
 		display: flex;
 		justify-content: center;
 		align-items: center;

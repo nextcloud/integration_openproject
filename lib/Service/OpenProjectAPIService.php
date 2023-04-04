@@ -916,33 +916,17 @@ class OpenProjectAPIService {
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The user '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The group '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
-			throw new \Exception('groupfolders app is not enabled');
-		} elseif ($this->isOpenProjectGroupfolderCreated()) {
-			throw new OpenprojectGroupfolderSetupConflictException(
-					'a groupfolder with the name "' .
-					Application::OPEN_PROJECT_ENTITIES_NAME .
-					'" already exists'
-				);
-		}
-		return true;
-	}
-
-	/**
-	 * @throws OpenprojectGroupfolderSetupConflictException
-	 */
-	public function isSystemReadyForGroupFolderSetUpForUI(): bool {
-		if (!$this->isGroupfoldersAppEnabled()) {
 			throw new \Exception('The group folder app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
 			throw new OpenprojectGroupfolderSetupConflictException(
-				'The group folder name ' .
-				Application::OPEN_PROJECT_ENTITIES_NAME .
-				' integration already exists'
-			);
+					'The group folder name ' .
+					Application::OPEN_PROJECT_ENTITIES_NAME .
+					' integration already exists'
+				);
 		}
 		return true;
 	}
