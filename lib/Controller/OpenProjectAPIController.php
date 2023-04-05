@@ -525,4 +525,32 @@ class OpenProjectAPIController extends Controller {
 		$base64url = strtr($base64, '+/', '-_');
 		return ($base64url);
 	}
+
+	/**
+	 * check if there is a OpenProject behind a certain URL
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 *
+	 *
+	 * @param string $url
+	 *
+	 * @return DataResponse
+	 */
+	public function getGroupFolderSetUpStatus(): DataResponse {
+		$isGroupFolderSetUpCorrect = $this->openprojectAPIService->isGroupFolderSetup();
+		// all the thing is ok then we return true and complete the integration
+		if($isGroupFolderSetUpCorrect) {
+			return new DataResponse(
+				[
+					'result' => true
+				]
+			);
+		}
+		return new DataResponse(
+			[
+				'result' => false
+			]
+		);
+	}
 }
