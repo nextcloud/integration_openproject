@@ -165,9 +165,9 @@
 			<FormHeading index="4"
 				:is-managed-project-heading="true"
 				:title="t('integration_openproject', 'Managed project folders (recommended)')"
-				:is-managed-folder-in-active="(isManagedGroupFolderSetUpFormInEdit) ? false : isManagedFolderActive === false && state.managed_folder_state === false"
+				:is-managed-folder-in-active="isManagedFolderInActive"
 				:is-group-folder-setup-correct="isGroupFolderStatusCorrect"
-				:is-complete="isManagedGroupFolderSetUpFormInEdit ? false : state.app_password_set ? true : oPSystemPassword !== null"
+				:is-complete="isManagedProjectFolderCompleted"
 				:is-disabled="isManagedGroupFolderSetUpInDisableMode"
 				:show-managed-folder-main-error="state.app_password_set" />
 			<div v-if="state.default_managed_folders">
@@ -237,7 +237,7 @@
 				</div>
 				<div v-else class="managed-folder-status">
 					<div class="managed-folder-status-value">
-						<b>Automatic managed folders:</b> {{ state.app_password_set ? "Active" : oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
+						<b>Automatic managed folders:</b> {{ state.app_password_set || oPSystemPassword !== null ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
 					<ManagedFolderError
 						v-if="state.app_password_set && !isGroupFolderSetupCorrect"
@@ -470,6 +470,12 @@ export default {
 			}
 			return true
 		},
+		isManagedProjectFolderCompleted() {
+			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.state.app_password_set ? true : this.oPSystemPassword !== null
+		},
+		isManagedFolderInActive() {
+			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.isManagedFolderActive === false && this.state.managed_folder_state === false
+		},
 		adminFileStorageHref() {
 			let hostPart = ''
 			const urlPart = '%sadmin/settings/storages'
@@ -512,6 +518,7 @@ export default {
 				 && this.isOPOAuthFormComplete
 				 && this.isNcOAuthFormComplete
 				&& this.isManagedGroupFolderSetUpComplete
+				&& !this.isOpSystemPasswordFormInEdit
 			)
 		},
 		isResetButtonDisabled() {
@@ -576,10 +583,25 @@ export default {
 			this.isOpenProjectInstanceValid = null
 		},
 		setManagedGroupFolderSetUpToEditMode() {
-			this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
-			this.isFormCompleted.managedGroupFolderSetUp = false
-			this.isGroupfolderSetupAutomaticallyReady = this.state.managed_folder_state
-			this.isManagedFolderActive = false
+			OC.dialogs.confirmDestructive(
+				t('integration_openproject', 'Editing the managed folders will allow you to automatically create and manage the project folders and also allow you to deactivete the whole managed project folder setup.'),
+				t('integration_openproject', 'Edit managed project folders'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('integration_openproject', 'Yes, Edit'),
+					confirmClasses: 'error',
+					cancel: t('integration_openproject', 'Cancel'),
+				},
+				async (result) => {
+					if (result) {
+						this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
+						this.isFormCompleted.managedGroupFolderSetUp = false
+						this.isGroupfolderSetupAutomaticallyReady = this.state.managed_folder_state
+						this.isManagedFolderActive = false
+					}
+				},
+				true
+			)
 		},
 		async setManagedGroupFolderSetupToViewMode() {
 			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
@@ -602,7 +624,7 @@ export default {
 				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 
 			} else {
-				// we will check for the error makgin the setup_group_folder === true
+				// we will check for the error making the setup_group_folder === true
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.state.managed_folder_state = true
@@ -905,11 +927,9 @@ export default {
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
 				if (response.data?.openproject_user_app_password) {
-					this.oPSystemPassword = response.data?.openproject_user_app_password
 					this.state.app_password_set = response.data?.openproject_user_app_password
-				} else {
-					this.oPSystemPassword = response.data?.openproject_user_app_password
 				}
+				this.oPSystemPassword = response.data?.openproject_user_app_password
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
@@ -953,7 +973,6 @@ export default {
 			default :
 				break
 			}
-			// console.error(errorResponse)
 			return null
 		},
 		notifyAboutOPOAuthTokenRevoke() {
