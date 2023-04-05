@@ -261,7 +261,7 @@ class FilesController extends OCSController {
 			'statuscode' => 404,
 		];
 	}
-
+	
 	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
 		if (class_exists('\OCA\Activity\Data') &&
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&

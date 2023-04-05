@@ -124,7 +124,9 @@ class FilesControllerTest extends TestCase {
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
 				'trashed' => false,
 				'modifier_name' => null,
-				'modifier_id' => null
+				'modifier_id' => null,
+				'dav_permissions' => 'RGDNVCK',
+				'path' => 'files/test'
 			],
 			$result->getData()
 		);
@@ -148,7 +150,7 @@ class FilesControllerTest extends TestCase {
 
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759)
+			$this->getNodeMock('text/plain', 759, 'file', 'files_trashbin/files/welcome.txt.d1648724302')
 		);
 
 		$mountCacheMock = $this->getSimpleMountCacheMock(
@@ -234,7 +236,7 @@ class FilesControllerTest extends TestCase {
 	public function testGetFileInfoFileExistingButCannotGetNameInContextOfOwner(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')->willReturn(
-			[$this->getNodeMock('image/png', 586)]
+			[$this->getNodeMock('image/png', 586, 'file', 'files/name-in-the-context-of-requester')]
 		);
 
 		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
@@ -258,7 +260,7 @@ class FilesControllerTest extends TestCase {
 
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759)
+			$this->getNodeMock('text/plain', 759, 'file', 'files_trashbin/files/welcome.txt.d1648724302')
 		);
 
 		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
@@ -290,7 +292,7 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [759], [365], [956])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', 'files/logo.png')
 				],
 				[],
 				[]
@@ -300,7 +302,7 @@ class FilesControllerTest extends TestCase {
 		$trashManagerMock->method('getTrashNodeById')
 			->withConsecutive([$this->anything(), 759], [$this->anything(), 365], [$this->anything(), 956])
 			->willReturnOnConsecutiveCalls(
-			$this->getNodeMock('text/plain', 759),
+			$this->getNodeMock('text/plain', 759, 'file', 'files_trashbin/files/welcome.txt.d1648724302'),
 				null,
 				null
 		);
@@ -356,7 +358,7 @@ class FilesControllerTest extends TestCase {
 		$folderMock->method('getById')
 			->willReturn(
 				[
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', 'files/logo.png')
 				]
 			);
 
@@ -381,7 +383,7 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [256], [365])
 			->willReturnOnConsecutiveCalls(
 					[
-						$this->getNodeMock('image/png')
+						$this->getNodeMock('image/png', 123, 'file', 'files/logo.png')
 					],
 					[],
 					[]
@@ -425,10 +427,10 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [365])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png', 123)
+					$this->getNodeMock('image/png', 123, 'file', 'files/logo.png')
 				],
 				[
-					$this->getNodeMock('image/png', 365),
+					$this->getNodeMock('image/png', 365, 'file', 'files/inFolder/image.png'),
 				]
 			);
 		$cachedMountFileInfoMock = $this->getMockBuilder(
@@ -471,12 +473,12 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [365])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png'),
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', 'files/logo.png'),
+					$this->getNodeMock('image/png', 123, 'file', 'files/logo.png')
 				],
 				[
-					$this->getNodeMock('image/png', 365),
-					$this->getNodeMock('image/png', 365)
+					$this->getNodeMock('image/png', 365, 'file', 'files/inFolder/image.png'),
+					$this->getNodeMock('image/png', 365, 'file', 'files/inFolder/image.png')
 				]
 			);
 
@@ -521,13 +523,17 @@ class FilesControllerTest extends TestCase {
 				[
 					$this->getNodeMock(
 						'httpd/unix-directory',
-						2
+						2,
+						'dir',
+						'files/myFolder/a-sub-folder'
 					)
 				],
 				[
 					$this->getNodeMock(
 						'httpd/unix-directory',
-						3
+						3,
+						'dir',
+						'files'
 					)
 				]
 			);
@@ -568,7 +574,9 @@ class FilesControllerTest extends TestCase {
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 					'trashed' => false,
 					'modifier_name' => null,
-					'modifier_id' => null
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files/myFolder/a-sub-folder'
 				],
 				3 => [
 					'status' => 'OK',
@@ -583,7 +591,9 @@ class FilesControllerTest extends TestCase {
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 					'trashed' => false,
 					'modifier_name' => null,
-					'modifier_id' => null
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files'
 				]
 			],
 			$result->getData()
@@ -635,7 +645,9 @@ class FilesControllerTest extends TestCase {
 		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
 		"trashed" => true,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files_trashbin/files/welcome.txt.d1648724302'
 	];
 
 	/**
@@ -654,7 +666,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/logo.png'
 	];
 
 	/**
@@ -673,7 +687,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/inFolder/image.png'
 	];
 
 	/**
@@ -692,7 +708,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/name-in-the-context-of-requester'
 	];
 
 	/**
@@ -753,7 +771,18 @@ class FilesControllerTest extends TestCase {
 		return $controller;
 	}
 
-	private function getNodeMock(string $mimeType, int $id = 123
+	private function getNodeMock(
+		string $mimeType,
+		int $id = 123,
+		string $fileType = 'dir',
+		string $internalPath = 'files/test',
+		bool $isShared = false,
+		bool $isShareable = true,
+		bool $isMounted = false,
+		bool $isReadable = true,
+		bool $isDeletable = true,
+		bool $isUpdateable = true,
+		bool $isCreatable = true
 	): Node {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
@@ -767,6 +796,16 @@ class FilesControllerTest extends TestCase {
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
 		$fileMock->method('getName')->willReturn('name-in-the-context-of-requester');
+		$fileMock->method('getInternalPath')->willReturn($internalPath);
+		$fileMock->method('getType')->willReturn($fileType);
+		$fileMock->method('isShared')->willReturn($isShared);
+		$fileMock->method('isShareable')->willReturn($isShareable);
+		$fileMock->method('isMounted')->willReturn($isMounted);
+		$fileMock->method('isReadable')->willReturn($isReadable);
+		$fileMock->method('isDeletable')->willReturn($isDeletable);
+		$fileMock->method('isUpdateable')->willReturn($isUpdateable);
+		$fileMock->method('isCreatable')->willReturn($isCreatable);
+
 		return $fileMock;
 	}
 
