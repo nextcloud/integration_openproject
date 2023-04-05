@@ -42,7 +42,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "dir::$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
         uses: actions/cache@v3
@@ -52,7 +52,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v2.1
+        uses: skjnldsv/read-package-engines-version-actions@v2
         id: versions
         with:
           fallbackNode: '^14'
@@ -255,7 +255,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "dir::$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
         uses: actions/cache@v3
