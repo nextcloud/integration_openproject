@@ -216,7 +216,6 @@ class FilesController extends OCSController {
 				);
 				$internalPath = $file->getName();
 			}
-			$path = $file->getInternalPath();
 			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
 				$modifierId = $modifier->getUID();
@@ -230,7 +229,8 @@ class FilesController extends OCSController {
 			} else {
 				$mimeType = $file->getMimeType();
 			}
-
+			$fullpath = $file->getpath();
+			$path = explode('/', $fullpath, 3);
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -246,7 +246,7 @@ class FilesController extends OCSController {
 				'modifier_name' => $modifierName,
 				'modifier_id' => $modifierId,
 				'dav_permissions' => DavUtil::getDavPermissions($file),
-				'path' => $path,
+				'path' => $path[2]
 			];
 		}
 
@@ -261,7 +261,7 @@ class FilesController extends OCSController {
 			'statuscode' => 404,
 		];
 	}
-	
+
 	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
 		if (class_exists('\OCA\Activity\Data') &&
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&

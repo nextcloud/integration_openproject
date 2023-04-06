@@ -22,7 +22,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -37,7 +39,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
     }
    """
@@ -65,7 +69,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -80,7 +86,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
+          "path": {"type": "string", "pattern":"^files\/subfolder\/file.txt$"}
       }
     }
    """
@@ -108,7 +116,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -123,7 +133,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [true]}
+          "trashed": {"type": "boolean", "enum": [true]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
+          "path": {"type": "string", "pattern":"^files_trashbin\/files\/file.txt.d\\d{10}$"}
       }
     }
    """
@@ -152,7 +164,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -167,7 +181,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [true]}
+          "trashed": {"type": "boolean", "enum": [true]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files_trashbin\/files\/subfolder.d\\d{10}\/file.txt"}
       }
     }
    """
@@ -198,7 +214,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name",
           "modifier_id",
           "modifier_name",
-          "trashed"
+          "trashed",
+          "dav_permissions",
+          "path"
         ]
       },
       "properties": {
@@ -232,7 +250,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name",
           "modifier_id",
           "modifier_name",
-          "trashed"
+          "trashed",
+          "dav_permissions",
+          "path"
         ]
       },
       "properties": {
@@ -261,7 +281,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -271,7 +293,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+          "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
     }
    """
@@ -296,7 +320,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -306,7 +332,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
     }
    """
@@ -332,7 +360,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -342,7 +372,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
     }
    """
@@ -367,7 +399,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -377,7 +411,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+          "path": {"type": "string", "pattern":"^files\/renamed.txt$"}
       }
     }
    """
@@ -403,7 +439,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -413,7 +451,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/to-share\/renamed.txt$"}
       }
     }
    """
@@ -438,7 +478,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -447,7 +489,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Brian$"},
           "owner_name": {"type": "string", "pattern": "^Brian$"},
           "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+          "modifier_name": {"type": "null"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/moved-out.txt$"}
       }
     }
    """
@@ -473,7 +517,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name",
           "modifier_id",
           "modifier_name",
-          "trashed"
+          "trashed",
+          "dav_permissions",
+          "path"
         ]
       },
       "properties": {
@@ -503,7 +549,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -515,7 +563,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice Hansen"},
           "modifier_id": {"type": "string", "pattern": "^Alice$"},
-          "modifier_name": {"type": "string", "pattern": "^Alice Hansen"}
+          "modifier_name": {"type": "string", "pattern": "^Alice Hansen"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
@@ -545,7 +595,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -557,7 +609,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice"},
           "modifier_id": {"type": "string", "pattern": "^<modifier>"},
-          "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"}
+          "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
@@ -602,7 +656,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -614,7 +670,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+          "modifier_name": {"type": "string", "pattern": "^Dipak"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
@@ -648,7 +706,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -660,7 +720,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+          "modifier_name": {"type": "string", "pattern": "^Dipak"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
@@ -691,7 +753,9 @@ Feature: retrieve file information of a single file, using the file ID
         "size",
         "name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -699,7 +763,9 @@ Feature: retrieve file information of a single file, using the file ID
           "size" : {"type" : "integer", "enum": [12]},
           "name": {"type": "string", "pattern": "^Alices-file.txt$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+          "modifier_name": {"type": "string", "pattern": "^Dipak"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/Alices-file.txt$"}
       }
     }
    """
@@ -733,7 +799,9 @@ Feature: retrieve file information of a single file, using the file ID
         "size",
         "name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -741,7 +809,9 @@ Feature: retrieve file information of a single file, using the file ID
           "size" : {"type" : "integer", "enum": [12]},
           "name": {"type": "string", "pattern": "^file.txt$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+          "modifier_name": {"type": "string", "pattern": "^Dipak"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/Alice-folder\/file.txt$"}
       }
     }
    """
@@ -766,7 +836,9 @@ Feature: retrieve file information of a single file, using the file ID
         "size",
         "name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -774,7 +846,9 @@ Feature: retrieve file information of a single file, using the file ID
           "size" : {"type" : "integer", "enum": [12]},
           "name": {"type": "string", "pattern": "^file.txt$"},
           "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+          "modifier_name": {"type": "null"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
@@ -807,7 +881,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -822,7 +898,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/folder$"}
       }
     }
    """
@@ -853,7 +931,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_name",
         "modifier_id",
         "modifier_name",
-        "trashed"
+        "trashed",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -868,7 +948,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+          "trashed": {"type": "boolean", "enum": [false]},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/folder\/file.txt$"}
       }
     }
    """
@@ -895,7 +977,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -905,7 +989,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
           "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+          "modifier_name": {"type": "null"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/folder\/file.txt$"}
       }
     }
    """
@@ -954,7 +1040,9 @@ Feature: retrieve file information of a single file, using the file ID
         "owner_id",
         "owner_name",
         "modifier_id",
-        "modifier_name"
+        "modifier_name",
+        "dav_permissions",
+        "path"
       ],
       "properties": {
           "status": {"type": "string", "pattern": "^OK$"},
@@ -964,7 +1052,9 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_id": {"type": "string", "pattern": "^Alice$"},
           "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
           "modifier_id": {"type": "string", "pattern": "^Brian"},
-          "modifier_name": {"type": "string", "pattern": "^Brian$"}
+          "modifier_name": {"type": "string", "pattern": "^Brian$"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "path": {"type": "string", "pattern":"^files\/file20.txt$"}
       }
     }
    """
