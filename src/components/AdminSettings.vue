@@ -532,6 +532,8 @@ export default {
 		init() {
 			if (this.state) {
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status
+				console.log(this.state)
+				console.log(this.isGroupFolderSetupCorrect)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -885,23 +887,33 @@ export default {
 		},
 		setUpGroupFolder() {
 			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
+				console.log("hit 1")
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
+				console.log("hit 2")
+
 				return true
 			}
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
+				console.log("hit 3")
 				return false
+			}
+
+			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+				console.log("hit 5")
+				return true
+			}
+
+			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+				console.log("hit 6")
+				return true
 			}
 			if (this.groupFolderStatus === true) {
+				console.log("hit 4")
 				return false
 			}
-			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
-				return true
-			}
-			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
-				return true
-			}
+			console.log("hit 7")
 			return false
 		},
 		async saveOPOptions() {
