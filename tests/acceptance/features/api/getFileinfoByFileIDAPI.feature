@@ -610,22 +610,22 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice"},
           "modifier_id": {"type": "string", "pattern": "^<modifier>"},
           "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"},
-          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^<dav_permissions>$"},
           "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
    """
     Examples:
-      | modifier | modifier-display-name | retriever | comment                                              |
-      | Alice    | Alice                 | Alice     | display-name should be username if not specially set |
-      | Brian    | Brian Peters          | Alice     |                                                      |
-      | Chandra  | Chandra Thapa         | Alice     |                                                      |
-      | Alice    | Alice                 | Brian     |                                                      |
-      | Brian    | Brian Peters          | Brian     |                                                      |
-      | Chandra  | Chandra Thapa         | Brian     |                                                      |
-      | Alice    | Alice                 | Chandra   |                                                      |
-      | Brian    | Brian Peters          | Chandra   |                                                      |
-      | Chandra  | Chandra Thapa         | Chandra   |                                                      |
+      | modifier | modifier-display-name | retriever | comment                                              | dav_permissions |
+      | Alice    | Alice                 | Alice     | display-name should be username if not specially set | RGDNVW          |
+      | Brian    | Brian Peters          | Alice     |                                                      | RGDNVW          |
+      | Chandra  | Chandra Thapa         | Alice     |                                                      | RGDNVW          |
+      | Alice    | Alice                 | Brian     |                                                      | SRGNVW          |
+      | Brian    | Brian Peters          | Brian     |                                                      | SRGNVW          |
+      | Chandra  | Chandra Thapa         | Brian     |                                                      | SRGNVW          |     
+      | Alice    | Alice                 | Chandra   |                                                      | SRGNVW          |
+      | Brian    | Brian Peters          | Chandra   |                                                      | SRGNVW          |
+      | Chandra  | Chandra Thapa         | Chandra   |                                                      | SRGNVW          |
 
 
   Scenario: get modifier in a chain of shares when there are multiple modifiers
@@ -671,7 +671,7 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
           "modifier_name": {"type": "string", "pattern": "^Dipak"},
-          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
           "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
@@ -721,7 +721,7 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
           "modifier_name": {"type": "string", "pattern": "^Dipak"},
-          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
           "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
@@ -899,7 +899,7 @@ Feature: retrieve file information of a single file, using the file ID
           "modifier_id": {"type": "null"},
           "modifier_name": {"type": "null"},
           "trashed": {"type": "boolean", "enum": [false]},
-          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVCK$"},
           "path": {"type": "string", "pattern":"^files\/folder$"}
       }
     }
