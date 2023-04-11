@@ -35,7 +35,6 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
 use Throwable;
-use OCP\Files\DavUtil;
 
 class FilesController extends OCSController {
 
@@ -233,8 +232,7 @@ class FilesController extends OCSController {
 			// full path is in format `<user-name>/files/a/b/`
 			// since we don't want to send it with username, only get the `files/a/b` and send it
 			$path = explode('/', $fullpath, 3);
-			// @phpstan-ignore-next-line
-			$davPermission = DavUtil::getDavPermissions($file);
+			$davPermission = $this->getDavPermissions($file);
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -322,5 +320,39 @@ class FilesController extends OCSController {
 			}
 		}
 		return null;
+	}
+
+	// copy of https://github.com/nextcloud/server/blob/cd44ee2053f105f60c668906ed8460605cb1da81/lib/public/Files/DavUtil.php#L58
+	// as this is only availabe from V25 and we need it in versions below that
+	private function getDavPermissions(FileInfo $info): string {
+		$p = '';
+		if ($info->isShared()) {
+			$p .= 'S';
+		}
+		if ($info->isShareable()) {
+			$p .= 'R';
+		}
+		if ($info->isMounted()) {
+			$p .= 'M';
+		}
+		if ($info->isReadable()) {
+			$p .= 'G';
+		}
+		if ($info->isDeletable()) {
+			$p .= 'D';
+		}
+		if ($info->isUpdateable()) {
+			$p .= 'NV'; // Renameable, Moveable
+		}
+		if ($info->getType() === FileInfo::TYPE_FILE) {
+			if ($info->isUpdateable()) {
+				$p .= 'W';
+			}
+		} else {
+			if ($info->isCreatable()) {
+				$p .= 'CK';
+			}
+		}
+		return $p;
 	}
 }
