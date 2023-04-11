@@ -610,21 +610,28 @@ export default {
 			if (this.groupFolderStatus) {
 				// TODO remove this comment and make it short
 				// it means all the thing is already set up so we donot need to do anything
-				// but we can have a case where app password is not there and we need to reset the app password incase we shift from inactive to active managed folder
-				if (!this.state.app_password_set) {
+				// but we can have a case where app password is not there and we need to reset the app password in case we shift from inactive to active managed folder
+				if (this.state.app_password_set === false) {
+					console.log("Yes no app password")
 					// we will get the app password this api request
 					const success = await this.saveOPOptions()
 					if (success) {
 						this.formMode.opSystemPassword = F_MODES.EDIT
-						this.groupFolderSetUpError = null
+						console.log("Direct here !!")
+						this.state.managed_folder_state = true
+						this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+						this.isFormCompleted.managedGroupFolderSetUp = true
+						this.isGroupFolderSetupCorrect = true
+						this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					}
+				} else {
+					console.log("Direct here !!")
+					this.state.managed_folder_state = true
+					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+					this.isFormCompleted.managedGroupFolderSetUp = true
+					this.isGroupFolderSetupCorrect = true
+					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 				}
-				this.state.managed_folder_state = true
-				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-				this.isFormCompleted.managedGroupFolderSetUp = true
-				this.isGroupFolderSetupCorrect = true
-				this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-
 			} else {
 				// we will check for the error making the setup_group_folder === true
 				const success = await this.saveOPOptions()
@@ -637,7 +644,6 @@ export default {
 					if ((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
 						this.formMode.opSystemPassword = F_MODES.EDIT
 					}
-					this.groupFolderSetUpError = null
 				}
 			}
 		},
@@ -676,6 +682,9 @@ export default {
 			this.loadingSetUpGroupFolder = true
 			await this.setManagedGroupFolderSetupToViewMode()
 			this.loadingSetUpGroupFolder = false
+			if(this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
+				this.groupFolderSetUpError = null
+			}
 		},
 		async saveOpenProjectHostUrl() {
 			this.loadingServerHostForm = true
@@ -965,9 +974,15 @@ export default {
 			return success
 		},
 		async checkIfGroupFolderIsAlreadyReadyForSetup() {
-			const url = generateUrl('/apps/integration_openproject/group-folder-status')
-			const response = await axios.get(url)
-			return response.data.result
+			let success = false
+			try {
+				const url = generateUrl('/apps/integration_openproject/group-folder-status')
+				await axios.get(url)
+				success = true
+			} catch (error) {
+				console.error(error)
+			}
+			return success
 		},
 		isGroupFolderError(errorResponse) {
 			const errorMessage = errorResponse.response.data.error
@@ -1050,6 +1065,10 @@ export default {
 					this.formMode.opSystemPassword = F_MODES.DISABLE
 				}
 
+			}
+			// we want to show the error only when managed group folder is in edit mode
+			if(this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
+				this.groupFolderSetUpError = null
 			}
 		},
 		resetOPSystemPassword() {
