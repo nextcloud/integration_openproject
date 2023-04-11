@@ -622,7 +622,7 @@ Feature: retrieve file information of a single file, using the file ID
       | Chandra  | Chandra Thapa         | Alice     |                                                      | RGDNVW          |
       | Alice    | Alice                 | Brian     |                                                      | SRGNVW          |
       | Brian    | Brian Peters          | Brian     |                                                      | SRGNVW          |
-      | Chandra  | Chandra Thapa         | Brian     |                                                      | SRGNVW          |     
+      | Chandra  | Chandra Thapa         | Brian     |                                                      | SRGNVW          |
       | Alice    | Alice                 | Chandra   |                                                      | SRGNVW          |
       | Brian    | Brian Peters          | Chandra   |                                                      | SRGNVW          |
       | Chandra  | Chandra Thapa         | Chandra   |                                                      | SRGNVW          |
@@ -671,7 +671,7 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
           "modifier_name": {"type": "string", "pattern": "^Dipak"},
-          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
           "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }
@@ -721,7 +721,7 @@ Feature: retrieve file information of a single file, using the file ID
           "owner_name": {"type": "string", "pattern": "^Alice$"},
           "modifier_id": {"type": "string", "pattern": "^Dipak"},
           "modifier_name": {"type": "string", "pattern": "^Dipak"},
-          "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+          "dav_permissions": {"type": "string", "pattern":"^RGNVW$"},
           "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
     }

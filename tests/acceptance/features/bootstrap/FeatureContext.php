@@ -461,9 +461,6 @@ class FeatureContext implements Context {
 	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		$responseAsJson = $responseAsJson->ocs->data;
-		// var_dump($schemaString);
-		// var_dump("_____________");
-		// var_dump($responseAsJson);
 		JsonAssertions::assertJsonDocumentMatchesSchema(
 			$responseAsJson,
 			$this->getJSONSchema($schemaString)

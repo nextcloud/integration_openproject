@@ -16,7 +16,6 @@ use OCP\RichObjectStrings\IValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
-use OCP\Files\DavUtil;
 
 /**
  * overriding the class_exists method, so that the unit tests always pass,
@@ -611,6 +610,164 @@ class FilesControllerTest extends TestCase {
 		);
 		assertSame(400, $result->getStatus());
 	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function davPermissionDataProvider() {
+		return [
+			[
+				// All permision set for file
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', true, true, true, true, true, true, true)
+				],
+				'SRMGDNVW',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// All permission set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, true, true, true, true, true)
+				],
+				'SRMGDNVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// only read permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', false, false, false, true, false, false, false)
+				],
+				'G',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// only read permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, false, false, true, false, false, false)
+				],
+				'G',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// create+update permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, false, false, false, false, true, true)
+				],
+				'NVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// share+read permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', false, true, false, true, false, false, false)
+				],
+				'RG',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// share+read permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, true, false, true, false, false, false)
+				],
+				'RG',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// shared+shareable+update permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', true, true, false, false, false, true, false)
+				],
+				'SRNVW',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// shared+shareable+update permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, false, false, false, true, false)
+				],
+				'SRNV',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// shared+shareable+update+create permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, false, false, false, true, true)
+				],
+				'SRNVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider davPermissionDataProvider
+	 * @param array<mixed> $nodeMocks
+	 * @param string $davPermission
+	 * @param string $mimeType
+	 * @param string $name
+	 * @param string $path
+	 * @return void
+	 */
+
+	public function testDavPermissions(
+		$nodeMocks,
+		$davPermission,
+		$mimeType,
+		$name,
+		$path
+	): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn($nodeMocks);
+
+		$mountCacheMock = $this->getSimpleMountCacheMock($path);
+
+		$filesController = $this->createFilesController(
+			$folderMock, null, $mountCacheMock
+		);
+		$result = $filesController->getFileInfo(123);
+		assertSame(
+			[
+				'status' => 'OK',
+				'statuscode' => 200,
+				"id" => 123,
+				"name" => $name,
+				"mtime" => 1640008813,
+				"ctime" => 1639906930,
+				"mimetype" => $mimeType,
+				"size" => 200245,
+				"owner_name" => "Test User",
+				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+				'trashed' => false,
+				'modifier_name' => null,
+				'modifier_id' => null,
+				'dav_permissions' => $davPermission,
+				'path' => $path
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
 
 	/**
 	 * @var array<mixed>
