@@ -950,12 +950,12 @@ describe('AdminSettings.vue', () => {
 			expect(saveOPOptionsSpy).toBeCalledTimes(1)
 			expect(dialogs.showSuccess).toBeCalledTimes(2)
 			expect(dialogs.showSuccess).toBeCalledWith('OpenProject admin options saved')
-			expect(dialogs.showSuccess).toBeCalledWith('Successfully revoked user(s) OpenProject OAuth access token(s)')
+			expect(dialogs.showSuccess).toBeCalledWith('Successfully revoked users\' OpenProject OAuth access tokens')
 
 		})
 		it.each([
 			['connection_error', 'Failed to perform revoke request due to connection error with the OpenProject server'],
-			['other_error', 'Failed to revoke some user(s) OpenProject OAuth access token(s)'],
+			['other_error', 'Failed to revoke some users\' OpenProject OAuth access tokens'],
 		])('should show error message on various failure', async (errorCode, errorMessage) => {
 			dialogs.showSuccess
 				.mockImplementationOnce()

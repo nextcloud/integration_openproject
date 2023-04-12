@@ -578,12 +578,12 @@ export default {
 				break
 			case 'other_error':
 				showError(
-					t('integration_openproject', 'Failed to revoke some user(s) OpenProject OAuth access token(s)')
+					t('integration_openproject', 'Failed to revoke some users\' OpenProject OAuth access tokens')
 				)
 				break
 			case 'success':
 				showSuccess(
-					t('integration_openproject', 'Successfully revoked user(s) OpenProject OAuth access token(s)')
+					t('integration_openproject', 'Successfully revoked users\' OpenProject OAuth access tokens')
 				)
 				break
 			default:
