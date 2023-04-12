@@ -49,8 +49,6 @@
     "OpenProject admin options saved" : "Сачуване су OpenProject админ опције",
     "Failed to save OpenProject admin options" : "Није успело чување OpenProject админ опција",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Није успело повлачење OpenProject OAuth приступног жетона за неке кориснике",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ако наставите моражете да ажурирате подешавања у свом OpenProject са новим Nextcloud OAuth подацима за приступ. Такође, сви OpenProject корисници ће морати поново да ауторизују приступ свом Nextcloud налогу.",
     "Failed to create Nextcloud OAuth client" : "Није успело креирање Nextcloud OAuth клијента",
     "Default user configuration saved" : "Сачувана је подразумевана корисничка конфигурација",
@@ -110,6 +108,8 @@
     "No OpenProject detected at the URL" : "На URL није пронађен ниједан OpenProject",
     "Enable notifications for activity in my work packages" : "Укључи обавештења за активност у мојим радним пакетима",
     "Invalid key" : "Неисправан кључ",
-    "To be able to use an OpenProject server with a local address, " : "Да бисте могли да користите OpenProject сервер са локалном адресом, "
+    "To be able to use an OpenProject server with a local address, " : "Да бисте могли да користите OpenProject сервер са локалном адресом, ",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Није успело повлачење OpenProject OAuth приступног жетона за неке кориснике",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

@@ -49,8 +49,6 @@
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "由於與 OpenProject 伺服器的連接錯誤，無法執行撤銷請求",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "已成功撤銷用戶 OpenProject OAuth 存取權杖",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "如果繼續，您將需要使用新的 Nextcloud OAuth 憑據更新 OpenProject 中的設置。 此外，OpenProject 中的所有用戶都需要重新授權訪問其 Nextcloud 帳戶。",
     "Failed to create Nextcloud OAuth client" : "無法創建 NextCloud Oauth 客戶端",
     "Default user configuration saved" : "默認用戶配置已保存",
@@ -110,6 +108,8 @@
     "No OpenProject detected at the URL" : "在 URL 中未檢測到 OpenProject",
     "Enable notifications for activity in my work packages" : "為我工作包中的活動啟用通告",
     "Invalid key" : "無效的密鑰",
-    "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，"
+    "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "已成功撤銷用戶 OpenProject OAuth 存取權杖"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
