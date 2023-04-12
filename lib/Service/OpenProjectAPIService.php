@@ -916,6 +916,11 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
+		if($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			if(!$this->isGroupfoldersAppEnabled()) {
+				throw new \Exception('The group folder app is not installed');
+			}
+		}
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			throw new OpenprojectGroupfolderSetupConflictException('The user '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
@@ -950,11 +955,9 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * returns true if the group-folder setup is completed
-	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
-	public function isGroupFolderSetupInformation(): array {
+	public function getGroupFolderSetupInformation(): array {
 		$status = $this->isGroupFolderSetup();
 		$errorMessage = null;
 		if(!$status) {

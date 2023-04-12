@@ -217,7 +217,7 @@ class ConfigController extends Controller {
 		// this condition applies only when user and group with along with app password is created
 		// code to for updating the app password token
 		$groupFolderID = $this->config->getAppValue(Application::APP_ID, 'openproject_groupfolder_id', '');
-		if(key_exists('reset_app_password', $values) && $values['reset_app_password'] && $groupFolderID !== '') {
+		if(key_exists('reset_app_password', $values) && $values['reset_app_password']) {
 			$app_password = $this->openprojectAPIService->replaceAppPasswordToken();
 		}
 
@@ -232,6 +232,9 @@ class ConfigController extends Controller {
 		);
 
 		foreach ($values as $key => $value) {
+			if($key === 'setup_group_folder' || $key === 'reset_app_password') {
+				continue;
+			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
 		// if the OpenProject OAuth URL has changed

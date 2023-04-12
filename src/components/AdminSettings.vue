@@ -210,7 +210,7 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
 							}}
 						</p>
-						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(this.groupFolderSetUpError)" :group-folder-set-up-error="groupFolderSetUpError" />
+						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(groupFolderSetUpError)" :group-folder-set-up-error="groupFolderSetUpError" />
 						<div class="form-actions">
 							<NcButton v-if="groupFolderSetUpError === null"
 								type="primary"
@@ -241,8 +241,8 @@
 					</div>
 					<ManagedFolderError
 						v-if="state.app_password_set && !isGroupFolderSetupCorrect"
-						:group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(this.state.group_folder_status.errorMessage)"
-						:group-folder-set-up-error="this.state.group_folder_status.errorMessage" />
+						:group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(state.group_folder_status.errorMessage)"
+						:group-folder-set-up-error="state.group_folder_status.errorMessage" />
 					<div class="form-actions">
 						<NcButton
 							data-test-id="reset-server-host-btn"
@@ -518,8 +518,6 @@ export default {
 		init() {
 			if (this.state) {
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
-				console.log(this.state)
-				console.log(this.isGroupFolderSetupCorrect)
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
@@ -563,16 +561,16 @@ export default {
 		},
 		groupFolderSetUpErrorMessageDescription(errorKey) {
 			switch (errorKey) {
-				case 'The group folder name OpenProject integration already exists' :
-					return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
-				case 'The group folder app is not installed' :
-					return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
-				case 'The user OpenProject already exists' :
-					return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
-				case 'The group OpenProject already exists' :
-					return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
-				default:
-					return t('integration_openproject', 'Something went wrong during groupfolder setup. Deactivate the automatically managed folders.')
+			case 'The group folder name OpenProject integration already exists' :
+				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
+			case 'The group folder app is not installed' :
+				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+			case 'The user OpenProject already exists' :
+				return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
+			case 'The group OpenProject already exists' :
+				return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
+			default:
+				return t('integration_openproject', 'Something went wrong during groupfolder setup. Deactivate the automatically managed folders.')
 			}
 		},
 		setServerHostFormToViewMode() {
@@ -607,19 +605,12 @@ export default {
 		},
 		async setManagedGroupFolderSetupToViewMode() {
 			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
-			console.log("Status ====" + this.groupFolderStatus)
 			if (this.groupFolderStatus) {
-				console.log("Entered here")
-				// TODO remove this comment and make it short
-				// it means all the thing is already set up so we donot need to do anything
-				// but we can have a case where app password is not there and we need to reset the app password in case we shift from inactive to active managed folder
 				if (this.state.app_password_set === false) {
-					console.log("Yes no app password")
 					// we will get the app password this api request
 					const success = await this.saveOPOptions()
 					if (success) {
 						this.formMode.opSystemPassword = F_MODES.EDIT
-						console.log("Direct here !!")
 						this.state.managed_folder_state = true
 						this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 						this.isFormCompleted.managedGroupFolderSetUp = true
@@ -627,7 +618,6 @@ export default {
 						this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					}
 				} else {
-					console.log("Direct here !!")
 					this.state.managed_folder_state = true
 					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 					this.isFormCompleted.managedGroupFolderSetUp = true
@@ -636,7 +626,6 @@ export default {
 				}
 			} else {
 				// we will check for the error making the setup_group_folder === true
-				console.log("Should hit here !!")
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.state.managed_folder_state = true
@@ -685,7 +674,7 @@ export default {
 			this.loadingSetUpGroupFolder = true
 			await this.setManagedGroupFolderSetupToViewMode()
 			this.loadingSetUpGroupFolder = false
-			if(this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
+			if (this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
 				this.groupFolderSetUpError = null
 			}
 		},
@@ -899,31 +888,24 @@ export default {
 		},
 		setUpGroupFolder() {
 			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
-				console.log("hit 1")
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
-				console.log("hit 2")
 
 				return true
 			}
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
-				console.log("hit 3")
 				return false
 			}
 			if (this.groupFolderStatus === true) {
-				console.log("hit 4")
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
-				console.log("hit 5")
 				return true
 			}
 			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
-				console.log("hit 6")
 				return true
 			}
-			console.log("hit 7")
 			return false
 		},
 		async saveOPOptions() {
@@ -1048,7 +1030,7 @@ export default {
 
 			}
 			// we want to show the error only when managed group folder is in edit mode
-			if(this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
+			if (this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
 				this.groupFolderSetUpError = null
 			}
 		},

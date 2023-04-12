@@ -532,9 +532,6 @@ class OpenProjectAPIController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
-	 *
-	 * @param string $url
-	 *
 	 * @return DataResponse
 	 */
 	public function getGroupFolderSetUpStatus(): DataResponse {
