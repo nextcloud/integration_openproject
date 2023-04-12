@@ -124,7 +124,9 @@ class FilesControllerTest extends TestCase {
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
 				'trashed' => false,
 				'modifier_name' => null,
-				'modifier_id' => null
+				'modifier_id' => null,
+				'dav_permissions' => 'RGDNVCK',
+				'path' => 'files/test'
 			],
 			$result->getData()
 		);
@@ -148,7 +150,7 @@ class FilesControllerTest extends TestCase {
 
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759)
+			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302')
 		);
 
 		$mountCacheMock = $this->getSimpleMountCacheMock(
@@ -234,7 +236,7 @@ class FilesControllerTest extends TestCase {
 	public function testGetFileInfoFileExistingButCannotGetNameInContextOfOwner(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')->willReturn(
-			[$this->getNodeMock('image/png', 586)]
+			[$this->getNodeMock('image/png', 586, 'file', '/testUser/files/name-in-the-context-of-requester')]
 		);
 
 		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
@@ -258,7 +260,7 @@ class FilesControllerTest extends TestCase {
 
 		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
 		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759)
+			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302')
 		);
 
 		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
@@ -290,7 +292,7 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [759], [365], [956])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
 				],
 				[],
 				[]
@@ -300,9 +302,9 @@ class FilesControllerTest extends TestCase {
 		$trashManagerMock->method('getTrashNodeById')
 			->withConsecutive([$this->anything(), 759], [$this->anything(), 365], [$this->anything(), 956])
 			->willReturnOnConsecutiveCalls(
-			$this->getNodeMock('text/plain', 759),
-				null,
-				null
+			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302'),
+			null,
+			null
 		);
 
 
@@ -356,7 +358,7 @@ class FilesControllerTest extends TestCase {
 		$folderMock->method('getById')
 			->willReturn(
 				[
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
 				]
 			);
 
@@ -381,7 +383,7 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [256], [365])
 			->willReturnOnConsecutiveCalls(
 					[
-						$this->getNodeMock('image/png')
+						$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
 					],
 					[],
 					[]
@@ -425,10 +427,10 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [365])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png', 123)
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
 				],
 				[
-					$this->getNodeMock('image/png', 365),
+					$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png'),
 				]
 			);
 		$cachedMountFileInfoMock = $this->getMockBuilder(
@@ -471,12 +473,10 @@ class FilesControllerTest extends TestCase {
 			->withConsecutive([123], [365])
 			->willReturnOnConsecutiveCalls(
 				[
-					$this->getNodeMock('image/png'),
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png'),
 				],
 				[
-					$this->getNodeMock('image/png', 365),
-					$this->getNodeMock('image/png', 365)
+					$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png'),
 				]
 			);
 
@@ -521,13 +521,17 @@ class FilesControllerTest extends TestCase {
 				[
 					$this->getNodeMock(
 						'httpd/unix-directory',
-						2
+						2,
+						'dir',
+						'/testUser/files/myFolder/a-sub-folder'
 					)
 				],
 				[
 					$this->getNodeMock(
 						'httpd/unix-directory',
-						3
+						3,
+						'dir',
+						'/testUser/files'
 					)
 				]
 			);
@@ -568,7 +572,9 @@ class FilesControllerTest extends TestCase {
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 					'trashed' => false,
 					'modifier_name' => null,
-					'modifier_id' => null
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files/myFolder/a-sub-folder'
 				],
 				3 => [
 					'status' => 'OK',
@@ -583,7 +589,9 @@ class FilesControllerTest extends TestCase {
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 					'trashed' => false,
 					'modifier_name' => null,
-					'modifier_id' => null
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files'
 				]
 			],
 			$result->getData()
@@ -602,6 +610,164 @@ class FilesControllerTest extends TestCase {
 		);
 		assertSame(400, $result->getStatus());
 	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function davPermissionDataProvider() {
+		return [
+			[
+				// All permision set for file
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', true, true, true, true, true, true, true)
+				],
+				'SRMGDNVW',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// All permission set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, true, true, true, true, true)
+				],
+				'SRMGDNVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// only read permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', false, false, false, true, false, false, false)
+				],
+				'G',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// only read permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, false, false, true, false, false, false)
+				],
+				'G',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// create+update permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, false, false, false, false, true, true)
+				],
+				'NVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// share+read permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', false, true, false, true, false, false, false)
+				],
+				'RG',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// share+read permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', false, true, false, true, false, false, false)
+				],
+				'RG',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// shared+shareable+update permision set for file
+			[
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png', true, true, false, false, false, true, false)
+				],
+				'SRNVW',
+				'image/png',
+				'logo.png',
+				'files/logo.png'
+			],
+			// shared+shareable+update permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, false, false, false, true, false)
+				],
+				'SRNV',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+			// shared+shareable+update+create permision set for folder
+			[
+				[
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/Folder', 'files/Folder', true, true, false, false, false, true, true)
+				],
+				'SRNVCK',
+				'application/x-op-directory',
+				'Folder',
+				'files/Folder'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider davPermissionDataProvider
+	 * @param array<mixed> $nodeMocks
+	 * @param string $davPermission
+	 * @param string $mimeType
+	 * @param string $name
+	 * @param string $path
+	 * @return void
+	 */
+
+	public function testDavPermissions(
+		$nodeMocks,
+		$davPermission,
+		$mimeType,
+		$name,
+		$path
+	): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')->willReturn($nodeMocks);
+
+		$mountCacheMock = $this->getSimpleMountCacheMock($path);
+
+		$filesController = $this->createFilesController(
+			$folderMock, null, $mountCacheMock
+		);
+		$result = $filesController->getFileInfo(123);
+		assertSame(
+			[
+				'status' => 'OK',
+				'statuscode' => 200,
+				"id" => 123,
+				"name" => $name,
+				"mtime" => 1640008813,
+				"ctime" => 1639906930,
+				"mimetype" => $mimeType,
+				"size" => 200245,
+				"owner_name" => "Test User",
+				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
+				'trashed' => false,
+				'modifier_name' => null,
+				'modifier_id' => null,
+				'dav_permissions' => $davPermission,
+				'path' => $path
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
 
 	/**
 	 * @var array<mixed>
@@ -635,7 +801,9 @@ class FilesControllerTest extends TestCase {
 		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
 		"trashed" => true,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files_trashbin/files/welcome.txt.d1648724302'
 	];
 
 	/**
@@ -654,7 +822,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/logo.png'
 	];
 
 	/**
@@ -673,7 +843,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/inFolder/image.png'
 	];
 
 	/**
@@ -692,7 +864,9 @@ class FilesControllerTest extends TestCase {
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
 		'trashed' => false,
 		'modifier_name' => null,
-		'modifier_id' => null
+		'modifier_id' => null,
+		'dav_permissions' => 'RGDNVW',
+		'path' => 'files/name-in-the-context-of-requester'
 	];
 
 	/**
@@ -753,7 +927,19 @@ class FilesControllerTest extends TestCase {
 		return $controller;
 	}
 
-	private function getNodeMock(string $mimeType, int $id = 123
+	private function getNodeMock(
+		string $mimeType,
+		int $id = 123,
+		string $fileType = 'dir',
+		string $path = '/testUser/files/test',
+		string $internalPath = 'files/test',
+		bool $isShared = false,
+		bool $isShareable = true,
+		bool $isMounted = false,
+		bool $isReadable = true,
+		bool $isDeletable = true,
+		bool $isUpdateable = true,
+		bool $isCreatable = true
 	): Node {
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
@@ -767,6 +953,17 @@ class FilesControllerTest extends TestCase {
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
 		$fileMock->method('getName')->willReturn('name-in-the-context-of-requester');
+		$fileMock->method('getPath')->willReturn($path);
+		$fileMock->method('getInternalPath')->willReturn($internalPath);
+		$fileMock->method('getType')->willReturn($fileType);
+		$fileMock->method('isShared')->willReturn($isShared);
+		$fileMock->method('isShareable')->willReturn($isShareable);
+		$fileMock->method('isMounted')->willReturn($isMounted);
+		$fileMock->method('isReadable')->willReturn($isReadable);
+		$fileMock->method('isDeletable')->willReturn($isDeletable);
+		$fileMock->method('isUpdateable')->willReturn($isUpdateable);
+		$fileMock->method('isCreatable')->willReturn($isCreatable);
+
 		return $fileMock;
 	}
 

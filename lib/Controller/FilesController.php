@@ -215,7 +215,6 @@ class FilesController extends OCSController {
 				);
 				$internalPath = $file->getName();
 			}
-
 			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
 				$modifierId = $modifier->getUID();
@@ -229,7 +228,11 @@ class FilesController extends OCSController {
 			} else {
 				$mimeType = $file->getMimeType();
 			}
-
+			$fullpath = $file->getpath();
+			// full path is in format `<user-name>/files/a/b/`
+			// since we don't want to send it with username, only get the `files/a/b` and send it
+			$path = explode('/', $fullpath, 3);
+			$davPermission = $this->getDavPermissions($file);
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -243,7 +246,9 @@ class FilesController extends OCSController {
 				'owner_id' => $owner->getUID(),
 				'trashed' => $trashed,
 				'modifier_name' => $modifierName,
-				'modifier_id' => $modifierId
+				'modifier_id' => $modifierId,
+				'dav_permissions' => $davPermission,
+				'path' => $path[2]
 			];
 		}
 
@@ -315,5 +320,39 @@ class FilesController extends OCSController {
 			}
 		}
 		return null;
+	}
+
+	// copy of https://github.com/nextcloud/server/blob/cd44ee2053f105f60c668906ed8460605cb1da81/lib/public/Files/DavUtil.php#L58
+	// as this is only availabe from V25 and we need it in versions below that
+	private function getDavPermissions(FileInfo $info): string {
+		$p = '';
+		if ($info->isShared()) {
+			$p .= 'S';
+		}
+		if ($info->isShareable()) {
+			$p .= 'R';
+		}
+		if ($info->isMounted()) {
+			$p .= 'M';
+		}
+		if ($info->isReadable()) {
+			$p .= 'G';
+		}
+		if ($info->isDeletable()) {
+			$p .= 'D';
+		}
+		if ($info->isUpdateable()) {
+			$p .= 'NV'; // Renameable, Moveable
+		}
+		if ($info->getType() === FileInfo::TYPE_FILE) {
+			if ($info->isUpdateable()) {
+				$p .= 'W';
+			}
+		} else {
+			if ($info->isCreatable()) {
+				$p .= 'CK';
+			}
+		}
+		return $p;
 	}
 }

@@ -42,7 +42,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed"
+              "trashed",
+              "dav_permissions",
+              "path"
             ],
             "properties": {
               "status": {"type": "string", "pattern": "^OK$"},
@@ -57,7 +59,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Alice$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [false]}
+              "trashed": {"type": "boolean", "enum": [false]},
+              "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+              "path": {"type": "string", "pattern":"^files\/file.txt$"}
             }
           },
           "%ids[1]%": {
@@ -75,7 +79,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed"
+              "trashed",
+              "dav_permissions",
+              "path"
             ],
             "properties": {
               "status": {"type": "string", "pattern": "^OK$"},
@@ -90,7 +96,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Brian Adams$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [false]}
+              "trashed": {"type": "boolean", "enum": [false]},
+              "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+              "path": {"type": "string", "pattern":"^files\/renamedByAlice.txt$"}
             }
           },
           "%ids[2]%": {
@@ -108,7 +116,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed"
+              "trashed",
+              "dav_permissions",
+              "path"
             ],
             "properties": {
               "status": {"type": "string", "pattern": "^OK$"},
@@ -123,7 +133,9 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Alice$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [true]}
+              "trashed": {"type": "boolean", "enum": [true]},
+              "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+              "path": {"type": "string", "pattern":"^files_trashbin\/files\/trashed.txt.d\\d{10}$"}
             }
           },
           "%ids[3]%": {
@@ -144,7 +156,9 @@ Feature: retrieve information of multiple files using the file IDs
                 "owner_name",
                 "modifier_id",
                 "modifier_name",
-                "trashed"
+                "trashed",
+                "dav_permissions",
+                "path"
               ]
             },
             "properties": {
@@ -170,7 +184,9 @@ Feature: retrieve information of multiple files using the file IDs
                 "owner_name",
                 "modifier_id",
                 "modifier_name",
-                "trashed"
+                "trashed",
+                "dav_permissions",
+                "path"
               ]
             },
             "properties": {

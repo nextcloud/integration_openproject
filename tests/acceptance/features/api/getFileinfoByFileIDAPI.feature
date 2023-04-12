@@ -6,41 +6,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [9] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [9] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of an existing file in a subfolder
     Given user "Alice" has been created
@@ -49,41 +53,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [9] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [9] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
+      "path": {"type": "string", "pattern":"^files\/subfolder\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a trashed file
     Given user "Alice" has been created
@@ -92,41 +100,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [9] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt.d\\d{10}$"},
-          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [true]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [9] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt.d\\d{10}$"},
+      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [true]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
+      "path": {"type": "string", "pattern":"^files_trashbin\/files\/file.txt.d\\d{10}$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file that is inside of a trashed folder
     Given user "Alice" has been created
@@ -136,41 +148,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [9] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [true]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [9] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [true]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files_trashbin\/files\/subfolder.d\\d{10}\/file.txt"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file owned by an different user
     Given user "Alice" has been created
@@ -179,68 +195,72 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "403"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode"
       ],
       "not": {
-       "required": [
-          "id",
-          "size",
-          "name",
-          "mtime",
-          "ctime",
-          "mimetype",
-          "owner_id",
-          "owner_name",
-          "modifier_id",
-          "modifier_name",
-          "trashed"
-        ]
+      "required": [
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
+      ]
       },
       "properties": {
-          "status": {"type": "string", "pattern": "^Forbidden$"},
-          "statuscode" : {"type" : "number", "enum": [403]}
+      "status": {"type": "string", "pattern": "^Forbidden$"},
+      "statuscode" : {"type" : "number", "enum": [403]}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a non-existing file
     Given user "Alice" has been created
     When user "Brian" gets the information of the file with the id "9999999999999"
     Then the HTTP status code should be "404"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode"
       ],
       "not": {
-       "required": [
-          "id",
-          "size",
-          "name",
-          "mtime",
-          "ctime",
-          "mimetype",
-          "owner_id",
-          "owner_name",
-          "modifier_id",
-          "modifier_name",
-          "trashed"
-        ]
+      "required": [
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
+      ]
       },
       "properties": {
-          "status": {"type": "string", "pattern": "^Not Found$"},
-          "statuscode" : {"type" : "number", "enum": [404]}
+      "status": {"type": "string", "pattern": "^Not Found$"},
+      "statuscode" : {"type" : "number", "enum": [404]}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file received as a share
     Given user "Alice" has been created
@@ -250,31 +270,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+      "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file that is in a folder received as a share
     Given user "Alice" has been created
@@ -285,31 +309,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file that is received through a folder and a file share
     Given user "Alice" has been created
@@ -321,31 +349,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file received as a share and renamed
     Given user "Alice" has been created
@@ -356,31 +388,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
+      "path": {"type": "string", "pattern":"^files\/renamed.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file received in a folder share and renamed
     Given user "Alice" has been created
@@ -392,31 +428,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^renamed.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^renamed.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/to-share\/renamed.txt$"}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get information of a file received in a folder share and moved out of that share
     Given user "Alice" has been created
@@ -428,60 +468,66 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Brian" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number",  "enum": [200] },
-          "name": {"type": "string", "pattern": "^moved-out.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Brian$"},
-          "owner_name": {"type": "string", "pattern": "^Brian$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number",  "enum": [200] },
+      "name": {"type": "string", "pattern": "^moved-out.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Brian$"},
+      "owner_name": {"type": "string", "pattern": "^Brian$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/moved-out.txt$"}
       }
-    }
-   """
+      }
+      """
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "403"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode"
       ],
       "not": {
-       "required": [
-          "id",
-          "size",
-          "name",
-          "mtime",
-          "ctime",
-          "mimetype",
-          "owner_id",
-          "owner_name",
-          "modifier_id",
-          "modifier_name",
-          "trashed"
-        ]
+      "required": [
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
+      ]
       },
       "properties": {
-          "status": {"type": "string", "pattern": "^Forbidden$"},
-          "statuscode" : {"type" : "number", "enum": [403]}
+      "status": {"type": "string", "pattern": "^Forbidden$"},
+      "statuscode" : {"type" : "number", "enum": [403]}
       }
-    }
-   """
+      }
+      """
 
   Scenario: get modifier when same user uploads and overwrites a file
     Given user "Alice" has been created with display-name "Alice Hansen"
@@ -490,35 +536,39 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [12]},
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice Hansen"},
-          "modifier_id": {"type": "string", "pattern": "^Alice$"},
-          "modifier_name": {"type": "string", "pattern": "^Alice Hansen"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [12]},
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen"},
+      "modifier_id": {"type": "string", "pattern": "^Alice$"},
+      "modifier_name": {"type": "string", "pattern": "^Alice Hansen"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario Outline: get modifier in a chain of shares
@@ -532,46 +582,50 @@ Feature: retrieve file information of a single file, using the file ID
     When user "<retriever>" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [12]},
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice"},
-          "modifier_id": {"type": "string", "pattern": "^<modifier>"},
-          "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [12]},
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice"},
+      "modifier_id": {"type": "string", "pattern": "^<modifier>"},
+      "modifier_name": {"type": "string", "pattern": "^<modifier-display-name>"},
+      "dav_permissions": {"type": "string", "pattern":"^<dav_permissions>$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
-    }
-   """
+      }
+      """
     Examples:
-      | modifier | modifier-display-name | retriever | comment                                              |
-      | Alice    | Alice                 | Alice     | display-name should be username if not specially set |
-      | Brian    | Brian Peters          | Alice     |                                                      |
-      | Chandra  | Chandra Thapa         | Alice     |                                                      |
-      | Alice    | Alice                 | Brian     |                                                      |
-      | Brian    | Brian Peters          | Brian     |                                                      |
-      | Chandra  | Chandra Thapa         | Brian     |                                                      |
-      | Alice    | Alice                 | Chandra   |                                                      |
-      | Brian    | Brian Peters          | Chandra   |                                                      |
-      | Chandra  | Chandra Thapa         | Chandra   |                                                      |
+      | modifier | modifier-display-name | retriever | comment                                              | dav_permissions |
+      | Alice    | Alice                 | Alice     | display-name should be username if not specially set | RGDNVW          |
+      | Brian    | Brian Peters          | Alice     |                                                      | RGDNVW          |
+      | Chandra  | Chandra Thapa         | Alice     |                                                      | RGDNVW          |
+      | Alice    | Alice                 | Brian     |                                                      | SRGNVW          |
+      | Brian    | Brian Peters          | Brian     |                                                      | SRGNVW          |
+      | Chandra  | Chandra Thapa         | Brian     |                                                      | SRGNVW          |
+      | Alice    | Alice                 | Chandra   |                                                      | SRGNVW          |
+      | Brian    | Brian Peters          | Chandra   |                                                      | SRGNVW          |
+      | Chandra  | Chandra Thapa         | Chandra   |                                                      | SRGNVW          |
 
 
   Scenario: get modifier in a chain of shares when there are multiple modifiers
@@ -589,35 +643,39 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [10]},
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [10]},
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "string", "pattern": "^Dipak"},
+      "modifier_name": {"type": "string", "pattern": "^Dipak"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier in a chain of shares when there are multiple modifiers (sharing and modification mixed)
@@ -635,35 +693,39 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [10]},
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice$"},
-          "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [10]},
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice$"},
+      "modifier_id": {"type": "string", "pattern": "^Dipak"},
+      "modifier_name": {"type": "string", "pattern": "^Dipak"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier after various renaming
@@ -682,27 +744,31 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [12]},
-          "name": {"type": "string", "pattern": "^Alices-file.txt$"},
-          "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [12]},
+      "name": {"type": "string", "pattern": "^Alices-file.txt$"},
+      "modifier_id": {"type": "string", "pattern": "^Dipak"},
+      "modifier_name": {"type": "string", "pattern": "^Dipak"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/Alices-file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier after various moving
@@ -724,27 +790,31 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [12]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "modifier_id": {"type": "string", "pattern": "^Dipak"},
-          "modifier_name": {"type": "string", "pattern": "^Dipak"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [12]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "modifier_id": {"type": "string", "pattern": "^Dipak"},
+      "modifier_name": {"type": "string", "pattern": "^Dipak"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/Alice-folder\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier after the modifier was deleted
@@ -757,27 +827,31 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [12]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [12]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier of a folder
@@ -791,41 +865,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of the folder "/folder"
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [16] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^folder$"},
-          "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [16] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^folder$"},
+      "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVCK$"},
+      "path": {"type": "string", "pattern":"^files\/folder$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier of a file changed through a public link
@@ -837,41 +915,45 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of the file "/folder/file.txt"
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "id",
-        "size",
-        "name",
-        "mtime",
-        "ctime",
-        "mimetype",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name",
-        "trashed"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "id",
+      "size",
+      "name",
+      "mtime",
+      "ctime",
+      "mimetype",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "trashed",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-          "size" : {"type" : "integer", "enum": [15] },
-          "mtime" : {"type" : "integer"},
-          "ctime" : {"type" : "integer", "enum": [0]},
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"},
-          "trashed": {"type": "boolean", "enum": [false]}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "size" : {"type" : "integer", "enum": [15] },
+      "mtime" : {"type" : "integer"},
+      "ctime" : {"type" : "integer", "enum": [0]},
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "trashed": {"type": "boolean", "enum": [false]},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/folder\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier of a file changed through a public link after a real change
@@ -884,31 +966,35 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of the file "/folder/file.txt"
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [15] },
-          "name": {"type": "string", "pattern": "^file.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
-          "modifier_id": {"type": "null"},
-          "modifier_name": {"type": "null"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [15] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/folder\/file.txt$"}
       }
-    }
-   """
+      }
+      """
 
 
   Scenario: get modifier of a file with a lot of unrelated change
@@ -943,28 +1029,198 @@ Feature: retrieve file information of a single file, using the file ID
     When user "Alice" gets the information of last created file
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
-    """"
-    {
-    "type": "object",
-    "required": [
-        "status",
-        "statuscode",
-        "size",
-        "name",
-        "owner_id",
-        "owner_name",
-        "modifier_id",
-        "modifier_name"
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
       ],
       "properties": {
-          "status": {"type": "string", "pattern": "^OK$"},
-          "statuscode" : {"type" : "number", "enum": [200]},
-          "size" : {"type" : "integer", "enum": [6] },
-          "name": {"type": "string", "pattern": "^file20.txt$"},
-          "owner_id": {"type": "string", "pattern": "^Alice$"},
-          "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
-          "modifier_id": {"type": "string", "pattern": "^Brian"},
-          "modifier_name": {"type": "string", "pattern": "^Brian$"}
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [6] },
+      "name": {"type": "string", "pattern": "^file20.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "string", "pattern": "^Brian"},
+      "modifier_name": {"type": "string", "pattern": "^Brian$"},
+      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
+      "path": {"type": "string", "pattern":"^files\/file20.txt$"}
       }
-    }
-   """
+      }
+      """
+
+  Scenario Outline: get file info of a file shared with different permissions
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Brian" has been created
+    And user "Alice" has uploaded file with content "some data" to "file.txt"
+    And user "Alice" has shared file "/file.txt" with user "Brian" with "<share-permission>" permissions
+    When user "Brian" gets the information of the file "/file.txt"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
+      ],
+      "properties": {
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [9] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^<requester-dav-permissions>$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
+      }
+      }
+      """
+    When user "Alice" gets the information of the file "/file.txt"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
+      ],
+      "properties": {
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [9] },
+      "name": {"type": "string", "pattern": "^file.txt$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^<owner-dav-permissions>$"},
+      "path": {"type": "string", "pattern":"^files\/file.txt$"}
+      }
+      }
+      """
+    Examples:
+      | share-permission   | requester-dav-permissions | owner-dav-permissions |
+      | all                | SRGNVW                    | RGDNVW                |
+      | read               | SG                        | RGDNVW                |
+      | read+share         | SRG                       | RGDNVW                |
+      | read+update        | SGNVW                     | RGDNVW                |
+      | read+update+share  | SRGNVW                    | RGDNVW                |
+      | read+delete        | SG                        | RGDNVW                |
+      | read+delete+update | SGNVW                     | RGDNVW                |
+
+
+  Scenario Outline: get file info of a folder shared with different permissions
+    Given user "Alice" has been created with display-name "Alice Hansen"
+    And user "Brian" has been created
+    And user "Alice" has created folder "/folder"
+    And user "Alice" has uploaded file with content "some data" to "/folder/file.txt"
+    And user "Alice" has shared folder "/folder" with user "Brian" with "<share-permission>" permissions
+    When user "Brian" gets the information of the folder "/folder"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
+      ],
+      "properties": {
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [9] },
+      "name": {"type": "string", "pattern": "^folder$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^<requester-dav-permissions>$"},
+      "path": {"type": "string", "pattern":"^files\/folder$"}
+      }
+      }
+      """
+    When user "Alice" gets the information of the file "/folder"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
+      ],
+      "properties": {
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [9] },
+      "name": {"type": "string", "pattern": "^folder$"},
+      "owner_id": {"type": "string", "pattern": "^Alice$"},
+      "owner_name": {"type": "string", "pattern": "^Alice Hansen$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^<owner-dav-permissions>$"},
+      "path": {"type": "string", "pattern":"^files\/folder$"}
+      }
+      }
+      """
+    Examples:
+      | share-permission          | requester-dav-permissions | owner-dav-permissions |
+      | all                       | SRGDNVCK                  | RGDNVCK               |
+      | read                      | SG                        | RGDNVCK               |
+      | read+share                | SRG                       | RGDNVCK               |
+      | read+update               | SGNV                      | RGDNVCK               |
+      | read+update+share         | SRGNV                     | RGDNVCK               |
+      | read+delete               | SGD                       | RGDNVCK               |
+      | read+delete+update        | SGDNV                     | RGDNVCK               |
+      | read+create               | SGCK                      | RGDNVCK               |
+      | read+create+update        | SGNVCK                    | RGDNVCK               |
+      | read+create+share         | SRGCK                     | RGDNVCK               |
+      | read+create+share+delete  | SRGDCK                    | RGDNVCK               |
+      | read+create+update+delete | SGDNVCK                   | RGDNVCK               |
+      | read+create+update+share  | SRGNVCK                   | RGDNVCK               |
