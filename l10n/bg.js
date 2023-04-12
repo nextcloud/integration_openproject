@@ -51,8 +51,6 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Опциите за администратор на OpenProject са записани",
     "Failed to save OpenProject admin options" : "Неуспешно записване на опциите за администратор на OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Неуспешно изпълнение на заявка за отмяна поради грешка при свързването със сървъра на OpenProject",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Неуспешна отмяна на токен/и за достъп до OpenProject OAuth на някой(и) потребител(и)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешна отмяна на токен(и) за достъп до OpenProject OAuth на потребител(и)",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ако продължите, ще трябва да актуализирате настройките във вашия OpenProject с новите идентификационни данни за Nextcloud OAuth. Също така, всички потребители ще трябва повторно да разрешат достъп до техния профил в Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Неуспешно създаване на Nextcloud OAuth клиент",
     "Default user configuration saved" : "Запазена конфигурация на потребителя по подразбиране",
@@ -112,6 +110,8 @@ OC.L10N.register(
     "No OpenProject detected at the URL" : "Не е открит OpenProject в URL адреса",
     "Enable notifications for activity in my work packages" : "Активиране на известия за активност в моите работни пакети",
     "Invalid key" : "Невалиден ключ",
-    "To be able to use an OpenProject server with a local address, " : "За да можете да използвате сървър на OpenProject с локален адрес, "
+    "To be able to use an OpenProject server with a local address, " : "За да можете да използвате сървър на OpenProject с локален адрес, ",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Неуспешна отмяна на токен/и за достъп до OpenProject OAuth на някой(и) потребител(и)",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешна отмяна на токен(и) за достъп до OpenProject OAuth на потребител(и)"
 },
 "nplurals=2; plural=(n != 1);");
