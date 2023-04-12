@@ -53,6 +53,7 @@ use OCP\Security\ISecureRandom;
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
+use function Symfony\Component\String\s;
 
 define('CACHE_TTL', 3600);
 
@@ -946,6 +947,32 @@ class OpenProjectAPIService {
 			$this->hasOpenProjectGroupFullPermissions() &&
 			$this->canOPUserManageACL()
 		);
+	}
+
+	/**
+	 * returns true if the group-folder setup is completed
+	 *
+	 * @return array
+	 */
+	public function isGroupFolderSetupInformation(): array {
+		$status = $this->isGroupFolderSetup();
+		$errorMessage = null;
+		if(!$status) {
+			try {
+				$this->isSystemReadyForGroupFolderSetUp();
+			} catch (Exception $e) {
+				$errorMessage = $e->getMessage();
+			}
+		}
+		if($errorMessage !== null) {
+			return [
+				'status' => $status,
+				'errorMessage' => $errorMessage
+			];
+		}
+		return [
+			'status' => $status
+		];
 	}
 
 	/**

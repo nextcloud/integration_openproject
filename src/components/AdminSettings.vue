@@ -210,7 +210,7 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
 							}}
 						</p>
-						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription" :group-folder-set-up-error="groupFolderSetUpError" />
+						<ManagedFolderError v-if="groupFolderSetUpError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(this.groupFolderSetUpError)" :group-folder-set-up-error="groupFolderSetUpError" />
 						<div class="form-actions">
 							<NcButton v-if="groupFolderSetUpError === null"
 								type="primary"
@@ -241,8 +241,8 @@
 					</div>
 					<ManagedFolderError
 						v-if="state.app_password_set && !isGroupFolderSetupCorrect"
-						group-folder-set-up-error-message-description="Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders."
-						group-folder-set-up-error="The group folder app is not installed" />
+						:group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(this.state.group_folder_status.errorMessage)"
+						:group-folder-set-up-error="this.state.group_folder_status.errorMessage" />
 					<div class="form-actions">
 						<NcButton
 							data-test-id="reset-server-host-btn"
@@ -499,20 +499,6 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'This value will not be accessible again after you clicking save. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		groupFolderSetUpErrorMessageDescription() {
-			switch (this.groupFolderSetUpError) {
-			case 'The group folder name OpenProject integration already exists' :
-				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
-			case 'The group folder app is not installed' :
-				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
-			case 'The user OpenProject already exists' :
-				return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
-			case 'The group OpenProject already exists' :
-				return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
-			default:
-				return ''
-			}
-		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
@@ -531,7 +517,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				this.isGroupFolderSetupCorrect = this.state.group_folder_status
+				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				console.log(this.state)
 				console.log(this.isGroupFolderSetupCorrect)
 				if (this.state.openproject_instance_url) {
@@ -575,6 +561,20 @@ export default {
 				}
 			}
 		},
+		groupFolderSetUpErrorMessageDescription(errorKey) {
+			switch (errorKey) {
+				case 'The group folder name OpenProject integration already exists' :
+					return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
+				case 'The group folder app is not installed' :
+					return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+				case 'The user OpenProject already exists' :
+					return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
+				case 'The group OpenProject already exists' :
+					return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
+				default:
+					return ''
+			}
+		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
 		},
@@ -607,7 +607,9 @@ export default {
 		},
 		async setManagedGroupFolderSetupToViewMode() {
 			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
+			console.log("Status ====" + this.groupFolderStatus)
 			if (this.groupFolderStatus) {
+				console.log("Entered here")
 				// TODO remove this comment and make it short
 				// it means all the thing is already set up so we donot need to do anything
 				// but we can have a case where app password is not there and we need to reset the app password in case we shift from inactive to active managed folder
@@ -634,6 +636,7 @@ export default {
 				}
 			} else {
 				// we will check for the error making the setup_group_folder === true
+				console.log("Should hit here !!")
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.state.managed_folder_state = true
@@ -908,19 +911,17 @@ export default {
 				console.log("hit 3")
 				return false
 			}
-
+			if (this.groupFolderStatus === true) {
+				console.log("hit 4")
+				return false
+			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
 				console.log("hit 5")
 				return true
 			}
-
 			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				console.log("hit 6")
 				return true
-			}
-			if (this.groupFolderStatus === true) {
-				console.log("hit 4")
-				return false
 			}
 			console.log("hit 7")
 			return false
@@ -977,8 +978,8 @@ export default {
 			let success = false
 			try {
 				const url = generateUrl('/apps/integration_openproject/group-folder-status')
-				await axios.get(url)
-				success = true
+				const response = await axios.get(url)
+				success = response?.data?.result
 			} catch (error) {
 				console.error(error)
 			}
