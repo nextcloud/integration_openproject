@@ -49,8 +49,6 @@
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
     "Failed to save OpenProject admin options" : "Fallo al guardar las opciones de administración de OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Fallo al ejecutar la solicitud de revocación ya que hubo un problema de conexión con el servidor OpenProject",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Fallo al revocar los tokens OAuth de algun(os) usuario(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Si procede, tendrá que actualizar la configuración de su OpenProject con las nuevas credenciales OAuth de Nextcloud. Además, todos los usuarios de OpenProject tendrán que volver a autorizar el acceso a su cuenta de Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Fallo al crear el cliente OAuth de Nextcloud",
     "Default user configuration saved" : "Las configuración de usuario por defecto ha sido guardada",
@@ -110,6 +108,8 @@
     "No OpenProject detected at the URL" : "No se ha detectado ningún OpenProject en la URL",
     "Enable notifications for activity in my work packages" : "Activar notificaciones de actividad en mis paquetes de trabajo",
     "Invalid key" : "Llave inválida",
-    "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,"
+    "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Fallo al revocar los tokens OAuth de algun(os) usuario(s)",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

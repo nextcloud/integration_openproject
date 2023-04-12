@@ -51,8 +51,6 @@ OC.L10N.register(
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Geçersiz kılma isteği, OpenProject sunucusuyla bağlantı sorunu nedeniyle yerine getirilemedi",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "İlerlerseniz OpenProject kurulumunuzdaki ayarları yeni Nextcloud OAuth kimlik bilgileriyle güncellemeniz gerekir. Ayrıca, OpenProject üzerindeki tüm kullanıcıların yeniden Nextcloud hesaplarına erişim izni vermeleri gerekir.",
     "Failed to create Nextcloud OAuth client" : "Nextcloud OAuth istemcisi oluşturulamadı",
     "Default user configuration saved" : "Varsayılan kullanıcı yapılandırması kaydedildi",
@@ -112,6 +110,8 @@ OC.L10N.register(
     "No OpenProject detected at the URL" : "Adreste bir OpenProject bulunamadı",
     "Enable notifications for activity in my work packages" : "Çalışma paketlerim için etkinlik bildirimlerini etkinleştir",
     "Invalid key" : "Anahtar geçersiz",
-    "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,"
+    "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı"
 },
 "nplurals=2; plural=(n > 1);");

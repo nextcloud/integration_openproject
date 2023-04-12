@@ -49,8 +49,6 @@
     "OpenProject admin options saved" : "OpenProject admin options saved",
     "Failed to save OpenProject admin options" : "Failed to save OpenProject admin options",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Failed to revoke some user(s) OpenProject OAuth access token(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorise access to their Nextcloud account.",
     "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "Default user configuration saved" : "Default user configuration saved",
@@ -110,6 +108,8 @@
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
     "Invalid key" : "Invalid key",
-    "To be able to use an OpenProject server with a local address, " : "To be able to use an OpenProject server with a local address, "
+    "To be able to use an OpenProject server with a local address, " : "To be able to use an OpenProject server with a local address, ",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Failed to revoke some user(s) OpenProject OAuth access token(s)",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
