@@ -49,8 +49,6 @@
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Požadavek na odvolání platnosti se nepodařilo provést kvůli chybě spojení s OpenProject serverem",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Pokud budete pokračovat, bude třeba aktualizovat nastavení ve vámi využívané instanci OpenProject těmi novými Nextcloud OAuth přihlašovacími údaji. Také bude třeba, aby všichni uživatelé v OpenProject znovu udělili oprávnění k přístupu ke svým účtům v Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Nepodařilo se vytvořit Nextcloud OAuth klienta",
     "Default user configuration saved" : "Výchozí nastavení pro uživatele uložena",
@@ -110,6 +108,8 @@
     "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
     "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích",
     "Invalid key" : "Neplatná klávesa",
-    "To be able to use an OpenProject server with a local address, " : "Aby bylo možné použít OpenProject server s lokální adresou,"
+    "To be able to use an OpenProject server with a local address, " : "Aby bylo možné použít OpenProject server s lokální adresou,",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
