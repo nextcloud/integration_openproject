@@ -572,7 +572,7 @@ export default {
 				case 'The group OpenProject already exists' :
 					return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
 				default:
-					return ''
+					return t('integration_openproject', 'Something went wrong during groupfolder setup. Deactivate the automatically managed folders.')
 			}
 		},
 		setServerHostFormToViewMode() {
@@ -960,13 +960,11 @@ export default {
 				this.oPOAuthTokenRevokeStatus = null
 				// catch the error response from the group folder response only
 				// since the response message is to be dispaled in the UI
-				const isGroupFolderError = this.isGroupFolderError(error)
-				if (isGroupFolderError !== null) {
+				if (error.response.data.error) {
 					// save the error message
 					this.groupFolderSetUpError = error.response.data.error
-				} else {
-					console.error(error)
 				}
+				console.error(error)
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
@@ -984,24 +982,6 @@ export default {
 				console.error(error)
 			}
 			return success
-		},
-		isGroupFolderError(errorResponse) {
-			const errorMessage = errorResponse.response.data.error
-			// TODO ask
-			// We have check the error message regarding the groupfolder setup and ignore other error
-			switch (errorMessage) {
-			case 'The group folder app is not installed' :
-				return 1
-			case 'The group folder name OpenProject integration already exists' :
-				return 2
-			case 'The user OpenProject already exists' :
-				return 3
-			case 'The group OpenProject already exists' :
-				return 4
-			default :
-				break
-			}
-			return null
 		},
 		notifyAboutOPOAuthTokenRevoke() {
 			switch (this.oPOAuthTokenRevokeStatus) {
