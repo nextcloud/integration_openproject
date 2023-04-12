@@ -51,8 +51,6 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Az OpenProject rendszergazdai beállításai mentve",
     "Failed to save OpenProject admin options" : "Az OpenProject rendszergazdai beállításainak mentése sikertelen",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Az OpenProject kiszolgáló kapcsolati hibája miatt a visszavonási kérés elvégzése sikertelen",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ha folytatja, akkor frissítenie kell az OpenProject beállításait a Nextcloud OAuth hitelesítő adatokkal. Továbbá az összes OpenProjectben lévő felhasználónak újból hitelesítenie kell a Nextcloud-fiókjával.",
     "Failed to create Nextcloud OAuth client" : "A Nextcloud OAuth-kliens létrehozása sikertelen",
     "Default user configuration saved" : "Alapértelmezett felhasználói konfiguráció mentve",
@@ -112,6 +110,8 @@ OC.L10N.register(
     "No OpenProject detected at the URL" : "Nem észlelhető OpenProject a webcímen",
     "Enable notifications for activity in my work packages" : "Értesítések engedélyezése a saját munkacsomagok tevékenységeihez",
     "Invalid key" : "Érvénytelen kulcs",
-    "To be able to use an OpenProject server with a local address, " : "Egy OpenProject kiszolgáló helyi címmel történő használatához,"
+    "To be able to use an OpenProject server with a local address, " : "Egy OpenProject kiszolgáló helyi címmel történő használatához,",
+    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen"
 },
 "nplurals=2; plural=(n != 1);");
