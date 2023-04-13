@@ -51,6 +51,8 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Požadavek na odvolání platnosti se nepodařilo provést kvůli chybě spojení s OpenProject serverem",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Pokud budete pokračovat, bude třeba aktualizovat nastavení ve vámi využívané instanci OpenProject těmi novými Nextcloud OAuth přihlašovacími údaji. Také bude třeba, aby všichni uživatelé v OpenProject znovu udělili oprávnění k přístupu ke svým účtům v Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Nepodařilo se vytvořit Nextcloud OAuth klienta",
     "Default user configuration saved" : "Výchozí nastavení pro uživatele uložena",
