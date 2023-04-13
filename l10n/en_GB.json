@@ -49,6 +49,8 @@
     "OpenProject admin options saved" : "OpenProject admin options saved",
     "Failed to save OpenProject admin options" : "Failed to save OpenProject admin options",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorise access to their Nextcloud account.",
     "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "Default user configuration saved" : "Default user configuration saved",
