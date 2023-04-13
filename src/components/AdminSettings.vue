@@ -868,7 +868,6 @@ export default {
 			}
 		},
 		appPassword() {
-			const restAppPassword = false
 			if (this.isGroupfolderSetupAutomaticallyReady === false) {
 				// case for deletion
 				return null
@@ -884,20 +883,19 @@ export default {
 			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}
-			return restAppPassword
+			return false
 		},
 		setUpGroupFolder() {
+			if (this.groupFolderStatus === true) {
+				return false
+			}
 			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
-
 				return true
 			}
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
-				return false
-			}
-			if (this.groupFolderStatus === true) {
 				return false
 			}
 			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
