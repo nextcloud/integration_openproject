@@ -51,6 +51,8 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Сачуване су OpenProject админ опције",
     "Failed to save OpenProject admin options" : "Није успело чување OpenProject админ опција",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Није успело повлачење OpenProject OAuth приступних жетона за неке кориснике",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешно су повучени корисникови OpenProject OAuth приступни жетони",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Ако наставите моражете да ажурирате подешавања у свом OpenProject са новим Nextcloud OAuth подацима за приступ. Такође, сви OpenProject корисници ће морати поново да ауторизују приступ свом Nextcloud налогу.",
     "Failed to create Nextcloud OAuth client" : "Није успело креирање Nextcloud OAuth клијента",
     "Default user configuration saved" : "Сачувана је подразумевана корисничка конфигурација",
