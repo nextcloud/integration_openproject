@@ -9,6 +9,7 @@ OC.L10N.register(
     "Save" : "Save",
     "Reset" : "إعادة الضبط",
     "Documentation" : "الدليل",
+    "Connected as {user}" : "متصل بصفته {user}",
     "Invalid token" : "علامة غير صالحة",
     "Copied!" : "تم النسخ!",
     "Copied to the clipboard" : "تم النسخ إلى الحافطة",
