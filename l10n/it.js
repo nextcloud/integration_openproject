@@ -29,6 +29,7 @@ OC.L10N.register(
     "OpenProject integration" : "Integrazione OpenProject",
     "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
+    "Could not fetch work packages from OpenProject" : "Impossibile recuperare i pacchetti di lavoro da OpenProject",
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "Start typing to search" : "Inizia a digitare per cercare",
     "Search for a work package to create a relation" : "Cerca un pacchetto di lavoro per creare una relazione",
