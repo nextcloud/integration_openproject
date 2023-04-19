@@ -80,7 +80,7 @@ OC.L10N.register(
     "Unexpected Error" : "Beklenmeyen bir sorun çıktı",
     "To add a link, use the search bar above to find the desired work package" : "İstediğiniz iş paketini bulmak ve bir bağlantı olarak eklemek için yukarıdaki arama çubuğunu kullanın",
     "Start typing to search" : "Aramak için yazmaya başlayın",
-    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi arayın",
+    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi ara",
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
     "Work package linked successfully!" : "Çalışma paketinin bağlantısı kuruldu!",
     "Failed to link file to work package" : "Çalışma paketinin bağlantısı kurulamadı",
