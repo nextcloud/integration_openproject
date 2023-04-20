@@ -27,7 +27,7 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use OCP\Files\NotFoundException;
 use OCP\DB\Exception;
-use OCP\Files\NotPermittedException;
+use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
 use OCP\IUserManager;
@@ -101,7 +101,7 @@ class DirectUploadService {
 	 *
 	 * @return array<mixed>
 	 *
-	 * @throws NotPermittedException
+	 * @throws OpenprojectUnauthorizedUserException
 	 * @throws NotFoundException
 	 * @throws Exception
 	 */
@@ -109,7 +109,7 @@ class DirectUploadService {
 		$tokenInfo = $this->databaseService->getTokenInfoFromDB($token);
 		$userId = $this->userManager->get($tokenInfo['user_id']);
 		if ($tokenInfo['user_id'] === null || !$this->userManager->userExists($tokenInfo['user_id']) || !$userId->isEnabled()) {
-			throw new NotPermittedException('unauthorized');
+			throw new OpenprojectUnauthorizedUserException('unauthorized');
 		}
 		$currentTime = (new DateTime())->getTimestamp();
 		if ($currentTime > $tokenInfo['expires_on']) {

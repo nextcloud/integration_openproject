@@ -214,6 +214,33 @@ class DirectUploadControllerTest extends TestCase {
 		assertSame($expectedStatusCode, $result->getStatus());
 	}
 
+	public function testNegativeFreeSpace(): void {
+		$fileMock = $this->getMockBuilder('\OC\Files\Node\File')->disableOriginalConstructor()->getMock();
+		$fileMock->method('getId')->willReturn(123);
+		$nodeMock = $this->getNodeMock('folder');
+		$tmpFileName = '/tmp/integration_openproject_unit_test';
+		\Safe\touch($tmpFileName);
+		$nodeMock[0]->method('getFreeSpace')->willReturn(-3);
+		$nodeMock[0]->method('newFile')->willReturn($fileMock);
+		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$userFolderMock->method('getById')->willReturn($nodeMock);
+		$directUploadController = $this->createDirectUploadController(
+			$userFolderMock, 101, $tmpFileName
+		);
+		$result = $directUploadController->directUpload(
+			'WampxL5Z97CndGwB7qLPfotosDT5mXk7oFyGLa64nmY35ANtkzT7zDQwYyXrbdC3'
+		);
+		$resultArray = $result->getData();
+		assertSame(
+			[
+				'file_name' => 'file.txt',
+				'file_id' => 123
+			],
+			$resultArray
+		);
+	}
+
+
 	/**
 	 * @param MockObject $folderMock
 	 * @param int $uploadedFileSize
