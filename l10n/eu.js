@@ -77,6 +77,8 @@ OC.L10N.register(
     "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
     "Failed to get OpenProject notifications" : "Akatsa OpenProject jakinarazpenak lortzerakoan",
     "assignee" : "esleitua",
+    "accountable" : "erantzulea",
+    "watcher" : "begiralea",
     "commented" : "iruzkinduta",
     "mentioned" : "aipatuta",
     "Existing relations:" : "Dauden harremanak:",
