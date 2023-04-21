@@ -472,3 +472,4 @@ npm run watch
       e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220728-nightly"`
    3. Push the tag to the `auto-release`  branch: `git push origin release/<version>:auto-release --tags -f`
    4. Approve the deployment in GitHub actions
+cscs
