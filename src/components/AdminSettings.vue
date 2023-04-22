@@ -170,7 +170,7 @@
 				:is-complete="isManagedProjectFolderCompleted"
 				:is-disabled="isManagedGroupFolderSetUpInDisableMode"
 				:show-managed-folder-main-error="state.app_password_set" />
-			<div v-if="state.default_managed_folders">
+			<div v-if="default_managed_folders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
 					<NcCheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
 						<b>Automatically managed folders</b>
@@ -397,6 +397,7 @@ export default {
 			iskeepCurrentCompleteIntegration: 'Setup OpenProject user, group and folder',
 			groupFolderStatus: null,
 			isGroupFolderSetupCorrect: null,
+			default_managed_folders: false,
 		}
 	},
 	computed: {
@@ -517,6 +518,10 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				// console.log(this.state)
+				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
+					this.default_managed_folders = true
+				}
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
@@ -535,7 +540,7 @@ export default {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
 				}
-				if (this.state.default_managed_folders) {
+				if (this.default_managed_folders) {
 					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.managedGroupFolderSetUp = true
 				}
@@ -553,7 +558,7 @@ export default {
 				if (this.state.managed_folder_state) {
 					this.isManagedFolderActive = false
 					this.isGroupfolderSetupAutomaticallyReady = true
-				} else if (this.state.default_managed_folders === true) {
+				} else if (this.default_managed_folders === true) {
 					this.isManagedFolderActive = false
 					this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
 				}
@@ -642,13 +647,13 @@ export default {
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			if (this.state.default_managed_folders === false) {
+			if (this.default_managed_folders === false) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 				// this api is to set the this.state.default_managed_folders = true to database in order to make the managed project folder visible
 				const result = await this.saveOPOptions()
 				if (result) {
-					this.state.default_managed_folders = true
+					this.default_managed_folders = true
 					this.isGroupfolderSetupAutomaticallyReady = true
 				}
 			}
@@ -668,7 +673,6 @@ export default {
 			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				this.iskeepCurrentCompleteIntegration = 'Setup OpenProject user, group and folder'
 			}
-
 		},
 		async checkForErrorOrSetUpOpenProjectGroupFolders() {
 			this.loadingSetUpGroupFolder = true
@@ -769,7 +773,7 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
-			this.state.default_managed_folders = false
+			// this.state.default_managed_folders = false
 			this.isGroupfolderSetupAutomaticallyReady = false
 
 			await this.saveOPOptions()
@@ -919,7 +923,7 @@ export default {
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
 					setup_group_folder: groupFolderSetUp,
-					default_managed_folders: this.state.default_managed_folders,
+					// default_managed_folders: this.state.default_managed_folders,
 					managed_folder_state: this.isGroupfolderSetupAutomaticallyReady,
 					reset_app_password: appPassword,
 				},

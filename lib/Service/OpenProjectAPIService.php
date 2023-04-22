@@ -19,6 +19,7 @@ use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
+use OCP\Files\InvalidPathException;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -982,6 +983,7 @@ class OpenProjectAPIService {
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
 	 * @throws NoUserException
+	 * @throws InvalidPathException
 	 */
 	public function createGroupfolder(): int {
 		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
@@ -1015,12 +1017,13 @@ class OpenProjectAPIService {
 		);
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$groupFolderId = $openProjectFolder->getId();
 		$this->config->setAppValue(
 			Application::APP_ID,
 			'openproject_groupfolder_id',
-			(string)$openProjectFolder->getId()
+			(string)$groupFolderId
 		);
-		return $openProjectFolder->getId();
+		return $groupFolderId;
 	}
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist

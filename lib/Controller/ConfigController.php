@@ -185,7 +185,6 @@ class ConfigController extends Controller {
 			'default_enable_unified_search',
 			'setup_group_folder',
 			'reset_app_password',
-			'default_managed_folders',
 			'managed_folder_state'
 		];
 		// if values contains a key that is not in the allowedKeys array,
@@ -344,6 +343,8 @@ class ConfigController extends Controller {
 
 	/**
 	 * set admin config values
+	 * @NoCSRFRequired
+	 *
 	 *
 	 * @param array<string, string|null> $values
 	 *
