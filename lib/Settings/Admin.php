@@ -75,7 +75,6 @@ class Admin implements ISettings {
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			'app_password_set' => ($appPasswordCount === 1),
-			'managed_folder_state' => $this->config->getAppValue(Application::APP_ID, 'managed_folder_state', '0') === '1',
 			'group_folder_status' => $groupFolderStatusInformation
 		];
 

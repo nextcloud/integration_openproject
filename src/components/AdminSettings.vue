@@ -398,6 +398,7 @@ export default {
 			groupFolderStatus: null,
 			isGroupFolderSetupCorrect: null,
 			default_managed_folders: false,
+			managed_folder_state: false
 		}
 	},
 	computed: {
@@ -475,7 +476,7 @@ export default {
 			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.state.app_password_set ? true : this.oPSystemPassword !== null
 		},
 		isManagedFolderInActive() {
-			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.isManagedFolderActive === false && this.state.managed_folder_state === false
+			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.isManagedFolderActive === false && this.managed_folder_state === false
 		},
 		adminFileStorageHref() {
 			let hostPart = ''
@@ -548,17 +549,15 @@ export default {
 					this.formMode.opSystemPassword = F_MODES.VIEW
 					this.isFormCompleted.opSystemPassword = true
 					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-				} else {
-					// this is the case when user is deleted and app password is gone but the state.managed_folder_state in the database is still true
-					// we make it false untill user make it true while setting up the managed group folders
-					this.state.managed_folder_state = false
+					this.managed_folder_state = true
 				}
 
 				// condition for active and inactive for managed project folders
-				if (this.state.managed_folder_state) {
+				if (this.managed_folder_state) {
 					this.isManagedFolderActive = false
 					this.isGroupfolderSetupAutomaticallyReady = true
-				} else if (this.default_managed_folders === true) {
+				}
+				if (this.default_managed_folders === true) {
 					this.isManagedFolderActive = false
 					this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
 				}
@@ -601,48 +600,19 @@ export default {
 					if (result) {
 						this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 						this.isFormCompleted.managedGroupFolderSetUp = false
-						this.isGroupfolderSetupAutomaticallyReady = this.state.managed_folder_state
+						this.isGroupfolderSetupAutomaticallyReady = this.managed_folder_state
 						this.isManagedFolderActive = false
 					}
 				},
 				true
 			)
 		},
-		async setManagedGroupFolderSetupToViewMode() {
-			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
-			if (this.groupFolderStatus) {
-				if (this.state.app_password_set === false) {
-					// we will get the app password this api request
-					const success = await this.saveOPOptions()
-					if (success) {
-						this.formMode.opSystemPassword = F_MODES.EDIT
-						this.state.managed_folder_state = true
-						this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-						this.isFormCompleted.managedGroupFolderSetUp = true
-						this.isGroupFolderSetupCorrect = true
-						this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-					}
-				} else {
-					this.state.managed_folder_state = true
-					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-					this.isFormCompleted.managedGroupFolderSetUp = true
-					this.isGroupFolderSetupCorrect = true
-					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-				}
-			} else {
-				// we will check for the error making the setup_group_folder === true
-				const success = await this.saveOPOptions()
-				if (success) {
-					this.state.managed_folder_state = true
-					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-					this.isFormCompleted.managedGroupFolderSetUp = true
-					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
-					this.isGroupFolderSetupCorrect = true
-					if ((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
-						this.formMode.opSystemPassword = F_MODES.EDIT
-					}
-				}
-			}
+		setManagedGroupFolderSetupToViewMode() {
+			this.managed_folder_state = true
+			this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
+			this.isFormCompleted.managedGroupFolderSetUp = true
+			this.isGroupFolderSetupCorrect = true
+			this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 		},
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
@@ -650,7 +620,6 @@ export default {
 			if (this.default_managed_folders === false) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
-				// this api is to set the this.state.default_managed_folders = true to database in order to make the managed project folder visible
 				const result = await this.saveOPOptions()
 				if (result) {
 					this.default_managed_folders = true
@@ -664,19 +633,39 @@ export default {
 		},
 		changeGroupFolderSetUpState() {
 			this.isGroupfolderSetupAutomaticallyReady = !this.isGroupfolderSetupAutomaticallyReady
-			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if (this.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
-			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === false) {
+			} else if (this.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === false) {
 				this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
-			} else if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === false) {
+			} else if (this.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === false) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
-			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+			} else if (this.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				this.iskeepCurrentCompleteIntegration = 'Setup OpenProject user, group and folder'
 			}
 		},
 		async checkForErrorOrSetUpOpenProjectGroupFolders() {
 			this.loadingSetUpGroupFolder = true
-			await this.setManagedGroupFolderSetupToViewMode()
+			this.groupFolderStatus = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
+			if (this.groupFolderStatus) {
+				if (this.state.app_password_set === false) {
+					const success = await this.saveOPOptions()
+					if (success) {
+						this.formMode.opSystemPassword = F_MODES.EDIT
+						this.setManagedGroupFolderSetupToViewMode()
+					}
+				} else {
+					this.setManagedGroupFolderSetupToViewMode()
+				}
+			} else {
+				// we will check for the error making the setup_group_folder === true
+				const success = await this.saveOPOptions()
+				if (success) {
+					this.setManagedGroupFolderSetupToViewMode()
+					if ((this.formMode.opSystemPassword === F_MODES.DISABLE && !this.state.app_password_set) || this.formMode.opSystemPassword === F_MODES.DISABLE) {
+						this.formMode.opSystemPassword = F_MODES.EDIT
+					}
+				}
+			}
 			this.loadingSetUpGroupFolder = false
 			if (this.formMode.managedGroupFolderSetUp === F_MODES.VIEW) {
 				this.groupFolderSetUpError = null
@@ -773,8 +762,6 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
-			// this.state.default_managed_folders = false
-			this.isGroupfolderSetupAutomaticallyReady = false
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -884,7 +871,7 @@ export default {
 			} else if (this.state.openproject_instance_url === null || this.state.openproject_client_secret === null || this.state.openproject_client_id === null) {
 				// incase when replacing any of the above values
 				return false
-			} else if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+			} else if (this.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}
 			return false
@@ -896,16 +883,16 @@ export default {
 			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
 				return false
 			}
-			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
+			if (this.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true && !this.state.app_password_set) {
 				return true
 			}
 			if (this.formMode.opSystemPassword === F_MODES.EDIT) {
 				return false
 			}
-			if (this.state.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if (this.managed_folder_state === true && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}
-			if (this.state.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
+			if (this.managed_folder_state === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}
 			return false
@@ -923,8 +910,6 @@ export default {
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
 					setup_group_folder: groupFolderSetUp,
-					// default_managed_folders: this.state.default_managed_folders,
-					managed_folder_state: this.isGroupfolderSetupAutomaticallyReady,
 					reset_app_password: appPassword,
 				},
 			}
@@ -1014,8 +999,8 @@ export default {
 			if (!this.state.app_password_set) {
 				const success = await this.saveOPOptions()
 				if (success) {
-					this.state.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
-					this.isManagedFolderActive = this.state.managed_folder_state
+					this.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
+					this.isManagedFolderActive = this.managed_folder_state
 				}
 
 			} else {
@@ -1023,7 +1008,7 @@ export default {
 				// since the integration is done without the groupfolder setup and the app password must be deleted
 				const success = await this.saveOPOptions()
 				if (success) {
-					this.state.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
+					this.managed_folder_state = this.isGroupfolderSetupAutomaticallyReady
 					this.state.app_password_set = false
 					this.isFormCompleted.opSystemPassword = false
 					this.isGroupFolderSetupCorrect = true
