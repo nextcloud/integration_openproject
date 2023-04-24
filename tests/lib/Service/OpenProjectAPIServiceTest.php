@@ -227,9 +227,28 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
 		$clientConfigMock
-			->method('getSystemValueBool')
-			->with('allow_local_remote_servers', false)
-			->willReturn(true);
+		->method('getSystemValueBool')
+		->withConsecutive(
+		['allow_local_remote_servers', false],
+		['installed', false],
+		['allow_local_remote_servers', false],
+		['allow_local_remote_servers', false],
+		['installed', false],
+		['allow_local_remote_servers', false],
+		['allow_local_remote_servers', false],
+		['installed', false],
+		['allow_local_remote_servers', false])
+		->willReturnOnConsecutiveCalls(
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		);
 
 		if (version_compare(OC_Util::getVersionString(), '26') >= 0) {
 			//changed from nextcloud 26
