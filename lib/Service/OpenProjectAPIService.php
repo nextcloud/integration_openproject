@@ -1016,6 +1016,7 @@ class OpenProjectAPIService {
 			true
 		);
 		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
+		sleep(5);
 		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$groupFolderId = $openProjectFolder->getId();
 		$this->config->setAppValue(

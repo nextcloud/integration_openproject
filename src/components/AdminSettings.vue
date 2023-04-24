@@ -398,7 +398,7 @@ export default {
 			groupFolderStatus: null,
 			isGroupFolderSetupCorrect: null,
 			default_managed_folders: false,
-			managed_folder_state: false
+			managed_folder_state: false,
 		}
 	},
 	computed: {
