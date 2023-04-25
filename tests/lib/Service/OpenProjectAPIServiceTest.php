@@ -204,7 +204,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
-		$clientConfigMock
+
+		if (version_compare(OC_Util::getVersionString(), '26') >= 0) {
+			$clientConfigMock
 		->method('getSystemValueBool')
 		->withConsecutive(
 		['allow_local_remote_servers', false],
@@ -227,8 +229,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			true,
 			true
 		);
-
-		if (version_compare(OC_Util::getVersionString(), '26') >= 0) {
 			//changed from nextcloud 26
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
@@ -238,6 +238,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
 			);
 		} elseif (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+			$clientConfigMock
+			->method('getSystemValueBool')
+			->with('allow_local_remote_servers', false)
+			->willReturn(true);
 			//changed from nextcloud 24
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
@@ -247,6 +251,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
 			);
 		} else {
+			$clientConfigMock
+			->method('getSystemValueBool')
+			->with('allow_local_remote_servers', false)
+			->willReturn(true);
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
 				$clientConfigMock,                                             // @phpstan-ignore-line
