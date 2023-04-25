@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Use Node 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 14
 
@@ -30,7 +30,7 @@ jobs:
           tools: php-cs-fixer, phpunit
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get current tag
         id: tag
@@ -39,13 +39,13 @@ jobs:
           tag=$(git tag -l --points-at HEAD)
           echo CURRENT TAG IS '"'${tag}'"' '!!!!'
           vtag=$(echo $tag | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+" || echo "")
-          echo "##[set-output name=currenttag;]$vtag"
+          echo "currenttag=$vtag" >> $GITHUB_OUTPUT
 
       - name: Build project
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
         id: build_release
         run: |
-          echo "##[set-output name=app_id;]$APP_ID"
+          echo "app_id=$APP_ID" >> $GITHUB_OUTPUT
           echo "###### copy certificate"
           mkdir -p ~/.nextcloud/certificates
           echo "$APP_CRT" > ~/.nextcloud/certificates/${APP_ID}.crt
@@ -69,7 +69,7 @@ jobs:
           tag=${{ steps.tag.outputs.currenttag }}
           version=${tag/v/}
           webserveruser=runner occ_dir=~/html/nextcloud version=$version make appstore
-          echo "##[set-output name=version;]$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
           APP_KEY: ${{ secrets.APP_KEY }}
