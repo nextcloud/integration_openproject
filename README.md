@@ -469,6 +469,6 @@ npm run watch
 
 #### 2. Publish Release
    1. Tag a commit on the `release/<version>` branch. The tag must have the format `v2.1.1` for releases and `v2.1.1-20220928-nightly` for nightly builds.  
-      e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220728-nightly"`
+      e.g: `git tag v2.0.6-20220928-nightly -m "v2.0.6-20220928-nightly"`
    3. Push the tag to the `auto-release`  branch: `git push origin release/<version>:auto-release --tags -f`
    4. Approve the deployment in GitHub actions
