@@ -6,6 +6,10 @@ on:
 
 name: CI
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   unittest-linting:
     name: unit tests and linting
@@ -26,17 +30,11 @@ jobs:
             phpVersion: 7.4
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          all_but_latest: true
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@2.23.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
@@ -44,7 +42,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
         uses: actions/cache@v3
@@ -54,14 +52,14 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.2
+        uses: skjnldsv/read-package-engines-version-actions@v2
         id: versions
         with:
           fallbackNode: '^14'
           fallbackNpm: '^7'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
           cache: 'npm'
@@ -224,26 +222,20 @@ jobs:
         image: redis:7
 
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          all_but_latest: true
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: integration_openproject
 
       - name: Checkout activity app
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: nextcloud/activity
           path: activity
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@2.23.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
@@ -251,7 +243,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
         uses: actions/cache@v3

@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Use Node 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 14
 
@@ -30,7 +30,7 @@ jobs:
           tools: php-cs-fixer, phpunit
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get current tag
         id: tag
@@ -39,13 +39,13 @@ jobs:
           tag=$(git tag -l --points-at HEAD)
           echo CURRENT TAG IS '"'${tag}'"' '!!!!'
           vtag=$(echo $tag | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+" || echo "")
-          echo "##[set-output name=currenttag;]$vtag"
+          echo "currenttag=$vtag" >> $GITHUB_OUTPUT
 
       - name: Build project
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
         id: build_release
         run: |
-          echo "##[set-output name=app_id;]$APP_ID"
+          echo "app_id=$APP_ID" >> $GITHUB_OUTPUT
           echo "###### copy certificate"
           mkdir -p ~/.nextcloud/certificates
           echo "$APP_CRT" > ~/.nextcloud/certificates/${APP_ID}.crt
@@ -69,7 +69,7 @@ jobs:
           tag=${{ steps.tag.outputs.currenttag }}
           version=${tag/v/}
           webserveruser=runner occ_dir=~/html/nextcloud version=$version make appstore
-          echo "##[set-output name=version;]$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
           APP_KEY: ${{ secrets.APP_KEY }}
@@ -77,26 +77,20 @@ jobs:
       - name: Create Release
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.currenttag }}
-          release_name: ${{ steps.tag.outputs.currenttag }}
+          name: ${{ steps.tag.outputs.currenttag }}
           draft: false
           prerelease: false
 
       - name: Upload Release Asset
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
         id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
-          asset_name: ${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
-          asset_content_type: application/gzip
+          files: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
 
       - name: Publish to appstore
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
