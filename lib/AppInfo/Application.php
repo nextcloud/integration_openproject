@@ -16,6 +16,7 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
+use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
@@ -76,6 +77,13 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
+
+		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
+			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);
+			// RenderReferenceEvent is dispatched when we know the smart picker or link previews will be used
+			// so we need to load our scripts at this moment
+			$context->registerEventListener(RenderReferenceEvent::class, OpenProjectReferenceListener::class);
+		}
 	}
 
 	public function boot(IBootContext $context): void {
