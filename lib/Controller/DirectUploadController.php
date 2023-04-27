@@ -30,6 +30,7 @@ use OC\User\NoUserException;
 use InvalidArgumentException;
 use OC\ForbiddenException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
+use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
 use \OCP\AppFramework\ApiController;
 use OCP\Files\File;
 use OCP\Files\InvalidCharacterInPathException;
@@ -37,12 +38,12 @@ use OCP\Files\InvalidContentException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
+use OCP\Lock\LockedException;
 use OCA\OpenProject\Service\DirectUploadService;
 use OCA\OpenProject\Service\DatabaseService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\IRootFolder;
-use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -218,8 +219,10 @@ class DirectUploadController extends ApiController {
 
 			// this is also true if we try to overwrite
 			// to overwrite a file we need enough free quota for the new data
-			// otherwise `putContent()` fails
-			if ($directUploadFile['size'] > $freeSpace) {
+			// otherwise `putContent()` fails,
+			// if freeSpace is smaller than 0 then treat it as a unlimited space
+			// and don't throw an error
+			if ($directUploadFile['size'] > $freeSpace && $freeSpace >= 0) {
 				throw new NotEnoughSpaceException('insufficient quota');
 			}
 			if ($folderNode->nodeExists($fileName) && $overwrite) {
@@ -248,7 +251,7 @@ class DirectUploadController extends ApiController {
 			}
 			$fileInfo = $folderNode->newFile($fileName, fopen($tmpPath, 'r'));
 			$fileId = $fileInfo->getId();
-		} catch (NotPermittedException $e) {
+		} catch (OpenprojectUnauthorizedUserException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_UNAUTHORIZED);
@@ -281,6 +284,10 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_UNSUPPORTED_MEDIA_TYPE);
+		} catch (LockedException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_LOCKED);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
