@@ -7,3 +7,5 @@ parameters:
         - bootstrap.php
     checkGenericClassInNonGenericObjectType: false
     reportUnmatchedIgnoredErrors: false
+    excludePaths:
+    	-  './lib/Reference/WorkPackageReferenceProvider.php'
