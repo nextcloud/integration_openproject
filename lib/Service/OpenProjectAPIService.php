@@ -550,9 +550,7 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder',
-			'default_managed_folders',
-			'managed_folder_state'
+			'setup_group_folder'
 		];
 
 		if ($allKeysMandatory) {
