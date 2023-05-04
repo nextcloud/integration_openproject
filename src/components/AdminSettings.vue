@@ -519,6 +519,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				this.managedFolderState = this.state.project_folder_state
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedFolders = true
@@ -741,6 +742,7 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
+			this.state.default_managed_projectfolder_state = false
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -888,6 +890,7 @@ export default {
 					openproject_instance_url: this.state.openproject_instance_url,
 					default_enable_navigation: this.state.default_enable_navigation,
 					default_enable_unified_search: this.state.default_enable_unified_search,
+					default_managed_projectfolder_state: this.isGroupfolderSetupAutomaticallyReady,
 					setup_group_folder: groupFolderSetUp,
 					reset_app_password: appPassword,
 				},

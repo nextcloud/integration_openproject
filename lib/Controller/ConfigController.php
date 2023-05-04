@@ -184,7 +184,8 @@ class ConfigController extends Controller {
 			'default_enable_navigation',
 			'default_enable_unified_search',
 			'setup_group_folder',
-			'reset_app_password'
+			'reset_app_password',
+			'default_managed_projectfolder_state'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
