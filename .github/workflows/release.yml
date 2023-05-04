@@ -81,16 +81,9 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.currenttag }}
           name: ${{ steps.tag.outputs.currenttag }}
+          files: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
-        id: upload-release-asset
-        uses: softprops/action-gh-release@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          files: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
 
       - name: Publish to appstore
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
