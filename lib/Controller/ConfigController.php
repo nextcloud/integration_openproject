@@ -204,10 +204,6 @@ class ConfigController extends Controller {
 					$group->addUser($user);
 					$this->subAdminManager->createSubAdmin($user, $group);
 					$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
-				// when all the thing is ready then create the app password for the openproject user
-				if (!$this->openprojectAPIService->hasAppPasswordAlready()) {
-					$app_password = $this->openprojectAPIService->generateAppPasswordTokenForUser();
-				}
 			}
 		}
 
@@ -216,7 +212,7 @@ class ConfigController extends Controller {
 		// code to for updating the app password token
 		$groupFolderID = $this->config->getAppValue(Application::APP_ID, 'openproject_groupfolder_id', '');
 		if(key_exists('reset_app_password', $values) && $values['reset_app_password']) {
-			$app_password = $this->openprojectAPIService->replaceAppPasswordToken();
+			$app_password = $this->openprojectAPIService->createOrReplaceAppPasswordToken();
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -623,9 +619,7 @@ class ConfigController extends Controller {
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
-			"reset_app_password" => null,
-			"managed_folder_state" => null,
-			"default_managed_folders" => null
+			"reset_app_password" => null
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);

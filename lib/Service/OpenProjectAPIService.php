@@ -1142,11 +1142,12 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * Deletes the old app password token and creates new one user OpenProject
+	 * creates new app password
+	 * Deletes the old app password  token if exists and creates new one
 	 *
 	 * @return string
 	 */
-	public function replaceAppPasswordToken(): string {
+	public function createOrReplaceAppPasswordToken(): string {
 		$this->deleteAppPassword();
 		return $this->generateAppPasswordTokenForUser();
 	}

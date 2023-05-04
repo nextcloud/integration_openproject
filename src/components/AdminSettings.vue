@@ -172,7 +172,7 @@
 				:show-managed-folder-main-error="state.app_password_set" />
 			<div v-if="showDefaultManagedFolders">
 				<div v-if="isManagedGroupFolderSetUpFormInEdit">
-					<NcCheckboxRadioSwitch type="switch" :checked="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
+					<NcCheckboxRadioSwitch type="switch" :checked.sync="isGroupfolderSetupAutomaticallyReady" @update:checked="changeGroupFolderSetUpState">
 						<b>Automatically managed folders</b>
 					</NcCheckboxRadioSwitch>
 					<div v-if="isGroupfolderSetupAutomaticallyReady === false" class="complete-without-groupfolders">
@@ -204,7 +204,7 @@
 						<b>OpenProject user, group and folder</b>
 						<p class="managed-folder-description">
 							{{
-								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folde, assigned to a group and managed by a folder,each called "OpenProject".')
+								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a folder,each called "OpenProject".')
 							}} <br>
 							{{
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later')
@@ -543,6 +543,7 @@ export default {
 				if (this.showDefaultManagedFolders) {
 					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.managedGroupFolderSetUp = true
+					this.isManagedFolderActive = false
 				}
 				if (this.state.app_password_set) {
 					this.formMode.opSystemPassword = F_MODES.VIEW
@@ -550,14 +551,10 @@ export default {
 					this.iskeepCurrentCompleteIntegration = 'Keep Current Change'
 					this.managedFolderState = true
 				}
-
 				// condition for active and inactive for managed project folders
 				if (this.managedFolderState) {
 					this.isManagedFolderActive = false
 					this.isGroupfolderSetupAutomaticallyReady = true
-				}
-				if (this.showDefaultManagedFolders === true) {
-					this.isManagedFolderActive = false
 				}
 			}
 		},
@@ -615,7 +612,6 @@ export default {
 			this.isFormCompleted.opSystemPassword = true
 		},
 		changeGroupFolderSetUpState() {
-			this.isGroupfolderSetupAutomaticallyReady = !this.isGroupfolderSetupAutomaticallyReady
 			if (this.managedFolderState === true && this.isGroupfolderSetupAutomaticallyReady === true) {
 				this.iskeepCurrentCompleteWithoutIntegration = 'Keep Current Change'
 			} else if (this.managedFolderState === false && this.isGroupfolderSetupAutomaticallyReady === false) {
