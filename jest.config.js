@@ -5,6 +5,7 @@ module.exports = {
 	testMatch: ['**/tests/**/*.spec.{js,ts}'],
 	moduleNameMapper: {
 		'\\.(scss)$': '<rootDir>/tests/jest/stubs/empty.js',
+		'@nextcloud/l10n/gettext': require.resolve('@nextcloud/l10n/gettext'),
 	},
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
 	collectCoverage: true,

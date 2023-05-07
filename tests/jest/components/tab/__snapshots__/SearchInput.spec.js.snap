@@ -37,7 +37,7 @@ Object {
 `;
 
 exports[`SearchInput.vue work packages multiselect search list should not be displayed if the search results is empty 1`] = `
-<ul class="multiselect__content" style="display: block;">
+<ul role="listbox" id="listbox-null" class="multiselect__content" style="display: block;">
   <!---->
   <li style="display: none;"><span class="multiselect__option"><span>No results</span></span></li>
   <li><span class="multiselect__option">
