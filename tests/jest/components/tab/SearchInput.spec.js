@@ -487,7 +487,7 @@ function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 			...data,
 		}),
 		stubs: {
-			Avatar: true,
+			NcAvatar: true,
 			WorkPackage: true,
 		},
 		propsData: {
