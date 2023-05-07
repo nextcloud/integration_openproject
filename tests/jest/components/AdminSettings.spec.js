@@ -29,11 +29,13 @@ global.OC = {
 
 global.t = (app, text) => text
 
-global.navigator = {
+const writeText = jest.fn()
+
+Object.assign(global.navigator, {
 	clipboard: {
-		writeText: jest.fn(),
+	  writeText,
 	},
-}
+})
 
 const selectors = {
 	oauthInstanceInput: '#openproject-oauth-instance > .text-input-input-wrapper > input',

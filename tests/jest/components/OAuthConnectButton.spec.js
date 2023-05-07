@@ -8,13 +8,13 @@ import * as dialogs from '@nextcloud/dialogs'
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
 
-const { location } = window
+const realLocation = window.location
 const localVue = createLocalVue()
 
 describe('OAuthConnectButton.vue', () => {
 	let wrapper
 	afterEach(() => {
-		window.location = location
+		window.location = realLocation
 		jest.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {
