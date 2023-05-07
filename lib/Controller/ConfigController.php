@@ -270,7 +270,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if(($runningFullReset && key_exists('reset_app_password', $values) && $values['reset_app_password'] === null) || ($values['managed_folder_state'] !== true && $values['reset_app_password'] === null)) {
+		if(($runningFullReset && key_exists('default_managed_projectfolder_state', $values) && $values['default_managed_projectfolder_state'] === false)) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
 
@@ -328,6 +328,7 @@ class ConfigController extends Controller {
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
+		$this->config->deleteAppValue(Application::APP_ID, 'default_managed_projectfolder_state');
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,

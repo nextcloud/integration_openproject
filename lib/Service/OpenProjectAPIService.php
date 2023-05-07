@@ -1161,4 +1161,16 @@ class OpenProjectAPIService {
 		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
 
+	/**
+	 * check if app password for user OpenProject is already created
+	 *
+	 * @return bool
+	 */
+	public function isSetForFirstTime(): bool {
+		$allAppKeys = $this->config->getAppKeys(Application::APP_ID);
+		if(in_array('default_managed_projectfolder_state', $allAppKeys)) {
+			return true;
+		}
+		return false;
+	}
 }

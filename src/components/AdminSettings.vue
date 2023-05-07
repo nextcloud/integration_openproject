@@ -392,7 +392,6 @@ export default {
 			oPSystemPassword: null,
 			isGroupfolderSetupAutomaticallyReady: null,
 			groupFolderSetUpError: null,
-			isManagedFolderActive: null,
 			iskeepCurrentCompleteWithoutIntegration: 'Keep Current Change',
 			iskeepCurrentCompleteIntegration: 'Setup OpenProject user, group and folder',
 			groupFolderStatus: null,
@@ -475,9 +474,6 @@ export default {
 		isManagedProjectFolderCompleted() {
 			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.state.app_password_set ? true : this.oPSystemPassword !== null
 		},
-		isManagedFolderInActive() {
-			return this.isManagedGroupFolderSetUpFormInEdit ? false : this.isManagedFolderActive === false && this.managedFolderState === false
-		},
 		adminFileStorageHref() {
 			let hostPart = ''
 			const urlPart = '%sadmin/settings/storages'
@@ -509,6 +505,15 @@ export default {
 				&& !this.isOpSystemPasswordFormInEdit
 			)
 		},
+		isManagedFolderInActive() {
+			if (this.isManagedGroupFolderSetUpFormInEdit) {
+				return false
+			}
+			if (!this.isIntegrationComplete) {
+				return false
+			}
+			return this.state.app_password_set === false
+		},
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
 		},
@@ -519,7 +524,9 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				this.managedFolderState = this.state.project_folder_state
+				if (this.state.project_folder_state) {
+					this.managedFolderState = true
+				}
 				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedFolders = true
@@ -544,7 +551,6 @@ export default {
 				if (this.showDefaultManagedFolders) {
 					this.formMode.managedGroupFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.managedGroupFolderSetUp = true
-					this.isManagedFolderActive = false
 				}
 				if (this.state.app_password_set) {
 					this.formMode.opSystemPassword = F_MODES.VIEW
@@ -554,7 +560,6 @@ export default {
 				}
 				// condition for active and inactive for managed project folders
 				if (this.managedFolderState) {
-					this.isManagedFolderActive = false
 					this.isGroupfolderSetupAutomaticallyReady = true
 				}
 			}
@@ -586,7 +591,6 @@ export default {
 			this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
 			this.isFormCompleted.managedGroupFolderSetUp = false
 			this.isGroupfolderSetupAutomaticallyReady = this.managedFolderState
-			this.isManagedFolderActive = false
 		},
 		setManagedGroupFolderSetupToViewMode() {
 			this.managedFolderState = true
@@ -742,7 +746,7 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
-			this.state.default_managed_projectfolder_state = false
+			this.isGroupfolderSetupAutomaticallyReady = false
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -982,7 +986,6 @@ export default {
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.managedFolderState = this.isGroupfolderSetupAutomaticallyReady
-					this.isManagedFolderActive = this.managedFolderState
 				}
 
 			} else {

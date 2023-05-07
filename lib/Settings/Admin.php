@@ -67,7 +67,6 @@ class Admin implements ISettings {
 		// We only need a single app password for user OpenProject
 		$appPasswordCount = sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME));
 		$groupFolderStatusInformation = $this->openProjectAPIService-> getGroupFolderSetupInformation();
-
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
@@ -77,8 +76,12 @@ class Admin implements ISettings {
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			'app_password_set' => ($appPasswordCount === 1),
 			'group_folder_status' => $groupFolderStatusInformation,
-			'project_folder_state' => $this->config->getAppValue(Application::APP_ID, 'default_managed_projectfolder_state', '0') === '1'
+			'project_folder_state' => true
 		];
+
+		if($this->openProjectAPIService->isSetForFirstTime() === false) {
+			unset($adminConfig['project_folder_state']);
+		}
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
 
