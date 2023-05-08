@@ -15,6 +15,11 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
+	/**
+	 * list of users that were created on the local server during test runs
+	 * key is the lowercase username, value is an array of user attributes
+	 */
+	private array $createdUsers = [];
 	private string $regularUserPassword = '';
 	private string $adminUsername = '';
 	private string $adminPassword = '';
@@ -90,6 +95,8 @@ class FeatureContext implements Context {
 			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 		);
 		$this->theHttpStatusCodeShouldBe(200);
+		$userid = \strtolower((string)$user);
+		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
@@ -934,5 +941,17 @@ class FeatureContext implements Context {
 		$this->sharingContext = $environment->getContext('SharingContext');
 		/** @phpstan-ignore-next-line */
 		$this->directUploadContext = $environment->getContext('DirectUploadContext');
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function after():void {
+		foreach ($this->createdUsers as $userData) {
+			$this->theAdministratorDeletesTheUser($userData['userid']);
+		}
 	}
 }
