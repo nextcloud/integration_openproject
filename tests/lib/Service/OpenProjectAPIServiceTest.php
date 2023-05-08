@@ -22,6 +22,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\App\IAppManager;
+use OCP\Files\IMimeTypeLoader;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -377,7 +378,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ISubAdmin::class)
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IMimeTypeLoader::class)
 		);
 	}
 
@@ -436,6 +438,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
 					$subAdminManagerMock,
+					$this->createMock(IMimeTypeLoader::class)
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1315,6 +1318,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ISubAdmin::class),
+			$this->createMock(IMimeTypeLoader::class)
 		);
 
 		$response = $service->request('', '', []);
