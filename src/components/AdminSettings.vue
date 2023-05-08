@@ -569,7 +569,7 @@ export default {
 			case 'The group folder name OpenProject integration already exists' :
 				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
 			case 'The group folder app is not installed' :
-				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
+				return t('integration_openproject', 'Please install the group folder app, to be able to use automatic managed folders or deactivate the automatically managed folders.')
 			case 'The user OpenProject already exists' :
 				return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
 			case 'The group OpenProject already exists' :
@@ -856,6 +856,10 @@ export default {
 			} else if (this.state.openproject_instance_url === null || this.state.openproject_client_secret === null || this.state.openproject_client_id === null) {
 				// incase when replacing any of the above values
 				return false
+			} else if (this.managedFolderState === true && this.formMode.opSystemPassword === F_MODES.VIEW) {
+				return false
+			} else if (this.managedFolderState === true) {
+				return true
 			} else if (this.managedFolderState === false && this.isGroupfolderSetupAutomaticallyReady === true) {
 				return true
 			}

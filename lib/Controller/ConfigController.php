@@ -195,7 +195,7 @@ class ConfigController extends Controller {
 			}
 		}
 		$openProjectGroupFolderFileId = null;
-		$app_password = null;
+		$appPassword = null;
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			if ($isSystemReady) {
@@ -210,10 +210,9 @@ class ConfigController extends Controller {
 
 		// TODO
 		// this condition applies only when user and group with along with app password is created
-		// code to for updating the app password token
-		$groupFolderID = $this->config->getAppValue(Application::APP_ID, 'openproject_groupfolder_id', '');
+		// code for updating the app password token
 		if(key_exists('reset_app_password', $values) && $values['reset_app_password']) {
-			$app_password = $this->openprojectAPIService->createOrReplaceAppPasswordToken();
+			$appPassword = $this->openprojectAPIService->createOrReplaceAppPasswordToken();
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -228,6 +227,10 @@ class ConfigController extends Controller {
 
 		foreach ($values as $key => $value) {
 			if($key === 'setup_group_folder' || $key === 'reset_app_password') {
+				continue;
+			}
+			if ($key === 'default_managed_projectfolder_state' && $values['default_managed_projectfolder_state'] === false) {
+				$this->config->deleteAppValue(Application::APP_ID, 'default_managed_projectfolder_state');
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
@@ -270,7 +273,9 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if(($runningFullReset && key_exists('default_managed_projectfolder_state', $values) && $values['default_managed_projectfolder_state'] === false)) {
+		if((key_exists('default_managed_projectfolder_state', $values) && $values['default_managed_projectfolder_state'] === false) ||
+			((key_exists('reset_app_password', $values) && $values['reset_app_password'] === null))
+		) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
 
@@ -328,12 +333,11 @@ class ConfigController extends Controller {
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
-		$this->config->deleteAppValue(Application::APP_ID, 'default_managed_projectfolder_state');
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 			"oPGroupFolderFileId" => $openProjectGroupFolderFileId,
-			"openproject_user_app_password" => $app_password,
+			"openproject_user_app_password" => $appPassword,
 		];
 	}
 
@@ -621,7 +625,7 @@ class ConfigController extends Controller {
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
-			"reset_app_password" => null
+			'reset_app_password' => null
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);

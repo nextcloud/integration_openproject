@@ -575,8 +575,8 @@ class OpenProjectAPIService {
 			if ($key === 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
 				throw new InvalidArgumentException('invalid data');
 			}
-			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'managed_folder_state' || $key === 'default_managed_folders' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'reset_app_password') {
+
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'reset_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -1134,9 +1134,9 @@ class OpenProjectAPIService {
 	 */
 	public function deleteAppPassword(): void {
 		// TODO rebase needed for this function
-		if(sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1) {
-			$token_id = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
-			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token_id);
+		if($this->hasAppPassword()) {
+			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
+			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
 			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
 		}
 	}
@@ -1157,7 +1157,7 @@ class OpenProjectAPIService {
 	 *
 	 * @return bool
 	 */
-	public function hasAppPasswordAlready(): bool {
+	public function hasAppPassword(): bool {
 		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
 

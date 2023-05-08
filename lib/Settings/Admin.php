@@ -64,9 +64,7 @@ class Admin implements ISettings {
 			$id = (int)$oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);
 		}
-		// We only need a single app password for user OpenProject
-		$appPasswordCount = sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME));
-		$groupFolderStatusInformation = $this->openProjectAPIService-> getGroupFolderSetupInformation();
+		$groupFolderStatusInformation = $this->openProjectAPIService->getGroupFolderSetupInformation();
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
@@ -74,7 +72,7 @@ class Admin implements ISettings {
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
-			'app_password_set' => ($appPasswordCount === 1),
+			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			'group_folder_status' => $groupFolderStatusInformation,
 			'project_folder_state' => true
 		];
