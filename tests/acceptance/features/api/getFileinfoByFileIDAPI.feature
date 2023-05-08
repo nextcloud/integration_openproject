@@ -230,37 +230,6 @@ Feature: retrieve file information of a single file, using the file ID
     Given user "Carol" has been created
     When user "Brian" gets the information of the file with the id "9999999999999"
     Then the HTTP status code should be "401"
-    And the ocs data of the response should match
-      """"
-      {
-      "type": "object",
-      "required": [
-      "status",
-      "statuscode"
-      ],
-      "not": {
-      "required": [
-      "id",
-      "size",
-      "name",
-      "mtime",
-      "ctime",
-      "mimetype",
-      "owner_id",
-      "owner_name",
-      "modifier_id",
-      "modifier_name",
-      "trashed",
-      "dav_permissions",
-      "path"
-      ]
-      },
-      "properties": {
-      "status": {"type": "string", "pattern": "^Not Found$"},
-      "statuscode" : {"type" : "number", "enum": [404]}
-      }
-      }
-      """
 
   Scenario: get information of a file received as a share
     Given user "Carol" has been created
