@@ -85,7 +85,7 @@ class FeatureContext implements Context {
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
 		// delete the user if it exists
-//		$this->theAdministratorDeletesTheUser($user);
+		// $this->theAdministratorDeletesTheUser($user);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
