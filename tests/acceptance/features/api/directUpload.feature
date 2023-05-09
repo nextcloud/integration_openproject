@@ -9,11 +9,11 @@ Feature: API endpoint for direct upload
   So that the long requests for uploading don't block any resources on the OpenProject back-end.
 
   Background:
-    Given user "Alice" has been created
+    Given user "Carol" has been created
 
 
   Scenario Outline: Send a file to the direct-upload endpoint
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | "<valid-file-name>" |
       | data      | some data           |
@@ -32,7 +32,7 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "<file-name>" for user "Alice" should be "some data"
+    And the content of file at "<file-name>" for user "Carol" should be "some data"
     Examples:
       | valid-file-name     | file-name       | pattern                     |
       | textfile0.txt       | textfile0.txt   | textfile0\\.txt             |
@@ -44,7 +44,7 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Send an invalid filename to the direct-upload endpoint
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | "         " |
       | data      | some data   |
@@ -64,7 +64,7 @@ Feature: API endpoint for direct upload
 
   Scenario: Send an empty filename to the direct-upload endpoint or exceed max_post_size
     # we cannot distinguish both cases
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""          |
       | data      | some data   |
@@ -105,8 +105,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Send a file with a filename that already exists (no overwrite parameter)
-    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "original data" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt     |
       | data      | changed data |
@@ -123,13 +123,13 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    And the content of file at "/file.txt" for user "Carol" should be "original data"
 
 
   Scenario: Folder is deleted before upload happens
-    Given user "Alice" has created folder "/forOP"
-    And user "Alice" got a direct-upload token for "/forOP"
-    And user "Alice" has deleted folder "/forOP"
+    Given user "Carol" has created folder "/forOP"
+    And user "Carol" got a direct-upload token for "/forOP"
+    And user "Carol" has deleted folder "/forOP"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -149,10 +149,10 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Folder is deleted and recreated (new fileid) before upload happens
-    Given user "Alice" has created folder "/forOP"
-    And user "Alice" got a direct-upload token for "/forOP"
-    And user "Alice" has deleted folder "/forOP"
-    And user "Alice" has created folder "/forOP"
+    Given user "Carol" has created folder "/forOP"
+    And user "Carol" got a direct-upload token for "/forOP"
+    And user "Carol" has deleted folder "/forOP"
+    And user "Carol" has created folder "/forOP"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -172,10 +172,10 @@ Feature: API endpoint for direct upload
 
 
   Scenario Outline: Folder is renamed before upload happens
-    Given user "Alice" has created folder "/forOP"
-    And user "Alice" has created folder "/secondfolder"
-    And user "Alice" got a direct-upload token for "/forOP"
-    And user "Alice" has renamed folder "/forOP" to "<rename-destination>"
+    Given user "Carol" has created folder "/forOP"
+    And user "Carol" has created folder "/secondfolder"
+    And user "Carol" got a direct-upload token for "/forOP"
+    And user "Carol" has renamed folder "/forOP" to "<rename-destination>"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -194,7 +194,7 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "<rename-destination>/file.txt" for user "Alice" should be "some data"
+    And the content of file at "<rename-destination>/file.txt" for user "Carol" should be "some data"
     Examples:
       | rename-destination  |
       | /renamed            |
@@ -206,12 +206,12 @@ Feature: API endpoint for direct upload
     And user "Chandra" has been created
     And user "Dipak" has been created
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
     And user "Brian" has shared folder "/toShare" with user "Chandra" with "all" permissions
     And user "Brian" has shared folder "/toShare" with user "Dipak" with "all" permissions
-    And user "Chandra" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Dipak" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Chandra" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Dipak" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Carol" got a direct-upload token for "/toShare"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -232,7 +232,7 @@ Feature: API endpoint for direct upload
     """
 
   Scenario: Use the same token after one successful upload
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     And an anonymous user has sent a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | testfile.txt |
       | data      | some data    |
@@ -254,7 +254,7 @@ Feature: API endpoint for direct upload
     """
 
   Scenario: Use the same token after one unsuccessful upload
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | ""        |
       | data      | some data |
@@ -277,8 +277,8 @@ Feature: API endpoint for direct upload
     """
 
   Scenario: use a token created by a user that was disabled after creating the token
-    Given user "Alice" got a direct-upload token for "/"
-    And user "Alice" has been disabled
+    Given user "Carol" got a direct-upload token for "/"
+    And user "Carol" has been disabled
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -298,8 +298,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: use a token created by a user that was deleted after creating the token
-    Given user "Alice" got a direct-upload token for "/"
-    And user "Alice" has been deleted
+    Given user "Carol" got a direct-upload token for "/"
+    And user "Carol" has been deleted
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -319,9 +319,9 @@ Feature: API endpoint for direct upload
 
 
   Scenario: use a token created by a user that was deleted and recreated after creating the token
-    Given user "Alice" got a direct-upload token for "/"
-    And user "Alice" has been deleted
-    And user "Alice" has been created
+    Given user "Carol" got a direct-upload token for "/"
+    And user "Carol" has been deleted
+    And user "Carol" has been created
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt  |
       | data      | some data |
@@ -343,8 +343,8 @@ Feature: API endpoint for direct upload
   Scenario: send file to a share without create permissions
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Carol" got a direct-upload token for "/toShare"
     And user "Brian" has changed the share permissions of last created share to "read+update+delete+share"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
@@ -367,8 +367,8 @@ Feature: API endpoint for direct upload
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
     And user "Brian" has uploaded file with content "original data" to "/toShare/file.txt"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Carol" got a direct-upload token for "/toShare"
     And user "Brian" has changed the share permissions of last created share to "read+update+delete+share"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
@@ -389,13 +389,13 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/toShare/file.txt" for user "Alice" should be "new data"
+    And the content of file at "/toShare/file.txt" for user "Carol" should be "new data"
     And the content of file at "/toShare/file.txt" for user "Brian" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename
-    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "original data" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -415,15 +415,15 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
-    And the content of file at "/file (2).txt" for user "Alice" should be "new data"
+    And the content of file at "/file.txt" for user "Carol" should be "original data"
+    And the content of file at "/file (2).txt" for user "Carol" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename, also files with that name and suffixed numbers also exist
-    Given user "Alice" has uploaded file with content "data 1" to "/file.txt"
-    And user "Alice" has uploaded file with content "data 2" to "/file (2).txt"
-    And user "Alice" has uploaded file with content "data 3" to "/file (3).txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "data 1" to "/file.txt"
+    And user "Carol" has uploaded file with content "data 2" to "/file (2).txt"
+    And user "Carol" has uploaded file with content "data 3" to "/file (3).txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -443,15 +443,15 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "data 1"
-    And the content of file at "/file (2).txt" for user "Alice" should be "data 2"
-    And the content of file at "/file (3).txt" for user "Alice" should be "data 3"
-    And the content of file at "/file (4).txt" for user "Alice" should be "new data"
+    And the content of file at "/file.txt" for user "Carol" should be "data 1"
+    And the content of file at "/file (2).txt" for user "Carol" should be "data 2"
+    And the content of file at "/file (3).txt" for user "Carol" should be "data 3"
+    And the content of file at "/file (4).txt" for user "Carol" should be "new data"
 
 
   Scenario: set overwrite to false and send file with an existing filename (filename has already a number in brackets)
-    Given user "Alice" has uploaded file with content "original data" to "/file (2).txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "original data" to "/file (2).txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file (2).txt |
       | data      | new data     |
@@ -471,13 +471,13 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file (2).txt" for user "Alice" should be "original data"
-    And the content of file at "/file (3).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2).txt" for user "Carol" should be "original data"
+    And the content of file at "/file (3).txt" for user "Carol" should be "new data"
 
 
   Scenario: set overwrite to true and send file with an existing filename
-    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "original data" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -497,14 +497,14 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "new data"
+    And the content of file at "/file.txt" for user "Carol" should be "new data"
 
 
   Scenario: set overwrite to true and send file with an existing filename, but no permissions to overwrite
     Given user "Brian" has been created
     And user "Brian" has uploaded file with content "original data" to "/file.txt"
-    And user "Brian" has shared file "/file.txt" with user "Alice" with "read" permissions
-    And user "Alice" got a direct-upload token for "/"
+    And user "Brian" has shared file "/file.txt" with user "Carol" with "read" permissions
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -522,12 +522,12 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    And the content of file at "/file.txt" for user "Carol" should be "original data"
 
 
   Scenario Outline: set overwrite to an invalid value
-    Given user "Alice" has uploaded file with content "original data" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has uploaded file with content "original data" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt    |
       | data      | new data    |
@@ -551,7 +551,7 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "original data"
+    And the content of file at "/file.txt" for user "Carol" should be "original data"
     Examples:
       | overwrite |
       | 1         |
@@ -562,7 +562,7 @@ Feature: API endpoint for direct upload
 
 
   Scenario: CORS preflight request
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends an OPTIONS request to the "direct-upload/%last-created-direct-upload-token%" endpoint with these headers:
       | header                         | value                    |
       | Access-Control-Request-Method  | POST                     |
@@ -576,7 +576,7 @@ Feature: API endpoint for direct upload
 
 
   Scenario Outline: set overwrite and send a new file
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt    |
       | data      | new data    |
@@ -596,7 +596,7 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "new data"
+    And the content of file at "/file.txt" for user "Carol" should be "new data"
     Examples:
       | overwrite |
       | true      |
@@ -604,8 +604,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: set overwrite to true and send a file with an existing folder name
-    Given user "Alice" has created folder "file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has created folder "file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -632,8 +632,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: set overwrite to false and send a file with an existing folder name
-    Given user "Alice" has created folder "file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has created folder "file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -653,12 +653,12 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file (2).txt" for user "Alice" should be "new data"
+    And the content of file at "/file (2).txt" for user "Carol" should be "new data"
 
 
   Scenario: don't set overwrite and send a file with an existing folder name
-    Given user "Alice" has created folder "file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given user "Carol" has created folder "file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt |
       | data      | new data |
@@ -678,8 +678,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Upload a file that just fits into the users quota
-    Given the quota of user "Alice" has been set to "10 B"
-    And user "Alice" got a direct-upload token for "/"
+    Given the quota of user "Carol" has been set to "10 B"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | textfile0.txt |
       | data      | 1234567890    |
@@ -698,12 +698,12 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "textfile0.txt" for user "Alice" should be "1234567890"
+    And the content of file at "textfile0.txt" for user "Carol" should be "1234567890"
 
 
   Scenario: Upload a file exceeding the users quota
-    Given the quota of user "Alice" has been set to "9 B"
-    And user "Alice" got a direct-upload token for "/"
+    Given the quota of user "Carol" has been set to "9 B"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 1234567890 |
@@ -723,9 +723,9 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Upload a file into a folder, exceeding the users quota
-    Given the quota of user "Alice" has been set to "9 B"
-    And user "Alice" has created folder "/forOP"
-    And user "Alice" got a direct-upload token for "/forOP"
+    Given the quota of user "Carol" has been set to "9 B"
+    And user "Carol" has created folder "/forOP"
+    And user "Carol" got a direct-upload token for "/forOP"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 1234567890 |
@@ -746,11 +746,11 @@ Feature: API endpoint for direct upload
 
   Scenario: Upload a file into a shared folder exceeding the quota of the user sharing the folder
     Given user "Brian" has been created
-    And the quota of user "Alice" has been set to "10 B"
+    And the quota of user "Carol" has been set to "10 B"
     And the quota of user "Brian" has been set to "9 B"
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Carol" got a direct-upload token for "/toShare"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 1234567890 |
@@ -771,11 +771,11 @@ Feature: API endpoint for direct upload
 
   Scenario: Upload a file into a shared folder exceeding the quota of sharee but not that of sharer
     Given user "Brian" has been created
-    And the quota of user "Alice" has been set to "10 B"
+    And the quota of user "Carol" has been set to "10 B"
     And the quota of user "Brian" has been set to "20 B"
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "all" permissions
-    And user "Alice" got a direct-upload token for "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
+    And user "Carol" got a direct-upload token for "/toShare"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt        |
       | data      | 123456789012345 |
@@ -794,14 +794,14 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/toShare/file.txt" for user "Alice" should be "123456789012345"
+    And the content of file at "/toShare/file.txt" for user "Carol" should be "123456789012345"
     And the content of file at "/toShare/file.txt" for user "Brian" should be "123456789012345"
 
 
   Scenario: overwrite an existing file with content that fits the quota. Needed quota is sizeof(old data)+sizeof(new data)
-    Given the quota of user "Alice" has been set to "20 B"
-    And user "Alice" has uploaded file with content "1234567890" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given the quota of user "Carol" has been set to "20 B"
+    And user "Carol" has uploaded file with content "1234567890" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 0987654321 |
@@ -821,13 +821,13 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "0987654321"
+    And the content of file at "/file.txt" for user "Carol" should be "0987654321"
 
 
   Scenario: try to overwrite an existing file with content that exceeds the quota. Needed quota is sizeof(old data)+sizeof(new data)
-    Given the quota of user "Alice" has been set to "19 B"
-    And user "Alice" has uploaded file with content "1234567890" to "/file.txt"
-    And user "Alice" got a direct-upload token for "/"
+    Given the quota of user "Carol" has been set to "19 B"
+    And user "Carol" has uploaded file with content "1234567890" to "/file.txt"
+    And user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 0987654321 |
@@ -845,11 +845,11 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/file.txt" for user "Alice" should be "1234567890"
+    And the content of file at "/file.txt" for user "Carol" should be "1234567890"
 
 
   Scenario: Try to upload a file with a blacklisted file name
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | .htaccess              |
       | data      | <IfModule mod_alias.c> |
@@ -869,7 +869,7 @@ Feature: API endpoint for direct upload
 
 
   Scenario: upload a hidden file
-    Given user "Alice" got a direct-upload token for "/"
+    Given user "Carol" got a direct-upload token for "/"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | .hidden     |
       | data      | hidden file |
@@ -888,6 +888,6 @@ Feature: API endpoint for direct upload
       }
     }
     """
-    And the content of file at "/.hidden" for user "Alice" should be "hidden file"
+    And the content of file at "/.hidden" for user "Carol" should be "hidden file"
 
 

@@ -9,11 +9,11 @@ Feature: API endpoint to prepare direct upload
   So that the long requests for uploading don't block any resources on the OpenProject back-end.
 
   Background:
-    Given user "Alice" has been created
+    Given user "Carol" has been created
 
   Scenario Outline: Get a direct-upload token for a folder
-    Given user "Alice" has created folder <folder>
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of <folder>
+    Given user "Carol" has created folder <folder>
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID of <folder>
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -39,7 +39,7 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get a direct-upload token for the root folder
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/"
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID of "/"
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -60,8 +60,8 @@ Feature: API endpoint to prepare direct upload
   Scenario Outline: Get a direct-upload token for a folder received as share
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "<permissions>" permissions
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "<permissions>" permissions
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
     Then the HTTP status code should be "200"
     And the data of the response should match
     """"
@@ -87,8 +87,8 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get a direct-upload token for a file
-    Given user "Alice" has uploaded file with content "some data" to "/file.txt"
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/file.txt"
+    Given user "Carol" has uploaded file with content "some data" to "/file.txt"
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID of "/file.txt"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -105,7 +105,7 @@ Feature: API endpoint to prepare direct upload
 
 
   Scenario: Try to get a direct-upload token for a non existing folder-id
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID "999999999"
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID "999999999"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -124,8 +124,8 @@ Feature: API endpoint to prepare direct upload
   Scenario: Try to get a direct-upload token for a folder without create permissions
     Given user "Brian" has been created
     And user "Brian" has created folder "/toShare"
-    And user "Brian" has shared folder "/toShare" with user "Alice" with "read+update+delete+share" permissions
-    When user "Alice" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
+    And user "Brian" has shared folder "/toShare" with user "Carol" with "read+update+delete+share" permissions
+    When user "Carol" sends a POST request to the direct-upload-token endpoint with the ID of "/toShare"
     Then the HTTP status code should be "404"
     And the data of the response should match
     """"
@@ -148,10 +148,10 @@ Feature: API endpoint to prepare direct upload
 
   Scenario: Tokens should be random
     Given user "Brian" has been created
-    And user "Alice" has created folder "/folder for OpenProject"
+    And user "Carol" has created folder "/folder for OpenProject"
     And user "Brian" has created folder "/folder for OpenProject"
-    When user "Alice" gets a direct-upload token for "/folder for OpenProject"
+    When user "Carol" gets a direct-upload token for "/folder for OpenProject"
     And user "Brian" gets a direct-upload token for "/folder for OpenProject"
-    And user "Alice" gets a direct-upload token for "/"
+    And user "Carol" gets a direct-upload token for "/"
     And user "Brian" gets a direct-upload token for "/"
     Then all direct-upload tokens should be different

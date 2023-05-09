@@ -171,8 +171,8 @@ Feature: setup the integration through an API
       | ""                                                                                                                                                                                            |
 
   Scenario: non-admin user tries to create the setup
-    Given user "Alice" has been created
-    When the user "Alice" sends a POST request to the "setup" endpoint with this data:
+    Given user "Carol" has been created
+    When the user "Carol" sends a POST request to the "setup" endpoint with this data:
       """
       {
       "values" : {
@@ -392,8 +392,8 @@ Feature: setup the integration through an API
 
 
   Scenario: non-admin tries to update the setup
-    Given user "Alice" has been created
-    When the user "Alice" sends a PATCH request to the "setup" endpoint with this data:
+    Given user "Carol" has been created
+    When the user "Carol" sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
@@ -446,8 +446,8 @@ Feature: setup the integration through an API
 
 
   Scenario: Trying to reset the integration as non-admin
-    Given user "Alice" has been created
-    When the user "Alice" sends a DELETE request to the "setup" endpoint
+    Given user "Carol" has been created
+    When the user "Carol" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
 
   # this test wil not pass locally if your system already has a `OpenProject` user/group setup
@@ -502,13 +502,13 @@ Feature: setup the integration through an API
     Then user "OpenProject" should have a folder called "OpenProject"
 
     # folders inside the OpenProject folder can only be deleted/renamed by the OpenProject user
-    Given user "Alice" has been created
-    And user "Alice" has been added to the group "OpenProject"
+    Given user "Carol" has been created
+    And user "Carol" has been added to the group "OpenProject"
     And user "OpenProject" has created folder "/OpenProject/project-abc"
-    Then user "Alice" should have a folder called "OpenProject/project-abc"
-    When user "Alice" deletes folder "/OpenProject/project-abc"
+    Then user "Carol" should have a folder called "OpenProject/project-abc"
+    When user "Carol" deletes folder "/OpenProject/project-abc"
     Then the HTTP status code should be 500
-    When user "Alice" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
+    When user "Carol" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
     Then the HTTP status code should be 500
     When user "OpenProject" renames folder "/OpenProject/project-abc" to "/OpenProject/project-123"
     Then the HTTP status code should be 201
@@ -517,9 +517,9 @@ Feature: setup the integration through an API
 
     # folders 2 levels down inside the OpenProject folder can be deleted by any user even if the parent is also called "OpenProject"
     Given user "OpenProject" has created folder "/OpenProject/OpenProject/project-abc"
-    When user "Alice" renames folder "/OpenProject/OpenProject/project-abc" to "/OpenProject/OpenProject/project-123"
+    When user "Carol" renames folder "/OpenProject/OpenProject/project-abc" to "/OpenProject/OpenProject/project-123"
     Then the HTTP status code should be 201
-    When user "Alice" deletes folder "/OpenProject/OpenProject/project-123"
+    When user "Carol" deletes folder "/OpenProject/OpenProject/project-123"
     Then the HTTP status code should be 204
 
     # a user, who is not in the OpenProject group can delete/rename items inside a folder that is called OpenProject
