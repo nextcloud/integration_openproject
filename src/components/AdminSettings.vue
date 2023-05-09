@@ -509,10 +509,15 @@ export default {
 			if (this.isManagedGroupFolderSetUpFormInEdit) {
 				return false
 			}
-			if (!this.isIntegrationComplete) {
-				return false
+			if (this.isFormCompleted.managedGroupFolderSetUp === false) {
+				if (this.state.app_password_set === false) {
+					return false
+				}
 			}
-			return this.state.app_password_set === false
+			if (this.state.app_password_set === false) {
+				return true
+			}
+			return false
 		},
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
@@ -602,14 +607,11 @@ export default {
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			if (this.showDefaultManagedFolders === false) {
+			if (!this.isIntegrationComplete) {
+				this.showDefaultManagedFolders = true
+				this.isGroupfolderSetupAutomaticallyReady = true
 				this.iskeepCurrentCompleteWithoutIntegration = 'Complete without project folders'
 				this.formMode.managedGroupFolderSetUp = F_MODES.EDIT
-				const result = await this.saveOPOptions()
-				if (result) {
-					this.showDefaultManagedFolders = true
-					this.isGroupfolderSetupAutomaticallyReady = true
-				}
 			}
 		},
 		setOPSytemPasswordToViewMode() {
@@ -853,7 +855,7 @@ export default {
 			} else if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
 				// in case of whole reset
 				return null
-			} else if (this.state.openproject_instance_url === null || this.state.openproject_client_secret === null || this.state.openproject_client_id === null) {
+			} else if (!this.state.openproject_instance_url || !this.state.openproject_client_secret || !this.state.openproject_client_id || !this.state.nc_oauth_client) {
 				// incase when replacing any of the above values
 				return false
 			} else if (this.managedFolderState === true && this.formMode.opSystemPassword === F_MODES.VIEW) {
