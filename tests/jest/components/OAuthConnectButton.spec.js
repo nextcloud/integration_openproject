@@ -14,7 +14,7 @@ const localVue = createLocalVue()
 describe('OAuthConnectButton.vue', () => {
 	let wrapper
 	afterEach(() => {
-		global.window.location = realLocation
+		global.window.location = Object.defineProperty({}, 'pathname', { value: realLocation.pathname })
 		jest.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {

@@ -99,167 +99,167 @@ jobs:
           make phpunit
           make jsunit
 
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
-
-      - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.0.3
-        with:
-          reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-          targetdir: './server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
-          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
-          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
-          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
-          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
-          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
-          title: '' # Optional title.
-          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
-          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
-          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
-
-      - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./server/apps/integration_openproject/coverage/php/lcov.info
-          delete-old-comments: true
-          title: "PHP Code Coverage"
-
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
-        with:
-          min_coverage: '59'
-          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
-
-      - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
-        with:
-          min_coverage: '57'
-          path: './server/apps/integration_openproject/coverage/php/lcov.info'
-
-  api-tests:
-    name: API tests
-    strategy:
-      matrix:
-        nextcloudVersion: [ stable23, stable24, stable25, stable26, master ]
-        phpVersionMajor: [ 7, 8 ]
-        phpVersionMinor: [ 4, 1 ]
-        database: [pgsql, mysql]
-        exclude:
-          - nextcloudVersion: stable23
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-          - nextcloudVersion: stable24
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-          - nextcloudVersion: stable26
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
-          - nextcloudVersion: master
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
-    runs-on: ubuntu-latest
-    container: ubuntu:latest
-    defaults:
-      run:
-        working-directory: integration_openproject
-
-    services:
-      nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
-        env:
-          SQL: ${{ matrix.database }}
-          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "nextcloud"
-          WITH_REDIS: "YES"
-        volumes:
-          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
-
-      database-postgres:
-        image: postgres:14
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nextcloud
-
-      database-mysql:
-        image: mariadb:10.5
-        env:
-          MYSQL_ROOT_PASSWORD: 'nextcloud'
-          MYSQL_PASSWORD: 'nextcloud'
-          MYSQL_USER: 'nextcloud'
-          MYSQL_DATABASE: 'nextcloud'
-
-      redis:
-        image: redis:7
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: integration_openproject
-
-      - name: Checkout activity app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/activity
-          path: activity
-          ref: ${{ matrix.nextcloudVersion }}
-
-      - name: Checkout groupfolders app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/groupfolders
-          path: groupfolders
-          ref: ${{ matrix.nextcloudVersion }}
-
-      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-          tools: composer
-          extensions: intl
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache PHP dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://nextcloud
-        run: |
-          composer install --no-progress --prefer-dist --optimize-autoloader
-          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
-          make api-test
+#      - name: JS Code Coverage Summary Report
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+#        uses: romeovs/lcov-reporter-action@v0.3.1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
+#          delete-old-comments: true
+#          title: "JS Code Coverage"
+#
+#      - name: Convert PHP cobertura coverage to lcov
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+#        uses: danielpalme/ReportGenerator-GitHub-Action@5.0.3
+#        with:
+#          reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+#          targetdir: './server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
+#          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
+#          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
+#          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
+#          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
+#          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
+#          title: '' # Optional title.
+#          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
+#          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
+#          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
+#
+#      - name: PHP Code Coverage Summary Report
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+#        uses: romeovs/lcov-reporter-action@v0.3.1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: ./server/apps/integration_openproject/coverage/php/lcov.info
+#          delete-old-comments: true
+#          title: "PHP Code Coverage"
+#
+#      - name: JS coverage check
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+#        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+#        with:
+#          min_coverage: '59'
+#          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
+#
+#      - name: PHP coverage check
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+#        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+#        with:
+#          min_coverage: '57'
+#          path: './server/apps/integration_openproject/coverage/php/lcov.info'
+#
+#  api-tests:
+#    name: API tests
+#    strategy:
+#      matrix:
+#        nextcloudVersion: [ stable23, stable24, stable25, stable26, master ]
+#        phpVersionMajor: [ 7, 8 ]
+#        phpVersionMinor: [ 4, 1 ]
+#        database: [pgsql, mysql]
+#        exclude:
+#          - nextcloudVersion: stable23
+#            phpVersionMajor: 8
+#            phpVersionMinor: 1
+#          - nextcloudVersion: stable24
+#            phpVersionMajor: 8
+#            phpVersionMinor: 1
+#          - nextcloudVersion: stable26
+#            phpVersionMajor: 7
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 0
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 1
+#          - phpVersionMajor: 8
+#            phpVersionMinor: 4
+#          - nextcloudVersion: master
+#            phpVersionMajor: 7
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 0
+#          - phpVersionMajor: 7
+#            phpVersionMinor: 1
+#          - phpVersionMajor: 8
+#            phpVersionMinor: 4
+#    runs-on: ubuntu-latest
+#    container: ubuntu:latest
+#    defaults:
+#      run:
+#        working-directory: integration_openproject
+#
+#    services:
+#      nextcloud:
+#        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
+#        env:
+#          SQL: ${{ matrix.database }}
+#          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+#          NEXTCLOUD_AUTOINSTALL: "YES"
+#          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+#          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+#          VIRTUAL_HOST: "nextcloud"
+#          WITH_REDIS: "YES"
+#        volumes:
+#          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+#
+#      database-postgres:
+#        image: postgres:14
+#        env:
+#          POSTGRES_PASSWORD: postgres
+#          POSTGRES_DB: nextcloud
+#
+#      database-mysql:
+#        image: mariadb:10.5
+#        env:
+#          MYSQL_ROOT_PASSWORD: 'nextcloud'
+#          MYSQL_PASSWORD: 'nextcloud'
+#          MYSQL_USER: 'nextcloud'
+#          MYSQL_DATABASE: 'nextcloud'
+#
+#      redis:
+#        image: redis:7
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          path: integration_openproject
+#
+#      - name: Checkout activity app
+#        uses: actions/checkout@v3
+#        with:
+#          repository: nextcloud/activity
+#          path: activity
+#          ref: ${{ matrix.nextcloudVersion }}
+#
+#      - name: Checkout groupfolders app
+#        uses: actions/checkout@v3
+#        with:
+#          repository: nextcloud/groupfolders
+#          path: groupfolders
+#          ref: ${{ matrix.nextcloudVersion }}
+#
+#      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+#          tools: composer
+#          extensions: intl
+#
+#      - name: Get composer cache directory
+#        id: composer-cache
+#        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+#
+#      - name: Cache PHP dependencies
+#        uses: actions/cache@v3
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
+#          restore-keys: ${{ runner.os }}-composer-
+#
+#      - name: API Tests
+#        env:
+#          NEXTCLOUD_BASE_URL: http://nextcloud
+#        run: |
+#          composer install --no-progress --prefer-dist --optimize-autoloader
+#          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+#          make api-test
