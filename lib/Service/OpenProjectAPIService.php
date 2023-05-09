@@ -43,6 +43,8 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
+use OCP\Files\IMimeTypeLoader;
+use OC_Util;
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
@@ -108,15 +110,20 @@ class OpenProjectAPIService {
 	 */
 	private ISubAdmin $subAdminManager;
 
-
-	/**
-	 * Service to make requests to OpenProject v3 (JSON) API
-	 */
-
 	/**
 	 * @var IDBConnection
 	 */
 	private $dbConnection;
+
+	/**
+	 * @var IMimeTypeLoader
+	 */
+	private $mimeTypeLoader;
+	/**
+	 * Service to make requests to OpenProject v3 (JSON) API
+	 */
+
+
 	public function __construct(
 								string $appName,
 								IAvatarManager $avatarManager,
@@ -131,7 +138,9 @@ class OpenProjectAPIService {
 								IGroupManager $groupManager,
 								IAppManager $appManager,
 								IDBConnection $dbConnection,
-								ISubAdmin $subAdminManager) {
+								ISubAdmin $subAdminManager,
+								IMimeTypeLoader $mimeTypeLoader
+	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
 		$this->logger = $logger;
@@ -146,6 +155,7 @@ class OpenProjectAPIService {
 		$this->appManager = $appManager;
 		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
+		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
 	/**
@@ -923,8 +933,13 @@ class OpenProjectAPIService {
 	 * @throws NoUserException
 	 */
 	public function createGroupfolder(): int {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
+			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
+		} else {
+			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		}
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -959,8 +974,14 @@ class OpenProjectAPIService {
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 	public function getGroupFolderManager(): FolderManager {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-		return new FolderManager($this->dbConnection);
+		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
+			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
+		} else {
+			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
+		}
+		return $groupfoldersFolderManager;
 	}
 
 	public function isOpenProjectGroupfolderCreated(): bool {
