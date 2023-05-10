@@ -11,7 +11,9 @@
 
 namespace OCA\OpenProject\Controller;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
@@ -175,6 +177,7 @@ class ConfigController extends Controller {
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
 	 * @throws OpenprojectGroupfolderSetupConflictException
+	 * @throws GuzzleException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
@@ -204,6 +207,31 @@ class ConfigController extends Controller {
 					$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 					$group->addUser($user);
 					$this->subAdminManager->createSubAdmin($user, $group);
+
+					// finish the setup of the user by doing a PROPFIND request
+					// without this request we can get LockException or NotFoundException
+					// after creating the group folder
+					$gClient = new Client();
+					$loopCounter = 0;
+					$statusCode = 0;
+					while ($statusCode != 207) {
+						try {
+							$response = $gClient->request(
+								'PROPFIND',
+								$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
+								['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
+							);
+							$statusCode = $response->getStatusCode();
+						} catch (GuzzleException $e) {
+							if ($loopCounter >= 10) {
+								throw $e;
+							}
+							sleep(1);
+						}
+						$loopCounter++;
+					}
+
+
 					$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
