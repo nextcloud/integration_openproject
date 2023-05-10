@@ -581,7 +581,7 @@ function mountWrapper() {
 		},
 		stubs: {
 			SearchInput: true,
-			Avatar: true,
+			NcAvatar: true,
 			EmptyContent: false,
 		},
 		data: () => ({

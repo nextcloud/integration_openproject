@@ -28,23 +28,14 @@ exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`]
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of Bal Bahadur Pun" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               Bal Bahadur Pun
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class=""></div>
   </div>
@@ -96,23 +87,14 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of Bal Bahadur Pun" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               Bal Bahadur Pun
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class="workpackage-seperator"></div>
   </div>
@@ -139,23 +121,14 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of कुमारी नेपाली" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               कुमारी नेपाली
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class=""></div>
   </div>
@@ -190,23 +163,14 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of Bal Bahadur Pun" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=1&amp;userName=Bal Bahadur Pun" user="Bal Bahadur Pun" display-name="Bal Bahadur Pun" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               Bal Bahadur Pun
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class="workpackage-seperator"></div>
   </div>
@@ -233,23 +197,14 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of कुमारी नेपाली" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="http://localhost/apps/integration_openproject/avatar?userId=13&amp;userName=कुमारी नेपाली" user="कुमारी नेपाली" display-name="कुमारी नेपाली" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               कुमारी नेपाली
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class=""></div>
   </div>
@@ -284,23 +239,14 @@ exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
         <div class="row">
           <div class="row__assignee">
             <div class="row__assignee__avatar">
-              <div data-v-09226ec4="" aria-label="Avatar of test" class="avatardiv popovermenu-wrapper item-avatar v-popper--has-tooltip" style="--size: 23px; line-height: 23px; font-size: 10px;">
-                <!---->
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <ncavatar-stub size="23" url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" display-name="test" class="item-avatar"></ncavatar-stub>
             </div>
             <div class="row__assignee__assignee">
               test
             </div>
           </div>
         </div>
-      </div> <button data-v-7a8f3349="" data-v-7a49ed06="" aria-label="
-						Unlink Work Package
-						" type="button" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton v-popper--has-tooltip"><span data-v-7a8f3349="" class="button-vue__wrapper"><span data-v-7a8f3349="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-7a8f3349=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span>
-        <!----></span>
-      </button>
+      </div> <button data-v-6398caea="" data-v-f91e01ae="" aria-label="Unlink Work Package" type="button" title="Unlink Work Package" class="button-vue button-vue--icon-only button-vue--vue-tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon link-off-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"><!----></path></svg></span></span></span></button>
     </div>
     <div class=""></div>
   </div>

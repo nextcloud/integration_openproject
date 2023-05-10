@@ -8,13 +8,16 @@ import * as dialogs from '@nextcloud/dialogs'
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
 
-const { location } = window
+const realLocation = global.window.location
 const localVue = createLocalVue()
 
 describe('OAuthConnectButton.vue', () => {
 	let wrapper
 	afterEach(() => {
-		window.location = location
+		Object.defineProperty(global.window, 'location', {
+			writable: true,
+			value: realLocation,
+		})
 		jest.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {
@@ -25,8 +28,8 @@ describe('OAuthConnectButton.vue', () => {
 	})
 	describe('when the admin config is ok', () => {
 		beforeEach(() => {
-			delete window.location
-			window.location = { replace: jest.fn(), pathname: '/index.php/apps/files/' }
+			delete global.window.location
+			global.window.location = { replace: jest.fn(), pathname: '/index.php/apps/files/' }
 			wrapper = getWrapper()
 		})
 		describe('on successful retrieving of the OP OAuth URI', () => {
