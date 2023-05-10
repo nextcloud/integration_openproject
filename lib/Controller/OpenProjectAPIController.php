@@ -536,7 +536,7 @@ class OpenProjectAPIController extends Controller {
 	 */
 	public function getGroupFolderSetUpStatus(): DataResponse {
 		$isGroupFolderSetUpCorrect = $this->openprojectAPIService->isGroupFolderSetup();
-		// all the thing is ok then we return true and complete the integration
+		// if everything is ok then we return true and complete the integration
 		if($isGroupFolderSetUpCorrect) {
 			return new DataResponse(
 				[

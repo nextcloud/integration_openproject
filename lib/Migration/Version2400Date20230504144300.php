@@ -55,7 +55,7 @@ class Version2400Date20230504144300 extends SimpleMigrationStep {
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$this->config->setAppValue(
-			Application::APP_ID, 'default_managed_projectfolder_state', true
+			Application::APP_ID, 'project_folder_setup_state', "1"
 		);
 		return null;
 	}

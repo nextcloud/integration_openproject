@@ -32,20 +32,13 @@ class Admin implements ISettings {
 	 */
 	private $openProjectAPIService;
 
-	/**
-	 * @var IProvider
-	 */
-	private $tokenProvider;
-
 	public function __construct(IConfig $config,
 								OauthService $oauthService,
-								IProvider $tokenProvider,
 								OpenProjectAPIService $openProjectAPIService,
 								IInitialState $initialStateService) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
-		$this->tokenProvider = $tokenProvider;
 		$this->openProjectAPIService = $openProjectAPIService;
 	}
 
@@ -74,11 +67,11 @@ class Admin implements ISettings {
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			'group_folder_status' => $groupFolderStatusInformation,
-			'project_folder_state' => true
+			'project_folder_setup_state' => true
 		];
 
-		if($this->openProjectAPIService->isSetForFirstTime() === false) {
-			unset($adminConfig['project_folder_state']);
+		if($this->openProjectAPIService->isGroupFolderProjectStateSaved() === false) {
+			unset($adminConfig['project_folder_setup_state']);
 		}
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

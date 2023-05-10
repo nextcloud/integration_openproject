@@ -1,7 +1,7 @@
 <template>
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
-		<div v-if="isManagedProjectHeading && isManagedFolderInActive" class="managed-folder-inactive">
+		<div v-if="isManagedProjectHeading && isSetupCompleteWithoutGroupFolders" class="setup-complete-without-group-folders">
 			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="!isGroupFolderSetupCorrect" class="group-folder-setup-status">
@@ -51,7 +51,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isManagedFolderInActive: {
+		isSetupCompleteWithoutGroupFolders: {
 			type: Boolean,
 			default: false,
 		},
@@ -101,11 +101,11 @@ export default {
 		align-items: center;
 	}
 
-	.managed-folder-inactive {
+	.setup-complete-without-group-folders {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		background: #555555;
+		background: var(--color-loading-dark);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -119,7 +119,7 @@ export default {
 		line-height: 16px;
 		text-align: center;
 		border-radius: 50%;
-		background: #555555;
+		background: var(--color-loading-dark);
 		color: white;
 	}
 	.title {

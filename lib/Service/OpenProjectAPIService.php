@@ -1162,15 +1162,15 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * check if app password for user OpenProject is already created
+	 * checks if the group project folder state is saved as true in database or not
 	 *
 	 * @return bool
 	 */
-	public function isSetForFirstTime(): bool {
-		$allAppKeys = $this->config->getAppKeys(Application::APP_ID);
-		if(in_array('default_managed_projectfolder_state', $allAppKeys)) {
-			return true;
+	public function isGroupFolderProjectStateSaved(): bool {
+		$keyExists = $this->config->getAppValue(Application::APP_ID, 'project_folder_setup_state');
+		if($keyExists === null) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 }

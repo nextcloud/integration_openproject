@@ -185,7 +185,7 @@ class ConfigController extends Controller {
 			'default_enable_unified_search',
 			'setup_group_folder',
 			'reset_app_password',
-			'default_managed_projectfolder_state'
+			'project_folder_setup_state'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -208,9 +208,7 @@ class ConfigController extends Controller {
 			}
 		}
 
-		// TODO
-		// this condition applies only when user and group with along with app password is created
-		// code for updating the app password token
+		// creates or replace the app password
 		if(key_exists('reset_app_password', $values) && $values['reset_app_password']) {
 			$appPassword = $this->openprojectAPIService->createOrReplaceAppPasswordToken();
 		}
@@ -229,8 +227,9 @@ class ConfigController extends Controller {
 			if($key === 'setup_group_folder' || $key === 'reset_app_password') {
 				continue;
 			}
-			if ($key === 'default_managed_projectfolder_state' && $values['default_managed_projectfolder_state'] === false) {
-				$this->config->deleteAppValue(Application::APP_ID, 'default_managed_projectfolder_state');
+
+			if ($key === 'project_folder_setup_state' && !$values['project_folder_setup_state']) {
+				$this->config->deleteAppValue(Application::APP_ID, 'project_folder_setup_state');
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
@@ -273,7 +272,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if((key_exists('default_managed_projectfolder_state', $values) && $values['default_managed_projectfolder_state'] === false) ||
+		if((key_exists('project_folder_setup_state', $values) && !$values['project_folder_setup_state']) ||
 			((key_exists('reset_app_password', $values) && $values['reset_app_password'] === null))
 		) {
 			$this->openprojectAPIService->deleteAppPassword();
@@ -344,8 +343,6 @@ class ConfigController extends Controller {
 
 	/**
 	 * set admin config values
-	 * @NoCSRFRequired
-	 *
 	 *
 	 * @param array<string, string|null> $values
 	 *
