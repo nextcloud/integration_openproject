@@ -202,37 +202,36 @@ class ConfigController extends Controller {
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			if ($isSystemReady) {
-					$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-					$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-					$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-					$group->addUser($user);
-					$this->subAdminManager->createSubAdmin($user, $group);
+				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+				$group->addUser($user);
+				$this->subAdminManager->createSubAdmin($user, $group);
 
-					// finish the setup of the user by doing a PROPFIND request
-					// without this request we can get LockException or NotFoundException
-					// after creating the group folder
-					$gClient = new Client();
-					$loopCounter = 0;
-					$statusCode = 0;
-					while ($statusCode != 207) {
-						try {
-							$response = $gClient->request(
-								'PROPFIND',
-								$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
-								['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
-							);
-							$statusCode = $response->getStatusCode();
-						} catch (GuzzleException $e) {
-							if ($loopCounter >= 10) {
-								throw $e;
-							}
-							sleep(1);
+				// finish the setup of the user by doing a PROPFIND request
+				// without this request we can get LockException or NotFoundException
+				// after creating the group folder
+				$gClient = new Client();
+				$loopCounter = 0;
+				$statusCode = 0;
+				while ($statusCode != 207) {
+					try {
+						$response = $gClient->request(
+							'PROPFIND',
+							$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
+							['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
+						);
+						$statusCode = $response->getStatusCode();
+					} catch (GuzzleException $e) {
+						if ($loopCounter >= 10) {
+							throw $e;
 						}
-						$loopCounter++;
+						sleep(1);
 					}
+					$loopCounter++;
+				}
 
-
-					$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
 
