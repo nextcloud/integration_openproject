@@ -320,6 +320,9 @@ export default {
 			border: none;
 		}
 		&--unlinkactionbutton {
+			position: absolute;
+			right:0;
+			top:0;
 			margin: 4px;
 			visibility: hidden;
 		}
