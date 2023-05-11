@@ -1168,7 +1168,7 @@ class OpenProjectAPIService {
 	 */
 	public function isGroupFolderProjectStateSaved(): bool {
 		$keyExists = $this->config->getAppValue(Application::APP_ID, 'project_folder_setup_state');
-		if($keyExists === null) {
+		if(!$keyExists) {
 			return false;
 		}
 		return true;

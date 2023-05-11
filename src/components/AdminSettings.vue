@@ -748,7 +748,7 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
-			this.isProjectFolderSwitchEnabled = false
+			this.isProjectFolderSwitchEnabled = true
 
 			await this.saveOPOptions()
 			window.location.reload()
