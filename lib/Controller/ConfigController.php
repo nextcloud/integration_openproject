@@ -172,7 +172,7 @@ class ConfigController extends Controller {
 	/**
 	 * set admin config values
 	 *
-	 * @param array<string, string|null> $values
+	 * @param array<string, string|null|bool> $values
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
@@ -188,7 +188,7 @@ class ConfigController extends Controller {
 			'default_enable_unified_search',
 			'setup_group_folder',
 			'reset_app_password',
-			'project_folder_setup_state'
+			'group_folder_switch_enabled'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -199,7 +199,7 @@ class ConfigController extends Controller {
 		}
 		$openProjectGroupFolderFileId = null;
 		$appPassword = null;
-		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
+		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder'] === true) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			if ($isSystemReady) {
 				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
@@ -236,8 +236,9 @@ class ConfigController extends Controller {
 		}
 
 		// creates or replace the app password
-		if(key_exists('reset_app_password', $values) && $values['reset_app_password']) {
-			$appPassword = $this->openprojectAPIService->createOrReplaceAppPasswordToken();
+		if(key_exists('reset_app_password', $values) && $values['reset_app_password'] === true) {
+			$this->openprojectAPIService->deleteAppPassword();
+			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -255,8 +256,8 @@ class ConfigController extends Controller {
 				continue;
 			}
 
-			if ($key === 'project_folder_setup_state' && !$values['project_folder_setup_state']) {
-				$this->config->deleteAppValue(Application::APP_ID, 'project_folder_setup_state');
+			if ($key === 'group_folder_switch_enabled' && $values['group_folder_switch_enabled'] === false) {
+				$this->config->deleteAppValue(Application::APP_ID, 'group_folder_switch_enabled');
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
@@ -299,7 +300,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if((key_exists('project_folder_setup_state', $values) && !$values['project_folder_setup_state']) ||
+		if((key_exists('group_folder_switch_enabled', $values) && $values['group_folder_switch_enabled'] === false) ||
 			((key_exists('reset_app_password', $values) && $values['reset_app_password'] === null))
 		) {
 			$this->openprojectAPIService->deleteAppPassword();
@@ -363,7 +364,7 @@ class ConfigController extends Controller {
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 			"oPGroupFolderFileId" => $openProjectGroupFolderFileId,
-			"openproject_user_app_password" => $appPassword,
+			"oPUserAppPassword" => $appPassword,
 		];
 	}
 
@@ -578,8 +579,8 @@ class ConfigController extends Controller {
 			if ($status['oPGroupFolderFileId'] !== null) {
 				$result['openproject_groupfolder_id'] = $status['oPGroupFolderFileId'];
 			}
-			if($status['openproject_user_app_password'] !== null) {
-				$result['openproject_user_app_password'] = $status['openproject_user_app_password'];
+			if($status['oPUserAppPassword'] !== null) {
+				$result['oPUserAppPassword'] = $status['oPUserAppPassword'];
 			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
@@ -615,8 +616,8 @@ class ConfigController extends Controller {
 				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 				}
-				if($status['openproject_user_app_password'] !== null) {
-					$result['openproject_user_app_password'] = $status['openproject_user_app_password'];
+				if($status['oPUserAppPassword'] !== null) {
+					$result['oPUserAppPassword'] = $status['oPUserAppPassword'];
 				}
 				return new DataResponse($result);
 			}

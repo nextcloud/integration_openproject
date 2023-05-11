@@ -1,10 +1,10 @@
 <template>
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
-		<div v-if="isManagedProjectHeading && isSetupCompleteWithoutGroupFolders" class="setup-complete-without-group-folders">
+		<div v-if="isGroupFolderSetupHeading && isSetupCompleteWithoutGroupFolders" class="setup-complete-without-group-folders">
 			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
-		<div v-else-if="!isGroupFolderSetupCorrect" class="group-folder-setup-status">
+		<div v-else-if="!isGroupFolderSetupCorrectAfterSetup" class="group-folder-setup-status">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
@@ -16,7 +16,7 @@
 		<div class="title"
 			:class="{
 				'green-text': isComplete,
-				'red-text': !isGroupFolderSetupCorrect
+				'red-text': !isGroupFolderSetupCorrectAfterSetup
 			}">
 			{{ title }}
 		</div>
@@ -55,11 +55,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isManagedProjectHeading: {
+		isGroupFolderSetupHeading: {
 			type: Boolean,
 			default: false,
 		},
-		isGroupFolderSetupCorrect: {
+		isGroupFolderSetupCorrectAfterSetup: {
 			type: Boolean,
 			default: true,
 		},

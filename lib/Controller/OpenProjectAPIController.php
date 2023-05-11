@@ -527,17 +527,16 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * check if there is a OpenProject behind a certain URL
+	 * check if the group folder set up is already setup or not
 	 *
-	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
 	 * @return DataResponse
 	 */
-	public function getGroupFolderSetUpStatus(): DataResponse {
-		$isGroupFolderSetUpCorrect = $this->openprojectAPIService->isGroupFolderSetup();
+	public function getGroupFolderSetupStatus(): DataResponse {
+		$isGroupFolderSetupCorrect = $this->openprojectAPIService->isGroupFolderSetup();
 		// if everything is ok then we return true and complete the integration
-		if($isGroupFolderSetUpCorrect) {
+		if($isGroupFolderSetupCorrect) {
 			return new DataResponse(
 				[
 					'result' => true

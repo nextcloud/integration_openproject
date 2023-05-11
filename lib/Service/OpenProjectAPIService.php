@@ -1133,23 +1133,11 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	public function deleteAppPassword(): void {
-		// TODO rebase needed for this function
 		if($this->hasAppPassword()) {
 			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
 			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
 			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
 		}
-	}
-
-	/**
-	 * creates new app password
-	 * Deletes the old app password  token if exists and creates new one
-	 *
-	 * @return string
-	 */
-	public function createOrReplaceAppPasswordToken(): string {
-		$this->deleteAppPassword();
-		return $this->generateAppPasswordTokenForUser();
 	}
 
 	/**
@@ -1167,7 +1155,7 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isGroupFolderProjectStateSaved(): bool {
-		$keyExists = $this->config->getAppValue(Application::APP_ID, 'project_folder_setup_state');
+		$keyExists = $this->config->getAppValue(Application::APP_ID, 'group_folder_switch_enabled');
 		if(!$keyExists) {
 			return false;
 		}

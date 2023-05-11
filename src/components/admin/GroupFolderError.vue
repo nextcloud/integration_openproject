@@ -11,7 +11,7 @@
 
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 export default {
-	name: 'ManagedFolderError',
+	name: 'GroupFolderError',
 	components: {
 		AlertCircleOutline,
 	},
