@@ -40,6 +40,7 @@
 <script>
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'WorkPackageReferenceWidget',
