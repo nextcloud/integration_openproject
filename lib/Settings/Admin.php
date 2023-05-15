@@ -10,7 +10,6 @@ use OCP\Settings\ISettings;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
-use OC\Authentication\Token\IProvider;
 
 class Admin implements ISettings {
 
@@ -70,7 +69,7 @@ class Admin implements ISettings {
 			'group_folder_switch_enabled' => true
 		];
 
-		if($this->openProjectAPIService->isGroupFolderProjectStateSaved() === false) {
+		if ($this->openProjectAPIService->isGroupFolderProjectStateSaved() === false) {
 			unset($adminConfig['group_folder_switch_enabled']);
 		}
 

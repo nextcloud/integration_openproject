@@ -187,7 +187,7 @@ class ConfigController extends Controller {
 			'default_enable_navigation',
 			'default_enable_unified_search',
 			'setup_group_folder',
-			'reset_app_password',
+			'setup_app_password',
 			'group_folder_switch_enabled'
 		];
 		// if values contains a key that is not in the allowedKeys array,
@@ -236,7 +236,7 @@ class ConfigController extends Controller {
 		}
 
 		// creates or replace the app password
-		if(key_exists('reset_app_password', $values) && $values['reset_app_password'] === true) {
+		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
 			$this->openprojectAPIService->deleteAppPassword();
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
@@ -252,7 +252,7 @@ class ConfigController extends Controller {
 		);
 
 		foreach ($values as $key => $value) {
-			if($key === 'setup_group_folder' || $key === 'reset_app_password') {
+			if ($key === 'setup_group_folder' || $key === 'setup_app_password') {
 				continue;
 			}
 
@@ -300,8 +300,8 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if((key_exists('group_folder_switch_enabled', $values) && $values['group_folder_switch_enabled'] === false) ||
-			((key_exists('reset_app_password', $values) && $values['reset_app_password'] === null))
+		if ((key_exists('group_folder_switch_enabled', $values) && $values['group_folder_switch_enabled'] === false) ||
+			((key_exists('setup_app_password', $values) && $values['setup_app_password'] === null))
 		) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
@@ -579,8 +579,8 @@ class ConfigController extends Controller {
 			if ($status['oPGroupFolderFileId'] !== null) {
 				$result['openproject_groupfolder_id'] = $status['oPGroupFolderFileId'];
 			}
-			if($status['oPUserAppPassword'] !== null) {
-				$result['oPUserAppPassword'] = $status['oPUserAppPassword'];
+			if ($status['oPUserAppPassword'] !== null) {
+				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
 			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
@@ -616,8 +616,8 @@ class ConfigController extends Controller {
 				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 				}
-				if($status['oPUserAppPassword'] !== null) {
-					$result['oPUserAppPassword'] = $status['oPUserAppPassword'];
+				if ($status['oPUserAppPassword'] !== null) {
+					$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
 				}
 				return new DataResponse($result);
 			}
@@ -650,7 +650,7 @@ class ConfigController extends Controller {
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
 			'default_enable_unified_search' => null,
-			'reset_app_password' => null
+			'setup_app_password' => null
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);

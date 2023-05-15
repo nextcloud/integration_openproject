@@ -550,20 +550,23 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_group_folder',
+			'setup_app_password'
 		];
 
 		if ($allKeysMandatory) {
 			foreach ($opKeys as $key) {
-				if(array_key_exists('reset_app_password', $values)) {
-					throw new InvalidArgumentException('invalid key');
-				}
 				if (!array_key_exists($key, $values)) {
 					throw new InvalidArgumentException('invalid key');
 				}
 			}
+			// for complete setup these both have to be true
+			if (($values['setup_group_folder'] === true && $values['setup_app_password'] === false) ||
+				($values['setup_group_folder'] === false && $values['setup_app_password'] === true)
+			) {
+				throw new InvalidArgumentException('invalid data');
+			}
 		} else {
-			$opKeys[] = 'reset_app_password';
 			foreach ($values as $key => $value) {
 				if (!in_array($key, $opKeys)) {
 					throw new InvalidArgumentException('invalid key');
@@ -576,7 +579,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'reset_app_password') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'setup_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -915,15 +918,15 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
 	public function isSystemReadyForGroupFolderSetUp(): bool {
-		if($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			if(!$this->isGroupfoldersAppEnabled()) {
+		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			if (!$this->isGroupfoldersAppEnabled()) {
 				throw new \Exception('The group folder app is not installed');
 			}
 		}
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('The user '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('The group '. Application::OPEN_PROJECT_ENTITIES_NAME .' already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
 			throw new \Exception('The group folder app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
@@ -959,14 +962,14 @@ class OpenProjectAPIService {
 	public function getGroupFolderSetupInformation(): array {
 		$status = $this->isGroupFolderSetup();
 		$errorMessage = null;
-		if(!$status) {
+		if (!$status) {
 			try {
 				$this->isSystemReadyForGroupFolderSetUp();
 			} catch (Exception $e) {
 				$errorMessage = $e->getMessage();
 			}
 		}
-		if($errorMessage !== null) {
+		if ($errorMessage !== null) {
 			return [
 				'status' => $status,
 				'errorMessage' => $errorMessage
@@ -1133,7 +1136,7 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	public function deleteAppPassword(): void {
-		if($this->hasAppPassword()) {
+		if ($this->hasAppPassword()) {
 			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
 			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
 			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
@@ -1156,7 +1159,7 @@ class OpenProjectAPIService {
 	 */
 	public function isGroupFolderProjectStateSaved(): bool {
 		$keyExists = $this->config->getAppValue(Application::APP_ID, 'group_folder_switch_enabled');
-		if(!$keyExists) {
+		if (!$keyExists) {
 			return false;
 		}
 		return true;

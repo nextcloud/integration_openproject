@@ -38,6 +38,9 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
+use OC\Authentication\Token\IProvider;
+use OCP\Security\ISecureRandom;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IRemoteHostValidator;
@@ -378,6 +381,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IMimeTypeLoader::class)
 		);
@@ -437,6 +443,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$groupManagerMock,
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
+					$this->createMock(IProvider::class),
+					$this->createMock(ISecureRandom::class),
+					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
 					$this->createMock(IMimeTypeLoader::class)
 				])
@@ -1341,6 +1350,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IMimeTypeLoader::class)
 		);

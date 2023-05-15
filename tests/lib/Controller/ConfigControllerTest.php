@@ -559,7 +559,8 @@ class ConfigControllerTest extends TestCase {
 			[
 				'status' => $adminConfigStatus,
 				'oPOAuthTokenRevokeStatus' => '',
-				'oPGroupFolderFileId' => null
+				'oPGroupFolderFileId' => null,
+				"oPUserAppPassword" => null
 			],
 			$result->getData()
 		);

@@ -893,7 +893,7 @@ export default {
 					default_enable_unified_search: this.state.default_enable_unified_search,
 					group_folder_switch_enabled: this.isProjectFolderSwitchEnabled === null ? true : this.isProjectFolderSwitchEnabled,
 					setup_group_folder: groupFolderSetUp,
-					reset_app_password: appPassword,
+					setup_app_password: appPassword,
 				},
 			}
 			try {
