@@ -82,7 +82,7 @@ describe('AdminSettings.vue', () => {
 	})
 	const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 
-	describe('form mode and completed status', () => {
+	describe('form mode and completed status without group folder/user app password setup', () => {
 		it.each([
 			[
 				'with empty state',
@@ -96,11 +96,13 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
+					groupFolderSetUp: F_MODES.DISABLE,
 				},
 				{
 					server: false,
 					opOauth: false,
 					ncOauth: false,
+					groupFolderSetUp: false,
 				},
 			],
 			[
@@ -115,11 +117,13 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.DISABLE,
+					groupFolderSetUp: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: false,
 					ncOauth: false,
+					groupFolderSetUp: false,
 				},
 			],
 			[
@@ -134,11 +138,13 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.DISABLE,
+					groupFolderSetUp: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: true,
 					ncOauth: false,
+					groupFolderSetUp: false,
 				},
 			],
 			[
@@ -156,11 +162,13 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.VIEW,
+					groupFolderSetUp: F_MODES.VIEW,
 				},
 				{
 					server: true,
 					opOauth: false,
 					ncOauth: true,
+					groupFolderSetUp: true,
 				},
 			],
 			[
@@ -178,11 +186,13 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.VIEW,
+					groupFolderSetUp: F_MODES.VIEW,
 				},
 				{
 					server: true,
 					opOauth: true,
 					ncOauth: true,
+					groupFolderSetUp: true,
 				},
 			],
 		])('when the form is loaded %s', (name, state, expectedFormMode, expectedFormState) => {
@@ -190,10 +200,12 @@ describe('AdminSettings.vue', () => {
 			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
 			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
 			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
+			expect(wrapper.vm.formMode.groupFolderSetUp).toBe(expectedFormMode.groupFolderSetUp)
 
 			expect(wrapper.vm.isFormCompleted.server).toBe(expectedFormState.server)
 			expect(wrapper.vm.isFormCompleted.opOauth).toBe(expectedFormState.opOauth)
 			expect(wrapper.vm.isFormCompleted.ncOauth).toBe(expectedFormState.ncOauth)
+			expect(wrapper.vm.isFormCompleted.groupFolderSetUp).toBe(expectedFormState.groupFolderSetUp)
 		})
 	})
 
