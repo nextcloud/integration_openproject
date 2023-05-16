@@ -244,7 +244,7 @@
 						:group-folder-set-up-error="state.group_folder_status.errorMessage" />
 					<div class="form-actions">
 						<NcButton
-							data-test-id="reset-server-host-btn"
+							data-test-id="edit-group-folder-setup"
 							@click="setGroupFolderSetUpToEditMode">
 							<template #icon>
 								<PencilIcon :size="20" />
@@ -519,6 +519,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				// console.log(this.state)
 				if (this.state.group_folder_status) {
 					this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				}
@@ -854,7 +855,23 @@ export default {
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
 			// conditions when setting up the group folders and user app passwords
-			if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
+			if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
+				// doing whole reset
+				if (this.isFormCompleted.opUserAppPassword === true) {
+					values = {
+						...values,
+						setup_group_folder: false,
+						setup_app_password: null,
+						group_folder_switch_enabled: true,
+					}
+				} else {
+					values = {
+						...values,
+						group_folder_switch_enabled: true,
+					}
+				}
+			}
+			else if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
 						...values,
@@ -875,29 +892,22 @@ export default {
 					...values,
 					setup_app_password: true,
 				}
-			} else if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
-				// doing whole reset
-				if (this.isFormCompleted.opUserAppPassword === true) {
-					values = {
-						...values,
-						setup_group_folder: false,
-						setup_app_password: null,
-						group_folder_switch_enabled: true,
-					}
-				}
 			}
-
 			const req = {
 				values,
 			}
 
+			console.log(values)
+
 			try {
 				const response = await axios.put(url, req)
+				console.log(response)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
 				if (response?.data?.oPUserAppPassword) {
 					this.state.app_password_set = true
 				}
+
 				this.oPUserAppPassword = response?.data?.oPUserAppPassword
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
