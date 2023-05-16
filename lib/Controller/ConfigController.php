@@ -300,9 +300,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if ((key_exists('group_folder_switch_enabled', $values) && $values['group_folder_switch_enabled'] === false) ||
-			((key_exists('setup_app_password', $values) && $values['setup_app_password'] === null))
-		) {
+		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === null) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
 

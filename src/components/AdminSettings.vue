@@ -519,8 +519,10 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
-				if (this.state.group_folder_switch_enabled) {
+				if (this.state.group_folder_status) {
+					this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
+				}
+				if (this.state.group_folder_switch_enabled === true) {
 					this.groupFolderState = true
 					this.textLabelGroupFolderSetupButton = t('integration_openproject', 'Setup OpenProject user, group and folder')
 				}
@@ -543,6 +545,9 @@ export default {
 				if (this.state.nc_oauth_client) {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
+				}
+				if (this.formMode.ncOauth === F_MODES.VIEW) {
+					this.showDefaultManagedFolders = true
 				}
 				if (this.showDefaultManagedFolders) {
 					this.formMode.groupFolderSetUp = F_MODES.VIEW
@@ -742,8 +747,6 @@ export default {
 			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
-			this.isProjectFolderSwitchEnabled = true
-			this.formMode.opUserAppPassword = F_MODES.DISABLE
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -840,70 +843,62 @@ export default {
 				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
 			}
 		},
-		appPassword() {
-			if (this.isProjectFolderSwitchEnabled === false) {
-				return null
-			} else if (this.isOPUserAppPasswordFormInEdit) {
-				return true
-			} else if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
-				return null
-			} else if (!this.state.openproject_instance_url || !this.state.openproject_client_secret || !this.state.openproject_client_id || !this.state.nc_oauth_client) {
-				return false
-			} else if (this.groupFolderState === true && this.formMode.opUserAppPassword === F_MODES.VIEW) {
-				return false
-			} else if (this.groupFolderState === true) {
-				return true
-			} else if (this.groupFolderState === false && this.isProjectFolderSwitchEnabled === true) {
-				return true
-			}
-			return false
-		},
-		setUpGroupFolder() {
-			if (this.isGroupFolderAlreadySetup === true) {
-				return false
-			}
-			if (this.formMode.server === F_MODES.EDIT || !this.isFormCompleted.opOauth || !this.isFormCompleted.ncOauth) {
-				return false
-			}
-			if (this.groupFolderState === true && this.isProjectFolderSwitchEnabled === true && !this.opUserAppPassword) {
-				return true
-			}
-			if (this.formMode.opUserAppPassword === F_MODES.EDIT) {
-				return false
-			}
-			if (this.groupFolderState === true && this.isProjectFolderSwitchEnabled === true) {
-				return true
-			}
-			if (this.groupFolderState === false && this.isProjectFolderSwitchEnabled === true) {
-				return true
-			}
-			return false
-		},
 		async saveOPOptions() {
 			let success = false
 			const url = generateUrl('/apps/integration_openproject/admin-config')
-			const appPassword = this.appPassword()
-			const groupFolderSetUp = this.setUpGroupFolder()
-			const req = {
-				values: {
-					openproject_client_id: this.state.openproject_client_id,
-					openproject_client_secret: this.state.openproject_client_secret,
-					openproject_instance_url: this.state.openproject_instance_url,
-					default_enable_navigation: this.state.default_enable_navigation,
-					default_enable_unified_search: this.state.default_enable_unified_search,
-					group_folder_switch_enabled: this.isProjectFolderSwitchEnabled === null ? true : this.isProjectFolderSwitchEnabled,
-					setup_group_folder: groupFolderSetUp,
-					setup_app_password: appPassword,
-				},
+			let values = {
+				openproject_client_id: this.state.openproject_client_id,
+				openproject_client_secret: this.state.openproject_client_secret,
+				openproject_instance_url: this.state.openproject_instance_url,
+				default_enable_navigation: this.state.default_enable_navigation,
+				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
+			// conditions when setting up the group folders and user app passwords
+			if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
+				if (!this.isProjectFolderSwitchEnabled) {
+					values = {
+						...values,
+						setup_group_folder: false,
+						setup_app_password: this.opUserAppPassword === true ? null : false,
+						group_folder_switch_enabled: false,
+					}
+				} else if (this.isProjectFolderSwitchEnabled === true) {
+					values = {
+						...values,
+						setup_group_folder: !this.isGroupFolderAlreadySetup,
+						setup_app_password: this.opUserAppPassword !== true,
+						group_folder_switch_enabled: true,
+					}
+				}
+			} else if (this.formMode.opUserAppPassword === F_MODES.EDIT) {
+				values = {
+					...values,
+					setup_app_password: true,
+				}
+			} else if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
+				// doing whole reset
+				if (this.isFormCompleted.opUserAppPassword === true) {
+					values = {
+						...values,
+						setup_group_folder: false,
+						setup_app_password: null,
+						group_folder_switch_enabled: true,
+					}
+				}
+			}
+
+			const req = {
+				values,
+			}
+
 			try {
 				const response = await axios.put(url, req)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
-				if (response.data?.oPUserAppPassword) {
+				if (response?.data?.oPUserAppPassword) {
 					this.state.app_password_set = true
 				}
-				this.oPUserAppPassword = response.data?.oPUserAppPassword
+				this.oPUserAppPassword = response?.data?.oPUserAppPassword
 				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
@@ -975,13 +970,13 @@ export default {
 			)
 		},
 		async completeIntegrationWithoutGroupFolderSetUp() {
-			this.isFormCompleted.groupFolderSetUp = true
-			this.formMode.groupFolderSetUp = F_MODES.VIEW
 			this.textLabelGroupFolderSetupButton = 'Keep Current Change'
 			if (!this.opUserAppPassword) {
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.groupFolderState = this.isProjectFolderSwitchEnabled
+					this.isFormCompleted.groupFolderSetUp = true
+					this.formMode.groupFolderSetUp = F_MODES.VIEW
 				}
 
 			} else {
@@ -993,6 +988,8 @@ export default {
 					this.state.app_password_set = false
 					this.isFormCompleted.opUserAppPassword = false
 					this.formMode.opUserAppPassword = F_MODES.DISABLE
+					this.isFormCompleted.groupFolderSetUp = true
+					this.formMode.groupFolderSetUp = F_MODES.VIEW
 				}
 
 			}
