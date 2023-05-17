@@ -519,7 +519,6 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				// console.log(this.state)
 				if (this.state.group_folder_status) {
 					this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
 				}
@@ -568,13 +567,13 @@ export default {
 		},
 		groupFolderSetUpErrorMessageDescription(errorKey) {
 			switch (errorKey) {
-			case 'The group folder name OpenProject integration already exists' :
+			case 'The group folder name "OpenProject" integration already exists' :
 				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
 			case 'The group folder app is not installed' :
 				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
-			case 'The user OpenProject already exists' :
+			case 'The user "OpenProject" already exists' :
 				return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
-			case 'The group OpenProject already exists' :
+			case 'The group "OpenProject" already exists' :
 				return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
 			default:
 				return t('integration_openproject', 'Something went wrong during groupfolder setup. Deactivate the automatically managed folders.')
@@ -637,7 +636,7 @@ export default {
 			this.isGroupFolderAlreadySetup = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
 			if (this.isGroupFolderAlreadySetup) {
 				if (!this.opUserAppPassword) {
-					const success = await this.saveOPOptions()
+					const success = await this.saveGroupFolderAndUserAppPasswordOptions()
 					if (success) {
 						this.formMode.opUserAppPassword = F_MODES.EDIT
 						this.setManagedGroupFolderSetupToViewMode()
@@ -647,7 +646,7 @@ export default {
 				}
 			} else {
 				// we will check for the error making the setup_group_folder === true
-				const success = await this.saveOPOptions()
+				const success = await this.saveGroupFolderAndUserAppPasswordOptions()
 				if (success) {
 					this.setManagedGroupFolderSetupToViewMode()
 					if ((this.formMode.opUserAppPassword === F_MODES.DISABLE && !this.opUserAppPassword) || this.formMode.opUserAppPassword === F_MODES.DISABLE) {
@@ -844,34 +843,12 @@ export default {
 				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
 			}
 		},
-		async saveOPOptions() {
+		async saveGroupFolderAndUserAppPasswordOptions() {
 			let success = false
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			let values = {
-				openproject_client_id: this.state.openproject_client_id,
-				openproject_client_secret: this.state.openproject_client_secret,
-				openproject_instance_url: this.state.openproject_instance_url,
-				default_enable_navigation: this.state.default_enable_navigation,
-				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
-			// conditions when setting up the group folders and user app passwords
-			if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
-				// doing whole reset
-				if (this.isFormCompleted.opUserAppPassword === true) {
-					values = {
-						...values,
-						setup_group_folder: false,
-						setup_app_password: null,
-						group_folder_switch_enabled: true,
-					}
-				} else {
-					values = {
-						...values,
-						group_folder_switch_enabled: true,
-					}
-				}
-			}
-			else if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
+			if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
 						...values,
@@ -893,34 +870,75 @@ export default {
 					setup_app_password: true,
 				}
 			}
+
 			const req = {
 				values,
 			}
 
-			console.log(values)
-
 			try {
 				const response = await axios.put(url, req)
-				console.log(response)
-				// after successfully saving the admin credentials, the admin config status needs to be updated
-				this.isAdminConfigOk = response?.data?.status === true
 				if (response?.data?.oPUserAppPassword) {
 					this.state.app_password_set = true
 				}
-
 				this.oPUserAppPassword = response?.data?.oPUserAppPassword
-				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
 			} catch (error) {
-				this.isAdminConfigOk = null
-				this.oPOAuthTokenRevokeStatus = null
 				// catch the error response from the group folder response only
 				// since the response message is to be displayed in the UI
 				if (error.response.data.error) {
 					this.groupFolderSetupError = error.response.data.error
 				}
-				console.error(error)
+				showError(
+					t('integration_openproject', 'Failed to save OpenProject admin options')
+				)
+			}
+			this.notifyAboutOPOAuthTokenRevoke()
+			return success
+
+		},
+		async saveOPOptions() {
+			let success = false
+			const url = generateUrl('/apps/integration_openproject/admin-config')
+			let values = {
+				openproject_client_id: this.state.openproject_client_id,
+				openproject_client_secret: this.state.openproject_client_secret,
+				openproject_instance_url: this.state.openproject_instance_url,
+
+				default_enable_navigation: this.state.default_enable_navigation,
+				default_enable_unified_search: this.state.default_enable_unified_search,
+			}
+			// conditions when setting up the group folders and user app passwords
+			if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
+				// doing whole reset
+				if (this.isFormCompleted.opUserAppPassword === true) {
+					values = {
+						...values,
+						setup_group_folder: false,
+						setup_app_password: null,
+						group_folder_switch_enabled: true,
+					}
+				} else {
+					values = {
+						...values,
+						group_folder_switch_enabled: true,
+					}
+				}
+			}
+			const req = {
+				values,
+			}
+			try {
+				const response = await axios.put(url, req)
+				// after successfully saving the admin credentials, the admin config status needs to be updated
+				this.isAdminConfigOk = response?.data?.status === true
+				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
+				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
+				success = true
+			} catch (error) {
+				console.error()
+				this.isAdminConfigOk = null
+				this.oPOAuthTokenRevokeStatus = null
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
 				)
@@ -982,7 +1000,7 @@ export default {
 		async completeIntegrationWithoutGroupFolderSetUp() {
 			this.textLabelGroupFolderSetupButton = 'Keep Current Change'
 			if (!this.opUserAppPassword) {
-				const success = await this.saveOPOptions()
+				const success = await this.saveGroupFolderAndUserAppPasswordOptions()
 				if (success) {
 					this.groupFolderState = this.isProjectFolderSwitchEnabled
 					this.isFormCompleted.groupFolderSetUp = true
@@ -992,7 +1010,7 @@ export default {
 			} else {
 				// the value of this null will help in the deletion of the app password
 				// since the integration is done without the groupfolder setup and the app password must be deleted
-				const success = await this.saveOPOptions()
+				const success = await this.saveGroupFolderAndUserAppPasswordOptions()
 				if (success) {
 					this.groupFolderState = this.isProjectFolderSwitchEnabled
 					this.state.app_password_set = false
@@ -1029,7 +1047,7 @@ export default {
 		async createNewAppPassword() {
 			this.formMode.opUserAppPassword = F_MODES.EDIT
 			this.isFormCompleted.opUserAppPassword = false
-			await this.saveOPOptions()
+			await this.saveGroupFolderAndUserAppPasswordOptions()
 		},
 		createNCOAuthClient() {
 			const url = generateUrl('/apps/integration_openproject/nc-oauth')
