@@ -288,7 +288,7 @@
 						{{ t('integration_openproject', 'Done, complete setup') }}
 					</NcButton>
 					<NcButton v-else
-						data-test-id="reset-op-system-password"
+						data-test-id="reset-user-app-password"
 						@click="resetOPUserAppPassword">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
@@ -397,6 +397,7 @@ export default {
 			showDefaultManagedFolders: false,
 			groupFolderState: false,
 			textLabelGroupFolderSetupButton: t('integration_openproject', 'Keep current change'),
+			isGroupFolderOrAppPasswordRequest: 0,
 		}
 	},
 	computed: {
@@ -521,6 +522,9 @@ export default {
 			if (this.state) {
 				if (this.state.group_folder_status) {
 					this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
+					if (this.state.group_folder_status.status === true) {
+						this.isGroupFolderAlreadySetup = true
+					}
 				}
 				if (this.state.group_folder_switch_enabled === true) {
 					this.groupFolderState = true
@@ -632,6 +636,7 @@ export default {
 			}
 		},
 		async setUpProjectGroupFolders() {
+			this.isGroupFolderOrAppPasswordRequest = 1
 			this.loadingSetUpGroupFolder = true
 			this.isGroupFolderAlreadySetup = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
 			if (this.isGroupFolderAlreadySetup) {
@@ -744,9 +749,10 @@ export default {
 			this.isFormCompleted.server = false
 			this.state.openproject_client_id = null
 			this.state.openproject_client_secret = null
-			this.state.openproject_instance_url = null
 			this.state.default_enable_navigation = false
+			this.state.openproject_instance_url = null
 			this.state.default_enable_unified_search = false
+			this.oPUserAppPassword = null
 
 			await this.saveOPOptions()
 			window.location.reload()
@@ -848,7 +854,7 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
 			let values = {
 			}
-			if (this.formMode.groupFolderSetUp === F_MODES.EDIT) {
+			if (this.isGroupFolderOrAppPasswordRequest === 1) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
 						...values,
@@ -864,7 +870,7 @@ export default {
 						group_folder_switch_enabled: true,
 					}
 				}
-			} else if (this.formMode.opUserAppPassword === F_MODES.EDIT) {
+			} else if (this.isGroupFolderOrAppPasswordRequest === 2) {
 				values = {
 					...values,
 					setup_app_password: true,
@@ -895,7 +901,6 @@ export default {
 			}
 			this.notifyAboutOPOAuthTokenRevoke()
 			return success
-
 		},
 		async saveOPOptions() {
 			let success = false
@@ -904,7 +909,6 @@ export default {
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
 				openproject_instance_url: this.state.openproject_instance_url,
-
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
@@ -998,6 +1002,7 @@ export default {
 			)
 		},
 		async completeIntegrationWithoutGroupFolderSetUp() {
+			this.isGroupFolderOrAppPasswordRequest = 1
 			this.textLabelGroupFolderSetupButton = 'Keep Current Change'
 			if (!this.opUserAppPassword) {
 				const success = await this.saveGroupFolderAndUserAppPasswordOptions()
@@ -1019,7 +1024,6 @@ export default {
 					this.isFormCompleted.groupFolderSetUp = true
 					this.formMode.groupFolderSetUp = F_MODES.VIEW
 				}
-
 			}
 			// we want to show the error only when managed group folder is in edit mode
 			if (this.formMode.groupFolderSetUp === F_MODES.VIEW) {
@@ -1029,7 +1033,7 @@ export default {
 		resetOPUserAppPassword() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.'),
-				t('integration_openproject', 'Replace application password for project folders application connection'),
+				t('integration_openproject', 'Replace user app password'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
 					confirm: t('integration_openproject', 'Yes, replace'),
@@ -1045,6 +1049,7 @@ export default {
 			)
 		},
 		async createNewAppPassword() {
+			this.isGroupFolderOrAppPasswordRequest = 2
 			this.formMode.opUserAppPassword = F_MODES.EDIT
 			this.isFormCompleted.opUserAppPassword = false
 			await this.saveGroupFolderAndUserAppPasswordOptions()
