@@ -246,6 +246,8 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $filters
 	 * @param bool $isGlobalSearch
 	 * @return array<mixed>
+	 * @throws \OCP\PreConditionNotMetException
+	 * @throws \Safe\Exceptions\JsonException
 	 */
 	private function searchRequest(string $userId, array $filters, bool $isGlobalSearch = false): array {
 		$resultsById = [];
