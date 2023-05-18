@@ -52,6 +52,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
+use OC\Authentication\Token\IToken;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
 
 /**
  * overriding the class_exists method, so that the unit tests always pass,
@@ -406,7 +408,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$userManagerMock = null,
 		$groupManagerMock = null,
 		$appManagerMock = null,
-		$subAdminManagerMock = null
+		$subAdminManagerMock = null,
+		$iSecureRandomMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -427,6 +430,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($subAdminManagerMock === null) {
 			$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 		}
+		if ($iSecureRandomMock === null) {
+			$iSecureRandomMock = $this->createMock(ISecureRandom::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -444,7 +450,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
 					$this->createMock(IProvider::class),
-					$this->createMock(ISecureRandom::class),
+					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
 					$this->createMock(IMimeTypeLoader::class)
@@ -1574,6 +1580,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isGroupFolderSetup());
+	}
+
+	public function testGenerateAppPasswordTokenForUser(): void {
+		$userMock = $this->getMockBuilder(IUser::class)->getMock();
+		$userMock
+			->method('getUID')
+			->willReturn(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		$token = "gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx";
+		$iSecureRandomMock = $this->getMockBuilder(ISecureRandom::class)
+			->getMock();
+		$iSecureRandomMock
+			->method('generate')
+			->willReturn($token);
+		$itokenMock = $this->createMock(IToken::class);
+		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->getMock();
+		$tokenProviderMock
+			->method('generateToken')
+			->with($token, Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME, null, Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($itokenMock);
+		$eventDispatcherMock = $this->getMockBuilder(IEventDispatcher::class)->getMock();
+		$eventDispatcherMock
+			->method('dispatchTyped')
+			->with($this->createMock(AppPasswordCreatedEvent::class));
+		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock);
+		$result = $service->generateAppPasswordTokenForUser();
+		$this->assertSame($token, $result);
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {

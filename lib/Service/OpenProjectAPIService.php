@@ -48,13 +48,11 @@ use OCP\Files\IMimeTypeLoader;
 use OC_Util;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
-use OC\Authentication\Token\IToken;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Security\ISecureRandom;
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
-use function Symfony\Component\String\s;
 
 define('CACHE_TTL', 3600);
 
@@ -1112,17 +1110,14 @@ class OpenProjectAPIService {
 	 */
 	public function generateAppPasswordTokenForUser(): string {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$password = null;
-		$appName = Application::OPEN_PROJECT_ENTITIES_NAME;
+		$userID = $user->getUID();
 		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
 		$generatedToken = $this->tokenProvider->generateToken(
 			$token,
-			$user->getUID(),
-			$user->getUID(),
-			$password,
-			$appName,
-			IToken::TEMPORARY_TOKEN,
-			IToken::DO_NOT_REMEMBER
+			$userID,
+			$userID,
+			null,
+			Application::OPEN_PROJECT_ENTITIES_NAME
 		);
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
