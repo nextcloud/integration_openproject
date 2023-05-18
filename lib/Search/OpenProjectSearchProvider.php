@@ -125,7 +125,7 @@ class OpenProjectSearchProvider implements IProvider {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		$searchResults = $this->service->searchWorkPackage($user->getUID(), $term, null, true);
+		$searchResults = $this->service->searchWorkPackage($user->getUID(), $term, null, false);
 		$searchResults = array_slice($searchResults, $offset, $limit);
 
 		if (isset($searchResults['error'])) {

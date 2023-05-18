@@ -213,7 +213,7 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param string|null $query
 	 * @param int|null $fileId
-	 * @param bool $isGlobalSearch
+	 * @param bool $onlyLinkableWorkPackages
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
@@ -222,7 +222,7 @@ class OpenProjectAPIService {
 		string $userId,
 		string $query = null,
 		int $fileId = null,
-		bool $isGlobalSearch = false
+		bool $onlyLinkableWorkPackages = true
 	): array {
 		$resultsById = [];
 		$filters = [];
@@ -234,7 +234,7 @@ class OpenProjectAPIService {
 		if ($query !== null) {
 			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$query]]];
 		}
-		$resultsById = $this->searchRequest($userId, $filters, $isGlobalSearch);
+		$resultsById = $this->searchRequest($userId, $filters, $onlyLinkableWorkPackages);
 		if (isset($resultsById['error'])) {
 			return $resultsById;
 		}
@@ -244,15 +244,15 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 * @param array<mixed> $filters
-	 * @param bool $isGlobalSearch
+	 * @param bool $onlyLinkableWorkPackages
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
 	 */
-	private function searchRequest(string $userId, array $filters, bool $isGlobalSearch = false): array {
+	private function searchRequest(string $userId, array $filters, bool $onlyLinkableWorkPackages = true): array {
 		$resultsById = [];
 		$sortBy = [['updatedAt', 'desc']];
-		if (!$isGlobalSearch) {
+		if ($onlyLinkableWorkPackages) {
 			$filters[] = [
 				'linkable_to_storage_url' =>
 					['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]

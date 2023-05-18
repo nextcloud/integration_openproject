@@ -544,7 +544,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				]
 			)
 			->willReturn($response);
-		$result = $service->searchWorkPackage('user', 'search query', null, true);
+		$result = $service->searchWorkPackage('user', 'search query', null, false);
 		$this->assertSame($expectedResult, $result);
 	}
 
