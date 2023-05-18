@@ -393,13 +393,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @param array<string> $onlyMethods
-	 * @param IRootFolder|null $rootMock
-	 * @param ICacheFactory|null $cacheFactoryMock
-	 * @param IUserManager|null $userManagerMock
-	 * @param IGroupManager|null $groupManagerMock
-	 * @param IAppManager|null $appManagerMock
-	 * @param ISubAdmin| null $subAdminManagerMock
-	 * @return OpenProjectAPIService|MockObject
+	 * @param null $rootMock
+	 * @param null $cacheFactoryMock
+	 * @param null $userManagerMock
+	 * @param null $groupManagerMock
+	 * @param null $appManagerMock
+	 * @param null $subAdminManagerMock
+	 * @param null $iSecureRandomMock
+	 * @param null $configMock
+	 * @return OpenProjectAPIService
 	 */
 	private function getServiceMock(
 		array $onlyMethods = ['request'],
@@ -409,7 +411,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$groupManagerMock = null,
 		$appManagerMock = null,
 		$subAdminManagerMock = null,
-		$iSecureRandomMock = null
+		$iSecureRandomMock = null,
+		$configMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -433,6 +436,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($iSecureRandomMock === null) {
 			$iSecureRandomMock = $this->createMock(ISecureRandom::class);
 		}
+		if ($configMock === null) {
+			$configMock = $this->createMock(IConfig::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -440,7 +446,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IAvatarManager::class),
 					$this->createMock(LoggerInterface::class),
 					$this->createMock(IL10N::class),
-					$this->createMock(IConfig::class),
+					$configMock,
 					$this->createMock(IClientService::class),
 					$rootMock,
 					$this->createMock(IURLGenerator::class),
@@ -1612,6 +1618,46 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock);
 		$result = $service->generateAppPasswordTokenForUser();
 		$this->assertSame($token, $result);
+	}
+
+	public function testIsGroupFolderProjectStateSaved() {
+		$configMock = $this->getMockBuilder(IConfig::class)
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->with('integration_openproject', 'group_folder_switch_enabled')
+			->willReturn(true);
+		$service = $this->getServiceMock([],
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+		$configMock);
+		$result = $service->isGroupFolderProjectStateSaved();
+		$this->assertTrue($result);
+	}
+
+	public function testIsGroupFolderProjectStateNotSaved() {
+		$configMock = $this->getMockBuilder(IConfig::class)
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->with('integration_openproject', 'group_folder_switch_enabled')
+			->willReturn(false);
+		$service = $this->getServiceMock([],
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$configMock);
+		$result = $service->isGroupFolderProjectStateSaved();
+		$this->assertFalse($result);
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {
