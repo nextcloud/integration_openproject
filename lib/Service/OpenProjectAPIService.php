@@ -929,9 +929,9 @@ class OpenProjectAPIService {
 			throw new \Exception('The group folder app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
 			throw new OpenprojectGroupfolderSetupConflictException(
-					'The group folder name ' .
+					'The group folder name "' .
 					Application::OPEN_PROJECT_ENTITIES_NAME .
-					' integration already exists'
+					'" integration already exists'
 				);
 		}
 		return true;
@@ -1037,6 +1037,9 @@ class OpenProjectAPIService {
 		return $groupfoldersFolderManager;
 	}
 
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
 	public function isOpenProjectGroupfolderCreated(): bool {
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = $this->getGroupFolderManager();

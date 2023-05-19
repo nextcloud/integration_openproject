@@ -393,15 +393,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @param array<string> $onlyMethods
-	 * @param null $rootMock
-	 * @param null $cacheFactoryMock
-	 * @param null $userManagerMock
-	 * @param null $groupManagerMock
-	 * @param null $appManagerMock
-	 * @param null $subAdminManagerMock
-	 * @param null $iSecureRandomMock
-	 * @param null $configMock
-	 * @return OpenProjectAPIService
+	 * @param IRootFolder|null $rootMock
+	 * @param ICacheFactory|null $cacheFactoryMock
+	 * @param IUserManager|null $userManagerMock
+	 * @param IGroupManager|null $groupManagerMock
+	 * @param IAppManager|null $appManagerMock
+	 * @param ISubAdmin|null $subAdminManagerMock
+	 * @param ISecureRandom|null $iSecureRandomMock
+	 * @param IConfig|null $configMock
+	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
 		array $onlyMethods = ['request'],
@@ -1386,10 +1386,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn([ 0 => [
 				'id' => 123,
 				'mount_point' => $mountPoint,
-				'groups' => Application::OPEN_PROJECT_ENTITIES_NAME,
+				'groups' => $gid,
 				'quota' => 1234,
 				'size' => 0,
-				'acl' => true
+				'acl' => $canManageACL
 			]]);
 
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
@@ -1484,7 +1484,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function groupFolderNotSetUpDataProvider() {
+	public function groupFolderNotSetUpDataProvider(): array {
 		return [
 			[false,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,Application::OPEN_PROJECT_ENTITIES_NAME,true],
 			[true,false,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,Application::OPEN_PROJECT_ENTITIES_NAME,true],
@@ -1620,44 +1620,108 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($token, $result);
 	}
 
-	public function testIsGroupFolderProjectStateSaved() {
-		$configMock = $this->getMockBuilder(IConfig::class)
+	public function testIsSystemReadyForGroupFolderSetUp(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$configMock
-			->method('getAppValue')
-			->with('integration_openproject', 'group_folder_switch_enabled')
+		$userManagerMock
+			->method('userExists')
+			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
+			->willReturnOnConsecutiveCalls(false, false);
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
+			->willReturnOnConsecutiveCalls(false, false);
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
 			->willReturn(true);
-		$service = $this->getServiceMock([],
+		$service = $this->getServiceMock(['getGroupFolderManager'],
 			null,
 			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-		$configMock);
-		$result = $service->isGroupFolderProjectStateSaved();
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock);
+		$folderManagerMock = $this->getFolderManagerMock('', false, '');
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
+		$result = $service->isSystemReadyForGroupFolderSetUp();
 		$this->assertTrue($result);
 	}
 
-	public function testIsGroupFolderProjectStateNotSaved() {
-		$configMock = $this->getMockBuilder(IConfig::class)
+	/**
+	 * @return array<mixed>
+	 */
+	public function testIsSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
+		return [
+			[true, true, false, false,'The group folder app is not installed'],
+			[true, false, false, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, true, false, false,'The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, false, false, false,'The group folder app is not installed'],
+			[false, false, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" integration already exists'],
+		];
+	}
+
+	/**
+	 * @param bool $userExists
+	 * @param bool $groupExists
+	 * @param bool $appEnabled
+	 * @param bool $groupFolderExists
+	 * @param string $exception
+	 * @return void
+	 * @dataProvider testIsSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider
+	 */
+	public function testIsSystemReadyForGroupFolderSetUpUserOrGroupExistsException(
+		bool $userExists,
+		bool $groupExists,
+		bool $appEnabled,
+		bool $groupFolderExists,
+		string $exception
+	): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$configMock
-			->method('getAppValue')
-			->with('integration_openproject', 'group_folder_switch_enabled')
-			->willReturn(false);
-		$service = $this->getServiceMock([],
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		$userManagerMock
+			->method('userExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userExists);
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($groupExists);
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn($appEnabled);
+		$service = $this->getServiceMock(['getGroupFolderManager'],
 			null,
 			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$configMock);
-		$result = $service->isGroupFolderProjectStateSaved();
-		$this->assertFalse($result);
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage($exception);
+		$service->isSystemReadyForGroupFolderSetUp();
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {
