@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Managed project folder form (groupfolder setup) view mode without group folder setup should show Automatic managed folders status as inactive 1`] = `
+exports[`AdminSettings.vue Managed project folder form (Group Folder Setup) view mode without group folder setup should show Automatic managed folders status as "Inactive" 1`] = `
 <div class="group-folder-setup">
   <formheading-stub index="4" title="Managed project folders (recommended)" issetupcompletewithoutgroupfolders="true" isgroupfoldersetupheading="true" isgroupfoldersetupcorrectaftersetup="true"></formheading-stub>
   <div>

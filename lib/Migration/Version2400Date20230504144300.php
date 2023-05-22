@@ -55,7 +55,7 @@ class Version2400Date20230504144300 extends SimpleMigrationStep {
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$this->config->setAppValue(
-			Application::APP_ID, 'group_folder_switch_enabled', "1"
+			Application::APP_ID, 'fresh_group_folder_setup', "1"
 		);
 		return null;
 	}

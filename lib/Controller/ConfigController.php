@@ -36,6 +36,7 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Security\ISecureRandom;
+use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -187,8 +188,7 @@ class ConfigController extends Controller {
 			'default_enable_navigation',
 			'default_enable_unified_search',
 			'setup_group_folder',
-			'setup_app_password',
-			'group_folder_switch_enabled'
+			'setup_app_password'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -199,6 +199,7 @@ class ConfigController extends Controller {
 		}
 		$openProjectGroupFolderFileId = null;
 		$appPassword = null;
+
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder'] === true) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
 			if ($isSystemReady) {
@@ -235,9 +236,12 @@ class ConfigController extends Controller {
 			}
 		}
 
-		// creates or replace the app password
+//		 creates or replace the app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
 			$this->openprojectAPIService->deleteAppPassword();
+			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				throw new \Exception('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
+			}
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
 
@@ -255,13 +259,9 @@ class ConfigController extends Controller {
 			if ($key === 'setup_group_folder' || $key === 'setup_app_password') {
 				continue;
 			}
-
-			if ($key === 'group_folder_switch_enabled' && $values['group_folder_switch_enabled'] === false) {
-				$this->config->deleteAppValue(Application::APP_ID, 'group_folder_switch_enabled');
-				continue;
-			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
+
 		// if the OpenProject OAuth URL has changed
 		if (key_exists('openproject_instance_url', $values)
 			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url']
@@ -353,6 +353,19 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($userUID);
 			});
 		}
+
+
+		// save the switch state only when resetting (as resetting is also fresh install for group folder and app password setup)
+		// this condition applies while setting the group folder and app password setup
+		if (key_exists('setup_app_password', $values) && key_exists('setup_group_folder', $values)) {
+			if ($runningFullReset) {
+				// when running full reset we will make the switch state true
+				$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "1");
+			} else {
+				$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "0");
+			}
+		}
+
 		// if the revoke has failed at least once, the last status is stored in the database
 		// this is not a neat way to give proper information about the revoke status
 		// TODO: find way to report every user's revoke status
@@ -371,6 +384,7 @@ class ConfigController extends Controller {
 	 * set admin config values
 	 *
 	 * @param array<string, string|null> $values
+	 * @NoAdminRequired
 	 *
 	 * @return DataResponse
 	 */

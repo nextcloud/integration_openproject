@@ -66,12 +66,8 @@ class Admin implements ISettings {
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			'group_folder_status' => $groupFolderStatusInformation,
-			'group_folder_switch_enabled' => $this->config->getAppValue(Application::APP_ID, 'group_folder_switch_enabled', '0')
+			'fresh_group_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_group_folder_setup', '0') === '1'
 		];
-
-		if ($this->openProjectAPIService->isGroupFolderProjectStateSaved() === false) {
-			unset($adminConfig['group_folder_switch_enabled']);
-		}
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
 

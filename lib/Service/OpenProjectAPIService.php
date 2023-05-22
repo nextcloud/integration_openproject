@@ -1149,17 +1149,4 @@ class OpenProjectAPIService {
 	public function hasAppPassword(): bool {
 		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
-
-	/**
-	 * checks if the group project folder state is saved as true in database or not
-	 *
-	 * @return bool
-	 */
-	public function isGroupFolderProjectStateSaved(): bool {
-		$keyExists = $this->config->getAppValue(Application::APP_ID, 'group_folder_switch_enabled');
-		if (!$keyExists) {
-			return false;
-		}
-		return true;
-	}
 }
