@@ -494,7 +494,7 @@ Feature: setup the integration through an API
 
   # this test wil not pass locally if your system already has a `OpenProject` user/group setup
   Scenario: Set up whole integration with group folder and user app password setup
-    When the administrator sends a POST request to the "setup" endpoint with this data:
+    When the administrator sends a POST request to the setup endpoint with this data storing the app password:
       """
       {
       "values" : {
@@ -641,7 +641,7 @@ Feature: setup the integration through an API
 
     # but other values can be updated by sending a PATCH request
     # also we can replace the app password by sending PATCH request
-    When the administrator sends a PATCH request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the setup endpoint with this data storing the app password:
       """
       {
       "values" : {
@@ -671,3 +671,4 @@ Feature: setup the integration through an API
       }
     }
     """
+    And the newly generated app password should be different from the previous one

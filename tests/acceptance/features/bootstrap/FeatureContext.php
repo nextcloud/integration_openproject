@@ -31,6 +31,7 @@ class FeatureContext implements Context {
 	 * @var array<int>
 	 */
 	private array $createdFiles = [];
+	private array $createdAppPasswords = [];
 
 	private ?ResponseInterface $response = null;
 
@@ -800,6 +801,41 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @When /^the administrator sends a (PATCH|POST) request to the setup endpoint with this data storing the app password:$/
+	 *
+	 * @return void
+	 */
+	public function theAdministratorSendsARequestToTheEndpointWithThisDataStoringTheAppPassword(
+		string $method,PyStringNode $data
+	): void {
+		$this->theAdministratorSendsARequestToTheEndpointWithThisData($method,"setup",$data);
+		if(isset(json_decode($data->getRaw())->values->setup_app_password) && json_decode($data->getRaw())->values->setup_app_password){
+			$responseAsJson = json_decode(
+				$this->response->getBody()->getContents()
+			);
+			$this->createdAppPasswords[] = $responseAsJson->openproject_user_app_password;
+			$this->response->getBody()->rewind();
+		}
+	}
+
+	/**
+	 * @Then the newly generated app password should be different from the previous one
+	 *
+	 * @return void
+	 */
+	public function theAppPasswordShouldBeDifferent(): void {
+		$uniqueAppPasswordArray = array_unique(
+			$this->createdAppPasswords
+		);
+		Assert::assertEquals(
+			count($uniqueAppPasswordArray),
+			count($this->createdAppPasswords),
+			"App password has the same value:\n" .
+			print_r($this->createdAppPasswords, true)
+		);
+	}
+
+	/**
 	 * @When /^the administrator sends a (PATCH|POST|DELETE) request to the "([^"]*)" endpoint$/
 	 *
 	 * @return void
@@ -954,5 +990,6 @@ class FeatureContext implements Context {
 		foreach ($this->createdUsers as $userData) {
 			$this->theAdministratorDeletesTheUser($userData['userid']);
 		}
+		$this->createdAppPasswords = [];
 	}
 }
