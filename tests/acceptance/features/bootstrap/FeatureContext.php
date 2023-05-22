@@ -817,7 +817,9 @@ class FeatureContext implements Context {
 			$responseAsJson = json_decode(
 				$this->response->getBody()->getContents()
 			);
-			$this->createdAppPasswords[] = $responseAsJson->openproject_user_app_password;
+			if(isset($responseAsJson->openproject_user_app_password)){
+				$this->createdAppPasswords[] = $responseAsJson->openproject_user_app_password;
+			}
 			$this->response->getBody()->rewind();
 		}
 	}
