@@ -810,10 +810,10 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function theAdministratorSendsARequestToTheEndpointWithThisDataStoringTheAppPassword(
-		string $method,PyStringNode $data
+		string $method, PyStringNode $data
 	): void {
-		$this->theAdministratorSendsARequestToTheEndpointWithThisData($method,"setup",$data);
-		if(isset(json_decode($data->getRaw())->values->setup_app_password) && json_decode($data->getRaw())->values->setup_app_password){
+		$this->theAdministratorSendsARequestToTheEndpointWithThisData($method, "setup", $data);
+		if (isset(json_decode($data->getRaw())->values->setup_app_password) && json_decode($data->getRaw())->values->setup_app_password) {
 			$responseAsJson = json_decode(
 				$this->response->getBody()->getContents()
 			);

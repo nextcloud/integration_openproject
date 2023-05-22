@@ -1137,7 +1137,6 @@ class OpenProjectAPIService {
 		if ($this->hasAppPassword()) {
 			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
 			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
-			$this->config->deleteAppValue(Application::APP_ID, 'app_password_set');
 		}
 	}
 

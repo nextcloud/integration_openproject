@@ -142,7 +142,6 @@ class ConfigController extends Controller {
 
 	/**
 	 * set config values
-	 * @NoAdminRequired
 	 *
 	 * @param array<string, string> $values
 	 * @return DataResponse
@@ -208,30 +207,10 @@ class ConfigController extends Controller {
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
-
 				// finish the setup of the user by doing a PROPFIND request
 				// without this request we can get LockException or NotFoundException
 				// after creating the group folder
-				$gClient = new Client();
-				$loopCounter = 0;
-				$statusCode = 0;
-				while ($statusCode != 207) {
-					try {
-						$response = $gClient->request(
-							'PROPFIND',
-							$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
-							['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
-						);
-						$statusCode = $response->getStatusCode();
-					} catch (GuzzleException $e) {
-						if ($loopCounter >= 10) {
-							throw $e;
-						}
-						sleep(1);
-					}
-					$loopCounter++;
-				}
-
+				$this->sendPropfindRequest($password);
 				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
@@ -379,14 +358,42 @@ class ConfigController extends Controller {
 		];
 	}
 
+	/**
+	 * send propfind request through curl
+	 *
+	 * @param string $password
+	 *
+	 * @return void
+	 */
+	public function sendPropfindRequest(string $password):void {
+		$gClient = new Client();
+		$loopCounter = 0;
+		$statusCode = 0;
+		while ($statusCode != 207) {
+			try {
+				$response = $gClient->request(
+					'PROPFIND',
+					$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
+					['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
+				);
+				$statusCode = $response->getStatusCode();
+			} catch (GuzzleException $e) {
+				if ($loopCounter >= 10) {
+					throw $e;
+				}
+				sleep(1);
+			}
+			$loopCounter++;
+		}
+	}
 
 	/**
 	 * set admin config values
 	 *
-	 * @param array<string, string|null> $values
-	 * @NoAdminRequired
+	 * @param array<string, string|null|bool> $values
 	 *
 	 * @return DataResponse
+	 * @throws GuzzleException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
@@ -405,7 +412,6 @@ class ConfigController extends Controller {
 
 	/**
 	 * receive oauth code and get oauth access token
-	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
 	 * @param string $code

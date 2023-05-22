@@ -4,6 +4,7 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use OCA\OAuth2\Controller\SettingsController;
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
@@ -13,6 +14,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUser;
+use OCP\IGroup;
 use OCP\AppFramework\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -1260,5 +1262,106 @@ class ConfigControllerTest extends TestCase {
 		$this->assertEquals(false, $data['status']);
 		$this->assertArrayHasKey('oPOAuthTokenRevokeStatus', $data);
 		$this->assertEquals("", $data['oPOAuthTokenRevokeStatus']);
+	}
+
+
+	public function testSetupIntegrationGroupFoldersSetUp():void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('isSystemReadyForGroupFolderSetUp')
+			->willReturn(true);
+		$service
+			->method('createGroupfolder')
+			->willReturn(123);
+		$service->method('deleteAppPassword');
+		$service
+			->method('generateAppPasswordTokenForUser')
+			->willReturn('gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx');
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'openproject_client_id', ''],
+				['integration_openproject', 'openproject_client_secret', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url']
+			)
+			->willReturnOnConsecutiveCalls(
+				'http://localhost:3000',
+				'some_cilent_id',
+				'some_cilent_secret',
+				'',
+				'some_cilent_id',
+				'some_cilent_secret',
+				'http://localhost:3000'
+			);
+		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
+		$secureRandomMock
+			->method('generate')
+			->with(10, ISecureRandom::CHAR_HUMAN_READABLE)
+			->willReturn('thisisapassword123');
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
+		$userManagerMock
+			->method('createUser')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		$userManagerMock
+			->method('userExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(true);
+		$groupMock = $this->getMockBuilder(IGroup::class)->getMock();
+		$groupMock
+			->method('addUser')
+			->with($userMock);
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
+		$groupManagerMock
+			->method('createGroup')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($groupMock);
+		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
+		$subAdminManagerMock
+			->method('createSubAdmin')
+			->with($userMock, $groupMock);
+
+		$configControllerMock = $this->getMockBuilder(ConfigController::class)
+			->setConstructorArgs(
+				[
+					'integration_openproject',
+					$this->createMock(IRequest::class),
+					$configMock,
+					$this->createMock(IURLGenerator::class),
+					$userManagerMock,
+					$this->l,
+					$service,
+					$this->createMock(LoggerInterface::class),
+					$this->createMock(OauthService::class),
+					$this->createMock(SettingsController::class),
+					$groupManagerMock,
+					$secureRandomMock,
+					$subAdminManagerMock,
+					'admin'
+				])
+			->onlyMethods(['sendPropfindRequest'])
+			->getMock();
+		$configControllerMock
+			->method('sendPropfindRequest')
+			->with('thisisapassword123');
+
+		$result = $configControllerMock->setAdminConfig([
+			"setup_group_folder" => true,
+			"setup_app_password" => true
+		]);
+		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
+		$data = $result->getData();
+		$this->assertArrayHasKey('oPGroupFolderFileId', $data);
+		$this->assertEquals(123, $data['oPGroupFolderFileId']);
+		$this->assertArrayHasKey('oPUserAppPassword', $data);
+		$this->assertEquals("gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx", $data['oPUserAppPassword']);
 	}
 }
