@@ -4,7 +4,7 @@
 		<div v-if="isGroupFolderSetupHeading && isSetupCompleteWithoutGroupFolders" class="setup-complete-without-group-folders">
 			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
-		<div v-else-if="!isGroupFolderSetupCorrectAfterSetup" class="group-folder-setup-status">
+		<div v-else-if="isGroupFolderSetupCorrectAfterSetup" class="group-folder-setup-status">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
@@ -16,7 +16,7 @@
 		<div class="title"
 			:class="{
 				'green-text': isComplete,
-				'red-text': !isGroupFolderSetupCorrectAfterSetup
+				'red-text': isGroupFolderSetupCorrectAfterSetup
 			}">
 			{{ title }}
 		</div>
@@ -61,7 +61,7 @@ export default {
 		},
 		isGroupFolderSetupCorrectAfterSetup: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 	},
 }

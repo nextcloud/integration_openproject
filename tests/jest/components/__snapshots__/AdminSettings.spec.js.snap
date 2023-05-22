@@ -1,26 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Managed project folder form (Group Folder Setup) view mode without group folder setup should show Automatic managed folders status as "Inactive" 1`] = `
-<div class="group-folder-setup">
-  <formheading-stub index="4" title="Managed project folders (recommended)" issetupcompletewithoutgroupfolders="true" isgroupfoldersetupheading="true" isgroupfoldersetupcorrectaftersetup="true"></formheading-stub>
-  <div>
-    <div class="group-folder-status">
-      <div class="group-folder-status-value"><b>Automatic managed folders:</b> Inactive
-      </div>
-      <!---->
-      <div class="form-actions">
-        <ncbutton-stub type="secondary" nativetype="button" data-test-id="edit-group-folder-setup">
-          Edit managed project folders
-        </ncbutton-stub>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="nextcloud-oauth-values">
-  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true" isgroupfoldersetupcorrectaftersetup="true"></formheading-stub>
+  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
     <textinput-stub value="nc-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-id" class="py-1"></textinput-stub>
     <textinput-stub value="nc-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-secret" class="py-1"></textinput-stub>
@@ -35,7 +17,7 @@ exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the
 
 exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
 <div class="nextcloud-oauth-values">
-  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true" isgroupfoldersetupcorrectaftersetup="true"></formheading-stub>
+  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
   <div>
     <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
     <fieldvalue-stub title="Nextcloud OAuth client secret" value="some-nc-client-secret-here" isrequired="true" encryptvalue="true" withinspection="true"></fieldvalue-stub>
