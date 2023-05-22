@@ -31,6 +31,10 @@ class FeatureContext implements Context {
 	 * @var array<int>
 	 */
 	private array $createdFiles = [];
+
+	/**
+	 * @var array<string>
+	 */
 	private array $createdAppPasswords = [];
 
 	private ?ResponseInterface $response = null;
