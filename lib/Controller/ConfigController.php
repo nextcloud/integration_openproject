@@ -580,7 +580,7 @@ class ConfigController extends Controller {
 	/**
 	 * @NoCSRFRequired
 	 * set up integration
-	 * @param array<string, string> $values
+	 *  @param array<string, string|null|bool> $values
 	 *
 	 * @return DataResponse
 	 *
