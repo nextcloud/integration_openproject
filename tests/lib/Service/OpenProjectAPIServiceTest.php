@@ -525,6 +525,30 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @param array<mixed> $response
+	 * @param array<mixed> $expectedResult
+	 * @return void
+	 * @dataProvider searchWorkPackageDataProvider
+	 */
+	public function testSearchWorkPackageNotLinkedToAStorage(array $response, array $expectedResult) {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->with(
+				'user', 'work_packages',
+				[
+					'filters' => '[' .
+						'{"typeahead":' .
+						'{"operator":"**","values":["search query"]}'.
+						'}]',
+					'sortBy' => '[["updatedAt","desc"]]',
+				]
+			)
+			->willReturn($response);
+		$result = $service->searchWorkPackage('user', 'search query', null, false);
+		$this->assertSame($expectedResult, $result);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testSearchWorkPackageByFileIdOnlyFileId() {
