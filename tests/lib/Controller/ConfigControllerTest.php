@@ -1347,10 +1347,10 @@ class ConfigControllerTest extends TestCase {
 					$subAdminManagerMock,
 					'admin'
 				])
-			->onlyMethods(['sendPropfindRequest'])
+			->onlyMethods(['finishUserSetup'])
 			->getMock();
 		$configControllerMock
-			->method('sendPropfindRequest')
+			->method('finishUserSetup')
 			->with('thisisapassword123');
 
 		$result = $configControllerMock->setAdminConfig([

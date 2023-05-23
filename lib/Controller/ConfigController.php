@@ -36,7 +36,6 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\Security\ISecureRandom;
-use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -210,7 +209,7 @@ class ConfigController extends Controller {
 				// finish the setup of the user by doing a PROPFIND request
 				// without this request we can get LockException or NotFoundException
 				// after creating the group folder
-				$this->sendPropfindRequest($password);
+				$this->finishUserSetup($password);
 				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
@@ -334,15 +333,14 @@ class ConfigController extends Controller {
 		}
 
 
-		// save the switch state only when resetting (as resetting is also fresh install for group folder and app password setup)
-		// this condition applies while setting the group folder and app password setup
-		if (key_exists('setup_app_password', $values) && key_exists('setup_group_folder', $values)) {
-			if ($runningFullReset) {
-				// when running full reset we will make the switch state true
-				$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "1");
-			} else {
-				$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "0");
-			}
+		// whenever doing full reset we want the group folder switch state to be "on" in the UI
+		// so setting `fresh_group_folder_setup` as true
+		if ($runningFullReset) {
+			$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "1");
+		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_group_folder', $values)) {
+			// for other cases when api has key 'setup_app_password' and 'setup_group_folder' we set it to false
+			// assuming user has either fully set the integration or patially without group folder/app password
+			$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "0");
 		}
 
 		// if the revoke has failed at least once, the last status is stored in the database
@@ -365,7 +363,7 @@ class ConfigController extends Controller {
 	 *
 	 * @return void
 	 */
-	public function sendPropfindRequest(string $password):void {
+	public function finishUserSetup(string $password):void {
 		$gClient = new Client();
 		$loopCounter = 0;
 		$statusCode = 0;

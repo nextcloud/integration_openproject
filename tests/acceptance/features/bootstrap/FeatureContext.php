@@ -802,17 +802,6 @@ class FeatureContext implements Context {
 		$this->sendRequestsToAppEndpoint(
 			$this->adminUsername, $this->adminPassword, $method, $endpoint, $data
 		);
-	}
-
-	/**
-	 * @When /^the administrator sends a (PATCH|POST) request to the setup endpoint with this data storing the app password:$/
-	 *
-	 * @return void
-	 */
-	public function theAdministratorSendsARequestToTheEndpointWithThisDataStoringTheAppPassword(
-		string $method, PyStringNode $data
-	): void {
-		$this->theAdministratorSendsARequestToTheEndpointWithThisData($method, "setup", $data);
 		if (isset(json_decode($data->getRaw())->values->setup_app_password) && json_decode($data->getRaw())->values->setup_app_password) {
 			$responseAsJson = json_decode(
 				$this->response->getBody()->getContents()
