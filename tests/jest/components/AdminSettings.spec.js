@@ -633,7 +633,6 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
 									fresh_group_folder_setup: false,
-									// group folder is already not set up
 									group_folder_status: {
 										status: true,
 									},
@@ -1151,7 +1150,6 @@ describe('AdminSettings.vue', () => {
 									nextcloud_client_secret: 'some-nc-client-secret-here',
 								},
 								fresh_group_folder_setup: false,
-								// group folder is already not set up
 								group_folder_status: {
 									status: true,
 								},
@@ -1331,7 +1329,6 @@ describe('AdminSettings.vue', () => {
 								openproject_client_secret: null,
 								nc_oauth_client: null,
 								fresh_group_folder_setup: true,
-								// group folder is already not set up
 								group_folder_status: {
 									status: true,
 								},
