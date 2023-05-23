@@ -94,7 +94,7 @@ OC.L10N.register(
     "commented" : "коментарисао",
     "mentioned" : "поменут",
     "Notifications associated with Work package marked as read" : "Обавештења придружена Радном пакету која су означена као прочитана",
-    "Failed to mark notifications as read" : "Није успело означавање обавештења као прочитана",
+    "Failed to mark notifications as read" : "Није успело означавање обавештења као прочитаних",
     "Existing relations:" : "Постојеће релације:",
     "Unlink Work Package" : "Развежи Радни пакет",
     "Are you sure you want to unlink the work package?" : "Да ли сте сигурни да желите да развежете радни пакет?",
