@@ -211,7 +211,6 @@ class ConfigController extends Controller {
 				// finish the setup of the user by doing a PROPFIND request
 				// without this request we can get LockException or NotFoundException
 				// after creating the group folder
-				$this->finishUserSetup($password);
 				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
