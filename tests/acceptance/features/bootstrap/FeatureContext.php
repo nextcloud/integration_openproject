@@ -814,6 +814,28 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sends a "([^"]*)" request to "([^"]*)" using (current|old|new) app password$/
+	 *
+	 * @param string $user
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param string $appPassword
+	 * @throws Exception
+	 */
+	public function theUserSendsRequestTo(string $user, string $method, string $endpoint, string $appPassword)
+	{
+		if($appPassword === 'current' || $appPassword ==='old') {
+			$appPassword = $this->createdAppPasswords[0];
+		} else {
+			$appPassword = $this->createdAppPasswords[1];
+		}
+		$this->response =  $this->sendHttpRequest(
+			self::sanitizeUrl($this->getBaseUrl() . $endpoint), $user, $appPassword , $method
+		);
+	}
+
+
+	/**
 	 * @Then the newly generated app password should be different from the previous one
 	 *
 	 * @return void

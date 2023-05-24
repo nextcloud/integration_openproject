@@ -638,9 +638,12 @@ Feature: setup the integration through an API
     }
     """
 
+    # we can make api request using the created app password for user "OpenProject"
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using current app password
+    Then the HTTP status code should be "207"
 
     # but other values can be updated by sending a PATCH request
-    # also we can replace the app password by sending PATCH request
+    # also we can replace old app password by sending PATCH request to get new user app password
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
@@ -654,14 +657,13 @@ Feature: setup the integration through an API
     And the data of the response should match
     """"
     {
-    "type": "object",
-    "required": [
-        "nextcloud_oauth_client_name",
-        "openproject_redirect_uri",
-        "nextcloud_client_id",
-        "nextcloud_client_secret",
-        "openproject_user_app_password"
-      ],
+      "type": "object",
+      "required": [
+          "nextcloud_oauth_client_name",
+          "openproject_redirect_uri",
+          "nextcloud_client_id",
+          "nextcloud_client_secret"
+       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
@@ -672,3 +674,11 @@ Feature: setup the integration through an API
     }
     """
     And the newly generated app password should be different from the previous one
+
+    # user "OpenProject" can make api request using the newly created app password
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using new app password
+    Then the HTTP status code should be "207"
+
+    # user "OpenProject" cannot make api request using the old app password
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
+    Then the HTTP status code should be "401"
