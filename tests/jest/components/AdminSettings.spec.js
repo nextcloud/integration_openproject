@@ -91,7 +91,7 @@ describe('AdminSettings.vue', () => {
 	})
 	const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 
-	describe('form mode and completed status without group folder, user app password setup', () => {
+	describe('form mode and completed status without group folder setup', () => {
 		it.each([
 			[
 				'with empty state',
@@ -857,7 +857,7 @@ describe('AdminSettings.vue', () => {
 					expect(setupGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 
-				it('on trigger switch should show button text label "Complete without group folder setup"', async () => {
+				it('should show button text label "Complete without group folder setup" when the switch is "off"', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
@@ -960,7 +960,7 @@ describe('AdminSettings.vue', () => {
 				})
 
 				// test for error while setting up the group folder
-				describe.only('trigger on "Setup OpenProject user, group and folder" button', () => {
+				describe('trigger on "Setup OpenProject user, group and folder" button', () => {
 					beforeEach(async () => {
 						axios.put.mockReset()
 						axios.get.mockReset()
@@ -1112,7 +1112,7 @@ describe('AdminSettings.vue', () => {
 							await wrapper.vm.$nextTick()
 						})
 
-						it('should group folder state as "Active"', async () => {
+						it('should set status as "Active"', async () => {
 							expect(wrapper.vm.$data.oPUserAppPassword).toBe('opUserAppPassword')
 							expect(wrapper.vm.formMode.opUserAppPassword).toBe(F_MODES.EDIT)
 							await wrapper.vm.$nextTick()
@@ -1121,11 +1121,11 @@ describe('AdminSettings.vue', () => {
 							expect(actualFolderStatusValue).toContain('Active')
 						})
 
-						it('should set user app password form to edit mdoe', async () => {
+						it('should set user app password form to edit mode', async () => {
 							expect(wrapper.vm.formMode.opUserAppPassword).toBe(F_MODES.EDIT)
 						})
 
-						it('group folder setup form to edit mdoe', async () => {
+						it('should set group folder setup form to edit mode', async () => {
 							expect(wrapper.vm.formMode.groupFolderSetUp).toBe(F_MODES.VIEW)
 						})
 						it('should create a new app password', async () => {
@@ -1181,7 +1181,7 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
-									setup_app_password: null,
+									setup_app_password: false,
 									setup_group_folder: false,
 								},
 							}
@@ -1196,7 +1196,7 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
-									setup_app_password: null,
+									setup_app_password: false,
 									setup_group_folder: false,
 								},
 							}
@@ -1208,7 +1208,7 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('If Already deactivated', function() {
+			describe('default deavtivate state', function() {
 				let wrapper = {}
 				beforeEach(async () => {
 					wrapper = getMountedWrapper({
@@ -1251,7 +1251,7 @@ describe('AdminSettings.vue', () => {
 					expect(setupGroupFolderButton.text()).toBe('Keep current change')
 				})
 
-				it('should show button label to "Setup OpenProject user, group and folder" when switch in "On"', async () => {
+				it('should show button label to "Setup OpenProject user, group and folder" when switch is "On"', async () => {
 					await wrapper.setData({
 						opUserAppPassword: false,
 					})
@@ -1264,8 +1264,8 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('upon complete setup (group folder and app password)', function() {
-				describe('edit mode again', function() {
+			describe('complete setup (group folder and app password)', function() {
+				describe('edit mode', function() {
 					let wrapper = {}
 					let getgroupfolderStatusSpy
 					beforeEach(async () => {
@@ -1306,7 +1306,7 @@ describe('AdminSettings.vue', () => {
 						expect(setupGroupFolderButton.text()).toBe('Keep current change')
 					})
 
-					it('on trigger "Keep on current change" should not create new user app password', async () => {
+					it('should not create new user app password on trigger "Keep on current change"', async () => {
 						const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
 						expect(setupGroupFolderButton.text()).toBe('Keep current change')
 						setupGroupFolderButton.trigger('click')
@@ -1314,14 +1314,14 @@ describe('AdminSettings.vue', () => {
 						expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
 					})
 
-					it('on switch "off" should show button label as "Complete without group folder setup"', async () => {
+					it('should show button label as "Complete without group folder setup" when switch is "off" ', async () => {
 						const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
 						await radioWitchButton.trigger('click')
 						const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
 						expect(setupGroupFolderButton.text()).toBe('Complete without group folder setup')
 					})
 
-					it('resetting should set switch as "off" again (same as fresh set up)', async () => {
+					it('should set switch as "on" again (same as fresh set up) when completely reset', async () => {
 						const wrapper = getMountedWrapper({
 							state: {
 								openproject_instance_url: null,
@@ -1342,7 +1342,7 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Reset User App password', () => {
+	describe('user app password reset', () => {
 		let confirmSpy
 		let wrapper
 		beforeEach(async () => {
@@ -1413,7 +1413,7 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Error after group folder is already setup', () => {
+	describe('error after group folder is already setup', () => {
 		beforeEach(async () => {
 			axios.put.mockReset()
 			axios.get.mockReset()
@@ -1510,7 +1510,7 @@ describe('AdminSettings.vue', () => {
 				)
 			})
 
-			it('should reset all settings on confirm when group folder, app password is not set', async () => {
+			it('should reset all settings on confirm when group folder is not setup', async () => {
 				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 					.mockImplementationOnce(() => Promise.resolve({ data: true }))
 				await wrapper.vm.resetAllAppValues()
@@ -1561,7 +1561,7 @@ describe('AdminSettings.vue', () => {
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
 							setup_group_folder: false,
-							setup_app_password: null,
+							setup_app_password: false,
 						},
 					}
 				)
@@ -1577,7 +1577,6 @@ describe('AdminSettings.vue', () => {
 				expect(window.location.reload).toBeCalledTimes(1)
 				window.location = location
 			})
-
 		})
 
 		it.each([

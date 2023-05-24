@@ -822,15 +822,14 @@ class FeatureContext implements Context {
 	 * @param string $appPassword
 	 * @throws Exception
 	 */
-	public function theUserSendsRequestTo(string $user, string $method, string $endpoint, string $appPassword)
-	{
-		if($appPassword === 'current' || $appPassword ==='old') {
+	public function theUserSendsRequestTo(string $user, string $method, string $endpoint, string $appPassword) : void {
+		if ($appPassword === 'current' || $appPassword === 'old') {
 			$appPassword = $this->createdAppPasswords[0];
 		} else {
 			$appPassword = $this->createdAppPasswords[1];
 		}
-		$this->response =  $this->sendHttpRequest(
-			self::sanitizeUrl($this->getBaseUrl() . $endpoint), $user, $appPassword , $method
+		$this->response = $this->sendHttpRequest(
+			self::sanitizeUrl($this->getBaseUrl() . $endpoint), $user, $appPassword, $method
 		);
 	}
 

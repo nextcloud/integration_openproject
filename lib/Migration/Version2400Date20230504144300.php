@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2022 Sagar Gurung <sagar@jankaritech.com>
+ * @copyright Copyright (c) 2023 Sagar Gurung <sagar@jankaritech.com>
  *
  * @author Your name <sagar@jankaritech.com>
  *

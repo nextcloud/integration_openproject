@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
+use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
@@ -176,6 +177,7 @@ class ConfigController extends Controller {
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
 	 * @throws OpenprojectGroupfolderSetupConflictException
+	 * @throw NoUserException
 	 * @throws GuzzleException
 	 */
 	private function setIntegrationConfig(array $values): array {
@@ -214,11 +216,11 @@ class ConfigController extends Controller {
 			}
 		}
 
-//		 creates or replace the app password
+		// creates or replace the app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
 			$this->openprojectAPIService->deleteAppPassword();
 			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-				throw new \Exception('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
+				throw new NoUserException('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
 			}
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
@@ -278,7 +280,7 @@ class ConfigController extends Controller {
 		);
 
 		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
-		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === null) {
+		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
 
@@ -401,6 +403,10 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
+		} catch (NoUserException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
