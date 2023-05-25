@@ -56,7 +56,7 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		}
 		$currentUserId = $this->userSession->getUser()->getUID();
 		if (
-			$this->openprojectAPIService->isGroupFolderSetup() &&
+			$this->openprojectAPIService->isProjectFoldersSetupComplete() &&
 			$parentNode->getId() === (int)$this->config->getAppValue(
 				Application::APP_ID,
 				'openproject_groupfolder_id',
