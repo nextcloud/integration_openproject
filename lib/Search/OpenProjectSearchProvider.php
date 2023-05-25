@@ -29,7 +29,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\IL10N;
 use OCP\IConfig;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
@@ -43,8 +42,6 @@ class OpenProjectSearchProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	/** @var IURLGenerator */
-	private $urlGenerator;
 	/**
 	 * @var IConfig
 	 */
@@ -60,18 +57,15 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @param IAppManager $appManager
 	 * @param IL10N $l10n
 	 * @param IConfig $config
-	 * @param IURLGenerator $urlGenerator
 	 * @param OpenProjectAPIService $service
 	 */
 	public function __construct(IAppManager $appManager,
 								IL10N $l10n,
 								IConfig $config,
-								IURLGenerator $urlGenerator,
 								OpenProjectAPIService $service) {
 		$this->appManager = $appManager;
 		$this->l10n = $l10n;
 		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
 		$this->service = $service;
 	}
 

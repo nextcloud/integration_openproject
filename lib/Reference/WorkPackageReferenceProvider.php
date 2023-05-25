@@ -99,10 +99,11 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	/**
 	 * Parse a link to find a work package ID
 	 *
-	 * @param $referenceText
+	 * @param string $referenceText
+	 *
 	 * @return int|null
 	 */
-	private function getWorkPackageIdFromUrl($referenceText): ?int {
+	private function getWorkPackageIdFromUrl(string $referenceText): ?int {
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
 		$openProjectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');

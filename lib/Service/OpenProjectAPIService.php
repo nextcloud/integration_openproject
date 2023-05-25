@@ -222,7 +222,8 @@ class OpenProjectAPIService {
 		string $userId,
 		string $query = null,
 		int $fileId = null,
-		bool $onlyLinkableWorkPackages = true
+		bool $onlyLinkableWorkPackages = true,
+		int $workPackageId = null
 	): array {
 		$resultsById = [];
 		$filters = [];
@@ -231,9 +232,16 @@ class OpenProjectAPIService {
 		if ($fileId !== null) {
 			$filters[] = ['file_link_origin_id' => ['operator' => '=', 'values' => [(string)$fileId]]];
 		}
+
 		if ($query !== null) {
 			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$query]]];
 		}
+
+		//search by wpId
+		if ($workPackageId !== null) {
+			$filters[] = ['id' => ['operator' => '=', 'values' => [(string)$workPackageId]]];
+		}
+
 		$resultsById = $this->searchRequest($userId, $filters, $onlyLinkableWorkPackages);
 		if (isset($resultsById['error'])) {
 			return $resultsById;
@@ -1045,9 +1053,15 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-	public function getWorkPackageInfo(string $userId, int $wpId) {
+	/**
+	 * @param string $userId
+	 * @param int $wpId
+	 *
+	 * @return array<mixed>
+	 */
+	public function getWorkPackageInfo(string $userId, int $wpId): array {
 		$result[] = null;
-		$searchResult = $this->searchWorkPackage($userId, null, null, false);
+		$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 		$result['title'] = $this->getSubline($searchResult[0]);
 		$result['description'] = $this->getMainText($searchResult[0]);
 		$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
