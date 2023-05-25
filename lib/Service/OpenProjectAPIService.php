@@ -1014,8 +1014,6 @@ class OpenProjectAPIService {
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			true
 		);
-		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 	}
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
