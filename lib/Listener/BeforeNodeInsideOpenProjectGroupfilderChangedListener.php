@@ -10,7 +10,6 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
