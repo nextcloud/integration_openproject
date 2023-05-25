@@ -558,8 +558,7 @@ class ConfigControllerTest extends TestCase {
 		$this->assertSame(
 			[
 				'status' => $adminConfigStatus,
-				'oPOAuthTokenRevokeStatus' => '',
-				'oPGroupFolderFileId' => null
+				'oPOAuthTokenRevokeStatus' => ''
 			],
 			$result->getData()
 		);

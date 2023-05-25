@@ -29,21 +29,15 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 	 * @var IUserSession
 	 */
 	private $userSession;
-	/**
-	 * @var IConfig
-	 */
-	private $config;
 
 	public function __construct(
 		OpenProjectAPIService $openprojectAPIService,
 		IUserSession $userSession,
-		IGroupManager $groupManager,
-		IConfig $config
+		IGroupManager $groupManager
 	) {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
-		$this->config = $config;
 	}
 
 	public function handle(Event $event): void {

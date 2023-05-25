@@ -192,7 +192,6 @@ class ConfigController extends Controller {
 				throw new InvalidArgumentException('Invalid key');
 			}
 		}
-		$openProjectGroupFolderFileId = null;
 
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
@@ -202,7 +201,7 @@ class ConfigController extends Controller {
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
-				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				$this->openprojectAPIService->createGroupfolder();
 			}
 		}
 
@@ -311,8 +310,7 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
-			"oPGroupFolderFileId" => $openProjectGroupFolderFileId
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
 		];
 	}
 
@@ -523,9 +521,6 @@ class ConfigController extends Controller {
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
-			}
-			if ($status['oPGroupFolderFileId'] !== null) {
-				$result['openproject_groupfolder_id'] = $status['oPGroupFolderFileId'];
 			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
