@@ -518,7 +518,6 @@ Feature: setup the integration through an API
         "openproject_redirect_uri",
         "nextcloud_client_id",
         "nextcloud_client_secret",
-        "openproject_groupfolder_id",
         "openproject_user_app_password"
       ],
       "properties": {
@@ -526,7 +525,6 @@ Feature: setup the integration through an API
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "openproject_groupfolder_id": {"type": "integer"},
           "openproject_user_app_password": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       },
       "not": {
