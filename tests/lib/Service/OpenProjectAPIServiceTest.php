@@ -1661,7 +1661,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function testIsSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
+	public function isSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
 		return [
 			[true, true, false, false,'The group folder app is not installed'],
 			[true, false, false, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],

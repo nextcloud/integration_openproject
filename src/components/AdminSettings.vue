@@ -497,7 +497,7 @@ export default {
 		userAppPasswordHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'This value will not be accessible again after you click save. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'This value is only visible now and then never again. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete

@@ -11,7 +11,6 @@
 
 namespace OCA\OpenProject\Controller;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
@@ -208,9 +207,6 @@ class ConfigController extends Controller {
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
-				// finish the setup of the user by doing a PROPFIND request
-				// without this request we can get LockException or NotFoundException
-				// after creating the group folder
 				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
 			}
 		}
@@ -355,35 +351,6 @@ class ConfigController extends Controller {
 			"oPGroupFolderFileId" => $openProjectGroupFolderFileId,
 			"oPUserAppPassword" => $appPassword,
 		];
-	}
-
-	/**
-	 * send propfind request through curl
-	 *
-	 * @param string $password
-	 *
-	 * @return void
-	 */
-	public function finishUserSetup(string $password):void {
-		$gClient = new Client();
-		$loopCounter = 0;
-		$statusCode = 0;
-		while ($statusCode != 207) {
-			try {
-				$response = $gClient->request(
-					'PROPFIND',
-					$this->urlGenerator->getAbsoluteURL('/remote.php/webdav'),
-					['auth' => [Application::OPEN_PROJECT_ENTITIES_NAME , $password]]
-				);
-				$statusCode = $response->getStatusCode();
-			} catch (GuzzleException $e) {
-				if ($loopCounter >= 10) {
-					throw $e;
-				}
-				sleep(1);
-			}
-			$loopCounter++;
-		}
 	}
 
 	/**
