@@ -34,7 +34,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 
 class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
-
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
 
 	// as we know we are on NC >= 26, we can use Php 8 syntax for class attributes
@@ -49,7 +48,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	/**
 	 * @inheritDoc
 	 */
-	public function getId(): string	{
+	public function getId(): string {
 		return 'openproject-work-package-ref';
 	}
 
@@ -63,7 +62,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	/**
 	 * @inheritDoc
 	 */
-	public function getOrder(): int	{
+	public function getOrder(): int {
 		return 10;
 	}
 

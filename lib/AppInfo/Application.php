@@ -17,6 +17,7 @@ use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
+use OCA\OpenProject\Listener\OpenProjectReferenceListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
@@ -25,6 +26,7 @@ use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
 
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;

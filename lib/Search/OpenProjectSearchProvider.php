@@ -135,10 +135,10 @@ class OpenProjectSearchProvider implements IProvider {
 		// @phpstan-ignore-next-line array_map supports also lambda functions
 		$formattedResults = array_map(function (array $entry) use ($openprojectUrl): OpenProjectSearchResultEntry {
 			return new OpenProjectSearchResultEntry(
-				$this->getOpenProjectUserAvatarUrl($entry),
-				$this->getMainText($entry),
-				$this->getSubline($entry),
-				$this->getLinkToOpenProject($entry, $openprojectUrl),
+				$this->service->getOpenProjectUserAvatarUrl($entry),
+				$this->service->getMainText($entry),
+				$this->service->getSubline($entry),
+				$this->service->getLinkToOpenProject($entry, $openprojectUrl),
 				'',
 				true
 			);
@@ -149,70 +149,5 @@ class OpenProjectSearchProvider implements IProvider {
 			$formattedResults,
 			$offset + $limit
 		);
-	}
-
-	/**
-	 * @param array<mixed> $entry
-	 * @return string
-	 */
-	protected function getMainText(array $entry): string {
-		$workPackageType = isset($entry['_links'], $entry['_links']['type'], $entry['_links']['type']['title'])
-			? strtoupper($entry['_links']['type']['title'])
-			: '';
-		$subject = $entry['subject'] ?? '';
-		return $workPackageType . ": " . $subject;
-	}
-
-	/**
-	 * @param array<mixed> $entry
-	 * @return string
-	 */
-	protected function getOpenProjectUserAvatarUrl(array $entry): string {
-		$userIdURL = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['href'])
-			? $entry['_links']['assignee']['href']
-			: '';
-		$userName = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['title'])
-			? $entry['_links']['assignee']['title']
-			: '';
-		$userId = preg_replace('/.*\//', "", $userIdURL);
-		return $this->urlGenerator->getAbsoluteURL(
-			'index.php/apps/integration_openproject/avatar?' .
-			"userId" .
-			'=' .
-			$userId .
-			'&' .
-			"userName" .
-			'=' .
-			$userName
-		);
-	}
-
-	/**
-	 * @param array<mixed> $entry
-	 * @return string
-	 */
-	protected function getSubline(array $entry): string {
-		$workPackageID = $entry['id'] ?? '';
-		$status = isset($entry['_links'], $entry['_links']['status'], $entry['_links']['status']['title'])
-			? '[' . $entry['_links']['status']['title'] . '] '
-			: '';
-		$projectTitle = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['title'])
-			? $entry['_links']['project']['title']
-			: '';
-		return "#" . $workPackageID . " " . $status . $projectTitle;
-	}
-
-	/**
-	 * @param array<mixed> $entry
-	 * @param string $url
-	 * @return string
-	 */
-	protected function getLinkToOpenProject(array $entry, string $url): string {
-		$projectId = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['href'])
-			? preg_replace('/.*\//', '', $entry['_links']['project']['href'])
-			: '';
-		return ($projectId !== '')
-			? $url . '/projects/' . $projectId . '/work_packages/' . $entry['id'] . '/activity'
-			: '';
 	}
 }
