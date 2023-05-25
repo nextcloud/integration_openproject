@@ -196,7 +196,6 @@ class ConfigController extends Controller {
 				throw new InvalidArgumentException('Invalid key');
 			}
 		}
-		$openProjectGroupFolderFileId = null;
 		$appPassword = null;
 
 		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder'] === true) {
@@ -207,7 +206,7 @@ class ConfigController extends Controller {
 				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
-				$openProjectGroupFolderFileId = $this->openprojectAPIService->createGroupfolder();
+				$this->openprojectAPIService->createGroupfolder();
 			}
 		}
 
@@ -348,7 +347,6 @@ class ConfigController extends Controller {
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
-			"oPGroupFolderFileId" => $openProjectGroupFolderFileId,
 			"oPUserAppPassword" => $appPassword,
 		];
 	}
@@ -563,9 +561,6 @@ class ConfigController extends Controller {
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
-			}
-			if ($status['oPGroupFolderFileId'] !== null) {
-				$result['openproject_groupfolder_id'] = $status['oPGroupFolderFileId'];
 			}
 			if ($status['oPUserAppPassword'] !== null) {
 				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
