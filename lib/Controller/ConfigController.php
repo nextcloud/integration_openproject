@@ -333,6 +333,7 @@ class ConfigController extends Controller {
 		// so setting `fresh_group_folder_setup` as true
 		if ($runningFullReset) {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "1");
+			$this->config->deleteAppValue(Application::APP_ID, 'openproject_groupfolder_id',);
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_group_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_group_folder' we set it to false
 			// assuming user has either fully set the integration or patially without group folder/app password
