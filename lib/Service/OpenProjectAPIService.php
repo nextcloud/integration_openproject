@@ -1039,6 +1039,7 @@ class OpenProjectAPIService {
 				$folder['permissions'] === 31 &&
 				$folder['acl'] === true
 			) {
+				// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 				if ($groupFolderManager->canManageACL(
 					$folder['folder_id'],
 					$this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME)
