@@ -49,7 +49,7 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		}
 		$currentUserId = $this->userSession->getUser()->getUID();
 		if (
-			$this->openprojectAPIService->isGroupFolderSetup() &&
+			$this->openprojectAPIService->isProjectFoldersSetupComplete() &&
 			preg_match('/.*\/files\/' .  Application::OPEN_PROJECT_ENTITIES_NAME . '$/', $parentNode->getPath()) === 1 &&
 			$currentUserId !== Application::OPEN_PROJECT_ENTITIES_NAME &&
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
