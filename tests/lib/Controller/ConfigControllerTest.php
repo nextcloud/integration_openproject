@@ -1272,8 +1272,7 @@ class ConfigControllerTest extends TestCase {
 			->method('isSystemReadyForGroupFolderSetUp')
 			->willReturn(true);
 		$service
-			->method('createGroupfolder')
-			->willReturn(123);
+			->method('createGroupfolder');
 		$service->method('deleteAppPassword');
 		$service
 			->method('generateAppPasswordTokenForUser')
@@ -1351,8 +1350,6 @@ class ConfigControllerTest extends TestCase {
 		]);
 		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
 		$data = $result->getData();
-		$this->assertArrayHasKey('oPGroupFolderFileId', $data);
-		$this->assertEquals(123, $data['oPGroupFolderFileId']);
 		$this->assertArrayHasKey('oPUserAppPassword', $data);
 		$this->assertEquals("gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx", $data['oPUserAppPassword']);
 	}

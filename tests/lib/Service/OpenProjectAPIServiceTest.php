@@ -1392,7 +1392,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn([ 0 => [
 				'id' => 123,
 				'mount_point' => $mountPoint,
-				'groups' => $gid,
+				'groups' => Application::OPEN_PROJECT_ENTITIES_NAME,
 				'quota' => 1234,
 				'size' => 0,
 				'acl' => $canManageACL
@@ -1662,7 +1662,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$userManagerMock,
 			$groupManagerMock,
 			$appManagerMock);
-		$folderManagerMock = $this->getFolderManagerMock('', false, '');
+		$folderManagerMock = $this->getFolderManagerMock('', false, [ 0 => [
+			'folder_id' => 123,
+			'mount_point' => '',
+			'permissions' => 31,
+			'acl' => true
+		]]);
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
 		$result = $service->isSystemReadyForGroupFolderSetUp();
