@@ -931,7 +931,7 @@ class OpenProjectAPIService {
 	 * @throws NotFoundException
 	 * @throws NoUserException
 	 */
-	public function createGroupfolder(): int {
+	public function createGroupfolder(): void {
 		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
 			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
@@ -961,14 +961,6 @@ class OpenProjectAPIService {
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			true
 		);
-		$userFolder = $this->storage->getUserFolder(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$openProjectFolder = $userFolder->get(Application::OPEN_PROJECT_ENTITIES_NAME);
-		$this->config->setAppValue(
-			Application::APP_ID,
-			'openproject_groupfolder_id',
-			(string)$openProjectFolder->getId()
-		);
-		return $openProjectFolder->getId();
 	}
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
