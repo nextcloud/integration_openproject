@@ -201,6 +201,7 @@ jobs:
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
