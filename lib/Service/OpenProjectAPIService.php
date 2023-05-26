@@ -158,8 +158,7 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param string|null $query
 	 * @param int|null $fileId
-	 * @param int $offset
-	 * @param int $limit
+	 * @param bool $onlyLinkableWorkPackages
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
@@ -168,8 +167,7 @@ class OpenProjectAPIService {
 		string $userId,
 		string $query = null,
 		int $fileId = null,
-		int $offset = 0,
-		int $limit = 5
+		bool $onlyLinkableWorkPackages = true
 	): array {
 		$resultsById = [];
 		$filters = [];
@@ -181,7 +179,7 @@ class OpenProjectAPIService {
 		if ($query !== null) {
 			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$query]]];
 		}
-		$resultsById = $this->searchRequest($userId, $filters);
+		$resultsById = $this->searchRequest($userId, $filters, $onlyLinkableWorkPackages);
 		if (isset($resultsById['error'])) {
 			return $resultsById;
 		}
@@ -191,17 +189,21 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 * @param array<mixed> $filters
+	 * @param bool $onlyLinkableWorkPackages
+	 *
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws \Safe\Exceptions\JsonException
 	 */
-	private function searchRequest(string $userId, array $filters): array {
+	private function searchRequest(string $userId, array $filters, bool $onlyLinkableWorkPackages = true): array {
 		$resultsById = [];
 		$sortBy = [['updatedAt', 'desc']];
-		$filters[] = [
-			'linkable_to_storage_url' =>
-				['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]
-		];
+		if ($onlyLinkableWorkPackages) {
+			$filters[] = [
+				'linkable_to_storage_url' =>
+					['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]
+			];
+		}
 
 		$params = [
 			'filters' => \Safe\json_encode($filters),
