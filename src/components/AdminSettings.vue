@@ -161,47 +161,47 @@
 				</div>
 			</div>
 		</div>
-		<div class="group-folder-setup">
+		<div class="project-folder-setup">
 			<FormHeading index="4"
-				:is-group-folder-setup-heading="true"
+				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Managed project folders (recommended)')"
-				:is-setup-complete-without-group-folders="isSetupCompleteWithoutGroupFolders"
-				:is-there-error-after-group-folder-and-app-password-setup="isThereErrorAfterGroupFolderAndAppPasswordSetup"
-				:is-complete="isGroupFolderSetupCompleted"
-				:is-disabled="isGroupFolderSetUpInDisableMode" />
-			<div v-if="showDefaultManagedFolders">
-				<div v-if="isGroupFolderSetupFormInEdit">
-					<NcCheckboxRadioSwitch type="switch" :checked.sync="isProjectFolderSwitchEnabled" @update:checked="changeGroupFolderSetUpState">
+				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
+				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
+				:is-complete="isProjectFolderSetupCompleted"
+				:is-disabled="isProjectFolderSetUpInDisableMode" />
+			<div v-if="showDefaultManagedProjectFolders">
+				<div v-if="isProjectFolderSetupFormInEdit">
+					<NcCheckboxRadioSwitch type="switch" :checked.sync="isProjectFolderSwitchEnabled" @update:checked="changeProjectFolderSetUpState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
 					<div v-if="isProjectFolderSwitchEnabled === false" class="complete-without-groupfolders">
-						<p class="group-folder-description">
+						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate in case you want to use the automatic creation and management of project folders.')
 							}}
 						</p>
 						<div class="form-actions">
 							<NcButton type="primary"
-								data-test-id="complete-without-group-folder-form-btn"
-								@click="completeIntegrationWithoutGroupFolderSetUp">
+								data-test-id="complete-without-project-folder-form-btn"
+								@click="completeIntegrationWithoutProjectFolderSetUp">
 								<template #icon>
 									<CheckBoldIcon :size="20" />
 								</template>
 								{{
-									textLabelGroupFolderSetupButton
+									textLabelProjectFolderSetupButton
 								}}
 							</NcButton>
 						</div>
 					</div>
 					<div v-else>
-						<p class="group-folder-description">
+						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.')
 							}}
 						</p>
 						<br>
 						<b>{{ t('integration_openproject', 'OpenProject user, group and folder') }}</b>
-						<p class="group-folder-description">
+						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called "OpenProject".')
 							}} <br>
@@ -209,24 +209,27 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
 							}}
 						</p>
-						<GroupFolderError v-if="groupFolderSetupError !== null" :group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(groupFolderSetupError)" :group-folder-set-up-error="groupFolderSetupError" />
+						<ProjectFolderError
+							v-if="projectFolderSetupError !== null"
+							:project-folder-set-up-error-message-description="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)"
+							:project-folder-set-up-error="projectFolderSetupError" />
 						<div class="form-actions">
-							<NcButton v-if="groupFolderSetupError === null"
+							<NcButton v-if="projectFolderSetupError === null"
 								type="primary"
-								data-test-id="complete-with-projectfolders-form-btn"
+								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
-									<LoadingIcon v-if="loadingSetupGroupFolder" class="loading-spinner" :size="20" />
+									<LoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
 									<CheckBoldIcon v-else :size="20" />
 								</template>
-								{{ textLabelGroupFolderSetupButton }}
+								{{ textLabelProjectFolderSetupButton }}
 							</NcButton>
-							<NcButton v-else-if="groupFolderSetupError"
+							<NcButton v-else-if="projectFolderSetupError"
 								type="primary"
-								data-test-id="complete-with-projectfolders-form-btn"
+								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
-									<LoadingIcon v-if="loadingSetupGroupFolder" class="loading-spinner" :size="20" />
+									<LoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
 									<RestoreIcon v-else :size="20" />
 								</template>
 								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
@@ -234,18 +237,18 @@
 						</div>
 					</div>
 				</div>
-				<div v-else class="group-folder-status">
-					<div class="group-folder-status-value">
+				<div v-else class="project-folder-status">
+					<div class="project-folder-status-value">
 						<b>Automatic managed folders:</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
-					<GroupFolderError
-						v-if="state.app_password_set && !isGroupFolderSetupCorrect"
-						:group-folder-set-up-error-message-description="groupFolderSetUpErrorMessageDescription(state.group_folder_status.errorMessage)"
-						:group-folder-set-up-error="state.group_folder_status.errorMessage" />
+					<ProjectFolderError
+						v-if="state.app_password_set && !isProjectFolderSetupCorrect"
+						:project-folder-set-up-error-message-description="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)"
+						:project-folder-set-up-error="state.project_folder_info.errorMessage" />
 					<div class="form-actions">
 						<NcButton
-							data-test-id="edit-group-folder-setup"
-							@click="setGroupFolderSetUpToEditMode">
+							data-test-id="edit-project-folder-setup"
+							@click="setProjectFolderSetUpToEditMode">
 							<template #icon>
 								<PencilIcon :size="20" />
 							</template>
@@ -345,7 +348,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import GroupFolderError from './admin/GroupFolderError.vue'
+import ProjectFolderError from './admin/ProjectFolderError.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -361,7 +364,7 @@ export default {
 		RestoreIcon,
 		CheckBox,
 		NcCheckboxRadioSwitch,
-		GroupFolderError,
+		ProjectFolderError,
 	},
 	data() {
 		return {
@@ -372,18 +375,18 @@ export default {
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
-				groupFolderSetUp: F_MODES.DISABLE,
+				projectFolderSetUp: F_MODES.DISABLE,
 			},
 			isFormCompleted: {
-				server: false, opOauth: false, ncOauth: false, opUserAppPassword: false, groupFolderSetUp: false,
+				server: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current change'),
-				completeWithoutGroupFolderSetup: t('integration_openproject', 'Complete without group folder setup'),
-				completeWithGroupFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
+				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without group folder setup'),
+				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
 			},
 			loadingServerHostForm: false,
-			loadingSetupGroupFolder: false,
+			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
 			isOpenProjectInstanceValid: null,
 			openProjectNotReachableErrorMessage: null,
@@ -395,14 +398,14 @@ export default {
 			oPOAuthTokenRevokeStatus: null,
 			oPUserAppPassword: null,
 			isProjectFolderSwitchEnabled: null,
-			groupFolderSetupError: null,
-			isGroupFolderAlreadySetup: null,
-			// we assume this value as true and without error, it is set false when something goes wrong after the group folder setup is already completed
-			isGroupFolderSetupCorrect: true,
-			showDefaultManagedFolders: false,
-			// this keeps track of the state of group folder when user has done some setup (with or without)
-			currentGroupFolderState: false,
-			textLabelGroupFolderSetupButton: null,
+			projectFolderSetupError: null,
+			isProjectFolderAlreadySetup: null,
+			// we assume this value as true and without error, it is set false when something goes wrong after the project folder setup is already completed
+			isProjectFolderSetupCorrect: true,
+			showDefaultManagedProjectFolders: false,
+			// this keeps track of the state of project folder when user has done some setup (with or without)
+			currentProjectFolderState: false,
+			textLabelProjectFolderSetupButton: null,
 			// pointer for which form the request is coming
 			isFormStep: null,
 		}
@@ -432,7 +435,7 @@ export default {
 			return this.isFormCompleted.opOauth
 		},
 		isManagedGroupFolderSetUpComplete() {
-			return this.isFormCompleted.groupFolderSetUp
+			return this.isFormCompleted.projectFolderSetUp
 		},
 		isOPUserAppPasswordFormComplete() {
 			return this.isFormCompleted.opUserAppPassword
@@ -458,23 +461,23 @@ export default {
 		isOPUserAppPasswordFormInEdit() {
 			return this.formMode.opUserAppPassword === F_MODES.EDIT
 		},
-		isGroupFolderSetupFormInEdit() {
-			return this.formMode.groupFolderSetUp === F_MODES.EDIT
+		isProjectFolderSetupFormInEdit() {
+			return this.formMode.projectFolderSetUp === F_MODES.EDIT
 		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
-		isGroupFolderSetUpInDisableMode() {
-			return this.formMode.groupFolderSetUp === F_MODES.DISABLE
+		isProjectFolderSetUpInDisableMode() {
+			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
 		},
 		isOPUserAppPasswordInDisableMode() {
 			return this.formMode.opUserAppPassword === F_MODES.DISABLE
 		},
-		isThereErrorAfterGroupFolderAndAppPasswordSetup() {
-			return (this.opUserAppPassword && this.formMode.groupFolderSetUp !== F_MODES.EDIT && this.isGroupFolderSetupCorrect === false)
+		isThereErrorAfterProjectFolderAndAppPasswordSetup() {
+			return (this.opUserAppPassword && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.isProjectFolderSetupCorrect === false)
 		},
-		isGroupFolderSetupCompleted() {
-			return this.isGroupFolderSetupFormInEdit ? false : this.opUserAppPassword
+		isProjectFolderSetupCompleted() {
+			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
 		adminFileStorageHref() {
 			let hostPart = ''
@@ -507,11 +510,11 @@ export default {
 				 && !this.isOPUserAppPasswordFormInEdit
 			)
 		},
-		isSetupCompleteWithoutGroupFolders() {
-			if (this.isGroupFolderSetupFormInEdit) {
+		isSetupCompleteWithoutProjectFolders() {
+			if (this.isProjectFolderSetupFormInEdit) {
 				return false
 			}
-			if (this.isFormCompleted.groupFolderSetUp === false && !this.opUserAppPassword) {
+			if (this.isFormCompleted.projectFolderSetUp === false && !this.opUserAppPassword) {
 				return false
 			}
 			return !this.opUserAppPassword
@@ -526,20 +529,20 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				if (this.state.group_folder_status) {
-					this.isGroupFolderSetupCorrect = this.state.group_folder_status.status
-					if (this.state.group_folder_status.status === true) {
-						this.isGroupFolderAlreadySetup = true
+				if (this.state.project_folder_info) {
+					this.isProjectFolderSetupCorrect = this.state.project_folder_info.status
+					if (this.state.project_folder_info.status === true) {
+						this.isProjectFolderAlreadySetup = true
 					}
 				}
-				if (this.state.fresh_group_folder_setup === true) {
-					this.currentGroupFolderState = true
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithGroupFolderSetup
+				if (this.state.fresh_project_folder_setup === true) {
+					this.currentProjectFolderState = true
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				} else {
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
-					this.showDefaultManagedFolders = true
+					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
@@ -559,28 +562,23 @@ export default {
 					this.isFormCompleted.ncOauth = true
 				}
 				if (this.formMode.ncOauth === F_MODES.VIEW) {
-					this.showDefaultManagedFolders = true
+					this.showDefaultManagedProjectFolders = true
 				}
-				if (this.showDefaultManagedFolders) {
-					this.formMode.groupFolderSetUp = F_MODES.VIEW
-					this.isFormCompleted.groupFolderSetUp = true
+				if (this.showDefaultManagedProjectFolders) {
+					this.formMode.projectFolderSetUp = F_MODES.VIEW
+					this.isFormCompleted.projectFolderSetUp = true
 				}
 				if (this.state.app_password_set) {
 					this.formMode.opUserAppPassword = F_MODES.VIEW
 					this.isFormCompleted.opUserAppPassword = true
-					this.currentGroupFolderState = true
+					this.currentProjectFolderState = true
 					this.isProjectFolderSwitchEnabled = true
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
-
-				if (this.currentGroupFolderState === true) {
-					this.isProjectFolderSwitchEnabled = true
-				} else {
-					this.isProjectFolderSwitchEnabled = false
-				}
+				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
 			}
 		},
-		groupFolderSetUpErrorMessageDescription(errorKey) {
+		projectFolderSetUpErrorMessageDescription(errorKey) {
 			switch (errorKey) {
 			case 'The group folder name "OpenProject" integration already exists' :
 				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
@@ -603,76 +601,76 @@ export default {
 			this.serverHostUrlForEdit = this.state.openproject_instance_url
 			this.isOpenProjectInstanceValid = null
 		},
-		setGroupFolderSetUpToEditMode() {
-			this.formMode.groupFolderSetUp = F_MODES.EDIT
-			this.isFormCompleted.groupFolderSetUp = false
-			this.isProjectFolderSwitchEnabled = this.currentGroupFolderState
+		setProjectFolderSetUpToEditMode() {
+			this.formMode.projectFolderSetUp = F_MODES.EDIT
+			this.isFormCompleted.projectFolderSetUp = false
+			this.isProjectFolderSwitchEnabled = this.currentProjectFolderState
 		},
-		setManagedGroupFolderSetupToViewMode() {
-			this.currentGroupFolderState = true
-			this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			this.isFormCompleted.groupFolderSetUp = true
-			this.formMode.groupFolderSetUp = F_MODES.VIEW
-			this.isGroupFolderSetupCorrect = true
+		setProjectFolderSetupToViewMode() {
+			this.currentProjectFolderState = true
+			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+			this.isFormCompleted.projectFolderSetUp = true
+			this.formMode.projectFolderSetUp = F_MODES.VIEW
+			this.isProjectFolderSetupCorrect = true
 		},
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			if (!this.isIntegrationComplete && this.formMode.groupFolderSetUp !== F_MODES.EDIT) {
-				this.showDefaultManagedFolders = true
+			if (!this.isIntegrationComplete && this.formMode.projectFolderSetUp !== F_MODES.EDIT) {
+				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
-				this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithGroupFolderSetup
-				this.formMode.groupFolderSetUp = F_MODES.EDIT
+				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
+				this.formMode.projectFolderSetUp = F_MODES.EDIT
 			}
 		},
 		setOPUserAppPasswordToViewMode() {
 			this.formMode.opUserAppPassword = F_MODES.VIEW
 			this.isFormCompleted.opUserAppPassword = true
 		},
-		changeGroupFolderSetUpState() {
+		changeProjectFolderSetUpState() {
 			if (this.opUserAppPassword === false) {
-				if (this.currentGroupFolderState === true && this.isProjectFolderSwitchEnabled === true) {
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithGroupFolderSetup
-				} else if (this.currentGroupFolderState === true && this.isProjectFolderSwitchEnabled === false) {
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithoutGroupFolderSetup
-				} else if (this.currentGroupFolderState === false && this.isProjectFolderSwitchEnabled === false) {
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-				} else if (this.currentGroupFolderState === false && this.isProjectFolderSwitchEnabled === true) {
-					this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithGroupFolderSetup
+				if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === true) {
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
+				} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === false) {
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithoutProjectFolderSetup
+				} else if (this.currentProjectFolderState === false && this.isProjectFolderSwitchEnabled === false) {
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+				} else if (this.currentProjectFolderState === false && this.isProjectFolderSwitchEnabled === true) {
+					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				}
-			} else if (this.currentGroupFolderState === true && this.isProjectFolderSwitchEnabled === true) {
-				this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			} else if (this.currentGroupFolderState === true && this.isProjectFolderSwitchEnabled === false) {
-				this.textLabelGroupFolderSetupButton = this.buttonTextLabel.completeWithoutGroupFolderSetup
+			} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === true) {
+				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+			} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === false) {
+				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithoutProjectFolderSetup
 			}
 		},
 		async setUpProjectGroupFolders() {
 			this.isFormStep = FORM.GROUP_FOLDER
-			this.loadingSetupGroupFolder = true
-			this.isGroupFolderAlreadySetup = await this.checkIfGroupFolderIsAlreadyReadyForSetup()
-			if (this.isGroupFolderAlreadySetup) {
+			this.loadingProjectFolderSetup = true
+			this.isProjectFolderAlreadySetup = await this.checkIfProjectFolderIsAlreadyReadyForSetup()
+			if (this.isProjectFolderAlreadySetup) {
 				if (!this.opUserAppPassword) {
 					const success = await this.saveOPOptions()
 					if (success) {
 						this.formMode.opUserAppPassword = F_MODES.EDIT
-						this.setManagedGroupFolderSetupToViewMode()
+						this.setProjectFolderSetupToViewMode()
 					}
 				} else {
-					this.setManagedGroupFolderSetupToViewMode()
+					this.setProjectFolderSetupToViewMode()
 				}
 			} else {
-				// we will check for the error making the setup_group_folder === true
+				// we will check for the error making the setup_project_folder === true
 				const success = await this.saveOPOptions()
 				if (success) {
-					this.setManagedGroupFolderSetupToViewMode()
+					this.setProjectFolderSetupToViewMode()
 					if ((this.formMode.opUserAppPassword === F_MODES.DISABLE && !this.opUserAppPassword) || this.formMode.opUserAppPassword === F_MODES.DISABLE) {
 						this.formMode.opUserAppPassword = F_MODES.EDIT
 					}
 				}
 			}
-			this.loadingSetupGroupFolder = false
-			if (this.formMode.groupFolderSetUp === F_MODES.VIEW) {
-				this.groupFolderSetupError = null
+			this.loadingProjectFolderSetup = false
+			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
+				this.projectFolderSetupError = null
 			}
 		},
 		async saveOpenProjectHostUrl() {
@@ -874,18 +872,18 @@ export default {
 				// doing whole reset
 				values = {
 					...values,
-					setup_group_folder: false,
+					setup_project_folder: false,
 					setup_app_password: false,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
-						setup_group_folder: false,
+						setup_project_folder: false,
 						setup_app_password: false,
 					}
 				} else if (this.isProjectFolderSwitchEnabled === true) {
 					values = {
-						setup_group_folder: !this.isGroupFolderAlreadySetup,
+						setup_project_folder: !this.isProjectFolderAlreadySetup,
 						setup_app_password: this.opUserAppPassword !== true,
 					}
 				}
@@ -917,10 +915,8 @@ export default {
 				console.error()
 				this.isAdminConfigOk = null
 				this.oPOAuthTokenRevokeStatus = null
-				// catch the error response from the group folder response only
-				// since the response message is to be displayed in the UI
 				if (error.response.data.error) {
-					this.groupFolderSetupError = error.response.data.error
+					this.projectFolderSetupError = error.response.data.error
 				}
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options')
@@ -929,10 +925,10 @@ export default {
 			this.notifyAboutOPOAuthTokenRevoke()
 			return success
 		},
-		async checkIfGroupFolderIsAlreadyReadyForSetup() {
+		async checkIfProjectFolderIsAlreadyReadyForSetup() {
 			let success = false
 			try {
-				const url = generateUrl('/apps/integration_openproject/group-folder-status')
+				const url = generateUrl('/apps/integration_openproject/project-folder-status')
 				const response = await axios.get(url)
 				success = response?.data?.result
 			} catch (error) {
@@ -980,9 +976,9 @@ export default {
 				true
 			)
 		},
-		async completeIntegrationWithoutGroupFolderSetUp() {
+		async completeIntegrationWithoutProjectFolderSetUp() {
 			this.isFormStep = FORM.GROUP_FOLDER
-			this.textLabelGroupFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 			const success = await this.saveOPOptions()
 			if (success) {
 				// also make password form disable and complete as false
@@ -991,13 +987,13 @@ export default {
 					this.formMode.opUserAppPassword = F_MODES.DISABLE
 				}
 				this.state.app_password_set = false
-				this.currentGroupFolderState = this.isProjectFolderSwitchEnabled
-				this.isFormCompleted.groupFolderSetUp = true
-				this.formMode.groupFolderSetUp = F_MODES.VIEW
+				this.currentProjectFolderState = this.isProjectFolderSwitchEnabled
+				this.isFormCompleted.projectFolderSetUp = true
+				this.formMode.projectFolderSetUp = F_MODES.VIEW
 			}
-			// we want to show the error only when managed group folder is in edit mode
-			if (this.formMode.groupFolderSetUp === F_MODES.VIEW) {
-				this.groupFolderSetupError = null
+			// we want to show the error only when project folder form is in edit mode
+			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
+				this.projectFolderSetupError = null
 			}
 		},
 		resetOPUserAppPassword() {
@@ -1069,11 +1065,11 @@ export default {
 	right: 22px;
 }
 
-.group-folder-description {
+.project-folder-description {
 	font-weight: 400;
 }
 
-.group-folder-status-value {
+.project-folder-status-value {
 	padding: 6px 0;
 
 }

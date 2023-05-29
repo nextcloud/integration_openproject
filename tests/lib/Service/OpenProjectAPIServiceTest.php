@@ -1631,7 +1631,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($token, $result);
 	}
 
-	public function testIsSystemReadyForGroupFolderSetUp(): void {
+	public function testIsSystemReadyForProjectFolderSetUp(): void {
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
@@ -1670,7 +1670,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		]]);
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
-		$result = $service->isSystemReadyForGroupFolderSetUp();
+		$result = $service->isSystemReadyForProjectFolderSetUp();
 		$this->assertTrue($result);
 	}
 
@@ -1737,7 +1737,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn($folderManagerMock);
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($exception);
-		$service->isSystemReadyForGroupFolderSetUp();
+		$service->isSystemReadyForProjectFolderSetUp();
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {

@@ -56,7 +56,7 @@ class Admin implements ISettings {
 			$id = (int)$oauthClientInternalId;
 			$clientInfo = $this->oauthService->getClientInfo($id);
 		}
-		$groupFolderStatusInformation = $this->openProjectAPIService->getGroupFolderSetupInformation();
+		$projectFolderStatusInformation = $this->openProjectAPIService->getProjectFolderSetupInformation();
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
@@ -65,8 +65,8 @@ class Admin implements ISettings {
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
-			'group_folder_status' => $groupFolderStatusInformation,
-			'fresh_group_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_group_folder_setup', '0') === '1'
+			'project_folder_info' => $projectFolderStatusInformation,
+			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1'
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

@@ -1,10 +1,10 @@
 <template>
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
-		<div v-if="isGroupFolderSetupHeading && isSetupCompleteWithoutGroupFolders" class="setup-complete-without-group-folders">
+		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
 			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
-		<div v-else-if="isThereErrorAfterGroupFolderAndAppPasswordSetup" class="group-folder-setup-status">
+		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-status">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
@@ -16,7 +16,7 @@
 		<div class="title"
 			:class="{
 				'green-text': isComplete,
-				'red-text': isThereErrorAfterGroupFolderAndAppPasswordSetup
+				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup
 			}">
 			{{ title }}
 		</div>
@@ -51,15 +51,15 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isSetupCompleteWithoutGroupFolders: {
+		isSetupCompleteWithoutProjectFolders: {
 			type: Boolean,
 			default: false,
 		},
-		isGroupFolderSetupHeading: {
+		isProjectFolderSetupHeading: {
 			type: Boolean,
 			default: false,
 		},
-		isThereErrorAfterGroupFolderAndAppPasswordSetup: {
+		isThereErrorAfterProjectFolderAndAppPasswordSetup: {
 			type: Boolean,
 			default: false,
 		},
@@ -91,7 +91,7 @@ export default {
 		align-items: center;
 	}
 
-	.group-folder-setup-status {
+	.project-folder-setup-status {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
@@ -101,7 +101,7 @@ export default {
 		align-items: center;
 	}
 
-	.setup-complete-without-group-folders {
+	.setup-complete-without-project-folders {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;

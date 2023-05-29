@@ -527,11 +527,11 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * check if the group folder set up is already setup or not
+	 * check if the project folder set up is already setup or not
 	 *
 	 * @return DataResponse
 	 */
-	public function getGroupFolderSetupStatus(): DataResponse {
+	public function getProjectFolderSetupStatus(): DataResponse {
 		return new DataResponse(
 			[
 				'result' => $this->openprojectAPIService->isProjectFoldersSetupComplete()

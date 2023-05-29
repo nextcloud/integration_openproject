@@ -547,7 +547,7 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder',
+			'setup_project_folder',
 			'setup_app_password'
 		];
 
@@ -558,8 +558,8 @@ class OpenProjectAPIService {
 				}
 			}
 			// for complete setup these both have to be true
-			if (($values['setup_group_folder'] === true && $values['setup_app_password'] === false) ||
-				($values['setup_group_folder'] === false && $values['setup_app_password'] === true)
+			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
+				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
 			) {
 				throw new InvalidArgumentException('invalid data');
 			}
@@ -576,7 +576,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder' || $key === 'setup_app_password') {
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_project_folder' || $key === 'setup_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -914,7 +914,7 @@ class OpenProjectAPIService {
 	/**
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
-	public function isSystemReadyForGroupFolderSetUp(): bool {
+	public function isSystemReadyForProjectFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			if (!$this->isGroupfoldersAppEnabled()) {
 				throw new \Exception('The group folder app is not installed');
@@ -954,12 +954,12 @@ class OpenProjectAPIService {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getGroupFolderSetupInformation(): array {
+	public function getProjectFolderSetupInformation(): array {
 		$status = $this->isProjectFoldersSetupComplete();
 		$errorMessage = null;
 		if (!$status) {
 			try {
-				$this->isSystemReadyForGroupFolderSetUp();
+				$this->isSystemReadyForProjectFolderSetUp();
 			} catch (Exception $e) {
 				$errorMessage = $e->getMessage();
 			}

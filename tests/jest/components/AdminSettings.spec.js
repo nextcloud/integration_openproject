@@ -42,7 +42,7 @@ const selectors = {
 	serverHostForm: '.openproject-server-host',
 	opOauthForm: '.openproject-oauth-values',
 	ncOauthForm: '.nextcloud-oauth-values',
-	groupFolderSetupForm: '.group-folder-setup',
+	projectFolderSetupForm: '.project-folder-setup',
 	resetServerHostButton: '[data-test-id="reset-server-host-btn"]',
 	textInputWrapper: '.text-input',
 	cancelEditServerHostForm: '[data-test-id="cancel-edit-server-host-btn"]',
@@ -56,13 +56,13 @@ const selectors = {
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
-	groupFolderSetupSwitch: '.checkbox-radio-switch__label',
-	completeGroupFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-projectfolders-form-btn"]',
-	completeWithoutGroupFolderSetupButton: '[data-test-id="complete-without-group-folder-form-btn"]',
-	editGroupFolderSetup: '[data-test-id="edit-group-folder-setup"]',
-	groupFolderStatus: '.group-folder-status-value',
-	groupFolderErrorMessage: '.group-folder-error-alert-message',
-	groupFolderErrorMessageDetails: '.group-folder-error > p',
+	projectFolderSetupSwitch: '.checkbox-radio-switch__label',
+	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
+	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
+	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
+	projectFolderStatus: '.project-folder-status-value',
+	projectFolderErrorMessage: '.project-folder-error-alert-message',
+	projectFolderErrorMessageDetails: '.project-folder-error > p',
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
 }
 
@@ -91,7 +91,7 @@ describe('AdminSettings.vue', () => {
 	})
 	const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 
-	describe('form mode and completed status without group folder setup', () => {
+	describe('form mode and completed status without project folder setup', () => {
 		it.each([
 			[
 				'with empty state',
@@ -105,14 +105,14 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
-					groupFolderSetUp: F_MODES.DISABLE,
+					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
 					server: false,
 					opOauth: false,
 					ncOauth: false,
-					groupFolderSetUp: false,
+					projectFolderSetUp: false,
 					opUserAppPassword: false,
 				},
 			],
@@ -128,14 +128,14 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.DISABLE,
-					groupFolderSetUp: F_MODES.DISABLE,
+					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: false,
 					ncOauth: false,
-					groupFolderSetUp: false,
+					projectFolderSetUp: false,
 					opUserAppPassword: false,
 				},
 			],
@@ -151,14 +151,14 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.DISABLE,
-					groupFolderSetUp: F_MODES.DISABLE,
+					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: true,
 					ncOauth: false,
-					groupFolderSetUp: false,
+					projectFolderSetUp: false,
 					opUserAppPassword: false,
 				},
 			],
@@ -177,14 +177,14 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.VIEW,
-					groupFolderSetUp: F_MODES.VIEW,
+					projectFolderSetUp: F_MODES.VIEW,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: false,
 					ncOauth: true,
-					groupFolderSetUp: true,
+					projectFolderSetUp: true,
 					opUserAppPassword: false,
 				},
 			],
@@ -203,14 +203,14 @@ describe('AdminSettings.vue', () => {
 					server: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.VIEW,
-					groupFolderSetUp: F_MODES.VIEW,
+					projectFolderSetUp: F_MODES.VIEW,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
 					server: true,
 					opOauth: true,
 					ncOauth: true,
-					groupFolderSetUp: true,
+					projectFolderSetUp: true,
 					opUserAppPassword: false,
 				},
 			],
@@ -219,13 +219,13 @@ describe('AdminSettings.vue', () => {
 			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
 			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
 			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
-			expect(wrapper.vm.formMode.groupFolderSetUp).toBe(expectedFormMode.groupFolderSetUp)
+			expect(wrapper.vm.formMode.projectFolderSetUp).toBe(expectedFormMode.projectFolderSetUp)
 			expect(wrapper.vm.formMode.opUserAppPassword).toBe(expectedFormMode.opUserAppPassword)
 
 			expect(wrapper.vm.isFormCompleted.server).toBe(expectedFormState.server)
 			expect(wrapper.vm.isFormCompleted.opOauth).toBe(expectedFormState.opOauth)
 			expect(wrapper.vm.isFormCompleted.ncOauth).toBe(expectedFormState.ncOauth)
-			expect(wrapper.vm.isFormCompleted.groupFolderSetUp).toBe(expectedFormState.groupFolderSetUp)
+			expect(wrapper.vm.isFormCompleted.projectFolderSetUp).toBe(expectedFormState.projectFolderSetUp)
 			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(expectedFormState.opUserAppPassword)
 		})
 	})
@@ -632,8 +632,8 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_id: 'abcdefg',
 										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
-									fresh_group_folder_setup: false,
-									group_folder_status: {
+									fresh_project_folder_setup: false,
+									project_folder_info: {
 										status: true,
 									},
 									app_password_set: false,
@@ -793,9 +793,9 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Managed project folder form (Group Folder Setup)', () => {
+	describe('Managed project folder form (Project Folder Setup)', () => {
 		describe('view mode', () => {
-			describe('without group folder setup', () => {
+			describe('without project folder setup', () => {
 				it('should show status as "Inactive"', () => {
 					const wrapper = getWrapper({
 						state: {
@@ -806,18 +806,18 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_id: 'some-nc-client-id-here',
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
-							fresh_group_folder_setup: true,
-							// group folder is already not set up
-							group_folder_status: {
+							fresh_project_folder_setup: true,
+							// project folder is already not set up
+							project_folder_info: {
 								status: false,
 							},
 							app_password_set: false,
 						},
 					})
-					const groupFolderStatus = wrapper.find(selectors.groupFolderStatus)
-					const actualFolderStatusValue = groupFolderStatus.text()
-					expect(actualFolderStatusValue).toContain('Inactive')
-					expect(wrapper.find(selectors.groupFolderSetupForm)).toMatchSnapshot()
+					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
+					const actualProjectFolderStatusValue = projectFolderStatus.text()
+					expect(actualProjectFolderStatusValue).toContain('Inactive')
+					expect(wrapper.find(selectors.projectFolderSetupForm)).toMatchSnapshot()
 				})
 			})
 		})
@@ -839,9 +839,9 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_id: 'some-nc-client-id-here',
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
-							fresh_group_folder_setup: true,
-							// group folder is already not set up
-							group_folder_status: {
+							fresh_project_folder_setup: true,
+							// project folder is already not set up
+							project_folder_info: {
 								status: false,
 							},
 							app_password_set: false,
@@ -849,12 +849,12 @@ describe('AdminSettings.vue', () => {
 					})
 					await wrapper.setData({
 						formMode: {
-							groupFolderSetUp: F_MODES.EDIT,
+							projectFolderSetUp: F_MODES.EDIT,
 						},
 					})
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-					expect(setupGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
+					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 
 				it('should show button text label "Complete without group folder setup" when the switch is "off"', async () => {
@@ -867,9 +867,9 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_id: 'some-nc-client-id-here',
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
-							fresh_group_folder_setup: true,
+							fresh_project_folder_setup: true,
 							// group folder is already not set up
-							group_folder_status: {
+							project_folder_info: {
 								status: false,
 							},
 							app_password_set: false,
@@ -877,15 +877,15 @@ describe('AdminSettings.vue', () => {
 					})
 					await wrapper.setData({
 						formMode: {
-							groupFolderSetUp: F_MODES.EDIT,
+							projectFolderSetUp: F_MODES.EDIT,
 						},
 					})
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
-					await radioWitchButton.trigger('click')
+					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
+					await projectFolderSetupSwitchButton.trigger('click')
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(false)
-					const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
-					expect(setupGroupFolderButton.text()).toBe('Complete without group folder setup')
+					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
 				})
 
 				describe('on trigger "Complete without group folder setup"', () => {
@@ -911,9 +911,9 @@ describe('AdminSettings.vue', () => {
 									nextcloud_client_id: 'some-nc-client-id-here',
 									nextcloud_client_secret: 'some-nc-client-secret-here',
 								},
-								fresh_group_folder_setup: true,
-								// group folder is already not set up
-								group_folder_status: {
+								fresh_project_folder_setup: true,
+								// project folder is already not set up
+								project_folder_info: {
 									status: false,
 								},
 								app_password_set: false,
@@ -921,36 +921,36 @@ describe('AdminSettings.vue', () => {
 						})
 						await wrapper.setData({
 							formMode: {
-								groupFolderSetUp: F_MODES.EDIT,
+								projectFolderSetUp: F_MODES.EDIT,
 							},
 						})
-						expect(wrapper.vm.formMode.groupFolderSetUp).toBe(F_MODES.EDIT)
-						const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
-						await radioWitchButton.trigger('click')
+						expect(wrapper.vm.formMode.projectFolderSetUp).toBe(F_MODES.EDIT)
+						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
+						await projectFolderSetupSwitchButton.trigger('click')
 						await wrapper.vm.$nextTick()
-						const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
-						expect(setupGroupFolderButton.text()).toBe('Complete without group folder setup')
-						await setupGroupFolderButton.trigger('click')
+						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
+						await completeWithoutProjectFolderSetupButton.trigger('click')
 						await wrapper.vm.$nextTick()
 						expect(saveOPOptionsSpy).toBeCalledWith(
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
 									setup_app_password: false,
-									setup_group_folder: false,
+									setup_project_folder: false,
 								},
 							}
 						)
 					})
 
 					it('should set status "Inactive"', async () => {
-						const groupFolderStatusWrapper = wrapper.find(selectors.groupFolderStatus)
-						const actualFolderStatusValue = groupFolderStatusWrapper.text()
-						expect(actualFolderStatusValue).toContain('Inactive')
+						const projectFolderStatusWrapper = wrapper.find(selectors.projectFolderStatus)
+						const actualProjectFolderStatusValue = projectFolderStatusWrapper.text()
+						expect(actualProjectFolderStatusValue).toContain('Inactive')
 					})
 
 					it('should set form mode to view', async () => {
-						expect(wrapper.vm.formMode.groupFolderSetUp).toBe(F_MODES.VIEW)
+						expect(wrapper.vm.formMode.projectFolderSetUp).toBe(F_MODES.VIEW)
 
 					})
 
@@ -969,7 +969,7 @@ describe('AdminSettings.vue', () => {
 					describe('upon failure', () => {
 						it.each([
 							[
-								'should set the group folder error message and error details when group folder is not enabled',
+								'should set the project folder error message and error details when group folder app is not enabled',
 								{
 									error: 'The group folder app is not installed',
 									expectedErrorDetailsMessage: 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.',
@@ -1009,18 +1009,18 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_id: 'some-nc-client-id-here',
 										nextcloud_client_secret: 'some-nc-client-secret-here',
 									},
-									fresh_group_folder_setup: true,
-									group_folder_status: {
+									fresh_project_folder_setup: true,
+									project_folder_info: {
 										status: false,
 									},
 									app_password_set: false,
-									groupFolderSetupError: null,
+									projectFolderSetupError: null,
 								},
 							})
 
 							await wrapper.setData({
 								formMode: {
-									groupFolderSetUp: F_MODES.EDIT,
+									projectFolderSetUp: F_MODES.EDIT,
 								},
 							})
 							const getgroupfolderStatus = jest.spyOn(axios, 'get').mockImplementationOnce(() => Promise.resolve({
@@ -1037,8 +1037,8 @@ describe('AdminSettings.vue', () => {
 
 							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 								.mockImplementationOnce(() => Promise.reject(err))
-							const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-							await setupGroupFolderButton.trigger('click')
+							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+							await completeProjectFolderSetupWithGroupFolderButton.trigger('click')
 							await wrapper.vm.$nextTick()
 							expect(getgroupfolderStatus).toBeCalledTimes(1)
 							expect(saveOPOptionsSpy).toBeCalledWith(
@@ -1046,15 +1046,15 @@ describe('AdminSettings.vue', () => {
 								{
 									values: {
 										setup_app_password: true,
-										setup_group_folder: true,
+										setup_project_folder: true,
 									},
 								}
 							)
 							await wrapper.vm.$nextTick()
-							const setupGroupFolderErrorMessage = wrapper.find(selectors.groupFolderErrorMessage)
-							const setupGroupFolderErrorMessageDetails = wrapper.find(selectors.groupFolderErrorMessageDetails)
-							expect(setupGroupFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-							expect(setupGroupFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
+							const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
+							const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
+							expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
+							expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 						})
 					})
 
@@ -1074,14 +1074,14 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_id: 'some-nc-client-id-here',
 										nextcloud_client_secret: 'some-nc-client-secret-here',
 									},
-									fresh_group_folder_setup: true,
+									fresh_project_folder_setup: true,
 									app_password_set: false,
 								},
 								isGroupFolderAlreadySetup: null,
 							})
 							await wrapper.setData({
 								formMode: {
-									groupFolderSetUp: F_MODES.EDIT,
+									projectFolderSetUp: F_MODES.EDIT,
 								},
 							})
 
@@ -1096,8 +1096,8 @@ describe('AdminSettings.vue', () => {
 										oPUserAppPassword: 'opUserAppPassword',
 									},
 								}))
-							const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-							await setupGroupFolderButton.trigger('click')
+							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+							await completeProjectFolderSetupWithGroupFolderButton.trigger('click')
 							await wrapper.vm.$nextTick()
 							expect(getgroupfolderStatusSpy).toBeCalledTimes(1)
 							expect(saveOPOptionsSpy).toBeCalledWith(
@@ -1105,7 +1105,7 @@ describe('AdminSettings.vue', () => {
 								{
 									values: {
 										setup_app_password: true,
-										setup_group_folder: true,
+										setup_project_folder: true,
 									},
 								}
 							)
@@ -1116,17 +1116,17 @@ describe('AdminSettings.vue', () => {
 							expect(wrapper.vm.$data.oPUserAppPassword).toBe('opUserAppPassword')
 							expect(wrapper.vm.formMode.opUserAppPassword).toBe(F_MODES.EDIT)
 							await wrapper.vm.$nextTick()
-							const groupFolderStatus = wrapper.find(selectors.groupFolderStatus)
-							const actualFolderStatusValue = groupFolderStatus.text()
-							expect(actualFolderStatusValue).toContain('Active')
+							const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
+							const actualProjectFolderStatusValue = projectFolderStatus.text()
+							expect(actualProjectFolderStatusValue).toContain('Active')
 						})
 
 						it('should set user app password form to edit mode', async () => {
 							expect(wrapper.vm.formMode.opUserAppPassword).toBe(F_MODES.EDIT)
 						})
 
-						it('should set group folder setup form to edit mode', async () => {
-							expect(wrapper.vm.formMode.groupFolderSetUp).toBe(F_MODES.VIEW)
+						it('should set project folder setup form to edit mode', async () => {
+							expect(wrapper.vm.formMode.projectFolderSetUp).toBe(F_MODES.VIEW)
 						})
 						it('should create a new app password', async () => {
 							expect(wrapper.vm.$data.oPUserAppPassword).toBe('opUserAppPassword')
@@ -1149,8 +1149,8 @@ describe('AdminSettings.vue', () => {
 									nextcloud_client_id: 'some-nc-client-id-here',
 									nextcloud_client_secret: 'some-nc-client-secret-here',
 								},
-								fresh_group_folder_setup: false,
-								group_folder_status: {
+								fresh_project_folder_setup: false,
+								project_folder_info: {
 									status: true,
 								},
 								app_password_set: true,
@@ -1158,7 +1158,7 @@ describe('AdminSettings.vue', () => {
 						})
 						await wrapper.setData({
 							formMode: {
-								groupFolderSetUp: F_MODES.EDIT,
+								projectFolderSetUp: F_MODES.EDIT,
 							},
 							oPUserAppPassword: 'userAppPassword',
 						})
@@ -1168,11 +1168,11 @@ describe('AdminSettings.vue', () => {
 									oPUserAppPassword: null,
 								},
 							}))
-						const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
-						await radioWitchButton.trigger('click')
+						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
+						await projectFolderSetupSwitchButton.trigger('click')
 						await wrapper.vm.$nextTick()
-						const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
-						await setupGroupFolderButton.trigger('click')
+						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+						await completeWithoutProjectFolderSetupButton.trigger('click')
 						await wrapper.vm.$nextTick()
 					})
 
@@ -1182,7 +1182,7 @@ describe('AdminSettings.vue', () => {
 							{
 								values: {
 									setup_app_password: false,
-									setup_group_folder: false,
+									setup_project_folder: false,
 								},
 							}
 						)
@@ -1191,19 +1191,19 @@ describe('AdminSettings.vue', () => {
 						expect(wrapper.vm.state.oPUserAppPassword).not.toBe(null)
 					})
 
-					it('should set group folder status to "Inactive"', async () => {
+					it('should set project folder status to "Inactive"', async () => {
 						expect(saveOPOptionsSpy).toBeCalledWith(
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
 									setup_app_password: false,
-									setup_group_folder: false,
+									setup_project_folder: false,
 								},
 							}
 						)
-						const groupFolderStatus = wrapper.find(selectors.groupFolderStatus)
-						const actualFolderStatusValue = groupFolderStatus.text()
-						expect(actualFolderStatusValue).toContain('Inactive')
+						const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
+						const actualProjectFolderStatusValue = projectFolderStatus.text()
+						expect(actualProjectFolderStatusValue).toContain('Inactive')
 					})
 				})
 			})
@@ -1220,9 +1220,9 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_id: 'some-nc-client-id-here',
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
-							fresh_group_folder_setup: false,
+							fresh_project_folder_setup: false,
 							// group folder is already not set up
-							group_folder_status: {
+							project_folder_info: {
 								status: false,
 							},
 							app_password_set: false,
@@ -1230,41 +1230,41 @@ describe('AdminSettings.vue', () => {
 					})
 					await wrapper.setData({
 						formMode: {
-							groupFolderSetUp: F_MODES.EDIT,
+							projectFolderSetUp: F_MODES.EDIT,
 						},
 					})
 				})
 
-				it('should show group folder status as "Inactive"', async () => {
+				it('should show project folder status as "Inactive"', async () => {
 					await wrapper.setData({
 						formMode: {
-							groupFolderSetUp: F_MODES.VIEW,
+							projectFolderSetUp: F_MODES.VIEW,
 						},
 					})
-					const groupFolderStatus = wrapper.find(selectors.groupFolderStatus)
-					const actualFolderStatusValue = groupFolderStatus.text()
-					expect(actualFolderStatusValue).toContain('Inactive')
+					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
+					const actualProjectFolderStatusValue = projectFolderStatus.text()
+					expect(actualProjectFolderStatusValue).toContain('Inactive')
 				})
 
 				it('should set the button label to "keep current change"', async () => {
-					const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
-					expect(setupGroupFolderButton.text()).toBe('Keep current change')
+					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Keep current change')
 				})
 
 				it('should show button label to "Setup OpenProject user, group and folder" when switch is "On"', async () => {
 					await wrapper.setData({
 						opUserAppPassword: false,
 					})
-					const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
-					await radioWitchButton.trigger('click')
+					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
+					await projectFolderSetupSwitchButton.trigger('click')
 					await wrapper.vm.$nextTick()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-					expect(setupGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
+					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 			})
 
-			describe('complete setup (group folder and app password)', function() {
+			describe('complete setup (project folder and app password)', function() {
 				describe('edit mode', function() {
 					let wrapper = {}
 					let getgroupfolderStatusSpy
@@ -1280,8 +1280,8 @@ describe('AdminSettings.vue', () => {
 									nextcloud_client_id: 'some-nc-client-id-here',
 									nextcloud_client_secret: 'some-nc-client-secret-here',
 								},
-								fresh_group_folder_setup: false,
-								group_folder_status: {
+								fresh_project_folder_setup: false,
+								project_folder_info: {
 									status: true,
 								},
 								app_password_set: true,
@@ -1290,7 +1290,7 @@ describe('AdminSettings.vue', () => {
 						})
 						await wrapper.setData({
 							formMode: {
-								groupFolderSetUp: F_MODES.EDIT,
+								projectFolderSetUp: F_MODES.EDIT,
 							},
 							oPUserAppPassword: 'opUserPassword',
 						})
@@ -1302,23 +1302,23 @@ describe('AdminSettings.vue', () => {
 					})
 
 					it('should show button label to "keep current"', async () => {
-						const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-						expect(setupGroupFolderButton.text()).toBe('Keep current change')
+						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current change')
 					})
 
 					it('should not create new user app password on trigger "Keep on current change"', async () => {
-						const setupGroupFolderButton = wrapper.find(selectors.completeGroupFolderSetupWithGroupFolderButton)
-						expect(setupGroupFolderButton.text()).toBe('Keep current change')
-						setupGroupFolderButton.trigger('click')
+						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current change')
+						completeProjectFolderSetupWithGroupFolderButton.trigger('click')
 						expect(getgroupfolderStatusSpy).toBeCalledTimes(1)
 						expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
 					})
 
 					it('should show button label as "Complete without group folder setup" when switch is "off" ', async () => {
-						const radioWitchButton = wrapper.find(selectors.groupFolderSetupSwitch)
-						await radioWitchButton.trigger('click')
-						const setupGroupFolderButton = wrapper.find(selectors.completeWithoutGroupFolderSetupButton)
-						expect(setupGroupFolderButton.text()).toBe('Complete without group folder setup')
+						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
+						await projectFolderSetupSwitchButton.trigger('click')
+						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
 					})
 
 					it('should set switch as "on" again (same as fresh set up) when completely reset', async () => {
@@ -1328,8 +1328,8 @@ describe('AdminSettings.vue', () => {
 								openproject_client_id: null,
 								openproject_client_secret: null,
 								nc_oauth_client: null,
-								fresh_group_folder_setup: true,
-								group_folder_status: {
+								fresh_project_folder_setup: true,
+								project_folder_info: {
 									status: true,
 								},
 								app_password_set: false,
@@ -1413,14 +1413,14 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('error after group folder is already setup', () => {
+	describe('error after project folder is already setup', () => {
 		beforeEach(async () => {
 			axios.put.mockReset()
 			axios.get.mockReset()
 		})
 		it.each([
 			[
-				'should set the group folder error message and error details when group folder is not enabled',
+				'should set the project folder error message and error details when group folder app is not enabled',
 				{
 					error: 'The group folder app is not installed',
 					expectedErrorDetailsMessage: 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.',
@@ -1445,8 +1445,9 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_id: 'some-nc-client-id-here',
 						nextcloud_client_secret: 'some-nc-client-secret-here',
 					},
-					// status is false with error message when something went wrong after group folder is already setup
-					group_folder_status: {
+					// status is false
+					// with error message when something went wrong after project folder is already setup
+					project_folder_info: {
 						errorMessage: expectedErrorDetails.error,
 						status: false,
 					},
@@ -1454,10 +1455,10 @@ describe('AdminSettings.vue', () => {
 				},
 			})
 			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(true)
-			const setupGroupFolderErrorMessage = wrapper.find(selectors.groupFolderErrorMessage)
-			const setupGroupFolderErrorMessageDetails = wrapper.find(selectors.groupFolderErrorMessageDetails)
-			expect(setupGroupFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			expect(setupGroupFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
+			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
+			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
+			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
+			expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 		})
 	})
 
@@ -1510,7 +1511,7 @@ describe('AdminSettings.vue', () => {
 				)
 			})
 
-			it('should reset all settings on confirm when group folder is not setup', async () => {
+			it('should reset all settings on confirm when project folder is not setup', async () => {
 				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 					.mockImplementationOnce(() => Promise.resolve({ data: true }))
 				await wrapper.vm.resetAllAppValues()
@@ -1525,7 +1526,7 @@ describe('AdminSettings.vue', () => {
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
 							setup_app_password: false,
-							setup_group_folder: false,
+							setup_project_folder: false,
 						},
 					}
 				)
@@ -1560,7 +1561,7 @@ describe('AdminSettings.vue', () => {
 							openproject_instance_url: null,
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
-							setup_group_folder: false,
+							setup_project_folder: false,
 							setup_app_password: false,
 						},
 					}

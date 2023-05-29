@@ -1264,12 +1264,12 @@ class ConfigControllerTest extends TestCase {
 	}
 
 
-	public function testSetupIntegrationGroupFoldersSetUp():void {
+	public function testSetupIntegrationProjectFoldersSetUp():void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$service
-			->method('isSystemReadyForGroupFolderSetUp')
+			->method('isSystemReadyForProjectFolderSetUp')
 			->willReturn(true);
 		$service
 			->method('createGroupfolder');
@@ -1345,7 +1345,7 @@ class ConfigControllerTest extends TestCase {
 				);
 
 		$result = $configControllerMock->setAdminConfig([
-			"setup_group_folder" => true,
+			"setup_project_folder" => true,
 			"setup_app_password" => true
 		]);
 		$this->assertEquals(Http::STATUS_OK, $result->getStatus());

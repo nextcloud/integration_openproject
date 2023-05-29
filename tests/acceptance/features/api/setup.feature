@@ -10,7 +10,7 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": false,
+        "setup_project_folder": false,
         "setup_app_password": false
         }
       }
@@ -50,7 +50,7 @@ Feature: setup the integration through an API
           "openproject_client_secret": <openproject_client_secret>,
           "default_enable_navigation": <enable_navigation>,
           "default_enable_unified_search": <enable_unified_search>,
-          "setup_group_folder": <setup_group_folder>,
+          "setup_project_folder": <setup_project_folder>,
           "setup_app_password": <setup_app_password>
         }
       }
@@ -74,7 +74,7 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_group_folder | setup_app_password |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password |
       | null                  | null                  | null                      | null              | null                  | null               | null               |
       | null                  | "id"                  | "secret"                  | false             | false                 | false              | false              |
       | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              | false              |
@@ -152,9 +152,9 @@ Feature: setup the integration through an API
     Examples:
       | values                                                                                                                                                                                                           |
       | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                                                       |
-      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false, "setup_app_password": false }    |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false, "setup_app_password": false}            |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_group_folder": false , "setup_app_password": false} |
+      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false }    |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false}            |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_project_folder": false , "setup_app_password": false} |
 
 
   Scenario Outline: setup with data that is not even valid JSON
@@ -172,7 +172,7 @@ Feature: setup the integration through an API
       | "values"                                                                                                                                                                                      |
       | ""                                                                                                                                                                                            |
 
-  Scenario: non-admin user tries to create the setup without group folder
+  Scenario: non-admin user tries to create the setup without project folder
     Given user "Carol" has been created
     When the user "Carol" sends a POST request to the "setup" endpoint with this data:
       """
@@ -183,7 +183,7 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": false,
+        "setup_project_folder": false,
         "setup_app_password": false
         }
       }
@@ -453,7 +453,7 @@ Feature: setup the integration through an API
     When the user "Carol" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
 
-  Scenario Outline: Trying to setup whole integration, group folder without user app password and vice-versa
+  Scenario Outline: Trying to setup whole integration, without project folder/user app password and vice-versa
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -463,7 +463,7 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": <setup_group_folder>,
+        "setup_project_folder": <setup_project_folder>,
         "setup_app_password": <setup_app_password>
         }
       }
@@ -487,13 +487,13 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | setup_group_folder | setup_app_password |
+      | setup_project_folder | setup_app_password |
       | true               | false              |
       | false              | true               |
 
 
   # this test wil not pass locally if your system already has a `OpenProject` user/group setup
-  Scenario: Set up whole integration with group folder and user app password setup
+  Scenario: Set up whole integration with project folder and user app password
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -503,7 +503,7 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": true,
+        "setup_project_folder": true,
         "setup_app_password": true
         }
       }
@@ -594,7 +594,7 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": true,
+        "setup_project_folder": true,
         "setup_app_password": true
         }
       }
@@ -613,12 +613,12 @@ Feature: setup the integration through an API
     }
     """
 
-    # sending a PATCH request with setup_group_folder=true will also fail
+    # sending a PATCH request with setup_project_folder=true will also fail
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
       "values" : {
-        "setup_group_folder": true
+        "setup_project_folder": true
         }
       }
       """

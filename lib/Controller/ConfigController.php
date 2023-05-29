@@ -187,7 +187,7 @@ class ConfigController extends Controller {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder',
+			'setup_project_folder',
 			'setup_app_password'
 		];
 		// if values contains a key that is not in the allowedKeys array,
@@ -199,8 +199,8 @@ class ConfigController extends Controller {
 		}
 		$appPassword = null;
 
-		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder'] === true) {
-			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
 			if ($isSystemReady) {
 				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
@@ -231,7 +231,7 @@ class ConfigController extends Controller {
 		);
 
 		foreach ($values as $key => $value) {
-			if ($key === 'setup_group_folder' || $key === 'setup_app_password') {
+			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
@@ -274,7 +274,7 @@ class ConfigController extends Controller {
 
 		);
 
-		// resetting the integration should also delete the app password for the user so that new can be created when setting up again
+		// resetting and keeping the project folder setup should delete the user app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
 			$this->openprojectAPIService->deleteAppPassword();
 		}
@@ -330,14 +330,14 @@ class ConfigController extends Controller {
 		}
 
 
-		// whenever doing full reset we want the group folder switch state to be "on" in the UI
-		// so setting `fresh_group_folder_setup` as true
+		// whenever doing full reset we want the project folder switch state to be "on" in the UI
+		// so setting `fresh_project_folder_setup` as true
 		if ($runningFullReset) {
-			$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "1");
-		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_group_folder', $values)) {
-			// for other cases when api has key 'setup_app_password' and 'setup_group_folder' we set it to false
-			// assuming user has either fully set the integration or patially without group folder/app password
-			$this->config->setAppValue(Application::APP_ID, 'fresh_group_folder_setup', "0");
+			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
+		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
+			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
+			// assuming user has either fully set the integration or partially without project folder/app password
+			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
 		}
 
 		// if the revoke has failed at least once, the last status is stored in the database
