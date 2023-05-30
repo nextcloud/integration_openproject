@@ -17,6 +17,7 @@ OC.L10N.register(
     "Details" : "Podrobnosti",
     "Start typing to search" : "Vpišite niz za iskanje …",
     "Mark as read" : "Označi kot prebrano",
+    "Unlink" : "Odstrani povezavo",
     "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:",
     "Connected accounts" : "Povezani računi"
 },
