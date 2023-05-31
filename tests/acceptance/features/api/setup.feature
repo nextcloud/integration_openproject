@@ -600,6 +600,7 @@ Feature: setup the integration through an API
       }
       """
     Then the HTTP status code should be "200"
+    Then the HTTP status code should be "200"
     And the data of the response should match
     """"
     {
