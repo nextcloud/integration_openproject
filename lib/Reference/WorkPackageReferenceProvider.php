@@ -151,7 +151,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 				// this is the data you will get in your custom reference widget
 				$reference->setRichObject(
 					self::RICH_OBJECT_TYPE,
-					$wpInfo
+					$wpInfo['entry']
 				);
 				return $reference;
 			}
