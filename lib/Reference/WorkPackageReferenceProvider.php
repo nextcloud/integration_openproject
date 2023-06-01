@@ -120,12 +120,12 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	 */
 	public function matchReference(string $referenceText): bool {
 		if ($this->userId !== null) {
-			$linkPreviewEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'link_preview_enabled', '1') === '1';
+			$linkPreviewEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'default_enable_unified_search', '0') === '1';
 			if (!$linkPreviewEnabled) {
 				return false;
 			}
 		}
-		$adminLinkPreviewEnabled = $this->config->getAppValue(Application::APP_ID, 'link_preview_enabled', '1') === '1';
+		$adminLinkPreviewEnabled = $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1';
 		if (!$adminLinkPreviewEnabled) {
 			return false;
 		}
