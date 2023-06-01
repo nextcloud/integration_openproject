@@ -81,6 +81,7 @@ class Application extends App implements IBootstrap {
 		);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
+//			error_log('REGISTER OP ref manager');
 			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);
 			// RenderReferenceEvent is dispatched when we know the smart picker or link previews will be used
 			// so we need to load our scripts at this moment

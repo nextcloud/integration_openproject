@@ -119,17 +119,6 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	 * @inheritDoc
 	 */
 	public function matchReference(string $referenceText): bool {
-		if ($this->userId !== null) {
-			$linkPreviewEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'default_enable_unified_search', '0') === '1';
-			if (!$linkPreviewEnabled) {
-				return false;
-			}
-		}
-		$adminLinkPreviewEnabled = $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1';
-		if (!$adminLinkPreviewEnabled) {
-			return false;
-		}
-
 		return $this->getWorkPackageIdFromUrl($referenceText) !== null;
 	}
 
@@ -141,7 +130,8 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				// TODO implement this
-				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
+//				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
+				$wpInfo = ['title' => 'YEYEYEYE'];
 
 				$reference = new Reference($referenceText);
 				// this is used if your custom reference widget cannot be loaded (in mobile/desktop clients for example)

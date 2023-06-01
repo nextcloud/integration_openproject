@@ -4,6 +4,8 @@ namespace OCA\OpenProject\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
@@ -24,15 +26,18 @@ class Personal implements ISettings {
 	 * @var string|null
 	 */
 	private $userId;
+	private IEventDispatcher $eventDispatcher;
 
 
 	public function __construct(
 								IConfig $config,
 								IInitialState $initialStateService,
+								IEventDispatcher $eventDispatcher,
 								?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -86,7 +91,7 @@ class Personal implements ISettings {
 			'oauth-connection-error-message', $oauthConnectionErrorMessage
 		);
 
-
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
 	}
 

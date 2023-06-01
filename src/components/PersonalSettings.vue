@@ -31,12 +31,17 @@
 			</CheckBox>
 		</div>
 		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
+		<div v-if="referenceObject !== null" class="thisIsATest">
+			<NcReferenceWidget
+				class="reference-widget"
+				:reference="referenceObject" />
+		</div>
 	</div>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
@@ -48,12 +53,13 @@ import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcReferenceWidget } from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, NcButton, CloseIcon, CheckIcon, InformationVariant, CheckBox,
+		SettingsTitle, OAuthConnectButton, NcButton, CloseIcon, CheckIcon, InformationVariant, CheckBox, NcReferenceWidget,
 	},
 
 	data() {
@@ -62,6 +68,7 @@ export default {
 			state: loadState('integration_openproject', 'user-config'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
+			referenceObject: null,
 		}
 	},
 	computed: {
@@ -91,6 +98,18 @@ export default {
 
 	mounted() {
 		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+
+		const link = 'http://openproject:3000/projects/6/work_packages/67'
+		axios.get(generateOcsUrl('references/resolve', 2) + '?reference=' + encodeURIComponent(link))
+			.then((response) => {
+				this.referenceObject = response.data.ocs.data.references[link]
+			})
+			.catch((error) => {
+				console.error(error)
+			})
+			.then(() => {
+				this.loading = false
+			})
 	},
 
 	methods: {
