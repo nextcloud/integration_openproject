@@ -28,7 +28,7 @@ jobs:
             phpVersion: 7.4
           - nextcloudVersion: master
             phpVersion: 7.4
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -39,6 +39,7 @@ jobs:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
           coverage: xdebug
+          extensions: gd, sqlite3
 
       - name: Get composer cache directory
         id: composer-cache
@@ -109,6 +110,13 @@ jobs:
           lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
           delete-old-comments: true
           title: "JS Code Coverage"
+
+      - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.101
+          dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
@@ -191,8 +199,13 @@ jobs:
             phpVersionMinor: 1
           - phpVersionMajor: 8
             phpVersionMinor: 4
-    runs-on: ubuntu-latest
-    container: ubuntu:latest
+    runs-on: ubuntu-20.04
+    container:
+      image: ubuntu:latest
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     defaults:
       run:
         working-directory: integration_openproject
@@ -217,6 +230,9 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nextcloud
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       database-mysql:
         image: mariadb:10.5
@@ -225,9 +241,15 @@ jobs:
           MYSQL_PASSWORD: 'nextcloud'
           MYSQL_USER: 'nextcloud'
           MYSQL_DATABASE: 'nextcloud'
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       redis:
         image: redis:7
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     steps:
       - name: Checkout
