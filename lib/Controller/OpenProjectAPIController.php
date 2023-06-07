@@ -22,6 +22,7 @@ use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Http\Client\LocalServerException;
+use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
@@ -68,12 +69,15 @@ class OpenProjectAPIController extends Controller {
 	 */
 	private $logger;
 
+	private ICertificateManager $certificateManager;
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
 								OpenProjectAPIService $openprojectAPIService,
 								IURLGenerator $urlGenerator,
 								LoggerInterface $logger,
+								ICertificateManager $certificateManager,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
@@ -83,6 +87,7 @@ class OpenProjectAPIController extends Controller {
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $logger;
+		$this->certificateManager = $certificateManager;
 	}
 
 	/**
@@ -427,6 +432,55 @@ class OpenProjectAPIController extends Controller {
 				]
 			);
 		} catch (RequestException $e) {
+			if (str_contains($e->getMessage(), 'cURL error 60')) {
+				$sslOptions = [
+					'capture_peer_cert' => true,
+					'verify_peer' => false,
+					'verify_peer_name' => false,
+				];
+
+				$streamContext = stream_context_create([
+					'ssl' => $sslOptions,
+				]);
+
+//		if ($this->usingIpAddress) {
+//			$connectTo = ($this->isIPv6) ? "[" . $this->ipAddress . ']' : $this->ipAddress;
+//		} else {
+				$urlArray = parse_url($url);
+				$connectTo = $urlArray["host"];
+				if (empty($urlArray["port"])) {
+					$port = "443";
+				} else {
+					$port = $urlArray["port"];
+				}
+
+//		}
+				$result = "certificate";
+				$client = @stream_socket_client(
+					"ssl://{$connectTo}:{$port}",
+					$errorNumber,
+					$errorDescription,
+					60,
+					STREAM_CLIENT_CONNECT,
+					$streamContext
+				);
+
+				if (! empty($errorDescription)) {
+					$result = $errorDescription;
+				}
+
+				if (! $client) {
+					$result = "could not download certificate";
+				}
+
+				$tlsInfo = stream_context_get_params($client);
+
+				fclose($client);
+
+				\Safe\openssl_x509_export($tlsInfo['options']['ssl']['peer_certificate'], $certString);
+				$this->certificateManager->addCertificate($certString, $connectTo);
+				return $this->isValidOpenProjectInstance($url);
+			}
 			$this->logger->error(
 				"Could not connect to the URL '$url'",
 				['app' => $this->appName, 'exception' => $e]
