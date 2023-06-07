@@ -1,6 +1,6 @@
 Feature: setup the integration through an API
 
-  Scenario: valid setup
+  Scenario: valid setup without group folder
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -10,7 +10,8 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": false
+        "setup_project_folder": false,
+        "setup_app_password": false
         }
       }
       """
@@ -49,7 +50,8 @@ Feature: setup the integration through an API
           "openproject_client_secret": <openproject_client_secret>,
           "default_enable_navigation": <enable_navigation>,
           "default_enable_unified_search": <enable_unified_search>,
-          "setup_group_folder": <setup_group_folder>
+          "setup_project_folder": <setup_project_folder>,
+          "setup_app_password": <setup_app_password>
         }
       }
       """
@@ -72,24 +74,24 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_group_folder |
-      | null                  | null                  | null                      | null              | null                  | null               |
-      | null                  | "id"                  | "secret"                  | false             | false                 | false              |
-      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              |
-      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                 |
-      | ""                    | ""                    | ""                        | ""                | ""                    | false              |
-      | ""                    | "id"                  | "secret"                  | false             | false                 | false              |
-      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false              |
-      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false              |
-      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"         |
-      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false              |
-      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false              |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password |
+      | null                  | null                  | null                      | null              | null                  | null               | null               |
+      | null                  | "id"                  | "secret"                  | false             | false                 | false              | false              |
+      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                 | ""                 |
+      | ""                    | ""                    | ""                        | ""                | ""                    | false              | false              |
+      | ""                    | "id"                  | "secret"                  | false             | false                 | false              | false              |
+      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false              | false              |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false              | false              |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"         | "a string"         |
+      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false              | false              |
+      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false              | false              |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false              | false              |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false              | false              |
 
 
   Scenario: setup with invalid keys
@@ -149,10 +151,10 @@ Feature: setup the integration through an API
    """
     Examples:
       | values                                                                                                                                                                                                           |
-      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                         |
-      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false }   |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_group_folder": false}           |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_group_folder": false} |
+      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                                                       |
+      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false }    |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false}            |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_project_folder": false , "setup_app_password": false} |
 
 
   Scenario Outline: setup with data that is not even valid JSON
@@ -170,7 +172,7 @@ Feature: setup the integration through an API
       | "values"                                                                                                                                                                                      |
       | ""                                                                                                                                                                                            |
 
-  Scenario: non-admin user tries to create the setup
+  Scenario: non-admin user tries to create the setup without project folder
     Given user "Carol" has been created
     When the user "Carol" sends a POST request to the "setup" endpoint with this data:
       """
@@ -181,7 +183,8 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": false
+        "setup_project_folder": false,
+        "setup_app_password": false
         }
       }
       """
@@ -450,8 +453,7 @@ Feature: setup the integration through an API
     When the user "Carol" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
 
-  # this test wil not pass locally if your system already has a `OpenProject` user/group setup
-  Scenario: OpenProject group/user setup
+  Scenario Outline: Trying to setup whole integration, without project folder/user app password and vice-versa
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -461,7 +463,48 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": true
+        "setup_project_folder": <setup_project_folder>,
+        "setup_app_password": <setup_app_password>
+        }
+      }
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "^invalid data$"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
+      }
+    }
+   """
+    Examples:
+      | setup_project_folder | setup_app_password |
+      | true               | false              |
+      | false              | true               |
+
+
+  # this test wil not pass locally if your system already has a `OpenProject` user/group setup
+  Scenario: Set up whole integration with project folder and user app password
+    When the administrator sends a POST request to the "setup" endpoint with this data:
+      """
+      {
+      "values" : {
+      "openproject_instance_url": "http://some-host.de",
+        "openproject_client_id": "the-client-id",
+        "openproject_client_secret": "the-client-secret",
+        "default_enable_navigation": false,
+        "default_enable_unified_search": false,
+        "setup_project_folder": true,
+        "setup_app_password": true
         }
       }
       """
@@ -474,13 +517,15 @@ Feature: setup the integration through an API
         "nextcloud_oauth_client_name",
         "openproject_redirect_uri",
         "nextcloud_client_id",
-        "nextcloud_client_secret"
+        "nextcloud_client_secret",
+        "openproject_user_app_password"
       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "openproject_user_app_password": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       },
       "not": {
       "required": [
@@ -549,7 +594,8 @@ Feature: setup the integration through an API
         "openproject_client_secret": "the-client-secret",
         "default_enable_navigation": false,
         "default_enable_unified_search": false,
-        "setup_group_folder": true
+        "setup_project_folder": true,
+        "setup_app_password": true
         }
       }
       """
@@ -562,17 +608,17 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^user \"OpenProject\" already exists$"}
+          "error": {"type": "string", "pattern": "^The user \"OpenProject\" already exists$"}
       }
     }
     """
 
-    # sending a PATCH request with setup_group_folder=true will also fail
+    # sending a PATCH request with setup_project_folder=true will also fail
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
       "values" : {
-        "setup_group_folder": true
+        "setup_project_folder": true
         }
       }
       """
@@ -585,17 +631,23 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^user \"OpenProject\" already exists$"}
+          "error": {"type": "string", "pattern": "^The user \"OpenProject\" already exists$"}
       }
     }
     """
+
+    # we can make api request using the created app password for user "OpenProject"
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using current app password
+    Then the HTTP status code should be "207"
 
     # but other values can be updated by sending a PATCH request
+    # also we can replace old app password by sending PATCH request to get new user app password
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
       "values" : {
-        "default_enable_navigation": true
+        "default_enable_navigation": true,
+        "setup_app_password": true
         }
       }
       """
@@ -603,18 +655,28 @@ Feature: setup the integration through an API
     And the data of the response should match
     """"
     {
-    "type": "object",
-    "required": [
-        "nextcloud_oauth_client_name",
-        "openproject_redirect_uri",
-        "nextcloud_client_id",
-        "nextcloud_client_secret"
-      ],
+      "type": "object",
+      "required": [
+          "nextcloud_oauth_client_name",
+          "openproject_redirect_uri",
+          "nextcloud_client_id",
+          "nextcloud_client_secret"
+       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "openproject_user_app_password": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
     """
+    And the newly generated app password should be different from the previous one
+
+    # user "OpenProject" can make api request using the newly created app password
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using new app password
+    Then the HTTP status code should be "207"
+
+    # user "OpenProject" cannot make api request using the old app password
+    When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
+    Then the HTTP status code should be "401"

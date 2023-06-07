@@ -45,6 +45,10 @@ use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
 use OCP\Files\IMimeTypeLoader;
 use OC_Util;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IProvider;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Security\ISecureRandom;
 
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
@@ -124,6 +128,9 @@ class OpenProjectAPIService {
 	 */
 
 
+	private IProvider $tokenProvider;
+	private ISecureRandom $random;
+	private IEventDispatcher $eventDispatcher;
 	public function __construct(
 								string $appName,
 								IAvatarManager $avatarManager,
@@ -138,6 +145,9 @@ class OpenProjectAPIService {
 								IGroupManager $groupManager,
 								IAppManager $appManager,
 								IDBConnection $dbConnection,
+								IProvider $tokenProvider,
+								ISecureRandom $random,
+								IEventDispatcher $eventDispatcher,
 								ISubAdmin $subAdminManager,
 								IMimeTypeLoader $mimeTypeLoader
 	) {
@@ -156,6 +166,9 @@ class OpenProjectAPIService {
 		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
 		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->tokenProvider = $tokenProvider;
+		$this->random = $random;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -534,7 +547,8 @@ class OpenProjectAPIService {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_project_folder',
+			'setup_app_password'
 		];
 
 		if ($allKeysMandatory) {
@@ -542,6 +556,12 @@ class OpenProjectAPIService {
 				if (!array_key_exists($key, $values)) {
 					throw new InvalidArgumentException('invalid key');
 				}
+			}
+			// for complete setup these both have to be true
+			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
+				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
+			) {
+				throw new InvalidArgumentException('invalid data');
 			}
 		} else {
 			foreach ($values as $key => $value) {
@@ -555,8 +575,8 @@ class OpenProjectAPIService {
 			if ($key === 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
 				throw new InvalidArgumentException('invalid data');
 			}
-			// validating specific two key
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_group_folder') {
+
+			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_project_folder' || $key === 'setup_app_password') {
 				if (!is_bool($value)) {
 					throw new InvalidArgumentException('invalid data');
 				}
@@ -894,18 +914,23 @@ class OpenProjectAPIService {
 	/**
 	 * @throws OpenprojectGroupfolderSetupConflictException
 	 */
-	public function isSystemReadyForGroupFolderSetUp(): bool {
+	public function isSystemReadyForProjectFolderSetUp(): bool {
+		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			if (!$this->isGroupfoldersAppEnabled()) {
+				throw new \Exception('The group folder app is not installed');
+			}
+		}
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			throw new OpenprojectGroupfolderSetupConflictException('group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
+			throw new OpenprojectGroupfolderSetupConflictException('The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
-			throw new \Exception('groupfolders app is not enabled');
+			throw new \Exception('The group folder app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
 			throw new OpenprojectGroupfolderSetupConflictException(
-					'a groupfolder with the name "' .
+					'The group folder name "' .
 					Application::OPEN_PROJECT_ENTITIES_NAME .
-					'" already exists'
+					'" integration already exists'
 				);
 		}
 		return true;
@@ -924,6 +949,30 @@ class OpenProjectAPIService {
 			$this->isGroupfoldersAppEnabled() &&
 			$this->isGroupfolderAppCorrectlySetup()
 		);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function getProjectFolderSetupInformation(): array {
+		$status = $this->isProjectFoldersSetupComplete();
+		$errorMessage = null;
+		if (!$status) {
+			try {
+				$this->isSystemReadyForProjectFolderSetUp();
+			} catch (Exception $e) {
+				$errorMessage = $e->getMessage();
+			}
+		}
+		if ($errorMessage !== null) {
+			return [
+				'status' => $status,
+				'errorMessage' => $errorMessage
+			];
+		}
+		return [
+			'status' => $status
+		];
 	}
 
 	/**
@@ -999,7 +1048,7 @@ class OpenProjectAPIService {
 		);
 	}
 
-	private function isUserPartOfAndAdminOfGroup():bool {
+	public function isUserPartOfAndAdminOfGroup():bool {
 		if ($this->groupManager->isInGroup(
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -1043,5 +1092,46 @@ class OpenProjectAPIService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function generateAppPasswordTokenForUser(): string {
+		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$userID = $user->getUID();
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$generatedToken = $this->tokenProvider->generateToken(
+			$token,
+			$userID,
+			$userID,
+			null,
+			Application::OPEN_PROJECT_ENTITIES_NAME
+		);
+		$this->eventDispatcher->dispatchTyped(
+			new AppPasswordCreatedEvent($generatedToken)
+		);
+		return $token;
+	}
+
+	/**
+	 * Deletes the created app password for user OpenProject
+	 *
+	 * @return void
+	 */
+	public function deleteAppPassword(): void {
+		if ($this->hasAppPassword()) {
+			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
+			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
+		}
+	}
+
+	/**
+	 * check if app password for user OpenProject is already created
+	 *
+	 * @return bool
+	 */
+	public function hasAppPassword(): bool {
+		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
 }

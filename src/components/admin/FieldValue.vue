@@ -36,6 +36,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		hideValue: {
+			type: Boolean,
+			default: false,
+		},
 		isRequired: {
 			type: Boolean,
 			default: false,
@@ -56,10 +60,15 @@ export default {
 		encryptedValue() {
 			return this.value.substring(0, 8) + '*'.repeat(15)
 		},
+		doNotShowValue() {
+			return '*'.repeat(23)
+		},
 		valueContent() {
 			return (this.encryptValue && !this.inspect)
 				? this.encryptedValue
-				: this.value
+				: (this.hideValue && !this.inspect)
+					? this.doNotShowValue
+					: this.value
 		},
 	},
 	methods: {

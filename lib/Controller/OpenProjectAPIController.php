@@ -525,4 +525,17 @@ class OpenProjectAPIController extends Controller {
 		$base64url = strtr($base64, '+/', '-_');
 		return ($base64url);
 	}
+
+	/**
+	 * check if the project folder set up is already setup or not
+	 *
+	 * @return DataResponse
+	 */
+	public function getProjectFolderSetupStatus(): DataResponse {
+		return new DataResponse(
+			[
+				'result' => $this->openprojectAPIService->isProjectFoldersSetupComplete()
+			]
+		);
+	}
 }

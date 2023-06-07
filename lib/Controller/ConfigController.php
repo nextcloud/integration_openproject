@@ -12,7 +12,9 @@
 namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
+use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
@@ -170,11 +172,13 @@ class ConfigController extends Controller {
 	/**
 	 * set admin config values
 	 *
-	 * @param array<string, string|null> $values
+	 * @param array<string, string|null|bool> $values
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
 	 * @throws OpenprojectGroupfolderSetupConflictException
+	 * @throw NoUserException
+	 * @throws GuzzleException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
@@ -183,7 +187,8 @@ class ConfigController extends Controller {
 			'openproject_client_secret',
 			'default_enable_navigation',
 			'default_enable_unified_search',
-			'setup_group_folder'
+			'setup_project_folder',
+			'setup_app_password'
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
@@ -192,9 +197,10 @@ class ConfigController extends Controller {
 				throw new InvalidArgumentException('Invalid key');
 			}
 		}
+		$appPassword = null;
 
-		if (key_exists('setup_group_folder', $values) && $values['setup_group_folder']) {
-			$isSystemReady = $this->openprojectAPIService->isSystemReadyForGroupFolderSetUp();
+		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
+			$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
 			if ($isSystemReady) {
 				$password = $this->secureRandom->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
@@ -203,6 +209,15 @@ class ConfigController extends Controller {
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
 			}
+		}
+
+		// creates or replace the app password
+		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
+			$this->openprojectAPIService->deleteAppPassword();
+			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				throw new NoUserException('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
+			}
+			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -216,8 +231,12 @@ class ConfigController extends Controller {
 		);
 
 		foreach ($values as $key => $value) {
+			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
+				continue;
+			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
 		}
+
 		// if the OpenProject OAuth URL has changed
 		if (key_exists('openproject_instance_url', $values)
 			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url']
@@ -254,6 +273,12 @@ class ConfigController extends Controller {
 			$values['openproject_client_secret'] === null
 
 		);
+
+		// resetting and keeping the project folder setup should delete the user app password
+		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
+			$this->openprojectAPIService->deleteAppPassword();
+		}
+
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
@@ -303,6 +328,18 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($userUID);
 			});
 		}
+
+
+		// whenever doing full reset we want the project folder switch state to be "on" in the UI
+		// so setting `fresh_project_folder_setup` as true
+		if ($runningFullReset) {
+			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
+		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
+			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
+			// assuming user has either fully set the integration or partially without project folder/app password
+			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
+		}
+
 		// if the revoke has failed at least once, the last status is stored in the database
 		// this is not a neat way to give proper information about the revoke status
 		// TODO: find way to report every user's revoke status
@@ -310,17 +347,18 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		return [
 			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
-			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus
+			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
+			"oPUserAppPassword" => $appPassword,
 		];
 	}
-
 
 	/**
 	 * set admin config values
 	 *
-	 * @param array<string, string|null> $values
+	 * @param array<string, string|null|bool> $values
 	 *
 	 * @return DataResponse
+	 * @throws GuzzleException
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
@@ -330,6 +368,10 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
+		} catch (NoUserException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
@@ -508,7 +550,7 @@ class ConfigController extends Controller {
 	/**
 	 * @NoCSRFRequired
 	 * set up integration
-	 * @param array<string, string> $values
+	 *  @param array<string, string|null|bool> $values
 	 *
 	 * @return DataResponse
 	 *
@@ -521,6 +563,9 @@ class ConfigController extends Controller {
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			if ($status['oPUserAppPassword'] !== null) {
+				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
 			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
@@ -556,6 +601,9 @@ class ConfigController extends Controller {
 				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
 				}
+				if ($status['oPUserAppPassword'] !== null) {
+					$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
+				}
 				return new DataResponse($result);
 			}
 			return new DataResponse([
@@ -586,7 +634,8 @@ class ConfigController extends Controller {
 			'openproject_client_id' => null,
 			'openproject_client_secret' => null,
 			'default_enable_navigation' => null,
-			'default_enable_unified_search' => null
+			'default_enable_unified_search' => null,
+			'setup_app_password' => false
 		];
 		try {
 			$status = $this->setIntegrationConfig($values);

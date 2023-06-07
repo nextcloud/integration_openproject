@@ -33,9 +33,9 @@ To set up or update the integration following data needs to be provided:
 - openproject_client_id
 - default_enable_navigation
 - default_enable_unified_search
-- setup_group_folder
+- setup_project_folder
 
-> Note: If the `setup_group_folder` key is set to true a new user, group and group folder named `OpenProject` will be created in case the system already doesn't have one or more of these present 
+> Note: If the `setup_project_folder` key is set to true a new user, group and group folder named `OpenProject` will be created in case the system already doesn't have one or more of these present 
 
 
 1. **Set up the whole integration with a [POST] request**
@@ -45,7 +45,7 @@ To set up or update the integration following data needs to be provided:
    Example curl request to set up whole integration
    ```bash
    curl -XPOST -u<nextcloud_admin_username>:<nextcloud_admin_password>  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
-   -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false,"setup_group_folder":false}}' \
+   -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false,"setup_project_folder":false}}' \
    -H 'Content-Type: application/json' -v
    ```
 

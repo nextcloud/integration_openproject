@@ -115,7 +115,7 @@ nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMI
 								   "openproject_client_secret":'${openproject_client_secret}',
 								   "default_enable_navigation":false,
 								   "default_enable_unified_search":false,
-								   "setup_group_folder":false
+								   "setup_project_folder":false
 								   }
 						   }' \
 						   -H 'Content-Type: application/json')

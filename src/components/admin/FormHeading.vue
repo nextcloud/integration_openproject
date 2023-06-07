@@ -1,14 +1,23 @@
 <template>
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
-		<div v-if="isComplete" class="complete">
+		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
+			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
+		</div>
+		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-status">
+			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
+		</div>
+		<div v-else-if="isComplete" class="complete">
 			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else class="index">
 			{{ index }}
 		</div>
 		<div class="title"
-			:class="{'green-text': isComplete}">
+			:class="{
+				'green-text': isComplete,
+				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup
+			}">
 			{{ title }}
 		</div>
 	</div>
@@ -16,11 +25,14 @@
 <script>
 
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
-
+import MinusThickIcon from 'vue-material-design-icons/MinusThick.vue'
+import ExclamationThickIcon from 'vue-material-design-icons/ExclamationThick.vue'
 export default {
 	name: 'FormHeading',
 	components: {
 		CheckBoldIcon,
+		MinusThickIcon,
+		ExclamationThickIcon,
 	},
 	props: {
 		index: {
@@ -39,6 +51,18 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSetupCompleteWithoutProjectFolders: {
+			type: Boolean,
+			default: false,
+		},
+		isProjectFolderSetupHeading: {
+			type: Boolean,
+			default: false,
+		},
+		isThereErrorAfterProjectFolderAndAppPasswordSetup: {
+			type: Boolean,
+			default: false,
+		},
 	},
 }
 </script>
@@ -53,11 +77,35 @@ export default {
 		color: var(--color-success);
 	}
 
+	.red-text {
+		color: var(--color-error);
+	}
+
 	.complete {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
 		background-color: var(--color-success);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.project-folder-setup-status {
+		height: 16px;
+		width: 16px;
+		border-radius: 50%;
+		background-color: var(--color-error);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.setup-complete-without-project-folders {
+		height: 16px;
+		width: 16px;
+		border-radius: 50%;
+		background: var(--color-loading-dark);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -71,7 +119,7 @@ export default {
 		line-height: 16px;
 		text-align: center;
 		border-radius: 50%;
-		background: #555555;
+		background: var(--color-loading-dark);
 		color: white;
 	}
 	.title {

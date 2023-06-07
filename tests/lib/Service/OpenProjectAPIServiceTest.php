@@ -38,6 +38,9 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
+use OC\Authentication\Token\IProvider;
+use OCP\Security\ISecureRandom;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IRemoteHostValidator;
@@ -49,6 +52,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
+use OC\Authentication\Token\IToken;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
 
 /**
  * overriding the class_exists method, so that the unit tests always pass,
@@ -378,6 +383,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IMimeTypeLoader::class)
 		);
@@ -390,7 +398,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IUserManager|null $userManagerMock
 	 * @param IGroupManager|null $groupManagerMock
 	 * @param IAppManager|null $appManagerMock
-	 * @param ISubAdmin| null $subAdminManagerMock
+	 * @param ISubAdmin|null $subAdminManagerMock
+	 * @param ISecureRandom|null $iSecureRandomMock
+	 * @param IConfig|null $configMock
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -400,7 +410,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$userManagerMock = null,
 		$groupManagerMock = null,
 		$appManagerMock = null,
-		$subAdminManagerMock = null
+		$subAdminManagerMock = null,
+		$iSecureRandomMock = null,
+		$configMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -421,6 +433,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($subAdminManagerMock === null) {
 			$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 		}
+		if ($iSecureRandomMock === null) {
+			$iSecureRandomMock = $this->createMock(ISecureRandom::class);
+		}
+		if ($configMock === null) {
+			$configMock = $this->createMock(IConfig::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -428,7 +446,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IAvatarManager::class),
 					$this->createMock(LoggerInterface::class),
 					$this->createMock(IL10N::class),
-					$this->createMock(IConfig::class),
+					$configMock,
 					$this->createMock(IClientService::class),
 					$rootMock,
 					$this->createMock(IURLGenerator::class),
@@ -437,6 +455,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$groupManagerMock,
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
+					$this->createMock(IProvider::class),
+					$iSecureRandomMock,
+					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
 					$this->createMock(IMimeTypeLoader::class)
 				])
@@ -1341,6 +1362,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
 			$this->createMock(IDBConnection::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IMimeTypeLoader::class)
 		);
@@ -1371,7 +1395,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'groups' => Application::OPEN_PROJECT_ENTITIES_NAME,
 				'quota' => 1234,
 				'size' => 0,
-				'acl' => true
+				'acl' => $canManageACL
 			]]);
 
 		if ($getFoldersForGroupResponse === null) {
@@ -1457,7 +1481,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function groupFolderNotSetUpDataProvider() {
+	public function groupFolderNotSetUpDataProvider(): array {
 		return [
 			[false,true,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,null,true],
 			[true,false,true,true,true,Application::OPEN_PROJECT_ENTITIES_NAME,null,true],
@@ -1573,6 +1597,147 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
 		$this->assertFalse($service->isProjectFoldersSetupComplete());
+	}
+
+	public function testGenerateAppPasswordTokenForUser(): void {
+		$userMock = $this->getMockBuilder(IUser::class)->getMock();
+		$userMock
+			->method('getUID')
+			->willReturn(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		$token = "gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx";
+		$iSecureRandomMock = $this->getMockBuilder(ISecureRandom::class)
+			->getMock();
+		$iSecureRandomMock
+			->method('generate')
+			->willReturn($token);
+		$itokenMock = $this->createMock(IToken::class);
+		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->getMock();
+		$tokenProviderMock
+			->method('generateToken')
+			->with($token, Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME, null, Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($itokenMock);
+		$eventDispatcherMock = $this->getMockBuilder(IEventDispatcher::class)->getMock();
+		$eventDispatcherMock
+			->method('dispatchTyped')
+			->with($this->createMock(AppPasswordCreatedEvent::class));
+		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock);
+		$result = $service->generateAppPasswordTokenForUser();
+		$this->assertSame($token, $result);
+	}
+
+	public function testIsSystemReadyForProjectFolderSetUp(): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
+			->willReturnOnConsecutiveCalls(false, false);
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
+			->willReturnOnConsecutiveCalls(false, false);
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn(true);
+		$service = $this->getServiceMock(['getGroupFolderManager'],
+			null,
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock);
+		$folderManagerMock = $this->getFolderManagerMock('', false, [ 0 => [
+			'folder_id' => 123,
+			'mount_point' => '',
+			'permissions' => 31,
+			'acl' => true
+		]]);
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
+		$result = $service->isSystemReadyForProjectFolderSetUp();
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function isSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
+		return [
+			[true, true, false, false,'The group folder app is not installed'],
+			[true, false, false, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, true, false, false,'The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, false, false, false,'The group folder app is not installed'],
+			[false, false, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" integration already exists'],
+		];
+	}
+
+	/**
+	 * @param bool $userExists
+	 * @param bool $groupExists
+	 * @param bool $appEnabled
+	 * @param bool $groupFolderExists
+	 * @param string $exception
+	 * @return void
+	 * @dataProvider isSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider
+	 */
+	public function testIsSystemReadyForGroupFolderSetUpUserOrGroupExistsException(
+		bool $userExists,
+		bool $groupExists,
+		bool $appEnabled,
+		bool $groupFolderExists,
+		string $exception
+	): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		$userManagerMock
+			->method('userExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userExists);
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
+			->getMock();
+		$groupManagerMock
+			->method('groupExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($groupExists);
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)
+			->getMock();
+		$appManagerMock
+			->method('isEnabledForUser')
+			->with('groupfolders', $userMock)
+			->willReturn($appEnabled);
+		$service = $this->getServiceMock(['getGroupFolderManager'],
+			null,
+			null,
+			$userManagerMock,
+			$groupManagerMock,
+			$appManagerMock);
+		$folderManagerMock = $this->getFolderManagerMock();
+		$service->method('getGroupFolderManager')
+			->willReturn($folderManagerMock);
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage($exception);
+		$service->isSystemReadyForProjectFolderSetUp();
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {
