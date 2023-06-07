@@ -4,12 +4,13 @@
 			<AlertCircleOutline fill-color="#FF0000" :size="26" />
 			<b class="project-folder-error-alert-message">{{ projectFolderSetUpError }}</b>
 		</div>
-		<p>{{ projectFolderSetUpErrorMessageDescription }}</p>
+		<p v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 	</div>
 </template>
 <script>
 
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import dompurify from 'dompurify'
 export default {
 	name: 'ProjectFolderError',
 	components: {
@@ -23,6 +24,11 @@ export default {
 		projectFolderSetUpErrorMessageDescription: {
 			type: String,
 			required: true,
+		},
+	},
+	computed: {
+		sanitizedHintText() {
+			return dompurify.sanitize(this.projectFolderSetUpErrorMessageDescription, { ADD_ATTR: ['target'] })
 		},
 	},
 }
@@ -40,5 +46,12 @@ export default {
 		}
 	}
 	color: var(--color-error);
+}
+</style>
+
+<style>
+.project-folder-error .link {
+	color: #1a67a3 !important;
+	font-style: italic;
 }
 </style>
