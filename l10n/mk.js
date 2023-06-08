@@ -5,6 +5,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Одбиен OAuth пристапен токен ",
     "Cancel" : "Откажи",
     "Save" : "Зачувај",
+    "Active" : "Активно",
     "Reset" : "Ресетирање",
     "Enable navigation link" : "Овозможи линк за навигација",
     "Documentation" : "Документација",

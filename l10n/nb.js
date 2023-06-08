@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth access token ble avslått",
     "Cancel" : "Avbryt",
     "Save" : "Lagre",
+    "Active" : "Aktiv",
     "Reset" : "Tilbakestill",
     "Documentation" : "Dokumentasjo",
     "Invalid token" : "Ugyldig polett",

@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "אסימון הגישה ב־OAuth סורב",
     "Cancel" : "ביטול",
     "Save" : "שמירה",
+    "Active" : "פעיל",
     "Reset" : "איפוס",
     "Enable navigation link" : "הפעלת קישור ניווט",
     "Documentation" : "תיעוד",

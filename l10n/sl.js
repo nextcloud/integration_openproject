@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Žeton OAuth za dostop je bil zavrnjen",
     "Cancel" : "Prekliči",
     "Save" : "Shrani",
+    "Active" : "Dejavno",
     "Reset" : "Ponastavi",
     "Enable navigation link" : "Omogoči povezave za krmarjenje",
     "Enable unified search for tickets" : "Omogoči enotno iskanje med objavami",

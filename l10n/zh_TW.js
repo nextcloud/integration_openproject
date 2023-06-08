@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth 存取權杖被拒絕",
     "Cancel" : "取消",
     "Save" : "儲存",
+    "Active" : "作用中",
     "Reset" : "重設",
     "Enable navigation link" : "啟用導覽連結",
     "Documentation" : "文件",

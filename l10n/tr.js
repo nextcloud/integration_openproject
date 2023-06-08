@@ -24,6 +24,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth istemcisi",
     "Yes, I have copied these values" : "Evet, bu değerleri kopyaladım",
     "Replace Nextcloud OAuth values" : "Nextcloud OAuth değerlerini değiştir",
+    "Active" : "Etkin",
     "Reset" : "Sıfırla",
     "Default user settings" : "Varsayılan kullanıcı ayarları",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Yeni bir kullanıcı bu varsayılan ayarları alır ve kullanıcı bunları değiştirene kadar bütünleştirme uygulamasına uygulanır.",
