@@ -52,6 +52,5 @@ export default {
 <style>
 .project-folder-error .link {
 	color: #1a67a3 !important;
-	font-style: italic;
 }
 </style>
