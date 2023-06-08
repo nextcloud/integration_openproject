@@ -22,6 +22,7 @@
     "Nextcloud OAuth client" : "Nextcloud OAuth клијент",
     "Yes, I have copied these values" : "Да, копирао сам ове вредности",
     "Replace Nextcloud OAuth values" : "Замени Nextcloud OAuth вредности",
+    "Active" : "Активан",
     "Reset" : "Ресетуј",
     "Default user settings" : "Подразумевана корисничка подешавања",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Нови корисник ће да добије ове подразумеване вредности и оне ће се применити на апликацију интеграције све док их корисник не промени.",

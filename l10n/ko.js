@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth 접근 토큰 거부됐습니다",
     "Cancel" : "취소",
     "Save" : "저장",
+    "Active" : "활성화",
     "Reset" : "초기화",
     "Server replied with an error message, please check the Nextcloud logs" : "서버가 오류 메시지로 응답했습니다. Nextcloud 로그를 참조하십시오.",
     "Documentation" : "문서",
