@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth 访问令牌被拒绝",
     "Cancel" : "取消",
     "Save" : "保存",
+    "Active" : "活动",
     "Reset" : "重置",
     "Enable navigation link" : "启用应用图标链接至实例",
     "Enable unified search for tickets" : "启用统一的票证搜索",

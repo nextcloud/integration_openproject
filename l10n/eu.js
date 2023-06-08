@@ -23,6 +23,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth bezeroa",
     "Yes, I have copied these values" : "Bai, balio hauek kopiatu ditut",
     "Replace Nextcloud OAuth values" : "Ordeztu Nextcloud OAuth balioak",
+    "Active" : "Aktibo",
     "Reset" : "Berrezarri",
     "Default user settings" : "Lehentsitako erabiltzailearen ezarpenak",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Erabiltzaile berri batek balio lehenetsi hauek jasoko ditu eta integrazio aplikazioan aplikatuko dira erabiltzaileak aldatzen dituen arte.",

@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Active" : "Aktiivinen",
     "Reset" : "Palauta",
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Documentation" : "Dokumentaatio",

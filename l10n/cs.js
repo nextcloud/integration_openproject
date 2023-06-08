@@ -24,6 +24,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "OAuth klient pro Nextcloud",
     "Yes, I have copied these values" : "Ano, tyto hodnoty jsem si zkopíroval(a)",
     "Replace Nextcloud OAuth values" : "Nahradit OAuth hodnoty pro Nextcloud",
+    "Active" : "Aktivní",
     "Reset" : "Vrátit na výchozí hodnoty",
     "Default user settings" : "Výchozí nastavení pro uživatele",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Nový uživatel obdrží tato výchozí nastavení a ta budou uplatňována na aplikaci pro napojení do té doby, než si uživatel nastavení případně změní.",
