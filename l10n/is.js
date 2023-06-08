@@ -6,6 +6,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
+    "Active" : "Virkt",
     "Reset" : "Endurstilla",
     "Enable navigation link" : "Virkja flakktengil",
     "Documentation" : "Hjálparskjöl",

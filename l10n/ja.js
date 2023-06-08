@@ -6,6 +6,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
     "Cancel" : "キャンセル",
     "Save" : "保存",
+    "Active" : "有効",
     "Reset" : "リセット",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Documentation" : "ドキュメント",

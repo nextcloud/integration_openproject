@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-token avvisades",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
+    "Active" : "Aktiv",
     "Reset" : "Återställ",
     "Enable navigation link" : "Aktivera navigeringslänk",
     "Documentation" : "Dokumentation",

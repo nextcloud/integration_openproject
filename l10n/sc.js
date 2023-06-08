@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Token de intrada OAuth refudadu",
     "Cancel" : "Annulla",
     "Save" : "Sarva",
+    "Active" : "Ativu",
     "Reset" : "Torra a impostare",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",

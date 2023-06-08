@@ -22,6 +22,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Klient Nextcloud Oauth",
     "Yes, I have copied these values" : "Áno, tieto hodnoty som skopíroval",
     "Replace Nextcloud OAuth values" : "Nahradiť hodnoty Nextcloud OAuth",
+    "Active" : "Aktívne",
     "Reset" : "Resetovať",
     "Default user settings" : "Predvolené nastavenia užívateľa",
     "Enable navigation link" : "Povoliť navigačný odkaz",

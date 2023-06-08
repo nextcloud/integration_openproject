@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "لغو",
     "Save" : "ذخیره",
+    "Active" : "فعال کردن",
     "Reset" : "بازنشاندن",
     "Documentation" : "مستندسازی",
     "Copied!" : "کپی شده",

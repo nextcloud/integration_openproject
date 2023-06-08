@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Token-ul OAuth a fost refuzat",
     "Cancel" : "Anulare",
     "Save" : "Salvează",
+    "Active" : "Activ",
     "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
     "Documentation" : "Documentație",

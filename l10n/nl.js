@@ -19,6 +19,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
     "Yes, I have copied these values" : "Ja, ik heb deze waarden gecopieerd",
     "Replace Nextcloud OAuth values" : "Vervang de NextCloud OAuth waarden",
+    "Active" : "Actief",
     "Reset" : "Herstellen",
     "Enable navigation link" : "Inschakelen navigatielink",
     "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",

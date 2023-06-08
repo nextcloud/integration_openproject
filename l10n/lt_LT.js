@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "„OAuth“ prieigos raktas atmestas",
     "Cancel" : "Atšaukti",
     "Save" : "Įrašyti",
+    "Active" : "Aktyvi",
     "Reset" : "Atstatyti",
     "Documentation" : "Dokumentacija",
     "Connected as {user}" : "Prisijungta kaip {user}",

@@ -22,6 +22,7 @@
     "Nextcloud OAuth client" : "Cliente Nextcloud OAuth ",
     "Yes, I have copied these values" : "Sí, he copiado estos valores",
     "Replace Nextcloud OAuth values" : "Reemplazar los valores de Nextcloud OAuth",
+    "Active" : "Activo",
     "Reset" : "Restablecer",
     "Default user settings" : "Configuraciones de usuario por defecto",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Un usuario nuevo recibirá estos valores por defecto y serán establecidos en la aplicación de integración hasta que el usuario los modifique.",
