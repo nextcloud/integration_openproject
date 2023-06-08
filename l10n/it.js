@@ -9,6 +9,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Cancel" : "Annulla",
     "Save" : "Salva",
+    "Active" : "Attivo",
     "Reset" : "Ripristina",
     "Enable navigation link" : "Abilita collegamento di navigazione",
     "Enable unified search for tickets" : "Abilita la ricerca unificata dei ticket",

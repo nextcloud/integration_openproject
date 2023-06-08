@@ -4,6 +4,7 @@ OC.L10N.register(
     "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
     "Cancel" : "Hủy",
     "Save" : "Lưu",
+    "Active" : "Hoạt động",
     "Reset" : "Đặt lại",
     "Documentation" : "Tài liệu",
     "Connected as {user}" : "Kết nối bởi {user}",

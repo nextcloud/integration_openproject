@@ -24,6 +24,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth 客戶端",
     "Yes, I have copied these values" : "是的，我已複製了這些值",
     "Replace Nextcloud OAuth values" : "取代 Nextcloud OAuth 值",
+    "Active" : "活動的",
     "Reset" : "重設",
     "Default user settings" : "默認用戶設定",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "新用戶將收到這些默認值，它們將應用於集成應用程式，直到用戶更改它們。",

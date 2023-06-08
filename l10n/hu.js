@@ -24,6 +24,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth kliens",
     "Yes, I have copied these values" : "Igen, átmásoltam ezeket az értékeket",
     "Replace Nextcloud OAuth values" : "Nextcloud OAuth értékek lecserélése",
+    "Active" : "Aktív",
     "Reset" : "Visszaállítás",
     "Default user settings" : "Alapértelmezett felhasználói beállítások",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Egy új felhasználó ezeket az alapértelmezéseket fogja kapni, és addig ez lesz alkalmazva az integrációs alkalmazásra, míg a felhasználó meg nem változtatja őket.",

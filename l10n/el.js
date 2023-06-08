@@ -7,6 +7,7 @@ OC.L10N.register(
     "OAuth access token refused" : "Το διακριτικό πρόσβασης OAuth απορρίφθηκε",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
+    "Active" : "Ενεργό",
     "Reset" : "Επαναφορά",
     "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",

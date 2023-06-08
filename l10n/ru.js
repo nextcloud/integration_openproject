@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "Отменить",
     "Save" : "Сохранить",
     "OpenProject OAuth settings" : "Параметры OAuth OpenProject",
+    "Active" : "Активный",
     "Reset" : "Сброс",
     "Enable navigation link" : "Включить ссылку для навигации",
     "Enable unified search for tickets" : "Включить унифицированный поиск билетов",

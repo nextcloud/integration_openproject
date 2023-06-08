@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Anullar",
     "Save" : "Enregistrar",
+    "Active" : "Activa",
     "Reset" : "Reïnicializar",
     "Documentation" : "Documentacion",
     "Connected as {user}" : "Connectat coma {user}",
