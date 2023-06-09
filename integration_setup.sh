@@ -24,6 +24,16 @@ log_success() {
 	echo -e "\e[32m$1\e[0m"
 }
 
+# we now have option to set up project folders in the integration app
+# this function checks if the system is ready for the project folder setup
+isSystemReadyForProjectFolderSetup() {
+#	log_info "Checking your system for project folder setup ..."
+	log_error "Failed !!"
+    exit 1
+}
+
+
+
 # making sure that jq is installed
 if ! command -v jq &> /dev/null
 then
@@ -39,7 +49,16 @@ NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintena
 OPENPROJECT_HOST_STATE=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                           ${OPENPROJECT_HOST}/api/v3/configuration | jq -r "._type")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
-INTEGRATION_URL_FOR_SETUP=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject/setup
+NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
+setup_project_folder=false
+setup_app_password-false
+
+# there might me cases where the user has already setup the project
+isProjectFolderSetupCorrect() {
+	# make an CURL API request and get the status of project folder
+	project_folder_setup_status=$(curl -s -XGET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/project-folder-status")
+}
+
 
 # check if both instances are started or not
 if [[ ${OPENPROJECT_HOST_STATE} != "Configuration" ]]
@@ -51,6 +70,20 @@ if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANC
 then
 	log_error "Nextcloud host cannot be reached or is in maintenance mode!!"
 	exit 1
+fi
+
+# we can set whether we want the integration with project folder or without it using environment variable 'SET_PROJECT_FOLDER_SETUP'
+if [[ ${SET_PROJECT_FOLDER_SETUP} == true ]]
+then
+	isProjectFolderSetupCorrect
+	result="$project_folder_setup_status"
+	result_value=$(echo "$result" | jq -e ".result")
+	if [[ ${result_value} == false ]]
+	then
+		setup_project_folder=true
+		setup_project_folder=true
+		isSystemReadyForProjectFolderSetup
+	fi
 fi
 
 log_info "Creating file storage in OpenProject ..."
@@ -107,7 +140,7 @@ log_info "success!"
 
 log_info "Setting up OpenProject integration in Nextcloud..."
 # api call to set the  openproject_client_id and openproject_client_secret to Nextcloud and also get nextcloud_client_id and nextcloud_client_secret
-nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} ${INTEGRATION_URL_FOR_SETUP} \
+nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
 						   -d '{
 						   "values":{
 								   "openproject_instance_url":"'${OPENPROJECT_HOST}'",
@@ -115,7 +148,8 @@ nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMI
 								   "openproject_client_secret":'${openproject_client_secret}',
 								   "default_enable_navigation":false,
 								   "default_enable_unified_search":false,
-								   "setup_project_folder":false
+								   "setup_project_folder":false,
+								   "setup_app_password":false
 								   }
 						   }' \
 						   -H 'Content-Type: application/json')
