@@ -24,6 +24,8 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "OAuth klient pro Nextcloud",
     "Yes, I have copied these values" : "Ano, tyto hodnoty jsem si zkopíroval(a)",
     "Replace Nextcloud OAuth values" : "Nahradit OAuth hodnoty pro Nextcloud",
+    "Managed project folders (recommended)" : "Složky spravovaných projektů (doporučeno)",
+    "Automatically managed folders" : "Automaticky spravované složky",
     "Active" : "Aktivní",
     "Reset" : "Vrátit na výchozí hodnoty",
     "Default user settings" : "Výchozí nastavení pro uživatele",
