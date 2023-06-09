@@ -616,11 +616,11 @@ export default {
 		async setNCOAuthFormToViewMode() {
 			this.formMode.ncOauth = F_MODES.VIEW
 			this.isFormCompleted.ncOauth = true
-			if (!this.isIntegrationComplete && this.formMode.projectFolderSetUp !== F_MODES.EDIT) {
+			if (!this.isIntegrationComplete && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
+				this.formMode.projectFolderSetUp = F_MODES.EDIT
 				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
 				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
-				this.formMode.projectFolderSetUp = F_MODES.EDIT
 			}
 		},
 		setOPUserAppPasswordToViewMode() {
