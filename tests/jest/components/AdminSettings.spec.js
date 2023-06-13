@@ -885,7 +885,7 @@ describe('AdminSettings.vue', () => {
 					await projectFolderSetupSwitchButton.trigger('click')
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(false)
 					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
+					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
 				})
 
 				describe('on trigger "Complete without group folder setup"', () => {
@@ -929,7 +929,7 @@ describe('AdminSettings.vue', () => {
 						await projectFolderSetupSwitchButton.trigger('click')
 						await wrapper.vm.$nextTick()
 						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
 						await completeWithoutProjectFolderSetupButton.trigger('click')
 						await wrapper.vm.$nextTick()
 						expect(saveOPOptionsSpy).toBeCalledWith(
@@ -969,31 +969,31 @@ describe('AdminSettings.vue', () => {
 					describe('upon failure', () => {
 						it.each([
 							[
-								'should set the project folder error message and error details when group folder app is not enabled',
+								'should set the project folder error message and error details when group folders app is not enabled',
 								{
-									error: 'The group folder app is not installed',
-									expectedErrorDetailsMessage: 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.',
+									error: 'The "Group folders" app is not installed',
+									expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatic managed folders or deactivate the automatically managed folders.',
 								},
 							],
 							[
 								'should set the user already exists error message and error details when user already exists',
 								{
 									error: 'The user "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the group folder name already exists error message and error details when group folder already exists',
 								{
-									error: 'The group folder name "OpenProject" integration already exists',
-									expectedErrorDetailsMessage: 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.',
+									error: 'The group folder name "OpenProject" already exists',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the group already exists error message and error details when group already exists',
 								{
 									error: 'The group "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 
@@ -1037,6 +1037,11 @@ describe('AdminSettings.vue', () => {
 
 							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 								.mockImplementationOnce(() => Promise.reject(err))
+							if (expectedErrorDetails.error !== 'The "Group folders" app is not installed') {
+								jest.spyOn(wrapper.vm, 'projectFolderSetUpErrorMessageDescription').mockReturnValue(
+									'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.'
+								)
+							}
 							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
 							await completeProjectFolderSetupWithGroupFolderButton.trigger('click')
 							await wrapper.vm.$nextTick()
@@ -1248,7 +1253,7 @@ describe('AdminSettings.vue', () => {
 
 				it('should set the button label to "keep current change"', async () => {
 					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Keep current change')
+					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Keep current setup')
 				})
 
 				it('should show button label to "Setup OpenProject user, group and folder" when switch is "On"', async () => {
@@ -1303,12 +1308,12 @@ describe('AdminSettings.vue', () => {
 
 					it('should show button label to "keep current"', async () => {
 						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current change')
+						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current setup')
 					})
 
 					it('should not create new user app password on trigger "Keep on current change"', async () => {
 						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current change')
+						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current setup')
 						completeProjectFolderSetupWithGroupFolderButton.trigger('click')
 						expect(getgroupfolderStatusSpy).toBeCalledTimes(1)
 						expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
@@ -1318,7 +1323,7 @@ describe('AdminSettings.vue', () => {
 						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
 						await projectFolderSetupSwitchButton.trigger('click')
 						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without group folder setup')
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
 					})
 
 					it('should set switch as "on" again (same as fresh set up) when completely reset', async () => {
@@ -1420,17 +1425,17 @@ describe('AdminSettings.vue', () => {
 		})
 		it.each([
 			[
-				'should set the project folder error message and error details when group folder app is not enabled',
+				'should set the project folder error message and error details when group folders app is not enabled',
 				{
-					error: 'The group folder app is not installed',
-					expectedErrorDetailsMessage: 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.',
+					error: 'The "Group folders" app is not installed',
+					expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatic managed folders or deactivate the automatically managed folders.',
 				},
 			],
 			[
 				'should set the user already exists error message and error details when user already exists',
 				{
 					error: 'The user "OpenProject" already exists',
-					expectedErrorDetailsMessage: 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.',
+					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible.',
 				},
 			],
 		])('%s', async (name, expectedErrorDetails) => {
@@ -1458,7 +1463,11 @@ describe('AdminSettings.vue', () => {
 			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
 			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
+			if (expectedErrorDetails.error !== 'The "Group folders" app is not installed') {
+				expect(projectFolderErrorMessageDetails.text()).toContain(expectedErrorDetails.expectedErrorDetailsMessage)
+			} else {
+				expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
+			}
 		})
 	})
 

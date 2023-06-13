@@ -1679,11 +1679,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function isSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
 		return [
-			[true, true, false, false,'The group folder app is not installed'],
+			[true, true, false, false,'The "Group folders" app is not installed'],
 			[true, false, false, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
 			[false, true, false, false,'The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
-			[false, false, false, false,'The group folder app is not installed'],
-			[false, false, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" integration already exists'],
+			[false, false, false, false,'The "Group folders" app is not installed'],
+			[false, false, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
 		];
 	}
 

@@ -381,8 +381,8 @@ export default {
 				server: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
-				keepCurrentChange: t('integration_openproject', 'Keep current change'),
-				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without group folder setup'),
+				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
+				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folder'),
 				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
 			},
 			loadingServerHostForm: false,
@@ -500,7 +500,12 @@ export default {
 		userAppPasswordHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'This value is only visible now and then never again. Copy this password to OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
+		errorHintForProjectFolderConfigAlreadyExists() {
+			const linkText = t('integration_openproject', 'troubleshooting guide')
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
@@ -580,16 +585,10 @@ export default {
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
 			switch (errorKey) {
-			case 'The group folder name "OpenProject" integration already exists' :
-				return t('integration_openproject', 'Please make sure to rename the group folder or completely delete the previous one or deactivate the automatically managed folders.')
-			case 'The group folder app is not installed' :
-				return t('integration_openproject', 'Please install the group folder to be able to use automatic managed folders or deactivate the automatically managed folders.')
-			case 'The user "OpenProject" already exists' :
-				return t('integration_openproject', 'Please make sure to completely delete the previous user or deactivate the automatically managed folders.')
-			case 'The group "OpenProject" already exists' :
-				return t('integration_openproject', 'Please make sure to completely delete the previous group or deactivate the automatically managed folders.')
+			case 'The "Group folders" app is not installed' :
+				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatic managed folders or deactivate the automatically managed folders.')
 			default:
-				return t('integration_openproject', 'Something went wrong during groupfolder setup. Deactivate the automatically managed folders.')
+				return this.errorHintForProjectFolderConfigAlreadyExists
 			}
 		},
 		setServerHostFormToViewMode() {
