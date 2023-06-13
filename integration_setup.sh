@@ -24,16 +24,6 @@ log_success() {
 	echo -e "\e[32m$1\e[0m"
 }
 
-# we now have option to set up project folders in the integration app
-# this function checks if the system is ready for the project folder setup
-isSystemReadyForProjectFolderSetup() {
-#	log_info "Checking your system for project folder setup ..."
-	log_error "Failed !!"
-    exit 1
-}
-
-
-
 # making sure that jq is installed
 if ! command -v jq &> /dev/null
 then
@@ -50,14 +40,9 @@ OPENPROJECT_HOST_STATE=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWO
                           ${OPENPROJECT_HOST}/api/v3/configuration | jq -r "._type")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
 NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
+# these two data are set as false when the integration is done without project folder setup
 setup_project_folder=false
-setup_app_password-false
-
-# there might me cases where the user has already setup the project
-isProjectFolderSetupCorrect() {
-	# make an CURL API request and get the status of project folder
-	project_folder_setup_status=$(curl -s -XGET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/project-folder-status")
-}
+setup_app_password=false
 
 
 # check if both instances are started or not
@@ -75,15 +60,8 @@ fi
 # we can set whether we want the integration with project folder or without it using environment variable 'SET_PROJECT_FOLDER_SETUP'
 if [[ ${SET_PROJECT_FOLDER_SETUP} == true ]]
 then
-	isProjectFolderSetupCorrect
-	result="$project_folder_setup_status"
-	result_value=$(echo "$result" | jq -e ".result")
-	if [[ ${result_value} == false ]]
-	then
-		setup_project_folder=true
-		setup_project_folder=true
-		isSystemReadyForProjectFolderSetup
-	fi
+	setup_project_folder=true
+	setup_app_password=true
 fi
 
 log_info "Creating file storage in OpenProject ..."
@@ -148,8 +126,8 @@ nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMI
 								   "openproject_client_secret":'${openproject_client_secret}',
 								   "default_enable_navigation":false,
 								   "default_enable_unified_search":false,
-								   "setup_project_folder":false,
-								   "setup_app_password":false
+								   "setup_project_folder":'$setup_project_folder',
+								   "setup_app_password":'$setup_app_password'
 								   }
 						   }' \
 						   -H 'Content-Type: application/json')
@@ -158,12 +136,39 @@ nextcloud_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMI
 nextcloud_client_id=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_id")
 nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_secret")
 
-if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
+setOPInfoInNextcloudErrorLog() {
 	echo "${nextcloud_information_response}" | jq
-	log_error "Response does not contain nextcloud_client_id (nextcloud_client_id) or nextcloud_client_secret(nextcloud_client_secret)"
 	log_error "Setup of the integration failed :( !!"
+	if [ ${SET_PROJECT_FOLDER_SETUP} == true ]; then
+		log_info "above response does not contain nextcloud_client_id (nextcloud_client_id) or nextcloud_client_secret(nextcloud_client_secret) or openproject_user_app_password (openproject_user_app_password)"
+		log_info "if the error is related to project folder setup name 'OpenProject' (group, user, folder) then follow below link to resolve the error"
+		echo "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/"
+	else
+		log_info "above response does not contain nextcloud_client_id (nextcloud_client_id) or nextcloud_client_secret(nextcloud_client_secret)"
+	fi
+	# when there is error when saving OP oauth information in the nextcloud
+	# we can delete the storage created in openproject. since we have to delete it manually when we run the script for the next time
+	curl -s -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+										  ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
+										  -H 'accept: application/hal+json' \
+										  -H 'Content-Type: application/json' \
+										  -H 'X-Requested-With: XMLHttpRequest'
 	exit 1
+}
+
+if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
+	setOPInfoInNextcloudErrorLog
 fi
+
+if [[ ${SET_PROJECT_FOLDER_SETUP} == true ]]
+then
+	openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
+	if [ ${openproject_user_app_password} == null ]; then
+		setOPInfoInNextcloudErrorLog
+	fi
+fi
+
+#
 
 log_info "success!"
 
@@ -192,3 +197,8 @@ fi
 
 log_info "success!"
 log_success "Setup of the integration was successful :) !!"
+if [ ${SET_PROJECT_FOLDER_SETUP} == true ]; then
+	echo "OpUserAppPassword= ${openproject_user_app_password}"
+	log_info "you can use this app password to make request to nextcloud as user 'OpenProject'"
+fi
+
