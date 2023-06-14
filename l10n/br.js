@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Arrest",
     "Save" : "Enrollañ",
+    "Active" : "O labourat",
     "Documentation" : "Diellvadur",
     "Copied!" : "Eilet eo !",
     "Details" : "Munudoù",

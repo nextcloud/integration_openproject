@@ -35,8 +35,6 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Nový uživatel obdrží tato výchozí nastavení a ta budou uplatňována na aplikaci pro napojení do té doby, než si uživatel nastavení případně změní.",
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Enable unified search for tickets" : "Zahrnout vyhledávání v požadavcích do celkového sjednoceného vyhledávání",
-    "Keep current change" : "Ponechat stávající změnu",
-    "Complete without group folder setup" : "Dokončit bez nastavení skupinové složky",
     "Administration > File storages" : "Správa → Úložiště souborů",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Přejděte do vámi využívané instance OpenProject {htmlLink} jako správce,  spusťte tam nastavení a hodnoty zkopírujte sem.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Zkopírujte (jako správce) následující hodnoty zpět do OpenProject {htmlLink}.",

@@ -22,6 +22,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Client OAuth de Nextcloud",
     "Yes, I have copied these values" : "Sí, he copiat aquests valors",
     "Replace Nextcloud OAuth values" : "Substituïu els valors d'OAuth de Nextcloud",
+    "Active" : "Actiu",
     "Reset" : "Restableix",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Enable unified search for tickets" : "Habilita la cerca unificada de peticions",
