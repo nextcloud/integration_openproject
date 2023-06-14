@@ -7,6 +7,7 @@ OC.L10N.register(
     "OpenProject server" : "مُخدّم أوبن بروجكت",
     "Cancel" : "إلغاء",
     "Save" : "Save",
+    "Active" : "فعال",
     "Reset" : "إعادة الضبط",
     "Documentation" : "الدليل",
     "Connected as {user}" : "متصل بصفته {user}",
