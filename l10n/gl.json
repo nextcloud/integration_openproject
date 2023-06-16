@@ -31,7 +31,7 @@
     "Administration > File storages" : "Administración > Almacenamento de ficheiros",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vaia ao teu OpenProject {htmlLink} como administrador e inicia a configuración e copia os valores aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copia os seguintes valores no OpenProject {htmlLink} como Administrador.",
-    "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Se continúa, terá que actualizar esta configuración coas novas credenciais de OpenProject OAuth. Ademais, todos os usuarios terán que volver autorizar o acceso á súa conta OpenProject.",
+    "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Se continúa, terá que actualizar estes axustes coas novas credenciais de OpenProject OAuth. Ademais, todos os usuarios terán que volver autorizar o acceso á súa conta OpenProject.",
     "Yes, replace" : "Si, substituír",
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Confirma que quere restabelecer esta aplicación e eliminar todos os axustes e todas as conexións de todos os usuarios de Nextcloud a OpenProject?",
     "Reset OpenProject integration" : "Restabelecer a integración de OpenProject",
