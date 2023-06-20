@@ -7,7 +7,9 @@ import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils.js'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
+import { getCurrentUser } from '@nextcloud/auth'
 
+jest.mock('@nextcloud/auth')
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
 jest.mock('@nextcloud/l10n', () => ({
@@ -242,6 +244,9 @@ describe('ProjectsTab.vue', () => {
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
 		it('sets the "error" state if the admin config is not okay', async () => {
+			getCurrentUser.mockReturnValue(() => {
+				return '{"isAdmin": false}'
+			})
 			const wrapper = mountWrapper()
 			axios.get
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
@@ -582,7 +587,6 @@ function mountWrapper() {
 		stubs: {
 			SearchInput: true,
 			NcAvatar: true,
-			EmptyContent: false,
 		},
 		data: () => ({
 			error: '',
