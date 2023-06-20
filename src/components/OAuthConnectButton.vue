@@ -15,6 +15,7 @@ import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
+import { translate as t } from '@nextcloud/l10n'
 import '@nextcloud/dialogs/styles/toast.scss'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import dompurify from 'dompurify'
@@ -42,8 +43,7 @@ export default {
 
 	computed: {
 		adminConfigNotOkMessage() {
-			const user = getCurrentUser()
-			if (user.isAdmin) {
+			if (getCurrentUser().isAdmin) {
 				const linkText = t('integration_openproject', 'Administration Settings > OpenProject')
 				const url = generateUrl('/settings/admin/openproject')
 				const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
