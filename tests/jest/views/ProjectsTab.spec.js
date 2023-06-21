@@ -244,9 +244,8 @@ describe('ProjectsTab.vue', () => {
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
 		it('sets the "error" state if the admin config is not okay', async () => {
-			getCurrentUser.mockReturnValue(() => {
-				return '{"isAdmin": false}'
-			})
+			const returnValue = { isAdmin: false }
+			getCurrentUser.mockReturnValue(returnValue)
 			const wrapper = mountWrapper()
 			axios.get
 				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
