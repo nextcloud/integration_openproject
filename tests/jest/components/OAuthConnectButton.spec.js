@@ -4,9 +4,11 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
+import { getCurrentUser } from '@nextcloud/auth'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/auth')
 
 const realLocation = global.window.location
 const localVue = createLocalVue()
@@ -21,7 +23,16 @@ describe('OAuthConnectButton.vue', () => {
 		jest.clearAllMocks()
 	})
 	describe('when the admin config is not okay', () => {
-		it('should show message', async () => {
+		it('should show message for normal user', async () => {
+			const returnValue = { isAdmin: false }
+			getCurrentUser.mockReturnValue(returnValue)
+			wrapper = getWrapper({ isAdminConfigOk: false })
+			expect(wrapper).toMatchSnapshot()
+		})
+
+		it('should show message for admin user', async () => {
+			const returnValue = { isAdmin: true }
+			getCurrentUser.mockReturnValue(returnValue)
 			wrapper = getWrapper({ isAdminConfigOk: false })
 			expect(wrapper).toMatchSnapshot()
 		})
@@ -85,6 +96,9 @@ function getWrapper(props = {}) {
 		localVue,
 		mocks: {
 			t: (app, msg) => msg,
+			generateUrl() {
+				return '/'
+			},
 		},
 		propsData: {
 			isAdminConfigOk: true,

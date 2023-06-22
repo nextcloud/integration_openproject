@@ -7,18 +7,18 @@
 		</template>
 		{{ t('integration_openproject', 'Connect to OpenProject') }}
 	</NcButton>
-	<div v-else class="oauth-connect--message">
-		{{ adminConfigNotOkMessage }}
-	</div>
+	<div v-else class="oauth-connect--message" v-html="adminConfigNotOkMessage" /> <!-- eslint-disable-line vue/no-v-html -->
 </template>
 <script>
 import axios from '@nextcloud/axios'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
+import { getCurrentUser } from '@nextcloud/auth'
 import { translate as t } from '@nextcloud/l10n'
+import '@nextcloud/dialogs/styles/toast.scss'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import dompurify from 'dompurify'
 
 export default {
 	name: 'OAuthConnectButton',
@@ -43,6 +43,14 @@ export default {
 
 	computed: {
 		adminConfigNotOkMessage() {
+			if (getCurrentUser().isAdmin) {
+				const linkText = t('integration_openproject', 'Administration Settings > OpenProject')
+				const url = generateUrl('/settings/admin/openproject')
+				const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
+				const hintText = t('integration_openproject', 'Some OpenProject integration application settings are not working. '
+				+ 'Configure the OpenProject integration in: {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
+				return dompurify.sanitize(hintText, { ADD_ATTR: ['target'] })
+			}
 			return t('integration_openproject', 'Some OpenProject integration application settings are not working.'
 				+ ' Please contact your Nextcloud administrator.')
 		},
@@ -92,5 +100,11 @@ export default {
 		padding: 0 18px;
 		line-height: 1.4rem;
 	}
+}
+</style>
+<style>
+.link {
+	color: #1a67a3 !important;
+	font-style: italic;
 }
 </style>
