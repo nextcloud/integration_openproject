@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OAuthConnectButton.vue when the admin config is not okay should show message for admin user 1`] = `<div class="oauth-connect--message">Some OpenProject integration application settings are not working. Click here {htmlLink} to set them up properly.</div>`;
+exports[`OAuthConnectButton.vue when the admin config is not okay should show message for admin user 1`] = `<div class="oauth-connect--message">Some OpenProject integration application settings are not working. Configure the OpenProject integration in: {htmlLink}</div>`;
 
 exports[`OAuthConnectButton.vue when the admin config is not okay should show message for normal user 1`] = `<div class="oauth-connect--message">Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator.</div>`;

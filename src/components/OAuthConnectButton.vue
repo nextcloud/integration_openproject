@@ -48,7 +48,7 @@ export default {
 				const url = generateUrl('/settings/admin/openproject')
 				const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 				const hintText = t('integration_openproject', 'Some OpenProject integration application settings are not working. '
-				+ 'Click here {htmlLink} to set them up properly.', { htmlLink }, null, { escape: false, sanitize: false })
+				+ 'Configure the OpenProject integration in: {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 				return dompurify.sanitize(hintText, { ADD_ATTR: ['target'] })
 			}
 			return t('integration_openproject', 'Some OpenProject integration application settings are not working.'
