@@ -82,6 +82,8 @@ OC.L10N.register(
     "Default user configuration saved" : "Výchozí nastavení pro uživatele uložena",
     "Failed to save default user configuration" : "Výchozí nastavení pro uživatele se nepodařilo uložit",
     "Connect to OpenProject" : "Připojeno k OpenProject",
+    "Administration Settings > OpenProject" : "Nastavení správy > OpenProject",
+    "Some OpenProject integration application settings are not working. " : "Některá nastavení aplikace pro napojení na OpenProject nefungují.",
     "Some OpenProject integration application settings are not working." : "Některá nastavení aplikace pro napojení na OpenProject nefungují.",
     "Failed to redirect to OpenProject" : "Přesměrování na OpenProject se nezdařilo",
     "Connected as {user}" : "Připojeni jako {user}",

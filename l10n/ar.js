@@ -9,6 +9,7 @@ OC.L10N.register(
     "Save" : "Save",
     "Active" : "فعال",
     "Reset" : "إعادة الضبط",
+    "Enable navigation link" : "تميكن رابط التنقُّل",
     "Documentation" : "الدليل",
     "Connected as {user}" : "متصل بصفته {user}",
     "Invalid token" : "علامة غير صالحة",

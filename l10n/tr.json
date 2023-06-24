@@ -80,6 +80,8 @@
     "Default user configuration saved" : "Varsayılan kullanıcı yapılandırması kaydedildi",
     "Failed to save default user configuration" : "Varsayılan kullanıcı yapılandırması kaydedilemedi",
     "Connect to OpenProject" : "OpenProject bağlantısı kur",
+    "Administration Settings > OpenProject" : "Yönetim ayarları > OpenProject",
+    "Some OpenProject integration application settings are not working. " : "OpenProject bütünleşme uygulamasının bazı ayarları çalışmıyor. ",
     "Some OpenProject integration application settings are not working." : "OpenProject bütünleşme uygulamasının bazı ayarları çalışmıyor.",
     "Failed to redirect to OpenProject" : "OpenProject sitesine yönlendirilemedi",
     "Connected as {user}" : "{user} olarak bağlantı kuruldu",

@@ -80,6 +80,8 @@
     "Default user configuration saved" : "Las configuración de usuario por defecto ha sido guardada",
     "Failed to save default user configuration" : "Fallo al guardar la configuración de usuario por defecto",
     "Connect to OpenProject" : "Conectar con OpenProject",
+    "Administration Settings > OpenProject" : "Ajustes de Administración > OpenProject",
+    "Some OpenProject integration application settings are not working. " : "Algunos ajustes de la aplicación de integración de OpenProject no funcionan.",
     "Some OpenProject integration application settings are not working." : "Algunos ajustes de la aplicación de integración de OpenProject no funcionan.",
     "Failed to redirect to OpenProject" : "Fallo en la redirección a OpenProject",
     "Connected as {user}" : "Conectado como {user}",
