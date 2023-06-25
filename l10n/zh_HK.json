@@ -80,6 +80,8 @@
     "Default user configuration saved" : "默認用戶配置已保存",
     "Failed to save default user configuration" : "保存默認用戶配置失敗",
     "Connect to OpenProject" : "連接到 OpenProject",
+    "Administration Settings > OpenProject" : "管理設定 > OpenProject",
+    "Some OpenProject integration application settings are not working. " : "某些 OpenProject 集成應用程序設置不起作用。",
     "Some OpenProject integration application settings are not working." : "某些 OpenProject 集成應用程序設置不起作用。",
     "Failed to redirect to OpenProject" : "無法重定向到 OpenProject",
     "Connected as {user}" : "以 {user} 身份連線",
