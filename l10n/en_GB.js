@@ -82,6 +82,8 @@ OC.L10N.register(
     "Default user configuration saved" : "Default user configuration saved",
     "Failed to save default user configuration" : "Failed to save default user configuration",
     "Connect to OpenProject" : "Connect to OpenProject",
+    "Administration Settings > OpenProject" : "Administration Settings > OpenProject",
+    "Some OpenProject integration application settings are not working. " : "Some OpenProject integration application settings are not working. ",
     "Some OpenProject integration application settings are not working." : "Some OpenProject integration application settings are not working.",
     "Failed to redirect to OpenProject" : "Failed to redirect to OpenProject",
     "Connected as {user}" : "Connected as {user}",
