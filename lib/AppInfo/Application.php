@@ -16,6 +16,8 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
+use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
+use OCA\OpenProject\Listener\OpenProjectReferenceListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
@@ -24,6 +26,7 @@ use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
 
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
@@ -76,6 +79,15 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
+
+		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
+			// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
+			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);
+			// RenderReferenceEvent is dispatched when we know the smart picker or link previews will be used
+			// so we need to load our scripts at this moment
+			// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
+			$context->registerEventListener(RenderReferenceEvent::class, OpenProjectReferenceListener::class);
+		}
 	}
 
 	public function boot(IBootContext $context): void {

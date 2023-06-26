@@ -15,5 +15,6 @@ $config
 	->notPath('src')
 	->notPath('vendor')
 	->notPath('server')
+	->notPath('lib/Reference/WorkPackageReferenceProvider.php')
 	->in(__DIR__);
 return $config;

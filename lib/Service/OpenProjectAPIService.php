@@ -235,7 +235,8 @@ class OpenProjectAPIService {
 		string $userId,
 		string $query = null,
 		int $fileId = null,
-		bool $onlyLinkableWorkPackages = true
+		bool $onlyLinkableWorkPackages = true,
+		int $workPackageId = null
 	): array {
 		$resultsById = [];
 		$filters = [];
@@ -244,9 +245,16 @@ class OpenProjectAPIService {
 		if ($fileId !== null) {
 			$filters[] = ['file_link_origin_id' => ['operator' => '=', 'values' => [(string)$fileId]]];
 		}
+
 		if ($query !== null) {
 			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$query]]];
 		}
+
+		//search by wpId
+		if ($workPackageId !== null) {
+			$filters[] = ['id' => ['operator' => '=', 'values' => [(string)$workPackageId]]];
+		}
+
 		$resultsById = $this->searchRequest($userId, $filters, $onlyLinkableWorkPackages);
 		if (isset($resultsById['error'])) {
 			return $resultsById;
@@ -1133,5 +1141,85 @@ class OpenProjectAPIService {
 	 */
 	public function hasAppPassword(): bool {
 		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
+	}
+
+	/**
+	 * @param string $userId
+	 * @param int $wpId
+	 *
+	 * @return array<mixed>
+	 */
+	public function getWorkPackageInfo(string $userId, int $wpId): array {
+		$result[] = null;
+		$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
+		$result['title'] = $this->getSubline($searchResult[0]);
+		$result['description'] = $this->getMainText($searchResult[0]);
+		$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
+		return $result;
+	}
+
+	/**
+	 * @param array<mixed> $entry
+	 * @return string
+	 */
+	public function getMainText(array $entry): string {
+		$workPackageType = isset($entry['_links'], $entry['_links']['type'], $entry['_links']['type']['title'])
+			? strtoupper($entry['_links']['type']['title'])
+			: '';
+		$subject = $entry['subject'] ?? '';
+		return $workPackageType . ": " . $subject;
+	}
+
+	/**
+	 * @param array<mixed> $entry
+	 * @return string
+	 */
+	public function getOpenProjectUserAvatarUrl(array $entry): string {
+		$userIdURL = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['href'])
+			? $entry['_links']['assignee']['href']
+			: '';
+		$userName = isset($entry['_links'], $entry['_links']['assignee'], $entry['_links']['assignee']['title'])
+			? $entry['_links']['assignee']['title']
+			: '';
+		$userId = preg_replace('/.*\//', "", $userIdURL);
+		return $this->urlGenerator->getAbsoluteURL(
+			'index.php/apps/integration_openproject/avatar?' .
+			"userId" .
+			'=' .
+			$userId .
+			'&' .
+			"userName" .
+			'=' .
+			$userName
+		);
+	}
+
+	/**
+	 * @param array<mixed> $entry
+	 * @return string
+	 */
+	public function getSubline(array $entry): string {
+		$workPackageID = $entry['id'] ?? '';
+		$status = isset($entry['_links'], $entry['_links']['status'], $entry['_links']['status']['title'])
+			? '[' . $entry['_links']['status']['title'] . '] '
+			: '';
+		$projectTitle = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['title'])
+			? $entry['_links']['project']['title']
+			: '';
+		return "#" . $workPackageID . " " . $status . $projectTitle;
+	}
+
+	/**
+	 * @param array<mixed> $entry
+	 * @param string $url
+	 * @return string
+	 */
+	public function getLinkToOpenProject(array $entry, string $url): string {
+		$projectId = isset($entry['_links'], $entry['_links']['project'], $entry['_links']['project']['href'])
+			? preg_replace('/.*\//', '', $entry['_links']['project']['href'])
+			: '';
+		return ($projectId !== '')
+			? $url . '/projects/' . $projectId . '/work_packages/' . $entry['id'] . '/activity'
+			: '';
 	}
 }
