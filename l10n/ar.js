@@ -11,6 +11,8 @@ OC.L10N.register(
     "Reset" : "إعادة الضبط",
     "Enable navigation link" : "تميكن رابط التنقُّل",
     "Documentation" : "الدليل",
+    "Administration Settings > OpenProject" : "إعدادات الإدارة> أوبن بروجكت",
+    "Some OpenProject integration application settings are not working. " : " بعض إعدادات تكامل تطبيق أوبن بروجكت لا تعمل.",
     "Connected as {user}" : "متصل بصفته {user}",
     "Invalid token" : "علامة غير صالحة",
     "Copied!" : "تم النسخ!",
