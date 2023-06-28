@@ -1,5 +1,6 @@
 { "translations": {
     "Error during OAuth exchanges" : "خطأ أثناء تبادل OAuth.",
+    "OpenProject work packages" : "حزم عمل أوبن بروجكت",
     "Bad HTTP method" : "دالة HTTP  غير صحيحة",
     "OAuth access token refused" : "أمارة token مرفوضة",
     "OpenProject server" : "مُخدّم أوبن بروجكت",
@@ -8,6 +9,12 @@
     "Active" : "فعال",
     "Reset" : "إعادة الضبط",
     "Enable navigation link" : "تميكن رابط التنقُّل",
+    "Keep current setup" : "الإبقاء علي الإعدادات الحالية",
+    "Complete without project folder" : "الإكمال بدون مجلد المشروع",
+    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "يمكن الوصول إلى هذه القيمة مرة واحدة فقط. الآن، بصفتك مسئولا، قم بنسخ كلمة المرور هذه إلى أوبن بروجكت {htmlLink}.",
+    "troubleshooting guide" : "دليل تحري الخلل واصلاحه",
+    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "تنصيب مستخدم أوبن بروجكت والمجموعة ومجلد المجموعة غير ممكن. يرجى الرجوع إلي {htmlLink} للتعرف على كيفية حل هذه المشكلة.",
+    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "يرجي تثبيت تطبيق \"مجلدات المجموعة\" حتي تتمكن من استخدام المجلدات المُدارة تلقائيًا أو إلغاء تنشيط المجلدات المُدارة تلقائيًا.",
     "Documentation" : "الدليل",
     "Administration Settings > OpenProject" : "إعدادات الإدارة> أوبن بروجكت",
     "Some OpenProject integration application settings are not working. " : " بعض إعدادات تكامل تطبيق أوبن بروجكت لا تعمل.",
@@ -18,6 +25,8 @@
     "Details" : "التفاصيل",
     "Start typing to search" : "اكتب هنا للبحث",
     "Mark as read" : "تمييز كمقروء",
+    "OpenProject API error" : "خطأ واجهة برمجة التطبيقات أوبن بروجكت",
+    "OpenProject settings" : "إعدادات أوبن بروجكت",
     "Connected accounts" : "حسابات مترابطة"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }
