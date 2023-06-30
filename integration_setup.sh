@@ -13,6 +13,8 @@
 # OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth information in OpenProject required for integration.
 # SETUP_PROJECT_FOLDER= <true|false> If true set the integration is done with project folder setup and vice-versa
 
+
+# helper functions
 log_error() {
 	echo -e "\e[31m$1\e[0m"
 }
@@ -23,6 +25,18 @@ log_info() {
 
 log_success() {
 	echo -e "\e[32m$1\e[0m"
+}
+
+getErrorLogSettingOPOauthInfoToNextcloud() {
+	echo  "$1" | jq
+	log_error "Setup of the integration failed :( !!"
+	# when there is error when saving OP oauth information in the nextcloud
+	# we can delete the storage created in openproject, otherwise it would need to be deleted manually when the script is ran the next time
+	curl -s -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+										  ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
+										  -H 'accept: application/hal+json' \
+										  -H 'Content-Type: application/json' \
+										  -H 'X-Requested-With: XMLHttpRequest'
 }
 
 # making sure that jq is installed
@@ -153,23 +167,11 @@ nextcloud_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME
 nextcloud_client_id=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_id")
 nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_secret")
 
-setOPInfoInNextcloudErrorLog() {
-	echo "${nextcloud_information_response}" | jq
-	log_error "Setup of the integration failed :( !!"
-	# when there is error when saving OP oauth information in the nextcloud
-	# we can delete the storage created in openproject, otherwise it would need to be deleted manually when the script is ran the next time
-	curl -s -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-										  ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
-										  -H 'accept: application/hal+json' \
-										  -H 'Content-Type: application/json' \
-										  -H 'X-Requested-With: XMLHttpRequest'
-}
-
 if [[ ${SETUP_PROJECT_FOLDER} == true ]]
 then
 	openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
 	if [ ${openproject_user_app_password} == null ]; then
-		setOPInfoInNextcloudErrorLog
+		getErrorLogSettingOPOauthInfoToNextcloud "$nextcloud_information_response"
 		log_info "Above response is missing one or more of nextcloud_client_id, nextcloud_client_secret, or openproject_user_app_password"
 		log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder) then follow below link to resolve the error"
 		log_info "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/"
@@ -177,7 +179,7 @@ then
 	fi
 else
 	if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
-    	setOPInfoInNextcloudErrorLog
+		getErrorLogSettingOPOauthInfoToNextcloud "$nextcloud_information_response"
         log_info "Above response is missing nextcloud_client_id or nextcloud_client_secret"
         exit 1
     fi
