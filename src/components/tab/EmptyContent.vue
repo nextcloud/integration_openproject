@@ -113,15 +113,13 @@ export default {
 			line-height: 1.4rem;
 			font-weight: 600;
 			padding: 4px 12px 12px 12px;
-			color: #333333;
 		}
 		&--sub-title {
 			font-size: 1rem;
 			line-height: 1.4rem;
 			text-align: center;
 			font-weight: 400;
-			color: #878787;
-			padding: 0px 18px;
+			padding: 0 18px;
 		}
 	}
 	&--connect-button {
@@ -129,12 +127,6 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-	}
-}
-
-body.theme--dark, body[data-theme-dark], body[data-theme-dark-highcontrast] {
-	.empty-content--message--title {
-		color: #cfcfcf;
 	}
 }
 </style>

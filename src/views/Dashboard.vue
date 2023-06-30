@@ -208,7 +208,7 @@ export default {
 				}
 			}).catch((error) => {
 				clearInterval(this.loop)
-				if (error.response && error.response.status === 404) {
+				if (error.response && (error.response.status === 404 || error.response.status === 503)) {
 					this.state = STATE.CONNECTION_ERROR
 				} else if (error.response && error.response.status === 401) {
 					showError(t('integration_openproject', 'Failed to get OpenProject notifications'))
