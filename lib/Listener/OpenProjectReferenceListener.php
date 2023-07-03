@@ -28,6 +28,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class OpenProjectReferenceListener implements IEventListener {
 	public function handle(Event $event): void {
 		// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26

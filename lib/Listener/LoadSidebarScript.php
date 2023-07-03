@@ -38,6 +38,9 @@ use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class LoadSidebarScript implements IEventListener {
 
 	/**

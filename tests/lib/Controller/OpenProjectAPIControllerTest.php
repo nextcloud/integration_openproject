@@ -956,7 +956,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'state=[a-z0-9]{10}&' .
 			'code_challenge=[a-zA-Z0-9\-_]{43}&' .
 			'code_challenge_method=S256$/',
-			$result->getData()
+			(string) $result->getData()
 		);
 	}
 }

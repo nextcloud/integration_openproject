@@ -59,6 +59,10 @@ npm-dev:
 phpstan:
 	composer run phpstan
 
+.PHONY: psalm
+psalm:
+	vendor/bin/psalm
+
 .PHONY: phpunit
 phpunit:
 	vendor/phpunit/phpunit/phpunit

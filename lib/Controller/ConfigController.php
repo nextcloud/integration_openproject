@@ -35,6 +35,7 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
@@ -489,7 +490,8 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * @return array{error?: string, user_name?: string, statusCode?: int}
+	 * @return array<mixed>
+	 * @throws PreConditionNotMetException
 	 */
 	private function storeUserInfo(): array {
 		$info = $this->openprojectAPIService->request($this->userId, 'users/me');

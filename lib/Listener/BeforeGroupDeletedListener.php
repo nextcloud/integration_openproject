@@ -34,6 +34,9 @@ use Psr\Log\LoggerInterface;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCA\OpenProject\AppInfo\Application;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class BeforeGroupDeletedListener implements IEventListener {
 
 	/**

@@ -516,6 +516,8 @@ class FeatureContext implements Context {
 	/**
 	 * @Then the following headers should be set
 	 *
+	 * @psalm-suppress TooManyTemplateParams
+	 *
 	 * taken from https://github.com/owncloud/core/blob/3d517563ddddc3e9f22c57e9fd15ba48210553c5/tests/acceptance/features/bootstrap/WebDav.php#L1668-L1708
 	 * @param TableNode<mixed> $table
 	 *
@@ -584,6 +586,9 @@ class FeatureContext implements Context {
 	/**
 	 * Verify that the tableNode contains expected headers
 	 * taken from https://github.com/owncloud/core/blob/8fa69f84526c7a5a6780b378eeaf9cabb7d46e56/tests/acceptance/features/bootstrap/FeatureContext.php#L3940-L3971
+	 *
+	 * @psalm-suppress TooManyTemplateParams
+	 *
 	 * @param TableNode<mixed> $table
 	 * @param array<mixed>|null $requiredHeader
 	 * @param array<mixed>|null $allowedHeader
@@ -941,6 +946,8 @@ class FeatureContext implements Context {
 
 	/**
 	 * Verify that the tableNode contains expected rows
+	 *
+	 * @psalm-suppress TooManyTemplateParams
 	 *
 	 * @param TableNode<mixed> $table
 	 * @param array<string> $requiredRows

@@ -75,8 +75,14 @@ jobs:
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP stan
-        run: make phpstan
+      - name: PHP code analysis
+        run: |
+          if [[ ${{ matrix.nextcloudVersion }} == "master" ]]
+          then
+            make psalm
+          else
+            make phpstan
+          fi
 
       - name: PHP code style
         run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
