@@ -66,6 +66,8 @@ class DirectUploadContext implements Context {
 	/**
 	 * @When /^an anonymous user sends a multipart form data POST request to the "([^"]*)" endpoint with:$/
 	 *
+	 * @psalm-suppress TooManyTemplateParams
+	 *
 	 * @param string $endpoint
 	 * @param TableNode<mixed> $formData
 	 * @return void
@@ -107,6 +109,8 @@ class DirectUploadContext implements Context {
 	/**
 	 * @Given /^an anonymous user has sent a multipart form data POST request to the "([^"]*)" endpoint with:$/
 	 *
+	 * @psalm-suppress TooManyTemplateParams
+	 *
 	 * @param string $endpoint
 	 * @param TableNode<mixed> $formData
 	 * @return void
@@ -138,6 +142,8 @@ class DirectUploadContext implements Context {
 
 	/**
 	 * @When /^an anonymous user sends an OPTIONS request to the "([^"]*)" endpoint with these headers:$/
+	 *
+	 * @psalm-suppress TooManyTemplateParams
 	 *
 	 * @param string $endpoint
 	 * @param TableNode<mixed> $headersTable

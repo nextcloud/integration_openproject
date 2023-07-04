@@ -8,7 +8,8 @@
 		"phpstan/phpstan-phpunit": "^1.0",
 		"phpstan/extension-installer": "^1.1",
 		"behat/behat": "^3.10",
-		"helmich/phpunit-json-assert": "^3.4"
+		"helmich/phpunit-json-assert": "^3.4",
+		"vimeo/psalm": "5.0.0"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",

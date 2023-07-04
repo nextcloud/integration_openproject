@@ -34,6 +34,9 @@ use OCP\User\Events\UserChangedEvent;
 use Psr\Log\LoggerInterface;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class UserChangedListener implements IEventListener {
 
 	/**
@@ -61,6 +64,7 @@ class UserChangedListener implements IEventListener {
 			$feature = $event->getFeature();
 			if ($feature === 'enabled' && !$event->getValue()) {
 				$this->logger->info('User openproject cannot be disabled');
+				$event->getUser()->setEnabled();
 				throw new OCSBadRequestException();
 			}
 		}

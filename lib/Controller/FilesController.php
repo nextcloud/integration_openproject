@@ -170,10 +170,10 @@ class FilesController extends OCSController {
 	}
 	/**
 	 * @param int $fileId
-	 * @return array{'status': string, 'statuscode': int, 'id'?: int, 'name'?:string,
-	 *               'mtime'?: int, 'ctime'?: int, 'mimetype'?: string, 'path'?: string,
-	 *               'size'?: int, 'owner_name'?: string, 'owner_id'?: string, 'trashed'?: bool,
-	 *               'modifier_name'?: string, 'modifier_id'?: string}
+	 * @return array<mixed>
+	 *
+	 *
+	 *
 	 */
 	private function compileFileInfo($fileId) {
 		$file = null;
@@ -281,7 +281,6 @@ class FilesController extends OCSController {
 			$this->richObjectValidator,
 			$this->logger
 		);
-
 		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$userSettings = new UserSettings($this->activityManager, $this->config);
 		if (!method_exists($activityData, 'get') ||

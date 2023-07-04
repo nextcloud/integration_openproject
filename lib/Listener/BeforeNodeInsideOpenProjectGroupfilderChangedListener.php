@@ -13,6 +13,9 @@ use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventListener {
 	/**
 	 * @var OpenProjectAPIService
