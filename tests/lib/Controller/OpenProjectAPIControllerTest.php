@@ -115,6 +115,32 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->getNotifications();
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testGetNotificationsBadOPInstanceUrl() {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls('http:openproject.org');
+		$this->getUserValueMock();
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
@@ -281,6 +307,31 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testGetSearchedWorkPackagesBadOPInstanceUrl(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls('http:openproject');
+		$this->getUserValueMock();
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->getSearchedWorkPackages('test');
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testGetSearchedWorkPackagesErrorResponse(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
@@ -353,7 +404,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
-		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
 	/**
@@ -380,6 +431,34 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageStatusBadOPInstanceUrl(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls('http:openproject');
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageStatus('7');
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -427,7 +506,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->getOpenProjectWorkPackageType('3');
-		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
 	/**
@@ -454,6 +533,34 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageTypeBadOPInstanceUrl(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls('http:openproject');
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->getOpenProjectWorkPackageType('3');
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
 	/**
@@ -511,7 +618,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->getWorkPackageFileLinks(7);
-		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
 	/**
@@ -607,7 +714,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->deleteFileLink(7);
-		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
 	/**
