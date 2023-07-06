@@ -272,7 +272,7 @@ export default {
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
 					this.state = STATE.NO_TOKEN
-				} else if (error.response && error.response.status === 404) {
+				} else if (error.response && (error.response.status === 404 || error.response.status === 503)) {
 					this.state = STATE.CONNECTION_ERROR
 				} else if (error.response && error.response.status === 500) {
 					this.state = STATE.ERROR
