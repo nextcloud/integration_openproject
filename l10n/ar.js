@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Error getting OAuth access token" : "حدث خطأ أثناء محاولة الحصول على أَمَارَة token للتصديق المفتوح OAuth",
     "Error during OAuth exchanges" : "خطأ أثناء تبادل OAuth.",
     "OpenProject work packages" : "حزم عمل أوبن بروجكت",
     "Bad HTTP method" : "دالة HTTP  غير صحيحة",
