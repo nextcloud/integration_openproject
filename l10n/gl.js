@@ -50,7 +50,7 @@ OC.L10N.register(
     "Setup OpenProject user, group and folder" : "Configurar o usuario, o grupo e o cartafol de OpenProject",
     "Administration > File storages" : "Administración > Almacenamento de ficheiros",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vaia ao seu OpenProject {htmlLink} como administrador, inicie a configuración e copie os valores aquí.",
-    "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiar os seguintes valores en OpenProject {htmlLink} como Administrador.",
+    "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiar os seguintes valores en OpenProject {htmlLink} como administrador.",
     "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Este valor só será accesíbel unha vez. Agora, como administrador, copie este contrasinal en OpenProject {htmlLink}.",
     "troubleshooting guide" : "guía de solución de problemas",
     "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Non foi posíbel axustar o usuario, o grupo e o cartafol do grupo de OpenProject. Consulte este {htmlLink} para saber como resolver esta situación.",
