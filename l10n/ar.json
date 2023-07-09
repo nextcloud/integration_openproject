@@ -45,6 +45,7 @@
     "Details" : "التفاصيل",
     "Start typing to search" : "اكتب هنا للبحث",
     "Mark as read" : "تمييز كمقروء",
+    "Unlink" : "فك الارتباط unlink",
     "OpenProject API error" : "خطأ واجهة برمجة التطبيقات أوبن بروجكت",
     "OpenProject settings" : "إعدادات أوبن بروجكت",
     "OAuth access token could not be obtained:" : "تعذر الحصول على الرمز المميز للوصول لتطبيق OAuth:",
