@@ -44,6 +44,7 @@ describe('FieldValue.vue', () => {
 						inspect: true,
 					})
 					await wrapper.find(selectors.inspectButton).trigger('click')
+					await localVue.nextTick()
 					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
 					await wrapper.find(selectors.inspectOffButton).trigger('click')
 					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
@@ -56,10 +57,12 @@ describe('FieldValue.vue', () => {
 					})
 					const inspect = wrapper.find(selectors.inspectButton)
 					await inspect.trigger('click')
-					expect(inspect).toMatchSnapshot()
+					await localVue.nextTick()
+					expect(wrapper.find(selectors.inspectOffButton)).toMatchSnapshot()
 					const inspectOff = wrapper.find(selectors.inspectOffButton)
 					await inspectOff.trigger('click')
-					expect(inspectOff).toMatchSnapshot()
+					await localVue.nextTick()
+					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
 
 				})
 			})
