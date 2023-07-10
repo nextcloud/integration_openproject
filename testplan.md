@@ -26,7 +26,7 @@
 #### Prerequisites
 
 - fresh NextCloud, without any previous history of having the app installed
-- install, but don't configure OpenProject integration app
+- install, but don't configure OpenProject Integration app
 
 ### Run tests as
 
@@ -46,8 +46,8 @@
 #### Prerequisites
 
 - NextCloud installed
-- OpenProject integration app installed
-- OpenProject integration app enabled
+- OpenProject Integration app installed
+- OpenProject Integration app enabled
 
 ### Run tests as
 
@@ -68,9 +68,9 @@
 #### Prerequisites
 
 - NextCloud installed
-- OpenProject integration app installed
-- OpenProject integration app enabled
-- OpenProject integration app configured as administrator
+- OpenProject Integration app installed
+- OpenProject Integration app enabled
+- OpenProject Integration app configured as administrator
 
 ### Run tests as
 1. normal user
@@ -93,9 +93,9 @@
 #### Prerequisites
 
 - NextCloud installed
-- OpenProject integration app installed
-- OpenProject integration app enabled
-- OpenProject integration app configured as administrator
+- OpenProject Integration app installed
+- OpenProject Integration app enabled
+- OpenProject Integration app configured as administrator
 - multiple NC users connected to OpenProject
 
 ### Run tests as
@@ -116,9 +116,9 @@
 ### Prerequisites
 
 - NextCloud installed
-- OpenProject integration app installed
-- OpenProject integration app enabled
-- OpenProject integration app configured as administrator
+- OpenProject Integration app installed
+- OpenProject Integration app enabled
+- OpenProject Integration app configured as administrator
 - multiple NC users connected to OpenProject
 
 ### Run tests as
@@ -154,7 +154,7 @@ variations: check different NC themes
 ### Prerequisites
 
 - notifications app installed and enabled https://github.com/nextcloud/notifications
-- enable notifications in "OpenProject integration" section of "Connected accounts"
+- enable notifications in "OpenProject Integration" section of "Connected accounts"
 
 #### Tests
 
@@ -170,7 +170,7 @@ variations: check different NC themes
 
 ### Prerequisites
 
-- enable unified search in "OpenProject integration" section of "Connected accounts"
+- enable unified search in "OpenProject Integration" section of "Connected accounts"
 
 | steps                                                      | expected outcome                             | result | comment |
 |------------------------------------------------------------|----------------------------------------------|--------|---------|
