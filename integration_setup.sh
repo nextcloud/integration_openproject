@@ -32,11 +32,17 @@ getErrorLogSettingOPOauthInfoToNextcloud() {
 	log_error "Setup of the integration failed :( !!"
 	# when there is error when saving OP oauth information in the nextcloud
 	# we can delete the storage created in openproject, otherwise it would need to be deleted manually when the script is ran the next time
-	curl -s -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+	delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
 										  ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
 										  -H 'accept: application/hal+json' \
 										  -H 'Content-Type: application/json' \
-										  -H 'X-Requested-With: XMLHttpRequest'
+										  -H 'X-Requested-With: XMLHttpRequest')
+	if [[ ${delete_storage_response} == 204 ]]
+    then
+    	log_info "File storage name \"${OPENPROJECT_STORAGE_NAME}\" has been deleted from OpenProject !!"
+    else
+    	log_info "Failed to delete file storage \"${OPENPROJECT_STORAGE_NAME}\" from OpenProject !!"
+    fi
 }
 
 # making sure that jq is installed
@@ -95,7 +101,7 @@ else
         setup_method=POST
 fi
 
-log_info "Creating file storage in OpenProject ..."
+log_info "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject ..."
 # api call to get openproject_client_id and openproject_client_secret
 create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                             ${OPENPROJECT_BASEURL_FOR_STORAGE} \
