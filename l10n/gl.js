@@ -82,7 +82,7 @@ OC.L10N.register(
     "Failed to create Nextcloud OAuth client" : "Produciuse un erro ao crear o cliente OAuth de Nextcloud",
     "Default user configuration saved" : "Gardouse a configuración predeterminada de usuario",
     "Failed to save default user configuration" : "Produciuse un erro ao gardar a configuración predeterminada de usuario",
-    "Connect to OpenProject" : "Conéctese a OpenProject",
+    "Connect to OpenProject" : "Conectar con OpenProject",
     "Administration Settings > OpenProject" : "Axustes de administración > OpenProject",
     "Some OpenProject integration application settings are not working. " : "Algúns axustes da aplicación de integración de OpenProject non funcionan.",
     "Some OpenProject integration application settings are not working." : "Algúns axustes da aplicación de integración de OpenProject non funcionan.",
