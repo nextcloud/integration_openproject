@@ -1155,6 +1155,7 @@ class OpenProjectAPIService {
 		$result['title'] = $this->getSubline($searchResult[0]);
 		$result['description'] = $this->getMainText($searchResult[0]);
 		$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
+		$result['entry'] = $searchResult[0];
 		return $result;
 	}
 

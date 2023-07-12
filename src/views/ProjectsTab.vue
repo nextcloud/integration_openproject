@@ -252,7 +252,7 @@ export default {
 							// and came back to a file that was selected before and so work-packages are already
 							// in the list. In that case don't even try to fetch all the additional meta data
 							if (!this.workpackageAlreadyInList(workPackage)) {
-								workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+								workPackage = await workpackageHelper.getAdditionalMetaData(workPackage, true)
 								// check again, the WP might have been added by an outstanding request
 								// from another file or the file might have changed while fetching metadata
 								if (

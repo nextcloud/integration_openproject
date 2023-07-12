@@ -27,7 +27,7 @@ export const workpackageHelper = {
 			? href.replace(/.*\//, '')
 			: null
 	},
-	async getAdditionalMetaData(workPackage) {
+	async getAdditionalMetaData(workPackage, linkableWorkpackage = false) {
 		if (typeof workPackage._links.status.href !== 'string'
 			|| workPackage._links.status.href === ''
 			|| typeof workPackage._links.type.href !== 'string'
@@ -41,11 +41,14 @@ export const workpackageHelper = {
 			|| workPackage._links.status.title === ''
 			|| typeof workPackage._links.type.title !== 'string'
 			|| workPackage._links.type.title === ''
-			|| typeof workPackage.fileId !== 'number'
-			|| workPackage.fileId <= 0
 		) {
 			throw new Error('missing data in workpackage object')
 		}
+
+		if (linkableWorkpackage && typeof workPackage.fileId !== 'number' && workPackage.fileId <= 0) {
+			throw new Error('missing data in workpackage object')
+		}
+
 		const statusId = this.replaceHrefToGetId(workPackage._links.status.href)
 		const typeId = this.replaceHrefToGetId(workPackage._links.type.href)
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)

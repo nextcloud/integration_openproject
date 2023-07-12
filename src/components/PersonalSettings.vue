@@ -72,11 +72,6 @@ export default {
 		},
 	},
 	watch: {
-		'state.notification_enabled'(newVal) {
-			this.saveOptions({
-				notification_enabled: newVal ? '1' : '0',
-			})
-		},
 		'state.search_enabled'(newVal) {
 			this.saveOptions({
 				search_enabled: newVal ? '1' : '0',

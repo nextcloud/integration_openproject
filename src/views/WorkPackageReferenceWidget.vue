@@ -31,9 +31,9 @@
 				{{ t('integration_openproject', 'OpenProject settings') }}
 			</a>
 		</div>
-		<div v-else class="work-package-wrapper">
-			{{ richObject.title }}
-		</div>
+		<WorkPackage :id="'workpackage-'+ richObject.id"
+			class="work-package-reference__link-preview"
+			:workpackage="workpackage" />
 	</div>
 </template>
 
@@ -41,6 +41,8 @@
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import { generateUrl } from '@nextcloud/router'
+import WorkPackage from '../components/tab/WorkPackage.vue'
+import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
 	name: 'WorkPackageReferenceWidget',
@@ -48,6 +50,7 @@ export default {
 	components: {
 		OpenInNewIcon,
 		CloseIcon,
+		WorkPackage,
 	},
 
 	props: {
@@ -68,6 +71,7 @@ export default {
 	data() {
 		return {
 			settingsUrl: generateUrl('/settings/user/openproject'),
+			workpackage: null,
 		}
 	},
 
@@ -77,7 +81,14 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.processWorkpackages()
+	},
+
 	methods: {
+		async processWorkpackages() {
+			this.workpackage = await workpackageHelper.getAdditionalMetaData(this.richObject)
+		},
 	},
 }
 </script>
@@ -86,7 +97,9 @@ export default {
 .work-package-reference {
 	width: 100%;
 	white-space: normal;
-	padding: 12px;
+	&__link-preview {
+		border-bottom: none;
+	}
 
 	a {
 		padding: 0 !important;
@@ -102,13 +115,6 @@ export default {
 		.icon {
 			margin-right: 8px;
 		}
-	}
-
-	.work-package-wrapper {
-		width: 100%;
-		display: flex;
-		align-items: start;
-
 	}
 
 	.settings-link {
