@@ -527,6 +527,8 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * @NoCSRFRequired
+	 *
 	 * check if the project folder set up is already setup or not
 	 *
 	 * @return DataResponse

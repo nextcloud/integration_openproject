@@ -597,20 +597,21 @@ class ConfigController extends Controller {
 			OpenProjectAPIService::validateIntegrationSetupInformation($values, false);
 			$status = $this->setIntegrationConfig($values);
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			$result = [];
+			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
+				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			}
+			if ($status['oPUserAppPassword'] !== null) {
+				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
+			}
 			if ($oauthClientInternalId !== '') {
 				$id = (int)$oauthClientInternalId;
-				$result = $this->oauthService->getClientInfo($id);
-				if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-					$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
-				}
-				if ($status['oPUserAppPassword'] !== null) {
-					$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
-				}
-				return new DataResponse($result);
+				$result = array_merge($this->oauthService->getClientInfo($id), $result);
+			} else {
+				// we will recreate new oauth when admin has reset it
+				$result = array_merge($this->recreateOauthClientInformation(), $result);
 			}
-			return new DataResponse([
-				"error" => 'could not find nextcloud oauth client for openproject'
-			], Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
