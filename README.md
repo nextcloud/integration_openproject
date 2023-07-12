@@ -23,7 +23,7 @@ Please report issues and bugs here: https://community.openproject.org/projects/n
 
 ## Setting up the integration as an administrator with API
 
-***Note: Setting up the integration can only be done by admin user but not a normal user***
+> Note: Setting up the integration can only be done by admin user but not a normal user
 
 We have a single API endpoint (/setup) available to set up, update and reset the integration.
 
@@ -34,18 +34,24 @@ To set up or update the integration following data needs to be provided:
 - default_enable_navigation
 - default_enable_unified_search
 - setup_project_folder
+- setup_app_password
 
-> Note: If the `setup_project_folder` key is set to true a new user, group and group folder named `OpenProject` will be created in case the system already doesn't have one or more of these present 
+> Note:
+> - We can set up the integration with or without `project folders`
+> - To set up the integration without `project folders` we need to set data `setup_project_folder=false` and `setup_app_password=false`
+> - To set up the integration with `project folders` we need to set data `setup_project_folder=true` and `setup_app_password=true`, this will create a new user, group, and group folder named OpenProject if the system doesn't already have one or more of these present. Also, an application password will be provided for the user `OpenProject`
+> - Once the `project folder` has already been set up, the created `OpenProject` user and group cannot be disabled or removed.
+> - If there is any error related to `OpenProject` user, group, group folders when setting up the whole integration or if the admin user wants to remove those entities then this [troubleshooting guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) can be followed up on how to resolve it. 
 
 
 1. **Set up the whole integration with a [POST] request**
 
    We must provide all of the above data for this request.
 
-   Example curl request to set up whole integration
+   Example curl request to set up whole integration with `project folders`
    ```bash
    curl -XPOST -u<nextcloud_admin_username>:<nextcloud_admin_password>  http://<nextcloud_host>/index.php/apps/integration_openproject/setup \
-   -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false,"setup_project_folder":false}}' \
+   -d '{"values":{"openproject_instance_url":"<openproject_instance_url>","openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>","default_enable_navigation":false,"default_enable_unified_search":false,"setup_project_folder":true, "setup_app_password":true}}' \
    -H 'Content-Type: application/json' -v
    ```
 
@@ -56,6 +62,7 @@ To set up or update the integration following data needs to be provided:
        "openproject_redirect_uri": "http://<openproject_instance_url>/oauth_clients/<nextcloud_client_id>/callback",
        "nextcloud_client_id": "<nextcloud_client_id>",
        "nextcloud_client_secret": "<nextcloud_client_secret>",
+       "openproject_user_app_password": "<openproject_user_app_password>",
        "openproject_revocation_status": "<openproject_revocation_status>"
    }
    ```
@@ -71,7 +78,7 @@ To set up or update the integration following data needs to be provided:
    -d '{"values":{"openproject_client_id":"<openproject_client_id>","openproject_client_secret":"<openproject_client_secret>"}}' \
    -H 'Content-Type: application/json' -v
    ```
-
+   
    The response from the above curl request
    ```json
    {
@@ -82,6 +89,8 @@ To set up or update the integration following data needs to be provided:
        "openproject_revocation_status": "<openproject_revocation_status>"
    }
    ```
+   > Note: If the integration is done with `project folders` then we can update/change the old `OpenProject` user's application password by setting `set_app_password=true`.
+   > Then we get new application password as `"openproject_user_app_password: <openproject_user_app_password>"` in the above JSON response.
 
 3. **Resetting the whole integration with a [DELETE] request**
 
@@ -97,7 +106,7 @@ To set up or update the integration following data needs to be provided:
        "openproject_revocation_status": "<openproject_revocation_status>"
    }
    ```
-***Note: In the response `openproject_revocation_status` is included only after a successful connection***
+> Note: In the response `openproject_revocation_status` is included only after a successful connection
 
 ## Setting up the integration with shell script
 
@@ -112,9 +121,15 @@ Prerequisites needed for using the shell script.
 
 Once all the above pre-conditions are met we can run the shell script to integrate with the following command.
 
-The following bash command has an environment variable `OPENPROJECT_STORAGE_NAME` which will be the storage name to store the oauth information in open project required for integration.
+> Note:
+> - We can set the whole integration with or without `project folders` using this script with an environment variable `SETUP_PROJECT_FOLDER`
+> - `SETUP_PROJECT_FOLDER=true` will set the integration with `project folders` and vice-versa
 
+Also, the following bash command has an environment variable `OPENPROJECT_STORAGE_NAME` which will be the storage name to store the oauth information in Open Project required for integration.
+
+Below is an example of a command to run the script to set up the integration with `project folders`
 ```bash
+SETUP_PROJECT_FOLDER=true \
 NEXTCLOUD_HOST=<nextcloud_host_url> \                      
 OPENPROJECT_HOST=<openproject_host_url> \
 OP_ADMIN_USERNAME=<openproject_global_admin_uername> OP_ADMIN_PASSWORD=<openproject_global_admin_password> \
@@ -123,7 +138,7 @@ OPENPROJECT_STORAGE_NAME=<files_storage_name> \
 bash integration_setup.sh
 ```
 
-***Note: these credentials are only used by the script to do the setup. They are not stored/remembered.***
+> Note: these credentials are only used by the script to do the setup. They are not stored/remembered.
 
 ## Direct upload
 There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload. First we need to get the `token`. Then use the token in the direct upload request.
