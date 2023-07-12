@@ -1257,9 +1257,6 @@ describe('AdminSettings.vue', () => {
 				})
 
 				it('should show button label to "Setup OpenProject user, group and folder" when switch is "On"', async () => {
-					await wrapper.setData({
-						oPUserAppPassword: false,
-					})
 					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
 					await projectFolderSetupSwitchButton.trigger('click')
 					await wrapper.vm.$nextTick()
