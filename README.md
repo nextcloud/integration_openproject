@@ -231,7 +231,7 @@ Requirements:
   For more information
   see: [OpenProject documentation](https://www.openproject.org/docs/development/development-environment-ubuntu/)
 
-- OpenProject integration app
+- OpenProject Integration app
 
 ### Setup
 

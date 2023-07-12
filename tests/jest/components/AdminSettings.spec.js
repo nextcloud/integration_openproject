@@ -1508,7 +1508,7 @@ describe('AdminSettings.vue', () => {
 					confirmClasses: 'error',
 					type: 70,
 				}
-				const expectedConfirmTitle = 'Reset OpenProject integration'
+				const expectedConfirmTitle = 'Reset OpenProject Integration'
 
 				expect(confirmSpy).toBeCalledTimes(1)
 				expect(confirmSpy).toBeCalledWith(

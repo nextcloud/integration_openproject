@@ -47,11 +47,11 @@ export default {
 				const linkText = t('integration_openproject', 'Administration Settings > OpenProject')
 				const url = generateUrl('/settings/admin/openproject')
 				const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
-				const hintText = t('integration_openproject', 'Some OpenProject integration application settings are not working. '
-				+ 'Configure the OpenProject integration in: {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
+				const hintText = t('integration_openproject', 'Some OpenProject Integration application settings are not working. '
+				+ 'Configure the OpenProject Integration in: {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 				return dompurify.sanitize(hintText, { ADD_ATTR: ['target'] })
 			}
-			return t('integration_openproject', 'Some OpenProject integration application settings are not working.'
+			return t('integration_openproject', 'Some OpenProject Integration application settings are not working.'
 				+ ' Please contact your Nextcloud administrator.')
 		},
 	},

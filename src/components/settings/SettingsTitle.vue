@@ -12,7 +12,7 @@ export default {
 	name: 'SettingsTitle',
 	computed: {
 		title() {
-			return t('integration_openproject', 'OpenProject integration')
+			return t('integration_openproject', 'OpenProject Integration')
 		},
 	},
 }

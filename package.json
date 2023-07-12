@@ -1,7 +1,7 @@
 {
 	"name": "integration_openproject",
 	"version": "0.0.1",
-	"description": "OpenProject integration",
+	"description": "OpenProject Integration",
 	"main": "index.js",
 	"directories": {
 		"test": "tests"

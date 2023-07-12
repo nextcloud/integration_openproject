@@ -735,7 +735,7 @@ export default {
 		resetAllAppValuesConfirmation() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
-				t('integration_openproject', 'Reset OpenProject integration'),
+				t('integration_openproject', 'Reset OpenProject Integration'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
 					confirm: t('integration_openproject', 'Yes, reset'),
