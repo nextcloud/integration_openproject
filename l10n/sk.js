@@ -44,7 +44,6 @@ OC.L10N.register(
     "Copied!" : "Skopírované!",
     "Copy value" : "Kopírovať hodnotu",
     "Details" : "Podrobnosti",
-    "OpenProject integration" : "OpenProject integrácia",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
     "Unexpected Error" : "Neočakávaná chyba",
@@ -62,6 +61,7 @@ OC.L10N.register(
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Máte %s oznámenie v {instance}","Máte %s oznámenia v {instance}","Máte %s oznámení v {instance}","Máte %s oznámenia v {instance}"],
     "Connected accounts" : "Prepojené účty",
     "Enable notifications for activity in my work packages" : "Povoliť upozornenia na aktivitu v mojich pracovných balíkoch",
+    "OpenProject integration" : "OpenProject integrácia",
     "Invalid key" : "Neplatný kľúč"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
