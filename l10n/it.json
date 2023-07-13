@@ -15,7 +15,6 @@
     "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Connect to OpenProject" : "Collegati a OpenProject",
-    "Some OpenProject integration application settings are not working." : "Alcune impostazioni dell'applicazione di integrazione OpenProject non funzionano.",
     "Connected as {user}" : "Connesso come {user}",
     "Disconnect from OpenProject" : "Disconnetti da OpenProject",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Attenzione, tutto ciò che digiti nella barra di ricerca sarà inviato alla tua istanza di OpenProject.",
@@ -26,7 +25,6 @@
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
     "Copied!" : "Copiato!",
     "Details" : "Dettagli",
-    "OpenProject integration" : "Integrazione OpenProject",
     "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
     "Could not fetch work packages from OpenProject" : "Impossibile recuperare i pacchetti di lavoro da OpenProject",
@@ -45,6 +43,8 @@
     "OpenProject notifications" : "Notifiche OpenProject ",
     "OpenProject activity" : "Attività OpenProject",
     "Connected accounts" : "Account connessi",
-    "Enable notifications for activity in my work packages" : "Abilita le notifiche per l'attività nei miei pacchetti di lavoro"
+    "Some OpenProject integration application settings are not working." : "Alcune impostazioni dell'applicazione di integrazione OpenProject non funzionano.",
+    "Enable notifications for activity in my work packages" : "Abilita le notifiche per l'attività nei miei pacchetti di lavoro",
+    "OpenProject integration" : "Integrazione OpenProject"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
