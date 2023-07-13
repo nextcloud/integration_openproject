@@ -30,7 +30,6 @@
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Si continueu, haureu d'actualitzar aquesta configuració amb les noves credencials d'OAuth de l'OpenProject. A més, tots els usuaris hauran de tornar a autoritzar l'accés al seu compte d'OpenProject.",
     "Yes, replace" : "Sí, substituir",
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Esteu segur que voleu restablir aquesta aplicació i suprimir tota la configuració i totes les connexions de tots els usuaris de Nextcloud a OpenProject?",
-    "Reset OpenProject integration" : "Restableix la integració d'OpenProject",
     "Yes, reset" : "Sí, reinicia",
     "Please introduce a valid OpenProject host name" : "Introduïu un nom d'amfitrió d'OpenProject vàlid",
     "Documentation" : "Documentació",
@@ -39,7 +38,6 @@
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Si continueu, haureu d'actualitzar la configuració del vostre OpenProject amb les noves credencials d'OAuth de Nextcloud. A més, tots els usuaris d'OpenProject hauran de tornar a autoritzar l'accés al seu compte Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "No s'ha pogut crear el client OAuth de Nextcloud",
     "Connect to OpenProject" : "Connecteu-vos a OpenProject",
-    "Some OpenProject integration application settings are not working." : "Alguns paràmetres de l'aplicació d'integració de l'OpenProject no funcionen.",
     "Failed to redirect to OpenProject" : "No s'ha pogut redirigir a OpenProject",
     "Connected as {user}" : "S'ha connectat com a {user}",
     "Disconnect from OpenProject" : "Desconnecteu-vos de l'OpenProject",
@@ -53,7 +51,6 @@
     "Copy value" : "Copia el valor",
     "Copied to the clipboard" : "S'ha copiat al porta-retalls",
     "Details" : "Detalls",
-    "OpenProject integration" : "Integració OpenProject",
     "No connection with OpenProject" : "No hi ha connexió amb OpenProject",
     "Error connecting to OpenProject" : "Error en connectar-se a OpenProject",
     "Could not fetch work packages from OpenProject" : "No s'han pogut recuperar els paquets de treball d'OpenProject",
@@ -81,8 +78,11 @@
     "OpenProject activity" : "Activitat OpenProject",
     "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
     "Connected accounts" : "Comptes connectats",
+    "Reset OpenProject integration" : "Restableix la integració d'OpenProject",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "L'URL d'OpenProject no és vàlid. Proporcioneu un URL amb la forma \"https://openproject.org\"",
     "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL",
-    "Enable notifications for activity in my work packages" : "Activa les notificacions d'activitat als meus paquets de treball"
+    "Some OpenProject integration application settings are not working." : "Alguns paràmetres de l'aplicació d'integració de l'OpenProject no funcionen.",
+    "Enable notifications for activity in my work packages" : "Activa les notificacions d'activitat als meus paquets de treball",
+    "OpenProject integration" : "Integració OpenProject"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

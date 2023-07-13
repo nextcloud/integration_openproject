@@ -29,7 +29,6 @@ OC.L10N.register(
     "Invalid token" : "Ongeldig token",
     "Copied!" : "Gekopieerd!",
     "Details" : "Details",
-    "OpenProject integration" : "OpenProject integratie",
     "Unexpected Error" : "Onverwachte fout",
     "Start typing to search" : "Begin met typen om te zoeken",
     "Mark as read" : "Markeren als gelezen",
@@ -37,6 +36,7 @@ OC.L10N.register(
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "OpenProject notifications" : "OpenProject meldingen",
     "OpenProject activity" : "OpenProject activiteit",
-    "Connected accounts" : "Verbonden accounts"
+    "Connected accounts" : "Verbonden accounts",
+    "OpenProject integration" : "OpenProject integratie"
 },
 "nplurals=2; plural=(n != 1);");
