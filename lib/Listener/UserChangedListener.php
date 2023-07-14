@@ -63,9 +63,12 @@ class UserChangedListener implements IEventListener {
 		if ($event->getUser()->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 			$feature = $event->getFeature();
 			if ($feature === 'enabled' && !$event->getValue()) {
-				$this->logger->info('User openproject cannot be disabled');
+				$this->logger->error('User "OpenProject" is needed to be protected by the app "OpenProject Integration", thus cannot be disabled. Please check the documentation "https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" for further information.');
 				$event->getUser()->setEnabled();
-				throw new OCSBadRequestException();
+				throw new OCSBadRequestException('<p>&nbsp;User "OpenProject" is needed to be protected by the
+				app "OpenProject Integration", thus cannot be disabled.
+				Please check the <a style="color:var(--color-primary-default)" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting"
+				target="_blank"><u>troubleshooting guide</u></a> for further information.</p>');
 			}
 		}
 	}

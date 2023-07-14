@@ -57,8 +57,10 @@ class BeforeUserDeletedListener implements IEventListener {
 		}
 		$user = $event->getUser();
 		if ($user->getUID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-			$this->logger->info('User openproject cannot be deleted');
-			throw new OCSBadRequestException();
+			$this->logger->error('User "OpenProject" is needed to be protected by the app "OpenProject Integration", thus cannot be deleted. Please check the documentation "https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" for further information.');
+			throw new OCSBadRequestException('<p>&nbsp;User "OpenProject" is needed to be protected by the app "OpenProject Integration", thus cannot be deleted.
+			Please check the <a style="color:var(--color-primary-default)" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting"
+			target="_blank"><u>troubleshooting guide</u></a> for further information.</p>');
 		}
 	}
 }
