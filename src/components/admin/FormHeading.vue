@@ -130,6 +130,12 @@ export default {
 	}
 }
 
+body[data-themes*='dark'] {
+	.index {
+		color: #000000;
+	}
+}
+
 .form-heading.disabled {
 	.index {
 		background: #CCCCCC !important;
