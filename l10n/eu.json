@@ -84,6 +84,8 @@
     "Unlink" : "Deskonektatu",
     "Work package unlinked" : "Deskonektatu da lan paketea",
     "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea",
+    "OpenProject API error" : "OpenProject API errorea",
+    "OpenProject settings" : "OpenProject ezarpenak",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
     "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
     "OpenProject notifications" : "OpenProject jakinarazpenak",
