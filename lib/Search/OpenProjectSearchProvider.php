@@ -111,12 +111,21 @@ class OpenProjectSearchProvider implements IProvider {
 		$openprojectUrl = OpenProjectAPIService::sanitizeUrl($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 
-		$searchEnabled = $this->config->getUserValue(
-			$user->getUID(),
-			Application::APP_ID, 'search_enabled',
-			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
-		if ($accessToken === '' || !$searchEnabled) {
+		if ($accessToken === '') {
 			return SearchResult::paginated($this->getName(), [], 0);
+		}
+
+		$routeFrom = $query->getRoute();
+		$requestedFromSmartPicker = $routeFrom === '' || $routeFrom === 'smart-picker';
+
+		if (!$requestedFromSmartPicker) {
+			$searchEnabled = $this->config->getUserValue(
+					$user->getUID(),
+					Application::APP_ID, 'search_enabled',
+					$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
+			if (!$searchEnabled) {
+				return SearchResult::paginated($this->getName(), [], 0);
+			}
 		}
 
 		$searchResults = $this->service->searchWorkPackage($user->getUID(), $term, null, false);
