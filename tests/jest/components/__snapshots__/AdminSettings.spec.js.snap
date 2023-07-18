@@ -2,7 +2,7 @@
 
 exports[`AdminSettings.vue Managed project folder form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
 <div class="project-folder-setup">
-  <formheading-stub index="4" title="Managed project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
+  <formheading-stub index="4" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
   <div>
     <div class="project-folder-status">
       <div class="project-folder-status-value"><b>Automatic managed folders:</b> Inactive
@@ -10,7 +10,7 @@ exports[`AdminSettings.vue Managed project folder form (Project Folder Setup) vi
       <!---->
       <div class="form-actions">
         <ncbutton-stub type="secondary" nativetype="button" data-test-id="edit-project-folder-setup">
-          Edit managed project folders
+          Edit project folders
         </ncbutton-stub>
       </div>
     </div>

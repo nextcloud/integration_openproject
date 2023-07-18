@@ -793,7 +793,7 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Managed project folder form (Project Folder Setup)', () => {
+	describe('Project folders form (Project Folder Setup)', () => {
 		describe('view mode', () => {
 			describe('without project folder setup', () => {
 				it('should show status as "Inactive"', () => {
@@ -885,7 +885,7 @@ describe('AdminSettings.vue', () => {
 					await projectFolderSetupSwitchButton.trigger('click')
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(false)
 					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
+					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
 				})
 
 				describe('on trigger "Complete without group folder setup"', () => {
@@ -929,7 +929,7 @@ describe('AdminSettings.vue', () => {
 						await projectFolderSetupSwitchButton.trigger('click')
 						await wrapper.vm.$nextTick()
 						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
 						await completeWithoutProjectFolderSetupButton.trigger('click')
 						await wrapper.vm.$nextTick()
 						expect(saveOPOptionsSpy).toBeCalledWith(
@@ -1320,7 +1320,7 @@ describe('AdminSettings.vue', () => {
 						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
 						await projectFolderSetupSwitchButton.trigger('click')
 						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folder')
+						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
 					})
 
 					it('should set switch as "on" again (same as fresh set up) when completely reset', async () => {
