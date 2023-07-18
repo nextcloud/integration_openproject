@@ -1,23 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Managed project folder form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
-<div class="project-folder-setup">
-  <formheading-stub index="4" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
-  <div>
-    <div class="project-folder-status">
-      <div class="project-folder-status-value"><b>Automatic managed folders:</b> Inactive
-      </div>
-      <!---->
-      <div class="form-actions">
-        <ncbutton-stub type="secondary" nativetype="button" data-test-id="edit-project-folder-setup">
-          Edit project folders
-        </ncbutton-stub>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="nextcloud-oauth-values">
   <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
@@ -112,6 +94,24 @@ exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed
       <!---->
     </div>
     <div class="form-actions"><button data-v-6398caea="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span><span data-v-6398caea="" class="button-vue__text">Replace OpenProject OAuth values</span></span></button></div>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue Project folders form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
+<div class="project-folder-setup">
+  <formheading-stub index="4" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
+  <div>
+    <div class="project-folder-status">
+      <div class="project-folder-status-value"><b>Automatic managed folders:</b> Inactive
+      </div>
+      <!---->
+      <div class="form-actions">
+        <ncbutton-stub type="secondary" nativetype="button" data-test-id="edit-project-folder-setup">
+          Edit project folders
+        </ncbutton-stub>
+      </div>
+    </div>
   </div>
 </div>
 `;
