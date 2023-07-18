@@ -80,20 +80,6 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 	 * @inheritDoc
 	 */
 	public function getSupportedSearchProviderIds(): array {
-		if ($this->userId !== null) {
-			$ids = [];
-			// take the fallback value from the defaults
-			$searchEnabled = $this->config->getUserValue(
-				$this->userId,
-				Application::APP_ID,
-				'search_enabled',
-				$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')
-			);
-			if ($searchEnabled) {
-				$ids[] = 'openproject-search';
-			}
-			return $ids;
-		}
 		return ['openproject-search'];
 	}
 
