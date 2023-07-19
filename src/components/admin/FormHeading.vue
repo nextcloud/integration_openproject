@@ -2,7 +2,7 @@
 	<div class="form-heading"
 		:class="{'disabled': isDisabled}">
 		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
-			<MinusThickIcon fill-color="#FFFFFF" :size="12" />
+			<MinusThickIcon :fill-color="isDarkTheme ? '#000000' : '#FFFFFF'" :size="12" />
 		</div>
 		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-status">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
@@ -60,6 +60,10 @@ export default {
 			default: false,
 		},
 		isThereErrorAfterProjectFolderAndAppPasswordSetup: {
+			type: Boolean,
+			default: false,
+		},
+		isDarkTheme: {
 			type: Boolean,
 			default: false,
 		},

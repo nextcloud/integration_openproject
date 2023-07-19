@@ -168,7 +168,8 @@
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
 				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
 				:is-complete="isProjectFolderSetupCompleted"
-				:is-disabled="isProjectFolderSetUpInDisableMode" />
+				:is-disabled="isProjectFolderSetUpInDisableMode"
+				:is-dark-theme="isDarkTheme" />
 			<div v-if="showDefaultManagedProjectFolders">
 				<div v-if="isProjectFolderSetupFormInEdit">
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="isProjectFolderSwitchEnabled" @update:checked="changeProjectFolderSetUpState">
@@ -526,6 +527,10 @@ export default {
 		},
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
+		},
+		isDarkTheme() {
+			return !!document.querySelector("body[data-themes*='dark']")
+
 		},
 	},
 	created() {
