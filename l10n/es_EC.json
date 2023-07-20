@@ -5,13 +5,20 @@
     "OAuth access token refused" : "Se rechazó el token de acceso de OAuth",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Active" : "Activo",
     "Reset" : "Restablecer",
+    "Enable navigation link" : "Habilitar enlace de navegación",
+    "Enable unified search for tickets" : "Habilitar búsqueda unificada para tickets",
     "Documentation" : "Documentación",
+    "Connected as {user}" : "Conectado como {usuario}",
+    "Incorrect access token" : "Token de acceso incorrecto",
     "Invalid token" : "Token inválido",
     "Copied!" : "¡Copiado!",
     "Details" : "Detalles",
     "Start typing to search" : "Empieza a escribir para buscar",
     "Mark as read" : "Marcar como leído",
-    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:"
+    "Unlink" : "Desvincular",
+    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:",
+    "Connected accounts" : "Cuentas conectadas"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
