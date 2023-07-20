@@ -164,7 +164,7 @@
 		<div class="project-folder-setup">
 			<FormHeading index="4"
 				:is-project-folder-setup-heading="true"
-				:title="t('integration_openproject', 'Managed project folders (recommended)')"
+				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
 				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
 				:is-complete="isProjectFolderSetupCompleted"
@@ -177,7 +177,7 @@
 					<div v-if="isProjectFolderSwitchEnabled === false" class="complete-without-groupfolders">
 						<p class="project-folder-description">
 							{{
-								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate in case you want to use the automatic creation and management of project folders.')
+								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.')
 							}}
 						</p>
 						<div class="form-actions">
@@ -252,7 +252,7 @@
 							<template #icon>
 								<PencilIcon :size="20" />
 							</template>
-							{{ t('integration_openproject', 'Edit managed project folders') }}
+							{{ t('integration_openproject', 'Edit project folders') }}
 						</NcButton>
 					</div>
 				</div>
@@ -382,7 +382,7 @@ export default {
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
-				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folder'),
+				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
 				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
 			},
 			loadingServerHostForm: false,
