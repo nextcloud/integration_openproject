@@ -6,42 +6,31 @@
 		:loading="isLoading"
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
-			<NcEmptyContent v-if="emptyContentMessage"
-				:description="!!isAdminConfigOk ? emptyContentMessage : undefined">
-				<template #icon>
-					<CheckBoldIcon v-if="isStateOk" :size="70" />
-					<LinkOffIcon v-else :size="70" />
-				</template>
-				<template #action>
-					<div v-if="showOauthConnect" class="connect-button">
-						<OAuthConnectButton :is-admin-config-ok="isAdminConfigOk" />
-					</div>
-				</template>
-			</NcEmptyContent>
+			<EmptyContent v-if="emptyContentMessage"
+				id="openproject-empty-content"
+				:state="state"
+				:dashboard="true"
+				:is-admin-config-ok="isAdminConfigOk" />
 		</template>
 	</NcDashboardWidget>
 </template>
 
 <script>
 import axios from '@nextcloud/axios'
-import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
-import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import { generateUrl } from '@nextcloud/router'
 import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import { loadState } from '@nextcloud/initial-state'
-import OAuthConnectButton from '../components/OAuthConnectButton.vue'
 import { checkOauthConnectionResult, STATE } from '../utils.js'
 import { translate as t } from '@nextcloud/l10n'
+import EmptyContent from '../components/tab/EmptyContent.vue'
 
 export default {
 	name: 'Dashboard',
 
 	components: {
-		NcDashboardWidget, NcEmptyContent, OAuthConnectButton, CheckBoldIcon, LinkOffIcon,
+		EmptyContent, NcDashboardWidget,
 	},
-
 	props: {
 		title: {
 			type: String,
