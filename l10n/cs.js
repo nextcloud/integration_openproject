@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "OAuth klient pro Nextcloud",
     "Yes, I have copied these values" : "Ano, tyto hodnoty jsem si zkopíroval(a)",
     "Replace Nextcloud OAuth values" : "Nahradit OAuth hodnoty pro Nextcloud",
+    "Project folders (recommended)" : "Složky projektů (doporučeno)",
     "Automatically managed folders" : "Automaticky spravované složky",
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Nechte OpenProject vytvářet složky pro projekty automaticky. Zajistí to, že každý člen týmu vždy bude mít správná přístupová oprávnění.",
     "OpenProject user, group and folder" : "Uživatel, skupina a složka OpenProject",
