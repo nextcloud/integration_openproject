@@ -383,12 +383,12 @@ e.g:
 ```yaml
 services:
   nextcloud:
-    image: nextcloud:23-apache
+    image: nextcloud:24-apache
     ports:
       - "8080:80"
 
   cron:
-    image: nextcloud:23-apache
+    image: nextcloud:24-apache
 ```
 
 Please note:
