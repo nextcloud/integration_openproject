@@ -27,8 +27,8 @@ log_success() {
 	echo -e "\e[32m$1\e[0m"
 }
 
-# whenever something goes wrong or error occurs during the setup of whole integration
-# we can delete the storage created in openproject, otherwise it would need to be deleted manually when the script is ran the next time
+# if something goes wrong or an error occurs during the setup of the whole integration
+# we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
 deleteOPStorageAndPrintErrorResponse() {
 	echo  "$1" | jq
 	log_error "Setup of the integration failed :( !!"
@@ -88,7 +88,7 @@ then
 								-H 'Content-Type: application/json' \
 								-H 'X-Requested-With: XMLHttpRequest')
 	isProjectFolderAlreadySetup=$(echo $project_folder_setup_response | jq -e ".result")
-	if [ "$isProjectFolderAlreadySetup" == "true" ]; then
+	if [[ "$isProjectFolderAlreadySetup" == "true" ]]; then
 		setup_project_folder=false
         setup_app_password=true
         setup_method=PATCH
@@ -211,16 +211,16 @@ set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_
 
 # if there is no error from the last api call then the integration can be declared successful
 response_type=$(echo $set_nextcloud_to_storage_response | jq -r "._type")
-if [ ${nextcloud_client_id} == "Error" ]; then
+if [[ ${nextcloud_client_id} == "Error" ]]; then
 	deleteOPStorageAndPrintErrorResponse "$set_nextcloud_to_storage_response"
 	exit 1
 fi
 
 log_info "success!"
 
-if [ ${SETUP_PROJECT_FOLDER} == true ]; then
-	# save the application password to Open Project
-    log_info "Saving 'OpenProject' user application password to Open Project...."
+if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
+# save the application password to OpenProject
+    log_info "Saving 'OpenProject' user application password to OpenProject...."
     save_app_password_response=$(curl -s -X PATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                                       ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
                                       -H 'accept: application/hal+json' \
@@ -231,7 +231,7 @@ if [ ${SETUP_PROJECT_FOLDER} == true ]; then
                                       }')
     app_password_response_type=$(echo $save_app_password_response | jq -r "._type")
     has_application_password=$(echo $save_app_password_response | jq -r ".hasApplicationPassword")
-    if [[ ${app_password_respose_type} == "Error" ]] || [[ ${has_application_password} == null ]]; then
+    if [[ ${app_password_response_type} == "Error" ]] || [[ ${has_application_password} == null ]]; then
     	deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
     	exit 1
     fi
