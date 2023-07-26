@@ -27,11 +27,11 @@ log_success() {
 	echo -e "\e[32m$1\e[0m"
 }
 
-getErrorLogSettingOPOauthInfoToNextcloud() {
+# if something goes wrong or an error occurs during the setup of the whole integration
+# we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
+deleteOPStorageAndPrintErrorResponse() {
 	echo  "$1" | jq
 	log_error "Setup of the integration failed :( !!"
-	# when there is error when saving OP oauth information in the nextcloud
-	# we can delete the storage created in openproject, otherwise it would need to be deleted manually when the script is ran the next time
 	delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
 										  ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
 										  -H 'accept: application/hal+json' \
@@ -88,7 +88,7 @@ then
 								-H 'Content-Type: application/json' \
 								-H 'X-Requested-With: XMLHttpRequest')
 	isProjectFolderAlreadySetup=$(echo $project_folder_setup_response | jq -e ".result")
-	if [ "$isProjectFolderAlreadySetup" == "true" ]; then
+	if [[ "$isProjectFolderAlreadySetup" == "true" ]]; then
 		setup_project_folder=false
         setup_app_password=true
         setup_method=PATCH
@@ -110,6 +110,7 @@ create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASS
                             -H 'X-Requested-With: XMLHttpRequest' \
                             -d '{
                             "name": "'${OPENPROJECT_STORAGE_NAME}'",
+                            "applicationPassword": "",
                             "_links": {
                               "origin": {
                                 "href": "'${NEXTCLOUD_HOST}'"
@@ -144,7 +145,7 @@ storage_id=$(echo $create_storage_response | jq -e '.id')
 openproject_client_id=$(echo $create_storage_response | jq -e '._embedded.oauthApplication.clientId')
 openproject_client_secret=$(echo $create_storage_response | jq -e '._embedded.oauthApplication.clientSecret')
 
-if [ ${storage_id} == null ] || [ ${openproject_client_id} == null ] || [ ${openproject_client_secret} == null ]; then
+if [[ ${storage_id} == null ]] || [[ ${openproject_client_id} == null ]] || [[ ${openproject_client_secret} == null ]]; then
 	echo "${create_storage_response}" | jq
 	log_error "Response does not contain storage_id (id) or openproject_client_id (clientId) or openproject_client_secret (clientSecret)"
 	log_error "Setup of the integration failed :( !!"
@@ -177,15 +178,15 @@ if [[ ${SETUP_PROJECT_FOLDER} == true ]]
 then
 	openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
 	if [ ${openproject_user_app_password} == null ]; then
-		getErrorLogSettingOPOauthInfoToNextcloud "$nextcloud_information_response"
+		deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
 		log_info "Above response is missing one or more of nextcloud_client_id, nextcloud_client_secret, or openproject_user_app_password"
 		log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder) then follow below link to resolve the error"
 		log_info "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/"
 		exit 1
 	fi
 else
-	if [ ${nextcloud_client_id} == null ] || [ ${nextcloud_client_secret} == null ]; then
-		getErrorLogSettingOPOauthInfoToNextcloud "$nextcloud_information_response"
+	if [[ ${nextcloud_client_id} == null ]] || ][ ${nextcloud_client_secret} == null ]]; then
+		deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
         log_info "Above response is missing nextcloud_client_id or nextcloud_client_secret"
         exit 1
     fi
@@ -209,19 +210,32 @@ set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_
 
 
 # if there is no error from the last api call then the integration can be declared successful
-
 response_type=$(echo $set_nextcloud_to_storage_response | jq -r "._type")
-if [ ${nextcloud_client_id} == "Error" ]; then
-	error_message=$(echo $set_nextcloud_to_storage_response | jq -r ".message")
-	log_error "${error_message}"
-	log_error "Setup of the integration failed :( !!"
+if [[ ${nextcloud_client_id} == "Error" ]]; then
+	deleteOPStorageAndPrintErrorResponse "$set_nextcloud_to_storage_response"
 	exit 1
 fi
 
 log_info "success!"
-log_success "Setup of the integration was successful :) !!"
-if [ ${SETUP_PROJECT_FOLDER} == true ]; then
-	log_info "OpUserAppPassword=${openproject_user_app_password}"
-	log_info "You can use this app password to make request to nextcloud as user 'OpenProject'"
+
+if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
+# save the application password to OpenProject
+    log_info "Saving 'OpenProject' user application password to OpenProject...."
+    save_app_password_response=$(curl -s -X PATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+                                      ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
+                                      -H 'accept: application/hal+json' \
+                                      -H 'Content-Type: application/json' \
+                                      -H 'X-Requested-With: XMLHttpRequest' \
+                                      -d '{
+                                      "applicationPassword": '${openproject_user_app_password}'
+                                      }')
+    app_password_response_type=$(echo $save_app_password_response | jq -r "._type")
+    has_application_password=$(echo $save_app_password_response | jq -r ".hasApplicationPassword")
+    if [[ ${app_password_response_type} == "Error" ]] || [[ ${has_application_password} == null ]]; then
+    	deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
+    	exit 1
+    fi
+    log_info "success!"
 fi
 
+log_success "Setup of the integration was successful :) !!"
