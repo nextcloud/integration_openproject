@@ -226,14 +226,12 @@ Feature: setup the integration through an API
     "required": [
         "nextcloud_oauth_client_name",
         "openproject_redirect_uri",
-        "nextcloud_client_id",
-        "nextcloud_client_secret"
+        "nextcloud_client_id"
       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
-          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       },
       "not": {
       "required": [
@@ -269,14 +267,12 @@ Feature: setup the integration through an API
     "required": [
         "nextcloud_oauth_client_name",
         "openproject_redirect_uri",
-        "nextcloud_client_id",
-        "nextcloud_client_secret"
+        "nextcloud_client_id"
       ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
-          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"}
+          "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       },
       "not": {
       "required": [
@@ -413,8 +409,7 @@ Feature: setup the integration through an API
       "required": [
           "nextcloud_oauth_client_name",
           "openproject_redirect_uri",
-          "nextcloud_client_id",
-          "nextcloud_client_secret"
+          "nextcloud_client_id"
         ]
       },
       "not": {
