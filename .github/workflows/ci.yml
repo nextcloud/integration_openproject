@@ -155,14 +155,11 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable22, stable23, stable24, stable25, stable26, stable27 ]
+        nextcloudVersion: [ stable23, stable24, stable25, stable26, stable27 ]
         phpVersionMajor: [ 7, 8 ]
         phpVersionMinor: [ 4, 1 ]
         database: [pgsql, mysql]
         exclude:
-          - nextcloudVersion: stable22
-            phpVersionMajor: 8
-            phpVersionMinor: 1
           - nextcloudVersion: stable23
             phpVersionMajor: 8
             phpVersionMinor: 1
