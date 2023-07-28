@@ -39,6 +39,7 @@ jobs:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
           coverage: xdebug
+          extensions: gd, sqlite3
 
       - name: Get composer cache directory
         id: composer-cache
@@ -240,7 +241,7 @@ jobs:
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
-          extensions: intl
+          extensions: intl, gd
 
       - name: Get composer cache directory
         id: composer-cache

@@ -137,12 +137,11 @@
 					title="Nextcloud OAuth client secret"
 					is-required
 					encrypt-value
-					with-inspection
 					:value="ncClientSecret" />
 				<div class="form-actions">
 					<Button v-if="isNcOAuthFormInEdit"
 						type="primary"
-						:disabled="!ncClientId || !ncClientSecret"
+						:disabled="!ncClientId"
 						data-test-id="submit-nc-oauth-values-form-btn"
 						@click="setNCOAuthFormToViewMode">
 						<template #icon>
@@ -252,7 +251,8 @@ export default {
 			return this.state.nc_oauth_client?.nextcloud_client_id
 		},
 		ncClientSecret() {
-			return this.state.nc_oauth_client?.nextcloud_client_secret
+			return '*******'
+
 		},
 		serverHostErrorMessage() {
 			if (
