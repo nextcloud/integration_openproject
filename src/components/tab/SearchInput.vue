@@ -1,27 +1,23 @@
 <template>
 	<div id="searchBar">
-		<NcMultiselect ref="workPackageMultiSelect"
+		<NcSelect ref="workPackageMultiSelect"
 			class="searchInput"
 			:placeholder="placeholder"
 			:options="filterSearchResultsByFileId"
 			:user-select="true"
 			label="displayName"
-			track-by="id"
-			:internal-search="false"
-			open-direction="below"
 			:loading="isStateLoading"
-			:preselect-first="true"
-			:preserve-search="true"
-			@search-change="asyncFind"
-			@change="linkWorkPackageToFile">
-			<template #option="{option}">
+			:filterable="false"
+			@search="asyncFind"
+			@option:selected="linkWorkPackageToFile">
+			<template #option="option">
 				<WorkPackage :key="option.id"
 					:workpackage="option" />
 			</template>
-			<template #noOptions>
+			<template #no-options>
 				{{ noOptionsText }}
 			</template>
-		</NcMultiselect>
+		</NcSelect>
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
@@ -33,7 +29,7 @@
 import debounce from 'lodash/debounce.js'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -46,8 +42,8 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
-		NcMultiselect,
 		WorkPackage,
+		NcSelect,
 	},
 	props: {
 		fileInfo: {
