@@ -15,6 +15,8 @@ use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\Security\ISecureRandom;
+use OCP\Security\ICrypto;
+use OC_Util;
 
 class OauthService {
 	/**
@@ -29,13 +31,20 @@ class OauthService {
 	private $clientMapper;
 
 	/**
+	 * @var ICrypto
+	 */
+	private $crypto;
+
+	/**
 	 * Service to manipulate Nextcloud oauth clients
 	 */
 	public function __construct(ClientMapper $clientMapper,
-								ISecureRandom $secureRandom
+								ISecureRandom $secureRandom,
+								ICrypto $crypto
 								) {
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
+		$this->crypto = $crypto;
 	}
 
 	/**
@@ -48,11 +57,27 @@ class OauthService {
 		$client = new Client();
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
-		$client->setSecret($this->secureRandom->generate(64, self::validChars));
+		$secret = $this->secureRandom->generate(64, self::validChars);
+		if (version_compare(OC_Util::getVersionString(), '27.0.1') >= 0) {
+			$encryptedSecret = $this->crypto->encrypt($secret);
+		} elseif (version_compare(OC_Util::getVersionString(), '26.0.4') >= 0 && version_compare(OC_Util::getVersionString(), '27.0.0') < 0) {
+			$encryptedSecret = $this->crypto->encrypt($secret);
+		} elseif (version_compare(OC_Util::getVersionString(), '25.0.8') >= 0 && version_compare(OC_Util::getVersionString(), '26.0.0') < 0) {
+			$encryptedSecret = $this->crypto->encrypt($secret);
+		} else {
+			$encryptedSecret = $secret;
+		}
+		$client->setSecret($encryptedSecret);
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
-		return $this->generateClientInfo($client);
+		return [
+			'id' => $client->getId(),
+			'nextcloud_oauth_client_name' => $client->getName(),
+			'openproject_redirect_uri' => $client->getRedirectUri(),
+			'nextcloud_client_id' => $client->getClientIdentifier(),
+			'nextcloud_client_secret' => $secret,
+		];
 	}
 
 	/**
@@ -62,7 +87,12 @@ class OauthService {
 	public function getClientInfo(int $id): ?array {
 		try {
 			$client = $this->clientMapper->getByUid($id);
-			return $this->generateClientInfo($client);
+			return [
+				'id' => $client->getId(),
+				'nextcloud_oauth_client_name' => $client->getName(),
+				'openproject_redirect_uri' => $client->getRedirectUri(),
+				'nextcloud_client_id' => $client->getClientIdentifier(),
+			];
 		} catch (ClientNotFoundException $e) {
 			return null;
 		}
@@ -84,19 +114,5 @@ class OauthService {
 		} catch (ClientNotFoundException $e) {
 			return false;
 		}
-	}
-
-	/**
-	 * @param Client $client
-	 * @return array<mixed>
-	 */
-	private function generateClientInfo(Client $client): array {
-		return [
-			'id' => $client->getId(),
-			'nextcloud_oauth_client_name' => $client->getName(),
-			'openproject_redirect_uri' => $client->getRedirectUri(),
-			'nextcloud_client_id' => $client->getClientIdentifier(),
-			'nextcloud_client_secret' => $client->getSecret(),
-		];
 	}
 }
