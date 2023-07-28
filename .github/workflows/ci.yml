@@ -277,7 +277,7 @@ jobs:
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
-          extensions: intl, gd
+          extensions: intl
 
       - name: Get composer cache directory
         id: composer-cache
