@@ -36,15 +36,7 @@ Object {
 }
 `;
 
-exports[`SearchInput.vue work packages multiselect search list should not be displayed if the search results is empty 1`] = `
-<ul role="listbox" id="listbox-null" class="multiselect__content" style="display: block;">
-  <!---->
-  <li style="display: none;"><span class="multiselect__option"><span>No results</span></span></li>
-  <li><span class="multiselect__option">
-			Start typing to search
-		</span></li>
-</ul>
-`;
+exports[`SearchInput.vue work packages multiselect search list should not be displayed if the search results is empty 1`] = `<ul id="vs10__listbox" role="listbox" style="display: none; visibility: hidden;"></ul>`;
 
 exports[`SearchInput.vue work packages multiselect search list should only use the options from the latest search response 1`] = `
 Object {

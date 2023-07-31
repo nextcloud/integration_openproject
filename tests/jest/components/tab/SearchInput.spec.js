@@ -53,12 +53,12 @@ describe('SearchInput.vue', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'
-	const multiSelectContentSelector = '.multiselect__content'
+	const workpackagesListSelector = '[role="listbox"]'
 	const workPackageStubSelector = 'workpackage-stub'
-	const inputSelector = '.multiselect__input'
+	const inputSelector = '.searchInput input'
 	const assigneeSelector = '.filterAssignee'
-	const loadingIconSelector = '.multiselect__spinner'
-	const multiSelectItemSelector = '.multiselect__option'
+	const loadingIconSelector = '.vs__spinner'
+	const firstWorkPackageSelector = '.searchInput .vs__dropdown-option'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -176,15 +176,22 @@ describe('SearchInput.vue', () => {
 				await wrapper.setData({
 					searchResults: [],
 				})
-				const multiSelectCont = wrapper.find(multiSelectContentSelector)
+				const multiSelectCont = wrapper.find(workpackagesListSelector)
 				expect(multiSelectCont).toMatchSnapshot()
 			})
 			it('should display correct options list of search results', async () => {
+				jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
 				await wrapper.setData({
-					fileInfo: { id: 1234 },
 					searchResults: workPackagesSearchResponse,
 				})
-				const multiSelectContent = wrapper.find(multiSelectContentSelector)
+				const multiSelectContent = wrapper.find(workpackagesListSelector)
 				expect(multiSelectContent.exists()).toBeTruthy()
 				const workPackages = multiSelectContent.findAll(workPackageStubSelector)
 				expect(workPackages).toHaveLength(workPackagesSearchResponse.length)
@@ -200,8 +207,15 @@ describe('SearchInput.vue', () => {
 				expect(assignee.exists()).toBeFalsy()
 			})
 			it('should only use the options from the latest search response', async () => {
+				jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
 				await wrapper.setData({
-					fileInfo: { id: 111 },
 					searchResults: workPackageObjectsInSearchResults,
 				})
 				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
@@ -408,7 +422,7 @@ describe('SearchInput.vue', () => {
 				axiosGetSpy.mockRestore()
 			})
 			it('should emit an action', async () => {
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				const multiselectItem = wrapper.find(firstWorkPackageSelector)
 				await multiselectItem.trigger('click')
 				const savedEvent = wrapper.emitted('saved')
 				expect(savedEvent).toHaveLength(1)
@@ -419,7 +433,7 @@ describe('SearchInput.vue', () => {
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
 					}))
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				const multiselectItem = wrapper.find(firstWorkPackageSelector)
 				await multiselectItem.trigger('click')
 				const expectedParams = new URLSearchParams()
 				expectedParams.append('workpackageId', 999)
@@ -433,7 +447,7 @@ describe('SearchInput.vue', () => {
 				postSpy.mockRestore()
 			})
 			it('should reset the state of the search input', async () => {
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				const multiselectItem = wrapper.find(firstWorkPackageSelector)
 				expect(wrapper.vm.searchResults.length).toBe(1)
 				expect(wrapper.find('input').element.value).toBe('orga')
 				await multiselectItem.trigger('click')
@@ -446,7 +460,7 @@ describe('SearchInput.vue', () => {
 				err.response = { status: 422 }
 				axios.post.mockRejectedValueOnce(err)
 				const showErrorSpy = jest.spyOn(dialogs, 'showError')
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				const multiselectItem = wrapper.find(firstWorkPackageSelector)
 				await multiselectItem.trigger('click')
 				await localVue.nextTick()
 				expect(showErrorSpy).toBeCalledTimes(1)

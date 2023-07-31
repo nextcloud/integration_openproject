@@ -5,9 +5,11 @@
 			:placeholder="placeholder"
 			:options="filterSearchResultsByFileId"
 			:user-select="true"
+			:append-to-body="false"
 			label="displayName"
 			:loading="isStateLoading"
 			:filterable="false"
+			:clear-search-on-blur="() => false"
 			@search="asyncFind"
 			@option:selected="linkWorkPackageToFile">
 			<template #option="option">
@@ -199,18 +201,6 @@ export default {
 	.stateMsg {
 		padding: 30px;
 		text-align: center;
-	}
-	.multiselect {
-		.multiselect__content-wrapper {
-			border-radius: var(--border-radius-large);
-			.multiselect__content {
-				.multiselect__element {
-					span {
-						padding: 0 !important;
-					}
-				}
-			}
-		}
 	}
 }
 </style>
