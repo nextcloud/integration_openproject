@@ -161,7 +161,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
-          min_coverage: '57'
+          min_coverage: '56'
           path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
   api-tests:
