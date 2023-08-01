@@ -202,5 +202,8 @@ export default {
 		padding: 30px;
 		text-align: center;
 	}
+	.vs__dropdown-option {
+		padding: 0 !important;
+	}
 }
 </style>
