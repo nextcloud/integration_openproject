@@ -117,7 +117,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 * @inheritDoc
 	 */
 	public function resolveReference(string $referenceText): ?IReference {
-		if ($this->matchReference($referenceText)) {
+		if ($this->matchReference($referenceText) && OpenProjectAPIService::isAdminConfigOk($this->config)) {
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
