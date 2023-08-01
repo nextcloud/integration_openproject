@@ -9,6 +9,7 @@ import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSea
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE } from '../../../../src/utils.js'
+import * as initialState from "@nextcloud/initial-state";
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -22,6 +23,13 @@ jest.mock('lodash/debounce', () =>
 		return fn
 	})
 )
+
+initialState.loadState = jest.fn(() => {
+	return {
+		openproject_instance_url: null,
+	}
+})
+
 
 global.t = (app, text) => text
 
