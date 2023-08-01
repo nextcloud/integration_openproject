@@ -1,6 +1,6 @@
 <template>
 	<div id="searchBar">
-		<NcSelect ref="workPackageMultiSelect"
+		<NcSelect ref="workPackageSelect"
 			class="searchInput"
 			:placeholder="placeholder"
 			:options="filterSearchResultsByFileId"
@@ -99,8 +99,8 @@ export default {
 	methods: {
 		emptySearchInput() {
 			// FIXME: https://github.com/shentao/vue-multiselect/issues/633
-			if (this.$refs.workPackageMultiSelect?.$refs?.VueMultiselect?.search) {
-				this.$refs.workPackageMultiSelect.$refs.VueMultiselect.search = ''
+			if (this.$refs.workPackageSelect?.$refs?.VueMultiselect?.search) {
+				this.$refs.workPackageSelect.$refs.VueMultiselect.search = ''
 			}
 		},
 		resetState() {
