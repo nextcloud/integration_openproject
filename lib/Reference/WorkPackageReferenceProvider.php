@@ -34,7 +34,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 
-class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
+class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
 
 	// as we know we are on NC >= 26, we can use Php 8 syntax for class attributes
@@ -74,13 +74,6 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider implem
 		return $this->urlGenerator->getAbsoluteURL(
 			$this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg')
 		);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getSupportedSearchProviderIds(): array {
-		return ['openproject-search'];
 	}
 
 	/**
