@@ -14,6 +14,6 @@ module.exports = {
 	coverageDirectory: '<rootDir>/coverage/jest/',
 	coverageReporters: ['lcov', 'html', 'text'],
 	transformIgnorePatterns: [
-		'node_modules/(?!vue-material-design-icons)',
+		'node_modules/(?!(vue-material-design-icons|@nextcloud/vue-select)/)',
 	]
 }

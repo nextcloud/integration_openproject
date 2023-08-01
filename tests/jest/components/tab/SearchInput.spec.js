@@ -53,12 +53,12 @@ describe('SearchInput.vue', () => {
 	let wrapper
 
 	const stateSelector = '.stateMsg'
-	const multiSelectContentSelector = '.multiselect__content'
+	const workpackagesListSelector = '[role="listbox"]'
 	const workPackageStubSelector = 'workpackage-stub'
-	const inputSelector = '.multiselect__input'
+	const inputSelector = '.searchInput input'
 	const assigneeSelector = '.filterAssignee'
-	const loadingIconSelector = '.multiselect__spinner'
-	const multiSelectItemSelector = '.multiselect__option'
+	const loadingIconSelector = '.vs__spinner'
+	const firstWorkPackageSelector = '.searchInput .vs__dropdown-option'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -74,7 +74,7 @@ describe('SearchInput.vue', () => {
 		})
 	})
 
-	describe('work packages multiselect', () => {
+	describe('work packages select', () => {
 		describe('search input', () => {
 			it('should reset the state if search value length becomes lesser than search char limit', async () => {
 				const axiosSpy = jest.spyOn(axios, 'get')
@@ -176,17 +176,24 @@ describe('SearchInput.vue', () => {
 				await wrapper.setData({
 					searchResults: [],
 				})
-				const multiSelectCont = wrapper.find(multiSelectContentSelector)
-				expect(multiSelectCont).toMatchSnapshot()
+				const ncSelectContent = wrapper.find(workpackagesListSelector)
+				expect(ncSelectContent).toMatchSnapshot()
 			})
 			it('should display correct options list of search results', async () => {
+				jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
 				await wrapper.setData({
-					fileInfo: { id: 1234 },
 					searchResults: workPackagesSearchResponse,
 				})
-				const multiSelectContent = wrapper.find(multiSelectContentSelector)
-				expect(multiSelectContent.exists()).toBeTruthy()
-				const workPackages = multiSelectContent.findAll(workPackageStubSelector)
+				const ncSelectContent = wrapper.find(workpackagesListSelector)
+				expect(ncSelectContent.exists()).toBeTruthy()
+				const workPackages = ncSelectContent.findAll(workPackageStubSelector)
 				expect(workPackages).toHaveLength(workPackagesSearchResponse.length)
 				for (let i = 0; i < workPackagesSearchResponse.length; i++) {
 					expect(workPackages.at(i).props()).toMatchSnapshot()
@@ -200,8 +207,15 @@ describe('SearchInput.vue', () => {
 				expect(assignee.exists()).toBeFalsy()
 			})
 			it('should only use the options from the latest search response', async () => {
+				jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
 				await wrapper.setData({
-					fileInfo: { id: 111 },
 					searchResults: workPackageObjectsInSearchResults,
 				})
 				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
@@ -408,8 +422,8 @@ describe('SearchInput.vue', () => {
 				axiosGetSpy.mockRestore()
 			})
 			it('should emit an action', async () => {
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
-				await multiselectItem.trigger('click')
+				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+				await ncSelectItem.trigger('click')
 				const savedEvent = wrapper.emitted('saved')
 				expect(savedEvent).toHaveLength(1)
 				expect(savedEvent[0]).toEqual([{ fileId: 111, id: 999 }])
@@ -419,8 +433,8 @@ describe('SearchInput.vue', () => {
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
 					}))
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
-				await multiselectItem.trigger('click')
+				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+				await ncSelectItem.trigger('click')
 				const expectedParams = new URLSearchParams()
 				expectedParams.append('workpackageId', 999)
 				expectedParams.append('fileId', 111)
@@ -433,10 +447,10 @@ describe('SearchInput.vue', () => {
 				postSpy.mockRestore()
 			})
 			it('should reset the state of the search input', async () => {
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
+				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 				expect(wrapper.vm.searchResults.length).toBe(1)
 				expect(wrapper.find('input').element.value).toBe('orga')
-				await multiselectItem.trigger('click')
+				await ncSelectItem.trigger('click')
 				expect(wrapper.vm.searchResults.length).toBe(0)
 				expect(wrapper.find('input').element.value).toBe('')
 
@@ -446,8 +460,8 @@ describe('SearchInput.vue', () => {
 				err.response = { status: 422 }
 				axios.post.mockRejectedValueOnce(err)
 				const showErrorSpy = jest.spyOn(dialogs, 'showError')
-				const multiselectItem = wrapper.find(multiSelectItemSelector)
-				await multiselectItem.trigger('click')
+				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+				await ncSelectItem.trigger('click')
 				await localVue.nextTick()
 				expect(showErrorSpy).toBeCalledTimes(1)
 				showErrorSpy.mockRestore()
