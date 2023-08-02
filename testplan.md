@@ -42,12 +42,39 @@
 | check administrators settings       | OpenProject section shown, only OpenProject host can be entered             |        |         |
 | check personal settings             | OpenProject section in 'Connected accounts' shown, good error message shown |        |         |
 
-### Configuration as admin
+### Configuration as admin without project folders
 #### Prerequisites
 
 - NextCloud installed
 - OpenProject Integration app installed
 - OpenProject Integration app enabled
+
+### Run tests as
+
+1. main admin user
+2. newly created user that is member of the "admin" group
+
+#### Tests
+
+| steps                                                                            | expected outcome                                                                               | result | comment |
+|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|--------|---------|
+| enter invalid URL as OpenProject host                                            | good error message shown, setting not saved, next step not enabled                             |        |         |
+| enter valid URL, that does not have an OpenProject listening as OpenProject host | good error message shown, setting not saved, next step not enabled                             |        |         |
+| enter valid and correct OpenProject host                                         | no error message shown, setting saved, next step enabled                                       |        |         |
+| enter only client Id                                                             | settings cannot be saved                                                                       |        |         |
+| enter also client secret                                                         | settings can be saved, NextCloud OAuth settings are generated and shown                        |        |         |
+| copy the credentials                                                             | Project folders settings is displayed, the toggle button is enabled                            |        |         |
+| disable the automatically managed folders and continue                           | Project folders settings should be disabled and a button to edit the setup should be displayed |        |         |
+
+
+### Configuration as admin with project folders
+#### Prerequisites
+
+- NextCloud installed
+- OpenProject Integration app installed
+- OpenProject Integration app enabled
+- Groupfolders app installed
+- Groupfolders app enabled
 
 ### Run tests as
 
@@ -63,11 +90,13 @@
 | enter valid and correct OpenProject host                                         | no error message shown, setting saved, next step enabled                |        |         |
 | enter only client Id                                                             | settings cannot be saved                                                |        |         |
 | enter also client secret                                                         | settings can be saved, NextCloud OAuth settings are generated and shown |        |         |
+| copy the credentials                                                             | project folders settings is enabled, the toggle button is enabled       |        |         |
+| setup the project folders                                                        | no error message shown, application password is generated and shown     |        |         |
 
 ### Connecting as user
 #### Prerequisites
 
-- NextCloud installed
+- NextCloud installed 
 - OpenProject Integration app installed
 - OpenProject Integration app enabled
 - OpenProject Integration app configured as administrator
@@ -97,6 +126,8 @@
 - OpenProject Integration app enabled
 - OpenProject Integration app configured as administrator
 - multiple NC users connected to OpenProject
+- Groupfolders app installed
+- Groupfolders app enabled
 
 ### Run tests as
 
@@ -108,8 +139,9 @@
 | steps                  | expected outcome                                                                                              | result | comment |
 |------------------------|---------------------------------------------------------------------------------------------------------------|--------|---------|
 | edit OP host           | OAuth client can still be used from OP side if OP is reachable by the new URL                                 |        |         |
-| edit OP OAuth settings | warning shown, on confirmation all NC users disconnected from OP                                              |        |         | 
+| edit OP OAuth settings | warning shown, on confirmation all NC users disconnected from OP                                              |        |         |
 | reset NC OAuth client  | warning shown, on confirmation, old OAuth client deleted and new NC OAuth client created (check in OAuth app) |        |         | 
+| edit app password      | warning shown, on confirmation a new app password is generated                                                |        |         | 
 
 ## Usage
 
@@ -148,23 +180,6 @@ variations: check different NC themes
 | link multiple WP to a file, go to an other file, come back to the original file  | WP listed correctly                              |        |         |
 | link multiple WP to a file, delete some WP                                       | WP listed correctly                              |        |         |
 | link multiple WP to a file, search for similar WP like the listed ones           | connected WP are not listed in the search        |        |         |
-
-### Notifications
-
-### Prerequisites
-
-- notifications app installed and enabled https://github.com/nextcloud/notifications
-- enable notifications in "OpenProject Integration" section of "Connected accounts"
-
-#### Tests
-
-
-| steps                                                                                                                             | expected outcome                                                                                                                                                                      | result | comment |
-|-----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------|
-| generate some notifications in OP, run `cron.php`                                                                                 | number of OP notifications are shown in one NC notification                                                                                                                           |        |         |
-| generate some notifications in OP, run `cron.php`, generate more notifications in OP, run `cron.php`                              | two NC notifications are shown, first showing the amount of OP notifications before first cron run and second showing the amount of newly created notifications between the cron runs |        |         |
-| generate some notifications in OP, run `cron.php`, dismiss notifications in NC, generate more notifications in OP, run `cron.php` | onle the number of OP notifications that were generated after the dismissal are shown in one NC notification                                                                          |        |         |
-| generate some notifications in OP, run `cron.php`, check links of NC notifications                                                | links should go to <OP-instance>/notifications                                                                                                                                        |        |         |
 
 ### Search
 
