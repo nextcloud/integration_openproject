@@ -132,13 +132,9 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			if (this.isSmartPicker) {
-				await this.debounceMakeSearchRequest(query)
-			} else {
-				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
-			}
+			await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
 		},
-		async getFileLink(selectedOption) {
+		async getWorkPackageLink(selectedOption) {
 			return this.openprojectUrl + '/projects/' + selectedOption.projectId + '/work_packages/' + selectedOption.id
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
@@ -147,7 +143,7 @@ export default {
 		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
 			if (this.isSmartPicker) {
-				const link = await this.getFileLink(selectedOption)
+				const link = await this.getWorkPackageLink(selectedOption)
 				this.$emit('submit', link)
 				return
 			}
@@ -176,12 +172,13 @@ export default {
 				)
 			}
 		},
-		async makeSearchRequest(search, fileId = null) {
+		async makeSearchRequest(search, fileId = null, isSmartPicker = false) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}
 			req.params = {
 				searchQuery: search,
+				isSmartPicker,
 			}
 			let response
 			try {
