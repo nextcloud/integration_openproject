@@ -100,7 +100,7 @@ OC.L10N.register(
     "Copied to the clipboard" : "Panoya kopyalandı",
     "Details" : "Ayrıntılar",
     "No connection with OpenProject" : "OpenProject bağlantısı yok",
-    "Error connecting to OpenProject" : "OpenProject bağlantısı kurulurken sorun çıktı",
+    "Error connecting to OpenProject" : "OpenProject ile bağlantı kurulurken sorun çıktı",
     "Could not fetch work packages from OpenProject" : "OpenProject üzerinden çalışma paketleri alınamadı",
     "No OpenProject notifications!" : "Herhangi bir OpenProject bildirimi yok!",
     "No OpenProject links yet" : "Henüz bir OpenProject bağlantısı yok",
