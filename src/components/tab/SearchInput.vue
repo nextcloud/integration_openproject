@@ -196,9 +196,8 @@ export default {
 					if (this.isStateLoading) {
 						if (this.isSmartPicker) {
 						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-						   if (this.isStateLoading) {
-							   this.searchResults.push(workPackage)
-							}
+							this.searchResults.push(workPackage)
+
 						} else {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)

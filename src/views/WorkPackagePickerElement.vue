@@ -68,12 +68,6 @@ export default {
 		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 	}),
 
-	computed: {
-	},
-
-	mounted() {
-	},
-
 	methods: {
 		onSubmit(data) {
 			this.$emit('submit', data)
