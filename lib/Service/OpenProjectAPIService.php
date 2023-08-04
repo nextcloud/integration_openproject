@@ -1151,11 +1151,14 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): array {
 		$result[] = null;
-		$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
-		$result['title'] = $this->getSubline($searchResult[0]);
-		$result['description'] = $this->getMainText($searchResult[0]);
-		$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
-		$result['entry'] = $searchResult[0];
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		if ($accessToken) {
+			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
+			$result['title'] = $this->getSubline($searchResult[0]);
+			$result['description'] = $this->getMainText($searchResult[0]);
+			$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
+			$result['entry'] = $searchResult[0];
+		}
 		return $result;
 	}
 
