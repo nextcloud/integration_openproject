@@ -145,6 +145,8 @@ OC.L10N.register(
     "Invalid key" : "مفتاح غير صحيح",
     "To be able to use an OpenProject server with a local address, " : "لتتمكن من استخدام خادم OpenProject  ذو العنوان المحلي،",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "فشل إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بمستخدم (مستخدمين)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "تم بنجاح إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بالمستخدم (المستخدمين)"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "تم بنجاح إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بالمستخدم (المستخدمين)",
+    "Search for work packages" : "البحث في حزم العمل work packages",
+    "OpenProject work package picker" : "مُنتقِي حزم العمل work package picker في OpenProject"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
