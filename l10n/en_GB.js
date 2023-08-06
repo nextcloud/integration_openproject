@@ -145,6 +145,8 @@ OC.L10N.register(
     "Invalid key" : "Invalid key",
     "To be able to use an OpenProject server with a local address, " : "To be able to use an OpenProject server with a local address, ",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Failed to revoke some user(s) OpenProject OAuth access token(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)",
+    "Search for work packages" : "Search for work packages",
+    "OpenProject work package picker" : "OpenProject work package picker"
 },
 "nplurals=2; plural=(n != 1);");
