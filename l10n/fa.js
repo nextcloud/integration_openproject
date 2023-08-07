@@ -10,9 +10,11 @@ OC.L10N.register(
     "Reset" : "بازنشاندن",
     "Enable unified search for tickets" : "جستجوی یکپارچه برای بلیط ها را فعال کنید",
     "Documentation" : "مستندسازی",
+    "Connected as {user}" : "متصل به عنوان {user}",
     "Copied!" : "کپی شده",
     "Details" : "جزئیات",
     "Mark as read" : "علامت به عنوان خوانده‌شده",
+    "OAuth access token could not be obtained:" : "نشانه دسترسی OAuth بدست نیامد:",
     "Connected accounts" : "حساب‌های متصل"
 },
 "nplurals=2; plural=(n > 1);");
