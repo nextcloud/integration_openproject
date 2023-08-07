@@ -25,7 +25,9 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Cliente Nextcloud OAuth ",
     "Yes, I have copied these values" : "Sí, he copiado estos valores",
     "Replace Nextcloud OAuth values" : "Reemplazar los valores de Nextcloud OAuth",
+    "Project folders (recommended)" : "Carpetas de proyecto (recomendado)",
     "Automatically managed folders" : "Carpetas administradas automáticamente",
+    "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Recomendamos utilizar esta funcionalidad pero no es obligatoria. Por favor, actívela en caso de que desee utilizar la creación y administración automática de las carpetas de proyecto.",
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Permita a OpenProject crear carpetas por proyecto de forma automática. Esto asegurará que cada miembro del equipo tenga siempre los permisos de acceso correctos.",
     "OpenProject user, group and folder" : "Usuario OpenProject, grupo y carpeta",
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para el manejo automatizado de las carpetas de proyecto, esta app necesita configurar una carpeta de grupo especial, asignada a un grupo y administrada por un usuario, cada uno llamado \"OpenProject\".",
@@ -33,6 +35,7 @@ OC.L10N.register(
     "Retry setup OpenProject user, group and folder" : "Reintentar la configuración del usuario, grupo y carpeta de OpenProject",
     "Active" : "Activo",
     "Inactive" : "Inactivo",
+    "Edit project folders" : "Editar las carpetas de proyecto",
     "Project folders application connection" : "Conexión de aplicación con las carpetas de proyecto",
     "Application Password" : "Contraseña de aplicación",
     "Done, complete setup" : "Listo, completar configuración",
@@ -43,6 +46,7 @@ OC.L10N.register(
     "Enable navigation link" : "Activar enlace de navegación",
     "Enable unified search for tickets" : "Activar búsqueda unificada de tickets",
     "Keep current setup" : "Mantener configuración actual",
+    "Complete without project folders" : "Completar sin la carpeta de proyecto",
     "Setup OpenProject user, group and folder" : "Configurar el usuario, carpeta y grupo de OpenProject",
     "Administration > File storages" : "Administración > Almacenamiento de archivos",
     "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vaya a su OpenProject {htmlLink} como administrador e inicie la configuración y copie los valores aquí.",
@@ -141,6 +145,8 @@ OC.L10N.register(
     "Invalid key" : "Llave inválida",
     "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Fallo al revocar los tokens OAuth de algun(os) usuario(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios",
+    "Search for work packages" : "Buscar paquetes de trabajo",
+    "OpenProject work package picker" : "Selector de paquetes de trabajo OpenProject"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
