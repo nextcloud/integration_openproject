@@ -138,12 +138,12 @@ export default {
 	}
 }
 
-.index-dark-mode{
-  color: #000000;
+.index-dark-mode {
+	color: #000000;
 }
 
-.index-light-mode{
-  color: #FFFFFF;
+.index-light-mode {
+	color: #FFFFFF;
 }
 
 .form-heading.disabled {
