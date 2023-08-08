@@ -10,7 +10,12 @@
 		<div v-else-if="isComplete" class="complete">
 			<CheckBoldIcon fill-color="#FFFFFF" :size="12" />
 		</div>
-		<div v-else class="index">
+		<div v-else
+			class="index"
+			:class="{
+				'index-dark-mode': isDarkTheme,
+				'index-light-mode': !isDarkTheme
+			}">
 			{{ index }}
 		</div>
 		<div class="title"
@@ -124,7 +129,6 @@ export default {
 		text-align: center;
 		border-radius: 50%;
 		background: var(--color-loading-dark);
-		color: white;
 	}
 	.title {
 		font-weight: 700;
@@ -134,10 +138,12 @@ export default {
 	}
 }
 
-body[data-themes*='dark'] {
-	.index {
-		color: #000000;
-	}
+.index-dark-mode{
+  color: #000000;
+}
+
+.index-light-mode{
+  color: #FFFFFF;
 }
 
 .form-heading.disabled {

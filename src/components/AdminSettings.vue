@@ -4,7 +4,9 @@
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
-				:is-complete="isServerHostFormComplete" />
+				:is-complete="isServerHostFormComplete"
+				:is-dark-theme="isDarkTheme" />
+
 			<FieldValue v-if="isServerHostFormInView"
 				is-required
 				class="pb-1"
@@ -56,7 +58,8 @@
 			<FormHeading index="2"
 				:title="t('integration_openproject', 'OpenProject OAuth settings')"
 				:is-complete="isOPOAuthFormComplete"
-				:is-disabled="isOPOAuthFormInDisableMode" />
+				:is-disabled="isOPOAuthFormInDisableMode"
+				:is-dark-theme="isDarkTheme" />
 			<div v-if="isServerHostFormComplete">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
@@ -109,7 +112,8 @@
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'Nextcloud OAuth client')"
 				:is-complete="isNcOAuthFormComplete"
-				:is-disabled="isNcOAuthFormInDisableMode" />
+				:is-disabled="isNcOAuthFormInDisableMode"
+				:is-dark-theme="isDarkTheme" />
 			<div v-if="state.nc_oauth_client">
 				<TextInput v-if="isNcOAuthFormInEdit"
 					id="nextcloud-oauth-client-id"
@@ -262,7 +266,8 @@
 			<FormHeading index="5"
 				:title="t('integration_openproject', 'Project folders application connection')"
 				:is-complete="isOPUserAppPasswordFormComplete"
-				:is-disabled="isOPUserAppPasswordInDisableMode" />
+				:is-disabled="isOPUserAppPasswordInDisableMode"
+				:is-dark-theme="isDarkTheme" />
 			<div v-if="state.app_password_set">
 				<TextInput v-if="isOPUserAppPasswordFormInEdit"
 					id="openproject-system-password"
@@ -408,6 +413,7 @@ export default {
 			textLabelProjectFolderSetupButton: null,
 			// pointer for which form the request is coming
 			isFormStep: null,
+			isDarkTheme: null,
 		}
 	},
 	computed: {
@@ -528,13 +534,12 @@ export default {
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
 		},
-		isDarkTheme() {
-			return !!document.querySelector("body[data-themes*='dark']")
-
-		},
 	},
 	created() {
 		this.init()
+	},
+	mounted() {
+		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
 	},
 	methods: {
 		init() {
