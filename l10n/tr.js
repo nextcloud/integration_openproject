@@ -145,6 +145,8 @@ OC.L10N.register(
     "Invalid key" : "Anahtar geçersiz",
     "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı",
+    "Search for work packages" : "Çalışma paketleri ara",
+    "OpenProject work package picker" : "OpenProject çalışma paketi seçici"
 },
 "nplurals=2; plural=(n > 1);");
