@@ -103,7 +103,7 @@ exports[`AdminSettings.vue Project folders form (Project Folder Setup) view mode
   <formheading-stub index="4" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
   <div>
     <div class="project-folder-status">
-      <div class="project-folder-status-value"><b>Automatic managed folders:</b> Inactive
+      <div class="project-folder-status-value"><b>Automatically managed folders:</b> Inactive
       </div>
       <!---->
       <div class="form-actions">
