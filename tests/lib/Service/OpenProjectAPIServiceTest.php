@@ -232,7 +232,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
-		if (version_compare(OC_Util::getVersionString(), '28') >= 0) {
+		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
 			$clientConfigMock
 				->method('getSystemValueBool')
 				->withConsecutive(
@@ -265,39 +265,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(IRemoteHostValidator::class), // @phpstan-ignore-line
 				$this->createMock(LoggerInterface::class));               // @phpstan-ignore-line
-		} elseif (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			$clientConfigMock
-			->method('getSystemValueBool')
-			->withConsecutive(
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false],
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false],
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false]
-			)
-				->willReturnOnConsecutiveCalls(
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true
-				);
-			//changed from nextcloud 26
-			// @phpstan-ignore-next-line
-			$ocClient = new Client(
-				$clientConfigMock,                                             // @phpstan-ignore-line
-				$certificateManager,                                           // @phpstan-ignore-line
-				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
-			);
 		} elseif (version_compare(OC_Util::getVersionString(), '26') >= 0) {
 			$clientConfigMock
 			->method('getSystemValueBool')
