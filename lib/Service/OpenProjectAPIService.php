@@ -1129,8 +1129,12 @@ class OpenProjectAPIService {
 	 */
 	public function deleteAppPassword(): void {
 		if ($this->hasAppPassword()) {
-			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
-			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
+			$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
+			foreach ($tokens as $token) {
+				if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+					$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token->getId());
+				}
+			}
 		}
 	}
 
@@ -1140,7 +1144,13 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function hasAppPassword(): bool {
-		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
+		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
+		foreach ($tokens as $token) {
+			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
