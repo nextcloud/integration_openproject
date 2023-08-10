@@ -33,7 +33,7 @@ exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete v
 exports[`AdminSettings.vue OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
 <div class="openproject-oauth-values">
   <div class="form-heading">
-    <div class="index">
+    <div class="index index-light-mode">
       2
     </div>
     <div class="title">
