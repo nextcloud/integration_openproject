@@ -143,6 +143,8 @@
     "Invalid key" : "Chave inválida",
     "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Falha ao revogar alguns tokens de acesso OpenProject OAuth do(s) usuário(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Usuário(s) revogado(s) com sucesso OpenProject OAuth access token(s)"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Usuário(s) revogado(s) com sucesso OpenProject OAuth access token(s)",
+    "Search for work packages" : "Pesquisar pacotes de trabalho",
+    "OpenProject work package picker" : "Seletor de pacotes de trabalho do OpenProject"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
