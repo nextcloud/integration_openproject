@@ -400,6 +400,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param ISubAdmin|null $subAdminManagerMock
 	 * @param ISecureRandom|null $iSecureRandomMock
 	 * @param IConfig|null $configMock
+	 * @param IProvider|null $tokenProviderMock
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -411,7 +412,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$appManagerMock = null,
 		$subAdminManagerMock = null,
 		$iSecureRandomMock = null,
-		$configMock = null
+		$configMock = null,
+		$tokenProviderMock = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -438,6 +440,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($configMock === null) {
 			$configMock = $this->createMock(IConfig::class);
 		}
+		if ($tokenProviderMock === null) {
+			$tokenProviderMock = $this->createMock(IProvider::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -454,7 +459,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$groupManagerMock,
 					$appManagerMock,
 					$this->createMock(IDBConnection::class),
-					$this->createMock(IProvider::class),
+					$tokenProviderMock,
 					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
@@ -1737,6 +1742,36 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($exception);
 		$service->isSystemReadyForProjectFolderSetUp();
+	}
+
+	public function testProjectFolderHasAppPassword(): void {
+		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->disableOriginalConstructor()
+			->getMock();
+		$tokenMock = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock
+			->method('getName')
+			->willReturn('OpenProject');
+		$tokenProviderMock
+			->method('getTokenByUser')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn([$tokenMock]);
+		$service = $this->getServiceMock([], null, null, null, null, null, null, null, null, $tokenProviderMock);
+		$this->assertTrue($service->hasAppPassword());
+	}
+
+	public function testProjectFolderHasAppPasswordNegativeCondition(): void {
+		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->disableOriginalConstructor()
+			->getMock();
+		$tokenMock = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock
+			->method('getName')
+			->willReturn('session');
+		$tokenProviderMock
+			->method('getTokenByUser')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn([$tokenMock]);
+		$service = $this->getServiceMock([], null, null, null, null, null, null, null, null, $tokenProviderMock);
+		$this->assertFalse($service->hasAppPassword());
 	}
 
 	public function testLinkWorkPackageToFilePact(): void {
