@@ -1759,6 +1759,33 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertTrue($service->hasAppPassword());
 	}
 
+	public function testProjectFolderHasMultipleAppPassword(): void {
+		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->disableOriginalConstructor()
+			->getMock();
+		$tokenMock1 = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock1
+			->method('getName')
+			->willReturnOnConsecutiveCalls('session');
+		$tokenMock2 = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock2
+			->method('getName')
+			->willReturnOnConsecutiveCalls('test');
+		$tokenMock3 = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock3
+			->method('getName')
+			->willReturnOnConsecutiveCalls('new-token');
+		$tokenMock4 = $this->getMockBuilder(IToken::class)->getMock();
+		$tokenMock4
+			->method('getName')
+			->willReturnOnConsecutiveCalls('OpenProject');
+		$tokenProviderMock
+			->method('getTokenByUser')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn([$tokenMock1,$tokenMock2,$tokenMock3,$tokenMock4]);
+		$service = $this->getServiceMock([], null, null, null, null, null, null, null, null, $tokenProviderMock);
+		$this->assertTrue($service->hasAppPassword());
+	}
+
 	public function testProjectFolderHasAppPasswordNegativeCondition(): void {
 		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->disableOriginalConstructor()
 			->getMock();
