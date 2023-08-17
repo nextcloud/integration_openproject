@@ -12,6 +12,7 @@ exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the
       </ncbutton-stub>
     </div>
   </div>
+  <!---->
 </div>
 `;
 
@@ -27,6 +28,7 @@ exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete v
       </ncbutton-stub>
     </div>
   </div>
+  <!---->
 </div>
 `;
 

@@ -163,7 +163,7 @@
 					</NcButton>
 				</div>
 			</div>
-			<div v-if="!state.nc_oauth_client && isOPOAuthFormComplete && isOPOAuthFormInView">
+			<div v-if="!state.nc_oauth_client && isOPOAuthFormComplete && isOPOAuthFormInView && showDefaultManagedProjectFolders">
 				<NcButton data-test-id="reset-nc-oauth-btn"
 					@click="resetNcOauthValues">
 					<template #icon>
@@ -585,7 +585,11 @@ export default {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
 					this.showDefaultManagedProjectFolders = true
-				} else if (!this.state.nc_oauth_client && this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret) {
+				} else if (!this.state.nc_oauth_client
+					&& this.state.openproject_instance_url
+					&& this.state.openproject_client_id
+					&& this.state.openproject_client_secret
+				    && (this.formMode.projectFolderSetUp === F_MODES.VIEW)) {
 					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.formMode.ncOauth === F_MODES.VIEW) {

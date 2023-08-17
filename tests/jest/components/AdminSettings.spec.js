@@ -146,6 +146,7 @@ describe('AdminSettings.vue', () => {
 					openproject_client_id: 'abcd',
 					openproject_client_secret: 'abcdefgh',
 					nc_oauth_client: null,
+					showDefaultManagedProjectFolders: false,
 				},
 				{
 					server: F_MODES.VIEW,
@@ -742,6 +743,26 @@ describe('AdminSettings.vue', () => {
 					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.EDIT)
 					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(false)
 					wrapper.destroy()
+				})
+
+				it('should be displayed if nextcloud oauth credentials is empty and everything is set', async () => {
+					const wrapper = getMountedWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							openproject_client_id: 'op-client-id',
+							openproject_client_secret: 'op-client-secret',
+							nc_oauth_client: {
+								nextcloud_client_id: '',
+								nextcloud_client_secret: '',
+							},
+							formMode: {
+								projectFolderSetUp: F_MODES.VIEW,
+							},
+
+						},
+					})
+					const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
+					expect(resetButton.isVisible()).toBe(true)
 				})
 			})
 		})
