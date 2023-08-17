@@ -163,6 +163,15 @@
 					</NcButton>
 				</div>
 			</div>
+			<div v-if="!state.nc_oauth_client && isOPOAuthFormComplete && isOPOAuthFormInView">
+				<NcButton data-test-id="reset-nc-oauth-btn"
+					@click="resetNcOauthValues">
+					<template #icon>
+						<AutoRenewIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
+				</NcButton>
+			</div>
 		</div>
 		<div class="project-folder-setup">
 			<FormHeading index="4"
