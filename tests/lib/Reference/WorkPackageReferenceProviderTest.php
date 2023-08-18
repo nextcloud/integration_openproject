@@ -34,11 +34,14 @@ use OC_Util;
 
 class WorkPackageReferenceProviderTest extends TestCase {
 	protected function setUp(): void {
-		if (version_compare(OC_Util::getVersionString(), '25') < 0) {
-			$this->markTestSkipped('WorkPackageReferenceProvider has php 8 syntax that is not supported by nc 24 so skip tests');
+		if (version_compare(OC_Util::getVersionString(), '26') < 0) {
+			$this->markTestSkipped('WorkPackageReferenceProvider is only available from nextcloud 26 so skip the tests on versions below');
 		}
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function getWorkPackageIdFromUrlDataProvider() {
 		return[
 			['https://openproject.org/projects/123/work_packages/1111'],
@@ -63,11 +66,12 @@ class WorkPackageReferenceProviderTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getAppValue')->with(Application::APP_ID, 'openproject_instance_url')
 			->willReturn("https://openproject.org");
-		$refrenceProvider = new WorkPackageReferenceProvider($configMock,
+		$refrenceProvider = new WorkPackageReferenceProvider(
+			$configMock,
 			$this->createMock(IL10N::class),
 			$this->createMock(IURLGenerator::class),
-		$this->createMock(ReferenceManager::class),
-		$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(ReferenceManager::class),
+			$this->createMock(OpenProjectAPIService::class),
 		'testUser'
 		);
 		$result = $refrenceProvider->getWorkPackageIdFromUrl($refrenceText);
