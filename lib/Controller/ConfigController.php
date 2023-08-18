@@ -200,10 +200,6 @@ class ConfigController extends Controller {
 		}
 		$appPassword = null;
 
-		if ($values['openproject_instance_url']) {
-			$values['openproject_instance_url'] = rtrim($values['openproject_instance_url'], '/');
-		}
-
 		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
 			$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
 			if ($isSystemReady) {

@@ -84,15 +84,17 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 * @return int|null
 	 */
 	private function getWorkPackageIdFromUrl(string $referenceText): ?int {
-		$patterns = array('\/projects\/[^\/\?]+\/work_packages(?:\/details)?\/([0-9]+)/',
+		$patterns = array(
 			'\/wp\/([0-9]+)/',
-			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/');
+			'\/projects\/[^\/\?]+\/(?:work_packages|bcf|boards)(?:\/details)?\/([0-9]+)/',
+			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/',
+			'\/projects\/[^\/\?]+\/(?:boards|calendars|team_planners)\/[^\/\?]+\/details\/([0-9]+)/');
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
 		$openProjectUrl = rtrim($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'),'/');
 		foreach ($patterns as $pattern) {
-			$string ='/^' . preg_quote($openProjectUrl, '/') . $pattern;
-			preg_match($string, $referenceText, $patternMatches);
+			$patternString ='/^' . preg_quote($openProjectUrl, '/') . $pattern;
+			preg_match($patternString, $referenceText, $patternMatches);
 			if (count($patternMatches) > 1) {
 				return (int) $patternMatches[1];
 			}
