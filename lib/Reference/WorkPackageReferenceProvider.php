@@ -25,7 +25,6 @@ namespace OCA\OpenProject\Reference;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Collaboration\Reference\ADiscoverableReferenceProvider;
-use OCP\Collaboration\Reference\ISearchableReferenceProvider;
 use OCP\Collaboration\Reference\Reference;
 use OC\Collaboration\Reference\ReferenceManager;
 use OCA\OpenProject\AppInfo\Application;
@@ -83,10 +82,10 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 *
 	 * @return int|null
 	 */
-	private function getWorkPackageIdFromUrl(string $referenceText): ?int {
+	public function getWorkPackageIdFromUrl(string $referenceText): ?int {
 		$patterns = array(
 			'\/wp\/([0-9]+)/',
-			'\/projects\/[^\/\?]+\/(?:work_packages|bcf|boards)(?:\/details)?\/([0-9]+)/',
+			'\/projects\/[^\/\?]+\/(?:work_packages|bcf)(?:\/details)?\/([0-9]+)/',
 			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/',
 			'\/projects\/[^\/\?]+\/(?:boards|calendars|team_planners)\/[^\/\?]+\/details\/([0-9]+)/');
 		// example links
