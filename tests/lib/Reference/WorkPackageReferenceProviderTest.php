@@ -48,6 +48,7 @@ class WorkPackageReferenceProviderTest extends TestCase {
 			['https://openproject.org/wp/1111'],
 			['https://openproject.org/projects/123/work_packages/details/1111'],
 			['https://openproject.org/work_packages/details/1111'],
+			['https://openproject.org/work_packages/1111'],
 			['https://openproject.org/work_packages/details/1111/overview'],
 			['https://openproject.org/projects/wielands-playground/boards/290/details/1111/overview'],
 			['https://openproject.org/projects/wielands-playground/calendars/new/details/1111/overview?cdate=2023-08-01&cview=dayGridMonth'],

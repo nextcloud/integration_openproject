@@ -86,7 +86,8 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 		$patterns = array(
 			'\/wp\/([0-9]+)/',
 			'\/projects\/[^\/\?]+\/(?:work_packages|bcf)(?:\/details)?\/([0-9]+)/',
-			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/',
+			'\/(?:work_packages|notifications)\/details\/([0-9]+)/',
+			'\/work_packages\/([0-9]+)/',
 			'\/projects\/[^\/\?]+\/(?:boards|calendars|team_planners)\/[^\/\?]+\/details\/([0-9]+)/');
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
