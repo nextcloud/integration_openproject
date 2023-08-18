@@ -7,12 +7,16 @@
     "Save" : "Lagre",
     "Active" : "Aktiv",
     "Reset" : "Tilbakestill",
+    "Enable navigation link" : "Aktiver navigasjonskobling",
     "Documentation" : "Dokumentasjo",
+    "Connected as {user}" : "Tilkoblet som {user}",
+    "Incorrect access token" : "Feil tilgangstoken",
     "Invalid token" : "Ugyldig polett",
     "Copied!" : "Kopiert!",
     "Details" : "Detaljer",
     "Start typing to search" : "Start å skrive for å søke",
     "Mark as read" : "Merk som lest",
-    "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:"
+    "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
+    "Connected accounts" : "Tilknyttede kontoer"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
