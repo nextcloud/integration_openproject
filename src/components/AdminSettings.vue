@@ -169,7 +169,7 @@
 					<template #icon>
 						<AutoRenewIcon :size="20" />
 					</template>
-					{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
+					{{ t('integration_openproject', 'Create Nextcloud OAuth values') }}
 				</NcButton>
 			</div>
 		</div>
@@ -584,13 +584,15 @@ export default {
 				if (this.state.nc_oauth_client) {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
-					this.showDefaultManagedProjectFolders = true
-				} else if (!this.state.nc_oauth_client
+				}
+				if (!this.state.nc_oauth_client
 					&& this.state.openproject_instance_url
 					&& this.state.openproject_client_id
 					&& this.state.openproject_client_secret
-				    && (this.formMode.projectFolderSetUp === F_MODES.VIEW)) {
+				    && this.textLabelProjectFolderSetupButton === 'Keep current setup') {
 					this.showDefaultManagedProjectFolders = true
+					this.formMode.projectFolderSetUp = F_MODES.VIEW
+					this.isFormCompleted.projectFolderSetUp = true
 				}
 				if (this.formMode.ncOauth === F_MODES.VIEW) {
 					this.showDefaultManagedProjectFolders = true
