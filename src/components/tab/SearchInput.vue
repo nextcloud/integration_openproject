@@ -135,7 +135,7 @@ export default {
 			await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
 		},
 		async getWorkPackageLink(selectedOption) {
-			return this.openprojectUrl + '/projects/' + selectedOption.projectId + '/work_packages/' + selectedOption.id
+			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + selectedOption.id
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
 			if (args[0].length < SEARCH_CHAR_LIMIT) return

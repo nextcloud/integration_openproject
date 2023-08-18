@@ -86,10 +86,10 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private function getWorkPackageIdFromUrl(string $referenceText): ?int {
 		$patterns = array('\/projects\/[^\/\?]+\/work_packages(?:\/details)?\/([0-9]+)/',
 			'\/wp\/([0-9]+)/',
-			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/',);
+			'\/(?:work_packages|notifications)\/[^\/\?]+\/([0-9]+)/');
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
-		$openProjectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$openProjectUrl = rtrim($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'),'/');
 		foreach ($patterns as $pattern) {
 			$string ='/^' . preg_quote($openProjectUrl, '/') . $pattern;
 			preg_match($string, $referenceText, $patternMatches);
