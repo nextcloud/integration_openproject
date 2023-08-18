@@ -25,7 +25,6 @@ namespace OCA\OpenProject\Reference;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Collaboration\Reference\ADiscoverableReferenceProvider;
-use OCP\Collaboration\Reference\ISearchableReferenceProvider;
 use OCP\Collaboration\Reference\Reference;
 use OC\Collaboration\Reference\ReferenceManager;
 use OCA\OpenProject\AppInfo\Application;
@@ -83,15 +82,23 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 *
 	 * @return int|null
 	 */
-	private function getWorkPackageIdFromUrl(string $referenceText): ?int {
+	public function getWorkPackageIdFromUrl(string $referenceText): ?int {
+		$patterns = array(
+			'\/wp\/([0-9]+)/',
+			'\/projects\/[^\/\?]+\/(?:work_packages|bcf)(?:\/details)?\/([0-9]+)/',
+			'\/(?:work_packages|notifications)\/details\/([0-9]+)/',
+			'\/work_packages\/([0-9]+)/',
+			'\/projects\/[^\/\?]+\/(?:boards|calendars|team_planners)\/[^\/\?]+\/details\/([0-9]+)/');
 		// example links
 		// https://community.openproject.org/projects/nextcloud-integration/work_packages/40070
-		$openProjectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		preg_match('/^' . preg_quote($openProjectUrl, '/') . '\/projects\/[^\/\?]+\/work_packages\/([0-9]+)/', $referenceText, $matches);
-		if (count($matches) > 1) {
-			return (int) $matches[1];
+		$openProjectUrl = rtrim($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'),'/');
+		foreach ($patterns as $pattern) {
+			$patternString ='/^' . preg_quote($openProjectUrl, '/') . $pattern;
+			preg_match($patternString, $referenceText, $patternMatches);
+			if (count($patternMatches) > 1) {
+				return (int) $patternMatches[1];
+			}
 		}
-
 		return null;
 	}
 

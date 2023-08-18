@@ -529,7 +529,7 @@ describe('SearchInput.vue', () => {
 			await ncSelectItem.trigger('click')
 			const savedEvent = wrapper.emitted('submit')
 			expect(savedEvent).toHaveLength(1)
-			expect(savedEvent[0][0]).toEqual('https://openproject.com/projects/1/work_packages/999')
+			expect(savedEvent[0][0]).toEqual('https://openproject.com/wp/999')
 		})
 
 		it('should not send a request to link file to workpackage', async () => {
