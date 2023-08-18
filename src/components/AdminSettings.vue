@@ -163,6 +163,15 @@
 					</NcButton>
 				</div>
 			</div>
+			<div v-if="!state.nc_oauth_client && isOPOAuthFormComplete && isOPOAuthFormInView && showDefaultManagedProjectFolders">
+				<NcButton data-test-id="reset-nc-oauth-btn"
+					@click="resetNcOauthValues">
+					<template #icon>
+						<AutoRenewIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Create Nextcloud OAuth values') }}
+				</NcButton>
+			</div>
 		</div>
 		<div class="project-folder-setup">
 			<FormHeading index="4"
@@ -575,6 +584,15 @@ export default {
 				if (this.state.nc_oauth_client) {
 					this.formMode.ncOauth = F_MODES.VIEW
 					this.isFormCompleted.ncOauth = true
+				}
+				if (!this.state.nc_oauth_client
+					&& this.state.openproject_instance_url
+					&& this.state.openproject_client_id
+					&& this.state.openproject_client_secret
+				    && this.textLabelProjectFolderSetupButton === 'Keep current setup') {
+					this.showDefaultManagedProjectFolders = true
+					this.formMode.projectFolderSetUp = F_MODES.VIEW
+					this.isFormCompleted.projectFolderSetUp = true
 				}
 				if (this.formMode.ncOauth === F_MODES.VIEW) {
 					this.showDefaultManagedProjectFolders = true
