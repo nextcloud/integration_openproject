@@ -146,6 +146,7 @@ OC.L10N.register(
     "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "已成功撤銷用戶 OpenProject OAuth 存取權杖",
+    "Create Nextcloud OAuth values" : "創建 Nextcloud OAuth 值",
     "Search for work packages" : "搜索工作軟件包",
     "OpenProject work package picker" : "OpenProject 工作軟件包選擇器"
 },
