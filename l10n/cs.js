@@ -145,6 +145,9 @@ OC.L10N.register(
     "Invalid key" : "Neplatná klávesa",
     "To be able to use an OpenProject server with a local address, " : "Aby bylo možné použít OpenProject server s lokální adresou,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
+    "Create Nextcloud OAuth values" : "Vytvořit OAuth hodnoty pro Nextcloud",
+    "Search for work packages" : "Vyhledat balíčky práce",
+    "OpenProject work package picker" : "Dialog pro volbu balíčku práce z OpenProject"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

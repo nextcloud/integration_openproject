@@ -146,6 +146,7 @@ OC.L10N.register(
     "To be able to use an OpenProject server with a local address, " : "Um einen OpenProject-Server mit einer lokalen Adresse nutzen zu können,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "OpenProject OAuth-Zugriffstoken einiger Benutzer konnten nicht widerrufen werden",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "OAuth-Zugriffstoken für OpenProject-OAuth wurde von Benutzern erfolgreich widerrufen",
+    "Create Nextcloud OAuth values" : "Nextcloud OAuth-Werte erstellen",
     "Search for work packages" : "Nach Arbeitspaketen suchen",
     "OpenProject work package picker" : "OpenProject-Arbeitspaketauswahl"
 },
