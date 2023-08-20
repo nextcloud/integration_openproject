@@ -146,6 +146,7 @@ OC.L10N.register(
     "To be able to use an OpenProject server with a local address, " : "لتتمكن من استخدام خادم OpenProject  ذو العنوان المحلي،",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "فشل إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بمستخدم (مستخدمين)",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "تم بنجاح إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بالمستخدم (المستخدمين)",
+    "Create Nextcloud OAuth values" : "إنشاء قيم التصديق المفتوح OAuth لنكست كلاود",
     "Search for work packages" : "البحث في حزم العمل work packages",
     "OpenProject work package picker" : "مُنتقِي حزم العمل work package picker في OpenProject"
 },
