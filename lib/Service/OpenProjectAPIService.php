@@ -541,14 +541,17 @@ class OpenProjectAPIService {
 	/**
 	 * validates the provided data for integration setup
 	 *
-	 * @param array<mixed> $values
+	 * @param array<string, string|null|bool> $values
 	 * @param bool $allKeysMandatory
 	 *
 	 * @return bool
 	 * @throws InvalidArgumentException
 	 *
 	 */
-	public static function validateIntegrationSetupInformation(array $values, bool $allKeysMandatory = true): bool {
+	public static function validateIntegrationSetupInformation(?array $values, bool $allKeysMandatory = true): bool {
+		if (!$values) {
+			throw new InvalidArgumentException("The data is not a valid JSON.");
+		}
 		$opKeys = [
 			'openproject_instance_url',
 			'openproject_client_id',

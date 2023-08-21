@@ -177,9 +177,7 @@ class ConfigController extends Controller {
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
-	 * @throws OpenprojectGroupfolderSetupConflictException
-	 * @throw NoUserException
-	 * @throws GuzzleException
+	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
@@ -373,10 +371,14 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			return new DataResponse([
-				'error' => $this->l->t($e->getMessage())
-			], Http::STATUS_BAD_REQUEST);
+				"error" => $e->getMessage()
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -557,7 +559,7 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 *
 	 */
-	public function setUpIntegration(array $values): DataResponse {
+	public function setUpIntegration(?array $values): DataResponse {
 		try {
 			// for POST all the keys must be mandatory
 			OpenProjectAPIService::validateIntegrationSetupInformation($values);
@@ -574,10 +576,18 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
-		} catch (\Exception $e) {
+		} catch (NoUserException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_NOT_FOUND);
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -586,12 +596,12 @@ class ConfigController extends Controller {
 	 *
 	 * update integration
 	 *
-	 * @param array<string, string> $values
+	 * @param array<string, string|null|bool> $values
 	 *
 	 *
 	 * @return DataResponse
 	 */
-	public function updateIntegration(array $values): DataResponse {
+	public function updateIntegration(?array $values): DataResponse {
 		try {
 			// for PUT key information can be optional (not mandatory)
 			OpenProjectAPIService::validateIntegrationSetupInformation($values, false);
@@ -616,10 +626,18 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
-		} catch (\Exception $e) {
+		} catch (NoUserException $e) {
+			return new DataResponse([
+				'error' => $this->l->t($e->getMessage())
+			], Http::STATUS_NOT_FOUND);
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
+		} catch (\Exception $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}
 
