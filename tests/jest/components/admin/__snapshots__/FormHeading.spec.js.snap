@@ -2,7 +2,7 @@
 
 exports[`FormHeading.vue is complete prop should hide the checkmark icon and show the index if not complete 1`] = `
 <div class="form-heading">
-  <div class="index">
+  <div class="index index-light-mode">
     1
   </div>
   <div class="title">
@@ -22,7 +22,7 @@ exports[`FormHeading.vue is complete prop should show checkmark icon, add green 
 
 exports[`FormHeading.vue is disabled prop should add disabled class to the form heading 1`] = `
 <div class="form-heading disabled">
-  <div class="index">
+  <div class="index index-light-mode">
     1
   </div>
   <div class="title">
