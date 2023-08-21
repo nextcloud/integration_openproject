@@ -91,7 +91,7 @@ export default {
 				if (this.dashboard) {
 					return t('integration_openproject', 'No OpenProject notifications!')
 				} else if (this.linkMultipleModal) {
-					return t('integration_openproject', 'Add a new link to all files')
+					return t('integration_openproject', 'Add a new link to all selected files')
 				}
 				return t('integration_openproject', 'No OpenProject links yet')
 			}

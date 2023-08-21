@@ -75,8 +75,9 @@ export default {
 			if (this.isAdminConfigOk) {
 				if (this.fileInfos.length === 1) {
 					await this.fetchWorkpackagesForMultipleFileLink(this.fileInfos[0].id)
+				} else {
+					this.state = STATE.OK
 				}
-				this.state = STATE.OK
 			} else {
 				this.state = STATE.ERROR
 			}
@@ -105,8 +106,8 @@ export default {
 							this.alreadyLinkedWorkPackage.push(workPackage)
 						}
 					}
+					this.state = STATE.OK
 				}
-				this.state = STATE.OK
 			} catch (error) {
 				if (error.response && error.response.status === 401) {
 					this.state = STATE.NO_TOKEN

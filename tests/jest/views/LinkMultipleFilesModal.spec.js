@@ -4,6 +4,9 @@ import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
 import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
 import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils.js'
+import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
+import axios from '@nextcloud/axios'
+import { getCurrentUser } from '@nextcloud/auth'
 
 jest.mock('@nextcloud/auth')
 jest.mock('@nextcloud/axios')
@@ -13,6 +16,25 @@ jest.mock('@nextcloud/l10n', () => ({
 	getLanguage: jest.fn(),
 }))
 const localVue = createLocalVue()
+
+const singleFileInfo = [{
+	id: 123,
+	name: 'logo.ong',
+}]
+
+const multipleFileInfo = [{
+	id: 123,
+	name: 'logo.ong',
+},
+
+{
+	id: 456,
+	name: 'pogo.ong',
+},
+{
+	id: 789,
+	name: 'togo.ong',
+}]
 
 describe('LinkMultipleFilesModal.vue', () => {
 	const searchInputStubSelector = 'searchinput-stub'
@@ -110,6 +132,285 @@ describe('LinkMultipleFilesModal.vue', () => {
 			await wrapper.setData({ state })
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+		})
+	})
+
+	describe('fetch workpackages', () => {
+		let wrapper
+		let axiosGetSpy = jest.fn()
+		beforeEach(() => {
+			wrapper = mountWrapper()
+			axiosGetSpy.mockRestore()
+			workpackageHelper.clearCache()
+		})
+
+		describe('single file selected', () => {
+			it.each([
+				{ HTTPStatus: 400, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
+				{ HTTPStatus: 401, AppState: STATE.NO_TOKEN },
+				{ HTTPStatus: 402, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
+				{ HTTPStatus: 404, AppState: STATE.CONNECTION_ERROR },
+				{ HTTPStatus: 500, AppState: STATE.ERROR },
+			])('sets states according to HTTP error codes', async (cases) => {
+				const err = new Error()
+				err.response = { status: cases.HTTPStatus }
+				axios.get.mockRejectedValueOnce(err)
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(wrapper.vm.state).toBe(cases.AppState)
+			})
+
+			it.each([
+				null,
+				'string',
+				undefined,
+				[{ // missing id
+					subject: 'subject',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
+						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}],
+				[{ // empty subject
+					id: 123,
+					subject: '',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
+						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}],
+				[{ // missing subject
+					id: 123,
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
+						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}],
+				[{ // missing _links.status.title
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}],
+				[{ // missing project.title
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
+						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { },
+					},
+				}],
+			])('sets the "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
+				axios.get
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: testCase,
+					}))
+					// mock for color requests, it should not fail because of the missing mock
+					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(wrapper.vm.state).toBe(STATE.FAILED_FETCHING_WORKPACKAGES)
+			})
+
+			it('sets the "ok" state on empty response', async () => {
+				axios.get
+					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(wrapper.vm.state).toBe(STATE.OK)
+			})
+			it('sets the "error" state if the admin config is not okay', async () => {
+				const returnValue = { isAdmin: false }
+				getCurrentUser.mockReturnValue(returnValue)
+				const wrapper = mountWrapper()
+				axios.get
+					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				await wrapper.setData({
+					isAdminConfigOk: false,
+				})
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(wrapper.vm.state).toBe(STATE.ERROR)
+				expect(wrapper).toMatchSnapshot()
+			})
+
+			it('sets the "error" state if the admin config is not okay', async () => {
+				const returnValue = { isAdmin: false }
+				getCurrentUser.mockReturnValue(returnValue)
+				const wrapper = mountWrapper()
+				axios.get
+					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				await wrapper.setData({
+					isAdminConfigOk: false,
+				})
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(wrapper.vm.state).toBe(STATE.ERROR)
+				expect(wrapper).toMatchSnapshot()
+			})
+
+			it('should set all workpackages to alreadylinked', async () => {
+				// this can happen if multiple replies arrive at the same time
+				// when the user switches between files while results still loading
+				wrapper = mountWrapper()
+				axiosGetSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [{
+							id: 123,
+							subject: 'my task',
+							_links: {
+								status: {
+									href: '/api/v3/statuses/12',
+									title: 'open',
+								},
+								type: {
+									href: '/api/v3/types/6',
+									title: 'Task',
+								},
+								assignee: {
+									href: '/api/v3/users/1',
+									title: 'Bal Bahadur Pun',
+								},
+								project: { title: 'a big project' },
+							},
+						},
+						{
+							id: 123,
+							subject: 'my task',
+							_links: {
+								status: {
+									href: '/api/v3/statuses/12',
+									title: 'open',
+								},
+								type: {
+									href: '/api/v3/types/6',
+									title: 'Task',
+								},
+								assignee: {
+									href: '/api/v3/users/1',
+									title: 'Bal Bahadur Pun',
+								},
+								project: { title: 'a big project' },
+							},
+						}],
+					}))
+					.mockImplementation(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				await wrapper.vm.setFileInfos(singleFileInfo)
+				expect(axiosGetSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/work-packages?fileId=123',
+					{}
+				)
+				expect(wrapper.vm.state).toBe(STATE.OK)
+				expect(wrapper.vm.alreadyLinkedWorkPackage.length).toBe(2)
+			})
+		})
+
+		describe('multiple files selected', () => {
+			it('sets the "error" state if the admin config is not okay', async () => {
+				const returnValue = { isAdmin: false }
+				getCurrentUser.mockReturnValue(returnValue)
+				const wrapper = mountWrapper()
+				axios.get
+					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				await wrapper.setData({
+					isAdminConfigOk: false,
+				})
+				await wrapper.vm.setFileInfos(multipleFileInfo)
+				expect(wrapper.vm.state).toBe(STATE.ERROR)
+				expect(wrapper).toMatchSnapshot()
+			})
+
+			it('should not fetch any workpackages', async () => {
+				await wrapper.setData({
+					isAdminConfigOk: false,
+				})
+				await wrapper.vm.setFileInfos(multipleFileInfo)
+				await expect(axios.get).toBeCalledTimes(0)
+			})
+		})
+
+		describe('onSave', () => {
+			it('should closed the modal', async () => {
+				await wrapper.vm.onSaved()
+				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
+			})
+
+			it('should set "alreadyLinkedWorkPackage", "fileInfos" to empty', async () => {
+				await wrapper.setData({
+					fileInfos: singleFileInfo,
+					alreadyLinkedWorkPackage: [{
+						fileId: 123,
+						id: '1',
+						subject: 'Organize work-packages',
+						project: 'test',
+						projectId: '15',
+						statusTitle: 'in-progress',
+						typeTitle: 'task',
+						assignee: 'test',
+						statusCol: 'blue',
+						typeCol: 'red',
+						picture: '/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System',
+					}],
+				})
+				await wrapper.vm.onSaved()
+				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
+			})
 		})
 	})
 })
