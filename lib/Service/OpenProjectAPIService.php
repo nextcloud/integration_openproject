@@ -1129,12 +1129,8 @@ class OpenProjectAPIService {
 	 */
 	public function deleteAppPassword(): void {
 		if ($this->hasAppPassword()) {
-			$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
-			foreach ($tokens as $token) {
-				if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-					$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token->getId());
-				}
-			}
+			$tokenId = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)[0]->getId();
+			$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $tokenId);
 		}
 	}
 
@@ -1144,13 +1140,7 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function hasAppPassword(): bool {
-		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
-		foreach ($tokens as $token) {
-			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-				return true;
-			}
-		}
-		return false;
+		return sizeof($this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME)) === 1;
 	}
 
 	/**
@@ -1161,14 +1151,11 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): array {
 		$result[] = null;
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		if ($accessToken) {
-			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
-			$result['title'] = $this->getSubline($searchResult[0]);
-			$result['description'] = $this->getMainText($searchResult[0]);
-			$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
-			$result['entry'] = $searchResult[0];
-		}
+		$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
+		$result['title'] = $this->getSubline($searchResult[0]);
+		$result['description'] = $this->getMainText($searchResult[0]);
+		$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
+		$result['entry'] = $searchResult[0];
 		return $result;
 	}
 

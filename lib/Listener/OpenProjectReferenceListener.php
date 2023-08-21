@@ -23,36 +23,15 @@
 namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
 use OCP\Util;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class OpenProjectReferenceListener implements IEventListener {
-
-	/**
-	 * @var IInitialState
-	 */
-	private $initialStateService;
-
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-
-	public function __construct(
-		IInitialState $initialStateService,
-		IConfig $config
-	) {
-		$this->initialStateService = $initialStateService;
-		$this->config = $config;
-	}
 	public function handle(Event $event): void {
 		// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
 		if (!$event instanceof RenderReferenceEvent) {
@@ -60,11 +39,5 @@ class OpenProjectReferenceListener implements IEventListener {
 		}
 
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
-
-		$this->initialStateService->provideInitialState(
-			'openproject-url',
-			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
-		);
 	}
 }

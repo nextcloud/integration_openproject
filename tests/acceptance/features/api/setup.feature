@@ -538,9 +538,10 @@ Feature: setup the integration through an API
     And groupfolder "OpenProject" should be managed by the user "OpenProject"
     # the next step is only for the tests, because that user has a random password
     Given the administrator has changed the password of "OpenProject" to the default testing password
-    And user "OpenProject" should have a folder called "OpenProject"
+    Then user "OpenProject" should have a folder called "OpenProject"
+
     # folders inside the OpenProject folder can only be deleted/renamed by the OpenProject user
-    And user "Carol" has been created
+    Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
     And user "OpenProject" has created folder "/OpenProject/project-abc"
     Then user "Carol" should have a folder called "OpenProject/project-abc"
@@ -634,12 +635,9 @@ Feature: setup the integration through an API
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using current app password
     Then the HTTP status code should be "207"
 
-    # this is to provide test coverage for issues like this
-    # https://community.openproject.org/projects/nextcloud-integration/work_packages/49621
-    When a new browser session for "Openproject" starts
     # but other values can be updated by sending a PATCH request
     # also we can replace old app password by sending PATCH request to get new user app password
-    And the administrator sends a PATCH request to the "setup" endpoint with this data:
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
       "values" : {

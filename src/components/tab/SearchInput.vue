@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
 import debounce from 'lodash/debounce.js'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
@@ -51,22 +50,18 @@ export default {
 	props: {
 		fileInfo: {
 			type: Object,
-			default: null,
+			required: true,
 		},
 		linkedWorkPackages: {
 			type: Array,
-			default: null,
-		},
-		isSmartPicker: {
-			type: Boolean,
-			default: false,
+			required: true,
 		},
 	},
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
 		noOptionsText: t('integration_openproject', 'Start typing to search'),
-		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
+		placeholder: t('integration_openproject', 'Search for a work package to create a relation'),
 	}),
 	computed: {
 		isStateOk() {
@@ -83,18 +78,8 @@ export default {
 			}
 			return ''
 		},
-		placeholder() {
-			if (this.isSmartPicker) {
-				return t('integration_openproject', 'Search for work packages')
-			} else {
-				return t('integration_openproject', 'Search for a work package to create a relation')
-			}
-		},
 		filterSearchResultsByFileId() {
 			return this.searchResults.filter(wp => {
-				if (this.isSmartPicker) {
-					return wp.id
-				}
 				if (wp.fileId === undefined || wp.fileId === '') {
 					console.error('work-package data does not contain a fileId')
 					return false
@@ -132,21 +117,13 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
-		},
-		async getWorkPackageLink(selectedOption) {
-			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + selectedOption.id
+			await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 		},
 		debounceMakeSearchRequest: debounce(function(...args) {
 			if (args[0].length < SEARCH_CHAR_LIMIT) return
 			return this.makeSearchRequest(...args)
 		}, DEBOUNCE_THRESHOLD),
 		async linkWorkPackageToFile(selectedOption) {
-			if (this.isSmartPicker) {
-				const link = await this.getWorkPackageLink(selectedOption)
-				this.$emit('submit', link)
-				return
-			}
 			const params = new URLSearchParams()
 			params.append('workpackageId', selectedOption.id)
 			params.append('fileId', this.fileInfo.id)
@@ -172,13 +149,12 @@ export default {
 				)
 			}
 		},
-		async makeSearchRequest(search, fileId = null, isSmartPicker = false) {
+		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const req = {}
 			req.params = {
 				searchQuery: search,
-				isSmartPicker,
 			}
 			let response
 			try {
@@ -194,19 +170,13 @@ export default {
 			for (let workPackage of workPackages) {
 				try {
 					if (this.isStateLoading) {
-						if (this.isSmartPicker) {
-						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+						workPackage.fileId = fileId
+						workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+						const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
+						const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
+						// check the state again, it might have changed in between
+						if (!alreadyInSearchResults && !alreadyLinked && this.isStateLoading) {
 							this.searchResults.push(workPackage)
-
-						} else {
-							workPackage.fileId = fileId
-							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
-							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
-							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
-							// check the state again, it might have changed in between
-							if (!alreadyInSearchResults && !alreadyLinked && this.isStateLoading) {
-								this.searchResults.push(workPackage)
-							}
 						}
 					}
 				} catch (e) {

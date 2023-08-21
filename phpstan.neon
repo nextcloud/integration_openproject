@@ -9,4 +9,3 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     excludePaths:
     	-  './lib/Reference/WorkPackageReferenceProvider.php'
-    	- './tests/lib/Reference/WorkPackageReferenceProviderTest.php'
