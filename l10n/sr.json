@@ -144,6 +144,7 @@
     "To be able to use an OpenProject server with a local address, " : "Да бисте могли да користите OpenProject сервер са локалном адресом, ",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Није успело повлачење OpenProject OAuth приступног жетона за неке кориснике",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон",
+    "Create Nextcloud OAuth values" : "Креирај Nextcloud OAuth вредности",
     "Search for work packages" : "Претрага радних пакета",
     "OpenProject work package picker" : "Бирач OpenProject радних пакета"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"

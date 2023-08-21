@@ -146,6 +146,7 @@ OC.L10N.register(
     "To be able to use an OpenProject server with a local address, " : "Да бисте могли да користите OpenProject сервер са локалном адресом, ",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Није успело повлачење OpenProject OAuth приступног жетона за неке кориснике",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон",
+    "Create Nextcloud OAuth values" : "Креирај Nextcloud OAuth вредности",
     "Search for work packages" : "Претрага радних пакета",
     "OpenProject work package picker" : "Бирач OpenProject радних пакета"
 },
