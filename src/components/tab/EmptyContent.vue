@@ -63,6 +63,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		linkMultipleModal: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
@@ -86,6 +90,8 @@ export default {
 			} else if (this.isStateOk) {
 				if (this.dashboard) {
 					return t('integration_openproject', 'No OpenProject notifications!')
+				} else if (this.linkMultipleModal) {
+					return t('integration_openproject', 'Add a new link to all files')
 				}
 				return t('integration_openproject', 'No OpenProject links yet')
 			}

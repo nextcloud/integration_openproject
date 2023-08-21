@@ -39,7 +39,7 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
-import { STATE } from '../../utils.js'
+import { STATE, SEARCHFROM } from '../../utils.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -52,7 +52,7 @@ export default {
 	},
 	props: {
 		fileInfo: {
-			type: Object,
+			type: [Object, Array],
 			default: null,
 		},
 		linkedWorkPackages: {
@@ -62,6 +62,11 @@ export default {
 		isSmartPicker: {
 			type: Boolean,
 			default: false,
+		},
+		isSearchFrom: {
+			type: String,
+			required: false,
+			default: null,
 		},
 	},
 	data: () => ({
@@ -93,16 +98,21 @@ export default {
 			}
 		},
 		filterSearchResultsByFileId() {
-			return this.searchResults.filter(wp => {
-				if (this.isSmartPicker) {
-					return wp.id
-				}
-				if (wp.fileId === undefined || wp.fileId === '') {
-					console.error('work-package data does not contain a fileId')
-					return false
-				}
-				return wp.fileId === this.fileInfo.id
-			})
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB || this.isSmartPicker) {
+				return this.searchResults.filter(wp => {
+					if (this.isSmartPicker) {
+						return wp.id
+					}
+					if (wp.fileId === undefined || wp.fileId === '') {
+						console.error('work-package data does not contain a fileId')
+						return false
+					}
+					return wp.fileId === this.fileInfo.id
+				})
+			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
+				return this.searchResults
+			}
+			return []
 		},
 	},
 	watch: {
@@ -127,7 +137,11 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
+				await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
+			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
+				await this.debounceMakeSearchRequest(query)
+			}
 		},
 		async getWorkPackageLink(selectedOption) {
 			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + selectedOption.id
@@ -142,22 +156,28 @@ export default {
 				this.$emit('submit', link)
 				return
 			}
-			const params = new URLSearchParams()
-			params.append('workpackageId', selectedOption.id)
-			params.append('fileId', this.fileInfo.id)
-			params.append('fileName', this.fileInfo.name)
-			const config = {
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
+			// since we can link multiple files now we send file information required in array (whether its only one value or multiple)
+			let fileInfoForBody = []
+			let successMessage
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
+				fileInfoForBody.push(this.fileInfo)
+				successMessage = 'Work package linked successfully!'
+			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
+				fileInfoForBody = this.fileInfo
+				successMessage = 'Work package linked successfully for selected files!'
+			}
+			const body = {
+				values: {
+					workpackageId: selectedOption.id,
+					fileinfo: fileInfoForBody,
 				},
 			}
 			const url = generateUrl('/apps/integration_openproject/work-packages')
-
 			try {
-				await axios.post(url, params, config)
+				await axios.post(url, body)
 				this.$emit('saved', selectedOption)
 				showSuccess(
-					t('integration_openproject', 'Work package linked successfully!')
+					t('integration_openproject', successMessage)
 				)
 				this.resetState()
 			} catch (e) {
@@ -184,7 +204,7 @@ export default {
 			if (response.status === 200) await this.processWorkPackages(response.data, fileId)
 			if (this.isStateLoading) this.state = STATE.OK
 		},
-		async processWorkPackages(workPackages, fileId) {
+		async processWorkPackages(workPackages, fileId = null) {
 			for (let workPackage of workPackages) {
 				try {
 					if (this.isStateLoading) {
@@ -193,7 +213,10 @@ export default {
 							this.searchResults.push(workPackage)
 
 						} else {
-							workPackage.fileId = fileId
+							if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
+								// for now multiple link of files to a workpackage, fileId is not sent for filtration process
+								workPackage.fileId = fileId
+							}
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)

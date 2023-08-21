@@ -183,12 +183,13 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $workpackageId
-	 * @param int $fileId
-	 * @param string $fileName
+	 * @NoCSRFRequired
+	 *
+	 * @param array<mixed> $values
+	 *
 	 * @return DataResponse
 	 */
-	public function linkWorkPackageToFile(int $workpackageId, int $fileId, string $fileName) {
+	public function linkWorkPackageToFile(array $values) {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
@@ -197,9 +198,7 @@ class OpenProjectAPIController extends Controller {
 
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
-				$workpackageId,
-				$fileId,
-				$fileName,
+				$values,
 				$this->userId,
 			);
 		} catch (OpenprojectErrorException $e) {

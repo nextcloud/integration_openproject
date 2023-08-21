@@ -100,6 +100,7 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
+			Util::addScript(Application::APP_ID, 'integration_openproject-filesplugin');
 		});
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);

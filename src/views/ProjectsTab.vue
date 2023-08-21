@@ -26,6 +26,7 @@
 		<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
+			:is-search-from="isSearchFrom"
 			@saved="onSaved" />
 		<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 		<div v-else-if="filterWorkpackagesByFileId.length > 0" id="openproject-linked-workpackages">
@@ -78,7 +79,7 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
-import { STATE, checkOauthConnectionResult } from '../utils.js'
+import { STATE, SEARCHFROM, checkOauthConnectionResult } from '../utils.js'
 
 export default {
 	name: 'ProjectsTab',
@@ -101,6 +102,7 @@ export default {
 		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 		color: null,
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
+		isSearchFrom: SEARCHFROM.PROJECT_TAB,
 	}),
 	computed: {
 		isLoading() {

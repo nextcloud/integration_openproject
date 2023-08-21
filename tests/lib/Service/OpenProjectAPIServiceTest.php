@@ -1245,9 +1245,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'user', 'work_packages/123/file_links',
 				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
 			);
-
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+			$values, 'user'
 		);
 		$this->assertSame(2456, $result);
 	}
@@ -1268,8 +1276,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request');
 
 		$this->expectException(NotPermittedException::class);
+
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
+
 		$service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+			$values, 'user'
 		);
 	}
 
@@ -1290,8 +1309,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request');
 
 		$this->expectException(NotFoundException::class);
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+			$values, 'user'
 		);
 	}
 	/**
@@ -1895,11 +1923,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 
 		$service = $this->getOpenProjectAPIService($storageMock);
-
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$result = $service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 
@@ -1953,10 +1987,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 
 		$this->expectException(OpenprojectErrorException::class);
+
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
+
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2008,10 +2051,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2045,10 +2095,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getOpenProjectAPIService($storageMock, 'MissingPermission');
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = [
+			"workpackageId" => 123,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2082,10 +2139,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getOpenProjectAPIService($storageMock);
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = [
+			"workpackageId" => 999999,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$service->linkWorkPackageToFile(
-			999999,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}

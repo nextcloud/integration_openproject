@@ -8,7 +8,7 @@ import workPackagesSearchResponse from '../../fixtures/workPackagesSearchRespons
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
-import { STATE } from '../../../../src/utils.js'
+import { STATE, SEARCHFROM } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
 
 jest.mock('@nextcloud/axios')
@@ -130,6 +130,9 @@ describe('SearchInput.vue', () => {
 						data: [],
 					}))
 				wrapper = mountSearchInput()
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
 				expect(axiosSpy).toHaveBeenCalledTimes(expectedCallCount)
@@ -142,6 +145,9 @@ describe('SearchInput.vue', () => {
 						data: [],
 					}))
 				wrapper = mountSearchInput()
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
 
@@ -168,6 +174,9 @@ describe('SearchInput.vue', () => {
 				const consoleMock = jest.spyOn(console, 'error')
 					.mockImplementationOnce(() => {})
 				wrapper = mountSearchInput()
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
 				await localVue.nextTick()
@@ -178,8 +187,11 @@ describe('SearchInput.vue', () => {
 		})
 
 		describe('search list', () => {
-			beforeEach(() => {
+			beforeEach(async () => {
 				wrapper = mountSearchInput()
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 			})
 			it('should not be displayed if the search results is empty', async () => {
 				await wrapper.setData({
@@ -195,6 +207,9 @@ describe('SearchInput.vue', () => {
 						data: [],
 					}))
 				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
 				await wrapper.setData({
@@ -222,6 +237,9 @@ describe('SearchInput.vue', () => {
 						data: [],
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
 				await wrapper.setData({
@@ -237,7 +255,7 @@ describe('SearchInput.vue', () => {
 						data: [],
 						status: 200,
 					}))
-				await wrapper.find(inputSelector).setValue('orga')
+				await inputField.setValue('orga')
 				for (let i = 0; i <= 10; i++) {
 					await wrapper.vm.$nextTick()
 				}
@@ -262,6 +280,9 @@ describe('SearchInput.vue', () => {
 							subject: 'Write a software',
 						},
 					])
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
@@ -418,6 +439,9 @@ describe('SearchInput.vue', () => {
 						data: [],
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
+				await wrapper.setProps({
+					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
 				await wrapper.setData({
@@ -444,14 +468,20 @@ describe('SearchInput.vue', () => {
 					}))
 				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 				await ncSelectItem.trigger('click')
-				const expectedParams = new URLSearchParams()
-				expectedParams.append('workpackageId', 999)
-				expectedParams.append('fileId', 111)
-				expectedParams.append('fileName', 'file.txt')
+				const body = {
+					values: {
+						workpackageId: 999,
+						fileinfo: [
+							{
+								id: 111,
+								name: 'file.txt',
+							},
+						],
+					},
+				}
 				expect(postSpy).toBeCalledWith(
 					'http://localhost/apps/integration_openproject/work-packages',
-					expectedParams,
-					{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+					body
 				)
 				postSpy.mockRestore()
 			})

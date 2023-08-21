@@ -246,7 +246,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function searchWorkPackagesDataProvider() {
 		return [
 			['test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			['test', 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			['test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
 			[null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
 		];
 	}
@@ -258,7 +258,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 * @dataProvider searchWorkPackagesDataProvider
 	 */
-	public function testGetSearchedWorkPackages($searchQuery, $fileId, array $expectedResponse):void {
+	public function testGetSearchedWorkPackages(?string $searchQuery, ?int $fileId, array $expectedResponse):void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()

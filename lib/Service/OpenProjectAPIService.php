@@ -704,53 +704,61 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws NotFoundException
+	 * @param array<mixed> $values
+	 * @param string $userId
+	 *
+	 * @return int
+	 *@throws NotFoundException
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws NotPermittedException
 	 * @throws OpenprojectErrorException
 	 * @throws \OC\User\NoUserException
 	 * @throws OpenprojectResponseException
-	 * @return int
+	 * @throws \OCP\Files\InvalidPathException
 	 */
 	public function linkWorkPackageToFile(
-		int $workpackageId,
-		int $fileId,
-		string $fileName,
+		array $values,
 		string $userId
 	): int {
-		$file = $this->getNode($userId, $fileId);
-		if (!$file->isReadable()) {
-			throw new NotPermittedException();
+		$fileIfnos = $values['fileinfo'];
+		$elements = [];
+		// multiple files can also be linked to a single work package
+		foreach ($fileIfnos as $fileinfo) {
+			$fileId = $fileinfo["id"];
+			$fileName = $fileinfo["name"];
+			$file = $this->getNode($userId, $fileId);
+			if (!$file->isReadable()) {
+				throw new NotPermittedException();
+			}
+			$element = [
+				'originData' => [
+					'id' => $fileId,
+					'name' => $fileName,
+					'mimeType' => $file->getMimeType(),
+					'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getCreationTime()),
+					'lastModifiedAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getMTime()),
+					'createdByName' => '',
+					'lastModifiedByName' => ''
+				],
+				'_links' => [
+					'storageUrl' => [
+						'href' => $this->getBaseUrl()
+					]
+				]
+			];
+			$elements[] = $element;
 		}
 
 		$body = [
 			'_type' => 'Collection',
 			'_embedded' => [
-				'elements' => [
-					[
-						'originData' => [
-							'id' => $fileId,
-							'name' => $fileName,
-							'mimeType' => $file->getMimeType(),
-							'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getCreationTime()),
-							'lastModifiedAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getMTime()),
-							'createdByName' => '',
-							'lastModifiedByName' => ''
-						],
-						'_links' => [
-							'storageUrl' => [
-								'href' => $this->getBaseUrl()
-							]
-						]
-					]
-				]
+				'elements' => $elements
 			]
 		];
 
 		$params['body'] = \Safe\json_encode($body);
 		$result = $this->request(
-			$userId, 'work_packages/' . $workpackageId. '/file_links', $params, 'POST'
+			$userId, 'work_packages/' . $values["workpackageId"] . '/file_links', $params, 'POST'
 		);
 
 		if (isset($result['error'])) {

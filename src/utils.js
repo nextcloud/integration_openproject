@@ -48,3 +48,8 @@ export const FORM = {
 	GROUP_FOLDER: 3,
 	APP_PASSWORD: 4,
 }
+
+export const SEARCHFROM = {
+	PROJECT_TAB: 'project-tab',
+	LINK_MULTIPLE_MODAL: 'link-multiple-modal',
+}
