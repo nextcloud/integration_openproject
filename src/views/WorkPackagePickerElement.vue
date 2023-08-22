@@ -24,7 +24,8 @@
 		<h2 class="work-package-picker__header">
 			{{ t('integration_openproject', 'OpenProject work package picker') }}
 		</h2>
-		<SearchInput :is-smart-picker="true"
+		<SearchInput ref="linkPicker"
+			:is-smart-picker="true"
 			:file-info="fileInfo"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
@@ -67,7 +68,11 @@ export default {
 		state: STATE.OK,
 		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 	}),
-
+	mounted() {
+		if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
+			document.getElementById(`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`).focus()
+		}
+	},
 	methods: {
 		onSubmit(data) {
 			this.$emit('submit', data)
