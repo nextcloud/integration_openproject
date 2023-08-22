@@ -107,8 +107,9 @@ OC.L10N.register(
     "Unexpected Error" : "Ha ocurrido un error inesperado",
     "To add a link, use the search bar above to find the desired work package" : "Para añadir un enlace, utilice la barra de búsqueda de arriba para encontrar el paquete de trabajo deseado",
     "Start typing to search" : "Empieza a escribir para buscar",
-    "Search for a work package to create a relation" : "Busca un paquete de trabajo para crear una relación",
     "No OpenProject account connected" : "No hay ninguna cuenta de OpenProject conectada",
+    "Search for work packages" : "Buscar paquetes de trabajo",
+    "Search for a work package to create a relation" : "Busca un paquete de trabajo para crear una relación",
     "Work package linked successfully!" : "¡Paquete de trabajo vinculado con éxito!",
     "Failed to link file to work package" : "No se ha podido vincular el archivo al paquete de trabajo",
     "Mark as read" : "Marcar como leído",
@@ -128,6 +129,7 @@ OC.L10N.register(
     "Unlink" : "Desvincular",
     "Work package unlinked" : "Paquete de trabajo desvinculado",
     "Failed to unlink work package" : "Fallo al desvincular el paquete de trabajo",
+    "OpenProject work package picker" : "Selector de paquetes de trabajo OpenProject",
     "OpenProject API error" : "Error en API OpenProject",
     "OpenProject settings" : "Ajustes de OpenProject",
     "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
@@ -145,8 +147,6 @@ OC.L10N.register(
     "Invalid key" : "Llave inválida",
     "To be able to use an OpenProject server with a local address, " : "Para tener la posibilidad de utilizar un servidor de OpenProject con una dirección local,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Fallo al revocar los tokens OAuth de algun(os) usuario(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios",
-    "Search for work packages" : "Buscar paquetes de trabajo",
-    "OpenProject work package picker" : "Selector de paquetes de trabajo OpenProject"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Se revocaron exitosamente los tokens OAuth de uno o más usuarios"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -105,8 +105,9 @@
     "Unexpected Error" : "Unexpected Error",
     "To add a link, use the search bar above to find the desired work package" : "To add a link, use the search bar above to find the desired work package",
     "Start typing to search" : "Start typing to search",
-    "Search for a work package to create a relation" : "Search for a work package to create a relation",
     "No OpenProject account connected" : "No OpenProject account connected",
+    "Search for work packages" : "Search for work packages",
+    "Search for a work package to create a relation" : "Search for a work package to create a relation",
     "Work package linked successfully!" : "Work package linked successfully!",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Mark as read" : "علامت به عنوان خوانده‌شده",
@@ -126,6 +127,7 @@
     "Unlink" : "Unlink",
     "Work package unlinked" : "Work package unlinked",
     "Failed to unlink work package" : "Failed to unlink work package",
+    "OpenProject work package picker" : "OpenProject work package picker",
     "OpenProject API error" : "OpenProject API error",
     "OpenProject settings" : "OpenProject settings",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
@@ -143,8 +145,6 @@
     "Invalid key" : "Invalid key",
     "To be able to use an OpenProject server with a local address, " : "To be able to use an OpenProject server with a local address, ",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Failed to revoke some user(s) OpenProject OAuth access token(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)",
-    "Search for work packages" : "Search for work packages",
-    "OpenProject work package picker" : "OpenProject work package picker"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
