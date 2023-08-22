@@ -3,11 +3,10 @@
 		<div class="empty-content--wrapper">
 			<div class="empty-content--icon">
 				<CheckIcon v-if="isStateOk && dashboard" :size="60" />
-				<LinkPlusIcon v-else-if="!!isAdminConfigOk && isStateOk && !dashboard && !isSmartPicker" :size="60" />
-				<OpenProjectIcon v-else-if="!!isSmartPicker" class="empty-content--icon--openproject" />
+				<LinkPlusIcon v-else-if="!!isAdminConfigOk && isStateOk && !dashboard" :size="60" />
 				<LinkOffIcon v-else :size="60" />
 			</div>
-			<div v-if="!!isAdminConfigOk && !isSmartPicker" class="empty-content--message">
+			<div v-if="!!isAdminConfigOk" class="empty-content--message">
 				<div class="empty-content--message--title">
 					{{ emptyContentTitleMessage }}
 				</div>
@@ -26,7 +25,6 @@
 import LinkPlusIcon from 'vue-material-design-icons/LinkPlus.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
-import OpenProjectIcon from '../icons/OpenProjectIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton.vue'
@@ -34,7 +32,7 @@ import { STATE } from '../../utils.js'
 
 export default {
 	name: 'EmptyContent',
-	components: { OAuthConnectButton, LinkPlusIcon, LinkOffIcon, CheckIcon, OpenProjectIcon },
+	components: { OAuthConnectButton, LinkPlusIcon, LinkOffIcon, CheckIcon },
 	props: {
 		state: {
 			type: String,
@@ -56,10 +54,6 @@ export default {
 			},
 		},
 		dashboard: {
-			type: Boolean,
-			default: false,
-		},
-		isSmartPicker: {
 			type: Boolean,
 			default: false,
 		},
@@ -115,11 +109,9 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		&--openproject {
-			margin: 90px;
-			display: block;
-			align-items: center;
-			justify-content: center;
+		img {
+			height: 50px;
+			width: 50px;
 		}
 	}
 	&--message {
