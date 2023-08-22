@@ -107,8 +107,9 @@ OC.L10N.register(
     "Unexpected Error" : "Ustekabeko errorea",
     "To add a link, use the search bar above to find the desired work package" : "Esteka bat gehitzeko, erabili goiko bilaketa-barra nahi duzun lan paketea aurkitzeko",
     "Start typing to search" : "Hasi idazten bilatzeko",
-    "Search for a work package to create a relation" : "Bilatu lan-pakete bat erlazio bat sortzeko",
     "No OpenProject account connected" : "Ez dago OpenProject konturik konektatuta",
+    "Search for work packages" : "Bilatu lan-paketeak",
+    "Search for a work package to create a relation" : "Bilatu lan-pakete bat erlazio bat sortzeko",
     "Work package linked successfully!" : "Lan-paketea ondo estekatu da!",
     "Failed to link file to work package" : "Arazoa lan-paketea estekatzerakoan",
     "Mark as read" : "Markatu irakurritako gisa",
@@ -128,6 +129,7 @@ OC.L10N.register(
     "Unlink" : "Deskonektatu",
     "Work package unlinked" : "Deskonektatu da lan paketea",
     "Failed to unlink work package" : "Ezin izan da deskonektatu lan paketea",
+    "OpenProject work package picker" : "OpenProject lan-pakete bilatzailea",
     "OpenProject API error" : "OpenProject API errorea",
     "OpenProject settings" : "OpenProject ezarpenak",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
@@ -145,8 +147,6 @@ OC.L10N.register(
     "Invalid key" : "Gako baliogabea",
     "To be able to use an OpenProject server with a local address, " : "Helbide lokala daukan OpenProject zerbitzari bat erabili ahal izateko,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Huts egin du erabiltzaile bat(zu)en OpenProject atzitzeko tokena(k) baliogabetzeak",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Ondo baliogabetu da/dira OpenProject atzitzeko erabiltzaile tokena(k).",
-    "Search for work packages" : "Bilatu lan-paketeak",
-    "OpenProject work package picker" : "OpenProject lan-pakete bilatzailea"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Ondo baliogabetu da/dira OpenProject atzitzeko erabiltzaile tokena(k)."
 },
 "nplurals=2; plural=(n != 1);");
