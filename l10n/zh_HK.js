@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth 客戶端",
     "Yes, I have copied these values" : "是的，我已複製了這些值",
     "Replace Nextcloud OAuth values" : "取代 Nextcloud OAuth 值",
+    "Create Nextcloud OAuth values" : "創建 Nextcloud OAuth 值",
     "Project folders (recommended)" : "專案資料夾（推薦）",
     "Automatically managed folders" : "自動託管的資料夾",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "我們建議使用此功能，但這不是強制性的。如果您想使用專案資料夾的自動創建和管理，請激活。",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "發生意外錯誤",
     "To add a link, use the search bar above to find the desired work package" : "要添加連結，請使用上方的搜索欄查找所需的工作包",
     "Start typing to search" : "輸入文字以搜尋",
-    "Search for a work package to create a relation" : "搜尋工作包以創建關係",
     "No OpenProject account connected" : "未連線至 OpenProject 帳號",
+    "Search for work packages" : "搜索工作軟件包",
+    "Search for a work package to create a relation" : "搜尋工作包以創建關係",
     "Work package linked successfully!" : "工作包鏈接成功！",
     "Failed to link file to work package" : "無法將檔案連結到工作包",
     "Mark as read" : "標為已讀",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "取消連結",
     "Work package unlinked" : "工作包連結已取消",
     "Failed to unlink work package" : "取消工作包連結失敗",
+    "OpenProject work package picker" : "OpenProject 工作軟件包選擇器",
     "OpenProject API error" : "OpenProject API 錯誤",
     "OpenProject settings" : "OpenProject 設定",
     "Successfully connected to OpenProject!" : "與 OpenProject 連線成功！",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "無效的密鑰",
     "To be able to use an OpenProject server with a local address, " : "為了能夠使用具有近端地址的 OpenProject 伺服器，",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "已成功撤銷用戶 OpenProject OAuth 存取權杖",
-    "Create Nextcloud OAuth values" : "創建 Nextcloud OAuth 值",
-    "Search for work packages" : "搜索工作軟件包",
-    "OpenProject work package picker" : "OpenProject 工作軟件包選擇器"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "已成功撤銷用戶 OpenProject OAuth 存取權杖"
 },
 "nplurals=1; plural=0;");

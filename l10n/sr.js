@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth клијент",
     "Yes, I have copied these values" : "Да, копирао сам ове вредности",
     "Replace Nextcloud OAuth values" : "Замени Nextcloud OAuth вредности",
+    "Create Nextcloud OAuth values" : "Креирај Nextcloud OAuth вредности",
     "Project folders (recommended)" : " Фолдери пројекта (препоручено)",
     "Automatically managed folders" : "Фолдери којима се аутоматски управља",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Препоручујемо да се користи ова функционалност, мада то није обавезно. Молимо вас да је активирате ако желите да користите аутоматско креирање и управљање фолдерима пројекта.",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "Неочекивана грешка",
     "To add a link, use the search bar above to find the desired work package" : "Да бисте додали линк, употребите линију за претрагу да пронађете жељени радни пакет",
     "Start typing to search" : "Почните да куцате да бисте претраживали",
-    "Search for a work package to create a relation" : "Претражите радни пакет да креирате везу",
     "No OpenProject account connected" : "Није повезан ниједан OpenProject налог",
+    "Search for work packages" : "Претрага радних пакета",
+    "Search for a work package to create a relation" : "Претражите радни пакет да креирате везу",
     "Work package linked successfully!" : "Радни пакет је успешно повезан!",
     "Failed to link file to work package" : "Није успело повезивање фајла са радним пакетом",
     "Mark as read" : "Означи као прочитано",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "Раскини везу",
     "Work package unlinked" : "Радни пакет је развезан",
     "Failed to unlink work package" : "Није успело развезивање радног пакета",
+    "OpenProject work package picker" : "Бирач OpenProject радних пакета",
     "OpenProject API error" : "OpenProject API грешка",
     "OpenProject settings" : "OpenProject подешавања",
     "Successfully connected to OpenProject!" : "Успешно је успостављена веза са OpenProject!",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "Неисправан кључ",
     "To be able to use an OpenProject server with a local address, " : "Да бисте могли да користите OpenProject сервер са локалном адресом, ",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Није успело повлачење OpenProject OAuth приступног жетона за неке кориснике",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон",
-    "Create Nextcloud OAuth values" : "Креирај Nextcloud OAuth вредности",
-    "Search for work packages" : "Претрага радних пакета",
-    "OpenProject work package picker" : "Бирач OpenProject радних пакета"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешно је повучен корисников OpenProject OAuth приступни жетон"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
