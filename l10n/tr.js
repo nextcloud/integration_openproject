@@ -107,8 +107,9 @@ OC.L10N.register(
     "Unexpected Error" : "Beklenmeyen bir sorun çıktı",
     "To add a link, use the search bar above to find the desired work package" : "İstediğiniz iş paketini bulmak ve bir bağlantı olarak eklemek için yukarıdaki arama çubuğunu kullanın",
     "Start typing to search" : "Aramak için yazmaya başlayın",
-    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi ara",
     "No OpenProject account connected" : "Bağlı bir OpenProject hesabı yok",
+    "Search for work packages" : "Çalışma paketleri ara",
+    "Search for a work package to create a relation" : "İlişki kurulacak bir çalışma paketi ara",
     "Work package linked successfully!" : "Çalışma paketinin bağlantısı kuruldu!",
     "Failed to link file to work package" : "Çalışma paketinin bağlantısı kurulamadı",
     "Mark as read" : "Okunmuş olarak işaretle",
@@ -128,6 +129,7 @@ OC.L10N.register(
     "Unlink" : "Bağlantıyı kes",
     "Work package unlinked" : "Çalışma paketinin bağlantısı kesildi",
     "Failed to unlink work package" : "Çalışma paketinin bağlantısı kesilemedi",
+    "OpenProject work package picker" : "OpenProject çalışma paketi seçici",
     "OpenProject API error" : "OpenProject API sorunu",
     "OpenProject settings" : "OpenProject ayarları",
     "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
@@ -145,8 +147,6 @@ OC.L10N.register(
     "Invalid key" : "Anahtar geçersiz",
     "To be able to use an OpenProject server with a local address, " : "Yerel bir adresi olan bir OpenProject sunucusunu kullanabilmek için,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Bazı kullanıcıların OpenProject OAuth erişim kodları geçersiz kılınamadı",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı",
-    "Search for work packages" : "Çalışma paketleri ara",
-    "OpenProject work package picker" : "OpenProject çalışma paketi seçici"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Kullanıcıların OpenProject OAuth erişim kodları geçersiz kılındı"
 },
 "nplurals=2; plural=(n > 1);");

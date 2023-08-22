@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "OAuth klient pro Nextcloud",
     "Yes, I have copied these values" : "Ano, tyto hodnoty jsem si zkopíroval(a)",
     "Replace Nextcloud OAuth values" : "Nahradit OAuth hodnoty pro Nextcloud",
+    "Create Nextcloud OAuth values" : "Vytvořit OAuth hodnoty pro Nextcloud",
     "Project folders (recommended)" : "Složky projektů (doporučeno)",
     "Automatically managed folders" : "Automaticky spravované složky",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Používání této funkce doporučujeme, ale není povinné. Zapněte ji v případě, že chcete používat automatické vytváření a správu složek projektu.",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "Neočekávaná chyba",
     "To add a link, use the search bar above to find the desired work package" : "Pokud chcete přidat odkaz, vyhledejte pomocí výše uvedené lišty požadovaný balíček práce",
     "Start typing to search" : "Hledejte psaním",
-    "Search for a work package to create a relation" : "Pokud chcete vytvořit souvislost, vyhledejte balíček práce",
     "No OpenProject account connected" : "Nepřipojen žádný OpenProject účet",
+    "Search for work packages" : "Vyhledat balíčky práce",
+    "Search for a work package to create a relation" : "Pokud chcete vytvořit souvislost, vyhledejte balíček práce",
     "Work package linked successfully!" : "Balíček práce úspěšně propojen!",
     "Failed to link file to work package" : "Nepodařilo se propojit soubor s balíčkem práce",
     "Mark as read" : "Označit jako přečtené",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "Odpojit",
     "Work package unlinked" : "Balíček práce odpojen",
     "Failed to unlink work package" : "Nepodařilo se odpojit balíček práce",
+    "OpenProject work package picker" : "Dialog pro volbu balíčku práce z OpenProject",
     "OpenProject API error" : "Chyba OpenProject API",
     "OpenProject settings" : "Nastavení pro OpenProject",
     "Successfully connected to OpenProject!" : "Úspěšně připojeno k OpenProject!",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "Neplatná klávesa",
     "To be able to use an OpenProject server with a local address, " : "Aby bylo možné použít OpenProject server s lokální adresou,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
-    "Create Nextcloud OAuth values" : "Vytvořit OAuth hodnoty pro Nextcloud",
-    "Search for work packages" : "Vyhledat balíčky práce",
-    "OpenProject work package picker" : "Dialog pro volbu balíčku práce z OpenProject"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

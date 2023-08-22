@@ -23,6 +23,7 @@
     "Nextcloud OAuth client" : "Cliente OAuth Nextcloud",
     "Yes, I have copied these values" : "Sim, copiei esses valores",
     "Replace Nextcloud OAuth values" : "Substituir os valores OAuth do Nextcloud",
+    "Create Nextcloud OAuth values" : "Criar valores Nextcloud OAuth",
     "Project folders (recommended)" : "Pastas de projeto (recomendado)",
     "Automatically managed folders" : "Pastas gerenciadas automaticamente",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Recomendamos o uso dessa funcionalidade, mas não é obrigatório. Ative-o caso queira usar a criação e gerenciamento automático de pastas de projetos.",
@@ -105,8 +106,9 @@
     "Unexpected Error" : "Erro Inesperado",
     "To add a link, use the search bar above to find the desired work package" : "Para adicionar um link, use a barra de pesquisa acima para encontrar o pacote de trabalho desejado",
     "Start typing to search" : "Comece a digitar para pesquisar",
-    "Search for a work package to create a relation" : "Procure um pacote de trabalho para criar uma relação",
     "No OpenProject account connected" : "Nenhuma conta OpenProject conectada",
+    "Search for work packages" : "Pesquisar pacotes de trabalho",
+    "Search for a work package to create a relation" : "Procure um pacote de trabalho para criar uma relação",
     "Work package linked successfully!" : "Pacote de trabalho vinculado com sucesso!",
     "Failed to link file to work package" : "Falha ao vincular arquivo ao pacote de trabalho",
     "Mark as read" : "Marcar como lido",
@@ -126,6 +128,7 @@
     "Unlink" : "Desvincular",
     "Work package unlinked" : "Pacote de trabalho desvinculado",
     "Failed to unlink work package" : "Falha ao desvincular o pacote de trabalho",
+    "OpenProject work package picker" : "Seletor de pacotes de trabalho do OpenProject",
     "OpenProject API error" : "Erro da API OpenProject",
     "OpenProject settings" : "Configurações do OpenProject",
     "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
@@ -143,8 +146,6 @@
     "Invalid key" : "Chave inválida",
     "To be able to use an OpenProject server with a local address, " : "Para habilitar o uso de instâncias OpenProject locais,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Falha ao revogar alguns tokens de acesso OpenProject OAuth do(s) usuário(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Usuário(s) revogado(s) com sucesso OpenProject OAuth access token(s)",
-    "Search for work packages" : "Pesquisar pacotes de trabalho",
-    "OpenProject work package picker" : "Seletor de pacotes de trabalho do OpenProject"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Usuário(s) revogado(s) com sucesso OpenProject OAuth access token(s)"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
