@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Cliente OAuth de Nextcloud",
     "Yes, I have copied these values" : "Si, copiei estes valores",
     "Replace Nextcloud OAuth values" : "Substituír os valores de OAuth de Nextcloud",
+    "Create Nextcloud OAuth values" : "Crear os valores OAuth de Nextcloud",
     "Project folders (recommended)" : "Cartafoles de proxectos (recomendado)",
     "Automatically managed folders" : "Cartafoles xestionados automaticamente",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Recomendamos usar esta funcionalidade mais non é obrigatoria. Actívea no caso de querer utilizar a creación e xestión automática de cartafoles do proxecto.",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "Produciuse un erro non agardado",
     "To add a link, use the search bar above to find the desired work package" : "Para engadir unha ligazón, utilice a barra de buscas de arriba para atopar o paquete de traballo desexado",
     "Start typing to search" : "Comece a escribir para buscar",
-    "Search for a work package to create a relation" : "Buscar un paquete de traballo para crear unha relación",
     "No OpenProject account connected" : "Non hai ningunha conta de OpenProject conectada",
+    "Search for work packages" : "Buscar paquetes de traballo",
+    "Search for a work package to create a relation" : "Buscar un paquete de traballo para crear unha relación",
     "Work package linked successfully!" : "Paquete de traballo vinculado correctamente!",
     "Failed to link file to work package" : "Produciuse un erro ao vincular o ficheiro ao paquete de traballo",
     "Mark as read" : "Marcar como lido",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "Desvincular",
     "Work package unlinked" : "Paquete de traballo desvinculado",
     "Failed to unlink work package" : "Produciuse un erro ao desvincular o paquete de traballo",
+    "OpenProject work package picker" : "Selector de paquetes de traballo OpenProject",
     "OpenProject API error" : "Produciuse un erro da API de OpenProject",
     "OpenProject settings" : "Axustes de OpenProject",
     "Successfully connected to OpenProject!" : "Conectado correctamente a OpenProject!",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "Chave non válida",
     "To be able to use an OpenProject server with a local address, " : "Para poder usar un servidor OpenProject cun enderezo local,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Produciuse un erro ao revogar algún(s) testemuño(s) de acceso de OpenProject OAuth de usuario(s)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Testemuño(s) de acceso OAuth de OpenProject de usuario(s) revogado(s) correctamente",
-    "Create Nextcloud OAuth values" : "Crear os valores OAuth de Nextcloud",
-    "Search for work packages" : "Buscar paquetes de traballo",
-    "OpenProject work package picker" : "Selector de paquetes de traballo OpenProject"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Testemuño(s) de acceso OAuth de OpenProject de usuario(s) revogado(s) correctamente"
 },
 "nplurals=2; plural=(n != 1);");

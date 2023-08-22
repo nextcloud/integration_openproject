@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "عميل Nextcloud OAuth",
     "Yes, I have copied these values" : "نعم، لقد قمتُ بنسخ هذه القيم",
     "Replace Nextcloud OAuth values" : "إستَبدِل قيم Nextcloud OAuth",
+    "Create Nextcloud OAuth values" : "إنشاء قيم التصديق المفتوح OAuth لنكست كلاود",
     "Project folders (recommended)" : "مجلدات المشروع (يُوصَى به)",
     "Automatically managed folders" : "المجلدات المدارة تلقائيا",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "نوصي باستخدام هذه الوظيفة ولكنها ليست إلزامية. يرجى تنشيطها إذا رغبت في استخدام الإنشاء التلقائي لمجلدات المشروع و إدارتها.",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "خطأ غير متوقع",
     "To add a link, use the search bar above to find the desired work package" : "لإضافة رابط، استخدم شريط البحث أعلاه للعثور على حزمة العمل work package المطلوبة",
     "Start typing to search" : "اكتب هنا للبحث",
-    "Search for a work package to create a relation" : "بحث عن حزمة عمل work package لإنشاء علاقة",
     "No OpenProject account connected" : "لا يوجد حساب OpenProject متصل",
+    "Search for work packages" : "البحث في حزم العمل work packages",
+    "Search for a work package to create a relation" : "بحث عن حزمة عمل work package لإنشاء علاقة",
     "Work package linked successfully!" : "تمّ ربط حزمة العمل بنجاح!",
     "Failed to link file to work package" : "فشل في ربط الملف بحزمة العمل",
     "Mark as read" : "تمييز كمقروء",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "فك الارتباط unlink",
     "Work package unlinked" : "تمّ إلغاء رابط حزمة العمل work package",
     "Failed to unlink work package" : "فشل إلغاء رابط حزمة العمل work package",
+    "OpenProject work package picker" : "مُنتقِي حزم العمل work package picker في OpenProject",
     "OpenProject API error" : "خطأ واجهة برمجة التطبيقات لـ OpenProject",
     "OpenProject settings" : "إعدادات OpenProject",
     "Successfully connected to OpenProject!" : "تم الاتصال بـنجاح ببرمجية OpenProject!",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "مفتاح غير صحيح",
     "To be able to use an OpenProject server with a local address, " : "لتتمكن من استخدام خادم OpenProject  ذو العنوان المحلي،",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "فشل إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بمستخدم (مستخدمين)",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "تم بنجاح إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بالمستخدم (المستخدمين)",
-    "Create Nextcloud OAuth values" : "إنشاء قيم التصديق المفتوح OAuth لنكست كلاود",
-    "Search for work packages" : "البحث في حزم العمل work packages",
-    "OpenProject work package picker" : "مُنتقِي حزم العمل work package picker في OpenProject"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "تم بنجاح إلغاء رمز (رموز) تحقق الوصول إلي OpenProject OAuth الخاصة بالمستخدم (المستخدمين)"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
