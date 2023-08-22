@@ -9,6 +9,7 @@ import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSea
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE } from '../../../../src/utils.js'
+import * as initialState from '@nextcloud/initial-state'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -22,6 +23,13 @@ jest.mock('lodash/debounce', () =>
 		return fn
 	})
 )
+
+// eslint-disable-next-line no-import-assign,import/namespace
+initialState.loadState = jest.fn(() => {
+	return {
+		openproject_instance_url: null,
+	}
+})
 
 global.t = (app, text) => text
 
@@ -143,6 +151,7 @@ describe('SearchInput.vue', () => {
 					{
 						params: {
 							searchQuery: 'orga',
+							isSmartPicker: false,
 						},
 					},
 				)
@@ -487,7 +496,55 @@ describe('SearchInput.vue', () => {
 			})
 		})
 	})
+
+	describe('search with smartpicker', () => {
+		let axiosGetSpy
+		beforeEach(async () => {
+			axiosGetSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			wrapper = mountSearchInput()
+			const inputField = wrapper.find(inputSelector)
+			await inputField.setValue('orga')
+			await wrapper.setData({
+				searchResults: [{
+					id: 999,
+					projectId: 1,
+				}],
+				openprojectUrl: 'https://openproject.com',
+			})
+			await localVue.nextTick()
+			await wrapper.setProps({
+				isSmartPicker: true,
+			})
+			await localVue.nextTick()
+		})
+		afterEach(() => {
+			axiosGetSpy.mockRestore()
+		})
+		it('should emit an action', async () => {
+			const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+			await ncSelectItem.trigger('click')
+			const savedEvent = wrapper.emitted('submit')
+			expect(savedEvent).toHaveLength(1)
+			expect(savedEvent[0][0]).toEqual('https://openproject.com/wp/999')
+		})
+
+		it('should not send a request to link file to workpackage', async () => {
+			const postSpy = jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+				}))
+			const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+			await ncSelectItem.trigger('click')
+			expect(postSpy).not.toBeCalled()
+			postSpy.mockRestore()
+		})
+	})
 })
+
 function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 	return mount(SearchInput, {
 		localVue,

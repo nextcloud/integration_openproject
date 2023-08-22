@@ -20,7 +20,7 @@
  */
 
 // this requires @nextcloud/vue >= 7.9.0
-import { registerWidget } from '@nextcloud/vue/dist/Components/NcRichText.js'
+import { registerWidget, registerCustomPickerElement, NcCustomPickerRenderResult } from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 // this is required for lazy loading
 __webpack_nonce__ = btoa(OC.requestToken) // eslint-disable-line
@@ -40,4 +40,21 @@ registerWidget('integration_openproject_work_package', async (el, { richObjectTy
 			accessible,
 		},
 	}).$mount(el)
+})
+
+registerCustomPickerElement('openproject-work-package-ref', async (el, { providerId, accessible }) => {
+	const { default: Vue } = await import(/* webpackChunkName: "reference-picker-lazy" */'vue')
+	const { default: WorkPackagePickerElement } = await import(/* webpackChunkName: "reference-picker-lazy" */'./views/WorkPackagePickerElement.vue')
+	Vue.mixin({ methods: { t, n } })
+
+	const Element = Vue.extend(WorkPackagePickerElement)
+	const vueElement = new Element({
+		propsData: {
+			providerId,
+			accessible,
+		},
+	}).$mount(el)
+	return new NcCustomPickerRenderResult(vueElement.$el, vueElement)
+}, (el, renderResult) => {
+	renderResult.object.$destroy()
 })

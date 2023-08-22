@@ -8,6 +8,7 @@ use Helmich\JsonAssert\JsonAssertions;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Cookie\CookieJar;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
@@ -39,6 +40,9 @@ class FeatureContext implements Context {
 
 	private ?ResponseInterface $response = null;
 
+	private CookieJar $cookieJar;
+	private string $requestToken;
+
 	public function getAdminUsername(): string {
 		return $this->adminUsername;
 	}
@@ -53,6 +57,20 @@ class FeatureContext implements Context {
 
 	public function getBaseUrl(): string {
 		return $this->baseUrl;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRequestToken():string {
+		return $this->requestToken;
+	}
+
+	/**
+	 * @return CookieJar
+	 */
+	public function getCookieJar():CookieJar {
+		return $this->cookieJar;
 	}
 
 	/**
@@ -83,6 +101,7 @@ class FeatureContext implements Context {
 		$this->adminUsername = $adminUsername;
 		$this->adminPassword = $adminPassword;
 		$this->regularUserPassword = $regularUserPassword;
+		$this->cookieJar = new CookieJar();
 	}
 
 	/**
@@ -907,6 +926,70 @@ class FeatureContext implements Context {
 			$user, $this->regularUserPassword, 'GET', $fileName
 		);
 		Assert::assertSame($content, $this->response->getBody()->getContents());
+	}
+
+	/**
+	 * @When a new browser session for :user starts
+	 *
+	 * @param string $user
+	 *
+	 * @return void
+	 */
+	public function aNewBrowserSessionForUserStarts(string $user):void {
+		$loginUrl = $this->getBaseUrl() . '/index.php/login';
+		$options['cookies'] = $this->getCookieJar();
+		// Request a new session and extract CSRF token
+		$this->setResponse(
+			$this->sendHttpRequest(
+				$loginUrl,
+				null,
+				null,
+				'GET',
+				null,
+				null,
+				$options
+			)
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+		$this->extractRequestTokenFromResponse($this->getResponse());
+
+		// Login and extract new token
+		$body = [
+			'user' => $user,
+			'password' => $this->getRegularUserPassword(),
+			'requesttoken' => $this->getRequestToken()
+		];
+		$options['cookies'] = $this->getCookieJar();
+		$this->setResponse(
+			$this->sendHttpRequest(
+				$loginUrl,
+				null,
+				null,
+				'POST',
+				null,
+				$body,
+				$options
+			)
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+		$this->extractRequestTokenFromResponse($this->getResponse());
+	}
+
+	/**
+	 * @param ResponseInterface $response
+	 *
+	 * @return void
+	 */
+	public function extractRequestTokenFromResponse(ResponseInterface $response):void {
+		$this->requestToken = \substr(
+			\preg_replace(
+				'/(.*)data-requesttoken="(.*)">(.*)/sm',
+				'\2',
+				$response->getBody()->getContents()
+			),
+			0,
+			89
+		);
 	}
 
 	/**

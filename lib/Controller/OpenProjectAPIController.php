@@ -154,17 +154,18 @@ class OpenProjectAPIController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null): DataResponse {
+	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null, bool $isSmartPicker = false): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
-
+		// when the search is done through smart picker we don't want to check if the work package is linkable
 		$result = $this->openprojectAPIService->searchWorkPackage(
 			$this->userId,
 			$searchQuery,
-			$fileId
+			$fileId,
+			!$isSmartPicker
 		);
 
 		if (!isset($result['error'])) {
