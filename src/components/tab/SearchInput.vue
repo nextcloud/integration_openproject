@@ -2,6 +2,7 @@
 	<div id="searchBar">
 		<NcSelect ref="workPackageSelect"
 			class="searchInput"
+			input-id="searchInput"
 			:placeholder="placeholder"
 			:options="filterSearchResultsByFileId"
 			:user-select="true"
@@ -107,17 +108,10 @@ export default {
 		fileInfo(oldFile, newFile) {
 			if (oldFile.id !== newFile.id) {
 				this.resetState()
-				this.emptySearchInput()
 			}
 		},
 	},
 	methods: {
-		emptySearchInput() {
-			// FIXME: https://github.com/shentao/vue-multiselect/issues/633
-			if (this.$refs.workPackageSelect?.$refs?.VueMultiselect?.search) {
-				this.$refs.workPackageSelect.$refs.VueMultiselect.search = ''
-			}
-		},
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK
