@@ -25,6 +25,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth-Client",
     "Yes, I have copied these values" : "Ja, ich habe diese Werte kopiert",
     "Replace Nextcloud OAuth values" : "Nextcloud OAuth-Werte ersetzen",
+    "Create Nextcloud OAuth values" : "Nextcloud OAuth-Werte erstellen",
     "Project folders (recommended)" : "Projektordner (empfohlen)",
     "Automatically managed folders" : "Automatisch verwaltete Ordner",
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "Die Nutzung dieser Funktionalität wird empfohlen, ist jedoch nicht zwingend erforderlich. Wenn Sie die automatische Erstellung und Verwaltung von Projektordnern verwenden möchten, aktivieren Sie bitte diese Funktion.",
@@ -107,8 +108,9 @@ OC.L10N.register(
     "Unexpected Error" : "Unerwarteter Fehler",
     "To add a link, use the search bar above to find the desired work package" : "Um einen Link hinzuzufügen, verwenden Sie die Suchleiste oben, um das gewünschte Arbeitspaket zu finden",
     "Start typing to search" : "Beginnen Sie mit der Eingabe, um zu suchen",
-    "Search for a work package to create a relation" : "Suche nach einem Arbeitspaket, um eine Beziehung zu erstellen",
     "No OpenProject account connected" : "Kein OpenProject-Konto verbunden",
+    "Search for work packages" : "Nach Arbeitspaketen suchen",
+    "Search for a work package to create a relation" : "Suche nach einem Arbeitspaket, um eine Beziehung zu erstellen",
     "Work package linked successfully!" : "Arbeitspaket erfolgreich verknüpft!",
     "Failed to link file to work package" : "Fehler beim Verknüpfen der Datei mit dem Arbeitspaket",
     "Mark as read" : "Als gelesen markieren",
@@ -128,6 +130,7 @@ OC.L10N.register(
     "Unlink" : "Verknüpfung aufheben",
     "Work package unlinked" : "Verknüpfung zum Arbeitspaket aufgehoben",
     "Failed to unlink work package" : "Die Verknüpfung zum Arbeitspaket konnte nicht aufgehoben werden",
+    "OpenProject work package picker" : "OpenProject-Arbeitspaketauswahl",
     "OpenProject API error" : "OpenProject API-Fehler",
     "OpenProject settings" : "OpenProject-Einstellungen",
     "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
@@ -145,9 +148,6 @@ OC.L10N.register(
     "Invalid key" : "Ungültiger Schlüssel",
     "To be able to use an OpenProject server with a local address, " : "Um einen OpenProject-Server mit einer lokalen Adresse nutzen zu können,",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "OpenProject OAuth-Zugriffstoken einiger Benutzer konnten nicht widerrufen werden",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "OAuth-Zugriffstoken für OpenProject-OAuth wurde von Benutzern erfolgreich widerrufen",
-    "Create Nextcloud OAuth values" : "Nextcloud OAuth-Werte erstellen",
-    "Search for work packages" : "Nach Arbeitspaketen suchen",
-    "OpenProject work package picker" : "OpenProject-Arbeitspaketauswahl"
+    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "OAuth-Zugriffstoken für OpenProject-OAuth wurde von Benutzern erfolgreich widerrufen"
 },
 "nplurals=2; plural=(n != 1);");
