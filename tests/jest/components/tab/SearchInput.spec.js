@@ -573,6 +573,250 @@ describe('SearchInput.vue', () => {
 			postSpy.mockRestore()
 		})
 	})
+
+	describe('search from multiple files link modal', () => {
+		const singleFileInfo = [{
+			id: 123,
+			name: 'logo.png',
+		}]
+
+		const multipleFileInfos = [{
+			id: 123,
+			name: 'logo.png',
+		},
+		{
+			id: 456,
+			name: 'pogo.png',
+		}]
+		describe('single file selected', () => {
+			describe('click on a workpackage option', () => {
+				let axiosGetSpy
+				beforeEach(async () => {
+					axiosGetSpy = jest.spyOn(axios, 'get')
+						.mockImplementationOnce(() => Promise.resolve({
+							status: 200,
+							data: [],
+						}))
+					wrapper = mountSearchInput(singleFileInfo)
+					await wrapper.setProps({
+						isSearchFrom: SEARCHFROM.LINK_MULTIPLE_MODAL,
+					})
+					const inputField = wrapper.find(inputSelector)
+					await inputField.setValue('orga')
+					await wrapper.setData({
+						searchResults: [{
+							fileId: 123,
+							id: 999,
+						}],
+					})
+				})
+				afterEach(() => {
+					axiosGetSpy.mockRestore()
+				})
+				it('should send a request to link file to workpackage', async () => {
+					const postSpy = jest.spyOn(axios, 'post')
+						.mockImplementationOnce(() => Promise.resolve({
+							status: 200,
+						}))
+					const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+					await ncSelectItem.trigger('click')
+					const body = {
+						values: {
+							workpackageId: 999,
+							fileinfo: singleFileInfo,
+						},
+					}
+					expect(postSpy).toBeCalledWith(
+						'http://localhost/apps/integration_openproject/work-packages',
+						body
+					)
+					postSpy.mockRestore()
+				})
+
+				it('should show an error when linking failed', async () => {
+					const err = new Error()
+					err.response = { status: 422 }
+					axios.post.mockRejectedValueOnce(err)
+					const showErrorSpy = jest.spyOn(dialogs, 'showError')
+					const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+					await ncSelectItem.trigger('click')
+					await localVue.nextTick()
+					expect(showErrorSpy).toBeCalledTimes(1)
+					showErrorSpy.mockRestore()
+				})
+
+				it('should not display work packages that are already linked', async () => {
+					const axiosSpy = jest.spyOn(axios, 'get')
+						.mockImplementationOnce(() => Promise.resolve({
+							status: 200,
+							data: workPackageSearchReqResponse,
+						}))
+						.mockImplementation(() => Promise.resolve(
+							{ status: 200, data: [] })
+						)
+					await wrapper.setProps({
+						linkedWorkPackages: [{
+							fileId: 123,
+							id: 2,
+							subject: 'Organize open source conference',
+						}],
+					})
+
+					const inputField = wrapper.find(inputSelector)
+					await inputField.setValue('anything longer than 3 char')
+					for (let i = 0; i < 8; i++) {
+						await localVue.nextTick()
+					}
+					expect(wrapper.vm.searchResults).toMatchObject(
+						[
+							{
+								assignee: 'System',
+								id: 13,
+								picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+								project: 'Demo project',
+								statusCol: '',
+								statusTitle: 'In progress',
+								subject: 'Write a software',
+								typeCol: '',
+								typeTitle: 'Phase',
+							},
+							{
+								assignee: 'System',
+								id: 5,
+								picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+								project: 'Demo project',
+								statusCol: '',
+								statusTitle: 'In progress',
+								subject: 'Create a website',
+								typeCol: '',
+								typeTitle: 'Phase',
+							},
+						],
+					)
+					axiosSpy.mockRestore()
+				})
+
+			})
+
+			describe('multiple files selected', () => {
+				describe('click on a workpackage option', () => {
+					let axiosGetSpy
+					beforeEach(async () => {
+						axiosGetSpy = jest.spyOn(axios, 'get')
+							.mockImplementationOnce(() => Promise.resolve({
+								status: 200,
+								data: [],
+							}))
+						wrapper = mountSearchInput(multipleFileInfos)
+						await wrapper.setProps({
+							isSearchFrom: SEARCHFROM.LINK_MULTIPLE_MODAL,
+						})
+						const inputField = wrapper.find(inputSelector)
+						await inputField.setValue('orga')
+						await wrapper.setData({
+							searchResults: [{
+								fileId: 123,
+								id: 999,
+							}],
+						})
+					})
+					afterEach(() => {
+						axiosGetSpy.mockRestore()
+					})
+					it('should send a request to link file to workpackage', async () => {
+						const postSpy = jest.spyOn(axios, 'post')
+							.mockImplementationOnce(() => Promise.resolve({
+								status: 200,
+							}))
+						const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+						await ncSelectItem.trigger('click')
+						const body = {
+							values: {
+								workpackageId: 999,
+								fileinfo: multipleFileInfos,
+							},
+						}
+						expect(postSpy).toBeCalledWith(
+							'http://localhost/apps/integration_openproject/work-packages',
+							body
+						)
+						postSpy.mockRestore()
+					})
+
+					it('should show an error when linking failed', async () => {
+						const err = new Error()
+						err.response = { status: 422 }
+						axios.post.mockRejectedValueOnce(err)
+						const showErrorSpy = jest.spyOn(dialogs, 'showError')
+						const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+						await ncSelectItem.trigger('click')
+						await localVue.nextTick()
+						expect(showErrorSpy).toBeCalledTimes(1)
+						showErrorSpy.mockRestore()
+					})
+
+					it('should display work packages that are already linked', async () => {
+						const axiosSpy = jest.spyOn(axios, 'get')
+							.mockImplementationOnce(() => Promise.resolve({
+								status: 200,
+								data: workPackageSearchReqResponse,
+							}))
+							.mockImplementation(() => Promise.resolve(
+								{ status: 200, data: [] })
+							)
+						await wrapper.setProps({
+							// here already linked package is empty when the file selected files is more than 1
+							linkedWorkPackages: [],
+						})
+
+						const inputField = wrapper.find(inputSelector)
+						await inputField.setValue('anything longer than 3 char')
+						for (let i = 0; i < 8; i++) {
+							await localVue.nextTick()
+						}
+						expect(wrapper.vm.searchResults).toMatchObject(
+							[
+								{
+									assignee: 'System',
+									id: 2,
+									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+									project: 'Demo project',
+									statusCol: '',
+									statusTitle: 'In progress',
+									subject: 'Organize open source conference',
+									typeCol: '',
+									typeTitle: 'Phase',
+								},
+								{
+									assignee: 'System',
+									id: 13,
+									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+									project: 'Demo project',
+									statusCol: '',
+									statusTitle: 'In progress',
+									subject: 'Write a software',
+									typeCol: '',
+									typeTitle: 'Phase',
+								},
+								{
+									assignee: 'System',
+									id: 5,
+									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+									project: 'Demo project',
+									statusCol: '',
+									statusTitle: 'In progress',
+									subject: 'Create a website',
+									typeCol: '',
+									typeTitle: 'Phase',
+								},
+							],
+						)
+						axiosSpy.mockRestore()
+					})
+				})
+			})
+		})
+	})
 })
 
 function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
