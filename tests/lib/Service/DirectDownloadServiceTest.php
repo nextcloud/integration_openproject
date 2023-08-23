@@ -62,7 +62,6 @@ class DirectDownloadServiceTest extends TestCase {
 		/** @var IRootFolder $root */
 		$root = $c->get(IRootFolder::class);
 		$this->userFolder = $root->getUserFolder(self::USER_ID);
-		// @phpstan-ignore-next-line
 		$this->directController = new DirectController(
 				'dav',
 				$c->get(IRequest::class),
