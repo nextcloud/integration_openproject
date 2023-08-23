@@ -252,7 +252,7 @@
 				</div>
 				<div v-else class="project-folder-status">
 					<div class="project-folder-status-value">
-						<b>Automatically managed folders:</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
+						<b>{{ t('integration_openproject','Automatically managed folders:') }}</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
 					<ProjectFolderError
 						v-if="state.app_password_set && !isProjectFolderSetupCorrect"
