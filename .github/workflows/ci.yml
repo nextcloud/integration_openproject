@@ -15,17 +15,8 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable24, stable25, stable26, stable27, master ]
-        phpVersion: [ 7.4, 8.0, 8.1 ]
-        exclude:
-          - nextcloudVersion: stable24
-            phpVersion: 8.1
-          - nextcloudVersion: stable26
-            phpVersion: 7.4
-          - nextcloudVersion: stable27
-            phpVersion: 7.4
-          - nextcloudVersion: master
-            phpVersion: 7.4
+        nextcloudVersion: [ stable25, stable26, stable27, master ]
+        phpVersion: [ 8.0, 8.1 ]
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -168,38 +159,10 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable24, stable25, stable26, stable27, master ]
-        phpVersionMajor: [ 7, 8 ]
-        phpVersionMinor: [ 4, 1 ]
+        nextcloudVersion: [ stable25, stable26, stable27, master ]
+        phpVersionMajor: [ 8 ]
+        phpVersionMinor: [ 1 ]
         database: [pgsql, mysql]
-        exclude:
-          - nextcloudVersion: stable24
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-          - nextcloudVersion: stable26
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
-          - nextcloudVersion: stable27
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
-          - nextcloudVersion: master
-            phpVersionMajor: 7
-          - phpVersionMajor: 7
-            phpVersionMinor: 0
-          - phpVersionMajor: 7
-            phpVersionMinor: 1
-          - phpVersionMajor: 8
-            phpVersionMinor: 4
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:latest
