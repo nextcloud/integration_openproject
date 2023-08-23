@@ -151,7 +151,7 @@ class FilesController extends OCSController {
 		}
 		$result = [];
 		foreach ($fileIds as $fileId) {
-			$result[$fileId] = $this->compileFileInfo($fileId);
+			$result[$fileId] = $this->compileFileInfo((int)$fileId);
 		}
 		return new DataResponse($result);
 	}
