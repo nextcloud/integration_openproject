@@ -227,7 +227,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-
+		$ocClient = null;
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
