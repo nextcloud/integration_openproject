@@ -11,6 +11,7 @@ namespace OCA\OpenProject\AppInfo;
 
 use Closure;
 use OCA\Files\Event\LoadSidebar;
+use OCA\OpenProject\Capabilities;
 use OCA\OpenProject\Listener\BeforeNodeInsideOpenProjectGroupfilderChangedListener;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
@@ -65,6 +66,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerCapability(Capabilities::class);
 		$context->registerDashboardWidget(OpenProjectWidget::class);
 		$context->registerSearchProvider(OpenProjectSearchProvider::class);
 
