@@ -17,14 +17,6 @@
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
     "Yes, I have copied these values" : "Ja, ik heb deze waarden gecopieerd",
     "Replace Nextcloud OAuth values" : "Vervang de NextCloud OAuth waarden",
-    "Active" : "Actief",
-    "Reset" : "Herstellen",
-    "Enable navigation link" : "Inschakelen navigatielink",
-    "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",
-    "Documentation" : "Documentatie",
-    "Connected as {user}" : "Verbonden als {user}",
-    "Incorrect access token" : "Onjuist access token",
-    "Invalid token" : "Ongeldig token",
     "Copied!" : "Gekopieerd!",
     "Details" : "Details",
     "Unexpected Error" : "Onverwachte fout",
@@ -35,6 +27,14 @@
     "OpenProject notifications" : "OpenProject meldingen",
     "OpenProject activity" : "OpenProject activiteit",
     "Connected accounts" : "Verbonden accounts",
-    "OpenProject integration" : "OpenProject integratie"
+    "Reset" : "Herstellen",
+    "Enable navigation link" : "Inschakelen navigatielink",
+    "Connected as {user}" : "Verbonden als {user}",
+    "Enable unified search for tickets" : "Inschakelen zoeken naar tickets",
+    "Incorrect access token" : "Onjuist access token",
+    "Invalid token" : "Ongeldig token",
+    "OpenProject integration" : "OpenProject integratie",
+    "Documentation" : "Documentatie",
+    "Active" : "Actief"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
