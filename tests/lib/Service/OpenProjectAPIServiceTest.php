@@ -135,6 +135,65 @@ class OpenProjectAPIServiceTest extends TestCase {
 	];
 
 	/**
+	 * @var array<mixed>
+	 */
+	private $validFileLinkRequestBodyForMultipleFiles = [
+		'_type' => 'Collection',
+		'_embedded' => [
+			'elements' => [
+				[
+					'originData' => [
+						'id' => 5503,
+						'name' => 'logo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				],
+				[
+					'originData' => [
+						'id' => 5504,
+						'name' => 'pogo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				],
+				[
+					'originData' => [
+						'id' => 5505,
+						'name' => 'dogo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				]
+			]
+		]
+	];
+
+	/**
 	 * @var array <mixed>
 	 */
 	private $validStatusResponseBody = [
@@ -162,6 +221,42 @@ class OpenProjectAPIServiceTest extends TestCase {
 		"isMilestone" => false,
 		"createdAt" => "2022-01-12T08:53:15Z",
 		"updatedAt" => "2022-01-12T08:53:34Z"
+	];
+
+
+	/**
+	 * @var array <mixed>
+	 */
+	private $singleFileInformation = [
+		"workpackageId" => 123,
+		"fileinfo" => [
+			[
+				"id" => 5503,
+				"name" => "logo.png"
+			]
+		]
+	];
+
+
+	/**
+	 * @var array <mixed>
+	 */
+	private $multipleFileInformation = [
+		"workpackageId" => 123,
+		"fileinfo" => [
+			[
+				"id" => 5503,
+				"name" => "logo.png"
+			],
+			[
+				"id" => 5504,
+				"name" => "pogo.png"
+			],
+			[
+				"id" => 5505,
+				"name" => "dogo.png"
+			]
+		]
 	];
 
 	/**
@@ -1245,19 +1340,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'user', 'work_packages/123/file_links',
 				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
 			);
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
+		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
 			$values, 'user'
 		);
-		$this->assertSame(2456, $result);
+		$this->assertSame([2456], $result);
 	}
 
 	/**
@@ -1277,16 +1364,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->expectException(NotPermittedException::class);
 
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
-
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
 			$values, 'user'
 		);
@@ -1309,19 +1387,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request');
 
 		$this->expectException(NotFoundException::class);
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
-		$result = $service->linkWorkPackageToFile(
+		$values = $this->singleFileInformation;
+		$service->linkWorkPackageToFile(
 			$values, 'user'
 		);
 	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToMultipleFileRequest(): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+
+		$service->method('getNode')
+			->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$service->expects($this->once())
+			->method('request')
+			->with(
+				'user', 'work_packages/123/file_links',
+				['body' => \Safe\json_encode($this->validFileLinkRequestBodyForMultipleFiles)]
+			);
+		$values = $this->multipleFileInformation;
+		$result = $service->linkWorkPackageToFile(
+			$values, 'user'
+		);
+		$this->assertSame([2456, 2457, 2458], $result);
+	}
+
+
 	/**
 	 * @return void
 	 * @param \Exception $exception
@@ -1923,21 +2020,43 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 
 		$service = $this->getOpenProjectAPIService($storageMock);
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
+		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
 
-		$this->assertSame(1337, $result);
+		$this->assertSame([1337], $result);
+	}
+
+
+	public function testLinkWorkPackageToMultipleFileRequestPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody($this->validFileLinkRequestBodyForMultipleFiles);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$values = $this->multipleFileInformation;
+		$result = $service->linkWorkPackageToFile(
+			$values,
+			'testUser'
+		);
+		$this->assertSame([2456, 2457, 2458], $result);
 	}
 
 	/**
@@ -1988,16 +2107,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->expectException(OpenprojectErrorException::class);
 
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
-
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
 			$values,
 			'testUser'
@@ -2051,15 +2161,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 
 		$this->expectException(OpenprojectErrorException::class);
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
 			$values,
 			'testUser'
@@ -2095,15 +2197,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getOpenProjectAPIService($storageMock, 'MissingPermission');
 
 		$this->expectException(OpenprojectErrorException::class);
-		$values = [
-			"workpackageId" => 123,
-			"fileinfo" => [
-				[
-					"id" => 5503,
-					'name' => 'logo.png'
-				]
-			]
-		];
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
 			$values,
 			'testUser'

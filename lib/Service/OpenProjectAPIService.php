@@ -707,7 +707,7 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $values
 	 * @param string $userId
 	 *
-	 * @return int
+	 * @return mixed
 	 *@throws NotFoundException
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws NotPermittedException
@@ -719,7 +719,7 @@ class OpenProjectAPIService {
 	public function linkWorkPackageToFile(
 		array $values,
 		string $userId
-	): int {
+	): mixed {
 		$fileIfnos = $values['fileinfo'];
 		$elements = [];
 		// multiple files can also be linked to a single work package
@@ -768,13 +768,21 @@ class OpenProjectAPIService {
 			!isset($result['_type']) ||
 			$result['_type'] !== 'Collection' ||
 			!isset($result['_embedded']) ||
-			!isset($result['_embedded']['elements']) ||
-			!isset($result['_embedded']['elements'][0]) ||
-			!isset($result['_embedded']['elements'][0]['id'])
+			!isset($result['_embedded']['elements'])
 		) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
-		return $result['_embedded']['elements'][0]['id'];
+		$fileIds = [];
+		for ($i = 0; $i < count($fileIfnos); $i++) {
+			if (
+				!isset($result['_embedded']['elements'][$i]) ||
+				!isset($result['_embedded']['elements'][$i]['id'])
+			) {
+				throw new OpenprojectResponseException('Malformed response');
+			}
+			$fileIds [] = $result['_embedded']['elements'][$i]['id'];
+		}
+		return $fileIds;
 	}
 
 	/**
