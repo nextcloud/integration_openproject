@@ -5,11 +5,11 @@ OC.L10N.register(
     "Bad HTTP method" : "Método HTTP incorreto",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
-    "Reset" : "Reiniciar",
-    "Documentation" : "Documentação",
-    "Invalid token" : "token inválido",
     "Copied!" : "Copiado!",
     "Details" : "Detalhes",
-    "Start typing to search" : "Digitar para pesquisar"
+    "Start typing to search" : "Digitar para pesquisar",
+    "Reset" : "Reiniciar",
+    "Invalid token" : "token inválido",
+    "Documentation" : "Documentação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

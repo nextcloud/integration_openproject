@@ -7,13 +7,6 @@ OC.L10N.register(
     "OAuth access token refused" : "Το διακριτικό πρόσβασης OAuth απορρίφθηκε",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
-    "Active" : "Ενεργό",
-    "Reset" : "Επαναφορά",
-    "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
-    "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
-    "Documentation" : "Τεκμηρίωση",
-    "Connected as {user}" : "Συνδεδεμένος ως {user}",
-    "Incorrect access token" : "Λανθασμένο token πρόσβασης",
     "Copied!" : "Αντιγράφηκαν!",
     "Details" : "Λεπτομέρειες",
     "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
@@ -21,6 +14,13 @@ OC.L10N.register(
     "commented" : "σχολίασε",
     "mentioned" : "ανέφερε",
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
-    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"
+    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
+    "Reset" : "Επαναφορά",
+    "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
+    "Connected as {user}" : "Συνδεδεμένος ως {user}",
+    "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
+    "Incorrect access token" : "Λανθασμένο token πρόσβασης",
+    "Documentation" : "Τεκμηρίωση",
+    "Active" : "Ενεργό"
 },
 "nplurals=2; plural=(n != 1);");
