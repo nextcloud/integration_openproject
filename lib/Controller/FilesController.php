@@ -141,7 +141,7 @@ class FilesController extends OCSController {
 	 * 		-u USER:PASSWD http://my.nc.org/ocs/v1.php/apps/integration_openproject/filesinfo
 	 * 		-X POST -d '{"fileIds":[FILE_ID_1,FILE_ID_2,...]}'
 	 *
-	 * @param array<int>|null $fileIds
+	 * @param array<mixed>|null $fileIds
 	 * @NoAdminRequired
 	 *
 	 */
@@ -208,7 +208,9 @@ class FilesController extends OCSController {
 					break;
 				}
 			}
-			if ($internalPath === null) {
+			// Note: in case of groupfolders the internal path is `__groupfolders/<group-folder-id>` so
+			// getInternalPath() functions returns empty string and the internal path fallbacks to the context of requester
+			if (!$internalPath) {
 				$this->logger->error(
 					'could not get the file name in the context of the owner,' .
 					' falling back to the context of requester'
