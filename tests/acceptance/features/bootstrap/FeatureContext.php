@@ -22,6 +22,8 @@ class FeatureContext implements Context {
 	 */
 	/** @var array<mixed> */
 	private array $createdUsers = [];
+	/** @var array<mixed> */
+	private array $createdgroups = [];
 	private string $regularUserPassword = '';
 	private string $adminUsername = '';
 	private string $adminPassword = '';
@@ -128,6 +130,20 @@ class FeatureContext implements Context {
 			"DELETE",
 			"welcome.txt"
 		);
+	}
+
+	/**
+	 * @Given  group :group has been created
+	 */
+	public function groupHasBeenCreated(string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/groups',
+			'POST',
+			$this->getAdminUsername(),
+			['groupid' => $group]
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+		$this->createdgroups['groupid'] = $group;
 	}
 
 	/**
@@ -411,9 +427,10 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When user :user gets the information of all files created in this scenario
+	 * @When user :user gets the information of all files and group folder :groupFolder created in this scenario
 	 */
-	public function userGetsTheInformationOfAllCreatedFiles(string $user): void {
+	public function userGetsTheInformationOfAllCreatedFiles(string $user, string $groupFolder): void {
+		$this->createdFiles[] = $this->getIdOfElement($user, $groupFolder);
 		$body = json_encode(["fileIds" => $this->createdFiles]);
 		Assert::assertNotFalse(
 			$body,
@@ -1095,6 +1112,9 @@ class FeatureContext implements Context {
 	public function after():void {
 		foreach ($this->createdUsers as $userData) {
 			$this->theAdministratorDeletesTheUser($userData['userid']);
+		}
+		foreach ($this->createdgroups as $groups) {
+			$this->theAdministratorDeletesTheGroup($groups);
 		}
 		$this->createdAppPasswords = [];
 	}
