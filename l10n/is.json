@@ -4,16 +4,16 @@
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
-    "Active" : "Virkt",
-    "Reset" : "Endurstilla",
-    "Enable navigation link" : "Virkja flakktengil",
-    "Documentation" : "Hjálparskjöl",
-    "Connected as {user}" : "Tengt sem {user}",
-    "Incorrect access token" : "Rangt aðgangsteikn",
     "Copied!" : "Afritað!",
     "Details" : "Details",
     "Start typing to search" : "Skrifaðu hér til að leita",
     "Mark as read" : "Merkja sem lesið",
-    "Connected accounts" : "Tengdir aðgangar"
+    "Connected accounts" : "Tengdir aðgangar",
+    "Reset" : "Endurstilla",
+    "Enable navigation link" : "Virkja flakktengil",
+    "Connected as {user}" : "Tengt sem {user}",
+    "Incorrect access token" : "Rangt aðgangsteikn",
+    "Documentation" : "Hjálparskjöl",
+    "Active" : "Virkt"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

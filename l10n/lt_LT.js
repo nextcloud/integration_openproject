@@ -7,15 +7,15 @@ OC.L10N.register(
     "OAuth access token refused" : "„OAuth“ prieigos raktas atmestas",
     "Cancel" : "Atšaukti",
     "Save" : "Įrašyti",
-    "Active" : "Aktyvi",
-    "Reset" : "Atstatyti",
-    "Documentation" : "Dokumentacija",
-    "Connected as {user}" : "Prisijungta kaip {user}",
     "Copied!" : "Nukopijuota!",
     "Details" : "Išsamiau",
     "Start typing to search" : "Norėdami atlikti paiešką, pradėkite rašyti",
     "Mark as read" : "Žymėti kaip skaitytą",
     "Unlink" : "Atsieti",
-    "Connected accounts" : "Prijungtos paskyros"
+    "Connected accounts" : "Prijungtos paskyros",
+    "Reset" : "Atstatyti",
+    "Connected as {user}" : "Prisijungta kaip {user}",
+    "Documentation" : "Dokumentacija",
+    "Active" : "Aktyvi"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
