@@ -12,6 +12,68 @@ class GroupfoldersContext implements Context {
 	 */
 	private $featureContext;
 
+	/** @var array<mixed> */
+	private array $createdGroupFolders = [];
+
+
+	/**
+	 * @Given group folder :folderName has been created
+	 */
+	public function groupFolderHasBeenCreated(string $folderName): void {
+		$fullUrl = $this->featureContext->getBaseUrl() .
+			"index.php/apps/groupfolders/folders";
+
+		$headers['OCS-APIRequest'] = 'true';
+		$options = [
+			'multipart' => [
+				[
+					'name' => 'mountpoint',
+					'contents' => $folderName
+				]
+			]];
+		$response = $this->featureContext->sendHttpRequest(
+			$fullUrl,
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			'POST',
+			$headers,
+			null,
+			$options
+		);
+		$this->featureContext->theHttpStatusCodeShouldBe(200, "", $response);
+		$xmlBody = $response->getBody()->getContents();
+		$responseXmlObject = new SimpleXMLElement($xmlBody);
+		$groupFolderId = (int)$responseXmlObject->data->id;
+		$this->createdGroupFolders[$folderName] = $groupFolderId;
+	}
+
+	/**
+	 * @Given group :group has been added to group folder :groupfolder
+	 */
+	public function groupHasBeenAddedToGroupFolder(string $group, string $groupfolder):void {
+		$groupfolderId = $this->createdGroupFolders[$groupfolder];
+		$fullUrl = $this->featureContext->getBaseUrl() .
+			"index.php/apps/groupfolders/folders/".$groupfolderId. "/groups";
+		$headers['OCS-APIRequest'] = 'true';
+		$options = [
+			'multipart' => [
+				[
+					'name' => 'group',
+					'contents' => $group
+				]
+			]];
+		$response = $this->featureContext->sendHttpRequest(
+			$fullUrl,
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			'POST',
+			$headers,
+			null,
+			$options
+		);
+		$this->featureContext->theHttpStatusCodeShouldBe(200, "", $response);
+	}
+
 	/**
 	 * @Then /^groupfolder "([^"]*)" should be present in the server$/
 	 */
@@ -113,6 +175,19 @@ class GroupfoldersContext implements Context {
 		return $body;
 	}
 
+	private function adminDeletesGroupfolder(int $id): void {
+		$fullUrl = $this->featureContext->getBaseUrl() .
+			"index.php/apps/groupfolders/folders/" . $id;
+		$headers['OCS-APIRequest'] = 'true';
+		$this->featureContext->sendHttpRequest(
+			$fullUrl,
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			'DELETE',
+			$headers
+		);
+	}
+
 	/**
 	 * This will run before EVERY scenario.
 	 * It will set the properties for this object.
@@ -130,5 +205,17 @@ class GroupfoldersContext implements Context {
 		// Get all the contexts you need in this context
 		/** @phpstan-ignore-next-line */
 		$this->featureContext = $environment->getContext('FeatureContext');
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function after():void {
+		foreach ($this->createdGroupFolders as $groupFolder) {
+			$this->adminDeletesGroupfolder((int)$groupFolder);
+		}
 	}
 }
