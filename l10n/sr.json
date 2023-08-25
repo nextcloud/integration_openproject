@@ -32,6 +32,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Да би аутоматски управљала фолдерима пројекта, ова апликација мора да подеси специјални фолдер групе који се додељује групи и којим управља корисник, сваки под именом „OpenProject”.",
     "The app will never delete files or folders, even if you deactivate this later." : "Ова апликација никада неће да обрише фајлове или фолдере, чак и ако касније ово искључите.",
     "Retry setup OpenProject user, group and folder" : "Поново покушај постављање OpenProject корисника, групе и фолдера",
+    "Automatically managed folders:" : "Фолдери којима се аутоматски управља:",
     "Copied!" : "Копирано!",
     "Copy value" : "Копирај вредност",
     "Copied to the clipboard" : "Копирано у клипборд",
