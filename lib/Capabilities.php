@@ -19,6 +19,9 @@ class Capabilities implements IPublicCapability {
 		$this->appManager = $appManager;
 	}
 
+	/**
+	 * @return array<string, array<string, bool|string>>
+	 */
 	public function getCapabilities(): array {
 		$appVersion = $this->appManager->getAppVersion(Application::APP_ID);
 		$groupfoldersVersion = $this->appManager->getAppVersion('groupfolders');
