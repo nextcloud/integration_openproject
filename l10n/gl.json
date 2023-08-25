@@ -32,6 +32,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para xestionar automaticamente os cartafoles do proxecto, esta aplicación necesita configurar un cartafol de grupo especial, asignado a un grupo e xestionado por un usuario, cada un chamado «OpenProject».",
     "The app will never delete files or folders, even if you deactivate this later." : "A aplicación nunca eliminará ficheiros ou cartafoles, aínda que a desactive máis tarde.",
     "Retry setup OpenProject user, group and folder" : "Volva tentar estabelecer o usuario, o grupo e o cartafol de OpenProject",
+    "Automatically managed folders:" : "Cartafoles xestionados automaticamente:",
     "Copied!" : "Copiado!",
     "Copy value" : "Copiar valor",
     "Copied to the clipboard" : "Copiouse no portapapeis",
