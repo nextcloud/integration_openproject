@@ -159,7 +159,6 @@ export default {
 					t('integration_openproject', 'Work package linked successfully!')
 				)
 				this.resetState()
-				this.emptySearchInput()
 			} catch (e) {
 				showError(
 					t('integration_openproject', 'Failed to link file to work package')
