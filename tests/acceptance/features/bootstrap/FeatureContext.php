@@ -914,6 +914,16 @@ class FeatureContext implements Context {
 		);
 	}
 
+	/**
+	 * @When the administrator requests the nextcloud capabilities
+	 *
+	 * @return void
+	 */
+	public function theAdministratorRequestsCapabilities(): void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/capabilities', 'GET', $this->getAdminUsername()
+		);
+	}
 
 	/**
 	 * @Then /^the content of file at "([^"]*)" for user "([^"]*)" should be "([^"]*)"$/
