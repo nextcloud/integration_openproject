@@ -34,6 +34,7 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\".",
     "The app will never delete files or folders, even if you deactivate this later." : "The app will never delete files or folders, even if you deactivate this later.",
     "Retry setup OpenProject user, group and folder" : "Retry setup OpenProject user, group and folder",
+    "Automatically managed folders:" : "Automatically managed folders:",
     "Copied!" : "Copied!",
     "Copy value" : "Copy value",
     "Copied to the clipboard" : "Copied to the clipboard",
