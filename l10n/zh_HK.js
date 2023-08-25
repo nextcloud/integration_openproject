@@ -34,6 +34,7 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "為了自動管理專案資料夾，此應用程式需要設置一個特殊的群組資料夾，分配給一個群組並由用戶管理，每個資料夾稱為“OpenProject”。",
     "The app will never delete files or folders, even if you deactivate this later." : "該應用程式永遠不會刪除檔案或資料夾，即使您稍後將其停用也是如此。",
     "Retry setup OpenProject user, group and folder" : "重試 OpenProject 用戶、群組和資料夾的設置",
+    "Automatically managed folders:" : "自動託管的資料夾",
     "Copied!" : "已複製！",
     "Copy value" : "複製值",
     "Copied to the clipboard" : "已複製到剪貼板",
