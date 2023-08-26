@@ -34,6 +34,7 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para gerenciar automaticamente as pastas do projeto, este aplicativo precisa configurar uma pasta de grupo especial, atribuída a um grupo e gerenciada por um usuário, cada uma chamada \"OpenProject\".",
     "The app will never delete files or folders, even if you deactivate this later." : "O aplicativo nunca excluirá arquivos ou pastas, mesmo que você desative isso posteriormente.",
     "Retry setup OpenProject user, group and folder" : "Tente configurar novamente o usuário, grupo e pasta do OpenProject",
+    "Automatically managed folders:" : "Pastas gerenciadas automaticamente:",
     "Copied!" : "Copiado!",
     "Copy value" : "Copiar valor",
     "Copied to the clipboard" : "Copiado para a área de transferência",
