@@ -34,6 +34,7 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "لغرض إدارة مجلدات المشروع تلقائيًا، يحتاج هذا التطبيق إلى تنصيب مجلد مجموعة خاص، والذي يتم تخصيصه لمجموعة ويديره مستخدم، وكل منها يسمى \"OpenProject\".",
     "The app will never delete files or folders, even if you deactivate this later." : "لن يقوم التطبيق بحذف الملفات أو المجلدات أبدا، حتى إذا قمت بإلغاء تنشيط ذلك لاحقًا.",
     "Retry setup OpenProject user, group and folder" : "إعادة محاولة تنصيب مستخدم ومجموعة ومجلد OpenProject",
+    "Automatically managed folders:" : "مُجلّدات مُدارة تلقاتيّاً:",
     "Copied!" : "تم النسخ!",
     "Copy value" : "نسخ القيمة ",
     "Copied to the clipboard" : "تم النسخ إلى الحافطة",
