@@ -707,19 +707,19 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $values
 	 * @param string $userId
 	 *
-	 * @return mixed
-	 *@throws NotFoundException
+	 * @throws NotFoundException
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws NotPermittedException
 	 * @throws OpenprojectErrorException
 	 * @throws \OC\User\NoUserException
 	 * @throws OpenprojectResponseException
-	 * @throws \OCP\Files\InvalidPathException
+	 *
+	 * @return array<int>
 	 */
 	public function linkWorkPackageToFile(
 		array $values,
 		string $userId
-	): mixed {
+	): array {
 		$fileIfnos = $values['fileinfo'];
 		$elements = [];
 		// multiple files can also be linked to a single work package

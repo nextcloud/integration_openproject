@@ -4,7 +4,7 @@
 			class="searchInput"
 			input-id="searchInput"
 			:placeholder="placeholder"
-			:options="filterSearchResultsByFileId"
+			:options="setOptionForSearch"
 			:user-select="true"
 			:append-to-body="false"
 			label="displayName"
@@ -90,6 +90,12 @@ export default {
 			}
 			return ''
 		},
+		setOptionForSearch() {
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB || this.isSmartPicker) {
+				return this.filterSearchResultsByFileId
+			}
+			return this.searchResults
+		},
 		placeholder() {
 			if (this.isSmartPicker) {
 				return t('integration_openproject', 'Search for work packages')
@@ -98,21 +104,16 @@ export default {
 			}
 		},
 		filterSearchResultsByFileId() {
-			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB || this.isSmartPicker) {
-				return this.searchResults.filter(wp => {
-					if (this.isSmartPicker) {
-						return wp.id
-					}
-					if (wp.fileId === undefined || wp.fileId === '') {
-						console.error('work-package data does not contain a fileId')
-						return false
-					}
-					return wp.fileId === this.fileInfo.id
-				})
-			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
-				return this.searchResults
-			}
-			return []
+			return this.searchResults.filter(wp => {
+				if (this.isSmartPicker) {
+					return wp.id
+				}
+				if (wp.fileId === undefined || wp.fileId === '') {
+					console.error('work-package data does not contain a fileId')
+					return false
+				}
+				return wp.fileId === this.fileInfo.id
+			})
 		},
 	},
 	watch: {
@@ -137,7 +138,7 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB || this.isSmartPicker) {
 				await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
 			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
 				await this.debounceMakeSearchRequest(query)

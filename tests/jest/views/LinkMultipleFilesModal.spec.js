@@ -11,10 +11,6 @@ import { getCurrentUser } from '@nextcloud/auth'
 jest.mock('@nextcloud/auth')
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
-jest.mock('@nextcloud/l10n', () => ({
-	translate: jest.fn((app, msg) => msg),
-	getLanguage: jest.fn(),
-}))
 const localVue = createLocalVue()
 
 const singleFileInfo = [{
@@ -301,9 +297,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				expect(wrapper).toMatchSnapshot()
 			})
 
-			it('should set all workpackages to alreadylinked', async () => {
-				// this can happen if multiple replies arrive at the same time
-				// when the user switches between files while results still loading
+			it('should set workpackages to alreadylinked', async () => {
 				wrapper = mountWrapper()
 				axiosGetSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
@@ -391,7 +385,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
 			})
 
-			it('should set "alreadyLinkedWorkPackage", "fileInfos" to empty', async () => {
+			it('should empty "alreadyLinkedWorkPackage", "fileInfos" and close modal', async () => {
 				await wrapper.setData({
 					fileInfos: singleFileInfo,
 					alreadyLinkedWorkPackage: [{
@@ -435,7 +429,6 @@ function mountWrapper() {
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: true,
-			workPackageIdToFiles: [],
 		}),
 	})
 }

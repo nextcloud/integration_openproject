@@ -183,13 +183,12 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 *
 	 * @param array<mixed> $values
 	 *
 	 * @return DataResponse
 	 */
-	public function linkWorkPackageToFile(array $values) {
+	public function linkWorkPackageToFile(array $values): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {

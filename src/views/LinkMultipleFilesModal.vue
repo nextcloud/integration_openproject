@@ -17,7 +17,7 @@
 					<EmptyContent
 						id="openproject-empty-content"
 						:state="state"
-						:link-multiple-modal="true"
+						:is-link-multiple-modal="true"
 						:is-admin-config-ok="isAdminConfigOk" />
 				</div>
 			</div>

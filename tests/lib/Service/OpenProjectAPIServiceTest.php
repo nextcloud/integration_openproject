@@ -2044,7 +2044,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setBody(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
 
 		$this->builder
-			->uponReceiving('a POST request to /work_packages')
+			->uponReceiving('a POST request to /work_packages with multiple files')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
