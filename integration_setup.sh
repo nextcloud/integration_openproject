@@ -181,7 +181,7 @@ then
 		deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
 		log_info "Above response is missing one or more of nextcloud_client_id, nextcloud_client_secret, or openproject_user_app_password"
 		log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder) then follow below link to resolve the error"
-		log_info "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/"
+		log_info "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting"
 		exit 1
 	fi
 else
