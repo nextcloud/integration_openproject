@@ -17,7 +17,7 @@ On the Nextcloud end, it allows users to:
 On the OpenProject end, users are able to:
 
 * Link work packages with files and folders in Nextcloud
-* Up- and download files directly to Nextcloud from within a work package
+* Upload and download files directly to Nextcloud from within a work package
 * Open linked files in Nextcloud to edit them
 * Let OpenProject create shared folders per project
 
