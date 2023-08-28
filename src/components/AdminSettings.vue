@@ -520,7 +520,7 @@ export default {
 		},
 		errorHintForProjectFolderConfigAlreadyExists() {
 			const linkText = t('integration_openproject', 'troubleshooting guide')
-			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
