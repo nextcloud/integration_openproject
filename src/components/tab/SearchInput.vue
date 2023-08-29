@@ -138,10 +138,11 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB || this.isSmartPicker) {
-				await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
-			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
-				await this.debounceMakeSearchRequest(query)
+			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
+				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
+			} else {
+				// we do not need to provide file id incase of searching through link multiple files to workpakcage and through linkpicker
+				await this.debounceMakeSearchRequest(query, null)
 			}
 		},
 		async getWorkPackageLink(selectedOption) {
@@ -162,10 +163,10 @@ export default {
 			let successMessage
 			if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
 				fileInfoForBody.push(this.fileInfo)
-				successMessage = 'Work package linked successfully!'
+				successMessage = t('integration_openproject', 'Work package linked successfully!')
 			} else if (this.isSearchFrom === SEARCHFROM.LINK_MULTIPLE_MODAL) {
 				fileInfoForBody = this.fileInfo
-				successMessage = 'Work package linked successfully for selected files!'
+				successMessage = t('integration_openproject', 'Work package linked successfully for selected files!')
 			}
 			const body = {
 				values: {
@@ -177,9 +178,7 @@ export default {
 			try {
 				await axios.post(url, body)
 				this.$emit('saved', selectedOption)
-				showSuccess(
-					t('integration_openproject', successMessage)
-				)
+				showSuccess(successMessage)
 				this.resetState()
 			} catch (e) {
 				showError(
@@ -187,9 +186,10 @@ export default {
 				)
 			}
 		},
-		async makeSearchRequest(search, fileId = null, isSmartPicker = false) {
+		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
+			const isSmartPicker = this.isSmartPicker
 			const req = {}
 			req.params = {
 				searchQuery: search,
@@ -205,19 +205,15 @@ export default {
 			if (response.status === 200) await this.processWorkPackages(response.data, fileId)
 			if (this.isStateLoading) this.state = STATE.OK
 		},
-		async processWorkPackages(workPackages, fileId = null) {
+		async processWorkPackages(workPackages, fileId) {
 			for (let workPackage of workPackages) {
 				try {
 					if (this.isStateLoading) {
 						if (this.isSmartPicker) {
 						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							this.searchResults.push(workPackage)
-
 						} else {
-							if (this.isSearchFrom === SEARCHFROM.PROJECT_TAB) {
-								// for now multiple link of files to a workpackage, fileId is not sent for filtration process
-								workPackage.fileId = fileId
-							}
+							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)

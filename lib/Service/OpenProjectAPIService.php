@@ -720,10 +720,10 @@ class OpenProjectAPIService {
 		array $values,
 		string $userId
 	): array {
-		$fileIfnos = $values['fileinfo'];
+		$fileInfos = $values['fileinfo'];
 		$elements = [];
 		// multiple files can also be linked to a single work package
-		foreach ($fileIfnos as $fileinfo) {
+		foreach ($fileInfos as $fileinfo) {
 			$fileId = $fileinfo["id"];
 			$fileName = $fileinfo["name"];
 			$file = $this->getNode($userId, $fileId);
@@ -773,7 +773,7 @@ class OpenProjectAPIService {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		$fileIds = [];
-		for ($i = 0; $i < count($fileIfnos); $i++) {
+		for ($i = 0; $i < count($fileInfos); $i++) {
 			if (
 				!isset($result['_embedded']['elements'][$i]) ||
 				!isset($result['_embedded']['elements'][$i]['id'])
