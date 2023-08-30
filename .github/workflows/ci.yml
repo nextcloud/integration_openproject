@@ -11,66 +11,67 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-#  unittest-linting:
-#    name: unit tests and linting
-#    strategy:
-#      matrix:
-#        nextcloudVersion: [ stable25, stable26, stable27, master ]
-#        phpVersion: [ 7.4, 8.0, 8.1 ]
-#        exclude:
-#          - nextcloudVersion: stable26
-#            phpVersion: 7.4
-#          - nextcloudVersion: stable27
-#            phpVersion: 7.4
-#          - nextcloudVersion: master
-#            phpVersion: 7.4
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Setup PHP ${{ matrix.phpVersion }}
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ matrix.phpVersion }}
-#          tools: composer, phpunit
-#          coverage: xdebug
-#          extensions: gd, sqlite3
-#
-#      - name: Get composer cache directory
-#        id: composer-cache
-#        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-#
-#      - name: Cache PHP dependencies
-#        uses: actions/cache@v3
-#        with:
-#          path: ${{ steps.composer-cache.outputs.dir }}
-#          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-#          restore-keys: ${{ runner.os }}-composer-
-#
-#      - name: Read package.json node and npm engines version
-#        uses: skjnldsv/read-package-engines-version-actions@v2
-#        id: versions
-#        with:
-#          fallbackNode: '^14'
-#          fallbackNpm: '^7'
-#
-#      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: ${{ steps.versions.outputs.nodeVersion }}
-#          cache: 'npm'
-#
-#      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-#        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-#
-#      - name: Install PHP Dependencies
-#        run: |
-#          composer install --no-progress --prefer-dist --optimize-autoloader
-#          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
+  unittest-linting:
+    name: unit tests and linting
+    strategy:
+      matrix:
+        nextcloudVersion: [ stable26 ]
+        phpVersion: [ 8.1 ]
+        exclude:
+          - nextcloudVersion: stable26
+            phpVersion: 7.4
+          - nextcloudVersion: stable27
+            phpVersion: 7.4
+          - nextcloudVersion: master
+            phpVersion: 7.4
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP ${{ matrix.phpVersion }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.phpVersion }}
+          tools: composer, phpunit
+          coverage: xdebug
+          extensions: gd, sqlite3
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@v2
+        id: versions
+        with:
+          fallbackNode: '^14'
+          fallbackNpm: '^7'
+
+      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          cache: 'npm'
+
+      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+
+      - name: Install PHP Dependencies
+        run: |
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
+          ls -al
 #          cd server && git submodule update --init
 #          ./occ maintenance:install --admin-pass=admin
-#
+
 #      - name: PHP code analysis
 #        run: |
 #          if [[ ${{ matrix.nextcloudVersion }} == "master" ]]
@@ -79,7 +80,7 @@ jobs:
 #          else
 #            make phpstan
 #          fi
-#
+
 #      - name: PHP code style
 #        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 #
@@ -91,18 +92,19 @@ jobs:
 #
 #      - name: Style Lint
 #        run: npm run stylelint
-#
-#      - name: PHP & Vue Unit Tests
-#        run: |
-#          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
-#          mkdir -p server/apps/integration_openproject
-#          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-#          cd server
-#          ./occ a:e groupfolders
-#          ./occ a:e integration_openproject
-#          cd apps/integration_openproject
-#          make phpunit
-#          make jsunit
+
+      - name: certs
+        run: |
+          mkdir -p server/apps/integration_openproject
+          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
+          cd server
+          pwd
+#          apt update -y
+#          apt install openssl -y
+#          apt install curl -y
+#          openssl version
+#          openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
+#          ls ./data/ssl
 #
 #      - name: JS Code Coverage Summary Report
 #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
@@ -206,153 +208,153 @@ jobs:
 #      run:
 #        working-directory: integration_openproject
 
-  webui-tests:
-    name: web tests
-    strategy:
-      matrix:
-        nextcloudVersion: [ stable26 ]
-        phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 1 ]
-        database: [ mysql ]
-    runs-on: ubuntu-20.04
-    container:
-      image: ubuntu:latest
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    defaults:
-      run:
-        working-directory: integration_openproject
-
-    services:
-#      openproject:
-#        image: openproject/community:12
+#  webui-tests:
+#    name: web tests
+#    strategy:
+#      matrix:
+#        nextcloudVersion: [ stable26 ]
+#        phpVersionMajor: [ 8 ]
+#        phpVersionMinor: [ 1 ]
+#        database: [ mysql ]
+#    runs-on: ubuntu-20.04
+#    container:
+#      image: ubuntu:latest
+#      credentials:
+#        username: ${{ secrets.DOCKERHUB_USERNAME }}
+#        password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#    defaults:
+#      run:
+#        working-directory: integration_openproject
+#
+#    services:
+##      openproject:
+##        image: openproject/community:12
+##        env:
+##          OPENPROJECT_SECRET_KEY_BASE: secret
+##          OPENPROJECT_HOST__NAME: openproject
+##          OPENPROJECT_HTTPS: false
+##          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
+##          OPENPROJECT_ONBOARDING__ENABLED: false
+##          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
+##          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
+#
+#      nextcloud:
+#        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
 #        env:
-#          OPENPROJECT_SECRET_KEY_BASE: secret
-#          OPENPROJECT_HOST__NAME: openproject
-#          OPENPROJECT_HTTPS: false
-#          OPENPROJECT_PASSWORD__MIN__LENGTH: 0
-#          OPENPROJECT_ONBOARDING__ENABLED: false
-#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: apiadmin
-#          OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: apiadmin
-
-      nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
-        env:
-          SQL: ${{ matrix.database }}
-          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "nextcloud.local"
-          WITH_REDIS: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
-        volumes:
-          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
-
-      proxy:
-        image: ghcr.io/juliushaertl/nextcloud-dev-nginx:latest
-        ports:
-          - "80:80"
-          - "443:443"
-        volumes:
-          - /var/run/docker.sock:/tmp/docker.sock:ro
-          - ./data/ssl/:/etc/nginx/certs
-        env:
-          DHPARAM_BITS: 2048
-          DHPARAM_GENERATION: "false"
-          HTTPS_METHOD: "noredirect"
-          HSTS: "off"
-
-#      database-postgres:
-#        image: postgres:14
+#          SQL: ${{ matrix.database }}
+#          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+#          NEXTCLOUD_AUTOINSTALL: "YES"
+#          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+#          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+#          VIRTUAL_HOST: "nextcloud.local"
+#          WITH_REDIS: "YES"
+#          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
+#        volumes:
+#          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+#
+#      proxy:
+#        image: ghcr.io/juliushaertl/nextcloud-dev-nginx:latest
+#        ports:
+#          - "80:80"
+#          - "443:443"
+#        volumes:
+#          - /var/run/docker.sock:/tmp/docker.sock:ro
+#          - ./data/ssl/:/etc/nginx/certs
 #        env:
-#          POSTGRES_PASSWORD: postgres
-#          POSTGRES_DB: nextcloud
+#          DHPARAM_BITS: 2048
+#          DHPARAM_GENERATION: "false"
+#          HTTPS_METHOD: "noredirect"
+#          HSTS: "off"
+#
+##      database-postgres:
+##        image: postgres:14
+##        env:
+##          POSTGRES_PASSWORD: postgres
+##          POSTGRES_DB: nextcloud
+##        credentials:
+##          username: ${{ secrets.DOCKERHUB_USERNAME }}
+##          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      database-mysql:
+#        image: mariadb:10.5
+#        env:
+#          MYSQL_ROOT_PASSWORD: 'nextcloud'
+#          MYSQL_PASSWORD: 'nextcloud'
+#          MYSQL_USER: 'nextcloud'
+#          MYSQL_DATABASE: 'nextcloud'
 #        credentials:
 #          username: ${{ secrets.DOCKERHUB_USERNAME }}
 #          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      database-mysql:
-        image: mariadb:10.5
-        env:
-          MYSQL_ROOT_PASSWORD: 'nextcloud'
-          MYSQL_PASSWORD: 'nextcloud'
-          MYSQL_USER: 'nextcloud'
-          MYSQL_DATABASE: 'nextcloud'
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      redis:
-        image: redis:7
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: integration_openproject
-
-      - name: create certs
-        run: |
-          pwd
-          mkdir -p data/ssl
-          apt update -y
-          apt install openssl -y
-          apt install curl -y
-          openssl version
-          openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
-          ls ./data/ssl
-
-
-
-
-#      - name: Checkout activity app
+#
+#      redis:
+#        image: redis:7
+#        credentials:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#    steps:
+#      - name: Checkout
 #        uses: actions/checkout@v3
 #        with:
-#          repository: nextcloud/activity
-#          path: activity
-#          ref: ${{ matrix.nextcloudVersion }}
+#          path: integration_openproject
 #
-#      - name: Checkout groupfolders app
-#        uses: actions/checkout@v3
-#        with:
-#          repository: nextcloud/groupfolders
-#          path: groupfolders
-#          ref: ${{ matrix.nextcloudVersion }}
-
-#      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-#          tools: composer
-#          extensions: intl
-#
-#      - name: Get composer cache directory
-#        id: composer-cache
-#        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-#
-#      - name: Cache PHP dependencies
-#        uses: actions/cache@v3
-#        with:
-#          path: ${{ steps.composer-cache.outputs.dir }}
-#          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
-#          restore-keys: ${{ runner.os }}-composer-
-#
-      - name: try Nextcloud 1
-        run: curl http://nextcloud.local/status.php -v
-
-      - name: try Nextcloud 2
-        run: curl -k https://nextcloud.local/status.php -v
-
-#      - name: API Tests
-#        env:
-#          NEXTCLOUD_BASE_URL: http://nextcloud
+#      - name: create certs
 #        run: |
-#          composer install --no-progress --prefer-dist --optimize-autoloader
-#          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
-#          make api-test
+#          pwd
+#          mkdir -p data/ssl
+#          apt update -y
+#          apt install openssl -y
+#          apt install curl -y
+#          openssl version
+#          openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
+#          ls ./data/ssl
+#
+#
+#
+#
+##      - name: Checkout activity app
+##        uses: actions/checkout@v3
+##        with:
+##          repository: nextcloud/activity
+##          path: activity
+##          ref: ${{ matrix.nextcloudVersion }}
+##
+##      - name: Checkout groupfolders app
+##        uses: actions/checkout@v3
+##        with:
+##          repository: nextcloud/groupfolders
+##          path: groupfolders
+##          ref: ${{ matrix.nextcloudVersion }}
+#
+##      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+##        uses: shivammathur/setup-php@v2
+##        with:
+##          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+##          tools: composer
+##          extensions: intl
+##
+##      - name: Get composer cache directory
+##        id: composer-cache
+##        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+##
+##      - name: Cache PHP dependencies
+##        uses: actions/cache@v3
+##        with:
+##          path: ${{ steps.composer-cache.outputs.dir }}
+##          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
+##          restore-keys: ${{ runner.os }}-composer-
+##
+#      - name: try Nextcloud 1
+#        run: curl http://nextcloud.local/status.php -v
+#
+#      - name: try Nextcloud 2
+#        run: curl -k https://nextcloud.local/status.php -v
+#
+##      - name: API Tests
+##        env:
+##          NEXTCLOUD_BASE_URL: http://nextcloud
+##        run: |
+##          composer install --no-progress --prefer-dist --optimize-autoloader
+##          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+##          make api-test
