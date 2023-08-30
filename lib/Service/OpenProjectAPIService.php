@@ -19,6 +19,7 @@ use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
+use OCP\Files\InvalidPathException;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -704,6 +705,7 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 *
 	 * @param array<mixed> $values
 	 * @param string $userId
 	 *
@@ -713,6 +715,7 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectErrorException
 	 * @throws \OC\User\NoUserException
 	 * @throws OpenprojectResponseException
+	 * *@throws InvalidPathException|JsonException
 	 *
 	 * @return array<int>
 	 */
@@ -720,12 +723,30 @@ class OpenProjectAPIService {
 		array $values,
 		string $userId
 	): array {
+		$allowedKeys = [
+			'workpackageId',
+			'fileinfo'
+		];
+		foreach ($values as $key => $value) {
+			if (!in_array($key, $allowedKeys)) {
+				throw new InvalidArgumentException('invalid key');
+			}
+		}
+		if (!is_int($values['workpackageId']) || !is_array($values['fileinfo']) || empty($values['fileinfo'])) {
+			throw new InvalidArgumentException('invalid data');
+		}
 		$fileInfos = $values['fileinfo'];
 		$elements = [];
 		// multiple files can also be linked to a single work package
-		foreach ($fileInfos as $fileinfo) {
-			$fileId = $fileinfo["id"];
-			$fileName = $fileinfo["name"];
+		foreach ($fileInfos as $fileInfo) {
+			if (!isset($fileInfo['id']) || !isset($fileInfo['name'])) {
+				throw new InvalidArgumentException('invalid data');
+			}
+			if (!is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
+				throw new InvalidArgumentException('invalid data');
+			}
+			$fileId = $fileInfo["id"];
+			$fileName = $fileInfo["name"];
 			$file = $this->getNode($userId, $fileId);
 			if (!$file->isReadable()) {
 				throw new NotPermittedException();

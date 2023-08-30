@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use InvalidArgumentException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
@@ -204,6 +205,10 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotPermittedException | NotFoundException $e) {
 			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse([
+				"error" => $e->getMessage()
+			], Http::STATUS_BAD_REQUEST);
 		} catch (Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
