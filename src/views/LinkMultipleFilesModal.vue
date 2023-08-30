@@ -74,7 +74,7 @@ export default {
 			this.fileInfos = fileInfos
 			if (this.isAdminConfigOk) {
 				if (this.fileInfos.length === 1) {
-					await this.fetchWorkpackagesForMultipleFileLink(this.fileInfos[0].id)
+					await this.fetchWorkpackagesForSingleFileSelected(this.fileInfos[0].id)
 				} else {
 					this.state = STATE.OK
 				}
@@ -87,7 +87,7 @@ export default {
 			this.alreadyLinkedWorkPackage = []
 			this.show = false
 		},
-		async fetchWorkpackagesForMultipleFileLink(fileId) {
+		async fetchWorkpackagesForSingleFileSelected(fileId) {
 			this.state = STATE.LOADING
 			const req = {}
 			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
@@ -98,9 +98,6 @@ export default {
 				} else {
 					if (response.data.length > 0) {
 						for (let workPackage of response.data) {
-							if (fileId !== this.fileInfos[0].id) {
-								break
-							}
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage, true)
 							this.alreadyLinkedWorkPackage.push(workPackage)
