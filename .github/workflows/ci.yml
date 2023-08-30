@@ -245,7 +245,7 @@ jobs:
           NEXTCLOUD_AUTOINSTALL: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "nextcloud"
+          VIRTUAL_HOST: "nextcloud.local"
           WITH_REDIS: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
         volumes:
@@ -303,7 +303,7 @@ jobs:
           mkdir -p data/ssl
           apt update -y
           apt install openssl -y
-          apt install curl
+          apt install curl -y
           openssl version
           openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
           ls ./data/ssl
@@ -344,10 +344,10 @@ jobs:
 #          restore-keys: ${{ runner.os }}-composer-
 #
       - name: try Nextcloud 1
-        run: curl http://nextcloud.local/status.php || true
+        run: curl http://nextcloud.local/status.php -v
 
       - name: try Nextcloud 2
-        run: curl -k https://nextcloud.local/status.php || true
+        run: curl -k https://nextcloud.local/status.php -v
 
 #      - name: API Tests
 #        env:
