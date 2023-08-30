@@ -303,6 +303,7 @@ jobs:
           mkdir -p data/ssl
           apt update -y
           apt install openssl -y
+          apt install curl
           openssl version
           openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
           ls ./data/ssl
