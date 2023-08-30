@@ -68,7 +68,6 @@ jobs:
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
-          ls -al
 #          cd server && git submodule update --init
 #          ./occ maintenance:install --admin-pass=admin
 
@@ -98,14 +97,14 @@ jobs:
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
-          pwd
-#          apt update -y
-#          apt install openssl -y
-#          apt install curl -y
-#          openssl version
-#          openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./data/ssl/nextcloud.local.key -out ./data/ssl/nextcloud.local.crt
-#          ls ./data/ssl
-#
+          sudo apt update -y
+          sudo apt install openssl -y
+          sudo apt install curl -y
+          openssl version
+          openssl req -subj '/CN=nextcloud.local/C=NP/L=Pokhara' -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout ./apps/integration_openproject/ci/data/ssl/nextcloud.local.key -out ./apps/integration_openproject/ci/data/ssl/nextcloud.local.crt
+          sudo update-ca-certificates
+          ls ./apps/integration_openproject/ci/data/ssl
+          docker compose version
 #      - name: JS Code Coverage Summary Report
 #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
 #        uses: romeovs/lcov-reporter-action@v0.3.1
