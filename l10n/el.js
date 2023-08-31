@@ -20,7 +20,6 @@ OC.L10N.register(
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
-    "Documentation" : "Τεκμηρίωση",
-    "Active" : "Ενεργό"
+    "Documentation" : "Τεκμηρίωση"
 },
 "nplurals=2; plural=(n != 1);");

@@ -121,24 +121,6 @@
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Tokens de acceso de OAuth del usuario de OpenProject revocados con éxito",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Para poder usar un servidor de OpenProject con una dirección local, activa la configuración `allow_local_remote_servers`. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Error al revocar algunos tokens de acceso OAuth de OpenProject de los usuarios",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acceso OAuth de OpenProject de algunos usuarios revocados con éxito",
-    "Active" : "Activo",
-    "Inactive" : "Inactivo",
-    "Project folders application connection" : "Conexión de la aplicación de carpetas de proyectos",
-    "Application Password" : "Contraseña de la aplicación",
-    "Done, complete setup" : "Completado, configuración finalizada",
-    "Replace application password" : "Reemplazar contraseña de la aplicación",
-    "Keep current setup" : "Mantener configuración actual",
-    "Setup OpenProject user, group and folder" : "Configurar usuario, grupo y carpeta de OpenProject",
-    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Esta contraseña solo será accesible una vez. Ahora, como administrador, copia esta contraseña a tu OpenProject {htmlLink}.",
-    "troubleshooting guide" : "guía de solución de problemas",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "No fue posible configurar el usuario, grupo y carpeta de OpenProject. Consulta {htmlLink} para resolver esta situación.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Por favor, instala la aplicación \"Group folders\" para poder utilizar carpetas administradas automáticamente o desactiva las carpetas administradas automáticamente.",
-    "Reset OpenProject Integration" : "Restablecer integración de OpenProject",
-    "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "Si continúas, la contraseña de la aplicación antigua para el usuario de OpenProject se eliminará y recibirás una nueva contraseña de usuario de OpenProject.",
-    "Replace user app password" : "Reemplazar contraseña de la aplicación de usuario",
-    "Administration Settings > OpenProject" : "Configuración > OpenProject",
-    "Some OpenProject Integration application settings are not working. " : "Algunas configuraciones de la aplicación de integración de OpenProject no están funcionando. ",
-    "Some OpenProject Integration application settings are not working." : "Algunas configuraciones de la aplicación de integración de OpenProject no están funcionando."
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Tokens de acceso OAuth de OpenProject de algunos usuarios revocados con éxito"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
