@@ -125,26 +125,6 @@
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens",
-    "Active" : "فعال کردن",
-    "Inactive" : "Inactive",
-    "Edit project folders" : "Edit project folders",
-    "Project folders application connection" : "Project folders application connection",
-    "Application Password" : "Application Password",
-    "Done, complete setup" : "Done, complete setup",
-    "Replace application password" : "Replace application password",
-    "Keep current setup" : "Keep current setup",
-    "Complete without project folders" : "Complete without project folders",
-    "Setup OpenProject user, group and folder" : "Setup OpenProject user, group and folder",
-    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.",
-    "troubleshooting guide" : "troubleshooting guide",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders.",
-    "Reset OpenProject Integration" : "Reset OpenProject Integration",
-    "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.",
-    "Replace user app password" : "Replace user app password",
-    "Administration Settings > OpenProject" : "Administration Settings > OpenProject",
-    "Some OpenProject Integration application settings are not working. " : "Some OpenProject Integration application settings are not working. ",
-    "Some OpenProject Integration application settings are not working." : "Some OpenProject Integration application settings are not working."
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

@@ -15,7 +15,6 @@ OC.L10N.register(
     "Connected accounts" : "Conturile conectate",
     "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
-    "Documentation" : "Documentație",
-    "Active" : "Activ"
+    "Documentation" : "Documentație"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

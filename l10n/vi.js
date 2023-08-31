@@ -10,7 +10,6 @@ OC.L10N.register(
     "Mark as read" : "Đánh dấu đã đọc",
     "Reset" : "Đặt lại",
     "Connected as {user}" : "Kết nối bởi {user}",
-    "Documentation" : "Tài liệu",
-    "Active" : "Hoạt động"
+    "Documentation" : "Tài liệu"
 },
 "nplurals=1; plural=0;");

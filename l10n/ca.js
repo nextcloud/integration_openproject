@@ -84,7 +84,6 @@ OC.L10N.register(
     "OpenProject instance not found" : "No s'ha trobat la instància d'OpenProject",
     "Failed to save OpenProject options" : "No s'han pogut desar les opcions d'OpenProject",
     "OpenProject integration" : "Integració OpenProject",
-    "Documentation" : "Documentació",
-    "Active" : "Actiu"
+    "Documentation" : "Documentació"
 },
 "nplurals=2; plural=(n != 1);");

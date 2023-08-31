@@ -46,7 +46,6 @@ OC.L10N.register(
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
     "OpenProject integration" : "Integrazione OpenProject",
-    "Documentation" : "Documentazione",
-    "Active" : "Attivo"
+    "Documentation" : "Documentazione"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
