@@ -36,7 +36,6 @@ OC.L10N.register(
     "Incorrect access token" : "Onjuist access token",
     "Invalid token" : "Ongeldig token",
     "OpenProject integration" : "OpenProject integratie",
-    "Documentation" : "Documentatie",
-    "Active" : "Actief"
+    "Documentation" : "Documentatie"
 },
 "nplurals=2; plural=(n != 1);");

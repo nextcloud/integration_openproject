@@ -18,7 +18,6 @@ OC.L10N.register(
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
     "Incorrect access token" : "Token de intrada non bàlidu",
-    "Documentation" : "Documentatzione",
-    "Active" : "Ativu"
+    "Documentation" : "Documentatzione"
 },
 "nplurals=2; plural=(n != 1);");

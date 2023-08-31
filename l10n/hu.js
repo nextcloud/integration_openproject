@@ -120,20 +120,6 @@ OC.L10N.register(
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Az OpenProject-kiszolgáló helyi címmel történő használatához engedélyezze az `allow_local_remote_servers` beállítást. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen",
-    "Active" : "Aktív",
-    "Inactive" : "Inaktív",
-    "Project folders application connection" : "Projektmappák alkalmazáskapcsolata",
-    "Application Password" : "Alkalmazásjelszó",
-    "Done, complete setup" : "Kész, beállítás befejezése",
-    "Replace application password" : "Alkalmazásjelszó cseréje",
-    "Keep current setup" : "Jelenlegi beállítások megtartása",
-    "Setup OpenProject user, group and folder" : "Az OpenProject felhasználó, csoport és mappa beállítása",
-    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Ez az érték csak egyszer érhető el. Most, rendszergazdaként másolja át ezt a jelszót az OpenProjectbe {htmlLink}.",
-    "troubleshooting guide" : "hibaelhárítási útmutató",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Az OpenProject felhasználó, csoport és csoportmappa beállítása nem volt lehetséges. A probléma megoldásához nézze meg ezt: {htmlLink}.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Telepítse a „Csoportmappák” alkalmazást, hogy használhassa vagy deaktiválhassa az automatikusan kezelt mappákat.",
-    "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "Ha folytatja, akkor az OpenProject-felhasználó régi alkalmazásjelszava törölve lesz, és új OpenProject felhasználói jelszót fog kapni.",
-    "Replace user app password" : "Felhasználó alkalmazásjelszavának cseréje"
+    "Successfully revoked users' OpenProject OAuth access tokens" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen"
 },
 "nplurals=2; plural=(n != 1);");

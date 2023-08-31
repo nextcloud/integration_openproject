@@ -14,7 +14,6 @@ OC.L10N.register(
     "Enable navigation link" : "Овозможи линк за навигација",
     "Connected as {user}" : "Поврзан како {user}",
     "Incorrect access token" : "Неточен токен за пристап",
-    "Documentation" : "Документација",
-    "Active" : "Активно"
+    "Documentation" : "Документација"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

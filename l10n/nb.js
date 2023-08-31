@@ -18,7 +18,6 @@ OC.L10N.register(
     "Connected as {user}" : "Tilkoblet som {user}",
     "Incorrect access token" : "Feil tilgangstoken",
     "Invalid token" : "Ugyldig polett",
-    "Documentation" : "Dokumentasjo",
-    "Active" : "Aktiv"
+    "Documentation" : "Dokumentasjo"
 },
 "nplurals=2; plural=(n != 1);");

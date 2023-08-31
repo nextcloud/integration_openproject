@@ -15,7 +15,6 @@ OC.L10N.register(
     "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Connected as {user}" : "{user} に接続済み",
     "Incorrect access token" : "正しくないアクセストークン",
-    "Documentation" : "ドキュメント",
-    "Active" : "有効"
+    "Documentation" : "ドキュメント"
 },
 "nplurals=1; plural=0;");

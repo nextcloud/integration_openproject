@@ -128,25 +128,6 @@
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "要能夠使用具有近端地址的 OpenProject 伺服器，請啟用“allow_local_remote_servers” 設置。{html鏈接}。",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
     "Successfully revoked users' OpenProject OAuth access tokens" : "已成功撤銷用戶 OpenProject OAuth 存取權杖",
-    "Active" : "活動的",
-    "Inactive" : "待用",
-    "Edit project folders" : "編輯專案資料夾",
-    "Project folders application connection" : "專案資料夾應用程式連接",
-    "Application Password" : "應用程式密碼",
-    "Done, complete setup" : "完成設置",
-    "Replace application password" : "取代應用程式密碼",
-    "Keep current setup" : "保留目前設置",
-    "Complete without project folders" : "無需專案資料夾即可完成",
-    "Setup OpenProject user, group and folder" : "設置 OpenProject 用戶, 群組及資料夾",
-    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "該值只能存取一次。現在，作為管理員，請將此密碼複製到 OpenProject {htmlLink}。",
-    "troubleshooting guide" : "故障排除指南",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "無法設置 OpenProject 用戶、群組和群組資料夾。請查看此 {htmlLink} 以了解如何解決此情況。",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "請安裝“群組資料夾”應用程式以便能夠使用自動管理的資料夾或停用自動管理的資料夾。",
-    "Reset OpenProject Integration" : "重設 OpenProject 整合",
-    "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "如果您繼續，您的 OpenProject 用戶的舊應用程式密碼將被刪除，您將收到一個新的 OpenProject 用戶密碼。",
-    "Replace user app password" : "取代用戶應用程式密碼",
-    "Administration Settings > OpenProject" : "管理設定 > OpenProject",
-    "Some OpenProject Integration application settings are not working. " : "某些 OpenProject 集成應用程序設置不起作用。",
-    "Some OpenProject Integration application settings are not working." : "某些 OpenProject 集成應用程序設置不起作用。"
+    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "該應用程式可以與開源項目管理和協作軟件 OpenProject 無縫集成。\n\n在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作軟件包連結\n* 查找連結到檔案或資料夾的所有工作軟件包\n* 通過儀表板查看 OpenProject 通知\n* 使用 Nextcloud 的搜索欄搜索工作軟件包\n* 通過智能選擇器在富文本字段中鏈接工作軟件包\n* 在文本字段中預覽工作軟件包的連結\n\n在 OpenProject 方面，用戶能夠：\n\n* 將工作軟件包與 Nextcloud 中的檔案和資料夾連結\n* 從工作軟件包中直接上傳和下載檔案到 Nextcloud\n* 在 Nextcloud 中打開連結檔案進行編輯\n* 讓 OpenProject 為每個項目創建共享資料夾\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員和 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/)用戶指南] (https://www.openproject.org/docs/user-guide/nextcloud-integration/)。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
