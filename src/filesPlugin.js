@@ -61,7 +61,7 @@ import LinkMultipleFilesModal from './views/LinkMultipleFilesModal.vue'
 
 OC.Plugins.register('OCA.Files.FileList', OCA.OpenProject.FilesPlugin)
 
-const modalId = 'exampleModal'
+const modalId = 'multipleFileLinkModal'
 const modalElement = document.createElement('div')
 modalElement.id = modalId
 document.body.append(modalElement)

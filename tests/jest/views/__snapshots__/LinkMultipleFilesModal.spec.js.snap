@@ -9,7 +9,7 @@ exports[`LinkMultipleFilesModal.vue fetch workpackages multiple files selected s
           Link to work package
         </h2>
         <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" islinkmultiplemodal="true" id="openproject-empty-content"></emptycontent-stub>
+        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" id="openproject-empty-content" is-link-multiple-modal="true"></emptycontent-stub>
       </div>
     </div>
   </ncmodal-stub>
@@ -25,7 +25,7 @@ exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets
           Link to work package
         </h2>
         <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" islinkmultiplemodal="true" id="openproject-empty-content"></emptycontent-stub>
+        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" id="openproject-empty-content" is-link-multiple-modal="true"></emptycontent-stub>
       </div>
     </div>
   </ncmodal-stub>
@@ -41,7 +41,7 @@ exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets
           Link to work package
         </h2>
         <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" islinkmultiplemodal="true" id="openproject-empty-content"></emptycontent-stub>
+        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" id="openproject-empty-content" is-link-multiple-modal="true"></emptycontent-stub>
       </div>
     </div>
   </ncmodal-stub>

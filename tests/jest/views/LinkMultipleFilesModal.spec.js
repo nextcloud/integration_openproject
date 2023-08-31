@@ -3,7 +3,7 @@
 import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
 import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
 import * as initialState from '@nextcloud/initial-state'
-import { STATE } from '../../../src/utils.js'
+import { SEARCH_WORKPACKAGES_FROM, STATE } from '../../../src/utils.js'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
@@ -429,6 +429,7 @@ function mountWrapper() {
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: true,
+			isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
 		}),
 	})
 }

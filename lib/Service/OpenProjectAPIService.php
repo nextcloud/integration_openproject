@@ -740,10 +740,7 @@ class OpenProjectAPIService {
 		$elements = [];
 		// multiple files can also be linked to a single work package
 		foreach ($fileInfos as $fileInfo) {
-			if (!isset($fileInfo['id']) || !isset($fileInfo['name'])) {
-				throw new InvalidArgumentException('invalid data');
-			}
-			if (!is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
+			if (!isset($fileInfo['id']) || !isset($fileInfo['name']) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
 				throw new InvalidArgumentException('invalid data');
 			}
 			$fileId = $fileInfo["id"];

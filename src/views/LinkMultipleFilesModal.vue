@@ -12,7 +12,7 @@
 					<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
-						:is-search-from="isSearchFrom"
+						:is-search-workpackage-from="isSearchWorkpackageFrom"
 						@saved="onSaved" />
 					<EmptyContent
 						id="openproject-empty-content"
@@ -33,7 +33,7 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
-import { SEARCHFROM, STATE } from '../utils.js'
+import { SEARCH_WORKPACKAGES_FROM, STATE } from '../utils.js'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
@@ -51,7 +51,7 @@ export default {
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			isSearchFrom: SEARCHFROM.LINK_MULTIPLE_MODAL,
+			isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
 		}
 	},
 

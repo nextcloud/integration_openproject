@@ -201,15 +201,11 @@ class OpenProjectAPIController extends Controller {
 				$values,
 				$this->userId,
 			);
-		} catch (OpenprojectErrorException $e) {
+		} catch (OpenprojectErrorException | InvalidArgumentException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotPermittedException | NotFoundException $e) {
 			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException $e) {
-			return new DataResponse([
-				"error" => $e->getMessage()
-			], Http::STATUS_BAD_REQUEST);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse($result);

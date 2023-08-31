@@ -8,7 +8,7 @@ import workPackagesSearchResponse from '../../fixtures/workPackagesSearchRespons
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
-import { STATE, SEARCHFROM } from '../../../../src/utils.js'
+import { STATE, SEARCH_WORKPACKAGES_FROM } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
 
 jest.mock('@nextcloud/axios')
@@ -131,7 +131,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
@@ -146,7 +146,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -175,7 +175,7 @@ describe('SearchInput.vue', () => {
 					.mockImplementationOnce(() => {})
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -190,7 +190,7 @@ describe('SearchInput.vue', () => {
 			beforeEach(async () => {
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 			})
 			it('should not be displayed if the search results is empty', async () => {
@@ -208,7 +208,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
@@ -238,7 +238,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
@@ -281,7 +281,7 @@ describe('SearchInput.vue', () => {
 						},
 					])
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
@@ -440,7 +440,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchFrom: SEARCHFROM.PROJECT_TAB,
+					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -481,7 +481,8 @@ describe('SearchInput.vue', () => {
 				}
 				expect(postSpy).toBeCalledWith(
 					'http://localhost/apps/integration_openproject/work-packages',
-					body
+					body,
+					{ headers: { 'Content-Type': 'application/json' } }
 				)
 				postSpy.mockRestore()
 			})
@@ -494,7 +495,7 @@ describe('SearchInput.vue', () => {
 				expect(wrapper.find('input').element.value).toBe('')
 
 			})
-			it('should show an error when linking failed', async () => {
+			it('should show an error when linking fails', async () => {
 				const err = new Error()
 				err.response = { status: 422 }
 				axios.post.mockRejectedValueOnce(err)
@@ -589,7 +590,7 @@ describe('SearchInput.vue', () => {
 			name: 'pogo.png',
 		}]
 		describe('single file selected', () => {
-			describe('click on a workpackage option', () => {
+			describe('select a work package for linking', () => {
 				let axiosGetSpy
 				beforeEach(async () => {
 					axiosGetSpy = jest.spyOn(axios, 'get')
@@ -599,7 +600,7 @@ describe('SearchInput.vue', () => {
 						}))
 					wrapper = mountSearchInput(singleFileInfo)
 					await wrapper.setProps({
-						isSearchFrom: SEARCHFROM.LINK_MULTIPLE_MODAL,
+						isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
 					})
 					const inputField = wrapper.find(inputSelector)
 					await inputField.setValue('orga')
@@ -628,12 +629,13 @@ describe('SearchInput.vue', () => {
 					}
 					expect(postSpy).toBeCalledWith(
 						'http://localhost/apps/integration_openproject/work-packages',
-						body
+						body,
+						{ headers: { 'Content-Type': 'application/json' } }
 					)
 					postSpy.mockRestore()
 				})
 
-				it('should show an error when linking failed', async () => {
+				it('should show an error when linking fails', async () => {
 					const err = new Error()
 					err.response = { status: 422 }
 					axios.post.mockRejectedValueOnce(err)
@@ -699,7 +701,7 @@ describe('SearchInput.vue', () => {
 			})
 
 			describe('multiple files selected', () => {
-				describe('click on a workpackage option', () => {
+				describe('select a work package for linking', () => {
 					let axiosGetSpy
 					beforeEach(async () => {
 						axiosGetSpy = jest.spyOn(axios, 'get')
@@ -709,7 +711,7 @@ describe('SearchInput.vue', () => {
 							}))
 						wrapper = mountSearchInput(multipleFileInfos)
 						await wrapper.setProps({
-							isSearchFrom: SEARCHFROM.LINK_MULTIPLE_MODAL,
+							isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
 						})
 						const inputField = wrapper.find(inputSelector)
 						await inputField.setValue('orga')
@@ -738,12 +740,13 @@ describe('SearchInput.vue', () => {
 						}
 						expect(postSpy).toBeCalledWith(
 							'http://localhost/apps/integration_openproject/work-packages',
-							body
+							body,
+							{ headers: { 'Content-Type': 'application/json' } }
 						)
 						postSpy.mockRestore()
 					})
 
-					it('should show an error when linking failed', async () => {
+					it('should show an error when linking fails', async () => {
 						const err = new Error()
 						err.response = { status: 422 }
 						axios.post.mockRejectedValueOnce(err)
