@@ -1224,3 +1224,43 @@ Feature: retrieve file information of a single file, using the file ID
       | read+create+share+delete  | SRGDCK                    | RGDNVCK               |
       | read+create+update+delete | SGDNVCK                   | RGDNVCK               |
       | read+create+update+share  | SRGNVCK                   | RGDNVCK               |
+
+
+  Scenario: get information of a group folder
+    Given user "Carol" has been created
+    And group "grp1" has been created
+    And user "Carol" has been added to the group "grp1"
+    And group folder "groupFolder" has been created
+    And  group "grp1" has been added to group folder "groupFolder"
+    When user "Carol" gets the information of the folder "/groupFolder"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+      """"
+      {
+      "type": "object",
+      "required": [
+      "status",
+      "statuscode",
+      "size",
+      "name",
+      "owner_id",
+      "owner_name",
+      "modifier_id",
+      "modifier_name",
+      "dav_permissions",
+      "path"
+      ],
+      "properties": {
+      "status": {"type": "string", "pattern": "^OK$"},
+      "statuscode" : {"type" : "number", "enum": [200]},
+      "size" : {"type" : "integer", "enum": [0] },
+      "name": {"type": "string", "pattern": "^groupFolder$"},
+      "owner_id": {"type": "string", "pattern": "^Carol$"},
+      "owner_name": {"type": "string", "pattern": "^Carol$"},
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
+      "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK$"},
+      "path": {"type": "string", "pattern":"^files/groupFolder$"}
+      }
+      }
+      """

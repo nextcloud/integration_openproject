@@ -619,6 +619,92 @@ class FilesControllerTest extends TestCase {
 		assertSame(400, $result->getStatus());
 	}
 
+	public function testGetFilesInfoSendStringIds(): void {
+		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
+		$folderMock->method('getById')
+			->withConsecutive([2], [3])
+			->willReturnOnConsecutiveCalls(
+				[
+					$this->getNodeMock(
+						'httpd/unix-directory',
+						2,
+						'dir',
+						'/testUser/files/myFolder/a-sub-folder'
+					)
+				],
+				[
+					$this->getNodeMock(
+						'httpd/unix-directory',
+						3,
+						'dir',
+						'/testUser/files/testFolder'
+					)
+				]
+			);
+
+		$cachedMountFileInfoMock = $this->getMockBuilder(
+			'\OCP\Files\Config\ICachedMountFileInfo'
+		)->getMock();
+		$cachedMountFileInfoMock->method('getInternalPath')
+			->willReturnOnConsecutiveCalls(
+				'files/myFolder/a-sub-folder',
+				''
+			);
+		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
+		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
+		$cachedMountFileInfoMock->method('getUser')
+			->willReturn($ownerMock);
+		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
+		$mountCacheMock->method('getMountsForFileId')
+			->willReturn(
+				[$cachedMountFileInfoMock]
+			);
+
+		$filesController = $this->createFilesController($folderMock, null, $mountCacheMock);
+
+		$result = $filesController->getFilesInfo(["2","3"]);
+		assertSame(
+			[
+				2 => [
+					'status' => 'OK',
+					'statuscode' => 200,
+					'id' => 2,
+					'name' => 'a-sub-folder',
+					'mtime' => 1640008813,
+					'ctime' => 1639906930,
+					'mimetype' => 'application/x-op-directory',
+					'size' => 200245,
+					'owner_name' => 'Test User',
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+					'trashed' => false,
+					'modifier_name' => null,
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files/myFolder/a-sub-folder'
+				],
+				3 => [
+					'status' => 'OK',
+					'statuscode' => 200,
+					'id' => 3,
+					'name' => 'name-in-the-context-of-requester',
+					'mtime' => 1640008813,
+					'ctime' => 1639906930,
+					'mimetype' => 'application/x-op-directory',
+					'size' => 200245,
+					'owner_name' => 'Test User',
+					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
+					'trashed' => false,
+					'modifier_name' => null,
+					'modifier_id' => null,
+					'dav_permissions' => 'RGDNVCK',
+					'path' => 'files/testFolder'
+				]
+			],
+			$result->getData()
+		);
+		assertSame(200, $result->getStatus());
+	}
+
 	/**
 	 * @return array<mixed>
 	 */
