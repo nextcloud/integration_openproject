@@ -17,7 +17,6 @@ OC.L10N.register(
     "Enable navigation link" : "Näytä navigointipalkissa",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
-    "Documentation" : "Dokumentaatio",
-    "Active" : "Aktiivinen"
+    "Documentation" : "Dokumentaatio"
 },
 "nplurals=2; plural=(n != 1);");

@@ -11,7 +11,6 @@ OC.L10N.register(
     "Reset" : "Reïnicializar",
     "Connected as {user}" : "Connectat coma {user}",
     "Invalid token" : "Geton invalid",
-    "Documentation" : "Documentacion",
-    "Active" : "Activa"
+    "Documentation" : "Documentacion"
 },
 "nplurals=2; plural=(n > 1);");

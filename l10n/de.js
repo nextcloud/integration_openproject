@@ -114,7 +114,6 @@ OC.L10N.register(
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Die OpenProject OAuth-Zugriffstoken einiger Benutzer wurden erfolgreich widerrufen.",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Um einen OpenProject-Server mit einer lokalen Adresse verwenden zu können, aktiviere die Einstellung „allow_local_remote_servers“.  {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "OpenProject OAuth-Zugriffstoken einiger Benutzer konnten nicht widerrufen werden",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "OAuth-Zugriffstoken für OpenProject-OAuth von Benutzern wurde erfolgreich widerrufen",
-    "Active" : "Aktiv"
+    "Successfully revoked users' OpenProject OAuth access tokens" : "OAuth-Zugriffstoken für OpenProject-OAuth von Benutzern wurde erfolgreich widerrufen"
 },
 "nplurals=2; plural=(n != 1);");

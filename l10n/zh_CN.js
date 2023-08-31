@@ -21,7 +21,6 @@ OC.L10N.register(
     "Incorrect access token" : "访问令牌不正确",
     "Invalid token" : "令牌无效",
     "URL is invalid" : "URL无效",
-    "Documentation" : "文档",
-    "Active" : "活动"
+    "Documentation" : "文档"
 },
 "nplurals=1; plural=0;");
