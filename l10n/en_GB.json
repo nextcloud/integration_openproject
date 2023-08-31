@@ -128,25 +128,6 @@
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "To be able to use an OpenProject server with a local address, enable the \"allow_local_remote_servers\" setting. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Failed to revoke some users' OpenProject OAuth access tokens",
     "Successfully revoked users' OpenProject OAuth access tokens" : "Successfully revoked users' OpenProject OAuth access tokens",
-    "Active" : "Active",
-    "Inactive" : "Inactive",
-    "Edit project folders" : "Edit project folders",
-    "Project folders application connection" : "Project folders application connection",
-    "Application Password" : "Application Password",
-    "Done, complete setup" : "Done, complete setup",
-    "Replace application password" : "Replace application password",
-    "Keep current setup" : "Keep current setup",
-    "Complete without project folders" : "Complete without project folders",
-    "Setup OpenProject user, group and folder" : "Setup OpenProject user, group and folder",
-    "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.",
-    "troubleshooting guide" : "troubleshooting guide",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders.",
-    "Reset OpenProject Integration" : "Reset OpenProject Integration",
-    "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password." : "If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.",
-    "Replace user app password" : "Replace user app password",
-    "Administration Settings > OpenProject" : "Administration Settings > OpenProject",
-    "Some OpenProject Integration application settings are not working. " : "Some OpenProject Integration application settings are not working. ",
-    "Some OpenProject Integration application settings are not working." : "Some OpenProject Integration application settings are not working."
+    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

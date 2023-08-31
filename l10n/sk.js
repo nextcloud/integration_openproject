@@ -61,7 +61,6 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integrácia",
     "Invalid key" : "Neplatný kľúč",
     "Default user settings" : "Predvolené nastavenia užívateľa",
-    "Documentation" : "Dokumentácia",
-    "Active" : "Aktívne"
+    "Documentation" : "Dokumentácia"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
