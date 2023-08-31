@@ -18,6 +18,7 @@ use OCA\Activity\UserSettings;
 use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
 use OCP\App\IAppManager;
+use OCP\AppFramework\QueryException;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
@@ -35,6 +36,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
 use Throwable;
+use OCP\Files\DavUtil;
 
 class FilesController extends OCSController {
 
@@ -90,6 +92,10 @@ class FilesController extends OCSController {
 	 * @var ITrashManager
 	 */
 	private $trashManager = null;
+	/**
+	 * @var DavUtil
+	 */
+	private $davUtils;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -103,7 +109,8 @@ class FilesController extends OCSController {
 								ILogger $logger,
 								IL10N $l,
 								IConfig $config,
-								IUserManager $userManager
+								IUserManager $userManager,
+								DavUtil $davUtils
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -117,6 +124,7 @@ class FilesController extends OCSController {
 		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
+		$this->davUtils = $davUtils;
 	}
 
 	/**
@@ -158,10 +166,12 @@ class FilesController extends OCSController {
 
 	/**
 	 * Function to make the trash-manager testable
-	 * @param ITrashManager $trashManager
+	 *
+	 * @param ITrashManager|null $trashManager
 	 * @return void
+	 * @throws QueryException
 	 */
-	public function setTrashManager($trashManager = null) {
+	public function setTrashManager(ITrashManager $trashManager = null): void {
 		if ($trashManager !== null) {
 			$this->trashManager = $trashManager;
 		} elseif ($this->trashManager === null) {
@@ -321,37 +331,9 @@ class FilesController extends OCSController {
 		return null;
 	}
 
-	// copy of https://github.com/nextcloud/server/blob/cd44ee2053f105f60c668906ed8460605cb1da81/lib/public/Files/DavUtil.php#L58
-	// as this is only availabe from V25 and we need it in versions below that
-	private function getDavPermissions(FileInfo $info): string {
-		$p = '';
-		if ($info->isShared()) {
-			$p .= 'S';
-		}
-		if ($info->isShareable()) {
-			$p .= 'R';
-		}
-		if ($info->isMounted()) {
-			$p .= 'M';
-		}
-		if ($info->isReadable()) {
-			$p .= 'G';
-		}
-		if ($info->isDeletable()) {
-			$p .= 'D';
-		}
-		if ($info->isUpdateable()) {
-			$p .= 'NV'; // Renameable, Moveable
-		}
-		if ($info->getType() === FileInfo::TYPE_FILE) {
-			if ($info->isUpdateable()) {
-				$p .= 'W';
-			}
-		} else {
-			if ($info->isCreatable()) {
-				$p .= 'CK';
-			}
-		}
-		return $p;
+	// `davUtils->getDavPermissions` method is static so it cannot be mocked to
+	// creating similar function here for testing purposes
+	public function getDavPermissions(FileInfo $info): string {
+		return $this->davUtils->getDavPermissions($info);
 	}
 }

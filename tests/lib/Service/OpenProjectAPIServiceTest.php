@@ -36,7 +36,6 @@ use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider;
 use OCP\Security\ISecureRandom;
@@ -228,7 +227,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-
+		$ocClient = null;
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 
@@ -279,7 +278,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
 			);
-		} elseif (version_compare(OC_Util::getVersionString(), '24') >= 0) {
+		} elseif (version_compare(OC_Util::getVersionString(), '25') >= 0) {
 			$clientConfigMock
 			->method('getSystemValueBool')
 			->with('allow_local_remote_servers', false)
@@ -288,19 +287,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			// @phpstan-ignore-next-line
 			$ocClient = new Client(
 				$clientConfigMock,                                             // @phpstan-ignore-line
-				$certificateManager,                                           // @phpstan-ignore-line
-				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
-			);
-		} else {
-			$clientConfigMock
-			->method('getSystemValueBool')
-			->with('allow_local_remote_servers', false)
-			->willReturn(true);
-			// @phpstan-ignore-next-line
-			$ocClient = new Client(
-				$clientConfigMock,                                             // @phpstan-ignore-line
-				$this->createMock(ILogger::class),                             // @phpstan-ignore-line
 				$certificateManager,                                           // @phpstan-ignore-line
 				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
