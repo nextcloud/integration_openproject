@@ -19,7 +19,6 @@ OC.L10N.register(
     "Connected as {user}" : "以 {user} 身份連線",
     "Incorrect access token" : "不正確的存取權杖",
     "Invalid token" : "無效的權杖",
-    "Documentation" : "文件",
-    "Active" : "作用中"
+    "Documentation" : "文件"
 },
 "nplurals=1; plural=0;");

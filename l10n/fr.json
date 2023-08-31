@@ -115,7 +115,6 @@
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Jeton·s d’accès OpenProject OAuth révoqué·s avec succès",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Pour pouvoir utiliser un serveur OpenProject avec une adresse locale, activer le paramètre `allow_local_remote_servers` {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Échec de la révocation des jetons d’accès OAuth OpenProject de certains utilisateurs.",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Jeton·s d’accès OAuth OpenProject révoqué·s avec succès.",
-    "Active" : "Actif"
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Jeton·s d’accès OAuth OpenProject révoqué·s avec succès."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

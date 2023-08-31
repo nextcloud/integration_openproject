@@ -112,7 +112,6 @@
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Успешна отмяна на токен(и) за достъп до OpenProject OAuth на потребител(и)",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "За да можете да използвате сървър на OpenProject с локален адрес, активирайте настройката `allow_local_remote_servers`. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Неуспешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешна отмяна на OAuth токени за достъп на някои потребители на OpenProject",
-    "Active" : "Активен"
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Успешна отмяна на OAuth токени за достъп на някои потребители на OpenProject"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
