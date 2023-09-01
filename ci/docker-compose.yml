@@ -96,12 +96,12 @@ services:
       - ./data/ssl/:/usr/local/share/ca-certificates
 #    command: ["sh", "-c", "sudo update-ca-certificates && exec ./docker/prod/supervisord"]
 
-#  start_dependencies:
-#    image: dadarek/wait-for-dependencies
-#    depends_on:
-#      - proxy
-#      - openproject
-#    command: proxy:443 proxy:80 openproject:3000
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - proxy
+      - openproject
+    command: proxy:443 proxy:80 openproject:80
 
 volumes:
   data:
