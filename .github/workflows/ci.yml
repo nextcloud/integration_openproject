@@ -106,7 +106,7 @@ jobs:
           ls ./apps/integration_openproject/ci/data/ssl
           cd apps/integration_openproject/ci
           docker compose up nextcloud proxy openproject start_dependencies -d
-          until curl -s -f http://nextcloud.local/status.php | grep '"installed":true'; do echo .; sleep 10; done
+          until curl -v -f http://nextcloud.local/status.php | grep '"installed":true'; do echo notFound; sleep 10; done
 
 #      - name: wait on OpenProject
 #        uses: iFaxity/wait-on-action@v1
