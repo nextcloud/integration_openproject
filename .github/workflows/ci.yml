@@ -105,7 +105,25 @@ jobs:
           sudo update-ca-certificates
           ls ./apps/integration_openproject/ci/data/ssl
           cd apps/integration_openproject/ci
-          docker compose up nextcloud proxy openproject
+          docker compose up nextcloud proxy openproject -d
+
+      - name: wait on OpenProject
+        uses: iFaxity/wait-on-action@v1
+        with:
+          resource: http-get://hos.docker.internal:3000/api/v3/
+          timeout: 240000
+
+      - name: wait on Nextcloud
+        run: until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+
+      - name: try Nextcloud 1
+        run: curl http://nextcloud.local/status.php -v
+
+      - name: try Nextcloud 2
+        run: curl -k https://nextcloud.local/status.php -v
+
+      - name: try OpenProject
+        run: curl http://host.docker.internal:3000/api/v3/users -u apiadmin:apiadmin -v
 
 #      - name: JS Code Coverage Summary Report
 #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
@@ -346,11 +364,6 @@ jobs:
 ##          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
 ##          restore-keys: ${{ runner.os }}-composer-
 ##
-#      - name: try Nextcloud 1
-#        run: curl http://nextcloud.local/status.php -v
-#
-#      - name: try Nextcloud 2
-#        run: curl -k https://nextcloud.local/status.php -v
 #
 ##      - name: API Tests
 ##        env:

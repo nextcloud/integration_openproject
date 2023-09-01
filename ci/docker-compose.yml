@@ -83,7 +83,6 @@ services:
       OPENPROJECT_HOST__NAME: "host.docker.internal:3000"
       OPENPROJECT_DEV_EXTRA_HOSTS: "host.docker.internal"
       OPENPROJECT_HTTPS: false
-      HOST: 0.0.0.0
       OPENPROJECT_PASSWORD__MIN__LENGTH: 0
       OPENPROJECT_ONBOARDING__ENABLED: false
       OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: "apiadmin"
@@ -97,6 +96,12 @@ services:
       - ./data/ssl/:/usr/local/share/ca-certificates
 #    command: ["sh", "-c", "sudo update-ca-certificates && exec ./docker/prod/supervisord"]
 
+#  start_dependencies:
+#    image: dadarek/wait-for-dependencies
+#    depends_on:
+#      - proxy
+#      - openproject
+#    command: proxy:443 proxy:80 openproject:3000
 
 volumes:
   data:
