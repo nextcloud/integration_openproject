@@ -110,7 +110,7 @@ jobs:
       - name: wait on OpenProject
         uses: iFaxity/wait-on-action@v1
         with:
-          resource: http-get://hos.docker.internal:3000/api/v3/
+          resource: http-get://host.docker.internal:3000/api/v3/
           timeout: 240000
 
       - name: wait on Nextcloud
