@@ -660,8 +660,11 @@ class FilesControllerTest extends TestCase {
 				[$cachedMountFileInfoMock]
 			);
 
-		$filesController = $this->createFilesController($folderMock, null, $mountCacheMock);
-
+		$filesController = $this->getFilesControllerMock(
+			['getDavPermissions'], $folderMock, $mountCacheMock
+		);
+		$filesController->method('getDavPermissions')
+			->willReturnOnConsecutiveCalls('RGDNVCK', 'RGDNVCK');
 		$result = $filesController->getFilesInfo(["2","3"]);
 		assertSame(
 			[
