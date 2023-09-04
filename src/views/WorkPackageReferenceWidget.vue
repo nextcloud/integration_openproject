@@ -20,7 +20,7 @@
   -->
 
 <template>
-	<div class="work-package-reference">
+	<div id="workpackage-link-previews" class="work-package-reference">
 		<div v-if="isError">
 			<h3 class="error-title">
 				<CloseIcon :size="20" class="icon" />
@@ -31,9 +31,11 @@
 				{{ t('integration_openproject', 'OpenProject settings') }}
 			</a>
 		</div>
-		<WorkPackage :id="'workpackage-'+ richObject.id"
+		<WorkPackage v-if="workpackage"
+			:id="'workpackage-'+ richObject.id"
 			class="work-package-reference__link-preview"
-			:workpackage="workpackage" />
+			:workpackage="workpackage"
+			:is-link-previews="true" />
 	</div>
 </template>
 
