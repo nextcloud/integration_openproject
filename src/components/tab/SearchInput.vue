@@ -15,7 +15,8 @@
 			@option:selected="linkWorkPackageToFile">
 			<template #option="option">
 				<WorkPackage :key="option.id"
-					:workpackage="option" />
+					:workpackage="option"
+					:is-smart-picker="isSmartPicker" />
 			</template>
 			<template #no-options>
 				{{ noOptionsText }}
