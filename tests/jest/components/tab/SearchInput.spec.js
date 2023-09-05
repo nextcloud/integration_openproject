@@ -8,7 +8,7 @@ import workPackagesSearchResponse from '../../fixtures/workPackagesSearchRespons
 import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSearchResponseNoAssignee.json'
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
-import { STATE, SEARCH_WORKPACKAGES_FROM } from '../../../../src/utils.js'
+import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
 
 jest.mock('@nextcloud/axios')
@@ -131,7 +131,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(search)
@@ -146,7 +146,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -175,7 +175,7 @@ describe('SearchInput.vue', () => {
 					.mockImplementationOnce(() => {})
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -190,7 +190,7 @@ describe('SearchInput.vue', () => {
 			beforeEach(async () => {
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 			})
 			it('should not be displayed if the search results is empty', async () => {
@@ -208,7 +208,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
@@ -238,7 +238,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
@@ -281,7 +281,7 @@ describe('SearchInput.vue', () => {
 						},
 					])
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const axiosSpy = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
@@ -440,7 +440,7 @@ describe('SearchInput.vue', () => {
 					}))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
-					isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.PROJECT_TAB,
+					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('orga')
@@ -600,7 +600,7 @@ describe('SearchInput.vue', () => {
 						}))
 					wrapper = mountSearchInput(singleFileInfo)
 					await wrapper.setProps({
-						isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
+						searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 					})
 					const inputField = wrapper.find(inputSelector)
 					await inputField.setValue('orga')
@@ -711,7 +711,7 @@ describe('SearchInput.vue', () => {
 							}))
 						wrapper = mountSearchInput(multipleFileInfos)
 						await wrapper.setProps({
-							isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
+							searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 						})
 						const inputField = wrapper.find(inputSelector)
 						await inputField.setValue('orga')

@@ -49,7 +49,7 @@ export const FORM = {
 	APP_PASSWORD: 4,
 }
 
-export const SEARCH_WORKPACKAGES_FROM = {
+export const WORKPACKAGES_SEARCH_ORIGIN = {
 	PROJECT_TAB: 'project-tab',
 	LINK_MULTIPLE_FILES_MODAL: 'link-multiple-files-modal',
 }

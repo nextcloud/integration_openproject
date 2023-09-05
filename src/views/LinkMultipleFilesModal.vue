@@ -12,7 +12,7 @@
 					<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
-						:is-search-workpackage-from="isSearchWorkpackageFrom"
+						:search-origin="searchOrigin"
 						@saved="onSaved" />
 					<EmptyContent
 						id="openproject-empty-content"
@@ -33,7 +33,7 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
-import { SEARCH_WORKPACKAGES_FROM, STATE } from '../utils.js'
+import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../utils.js'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
@@ -51,7 +51,7 @@ export default {
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			isSearchWorkpackageFrom: SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL,
+			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 		}
 	},
 
@@ -73,11 +73,7 @@ export default {
 		async setFileInfos(fileInfos) {
 			this.fileInfos = fileInfos
 			if (this.isAdminConfigOk) {
-				if (this.fileInfos.length === 1) {
-					await this.fetchWorkpackagesForSingleFileSelected(this.fileInfos[0].id)
-				} else {
-					this.state = STATE.OK
-				}
+				await this.fetchWorkpackagesForSingleFileSelected(this.fileInfos[0].id)
 			} else {
 				this.state = STATE.ERROR
 			}
@@ -96,7 +92,7 @@ export default {
 				if (!Array.isArray(response.data)) {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				} else {
-					if (response.data.length > 0) {
+					if (this.fileInfos.length === 1 && response.data.length > 0) {
 						for (let workPackage of response.data) {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage, true)

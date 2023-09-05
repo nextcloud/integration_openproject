@@ -706,7 +706,11 @@ class OpenProjectAPIService {
 
 	/**
 	 *
-	 * @param array<mixed> $values
+	 * @param array<mixed> $values An array containing the following keys:
+	 * 		- "workpackageId" (int): The ID of the work package.
+	 * 		- "fileinfo" (array):  An array of file information with the following keys:
+	 * 			- "id" (int): File id of the file
+	 * 			- "name" (string): Name of the file
 	 * @param string $userId
 	 *
 	 * @return array<int>
@@ -740,7 +744,7 @@ class OpenProjectAPIService {
 		$elements = [];
 		// multiple files can also be linked to a single work package
 		foreach ($fileInfos as $fileInfo) {
-			if (!isset($fileInfo['id']) || !isset($fileInfo['name']) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
+			if (!key_exists('id', $fileInfo) || !key_exists('name', $fileInfo) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
 				throw new InvalidArgumentException('invalid data');
 			}
 			$fileId = $fileInfo["id"];

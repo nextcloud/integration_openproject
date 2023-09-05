@@ -39,7 +39,7 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
-import { STATE, SEARCH_WORKPACKAGES_FROM } from '../../utils.js'
+import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -63,7 +63,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isSearchWorkpackageFrom: {
+		searchOrigin: {
 			type: String,
 			required: false,
 			default: null,
@@ -91,7 +91,7 @@ export default {
 			return ''
 		},
 		setOptionForSearch() {
-			if (this.isSearchWorkpackageFrom === SEARCH_WORKPACKAGES_FROM.PROJECT_TAB || this.isSmartPicker) {
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB || this.isSmartPicker) {
 				return this.filterSearchResultsByFileId
 			}
 			return this.searchResults
@@ -138,7 +138,7 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			if (this.isSearchWorkpackageFrom === SEARCH_WORKPACKAGES_FROM.PROJECT_TAB) {
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 			} else {
 				// we do not need to provide a file id incase of searching through link multiple files to work package and through smart picker
@@ -161,10 +161,10 @@ export default {
 			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)
 			let fileInfoForBody = []
 			let successMessage
-			if (this.isSearchWorkpackageFrom === SEARCH_WORKPACKAGES_FROM.PROJECT_TAB) {
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				fileInfoForBody.push(this.fileInfo)
 				successMessage = t('integration_openproject', 'Link to work package created successfully!')
-			} else if (this.isSearchWorkpackageFrom === SEARCH_WORKPACKAGES_FROM.LINK_MULTIPLE_FILES_MODAL) {
+			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
 				fileInfoForBody = this.fileInfo
 				successMessage = t('integration_openproject', 'Links to work package created successfully for selected files!')
 			}

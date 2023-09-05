@@ -185,7 +185,11 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param array<mixed> $values
+	 * @param array<mixed> $values An array containing the following keys:
+	 *        - "workpackageId" (int): The ID of the work package.
+	 *        - "fileinfo" (array):  An array of file information with the following keys:
+	 *            - "id" (int): File id of the file
+	 *            - "name" (string): Name of the file
 	 *
 	 * @return DataResponse
 	 */
