@@ -12,10 +12,10 @@ jobs:
       APP_ID: integration_openproject
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node 14
+      - name: Use Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Set up npm
         run: npm i -g npm
