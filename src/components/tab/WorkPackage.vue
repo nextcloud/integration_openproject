@@ -134,11 +134,10 @@ export default {
 		},
 		getWPBackgroundElement() {
 			let el = document.getElementById('workpackage-' + this.workpackage.id)
-			console.log(this.workpackage.id)
-			console.log(typeof el)
-			console.log(el)
 			if (this.isSmartPicker) {
 				el = document.getElementById('work-package-smart-picker')
+			} else if (this.isLinkPreviews) {
+				el = document.getElementById('workpackage-link-previews')
 			}
 			if (el === null) {
 				el = document.getElementById('tab-open-project')

@@ -20,7 +20,7 @@
   -->
 
 <template>
-	<div id="work-package-smart-picker" class="work-package-picker" >
+	<div id="work-package-smart-picker" class="work-package-picker">
 		<h2 class="work-package-picker__header">
 			{{ t('integration_openproject', 'OpenProject work package picker') }}
 		</h2>
