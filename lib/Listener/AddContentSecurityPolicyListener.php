@@ -30,6 +30,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class AddContentSecurityPolicyListener implements IEventListener {
 	/**
 	 * @var IConfig
