@@ -28,6 +28,17 @@
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
 			@saved="onSaved" />
+		<div v-if="!!isAdminConfigOk && !!isStateOk" class="create-workpackage">
+			<NcActions>
+				<NcActionButton class="create-workpackage--button" @click="showMessage('Add')">
+					<template #icon>
+						<Plus :size="25" />
+					</template>
+					{{ t('integration_openproject', 'Create and link a new work package') }}
+				</NcActionButton>
+			</NcActions>
+			<span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+		</div>
 		<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 		<div v-else-if="filterWorkpackagesByFileId.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
@@ -70,11 +81,12 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 import axios from '@nextcloud/axios'
 
 import { generateUrl } from '@nextcloud/router'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import {showSuccess, showError, showMessage} from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
@@ -91,6 +103,7 @@ export default {
 		NcActionButton,
 		LoadingIcon,
 		LinkOffIcon,
+		Plus,
 	},
 	data: () => ({
 		error: '',
@@ -125,6 +138,7 @@ export default {
 		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 	methods: {
+		showMessage,
 		/**
 		 * updates current resource
 		 *
@@ -290,6 +304,23 @@ export default {
 <style scoped lang="scss">
 .projects {
 	width: 100%;
+
+	.create-workpackage {
+		padding: 10px;
+		display: flex;
+		align-items: center;
+		&--button {
+			background-color: var(--color-background-dark)
+		}
+		&--label {
+			padding-left: 5px;
+			font-size: 1rem;
+			line-height: 1.4rem;
+			font-weight: 400;
+			text-align: left;
+		}
+	}
+
 	.existing-relations {
 		text-align: left;
 		font-weight: bold;
