@@ -20,6 +20,8 @@ exports[`SearchInput.vue state messages no-token: should display the correct sta
 
 exports[`SearchInput.vue work packages select search list should display correct options list of search results 1`] = `
 Object {
+  "isLinkPreviews": false,
+  "isSmartPicker": false,
   "workpackage": Object {
     "assignee": "test",
     "fileId": 1234,
@@ -40,6 +42,8 @@ exports[`SearchInput.vue work packages select search list should not be displaye
 
 exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
 Object {
+  "isLinkPreviews": false,
+  "isSmartPicker": false,
   "workpackage": Object {
     "assignee": "some assignee",
     "fileId": 111,
