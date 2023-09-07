@@ -32,6 +32,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Aby bylo možné automaticky spravovat složky projektů, tato aplikace potřebuje vytvořit speciální skupinovou složku, přiřazenou skupině a spravovanou uživatelem, každá nazvaná „OpenProject“.",
     "The app will never delete files or folders, even if you deactivate this later." : "Tato aplikace nikdy nebude mazat soubory či složky, i když ji později vypnete.",
     "Retry setup OpenProject user, group and folder" : "Zkusit znovu vytvořit uživatele, skupinu a složku OpenProject",
+    "Automatically managed folders:" : "Automaticky spravované složky:",
     "Copied!" : "Zkopírováno!",
     "Copy value" : "Zkopírovat hodnotu",
     "Copied to the clipboard" : "Zkopírováno do schránky",
