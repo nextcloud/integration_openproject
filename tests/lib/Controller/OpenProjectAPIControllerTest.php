@@ -14,7 +14,10 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\Files\NotPermittedException;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
@@ -534,7 +537,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 		$this->assertSame(['error' => 'something went wrong'], $response->getData());
 	}
-	
+
 	/**
 	 * @return void
 	 */
@@ -1065,5 +1068,125 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'code_challenge_method=S256$/',
 			(string) $result->getData()
 		);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFile() {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile'])
+			->getMock();
+		$service->expects($this->once())
+			->method('linkWorkPackageToFile')
+			->with(1, 3, 'textFile.txt', 'test')
+			->willReturn(2);
+
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->linkWorkPackageToFile(1, 3, 'textFile.txt');
+		$this->assertSame(2, $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileErrorResponse() {
+		$this->getUserValueMock('');
+		$service = $this->createMock(OpenProjectAPIService::class);
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->linkWorkPackageToFile(1, 3, 'textFile.txt');
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileNotEnoughPermissions(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('linkWorkPackageToFile')
+			->willThrowException(new NotPermittedException());
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->linkWorkPackageToFile(1, 3, 'textFile.txt');
+		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileOpenProjectErrorException(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('linkWorkPackageToFile')
+			->willThrowException(new OpenprojectErrorException('Error while linking file to a work package'));
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->linkWorkPackageToFile(1, 3, 'textFile.txt');
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame('Error while linking file to a work package', $response->getData());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileOpenprojectResponseException(): void {
+		$this->getUserValueMock();
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service
+			->method('linkWorkPackageToFile')
+			->willThrowException(new OpenprojectResponseException('Malformed response'));
+		$controller = new OpenProjectAPIController(
+			'integration_openproject',
+			$this->requestMock,
+			$this->configMock,
+			$service,
+			$this->urlGeneratorMock,
+			$this->loggerMock,
+			'test'
+		);
+		$response = $controller->linkWorkPackageToFile(1, 3, 'textFile.txt');
+		$this->assertSame(Http::STATUS_INTERNAL_SERVER_ERROR, $response->getStatus());
+		$this->assertSame('Malformed response', $response->getData());
 	}
 }
