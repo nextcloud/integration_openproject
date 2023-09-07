@@ -21,11 +21,34 @@
 			<template #no-options>
 				{{ noOptionsText }}
 			</template>
+			<template v-if="!isSmartPicker" #list-footer>
+				<li class="create-workpackage-footer-option" @click="openCreateWorkpackageModal()">
+					<Plus :size="20" fill-color="var(--color-primary)" />
+					<span class="create-workpackage-footer-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+				</li>
+			</template>
 		</NcSelect>
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
 		</div>
+		<div v-if="!!isStateOk && !isSmartPicker" class="create-workpackage">
+			<NcActions class="create-workpackage--action">
+				<NcActionButton class="create-workpackage--button" @click="openCreateWorkpackageModal()">
+					<template #icon>
+						<Plus class="plus" :size="26" />
+					</template>
+				</NcActionButton>
+			</NcActions>
+			<span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+		</div>
+		<CreateWorkPackageModal
+			v-if="!isSmartPicker"
+			ref="testRef"
+			:show-modal="isCreateWorkpackageModalVisible"
+			data-test-id="create-workpackage-modal"
+			@create-work-package="onCreateWorkPackageEvent"
+			@close-create-work-package-modal="onCloseCreateWorkPackageModalEvent" />
 	</div>
 </template>
 
@@ -36,10 +59,15 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import WorkPackage from './WorkPackage.vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import { translate as t } from '@nextcloud/l10n'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -47,6 +75,10 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
+		NcActions,
+		NcActionButton,
+		CreateWorkPackageModal,
+		Plus,
 		WorkPackage,
 		NcSelect,
 	},
@@ -74,6 +106,9 @@ export default {
 		searchResults: [],
 		noOptionsText: t('integration_openproject', 'Start typing to search'),
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
+		isCreateWorkpackageModalVisible: false,
+		newWorkpackageCreated: false,
+		workpackageData: [], // only for newly created workpackages
 	}),
 	computed: {
 		isStateOk() {
@@ -124,9 +159,29 @@ export default {
 		},
 	},
 	methods: {
+		async onCreateWorkPackageEvent(data) {
+			this.isCreateWorkpackageModalVisible = false
+			if (
+				data.openProjectEventName === 'work_package_creation_cancellation'
+			) {
+				showError(t('integration_openproject', 'Work package creation was not successful.'))
+			}
+			if (data.openProjectEventName === 'work_package_creation_success') {
+				showSuccess(t('integration_openproject', 'Work package created successfully.'))
+				this.newWorkpackageCreated = true
+				await this.linkWorkPackageToFile(data.openProjectEventPayload)
+			}
+		},
+		onCloseCreateWorkPackageModalEvent() {
+			this.isCreateWorkpackageModalVisible = false
+		},
+		async openCreateWorkpackageModal() {
+			this.isCreateWorkpackageModalVisible = true
+		},
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK
+			this.newWorkpackageCreated = false
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200) return
@@ -141,7 +196,7 @@ export default {
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
 			} else {
-				// we do not need to provide a file id incase of searching through link multiple files to work package and through smart picker
+				// we do not need to provide a file id in case of searching through link multiple files to work package and through smart picker
 				await this.debounceMakeSearchRequest(query, null)
 			}
 		},
@@ -160,6 +215,12 @@ export default {
 			}
 			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+				if (this.newWorkpackageCreated && this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+					// after creating the new work package from the project tab process the work package
+					// to display the existing linked work package automatically in the UI
+					selectedOption.fileId = this.fileInfo.id
+					selectedOption = await workpackageHelper.getAdditionalMetaData(selectedOption)
+				}
 				await workpackageHelper.linkFileToWorkPackageWithSingleRequest([this.fileInfo], selectedOption, t('integration_openproject', 'Link to work package created successfully!'), this)
 				this.resetState()
 			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
@@ -203,6 +264,12 @@ export default {
 						} else {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							if (this.newWorkpackageCreated) {
+								// don't check if it's already linked or not because we know it's already linked
+								// we need the processed data to display in the UI
+								this.searchResults.push(workPackage)
+								return
+							}
 							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
 							// check the state again, it might have changed in between
@@ -236,6 +303,54 @@ export default {
 	}
 	.vs__dropdown-option {
 		padding: 0 !important;
+	}
+
+	.create-workpackage-footer-option {
+		margin-top: 5px;
+		width: 100%;
+		border-top: 1px solid var(--color-background-dark);
+		padding: 20px 10px 20px 10px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		position: sticky;
+		position: -webkit-sticky; /* Safari */
+		z-index: 1;
+		bottom: 0;
+		background: var(--color-main-background);
+		overflow-y: hidden;
+		&--label {
+			color: var(--color-primary);
+			padding-left: 5px;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 16px;
+			letter-spacing: 0;
+			text-align: left;
+
+		}
+	}
+	.create-workpackage {
+		margin-top: 10px;
+		display: flex;
+		align-items: center;
+		&--button {
+			border: 1px solid var(--color-border-dark);
+			&--label {
+				padding-left: 15px;
+				font-size: 1rem;
+				line-height: 1.4rem;
+				font-weight: 400;
+				text-align: left;
+			}
+		}}
+	.create-workpackage--label {
+		margin-left: 10px;
+	}
+	.create-workpackage-footer-option:hover {
+		background-color: var(--color-background-dark);
+		cursor: pointer;
 	}
 }
 </style>

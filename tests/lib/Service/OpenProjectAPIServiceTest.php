@@ -102,6 +102,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	private $fileLinksPath = '/api/v3/file_links';
 
 	/**
+	 * @var string
+	 */
+	private $getProjectsPath = '/api/v3/work_packages/available_projects';
+
+	/**
 	 * @var IConfig|MockObject
 	 */
 	private $defaultConfigMock;
@@ -253,6 +258,249 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				"id" => 5505,
 				"name" => "dogo.png"
+			]
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validOpenProjectGetProjectsResponse = [
+		"_type" => "Collection",
+		"total" => 6,
+		"count" => 6,
+		"pageSize" => 20,
+		"offset" => 1,
+		"_embedded" => [
+			"elements" => [
+				[
+					"_type" => "Project",
+					"id" => 6,
+					"identifier" => "dev-custom-fields",
+					"name" => "[dev] Custom fields",
+					"_links" => [
+						"self" => [
+							"href" => "/api/v3/projects/6",
+							"title" => "[dev] Custom fields"
+						],
+						"parent" => [
+							"href" => "/api/v3/projects/5",
+							"title" => "[dev] Large"
+						]
+					]
+				],
+				[
+					"_type" => "Project",
+					"id" => 5,
+					"identifier" => "dev-large",
+					"name" => "[dev] Large",
+					"_links" => [
+						"self" => [
+							"href" => "/api/v3/projects/5",
+							"title" => "[dev] Large"
+						],
+						"parent" => [
+							"href" => null
+						],
+						"storages" => [
+							[
+								"href" => "/api/v3/storages/37",
+								"title" => "nc-26"
+							]
+						]
+					]
+				]
+			]
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validWorkPackageFormValidationBody = [
+		"_links" => [
+			"type" => [
+				"href" => "/api/v3/types/2",
+				"title" => "Milestone"
+			],
+			"status" => [
+				"href" => "/api/v3/statuses/1",
+				"title" => "New"
+			],
+			"project" => [
+				"href" => "/api/v3/projects/6",
+				"title" => "Demo project"
+			],
+			"assignee" => [
+				"href" => "/api/v3/users/4",
+				"title" => "OpenProject Admin"
+			],
+		],
+		"subject" => "This is a new work package",
+		"description" => [
+			"format" => "markdown",
+			"raw" => "this is a default description for milestone type",
+			"html" => null
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validWorkPackageFormValidationResponse = [
+		"_type" => "Form",
+		"_embedded" =>
+			[
+				"payload" => [
+					"subject" => "This is a new workpackage",
+					"description" => [
+						"format" => "markdown",
+						"raw" => "this is a default description for task type",
+						"html" => "<p class=\"op-uc-p\">this is a default description for task type</p>"
+					],
+					"_links" => [
+						"type" => [
+							"href" => "/api/v3/types/2",
+							"title" => "Milestone"
+						],
+						"status" => [
+							"href" => "/api/v3/statuses/1",
+							"title" => "New"
+						],
+						"project" => [
+							"href" => "/api/v3/projects/6",
+							"title" => "Demo project"
+						],
+						"assignee" => [
+							"href" => null
+						],
+					]
+				],
+				"schema" => [
+					"_type" => "Schema",
+					"type" => [
+						"type" => "Type",
+						"allowedValues" => []
+					]
+				],
+				"validationErrors" => []
+			]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validGetProjectAssigneesResponse = [
+		"_type" => "Collection",
+		"total" => 2,
+		"count" => 2,
+		"_embedded" => [
+			"elements" =>
+				[
+					"_type" => "User",
+					"id" => 7,
+					"name" => "Project admin DEV user",
+					"_links" => [
+						"self" => [
+							"href" => "/api/v3/users/7",
+							"title" => "Project admin DEV user"
+						]
+					]
+				],
+			[
+				"_type" => "User",
+				"id" => 6,
+				"name" => "Member DEV user",
+				"_links" => [
+					"self" => [
+						"href" => "/api/v3/users/6",
+						"title" => "Member DEV user"
+					]
+				]
+			]
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validCreateWorkpackageBody = [
+		"_links" => [
+			"type" => [
+				"href" => "/api/v3/types/2",
+				"title" => "Milestone"
+			],
+			"status" => [
+				"href" => "/api/v3/statuses/1",
+				"title" => "New"
+			],
+			"project" => [
+				"href" => "/api/v3/projects/6",
+				"title" => "Demo project"
+			],
+			"assignee" => [
+				"href" => "/api/v3/users/4",
+				"title" => "OpenProject Admin"
+			],
+		],
+		"subject" => "This is a new work package",
+		"description" => [
+			"format" => "markdown",
+			"raw" => "this is a default description for milestone type",
+			"html" => null
+		],
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $createWorkpackageResponse = [
+		"_embedded" => [
+			"type" => [
+				"_type" => "Type",
+				"id" => 2,
+				"name" => "Milestone",
+				"color" => "#FF922B",
+			],
+			"status" => [
+				"_type" => "Status",
+				"id" => 1,
+				"name" => "New",
+				"color" => "#DEE2E6",
+			]
+		],
+		"_type" => "WorkPackage",
+		"id" => 12,
+		"subject" => "This is a new work package",
+		"description" => [
+			"format" => "markdown",
+			"raw" => "this is a default description for milestone type",
+			"html" => "<p class=\"op-uc-p\">this is a default description for milestone type</p>"
+		],
+		"_links" => [
+			"self" => [
+				"href" => "/api/v3/work_packages/12",
+				"title" => "This is a new work package"
+			]
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
+	private $validStoragesResponse = [
+		"_type" => "Storage",
+		"id" => 37,
+		"name" => "nc-26",
+		"_embedded" => [
+			"oauthApplication" => [
+				"_type" => "OAuthApplication",
+				"id" => 56,
+			]
+		],
+		"_links" => [
+			"origin" => [
+				"href" => "https://nc.my-server.org",
 			]
 		]
 	];
@@ -901,11 +1149,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'testUser',
 			'not_existing'
 		);
-		$this->assertSame([
-			'error' => 'Client error: `GET http://localhost:7200/api/v3/not_existing` ' .
-						'resulted in a `404 Not Found` response',
-			'statusCode' => 404
-		], $result);
+		$this->assertSame('Client error: `GET http://localhost:7200/api/v3/not_existing` ' .
+			'resulted in a `404 Not Found` response', $result['message']);
+		$this->assertSame(404, $result['statusCode']);
 	}
 
 	/**
@@ -1224,37 +1470,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function connectExpectionDataProvider() {
+	public function connectExpectionDataProvider(): array {
 		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
-		$responseMock402 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-		$responseMock402->method('getStatusCode')->willReturn(402);
-		$responseMock403 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-		$responseMock403->method('getStatusCode')->willReturn(403);
 		$responseMock500 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
 		$responseMock500->method('getStatusCode')->willReturn(500);
-		$responseMock501 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-		$responseMock501->method('getStatusCode')->willReturn(501);
 
 		return [
 			[
 				new ConnectException('a connection problem', $requestMock),
 				404,
 				'a connection problem'
-			],
-			[
-				new ClientException('some client problem', $requestMock, $responseMock403),
-				403,
-				'some client problem'
-			],
-			[
-				new ClientException('some client problem', $requestMock, $responseMock402),
-				402,
-				'some client problem'
-			],
-			[
-				new ServerException('some server issue', $requestMock, $responseMock501),
-				501,
-				'some server issue'
 			],
 			[
 				new BadResponseException('some issue', $requestMock, $responseMock500),
@@ -1270,6 +1495,36 @@ class OpenProjectAPIServiceTest extends TestCase {
 		];
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
+	public function clientExpectionDataProvider(): array {
+		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
+		$responseMock402 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock402->method('getStatusCode')->willReturn(402);
+		$responseMock403 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock403->method('getStatusCode')->willReturn(403);
+		$responseMock501 = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
+		$responseMock501->method('getStatusCode')->willReturn(501);
+
+		return [
+			[
+				new ClientException('some client problem', $requestMock, $responseMock403),
+				403,
+				'some client problem'
+			],
+			[
+				new ServerException('some server issue', $requestMock, $responseMock501),
+				501,
+				'some server issue'
+			],
+			[
+				new ClientException('some client problem', $requestMock, $responseMock402),
+				402,
+				'some client problem'
+			],
+		];
+	}
 	/**
 	 * @return array<array<array<string>>>
 	 */
@@ -1608,7 +1863,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider connectExpectionDataProvider
 	 *
 	 */
-	public function testRequestException(
+	public function testRequestConnectException(
 		$exception, $expectedHttpStatusCode, $expectedError
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
@@ -1665,6 +1920,76 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['error']);
+		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
+	}
+
+	/**
+	 * @return void
+	 * @param \Exception $exception
+	 * @param int $expectedHttpStatusCode
+	 * @param string $expectedError
+	 * @dataProvider clientExpectionDataProvider
+	 *
+	 */
+	public function testRequestClientServerException(
+		$exception, $expectedHttpStatusCode, $expectedError
+	) {
+		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
+		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
+
+		$ocClient = $this->getMockBuilder('\OCP\Http\Client\IClient')->getMock();
+		$ocClient->method('get')->willThrowException($exception);
+		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
+		$clientService->method('newClient')->willReturn($ocClient);
+
+		$configMock = $this->getMockBuilder(IConfig::class)
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$this->clientId,
+				$this->clientSecret,
+				'http://openproject.org',
+			);
+		$configMock
+			->method('getUserValue')
+			->withConsecutive(
+				['','integration_openproject', 'token'],
+				['','integration_openproject', 'refresh_token'],
+			)
+			->willReturnOnConsecutiveCalls(
+				'',
+				'',
+			);
+
+		$service = new OpenProjectAPIService(
+			'integration_openproject',
+			$this->createMock(IAvatarManager::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(IL10N::class),
+			$configMock,
+			$clientService,
+			$this->createMock(IRootFolder::class),
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(ICacheFactory::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(IAppManager::class),
+			$this->createMock(IDBConnection::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IMimeTypeLoader::class)
+		);
+
+		$response = $service->request('', '', []);
+		$this->assertSame($expectedError, $response['message']);
 		$this->assertSame($expectedHttpStatusCode, $response['statusCode']);
 	}
 
@@ -2776,5 +3101,281 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$this->expectException(OpenprojectErrorException::class);
 		$service->deleteFileLink(12345, 'testUser');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetAvailableOpenProjectProjectsPact(): void {
+		$expectedResult = [
+			5 => [
+				"_type" => "Project",
+				"id" => 5,
+				"identifier" => "dev-large",
+				"name" => "[dev] Large",
+				"_links" => [
+					"self" => [
+						"href" => "/api/v3/projects/5",
+						"title" => "[dev] Large"
+					],
+					"parent" => [
+						"href" => null
+					],
+					"storages" => [
+						[
+							"href" => "/api/v3/storages/37",
+							"title" => "nc-26"
+						]
+					]
+				]
+			]
+		];
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath($this->getProjectsPath)
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$consumerRequestStorage = new ConsumerRequest();
+		$consumerRequestStorage
+			->setMethod('GET')
+			->setPath('/api/v3/storages/37')
+			->setHeaders(["Authorization" => "Bearer new-Token"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody($this->validOpenProjectGetProjectsResponse);
+		$providerResponseStorage = new ProviderResponse();
+		$providerResponseStorage
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody($this->validStoragesResponse);
+
+		$this->builder
+			->uponReceiving('a GET request to /work_packages/available_projects')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$this->builder
+			->uponReceiving('a GET request to storages')
+			->with($consumerRequestStorage)
+			->willRespondWith($providerResponseStorage);
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$result = $service->getAvailableOpenProjectProjects('testUser');
+		$this->assertSame($expectedResult, $result);
+	}
+
+	/**
+	 * @dataProvider malformedResponsesDataProvider
+	 * @param array<mixed> $response
+	 * @return void
+	 */
+	public function testGetAvailableOpenProjectProjectsMalformedResponse(array $response): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn($response);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->getAvailableOpenProjectProjects('testUser');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetAvailableOpenProjectProjectsErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getAvailableOpenProjectProjects('testUser');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testWorkpackagesFormValidationPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath('/api/v3/projects/6/work_packages/form')
+			->setHeaders(["Authorization" => "Bearer 1234567890"])
+			->setBody($this->validWorkPackageFormValidationBody);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody($this->validWorkPackageFormValidationResponse);
+
+		$this->builder
+			->uponReceiving('a POST request to /projects/6/work_packages/form')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$result = $service->getOpenProjectWorkPackageForm('testUser', '6', $this->validWorkPackageFormValidationBody);
+		$this->assertSame($this->validWorkPackageFormValidationResponse['_embedded'], $result);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function workpackageFormMalformedResponsesDataProvider() {
+		return [
+			[["_type" => "workpackage"]],
+			[["_embedded" => []]],
+			[["_embedded" => ['payloa']]],
+			[["_embedded" => ['schemas']]],
+			[["embedded" => ['payload']]],
+			[["embedded" => ['schema']]],
+		];
+	}
+
+	/**
+	 * @dataProvider workpackageFormMalformedResponsesDataProvider
+	 * @param array<mixed> $response
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageFormMalformedResponse(array $response): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn($response);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->getOpenProjectWorkPackageForm('testUser', "6", $this->validWorkPackageFormValidationBody);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOpenProjectWorkPackageFormErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getOpenProjectWorkPackageForm('testUser', "6", $this->validWorkPackageFormValidationBody);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetAvailableAssigneesOfAProjectPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/projects/6/available_assignees')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody($this->validGetProjectAssigneesResponse);
+
+		$this->builder
+			->uponReceiving('a GET request to /projects/6/available_assignees')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$result = $service->getAvailableAssigneesOfAProject('testUser', '6');
+		$this->assertSame($this->validGetProjectAssigneesResponse['_embedded']['elements'], $result);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function getAvailableAssigneesOfAProjectMalformedResponsesDataProvider() {
+		return [
+			[["_type" => "workpackage"]],
+			[["_embedded" => []]],
+			[["_embedded" => ['element']]],
+			[["embedded" => ['elements']]],
+		];
+	}
+
+	/**
+	 * @dataProvider getAvailableAssigneesOfAProjectMalformedResponsesDataProvider
+	 * @param array<mixed> $response
+	 * @return void
+	 */
+	public function testGetAvailableAssigneesOfAProjectMalformedResponse(array $response) {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn($response);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->getAvailableAssigneesOfAProject('testUser', "6");
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetAvailableAssigneesOfAProjectErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->getAvailableAssigneesOfAProject('testUser', "6");
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCreateWorkpackagePact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath('/api/v3/work_packages')
+			->setHeaders(["Authorization" => "Bearer 1234567890"])
+			->setBody($this->validCreateWorkpackageBody);
+
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody($this->createWorkpackageResponse);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages to create a new work package')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$storageMock = $this->getStorageMock();
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$result = $service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
+		$this->assertSame($this->createWorkpackageResponse, $result);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function createWorkpackagesMalformedResponsesDataProvider() {
+		return [
+			[["_type" => "collection"]],
+			[["id" => null]],
+			[["_embedded" => []]],
+		];
+	}
+	/**
+	 * @dataProvider createWorkpackagesMalformedResponsesDataProvider
+	 * @param array<mixed> $response
+	 * @return void
+	 */
+	public function testCreateWorkpackagesMalformedResponse($response) {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn($response);
+		$this->expectException(OpenprojectResponseException::class);
+		$service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCreateWorkpackagesErrorResponse(): void {
+		$service = $this->getServiceMock();
+		$service->method('request')
+			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
+		$this->expectException(OpenprojectErrorException::class);
+		$service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
 	}
 }

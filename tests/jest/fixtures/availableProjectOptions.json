@@ -1,0 +1,144 @@
+[
+	{
+		"label": "Demo project",
+		"id": 1,
+		"self": {
+			"href": "/api/v3/projects/1",
+			"title": "Demo project"
+		},
+		"parent": {
+			"href": null
+		},
+		"children": [],
+		"relation": "parent",
+		"counter": 0
+	},
+	{
+		"label": "Scrum project",
+		"id": 2,
+		"self": {
+			"href": "/api/v3/projects/2",
+			"title": "Scrum project"
+		},
+		"parent": {
+			"href": null
+		},
+		"children": [],
+		"relation": "parent",
+		"counter": 0
+	},
+	{
+		"label": "[dev] Empty",
+		"id": 3,
+		"self": {
+			"href": "/api/v3/projects/3",
+			"title": "[dev] Empty"
+		},
+		"parent": {
+			"href": null
+		},
+		"children": [],
+		"relation": "parent",
+		"counter": 0
+	},
+	{
+		"label": "[dev] Large",
+		"id": 4,
+		"self": {
+			"href": "/api/v3/projects/4",
+			"title": "[dev] Large"
+		},
+		"parent": {
+			"href": null
+		},
+		"children": [
+			{
+				"label": "[dev] Large child",
+				"id": 5,
+				"self": {
+					"href": "/api/v3/projects/5",
+					"title": "[dev] Large child"
+				},
+				"parent": {
+					"href": "/api/v3/projects/4",
+					"title": "[dev] Large"
+				},
+				"children": [
+					{
+						"label": "[dev] Large Grand Child",
+						"id": 7,
+						"self": {
+							"href": "/api/v3/projects/7",
+							"title": "[dev] Large Grand Child"
+						},
+						"parent": {
+							"href": "/api/v3/projects/5",
+							"title": "[dev] Large child"
+						},
+						"children": []
+					}
+				]
+			}
+		],
+		"relation": "parent",
+		"counter": 0
+	},
+	{
+		"label": "[dev] Large child",
+		"id": 5,
+		"self": {
+			"href": "/api/v3/projects/5",
+			"title": "[dev] Large child"
+		},
+		"parent": {
+			"href": "/api/v3/projects/4",
+			"title": "[dev] Large"
+		},
+		"children": [
+			{
+				"label": "[dev] Large Grand Child",
+				"id": 7,
+				"self": {
+					"href": "/api/v3/projects/7",
+					"title": "[dev] Large Grand Child"
+				},
+				"parent": {
+					"href": "/api/v3/projects/5",
+					"title": "[dev] Large child"
+				},
+				"children": []
+			}
+		],
+		"relation": "child",
+		"counter": 2
+	},
+	{
+		"label": "[dev] Large Grand Child",
+		"id": 7,
+		"self": {
+			"href": "/api/v3/projects/7",
+			"title": "[dev] Large Grand Child"
+		},
+		"parent": {
+			"href": "/api/v3/projects/5",
+			"title": "[dev] Large child"
+		},
+		"children": [],
+		"relation": "child",
+		"counter": 4
+	},
+	{
+		"label": "[dev] Custom fields",
+		"id": 6,
+		"self": {
+			"href": "/api/v3/projects/6",
+			"title": "[dev] Custom fields"
+		},
+		"parent": {
+			"href": null
+		},
+		"children": [],
+		"relation": "parent",
+		"counter": 0
+	}
+]

@@ -38,7 +38,7 @@ Object {
 }
 `;
 
-exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `<ul id="vs10__listbox" role="listbox" style="display: none; visibility: hidden;"></ul>`;
+exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `<ul id="vs12__listbox" role="listbox" style="display: none; visibility: hidden;"></ul>`;
 
 exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
 Object {
