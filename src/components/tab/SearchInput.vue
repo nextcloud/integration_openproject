@@ -21,6 +21,12 @@
 			<template #no-options>
 				{{ noOptionsText }}
 			</template>
+			<template #list-footer>
+				<li class="create-workpackage-option" @click="showMessage('Add')">
+					<Plus :size="20" fill-color="var(--color-primary)" />
+					<span class="create-workpackage-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+				</li>
+			</template>
 		</NcSelect>
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
@@ -36,10 +42,11 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import WorkPackage from './WorkPackage.vue'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -47,6 +54,7 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
+		Plus,
 		WorkPackage,
 		NcSelect,
 	},
@@ -124,6 +132,7 @@ export default {
 		},
 	},
 	methods: {
+		showMessage,
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK
@@ -255,6 +264,29 @@ export default {
 	}
 	.vs__dropdown-option {
 		padding: 0 !important;
+	}
+	.create-workpackage-option{
+		margin-top: 5px;
+		width: 100%;
+		border-top: 1px solid var(--color-background-dark);
+		padding: 20px 10px 20px 10px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		&--label{
+			color: var(--color-primary);
+			padding-left: 5px;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 16px;
+			letter-spacing: 0;
+			text-align: left;
+
+		}
+	}
+	.create-workpackage-option:hover {
+		background-color: var(--color-background-dark);
 	}
 }
 </style>

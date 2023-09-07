@@ -86,7 +86,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import axios from '@nextcloud/axios'
 
 import { generateUrl } from '@nextcloud/router'
-import {showSuccess, showError, showMessage} from '@nextcloud/dialogs'
+import { showSuccess, showError, showMessage } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
@@ -373,7 +373,7 @@ export default {
 	.workpackage-seperator {
 		height: 0;
 		margin: 0 10px;
-		border-bottom: 1px solid rgb(237 237 237);
+		border-bottom: 1px solid var(--color-background-dark);
 	}
 }
 
