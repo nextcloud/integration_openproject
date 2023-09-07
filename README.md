@@ -41,7 +41,7 @@ To set up or update the integration following data needs to be provided:
 > - To set up the integration without `project folders` we need to set data `setup_project_folder=false` and `setup_app_password=false`
 > - To set up the integration with `project folders` we need to set data `setup_project_folder=true` and `setup_app_password=true`, this will create a new user, group, and group folder named OpenProject if the system doesn't already have one or more of these present. Also, an application password will be provided for the user `OpenProject`
 > - Once the `project folder` has already been set up, the created `OpenProject` user and group cannot be disabled or removed.
-> - If there is any error related to `OpenProject` user, group, group folders when setting up the whole integration or if the admin user wants to remove those entities then this [troubleshooting guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) can be followed up on how to resolve it. 
+> - If there is any error related to `OpenProject` user, group, group folders when setting up the whole integration or if the admin user wants to remove those entities then this [troubleshooting guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting) can be followed up on how to resolve it. 
 
 
 1. **Set up the whole integration with a [POST] request**
