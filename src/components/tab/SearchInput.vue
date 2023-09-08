@@ -22,9 +22,9 @@
 				{{ noOptionsText }}
 			</template>
 			<template #list-footer>
-				<li class="create-workpackage-option" @click="showMessage('Add')">
+				<li class="create-workpackage-footer-option" @click="showMessage('Add')">
 					<Plus :size="20" fill-color="var(--color-primary)" />
-					<span class="create-workpackage-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+					<span class="create-workpackage-footer-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
 				</li>
 			</template>
 		</NcSelect>
@@ -265,7 +265,8 @@ export default {
 	.vs__dropdown-option {
 		padding: 0 !important;
 	}
-	.create-workpackage-option{
+
+	.create-workpackage-footer-option {
 		margin-top: 5px;
 		width: 100%;
 		border-top: 1px solid var(--color-background-dark);
@@ -274,7 +275,13 @@ export default {
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
-		&--label{
+		position: sticky;
+		position: -webkit-sticky; /* Safari */
+		z-index: 1;
+		bottom: 0;
+		background: var(--color-main-background);
+		overflow-y: hidden;
+		&--label {
 			color: var(--color-primary);
 			padding-left: 5px;
 			font-size: 14px;
@@ -285,8 +292,9 @@ export default {
 
 		}
 	}
-	.create-workpackage-option:hover {
+	.create-workpackage-footer-option:hover {
 		background-color: var(--color-background-dark);
+		cursor: pointer;
 	}
 }
 </style>
