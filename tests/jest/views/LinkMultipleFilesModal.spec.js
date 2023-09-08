@@ -37,6 +37,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 	const ncModalStubSelector = 'ncmodal-stub'
 	const loadingIndicatorSelector = '.loading-spinner'
 	const emptyContentSelector = '#openproject-empty-content'
+	const emptyContentTitleMessageSelector = '.empty-content--message--title'
 	beforeEach(() => {
 		jest.useFakeTimers()
 		// eslint-disable-next-line no-import-assign,import/namespace
@@ -128,6 +129,31 @@ describe('LinkMultipleFilesModal.vue', () => {
 			await wrapper.setData({ state })
 			await localVue.nextTick()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+		})
+
+		it('shows message "Add a new link to all selected files" when admin config is okay', async () => {
+			wrapper = mount(LinkMultipleFilesModal, {
+				localVue,
+				attachTo: document.body,
+				mocks: {
+					t: (app, msg) => msg,
+					generateUrl() {
+						return '/'
+					},
+				},
+				stubs: {
+					SearchInput: true,
+					NcModal: true,
+				}
+			})
+			await wrapper.setData({
+				show: true,
+				state: STATE.OK,
+				isAdminConfigOk: true
+			})
+			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+			const titleContent = wrapper.find(emptyContentTitleMessageSelector)
+			expect(titleContent.text()).toBe('Add a new link to all selected files')
 		})
 	})
 
