@@ -22,18 +22,25 @@
 <template>
 	<div class="work-package-picker">
 		<h2 class="work-package-picker__header">
-			{{ t('integration_openproject', 'OpenProject work package picker') }}
+			{{ t("integration_openproject", "OpenProject work package picker") }}
 		</h2>
-		<SearchInput ref="linkPicker"
+		<SearchInput
+			ref="linkPicker"
 			:is-smart-picker="true"
 			:file-info="fileInfo"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
-		<EmptyContent id="openproject-empty-content"
+		<EmptyContent
+			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
 			:is-smart-picker="true"
 			:is-admin-config-ok="isAdminConfigOk" />
+		<iframe
+			id="inlineFrameExample"
+			title="Inline Frame Example"
+			height="1000px"
+			src="https://openproject.local/work_packages/new?iframe=true" />
 	</div>
 </template>
 
@@ -43,6 +50,24 @@ import EmptyContent from '../components/tab/EmptyContent.vue'
 import { STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
 
+function handler(event) {
+	if (event.origin !== 'https://openproject.local') return
+
+	console.log('Event', event.data)
+	if (
+		event.data.openProjectEventName === 'work_package_creation_cancellation'
+	) {
+		alert('Canceled')
+	}
+	if (event.data.openProjectEventName === 'work_package_creation_success') {
+		alert(
+			'Saved. WorkPackage ID: '
+        + event.data.openProjectEventPayload.workPackageId
+        + ' '
+        + event.data.openProjectEventPayload.workPackageUrl
+		)
+	}
+}
 export default {
 	name: 'WorkPackagePickerElement',
 
@@ -66,12 +91,20 @@ export default {
 		fileInfo: {},
 		linkedWorkPackages: [],
 		state: STATE.OK,
-		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+		isAdminConfigOk: loadState(
+			'integration_openproject',
+			'admin-config-status'
+		),
 	}),
 	mounted() {
 		if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
-			document.getElementById(`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`).focus()
+			document
+				.getElementById(
+					`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`
+				)
+				.focus()
 		}
+		window.addEventListener('message', handler, false)
 	},
 	methods: {
 		onSubmit(data) {
@@ -84,6 +117,7 @@ export default {
 <style scoped lang="scss">
 .work-package-picker {
 	width: 100%;
+	height: 200%;
 	display: flex;
 	flex-direction: column;
 	margin-top: 44px;
@@ -92,5 +126,9 @@ export default {
 		align-items: center;
 		align-self: center;
 	}
+}
+
+iframe {
+	border: 5px solid red;
 }
 </style>
