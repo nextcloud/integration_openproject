@@ -52,6 +52,14 @@ export default {
 			type: Object,
 			required: true,
 		},
+		isSmartPicker: {
+			type: Boolean,
+			default: false,
+		},
+		isLinkPreviews: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data: () => ({
 		wpTypeTextStroke: 'unset',
@@ -126,6 +134,11 @@ export default {
 		},
 		getWPBackgroundElement() {
 			let el = document.getElementById('workpackage-' + this.workpackage.id)
+			if (this.isSmartPicker) {
+				el = document.getElementById('work-package-smart-picker')
+			} else if (this.isLinkPreviews) {
+				el = document.getElementById('workpackage-link-previews')
+			}
 			if (el === null) {
 				el = document.getElementById('tab-open-project')
 			}
