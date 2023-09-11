@@ -22,12 +22,13 @@
 				{{ noOptionsText }}
 			</template>
 			<template #list-footer>
-				<li class="create-workpackage-footer-option" @click="showMessage('Add')">
+				<li class="create-workpackage-footer-option" @click="openIframe()">
 					<Plus :size="20" fill-color="var(--color-primary)" />
 					<span class="create-workpackage-footer-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
 				</li>
 			</template>
 		</NcSelect>
+		<CreateWorkPackageModal :show-modal="iframeVisible" />
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
@@ -47,6 +48,8 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -54,6 +57,7 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
+		CreateWorkPackageModal,
 		Plus,
 		WorkPackage,
 		NcSelect,
@@ -82,6 +86,7 @@ export default {
 		searchResults: [],
 		noOptionsText: t('integration_openproject', 'Start typing to search'),
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
+		iframeVisible: false,
 	}),
 	computed: {
 		isStateOk() {
@@ -132,7 +137,9 @@ export default {
 		},
 	},
 	methods: {
-		showMessage,
+		openIframe() {
+			this.iframeVisible = true
+		},
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK

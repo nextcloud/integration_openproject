@@ -28,6 +28,7 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
+use OCP\IRequest;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
 /**
@@ -39,17 +40,34 @@ class AddContentSecurityPolicyListener implements IEventListener {
 	 */
 	protected $config;
 
-	public function __construct(IConfig $config) {
+	/**
+	 * @var IRequest
+	 */
+	protected $request;
+
+	public function __construct(IConfig $config, IRequest $request) {
 		$this->config = $config;
+		$this->request = $request;
 	}
 
 	public function handle(Event $event): void {
 		if (!($event instanceof AddContentSecurityPolicyEvent)) {
 			return;
 		}
+
+		// only allow through csp if the page is `index.php` i.e files app
+//		if (!$this->isPageLoad()) {
+//			return;
+//		}
+
 		$csp = new ContentSecurityPolicy();
 		$baseUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
 		$csp->addAllowedFrameDomain($baseUrl);
 		$event->addPolicy($csp);
 	}
+
+//	private function isPageLoad(): bool {
+//		$scriptNameParts = explode('/', $this->request->getScriptName());
+//		return end($scriptNameParts) === 'index.php';
+//	}
 }
