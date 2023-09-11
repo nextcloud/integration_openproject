@@ -144,12 +144,12 @@ describe('LinkMultipleFilesModal.vue', () => {
 				stubs: {
 					SearchInput: true,
 					NcModal: true,
-				}
+				},
 			})
 			await wrapper.setData({
 				show: true,
 				state: STATE.OK,
-				isAdminConfigOk: true
+				isAdminConfigOk: true,
 			})
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
 			const titleContent = wrapper.find(emptyContentTitleMessageSelector)

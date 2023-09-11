@@ -33,7 +33,11 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
-import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../utils.js'
+import {
+	WORKPACKAGES_SEARCH_ORIGIN,
+	STATE,
+	checkOauthConnectionResult,
+} from '../utils.js'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
@@ -51,6 +55,8 @@ export default {
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
+			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
 		}
 	},
@@ -62,6 +68,10 @@ export default {
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
+	},
+
+	mounted() {
+		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 	methods: {
 		showModal() {
