@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use InvalidArgumentException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
@@ -183,12 +184,16 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $workpackageId
-	 * @param int $fileId
-	 * @param string $fileName
+	 *
+	 * @param array<mixed> $values An array containing the following keys:
+	 *        - "workpackageId" (int): The ID of the work package.
+	 *        - "fileinfo" (array):  An array of file information with the following keys:
+	 *            - "id" (int): File id of the file
+	 *            - "name" (string): Name of the file
+	 *
 	 * @return DataResponse
 	 */
-	public function linkWorkPackageToFile(int $workpackageId, int $fileId, string $fileName) {
+	public function linkWorkPackageToFile(array $values): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
@@ -197,16 +202,14 @@ class OpenProjectAPIController extends Controller {
 
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
-				$workpackageId,
-				$fileId,
-				$fileName,
+				$values,
 				$this->userId,
 			);
-		} catch (OpenprojectErrorException $e) {
+		} catch (OpenprojectErrorException | InvalidArgumentException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotPermittedException | NotFoundException $e) {
 			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse($result);

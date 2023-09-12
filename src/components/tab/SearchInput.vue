@@ -4,7 +4,7 @@
 			class="searchInput"
 			input-id="searchInput"
 			:placeholder="placeholder"
-			:options="filterSearchResultsByFileId"
+			:options="setOptionForSearch"
 			:user-select="true"
 			:append-to-body="false"
 			label="displayName"
@@ -39,7 +39,7 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
-import { STATE } from '../../utils.js'
+import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -52,7 +52,7 @@ export default {
 	},
 	props: {
 		fileInfo: {
-			type: Object,
+			type: [Object, Array],
 			default: null,
 		},
 		linkedWorkPackages: {
@@ -62,6 +62,11 @@ export default {
 		isSmartPicker: {
 			type: Boolean,
 			default: false,
+		},
+		searchOrigin: {
+			type: String,
+			required: false,
+			default: null,
 		},
 	},
 	data: () => ({
@@ -84,6 +89,12 @@ export default {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			}
 			return ''
+		},
+		setOptionForSearch() {
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB || this.isSmartPicker) {
+				return this.filterSearchResultsByFileId
+			}
+			return this.searchResults
 		},
 		placeholder() {
 			if (this.isSmartPicker) {
@@ -127,7 +138,12 @@ export default {
 		},
 		async asyncFind(query) {
 			this.resetState()
-			await this.debounceMakeSearchRequest(query, this.fileInfo.id, this.isSmartPicker)
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
+			} else {
+				// we do not need to provide a file id incase of searching through link multiple files to work package and through smart picker
+				await this.debounceMakeSearchRequest(query, null)
+			}
 		},
 		async getWorkPackageLink(selectedOption) {
 			return this.openprojectUrl.replace(/^\/+|\/+$/g, '') + '/wp/' + selectedOption.id
@@ -142,23 +158,34 @@ export default {
 				this.$emit('submit', link)
 				return
 			}
-			const params = new URLSearchParams()
-			params.append('workpackageId', selectedOption.id)
-			params.append('fileId', this.fileInfo.id)
-			params.append('fileName', this.fileInfo.name)
+			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)
+			let fileInfoForBody = []
+			let successMessage
+			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+				fileInfoForBody.push(this.fileInfo)
+				successMessage = t('integration_openproject', 'Link to work package created successfully!')
+			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
+				fileInfoForBody = this.fileInfo
+				successMessage = t('integration_openproject', 'Links to work package created successfully for selected files!')
+			}
+
 			const config = {
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Type': 'application/json',
+				},
+			}
+
+			const body = {
+				values: {
+					workpackageId: selectedOption.id,
+					fileinfo: fileInfoForBody,
 				},
 			}
 			const url = generateUrl('/apps/integration_openproject/work-packages')
-
 			try {
-				await axios.post(url, params, config)
+				await axios.post(url, body, config)
 				this.$emit('saved', selectedOption)
-				showSuccess(
-					t('integration_openproject', 'Work package linked successfully!')
-				)
+				showSuccess(successMessage)
 				this.resetState()
 			} catch (e) {
 				showError(
@@ -166,9 +193,10 @@ export default {
 				)
 			}
 		},
-		async makeSearchRequest(search, fileId = null, isSmartPicker = false) {
+		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
+			const isSmartPicker = this.isSmartPicker
 			const req = {}
 			req.params = {
 				searchQuery: search,
@@ -191,7 +219,6 @@ export default {
 						if (this.isSmartPicker) {
 						   workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							this.searchResults.push(workPackage)
-
 						} else {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)

@@ -19,6 +19,7 @@ use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCP\App\IAppManager;
+use OCP\Files\InvalidPathException;
 use OCP\Files\Node;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -704,53 +705,83 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @throws \OCP\Files\InvalidPathException
+	 *
+	 * @param array<mixed> $values An array containing the following keys:
+	 * 		- "workpackageId" (int): The ID of the work package.
+	 * 		- "fileinfo" (array):  An array of file information with the following keys:
+	 * 			- "id" (int): File id of the file
+	 * 			- "name" (string): Name of the file
+	 * @param string $userId
+	 *
+	 * @return array<int>
 	 * @throws NotFoundException
 	 * @throws \OCP\PreConditionNotMetException
 	 * @throws NotPermittedException
 	 * @throws OpenprojectErrorException
 	 * @throws \OC\User\NoUserException
 	 * @throws OpenprojectResponseException
-	 * @return int
+	 * @throws InvalidArgumentException
+	 * @throws InvalidPathException
+	 *
 	 */
 	public function linkWorkPackageToFile(
-		int $workpackageId,
-		int $fileId,
-		string $fileName,
+		array $values,
 		string $userId
-	): int {
-		$file = $this->getNode($userId, $fileId);
-		if (!$file->isReadable()) {
-			throw new NotPermittedException();
+	): array {
+		$allowedKeys = [
+			'workpackageId',
+			'fileinfo'
+		];
+		foreach ($values as $key => $value) {
+			if (!in_array($key, $allowedKeys)) {
+				throw new InvalidArgumentException('invalid key');
+			}
+		}
+		if (!is_int($values['workpackageId']) || !is_array($values['fileinfo']) || empty($values['fileinfo'])) {
+			throw new InvalidArgumentException('invalid data');
+		}
+		$fileInfos = $values['fileinfo'];
+		$elements = [];
+		// multiple files can also be linked to a single work package
+		foreach ($fileInfos as $fileInfo) {
+			if (!key_exists('id', $fileInfo) || !key_exists('name', $fileInfo) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
+				throw new InvalidArgumentException('invalid data');
+			}
+			$fileId = $fileInfo["id"];
+			$fileName = $fileInfo["name"];
+			$file = $this->getNode($userId, $fileId);
+			if (!$file->isReadable()) {
+				throw new NotPermittedException();
+			}
+			$element = [
+				'originData' => [
+					'id' => $fileId,
+					'name' => $fileName,
+					'mimeType' => $file->getMimeType(),
+					'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getCreationTime()),
+					'lastModifiedAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getMTime()),
+					'createdByName' => '',
+					'lastModifiedByName' => ''
+				],
+				'_links' => [
+					'storageUrl' => [
+						'href' => $this->getBaseUrl()
+					]
+				]
+			];
+			$elements[] = $element;
 		}
 
 		$body = [
 			'_type' => 'Collection',
 			'_embedded' => [
-				'elements' => [
-					[
-						'originData' => [
-							'id' => $fileId,
-							'name' => $fileName,
-							'mimeType' => $file->getMimeType(),
-							'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getCreationTime()),
-							'lastModifiedAt' => gmdate('Y-m-d\TH:i:s.000\Z', $file->getMTime()),
-							'createdByName' => '',
-							'lastModifiedByName' => ''
-						],
-						'_links' => [
-							'storageUrl' => [
-								'href' => $this->getBaseUrl()
-							]
-						]
-					]
-				]
+				'elements' => $elements
 			]
 		];
 
 		$params['body'] = \Safe\json_encode($body);
 		$result = $this->request(
-			$userId, 'work_packages/' . $workpackageId. '/file_links', $params, 'POST'
+			$userId, 'work_packages/' . $values["workpackageId"] . '/file_links', $params, 'POST'
 		);
 
 		if (isset($result['error'])) {
@@ -760,13 +791,21 @@ class OpenProjectAPIService {
 			!isset($result['_type']) ||
 			$result['_type'] !== 'Collection' ||
 			!isset($result['_embedded']) ||
-			!isset($result['_embedded']['elements']) ||
-			!isset($result['_embedded']['elements'][0]) ||
-			!isset($result['_embedded']['elements'][0]['id'])
+			!isset($result['_embedded']['elements'])
 		) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
-		return $result['_embedded']['elements'][0]['id'];
+		$fileIds = [];
+		for ($i = 0; $i < count($fileInfos); $i++) {
+			if (
+				!isset($result['_embedded']['elements'][$i]) ||
+				!isset($result['_embedded']['elements'][$i]['id'])
+			) {
+				throw new OpenprojectResponseException('Malformed response');
+			}
+			$fileIds [] = $result['_embedded']['elements'][$i]['id'];
+		}
+		return $fileIds;
 	}
 
 	/**

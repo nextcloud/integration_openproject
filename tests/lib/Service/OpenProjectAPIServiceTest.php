@@ -135,6 +135,65 @@ class OpenProjectAPIServiceTest extends TestCase {
 	];
 
 	/**
+	 * @var array<mixed>
+	 */
+	private $validFileLinkRequestBodyForMultipleFiles = [
+		'_type' => 'Collection',
+		'_embedded' => [
+			'elements' => [
+				[
+					'originData' => [
+						'id' => 5503,
+						'name' => 'logo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				],
+				[
+					'originData' => [
+						'id' => 5504,
+						'name' => 'pogo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				],
+				[
+					'originData' => [
+						'id' => 5505,
+						'name' => 'dogo.png',
+						'mimeType' => 'image/png',
+						'createdAt' => '2021-12-19T09:42:10.000Z',
+						'lastModifiedAt' => '2021-12-20T14:00:13.000Z',
+						'createdByName' => '',
+						'lastModifiedByName' => ''
+					],
+					'_links' => [
+						'storageUrl' => [
+							'href' => 'https://nc.my-server.org'
+						]
+					]
+				]
+			]
+		]
+	];
+
+	/**
 	 * @var array <mixed>
 	 */
 	private $validStatusResponseBody = [
@@ -162,6 +221,42 @@ class OpenProjectAPIServiceTest extends TestCase {
 		"isMilestone" => false,
 		"createdAt" => "2022-01-12T08:53:15Z",
 		"updatedAt" => "2022-01-12T08:53:34Z"
+	];
+
+
+	/**
+	 * @var array <mixed>
+	 */
+	private $singleFileInformation = [
+		"workpackageId" => 123,
+		"fileinfo" => [
+			[
+				"id" => 5503,
+				"name" => "logo.png"
+			]
+		]
+	];
+
+
+	/**
+	 * @var array <mixed>
+	 */
+	private $multipleFileInformation = [
+		"workpackageId" => 123,
+		"fileinfo" => [
+			[
+				"id" => 5503,
+				"name" => "logo.png"
+			],
+			[
+				"id" => 5504,
+				"name" => "pogo.png"
+			],
+			[
+				"id" => 5505,
+				"name" => "dogo.png"
+			]
+		]
 	];
 
 	/**
@@ -1245,11 +1340,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'user', 'work_packages/123/file_links',
 				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
 			);
-
+		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+			$values, 'user'
 		);
-		$this->assertSame(2456, $result);
+		$this->assertSame([2456], $result);
 	}
 
 	/**
@@ -1268,8 +1363,197 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request');
 
 		$this->expectException(NotPermittedException::class);
+
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+			$values, 'user'
+		);
+	}
+
+	/**
+	 * @return array<array<string>>
+	 */
+	public function getInvalidKeyInformation(): array {
+		return [
+			['workpackageiD', 'fileinfo'],
+			['workpackageId', 'fileINfo'],
+			['workpackageiD', 'fileINfo']
+		];
+	}
+
+	/**
+	 * @param string $keyWorkPackageId
+	 * @param string $keyFileInfo
+	 * @dataProvider getInvalidKeyInformation
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileInvalidKey(string $keyWorkPackageId, string $keyFileInfo): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$service->method('getNode')
+			->willReturn($fileMock);
+		$service->expects($this->never())
+			->method('request');
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessageMatches('/^invalid key$/');
+		$values = [
+			$keyWorkPackageId => 123,
+			$keyFileInfo => [
+				[
+					"id" => 5503,
+					"name" => "logo.png"
+				]
+			]
+		];
+		$service->linkWorkPackageToFile(
+			$values, 'user'
+		);
+	}
+
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function getInvalidKeyWithCorrectKeyInformation(): array {
+		return [
+			["", ""],
+			[null, ""],
+			[false, ""],
+			[true, ""],
+			["invalid-data", ""],
+			["", null],
+			["", false],
+			["", true],
+			[1, null],
+			[1, false],
+			[1, true],
+			[null, [["id" => 5503, "name" => "logo.png"]]],
+			[false, [["id" => 5503, "name" => "logo.png"]]],
+			[true, [["id" => 5503, "name" => "logo.png"]]],
+			["", "invalid-data"],
+			["invalid-data", "invalid-data"],
+			[1, "invalid-data"],
+			[1, []],
+			["invalid-data", [["id" => 5503, "name" => "logo.png"]]],
+		];
+	}
+
+	/**
+	 * @param array<mixed> $workpackageIdValue
+	 * @param array<mixed> $fileInfoValue
+	 * @dataProvider getInvalidKeyWithCorrectKeyInformation
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileInvalidDataWithValidKey($workpackageIdValue, $fileInfoValue): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$service->method('getNode')
+			->willReturn($fileMock);
+		$service->expects($this->never())
+			->method('request');
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessageMatches('/^invalid data$/');
+		$values = [
+			"workpackageId" => $workpackageIdValue,
+			"fileinfo" => $fileInfoValue
+		];
+		$service->linkWorkPackageToFile(
+			$values, 'user'
+		);
+	}
+
+
+	/**
+	 * @return array<array<string>>
+	 */
+	public function getInvalidKeyWithValidFileInfokeys(): array {
+		return [
+			["i", "name"],
+			["id", "nme"],
+			["i", "nme"]
+		];
+	}
+
+	/**
+	 * @param string $invalidFileIdKey
+	 * @param string $invalidFileNameKey
+	 * @dataProvider getInvalidKeyWithValidFileInfokeys
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileInvalidDataWithValidFileInfoKeys(string $invalidFileIdKey, string $invalidFileNameKey): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$service->method('getNode')
+			->willReturn($fileMock);
+		$service->expects($this->never())
+			->method('request');
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessageMatches('/^invalid data$/');
+		$values = [
+			"workpackageId" => 1,
+			"fileinfo" => [
+				[
+					$invalidFileIdKey => 5503,
+					$invalidFileNameKey => "logo.png"
+				]
+			]
+		];
+		$service->linkWorkPackageToFile(
+			$values, 'user'
+		);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function getInvalidKeyWithValidFileInfoValues(): array {
+		return [
+			["", ""],
+			[null, ""],
+			[false, ""],
+			[true, ""],
+			["invalid-data", ""],
+			["", null],
+			["", false],
+			["", true],
+			["", "logo.png"],
+			["invalid-data", "logo.png"],
+			[[], []],
+			[1, null],
+			[1, false],
+			[1, true],
+			[null, "logo.png"],
+			[false, "logo.png"],
+			[true, "logo.png"],
+		];
+	}
+
+	/**
+	 * @param array<mixed> $invalidFileIdValue
+	 * @param array<mixed> $invalidFileNameValue
+	 * @dataProvider getInvalidKeyWithValidFileInfoValues
+	 * @return void
+	 */
+	public function testLinkWorkPackageToFileFileInvalidDataWithValidFileInfoValues($invalidFileIdValue, $invalidFileNameValue): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
+		$service->method('getNode')
+			->willReturn($fileMock);
+		$service->expects($this->never())
+			->method('request');
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessageMatches('/^invalid data$/');
+		$values = [
+			"workpackageId" => 1,
+			"fileinfo" => [
+				[
+					"id" => $invalidFileIdValue,
+					"name" => $invalidFileNameValue
+				]
+			]
+		];
+		$service->linkWorkPackageToFile(
+			$values, 'user'
 		);
 	}
 
@@ -1290,10 +1574,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request');
 
 		$this->expectException(NotFoundException::class);
-		$result = $service->linkWorkPackageToFile(
-			123, 5503, 'logo.png', 'user'
+		$values = $this->singleFileInformation;
+		$service->linkWorkPackageToFile(
+			$values, 'user'
 		);
 	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testLinkWorkPackageToMultipleFileRequest(): void {
+		$service = $this->getServiceMock(['request', 'getNode']);
+
+		$service->method('getNode')
+			->willReturn($this->getNodeMock());
+		$service->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$service->expects($this->once())
+			->method('request')
+			->with(
+				'user', 'work_packages/123/file_links',
+				['body' => \Safe\json_encode($this->validFileLinkRequestBodyForMultipleFiles)]
+			);
+		$values = $this->multipleFileInformation;
+		$result = $service->linkWorkPackageToFile(
+			$values, 'user'
+		);
+		$this->assertSame([2456, 2457, 2458], $result);
+	}
+
+
 	/**
 	 * @return void
 	 * @param \Exception $exception
@@ -1895,15 +2207,43 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 
 		$service = $this->getOpenProjectAPIService($storageMock);
-
+		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 
-		$this->assertSame(1337, $result);
+		$this->assertSame([1337], $result);
+	}
+
+
+	public function testLinkWorkPackageToMultipleFileRequestPact(): void {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('POST')
+			->setPath($this->workPackagesPath . '/123/file_links')
+			->setHeaders(['Authorization' => 'Bearer 1234567890'])
+			->setBody($this->validFileLinkRequestBodyForMultipleFiles);
+		$providerResponse = new ProviderResponse();
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
+			->setBody(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
+		$this->builder
+			->uponReceiving('a POST request to /work_packages with multiple files')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+
+		$storageMock = $this->getStorageMock();
+
+		$service = $this->getOpenProjectAPIService($storageMock);
+		$values = $this->multipleFileInformation;
+		$result = $service->linkWorkPackageToFile(
+			$values,
+			'testUser'
+		);
+		$this->assertSame([2456, 2457, 2458], $result);
 	}
 
 	/**
@@ -1953,10 +2293,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 
 		$this->expectException(OpenprojectErrorException::class);
+
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2008,10 +2348,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2045,10 +2384,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getOpenProjectAPIService($storageMock, 'MissingPermission');
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = $this->singleFileInformation;
 		$service->linkWorkPackageToFile(
-			123,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}
@@ -2082,10 +2420,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getOpenProjectAPIService($storageMock);
 
 		$this->expectException(OpenprojectErrorException::class);
+		$values = [
+			"workpackageId" => 999999,
+			"fileinfo" => [
+				[
+					"id" => 5503,
+					'name' => 'logo.png'
+				]
+			]
+		];
 		$service->linkWorkPackageToFile(
-			999999,
-			5503,
-			'logo.png',
+			$values,
 			'testUser'
 		);
 	}

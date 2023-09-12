@@ -64,6 +64,9 @@ export default {
 			if (window.location.pathname.includes('apps/files') && this.fileInfo.id !== undefined) {
 				return { page: 'files', file: this.fileInfo }
 			}
+			if (window.location.pathname.includes('apps/files') && Object.keys(this.fileInfo).length === 0) {
+				return { page: 'files' }
+			}
 			return { page: 'settings' }
 		},
 		async onOAuthClick() {

@@ -19,6 +19,7 @@ webpackConfig.entry = {
 	dashboard: { import: path.join(__dirname, 'src', 'dashboard.js'), filename: appId + '-dashboard.js' },
 	'openproject-tab': { import: path.join(__dirname, 'src', 'projectTab.js'), filename: appId + '-projectTab.js' },
 	fileActions: { import: path.join(__dirname, 'src', 'fileActions.js'), filename: appId + '-fileActions.js' },
+	filesPlugin: { import: path.join(__dirname, 'src', 'filesPlugin.js'), filename: appId + '-filesPlugin.js' },
 	reference: { import: path.join(__dirname, 'src', 'reference.js'), filename: appId + '-reference.js' },
 }
 
