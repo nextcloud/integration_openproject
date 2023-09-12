@@ -1,6 +1,6 @@
 <template>
 	<div id="searchBar">
-		<NcSelect ref="workPackageSelect"
+		<NcSelect append-to-body ref="workPackageSelect"
 			class="searchInput"
 			input-id="searchInput"
 			:placeholder="placeholder"
@@ -28,12 +28,22 @@
 				</li>
 			</template>
 		</NcSelect>
-		<CreateWorkPackageModal :show-modal="iframeVisible" />
 		<div v-if="!isStateOk"
 			class="stateMsg text-center">
 			{{ stateMessages }}
 		</div>
-	</div>
+  <div v-if="!!isStateOk" class="create-workpackage">
+    <NcActions>
+      <NcActionButton class="create-workpackage--button" @click="openIframe()">
+        <template #icon>
+          <Plus :size="20" />
+        </template>
+      </NcActionButton>
+    </NcActions>
+    <span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+  </div>
+  <CreateWorkPackageModal :show-modal="iframeVisible" @createWorkPackage="handelCreateWorkPackage"/>
+  </div>
 </template>
 
 <script>
@@ -48,8 +58,9 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
+import NcActionButton from "@nextcloud/vue/dist/Components/NcActionButton";
+import NcActions from "@nextcloud/vue/dist/Components/NcActions";
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -57,6 +68,7 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
+    NcActions, NcActionButton,
 		CreateWorkPackageModal,
 		Plus,
 		WorkPackage,
@@ -137,6 +149,25 @@ export default {
 		},
 	},
 	methods: {
+    handelCreateWorkPackage(data) {
+      // Handle the custom event and the data received from the child component
+      console.log('Custom event received in parent component with data:', data);
+      if (
+          data.openProjectEventName === 'work_package_creation_cancellation'
+      ) {
+        showError(t('integration_openproject', 'Work package creation was not successfull.'))
+        this.iframeVisible = false
+      }
+      if (data.openProjectEventName === 'work_package_creation_success') {
+        const workpackageInfo = {
+          id: data.openProjectEventPayload.workPackageId
+        }
+        console.log(workpackageInfo)
+        this.linkWorkPackageToFile(workpackageInfo)
+        showSuccess(t('integration_openproject', 'Work package created and linked successfully.'))
+        this.iframeVisible = false
+      }
+    },
 		openIframe() {
 			this.iframeVisible = true
 		},
@@ -299,6 +330,22 @@ export default {
 
 		}
 	}
+  .create-workpackage {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    &--button {
+      background-color: var(--color-background-dark)
+    }
+    &--label {
+      padding-left: 5px;
+      font-size: 1rem;
+      line-height: 1.4rem;
+      font-weight: 400;
+      text-align: left;
+    }
+  }
+
 	.create-workpackage-footer-option:hover {
 		background-color: var(--color-background-dark);
 		cursor: pointer;
