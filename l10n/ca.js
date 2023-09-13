@@ -36,7 +36,6 @@ OC.L10N.register(
     "Start typing to search" : "Comenceu a escriure per cercar",
     "No OpenProject account connected" : "No hi ha cap compte d'OpenProject connectada",
     "Search for a work package to create a relation" : "Cerqueu un paquet de treball per crear una relació",
-    "Work package linked successfully!" : "El paquet de treball s'ha enllaçat correctament!",
     "Failed to link file to work package" : "No s'ha pogut enllaçar el fitxer amb el paquet de treball",
     "Mark as read" : "Marca com a llegit",
     "Failed to get OpenProject notifications" : "No s'han pogut rebre les notificacions d'OpenProject",
@@ -84,6 +83,7 @@ OC.L10N.register(
     "OpenProject instance not found" : "No s'ha trobat la instància d'OpenProject",
     "Failed to save OpenProject options" : "No s'han pogut desar les opcions d'OpenProject",
     "OpenProject integration" : "Integració OpenProject",
+    "Work package linked successfully!" : "El paquet de treball s'ha enllaçat correctament!",
     "Documentation" : "Documentació"
 },
 "nplurals=2; plural=(n != 1);");
