@@ -1,6 +1,6 @@
 <template>
 	<div id="searchBar">
-		<NcSelect append-to-body ref="workPackageSelect"
+		<NcSelect ref="workPackageSelect"
 			class="searchInput"
 			input-id="searchInput"
 			:placeholder="placeholder"
@@ -21,7 +21,7 @@
 			<template #no-options>
 				{{ noOptionsText }}
 			</template>
-			<template #list-footer>
+			<template v-if="!isSmartPicker" #list-footer>
 				<li class="create-workpackage-footer-option" @click="openIframe()">
 					<Plus :size="20" fill-color="var(--color-primary)" />
 					<span class="create-workpackage-footer-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
@@ -32,18 +32,21 @@
 			class="stateMsg text-center">
 			{{ stateMessages }}
 		</div>
-  <div v-if="!!isStateOk" class="create-workpackage">
-    <NcActions>
-      <NcActionButton class="create-workpackage--button" @click="openIframe()">
-        <template #icon>
-          <Plus :size="20" />
-        </template>
-      </NcActionButton>
-    </NcActions>
-    <span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
-  </div>
-  <CreateWorkPackageModal :show-modal="iframeVisible" @createWorkPackage="handelCreateWorkPackage"/>
-  </div>
+		<div v-if="!!isStateOk && !isSmartPicker" class="create-workpackage">
+			<NcActions>
+				<NcActionButton class="create-workpackage--button" @click="openIframe()">
+					<template #icon>
+						<Plus :size="20" />
+					</template>
+				</NcActionButton>
+			</NcActions>
+			<span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+		</div>
+		<CreateWorkPackageModal v-if="!isSmartPicker"
+			:show-modal="iframeVisible"
+			@createWorkPackage="handelCreateWorkPackageEvent"
+			@closeCreateWorkPackageModal="handelCloseCreateWorkPackageModalEvent" />
+	</div>
 </template>
 
 <script>
@@ -53,14 +56,14 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import WorkPackage from './WorkPackage.vue'
-import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
-import NcActionButton from "@nextcloud/vue/dist/Components/NcActionButton";
-import NcActions from "@nextcloud/vue/dist/Components/NcActions";
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -68,7 +71,8 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
-    NcActions, NcActionButton,
+		NcActions,
+		NcActionButton,
 		CreateWorkPackageModal,
 		Plus,
 		WorkPackage,
@@ -99,6 +103,8 @@ export default {
 		noOptionsText: t('integration_openproject', 'Start typing to search'),
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 		iframeVisible: false,
+		newWorkpackageCreated: false,
+		workpackageData: [], // only for newly created workpackages
 	}),
 	computed: {
 		isStateOk() {
@@ -149,31 +155,41 @@ export default {
 		},
 	},
 	methods: {
-    handelCreateWorkPackage(data) {
-      // Handle the custom event and the data received from the child component
-      console.log('Custom event received in parent component with data:', data);
-      if (
-          data.openProjectEventName === 'work_package_creation_cancellation'
-      ) {
-        showError(t('integration_openproject', 'Work package creation was not successfull.'))
-        this.iframeVisible = false
-      }
-      if (data.openProjectEventName === 'work_package_creation_success') {
-        const workpackageInfo = {
-          id: data.openProjectEventPayload.workPackageId
-        }
-        console.log(workpackageInfo)
-        this.linkWorkPackageToFile(workpackageInfo)
-        showSuccess(t('integration_openproject', 'Work package created and linked successfully.'))
-        this.iframeVisible = false
-      }
-    },
+		async handelCreateWorkPackageEvent(data) {
+			this.searchResults = []
+			this.iframeVisible = false
+			if (
+				data.openProjectEventName === 'work_package_creation_cancellation'
+			) {
+				showError(t('integration_openproject', 'Work package creation was not successfull.'))
+			}
+			if (data.openProjectEventName === 'work_package_creation_success') {
+				showSuccess(t('integration_openproject', 'Work package created successfully.'))
+				const workPackageId = parseInt(data.openProjectEventPayload.workPackageId)
+				if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+					this.newWorkpackageCreated = true
+					// search by work package id when searched from the project tab to update the
+					// existing linked work package automatically
+					await this.makeSearchRequest(null, this.fileInfo.id, workPackageId)
+					await this.linkWorkPackageToFile(this.searchResults[0])
+				} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
+					const workpackageInfo = {
+						id: workPackageId,
+					}
+					await this.linkWorkPackageToFile(workpackageInfo)
+				}
+			}
+		},
+		handelCloseCreateWorkPackageModalEvent() {
+			this.iframeVisible = false
+		},
 		openIframe() {
 			this.iframeVisible = true
 		},
 		resetState() {
 			this.searchResults = []
 			this.state = STATE.OK
+			this.newWorkpackageCreated = false
 		},
 		checkForErrorCode(statusCode) {
 			if (statusCode === 200) return
@@ -186,10 +202,10 @@ export default {
 		async asyncFind(query) {
 			this.resetState()
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
-				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
+				await this.debounceMakeSearchRequest(query, this.fileInfo.id, null)
 			} else {
-				// we do not need to provide a file id incase of searching through link multiple files to work package and through smart picker
-				await this.debounceMakeSearchRequest(query, null)
+				// we do not need to provide a file id in case of searching through link multiple files to work package and through smart picker
+				await this.debounceMakeSearchRequest(query, null, null)
 			}
 		},
 		async getWorkPackageLink(selectedOption) {
@@ -235,12 +251,18 @@ export default {
 				showSuccess(successMessage)
 				this.resetState()
 			} catch (e) {
-				showError(
-					t('integration_openproject', 'Failed to link file to work package')
-				)
+				if (parseInt(e.response.status) === 422) {
+					showError(
+						t('integration_openproject', 'Failed to link file to work package. Storage is not linked to project.')
+					)
+				} else {
+					showError(
+						t('integration_openproject', 'Failed to link file to work package')
+					)
+				}
 			}
 		},
-		async makeSearchRequest(search, fileId) {
+		async makeSearchRequest(search, fileId, workpackageId) {
 			this.state = STATE.LOADING
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			const isSmartPicker = this.isSmartPicker
@@ -248,6 +270,7 @@ export default {
 			req.params = {
 				searchQuery: search,
 				isSmartPicker,
+				workpackageId,
 			}
 			let response
 			try {
@@ -269,6 +292,9 @@ export default {
 						} else {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
+							if (this.newWorkpackageCreated) {
+								this.searchResults.push(workPackage)
+							}
 							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)
 							// check the state again, it might have changed in between
@@ -330,21 +356,21 @@ export default {
 
 		}
 	}
-  .create-workpackage {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    &--button {
-      background-color: var(--color-background-dark)
-    }
-    &--label {
-      padding-left: 5px;
-      font-size: 1rem;
-      line-height: 1.4rem;
-      font-weight: 400;
-      text-align: left;
-    }
-  }
+	.create-workpackage {
+		margin-top: 10px;
+		display: flex;
+		align-items: center;
+		&--button {
+			background-color: var(--color-background-dark)
+		}
+		&--label {
+			padding-left: 5px;
+			font-size: 1rem;
+			line-height: 1.4rem;
+			font-weight: 400;
+			text-align: left;
+		}
+	}
 
 	.create-workpackage-footer-option:hover {
 		background-color: var(--color-background-dark);

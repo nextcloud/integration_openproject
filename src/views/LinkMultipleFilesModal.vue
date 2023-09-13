@@ -77,9 +77,6 @@ export default {
 		showModal() {
 			this.show = true
 		},
-		closeDropDown() {
-			this.show = false
-		},
 		async setFileInfos(fileInfos) {
 			this.fileInfos = fileInfos
 			if (this.isAdminConfigOk) {

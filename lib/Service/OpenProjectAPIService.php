@@ -744,9 +744,9 @@ class OpenProjectAPIService {
 		$elements = [];
 		// multiple files can also be linked to a single work package
 		foreach ($fileInfos as $fileInfo) {
-			if (!key_exists('id', $fileInfo) || !key_exists('name', $fileInfo) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
-				throw new InvalidArgumentException('invalid data');
-			}
+//			if (!key_exists('id', $fileInfo) || !key_exists('name', $fileInfo) || !is_int($fileInfo['id']) || $fileInfo['name'] === '' || !is_string($fileInfo['name'])) {
+//				throw new InvalidArgumentException('invalid data');
+//			}
 			$fileId = $fileInfo["id"];
 			$fileName = $fileInfo["name"];
 			$file = $this->getNode($userId, $fileId);
@@ -785,7 +785,7 @@ class OpenProjectAPIService {
 		);
 
 		if (isset($result['error'])) {
-			throw new OpenprojectErrorException($result['error']);
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
 		}
 		if (
 			!isset($result['_type']) ||

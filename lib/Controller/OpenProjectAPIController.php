@@ -152,10 +152,16 @@ class OpenProjectAPIController extends Controller {
 	 *
 	 * @param ?string $searchQuery
 	 * @param ?int $fileId
+	 * @param bool $isSmartPicker
 	 *
 	 * @return DataResponse
 	 */
-	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null, bool $isSmartPicker = false): DataResponse {
+	public function getSearchedWorkPackages(
+		?string $searchQuery = null,
+		?int $fileId = null,
+		bool $isSmartPicker = false,
+		?int $workpackageId = null
+	): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
@@ -166,7 +172,8 @@ class OpenProjectAPIController extends Controller {
 			$this->userId,
 			$searchQuery,
 			$fileId,
-			!$isSmartPicker
+			!$isSmartPicker,
+			$workpackageId
 		);
 
 		if (!isset($result['error'])) {
@@ -205,8 +212,10 @@ class OpenProjectAPIController extends Controller {
 				$values,
 				$this->userId,
 			);
-		} catch (OpenprojectErrorException | InvalidArgumentException $e) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getcode());
 		} catch (NotPermittedException | NotFoundException $e) {
 			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {

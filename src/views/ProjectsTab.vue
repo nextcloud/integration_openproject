@@ -70,7 +70,6 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
 
 import axios from '@nextcloud/axios'
 
@@ -92,7 +91,6 @@ export default {
 		NcActionButton,
 		LoadingIcon,
 		LinkOffIcon,
-		Plus,
 	},
 	data: () => ({
 		error: '',
