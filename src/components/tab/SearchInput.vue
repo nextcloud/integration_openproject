@@ -33,10 +33,10 @@
 			{{ stateMessages }}
 		</div>
 		<div v-if="!!isStateOk && !isSmartPicker" class="create-workpackage">
-			<NcActions>
+			<NcActions class="create-workpackage--action">
 				<NcActionButton class="create-workpackage--button" @click="openIframe()">
 					<template #icon>
-						<Plus :size="20" />
+						<Plus class="plus" :size="26" />
 					</template>
 				</NcActionButton>
 			</NcActions>
@@ -361,7 +361,14 @@ export default {
 		display: flex;
 		align-items: center;
 		&--button {
-			background-color: var(--color-background-dark)
+			border: 1px solid var(--color-border-dark);
+			//min-height: 30px !important;
+			//min-width: 30px !important;
+			//width: 34px !important;
+			//height: 34px !important;
+			//border-radius: 50% !important;
+			//align-items: center;
+			//justify-content: center;
 		}
 		&--label {
 			padding-left: 5px;
@@ -372,6 +379,10 @@ export default {
 		}
 	}
 
+	//.plus{
+	//  display: flex;
+	//  align-self: center;
+	//}
 	.create-workpackage-footer-option:hover {
 		background-color: var(--color-background-dark);
 		cursor: pointer;

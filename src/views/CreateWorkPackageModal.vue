@@ -1,8 +1,7 @@
 <template>
-	<NcModal class="create-workpackage-modal"
-		:show.sync="showModal"
+	<NcModal v-if="showModal"
+		class="create-workpackage-modal"
 		:can-close="true"
-		:close-on-click-outside="false"
 		:size="normal"
 		@close="closeModal">
 		<h2 class="create-workpackage-modal--title">
@@ -20,7 +19,7 @@
 <script>
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import { loadState } from '@nextcloud/initial-state'
-import { STATE } from '../utils'
+import { STATE } from '../utils.js'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
 
 export default {
@@ -51,8 +50,8 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			this.showModal = false
 			this.$emit('closeCreateWorkPackageModal')
+			this.state = STATE.LOADING
 		},
 		handleIframeLoad() {
 			this.state = STATE.OK
@@ -61,6 +60,7 @@ export default {
 				const eventData = event.data
 				// send the data to the parent component to create link to the work package
 				this.$emit('createWorkPackage', eventData)
+				this.state = STATE.LOADING
 			})
 		},
 	},
