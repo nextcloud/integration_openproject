@@ -44,8 +44,8 @@
 		</div>
 		<CreateWorkPackageModal v-if="!isSmartPicker"
 			:show-modal="iframeVisible"
-			@createWorkPackage="handelCreateWorkPackageEvent"
-			@closeCreateWorkPackageModal="handelCloseCreateWorkPackageModalEvent" />
+			@create-work-package="handelCreateWorkPackageEvent"
+			@close-create-work-package-modal="handelCloseCreateWorkPackageModalEvent" />
 	</div>
 </template>
 
@@ -161,23 +161,16 @@ export default {
 			if (
 				data.openProjectEventName === 'work_package_creation_cancellation'
 			) {
-				showError(t('integration_openproject', 'Work package creation was not successfull.'))
+				showError(t('integration_openproject', 'Work package creation was not successful.'))
 			}
 			if (data.openProjectEventName === 'work_package_creation_success') {
 				showSuccess(t('integration_openproject', 'Work package created successfully.'))
 				const workPackageId = parseInt(data.openProjectEventPayload.workPackageId)
-				if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
-					this.newWorkpackageCreated = true
-					// search by work package id when searched from the project tab to update the
-					// existing linked work package automatically
-					await this.makeSearchRequest(null, this.fileInfo.id, workPackageId)
-					await this.linkWorkPackageToFile(this.searchResults[0])
-				} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
-					const workpackageInfo = {
-						id: workPackageId,
-					}
-					await this.linkWorkPackageToFile(workpackageInfo)
+				this.newWorkpackageCreated = true
+				const workpackageInfo = {
+					id: workPackageId,
 				}
+				await this.linkWorkPackageToFile(workpackageInfo)
 			}
 		},
 		handelCloseCreateWorkPackageModalEvent() {
@@ -247,7 +240,14 @@ export default {
 			const url = generateUrl('/apps/integration_openproject/work-packages')
 			try {
 				await axios.post(url, body, config)
-				this.$emit('saved', selectedOption)
+				if (this.newWorkpackageCreated && this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
+					// after creating the new work package from the project tab search by id
+					// to display the existing linked work package automatically in the UI
+					await this.makeSearchRequest(null, this.fileInfo.id, selectedOption.id)
+					this.$emit('saved', this.searchResults[0])
+				} else {
+					this.$emit('saved', selectedOption)
+				}
 				showSuccess(successMessage)
 				this.resetState()
 			} catch (e) {

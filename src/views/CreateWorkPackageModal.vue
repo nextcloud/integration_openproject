@@ -50,17 +50,19 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			this.$emit('closeCreateWorkPackageModal')
+			this.$emit('close-create-work-package-modal')
 			this.state = STATE.LOADING
 		},
 		handleIframeLoad() {
 			this.state = STATE.OK
 			window.addEventListener('message', (event) => {
 				if (event.origin !== this.openprojectUrl) return
-				const eventData = event.data
+				let eventData = event.data
 				// send the data to the parent component to create link to the work package
-				this.$emit('createWorkPackage', eventData)
+				this.$emit('create-work-package', eventData)
 				this.state = STATE.LOADING
+				event = null
+				eventData = null
 			})
 		},
 	},

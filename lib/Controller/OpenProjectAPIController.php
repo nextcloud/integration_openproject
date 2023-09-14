@@ -153,7 +153,7 @@ class OpenProjectAPIController extends Controller {
 	 * @param ?string $searchQuery
 	 * @param ?int $fileId
 	 * @param bool $isSmartPicker
-	 *
+	 * @param int|null $workpackageId
 	 * @return DataResponse
 	 */
 	public function getSearchedWorkPackages(
