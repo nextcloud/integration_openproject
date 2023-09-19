@@ -829,44 +829,90 @@ describe('SearchInput.vue', () => {
 	describe('create work package button at the footer of the NcSelect', () => {
 		wrapper = mountSearchInput()
 		it('should open create work package modal when clicked', async () => {
-			const button = wrapper.find(createWorkpackageButtonSelector)
-			await button.trigger('click')
 			await wrapper.setData({
-				iframeVisible: true,
 				isSmartPicker: false,
 				state: STATE.OK
-
 			})
+			const button = wrapper.find(createWorkpackageButtonSelector)
+			await button.trigger('click')
 			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
 		})
 	})
 
-	describe.only('create work package option at the footer of the NcSelect option list', () => {
+	describe('create work package option at the footer of the NcSelect option list', () => {
 		wrapper = mountSearchInput()
 		it('should open create work package modal when clicked', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+			await wrapper.setProps({
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
+			})
+			const inputField = wrapper.find(inputSelector)
+			await inputField.setValue(' ')
 			await wrapper.setData({
+				searchResults: workPackagesSearchResponse,
 				isSmartPicker: false,
 				state: STATE.OK
 			})
 			await localVue.nextTick()
-			const inputField = wrapper.find(inputSelector)
-			await inputField.setValue('')
-			await wrapper.setData({
-				state: STATE.OK
-			})
-			await localVue.nextTick()
-			await wrapper.find('.vs__open-indicator').trigger('click')
-			await localVue.nextTick()
-			await localVue.nextTick()
-			await localVue.nextTick()
-			await localVue.nextTick()
-			console.log(wrapper.html())
 			const optionList = wrapper.find(createWorkPackageNcSelectOptionListSelector)
 			await optionList.trigger('click')
-			// await wrapper.setData({
-			// 	iframeVisible: true,
-			// })
 			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
+		})
+	})
+
+	describe.only('create work packages event handeling', () => {
+		wrapper = mountSearchInput()
+		it('should show error message if work package creation process gets canceled',() =>{
+			const showErrorSpy = jest.spyOn(dialogs, 'showError')
+			const workpackageCreationEventData = {
+				openProjectEventName: "work_package_creation_cancellation"
+			}
+			wrapper.vm.handelCreateWorkPackageEvent(workpackageCreationEventData)
+			expect(showErrorSpy).toBeCalledTimes(1)
+			expect(showErrorSpy).toBeCalledWith('Work package creation was not successful.')
+			showErrorSpy.mockRestore()
+		})
+
+		it('should show success message and link work package to a file if work package creation process is successful',async () =>{
+			jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+				}))
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						fileId: 111,
+						id: 1111,
+						subject: 'Organize open source conference',
+					}],
+				}))
+			const showSuccessSpy = jest.spyOn(dialogs, 'showSuccess')
+			const workpackageCreationEventData = {
+				openProjectEventName: "work_package_creation_success",
+				openProjectEventPayload: {
+					workPackageId: '1111'
+				}
+			}
+			await wrapper.setData({
+				searchResults: workPackagesSearchResponse,
+				newWorkpackageCreated:true,
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB
+			})
+			await localVue.nextTick()
+			wrapper.vm.handelCreateWorkPackageEvent(workpackageCreationEventData)
+			await wrapper.setData({
+				fileInfo: { id: 111 },
+			})
+			await localVue.nextTick()
+			expect(showSuccessSpy).toBeCalledTimes(2)
+			expect(showSuccessSpy).toBeCalledWith('Work package created successfully.','Link to work package created successfully!')
+			showSuccessSpy.mockRestore()
 		})
 	})
 })
