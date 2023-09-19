@@ -67,6 +67,9 @@ describe('SearchInput.vue', () => {
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.vs__spinner'
 	const firstWorkPackageSelector = '.searchInput .vs__dropdown-option'
+	const createWorkpackageButtonSelector = '.create-workpackage--button'
+	const createWorkPackageNcSelectOptionListSelector = '.create-workpackage-footer-option'
+	const createWorkpackageModalSelector= '[data-test-id="create-workpackage-modal"]'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -158,6 +161,7 @@ describe('SearchInput.vue', () => {
 						params: {
 							searchQuery: 'orga',
 							isSmartPicker: false,
+							workpackageId: null,
 						},
 					},
 				)
@@ -818,6 +822,51 @@ describe('SearchInput.vue', () => {
 					})
 				})
 			})
+
+		})
+	})
+
+	describe('create work package button at the footer of the NcSelect', () => {
+		wrapper = mountSearchInput()
+		it('should open create work package modal when clicked', async () => {
+			const button = wrapper.find(createWorkpackageButtonSelector)
+			await button.trigger('click')
+			await wrapper.setData({
+				iframeVisible: true,
+				isSmartPicker: false,
+				state: STATE.OK
+
+			})
+			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
+		})
+	})
+
+	describe.only('create work package option at the footer of the NcSelect option list', () => {
+		wrapper = mountSearchInput()
+		it('should open create work package modal when clicked', async () => {
+			await wrapper.setData({
+				isSmartPicker: false,
+				state: STATE.OK
+			})
+			await localVue.nextTick()
+			const inputField = wrapper.find(inputSelector)
+			await inputField.setValue('')
+			await wrapper.setData({
+				state: STATE.OK
+			})
+			await localVue.nextTick()
+			await wrapper.find('.vs__open-indicator').trigger('click')
+			await localVue.nextTick()
+			await localVue.nextTick()
+			await localVue.nextTick()
+			await localVue.nextTick()
+			console.log(wrapper.html())
+			const optionList = wrapper.find(createWorkPackageNcSelectOptionListSelector)
+			await optionList.trigger('click')
+			// await wrapper.setData({
+			// 	iframeVisible: true,
+			// })
+			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
 		})
 	})
 })
@@ -837,6 +886,7 @@ function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 		stubs: {
 			NcAvatar: true,
 			WorkPackage: true,
+			CreateWorkPackageModal:true,
 		},
 		propsData: {
 			fileInfo,

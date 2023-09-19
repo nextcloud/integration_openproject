@@ -44,6 +44,7 @@
 		</div>
 		<CreateWorkPackageModal v-if="!isSmartPicker"
 			:show-modal="iframeVisible"
+                            data-test-id="create-workpackage-modal"
 			@create-work-package="handelCreateWorkPackageEvent"
 			@close-create-work-package-modal="handelCloseCreateWorkPackageModalEvent" />
 	</div>

@@ -36,8 +36,7 @@ export default {
 	},
 	data: () => ({
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
-		state: STATE.LOADING,
-		show: false,
+		state: STATE.LOADING
 	}),
 	computed: {
 		getIframeSource() {
@@ -61,8 +60,6 @@ export default {
 				// send the data to the parent component to create link to the work package
 				this.$emit('create-work-package', eventData)
 				this.state = STATE.LOADING
-				event = null
-				eventData = null
 			})
 		},
 	},
