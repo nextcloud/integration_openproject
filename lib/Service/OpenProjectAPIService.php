@@ -1090,7 +1090,6 @@ class OpenProjectAPIService {
 	public function isGroupfoldersAppEnabled(): bool {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		return (
-			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
 			$this->appManager->isEnabledForUser(
 			'groupfolders',
 			$user
