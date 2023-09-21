@@ -10,6 +10,7 @@ import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqRes
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
+import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -69,7 +70,7 @@ describe('SearchInput.vue', () => {
 	const firstWorkPackageSelector = '.searchInput .vs__dropdown-option'
 	const createWorkpackageButtonSelector = '.create-workpackage--button'
 	const createWorkPackageNcSelectOptionListSelector = '.create-workpackage-footer-option'
-	const createWorkpackageModalSelector= '[data-test-id="create-workpackage-modal"]'
+	const createWorkpackageModalSelector = '[data-test-id="create-workpackage-modal"]'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -831,7 +832,7 @@ describe('SearchInput.vue', () => {
 		it('should open create work package modal when clicked', async () => {
 			await wrapper.setData({
 				isSmartPicker: false,
-				state: STATE.OK
+				state: STATE.OK,
 			})
 			const button = wrapper.find(createWorkpackageButtonSelector)
 			await button.trigger('click')
@@ -856,7 +857,7 @@ describe('SearchInput.vue', () => {
 			await wrapper.setData({
 				searchResults: workPackagesSearchResponse,
 				isSmartPicker: false,
-				state: STATE.OK
+				state: STATE.OK,
 			})
 			await localVue.nextTick()
 			const optionList = wrapper.find(createWorkPackageNcSelectOptionListSelector)
@@ -865,20 +866,27 @@ describe('SearchInput.vue', () => {
 		})
 	})
 
-	describe.only('create work packages event handeling', () => {
-		wrapper = mountSearchInput()
-		it('should show error message if work package creation process gets canceled',() =>{
-			const showErrorSpy = jest.spyOn(dialogs, 'showError')
+	describe('create work packages event handeling', () => {
+		beforeEach(async () => {
+			wrapper = mountSearchInput()
+			jest.clearAllMocks()
+			dialogs.showSuccess.mockReset()
+			dialogs.showError.mockReset()
+		})
+		afterEach(async () => {
+			wrapper.destroy()
+		})
+		it('should show error message if work package creation process gets canceled', () => {
+			dialogs.showError.mockImplementationOnce()
 			const workpackageCreationEventData = {
-				openProjectEventName: "work_package_creation_cancellation"
+				openProjectEventName: 'work_package_creation_cancellation',
 			}
 			wrapper.vm.handelCreateWorkPackageEvent(workpackageCreationEventData)
-			expect(showErrorSpy).toBeCalledTimes(1)
-			expect(showErrorSpy).toBeCalledWith('Work package creation was not successful.')
-			showErrorSpy.mockRestore()
+			expect(dialogs.showError).toBeCalledTimes(1)
+			expect(dialogs.showError).toBeCalledWith('Work package creation was not successful.')
 		})
 
-		it('should show success message and link work package to a file if work package creation process is successful',async () =>{
+		it('should show success message and link work package to a file if work package creation process is successful', async () => {
 			jest.spyOn(axios, 'post')
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
@@ -887,32 +895,35 @@ describe('SearchInput.vue', () => {
 				.mockImplementationOnce(() => Promise.resolve({
 					status: 200,
 					data: [{
-						fileId: 111,
-						id: 1111,
+						fileId: 1234,
+						id: 1,
 						subject: 'Organize open source conference',
 					}],
 				}))
-			const showSuccessSpy = jest.spyOn(dialogs, 'showSuccess')
+			// mock this method because we don't really care about this for this test
+			jest.spyOn(workpackageHelper, 'getAdditionalMetaData')
+				.mockImplementationOnce(() => Promise.resolve(workPackagesSearchResponse))
+
+			dialogs.showSuccess
+				.mockImplementationOnce()
+				.mockImplementationOnce()
 			const workpackageCreationEventData = {
-				openProjectEventName: "work_package_creation_success",
+				openProjectEventName: 'work_package_creation_success',
 				openProjectEventPayload: {
-					workPackageId: '1111'
-				}
+					workPackageId: '1',
+				},
 			}
 			await wrapper.setData({
 				searchResults: workPackagesSearchResponse,
-				newWorkpackageCreated:true,
-				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB
+				newWorkpackageCreated: true,
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
+				fileInfo: { id: 1234, name: 'file.txt' },
 			})
 			await localVue.nextTick()
 			wrapper.vm.handelCreateWorkPackageEvent(workpackageCreationEventData)
-			await wrapper.setData({
-				fileInfo: { id: 111 },
-			})
-			await localVue.nextTick()
-			expect(showSuccessSpy).toBeCalledTimes(2)
-			expect(showSuccessSpy).toBeCalledWith('Work package created successfully.','Link to work package created successfully!')
-			showSuccessSpy.mockRestore()
+			expect(dialogs.showSuccess).toBeCalledTimes(1)
+			expect(dialogs.showSuccess).toBeCalledWith('Work package created successfully.')
+			expect(dialogs.showSuccess).toBeCalledWith('Link to work package created successfully!')
 		})
 	})
 })
@@ -932,7 +943,7 @@ function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 		stubs: {
 			NcAvatar: true,
 			WorkPackage: true,
-			CreateWorkPackageModal:true,
+			CreateWorkPackageModal: true,
 		},
 		propsData: {
 			fileInfo,

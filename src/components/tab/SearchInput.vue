@@ -44,7 +44,7 @@
 		</div>
 		<CreateWorkPackageModal v-if="!isSmartPicker"
 			:show-modal="iframeVisible"
-                            data-test-id="create-workpackage-modal"
+			data-test-id="create-workpackage-modal"
 			@create-work-package="handelCreateWorkPackageEvent"
 			@close-create-work-package-modal="handelCloseCreateWorkPackageModalEvent" />
 	</div>
@@ -295,6 +295,7 @@ export default {
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage)
 							if (this.newWorkpackageCreated) {
 								this.searchResults.push(workPackage)
+								return
 							}
 							const alreadyLinked = this.linkedWorkPackages.some(el => el.id === workPackage.id)
 							const alreadyInSearchResults = this.searchResults.some(el => el.id === workPackage.id)

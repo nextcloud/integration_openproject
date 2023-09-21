@@ -36,7 +36,7 @@ export default {
 	},
 	data: () => ({
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
-		state: STATE.LOADING
+		state: STATE.LOADING,
 	}),
 	computed: {
 		getIframeSource() {
@@ -56,7 +56,7 @@ export default {
 			this.state = STATE.OK
 			window.addEventListener('message', (event) => {
 				if (event.origin !== this.openprojectUrl) return
-				let eventData = event.data
+				const eventData = event.data
 				// send the data to the parent component to create link to the work package
 				this.$emit('create-work-package', eventData)
 				this.state = STATE.LOADING
