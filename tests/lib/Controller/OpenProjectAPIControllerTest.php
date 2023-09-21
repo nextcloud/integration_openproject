@@ -1226,7 +1226,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service
 			->method('linkWorkPackageToFile')
-			->willThrowException(new OpenprojectErrorException('Error while linking file to a work package'));
+			->willThrowException(new OpenprojectErrorException('Error while linking file to a work package', 400));
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -1237,6 +1237,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			'test'
 		);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
+		var_dump($response->getData());
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		$this->assertSame('Error while linking file to a work package', $response->getData());
 	}
