@@ -12,6 +12,7 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
+use OC_Util;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
@@ -35,6 +36,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\RichObjectStrings\IValidator;
+use Psr\Log\LoggerInterface;
 use Throwable;
 use OCP\Files\DavUtil;
 
@@ -97,6 +99,29 @@ class FilesController extends OCSController {
 	 */
 	private $davUtils;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $log;
+
+	/**
+	 * @param string $appName
+	 * @param IRequest $request
+	 * @param IRootFolder $rootFolder
+	 * @param IUserSession $userSession
+	 * @param IMountProviderCollection $mountCollection
+	 * @param IManager $activityManager
+	 * @param IAppManager $appManager
+	 * @param IDBConnection $connection
+	 * @param IValidator $richObjectValidator
+	 * @param ILogger $logger
+	 * @param IL10N $l
+	 * @param IConfig $config
+	 * @param IUserManager $userManager
+	 * @param DavUtil $davUtils
+	 * @param LoggerInterface $log
+	 */
+
 	public function __construct(string $appName,
 								IRequest $request,
 								IRootFolder $rootFolder,
@@ -110,7 +135,8 @@ class FilesController extends OCSController {
 								IL10N $l,
 								IConfig $config,
 								IUserManager $userManager,
-								DavUtil $davUtils
+								DavUtil $davUtils,
+								LoggerInterface $log
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -125,6 +151,7 @@ class FilesController extends OCSController {
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
 		$this->davUtils = $davUtils;
+		$this->log = $log;
 	}
 
 	/**
@@ -227,7 +254,9 @@ class FilesController extends OCSController {
 				);
 				$internalPath = $file->getName();
 			}
-			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
+			$a = $owner->getUID();
+			$b = $file->getId();
+			$modifier = $this->getLastModifier($a, $b);
 			if ($modifier instanceof IUser) {
 				$modifierId = $modifier->getUID();
 				$modifierName = $modifier->getDisplayName();
@@ -281,7 +310,11 @@ class FilesController extends OCSController {
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&
 			class_exists('\OCA\Activity\UserSettings')
 		) {
-			$activityData = new Data($this->activityManager, $this->connection);
+			if (version_compare(OC_Util::getVersionString(), '28') >= 0) {
+				$activityData = new Data($this->activityManager, $this->connection, $this->log);
+			} else {
+				$activityData = new Data($this->activityManager, $this->connection);
+			}
 		} else {
 			return null;
 		}
