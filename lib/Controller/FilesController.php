@@ -254,9 +254,7 @@ class FilesController extends OCSController {
 				);
 				$internalPath = $file->getName();
 			}
-			$a = $owner->getUID();
-			$b = $file->getId();
-			$modifier = $this->getLastModifier($a, $b);
+			$modifier = $this->getLastModifier($owner->getUID(), $file->getId());
 			if ($modifier instanceof IUser) {
 				$modifierId = $modifier->getUID();
 				$modifierName = $modifier->getDisplayName();
