@@ -28,6 +28,7 @@ use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
+
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -38,8 +39,6 @@ use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
-use OCP\Security\CSP\AddContentSecurityPolicyEvent;
-use OCA\OpenProject\Listener\AddContentSecurityPolicyListener;
 
 /**
  * Class Application
@@ -82,7 +81,6 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
-		$context->registerEventListener(AddContentSecurityPolicyEvent::class, AddContentSecurityPolicyListener::class);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
 			// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
