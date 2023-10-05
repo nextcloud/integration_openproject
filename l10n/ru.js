@@ -14,6 +14,7 @@ OC.L10N.register(
     "Details" : "Свойства",
     "Start typing to search" : "Начините вводить символы для поиска",
     "Mark as read" : "Отметить прочитанным",
+    "Confirm unlink" : "Подтвердите отмену связи",
     "OAuth access token could not be obtained:" : "Токен доступа OAuth не может быть получен:",
     "Connected accounts" : "Подключённые учётные записи",
     "Reset" : "Сброс",
