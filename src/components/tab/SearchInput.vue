@@ -36,7 +36,6 @@ import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import WorkPackage from './WorkPackage.vue'
-import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
@@ -159,38 +158,19 @@ export default {
 				return
 			}
 			// since we can link multiple files now we send file information required in an array (whether it's only one value or multiple)
-			let fileInfoForBody = []
-			let successMessage
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
-				fileInfoForBody.push(this.fileInfo)
-				successMessage = t('integration_openproject', 'Link to work package created successfully!')
-			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
-				fileInfoForBody = this.fileInfo
-				successMessage = t('integration_openproject', 'Links to work package created successfully for selected files!')
-			}
-
-			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-
-			const body = {
-				values: {
-					workpackageId: selectedOption.id,
-					fileinfo: fileInfoForBody,
-				},
-			}
-			const url = generateUrl('/apps/integration_openproject/work-packages')
-			try {
-				await axios.post(url, body, config)
-				this.$emit('saved', selectedOption)
-				showSuccess(successMessage)
+				await workpackageHelper.linkFileToWorkPackageWithSingleRequest([this.fileInfo], selectedOption, t('integration_openproject', 'Link to work package created successfully!'), this)
 				this.resetState()
-			} catch (e) {
-				showError(
-					t('integration_openproject', 'Failed to link file to work package')
-				)
+			} else if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL) {
+				if (this.fileInfo.length <= 20) {
+					await workpackageHelper.linkFileToWorkPackageWithSingleRequest(this.fileInfo, selectedOption, t('integration_openproject', 'Links to work package created successfully for selected files!'), this)
+					this.$emit('close', selectedOption)
+					this.resetState()
+				} else {
+					const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(this.fileInfo)
+					await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedOption, false, this)
+					this.resetState()
+				}
 			}
 		},
 		async makeSearchRequest(search, fileId) {

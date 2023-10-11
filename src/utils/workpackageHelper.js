@@ -1,5 +1,6 @@
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 let cachedStatusColors = {}
 let cachedTypeColors = {}
@@ -87,6 +88,98 @@ export const workpackageHelper = {
 			typeCol: typeColor,
 			picture: avatarUrl,
 			fileId: workPackage.fileId,
+		}
+	},
+	chunkMultipleSelectedFilesInformation(fileInformation) {
+		// this function chunks 20 files information in an array and returns array of it
+		const chunkedResult = []
+		for (let i = 0; i < fileInformation.length; i += 20) {
+			chunkedResult.push(fileInformation.slice(i, i + 20))
+		}
+		return chunkedResult
+	},
+	getTotalNoOfFilesFromChunks(chunkedFilesInformations) {
+		const totalFiles = []
+		for (let i = 0; i < chunkedFilesInformations.length; i++) {
+			totalFiles.push(...chunkedFilesInformations[i])
+		}
+		return totalFiles.length
+	},
+
+	/*
+		Here the chunkedFilesInformation is the array that contains the array of chunked files information in 20
+	*/
+	async linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkpackage, isRemaining, component) {
+		const chunkingInformation = {
+			totalNoOfFilesSelected: this.getTotalNoOfFilesFromChunks(chunkedFilesInformations),
+			totalFilesAlreadyLinked: 0,
+			totalFilesNotLinked: this.getTotalNoOfFilesFromChunks(chunkedFilesInformations),
+			isChunkingError: false,
+			remainingFileInformations: [],
+			selectedWorkPackage: selectedWorkpackage,
+		}
+		for (const fileInfoForBody of chunkedFilesInformations) {
+			try {
+				let retry = 0
+				while (retry <= 1) {
+					try {
+						await this.makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage)
+						break
+					} catch (e) {
+						if (retry === 1) {
+							throw new Error()
+						}
+					}
+					retry++
+				}
+				if (chunkedFilesInformations.indexOf(fileInfoForBody) !== chunkedFilesInformations.length - 1) {
+					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + 20
+				} else {
+					// for the last chunked files information we only count the no of files which may not be 20
+					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + fileInfoForBody.length
+				}
+				chunkingInformation.totalFilesNotLinked = chunkingInformation.totalNoOfFilesSelected - chunkingInformation.totalFilesAlreadyLinked
+			} catch (e) {
+				chunkingInformation.isChunkingError = true
+				// we compute the remaining files information when there is some error while chunking
+				for (let i = chunkedFilesInformations.indexOf(fileInfoForBody); i < chunkedFilesInformations.length; i++) {
+					chunkingInformation.remainingFileInformations.push(...chunkedFilesInformations[i])
+				}
+				break
+			} finally {
+				if (isRemaining) {
+					component.getChunkedInformations(chunkingInformation)
+				} else {
+					component.$emit('get-chunked-informations', chunkingInformation)
+				}
+			}
+		}
+	},
+
+	async makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage) {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+		const url = generateUrl('/apps/integration_openproject/work-packages')
+		const body = {
+			values: {
+				workpackageId: selectedWorkpackage.id,
+				fileinfo: fileInfoForBody,
+			},
+		}
+		await axios.post(url, body, config)
+	},
+	async linkFileToWorkPackageWithSingleRequest(fileInfoForBody, selectedWorkpackage, successMessage, component) {
+		try {
+			await this.makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage)
+			component.$emit('saved', selectedWorkpackage)
+			showSuccess(successMessage)
+		} catch (e) {
+			showError(
+				t('integration_openproject', 'Failed to link file to work package')
+			)
 		}
 	},
 }

@@ -10,6 +10,7 @@ import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqRes
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
+import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -701,120 +702,328 @@ describe('SearchInput.vue', () => {
 			})
 
 			describe('multiple files selected', () => {
-				describe('select a work package for linking', () => {
-					let axiosGetSpy
-					beforeEach(async () => {
-						axiosGetSpy = jest.spyOn(axios, 'get')
-							.mockImplementationOnce(() => Promise.resolve({
-								status: 200,
-								data: [],
-							}))
-						wrapper = mountSearchInput(multipleFileInfos)
-						await wrapper.setProps({
-							searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
+				describe('less than 20', () => {
+					describe('select a work package for linking', () => {
+						let axiosGetSpy
+						beforeEach(async () => {
+							axiosGetSpy = jest.spyOn(axios, 'get')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+									data: [],
+								}))
+							wrapper = mountSearchInput(multipleFileInfos)
+							await wrapper.setProps({
+								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
+							})
+							const inputField = wrapper.find(inputSelector)
+							await inputField.setValue('orga')
+							await wrapper.setData({
+								searchResults: [{
+									fileId: 123,
+									id: 999,
+								}],
+							})
 						})
-						const inputField = wrapper.find(inputSelector)
-						await inputField.setValue('orga')
-						await wrapper.setData({
-							searchResults: [{
-								fileId: 123,
-								id: 999,
-							}],
+						afterEach(() => {
+							axiosGetSpy.mockRestore()
 						})
-					})
-					afterEach(() => {
-						axiosGetSpy.mockRestore()
-					})
-					it('should send a request to link file to workpackage', async () => {
-						const postSpy = jest.spyOn(axios, 'post')
-							.mockImplementationOnce(() => Promise.resolve({
-								status: 200,
-							}))
-						const ncSelectItem = wrapper.find(firstWorkPackageSelector)
-						await ncSelectItem.trigger('click')
-						const body = {
-							values: {
-								workpackageId: 999,
-								fileinfo: multipleFileInfos,
-							},
-						}
-						expect(postSpy).toBeCalledWith(
-							'http://localhost/apps/integration_openproject/work-packages',
-							body,
-							{ headers: { 'Content-Type': 'application/json' } }
-						)
-						postSpy.mockRestore()
-					})
-
-					it('should show an error when linking fails', async () => {
-						const err = new Error()
-						err.response = { status: 422 }
-						axios.post.mockRejectedValueOnce(err)
-						const showErrorSpy = jest.spyOn(dialogs, 'showError')
-						const ncSelectItem = wrapper.find(firstWorkPackageSelector)
-						await ncSelectItem.trigger('click')
-						await localVue.nextTick()
-						expect(showErrorSpy).toBeCalledTimes(1)
-						showErrorSpy.mockRestore()
-					})
-
-					it('should display work packages that are already linked', async () => {
-						const axiosSpy = jest.spyOn(axios, 'get')
-							.mockImplementationOnce(() => Promise.resolve({
-								status: 200,
-								data: workPackageSearchReqResponse,
-							}))
-							.mockImplementation(() => Promise.resolve(
-								{ status: 200, data: [] })
+						it('should send a request to link file to workpackage', async () => {
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							const body = {
+								values: {
+									workpackageId: 999,
+									fileinfo: multipleFileInfos,
+								},
+							}
+							expect(postSpy).toBeCalledWith(
+								'http://localhost/apps/integration_openproject/work-packages',
+								body,
+								{ headers: { 'Content-Type': 'application/json' } }
 							)
-						await wrapper.setProps({
-							// here already linked package is empty when the file selected files is more than 1
-							linkedWorkPackages: [],
+							postSpy.mockRestore()
 						})
 
-						const inputField = wrapper.find(inputSelector)
-						await inputField.setValue('anything longer than 3 char')
-						for (let i = 0; i < 8; i++) {
+						it('should show an error when linking fails', async () => {
+							const err = new Error()
+							err.response = { status: 422 }
+							axios.post.mockRejectedValueOnce(err)
+							const showErrorSpy = jest.spyOn(dialogs, 'showError')
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
 							await localVue.nextTick()
+							expect(showErrorSpy).toBeCalledTimes(1)
+							showErrorSpy.mockRestore()
+						})
+
+						it('should display work packages that are already linked', async () => {
+							const axiosSpy = jest.spyOn(axios, 'get')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+									data: workPackageSearchReqResponse,
+								}))
+								.mockImplementation(() => Promise.resolve(
+									{ status: 200, data: [] })
+								)
+							await wrapper.setProps({
+								// here already linked package is empty when the file selected files is more than 1
+								linkedWorkPackages: [],
+							})
+
+							const inputField = wrapper.find(inputSelector)
+							await inputField.setValue('anything longer than 3 char')
+							for (let i = 0; i < 8; i++) {
+								await localVue.nextTick()
+							}
+							expect(wrapper.vm.searchResults).toMatchObject(
+								[
+									{
+										assignee: 'System',
+										id: 2,
+										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										project: 'Demo project',
+										statusCol: '',
+										statusTitle: 'In progress',
+										subject: 'Organize open source conference',
+										typeCol: '',
+										typeTitle: 'Phase',
+									},
+									{
+										assignee: 'System',
+										id: 13,
+										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										project: 'Demo project',
+										statusCol: '',
+										statusTitle: 'In progress',
+										subject: 'Write a software',
+										typeCol: '',
+										typeTitle: 'Phase',
+									},
+									{
+										assignee: 'System',
+										id: 5,
+										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										project: 'Demo project',
+										statusCol: '',
+										statusTitle: 'In progress',
+										subject: 'Create a website',
+										typeCol: '',
+										typeTitle: 'Phase',
+									},
+								],
+							)
+							axiosSpy.mockRestore()
+						})
+					})
+				})
+
+				describe('more than 20 with chunk', () => {
+					/*
+						For the test of linking multiple files more than 20
+						This test scenario create a file information of 55 which is used through the whole test for the link with chunking
+						It means the file will get hchunked as [20, 20, 25]
+					 */
+					let multipleFilesForChunking = []
+					for(let i = 1; i<=55; i++) {
+						multipleFilesForChunking.push({
+							id: i,
+							name: `test${i}.txt`
+						})
+					}
+
+					it('should chunk file information in 20', async () => {
+						wrapper = mountSearchInput()
+						const chunkedInformation = workpackageHelper.chunkMultipleSelectedFilesInformation(multipleFilesForChunking)
+						expect(chunkedInformation.length).toBe(3)
+						for(let i = 0; i < chunkedInformation.length; i ++) {
+							if(i === chunkedInformation.length - 1) {
+								expect(chunkedInformation[i].length).toBe(15)
+							} else {
+								expect(chunkedInformation[i].length).toBe(20)
+							}
 						}
-						expect(wrapper.vm.searchResults).toMatchObject(
+					})
+
+					describe('select a work package for linking', () => {
+						let axiosGetSpy
+						beforeEach(async () => {
+							axiosGetSpy = jest.spyOn(axios, 'get')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+									data: [],
+								}))
+							wrapper = mountSearchInput(multipleFilesForChunking)
+							await wrapper.setProps({
+								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
+							})
+							const inputField = wrapper.find(inputSelector)
+							await inputField.setValue('orga')
+							await wrapper.setData({
+								searchResults: [{
+									fileId: 123,
+									id: 999,
+								}],
+							})
+						})
+						afterEach(() => {
+							axiosGetSpy.mockRestore()
+						})
+						it('should send request 3 times to link chunked file to workpackage', async () => {
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							expect(postSpy).toHaveBeenCalledTimes(3)
+						})
+
+						it('should emit event "get-chunked-informations" for 3 times', async () => {
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit');
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							expect(postSpy).toHaveBeenCalledTimes(3)
+							expect(spyOnEmit).toHaveBeenCalledTimes(3)
+						})
+
+						it('should emit event "get-chunked-informations" with data', async () => {
+							let emittedData;
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
+								emittedData = data;
+							});
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							expect(spyOnEmit).toHaveBeenCalledTimes(3)
+							expect(emittedData.totalFilesAlreadyLinked).toBe(multipleFilesForChunking.length)
+						})
+
+						it.each([
 							[
+								'should set chunk error true',
 								{
-									assignee: 'System',
-									id: 2,
-									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
-									project: 'Demo project',
-									statusCol: '',
-									statusTitle: 'In progress',
-									subject: 'Organize open source conference',
-									typeCol: '',
-									typeTitle: 'Phase',
-								},
-								{
-									assignee: 'System',
-									id: 13,
-									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
-									project: 'Demo project',
-									statusCol: '',
-									statusTitle: 'In progress',
-									subject: 'Write a software',
-									typeCol: '',
-									typeTitle: 'Phase',
-								},
-								{
-									assignee: 'System',
-									id: 5,
-									picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
-									project: 'Demo project',
-									statusCol: '',
-									statusTitle: 'In progress',
-									subject: 'Create a website',
-									typeCol: '',
-									typeTitle: 'Phase',
+									key: "isChunkingError",
+									value: true,
 								},
 							],
-						)
-						axiosSpy.mockRestore()
+							[
+								'should set alreadylinked files to 40',
+								{
+									key: "totalFilesAlreadyLinked",
+									value: 40,
+								},
+							],
+							[
+								'should set files not linked to 2',
+								{
+									key: "totalFilesNotLinked",
+									value: 15,
+								},
+							]
+						])('%s when request fails', async (name, expectedData) => {
+							/*
+							Here the emmited chunking information data will be as
+							emittedData = {
+							 	totalNoOfFilesSelected: number,
+							 	totalFilesAlreadyLinked: number,
+							 	totalFilesNotLinked: number,
+							 	isChunkingError: bool,
+							 	remainingFileInformations: Array,
+							 	selectedWorkPackage: Object
+							 }
+							*/
+							let emittedData
+							// rejects the 3rd request
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+								.mockImplementation(() => Promise.reject({}))
+							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
+								emittedData = data;
+							});
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							const expectedKey = expectedData.key
+							expect(emittedData[expectedKey]).toBe(expectedData.value)
+						})
+
+						it('should set length of remaining files to 15', async () => {
+							let emittedData;
+							// rejects the 3rd request
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+								.mockImplementationOnce(() => Promise.resolve({
+									status: 200,
+								}))
+								.mockImplementation(() => Promise.reject({}))
+							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
+								emittedData = data;
+							});
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							expect(emittedData.remainingFileInformations.length).toBe(15)
+						})
+
+						it('should retry once if a request to link fails', async () => {
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => {
+									throw new Error('Throw error to retry once');
+								})
+								.mockImplementation(() => {
+									status: 200
+								});
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							// here 'makeRequestToLinkFilesToWorkPackage' is called 4 times since the chunk is [20,20,15] 3 times and 1 is added for retry since it fails for the first time
+							expect(postSpy).toHaveBeenCalledTimes(4)
+						})
+
+						it('should not retry again if the retry it self fails', async () => {
+							const postSpy = jest.spyOn(axios, 'post')
+								.mockImplementation(() => Promise.reject())
+							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
+							await ncSelectItem.trigger('click')
+							for(let i = 0 ; i < 5; i++) {
+								await localVue.nextTick()
+							}
+							// here the post is called 2 times (1 extra for retry)
+							expect(postSpy).toHaveBeenCalledTimes(2)
+						})
 					})
 				})
 			})

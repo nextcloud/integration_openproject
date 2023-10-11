@@ -2,9 +2,48 @@
 	<div class="multiple-link-modal-container">
 		<NcModal
 			v-if="show"
+			:can-close="canCloseModal"
 			@close="closeRequestModal">
 			<div class="multiple-link-modal-content">
 				<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
+				<div v-else-if="chunkingInformation !== null" class="link-progress-information-wrapper">
+					<div v-if="getChunkStateInChunking" class="link-progress-information-failed">
+						<div class="link-progress-information-failed--details">
+							<div class="link-progress-information-failed--details--info">
+								<AlertCircleOutline fill-color="#FF0000" :size="70" />
+							</div>
+							<div class="link-progress-information-failed--details--info">
+								<p>Files selected: {{ getTotalNoOfFilesSelectedInChunking }}</p>
+								<p>Files successfully linked: {{ getTotalNoOfFilesAlreadyLinkedInChunking }}</p>
+								<p :style="{ color: '#FF0000' }">
+									Files failed to linked: {{ getTotalNoOfFilesNotLinkedInChunking }}
+								</p>
+							</div>
+							<div class="link-progress-information-failed--details--info">
+								<NcButton
+									data-test-id="reset-user-app-password"
+									@click="relinkRemainingFilesToWorkPackage">
+									<template #icon>
+										<AutoRenewIcon :size="20" />
+									</template>
+									{{ t('integration_openproject', 'Retry linking remaining files') }}
+								</NcButton>
+							</div>
+						</div>
+					</div>
+					<div v-else class="link-progress-information-success">
+						<FileLinkIcon :size="50" />
+						<div class="success-progress-information">
+							<div class="success-progress-information--title">
+								<p>{{ getTotalNoOfFilesAlreadyLinkedInChunking }} of {{ getTotalNoOfFilesSelectedInChunking }} files linked</p>
+								<p>{{ getProgressValueOfMultipleFilesLinked }}%</p>
+							</div>
+							<div class="success-progress-information--progress-bar">
+								<NcProgressBar :value="getProgressValueOfMultipleFilesLinked" size="medium" />
+							</div>
+						</div>
+					</div>
+				</div>
 				<div v-else class="multiple-link-modal-inside-content">
 					<h2>
 						{{ t('integration-openproject', 'Link to work package') }}
@@ -13,7 +52,8 @@
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
 						:search-origin="searchOrigin"
-						@saved="onSaved" />
+						@get-chunked-informations="getChunkedInformations"
+						@close="closeRequestModal" />
 					<EmptyContent
 						id="openproject-empty-content"
 						:state="state"
@@ -33,11 +73,18 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
+import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
+import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
+
 import {
-	WORKPACKAGES_SEARCH_ORIGIN,
-	STATE,
 	checkOauthConnectionResult,
+	STATE,
+	WORKPACKAGES_SEARCH_ORIGIN,
 } from '../utils.js'
+import { showSuccess, showError } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
@@ -47,6 +94,11 @@ export default {
 		SearchInput,
 		NcModal,
 		LoadingIcon,
+		NcProgressBar,
+		AlertCircleOutline,
+		NcButton,
+		AutoRenewIcon,
+		FileLinkIcon,
 	},
 	data() {
 		return {
@@ -58,6 +110,7 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
+			chunkingInformation: null,
 		}
 	},
 
@@ -68,12 +121,50 @@ export default {
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
+		getTotalNoOfFilesSelectedInChunking() {
+			return this.chunkingInformation?.totalNoOfFilesSelected
+		},
+		getTotalNoOfFilesAlreadyLinkedInChunking() {
+			return this.chunkingInformation?.totalFilesAlreadyLinked
+		},
+		getTotalNoOfFilesNotLinkedInChunking() {
+			return this.chunkingInformation?.totalFilesNotLinked
+		},
+		getProgressValueOfMultipleFilesLinked() {
+			const progressPercentage = parseInt((this.chunkingInformation?.totalFilesAlreadyLinked / this.chunkingInformation?.totalNoOfFilesSelected) * 100)
+			if (progressPercentage === 100) {
+				this.closeRequestModal()
+				showSuccess(t('integration_openproject', 'All selected files has been linked to WorkPackage Successfully!!'))
+			}
+			return progressPercentage
+		},
+		getChunkStateInChunking() {
+			return this.chunkingInformation?.isChunkingError
+		},
+		canCloseModal() {
+			return this.chunkingInformation?.isChunkingError !== false
+		},
 	},
 
 	mounted() {
 		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 	},
 	methods: {
+		async relinkRemainingFilesToWorkPackage() {
+			this.chunkingInformation.isChunkingError = false
+			const remainingFilesToChunk = this.chunkingInformation.remainingFileInformations
+			const selectedWorkPackage = this.chunkingInformation.selectedWorkPackage
+			const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(remainingFilesToChunk)
+			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkPackage, true, this)
+			if (this.chunkingInformation?.totalFilesAlreadyLinked !== remainingFilesToChunk.length) {
+				showError(
+					t('integration_openproject', 'Failed to link selected files to a work package')
+				)
+			}
+		},
+		getChunkedInformations(data) {
+			this.chunkingInformation = data
+		},
 		showModal() {
 			this.show = true
 		},
@@ -92,6 +183,7 @@ export default {
 			this.fileInfos = []
 			this.alreadyLinkedWorkPackage = []
 			this.show = false
+			this.chunkingInformation = null
 		},
 		async fetchWorkpackagesForSingleFileSelected(fileId) {
 			this.state = STATE.LOADING
@@ -122,10 +214,7 @@ export default {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				}
 			}
-		},
-		onSaved() {
-			this.closeRequestModal()
-		},
+		}
 	},
 }
 </script>
@@ -149,5 +238,47 @@ h2 {
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+}
+
+.link-progress-information-wrapper {
+	width: 75%;
+}
+
+.link-progress-information-success {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.success-progress-information {
+	width: 100%;
+	height: 45px;
+	margin-right: 10px;
+	margin-left: 10px;
+	&--title {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	&--progress-bar {
+		margin-top: 11px;
+	}
+}
+
+.link-progress-information-failed {
+	width: 100%;
+	height: 250px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&--details {
+		text-align: center;
+		&--info {
+			padding: 13px;
+		}
+	}
 }
 </style>

@@ -405,10 +405,23 @@ describe('LinkMultipleFilesModal.vue', () => {
 			})
 		})
 
-		describe('onSave', () => {
+		describe('close', () => {
 			it('should closed the modal', async () => {
-				await wrapper.vm.onSaved()
+				await wrapper.vm.closeRequestModal()
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
+			})
+
+			it('should make chunkng information empty', async () => {
+				await wrapper.vm.closeRequestModal()
+				expect(wrapper.vm.chunkingInformation).toBe(null)
+			})
+
+			it('should make chunkng information empty when not empty', async () => {
+				await wrapper.setData({
+					chunkingInformation: {},
+				})
+				await wrapper.vm.closeRequestModal()
+				expect(wrapper.vm.chunkingInformation).toBe(null)
 			})
 
 			it('should empty "alreadyLinkedWorkPackage", "fileInfos" and close modal', async () => {
@@ -428,7 +441,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 						picture: '/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System',
 					}],
 				})
-				await wrapper.vm.onSaved()
+				await wrapper.vm.closeRequestModal()
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
 			})
 		})
