@@ -62,6 +62,7 @@ OC.L10N.register(
     "OpenProject integration" : "OpenProject integrácia",
     "Invalid key" : "Neplatný kľúč",
     "Default user settings" : "Predvolené nastavenia užívateľa",
+    "Server replied with an error message, please check the Nextcloud logs" : "Server vrátil chybovú hlášku, prosím skontrolujte logy Nextcloudu",
     "Documentation" : "Dokumentácia"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
