@@ -98,7 +98,7 @@ export const workpackageHelper = {
 		}
 		return chunkedResult
 	},
-	getTotalNoOfFilesFromChunks(chunkedFilesInformations) {
+	getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations) {
 		const totalFiles = []
 		for (let i = 0; i < chunkedFilesInformations.length; i++) {
 			totalFiles.push(...chunkedFilesInformations[i])
@@ -111,9 +111,9 @@ export const workpackageHelper = {
 	*/
 	async linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkpackage, isRemaining, component) {
 		const chunkingInformation = {
-			totalNoOfFilesSelected: this.getTotalNoOfFilesFromChunks(chunkedFilesInformations),
+			totalNoOfFilesSelected: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
 			totalFilesAlreadyLinked: 0,
-			totalFilesNotLinked: this.getTotalNoOfFilesFromChunks(chunkedFilesInformations),
+			totalFilesNotLinked: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
 			isChunkingError: false,
 			remainingFileInformations: [],
 			selectedWorkPackage: selectedWorkpackage,
@@ -135,13 +135,13 @@ export const workpackageHelper = {
 				if (chunkedFilesInformations.indexOf(fileInfoForBody) !== chunkedFilesInformations.length - 1) {
 					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + 20
 				} else {
-					// for the last chunked files information we only count the no of files which may not be 20
+					// for the last chunked files information we only count the no of files which are not be 20
 					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + fileInfoForBody.length
 				}
 				chunkingInformation.totalFilesNotLinked = chunkingInformation.totalNoOfFilesSelected - chunkingInformation.totalFilesAlreadyLinked
 			} catch (e) {
 				chunkingInformation.isChunkingError = true
-				// we compute the remaining files information when there is some error while chunking
+				// when error encounters while chunking we compute the information of files for relinking  again
 				for (let i = chunkedFilesInformations.indexOf(fileInfoForBody); i < chunkedFilesInformations.length; i++) {
 					chunkingInformation.remainingFileInformations.push(...chunkedFilesInformations[i])
 				}

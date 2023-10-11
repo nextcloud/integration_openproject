@@ -10,18 +10,18 @@
 					<div v-if="getChunkStateInChunking" class="link-progress-information-failed">
 						<div class="link-progress-information-failed--details">
 							<div class="link-progress-information-failed--details--info">
-								<AlertCircleOutline fill-color="#FF0000" :size="70" />
+								<AlertCircleOutline fill-color="#e9322d" :size="70" />
 							</div>
 							<div class="link-progress-information-failed--details--info">
-								<p>Files selected: {{ getTotalNoOfFilesSelectedInChunking }}</p>
-								<p>Files successfully linked: {{ getTotalNoOfFilesAlreadyLinkedInChunking }}</p>
-								<p :style="{ color: '#FF0000' }">
-									Files failed to linked: {{ getTotalNoOfFilesNotLinkedInChunking }}
+								<p>{{ t('integration_openproject', `Files selected: ${getTotalNoOfFilesSelectedInChunking}`) }}</p>
+								<p>{{ t('integration_openproject', `Files successfully linked: ${getTotalNoOfFilesAlreadyLinkedInChunking}`) }}</p>
+								<p class="link-progress-information-failed--details--info--error">
+									{{ t('integration_openproject', `Files failed to linked: ${getTotalNoOfFilesNotLinkedInChunking}`) }}
 								</p>
 							</div>
 							<div class="link-progress-information-failed--details--info">
 								<NcButton
-									data-test-id="reset-user-app-password"
+									data-test-id="relink-remaining-files"
 									@click="relinkRemainingFilesToWorkPackage">
 									<template #icon>
 										<AutoRenewIcon :size="20" />
@@ -35,8 +35,8 @@
 						<FileLinkIcon :size="50" />
 						<div class="success-progress-information">
 							<div class="success-progress-information--title">
-								<p>{{ getTotalNoOfFilesAlreadyLinkedInChunking }} of {{ getTotalNoOfFilesSelectedInChunking }} files linked</p>
-								<p>{{ getProgressValueOfMultipleFilesLinked }}%</p>
+								<p>{{ t('integration_openproject', `${getTotalNoOfFilesAlreadyLinkedInChunking} of ${getTotalNoOfFilesSelectedInChunking} files linked`) }}</p>
+								<p>{{ t('integration_openproject', `${getProgressValueOfMultipleFilesLinked}%`) }}</p>
 							</div>
 							<div class="success-progress-information--progress-bar">
 								<NcProgressBar :value="getProgressValueOfMultipleFilesLinked" size="medium" />
@@ -78,6 +78,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
+import { translate as t } from '@nextcloud/l10n'
 
 import {
 	checkOauthConnectionResult,
@@ -85,6 +86,7 @@ import {
 	WORKPACKAGES_SEARCH_ORIGIN,
 } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 
 export default {
@@ -131,10 +133,12 @@ export default {
 			return this.chunkingInformation?.totalFilesNotLinked
 		},
 		getProgressValueOfMultipleFilesLinked() {
-			const progressPercentage = parseInt((this.chunkingInformation?.totalFilesAlreadyLinked / this.chunkingInformation?.totalNoOfFilesSelected) * 100)
+			const progressPercentage = parseInt((this.getTotalNoOfFilesAlreadyLinkedInChunking / this.getTotalNoOfFilesSelectedInChunking) * 100)
 			if (progressPercentage === 100) {
 				this.closeRequestModal()
-				showSuccess(t('integration_openproject', 'All selected files has been linked to WorkPackage Successfully!!'))
+				showSuccess(
+					t('integration_openproject', 'Links to work package created successfully for selected files!')
+				)
 			}
 			return progressPercentage
 		},
@@ -156,9 +160,9 @@ export default {
 			const selectedWorkPackage = this.chunkingInformation.selectedWorkPackage
 			const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(remainingFilesToChunk)
 			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkPackage, true, this)
-			if (this.chunkingInformation?.totalFilesAlreadyLinked !== remainingFilesToChunk.length) {
+			if (this.getTotalNoOfFilesAlreadyLinkedInChunking !== remainingFilesToChunk.length) {
 				showError(
-					t('integration_openproject', 'Failed to link selected files to a work package')
+					t('integration_openproject', 'Failed to link selected files to work package')
 				)
 			}
 		},
@@ -214,7 +218,7 @@ export default {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				}
 			}
-		}
+		},
 	},
 }
 </script>
@@ -278,6 +282,9 @@ h2 {
 		text-align: center;
 		&--info {
 			padding: 13px;
+			&--error {
+				color: var(--color-error);
+			}
 		}
 	}
 }

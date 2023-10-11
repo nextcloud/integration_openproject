@@ -39,6 +39,7 @@ import WorkPackage from './WorkPackage.vue'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
+import { translate as t } from '@nextcloud/l10n'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -167,6 +168,7 @@ export default {
 					this.$emit('close', selectedOption)
 					this.resetState()
 				} else {
+					// the selected files will be linked in chunks
 					const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(this.fileInfo)
 					await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedOption, false, this)
 					this.resetState()

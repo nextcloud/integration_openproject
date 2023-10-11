@@ -827,11 +827,11 @@ describe('SearchInput.vue', () => {
 						This test scenario create a file information of 55 which is used through the whole test for the link with chunking
 						It means the file will get hchunked as [20, 20, 25]
 					 */
-					let multipleFilesForChunking = []
-					for(let i = 1; i<=55; i++) {
+					const multipleFilesForChunking = []
+					for (let i = 1; i <= 55; i++) {
 						multipleFilesForChunking.push({
 							id: i,
-							name: `test${i}.txt`
+							name: `test${i}.txt`,
 						})
 					}
 
@@ -839,8 +839,8 @@ describe('SearchInput.vue', () => {
 						wrapper = mountSearchInput()
 						const chunkedInformation = workpackageHelper.chunkMultipleSelectedFilesInformation(multipleFilesForChunking)
 						expect(chunkedInformation.length).toBe(3)
-						for(let i = 0; i < chunkedInformation.length; i ++) {
-							if(i === chunkedInformation.length - 1) {
+						for (let i = 0; i < chunkedInformation.length; i++) {
+							if (i === chunkedInformation.length - 1) {
 								expect(chunkedInformation[i].length).toBe(15)
 							} else {
 								expect(chunkedInformation[i].length).toBe(20)
@@ -871,6 +871,7 @@ describe('SearchInput.vue', () => {
 						})
 						afterEach(() => {
 							axiosGetSpy.mockRestore()
+							axios.post.mockRestore()
 						})
 						it('should send request 3 times to link chunked file to workpackage', async () => {
 							const postSpy = jest.spyOn(axios, 'post')
@@ -879,7 +880,7 @@ describe('SearchInput.vue', () => {
 								}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							expect(postSpy).toHaveBeenCalledTimes(3)
@@ -890,10 +891,10 @@ describe('SearchInput.vue', () => {
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
-							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit');
+							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit')
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							expect(postSpy).toHaveBeenCalledTimes(3)
@@ -901,17 +902,17 @@ describe('SearchInput.vue', () => {
 						})
 
 						it('should emit event "get-chunked-informations" with data', async () => {
-							let emittedData;
-							const postSpy = jest.spyOn(axios, 'post')
+							let emittedData
+							jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
 							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data;
-							});
+								emittedData = data
+							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							expect(spyOnEmit).toHaveBeenCalledTimes(3)
@@ -922,24 +923,24 @@ describe('SearchInput.vue', () => {
 							[
 								'should set chunk error true',
 								{
-									key: "isChunkingError",
+									key: 'isChunkingError',
 									value: true,
 								},
 							],
 							[
 								'should set alreadylinked files to 40',
 								{
-									key: "totalFilesAlreadyLinked",
+									key: 'totalFilesAlreadyLinked',
 									value: 40,
 								},
 							],
 							[
 								'should set files not linked to 2',
 								{
-									key: "totalFilesNotLinked",
+									key: 'totalFilesNotLinked',
 									value: 15,
 								},
-							]
+							],
 						])('%s when request fails', async (name, expectedData) => {
 							/*
 							Here the emmited chunking information data will be as
@@ -954,20 +955,22 @@ describe('SearchInput.vue', () => {
 							*/
 							let emittedData
 							// rejects the 3rd request
-							const postSpy = jest.spyOn(axios, 'post')
+							jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
-								.mockImplementation(() => Promise.reject({}))
-							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data;
-							});
+								.mockImplementation(() => Promise.reject(
+									new Error('Throw eror')
+								))
+							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
+								emittedData = data
+							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							const expectedKey = expectedData.key
@@ -975,22 +978,22 @@ describe('SearchInput.vue', () => {
 						})
 
 						it('should set length of remaining files to 15', async () => {
-							let emittedData;
+							let emittedData
 							// rejects the 3rd request
-							const postSpy = jest.spyOn(axios, 'post')
+							jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
-								.mockImplementation(() => Promise.reject({}))
-							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
-								emittedData = data;
-							});
+								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
+							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
+								emittedData = data
+							})
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							expect(emittedData.remainingFileInformations.length).toBe(15)
@@ -999,14 +1002,14 @@ describe('SearchInput.vue', () => {
 						it('should retry once if a request to link fails', async () => {
 							const postSpy = jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => {
-									throw new Error('Throw error to retry once');
+									throw new Error('Throw error to retry once')
 								})
-								.mockImplementation(() => {
-									status: 200
-								});
+								.mockImplementation(() => Promise.resolve({
+									status: 200,
+								}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							// here 'makeRequestToLinkFilesToWorkPackage' is called 4 times since the chunk is [20,20,15] 3 times and 1 is added for retry since it fails for the first time
@@ -1015,10 +1018,10 @@ describe('SearchInput.vue', () => {
 
 						it('should not retry again if the retry it self fails', async () => {
 							const postSpy = jest.spyOn(axios, 'post')
-								.mockImplementation(() => Promise.reject())
+								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
-							for(let i = 0 ; i < 5; i++) {
+							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
 							// here the post is called 2 times (1 extra for retry)
