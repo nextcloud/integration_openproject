@@ -15,7 +15,8 @@
 		"stylelint": "stylelint css src",
 		"stylelint:fix": "stylelint css src --fix",
 		"test:unit": "jest --silent",
-		"test:unit:watch": "jest --watch --no-coverage"
+		"test:unit:watch": "jest --watch --no-coverage",
+		"test:e2e": "cucumber-js --require cucumber.config.js --require tests/e2e/stepDefinitions/**/*.js --format @cucumber/pretty-formatter"
 	},
 	"repository": {
 		"type": "git",
@@ -52,15 +53,20 @@
 		"vue-material-design-icons": "^5.1.2"
 	},
 	"devDependencies": {
+		"@cucumber/cucumber": "^7.3.1",
+		"@cucumber/pretty-formatter": "^1.0.0",
 		"@nextcloud/babel-config": "^1.0.0",
 		"@nextcloud/browserslist-config": "^2.3.0",
 		"@nextcloud/eslint-config": "^8.1.2",
 		"@nextcloud/stylelint-config": "^2.2.0",
 		"@nextcloud/webpack-vue-config": "^5.3.0",
+		"@playwright/test": "^1.37.1",
 		"@vue/cli-plugin-unit-jest": "5.0.6",
 		"@vue/test-utils": "1.3.4",
 		"@vue/vue2-jest": "^27.0.0",
 		"eslint-webpack-plugin": "^4.0.1",
+		"node-fetch": "^3.3.2",
+		"playwright": "^1.37.1",
 		"stylelint-webpack-plugin": "^4.1.1"
 	}
 }
