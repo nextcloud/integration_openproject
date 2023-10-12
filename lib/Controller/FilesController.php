@@ -24,9 +24,7 @@ use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
-use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\AppFramework\OCSController;
@@ -35,8 +33,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\RichObjectStrings\IValidator;
-use Psr\Log\LoggerInterface;
+use OCP\Server;
 use Throwable;
 use OCP\Files\DavUtil;
 
@@ -63,24 +60,9 @@ class FilesController extends OCSController {
 	protected $connection;
 
 	/**
-	 * @var IValidator
-	 */
-	private $richObjectValidator;
-
-	/**
 	 * @var ILogger
 	 */
 	private $logger;
-
-	/**
-	 * @var IL10N
-	 */
-	private $l;
-
-	/**
-	 * @var IConfig
-	 */
-	private $config;
 
 	/**
 	 * @var IUserManager
@@ -130,10 +112,7 @@ class FilesController extends OCSController {
 								IManager $activityManager,
 								IAppManager $appManager,
 								IDBConnection $connection,
-								IValidator $richObjectValidator,
 								ILogger $logger,
-								IL10N $l,
-								IConfig $config,
 								IUserManager $userManager,
 								DavUtil $davUtils,
 								LoggerInterface $log
@@ -144,10 +123,7 @@ class FilesController extends OCSController {
 		$this->mountCollection = $mountCollection;
 		$this->activityManager = $activityManager;
 		$this->connection = $connection;
-		$this->richObjectValidator = $richObjectValidator;
 		$this->logger = $logger;
-		$this->l = $l;
-		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
 		$this->davUtils = $davUtils;
@@ -308,24 +284,15 @@ class FilesController extends OCSController {
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&
 			class_exists('\OCA\Activity\UserSettings')
 		) {
-			if (version_compare(OC_Util::getVersionString(), '28') >= 0) {
-				$activityData = new Data($this->activityManager, $this->connection, $this->log);
-			} else {
-				$activityData = new Data($this->activityManager, $this->connection);
-			}
+			$activityData = Server::get(Data::class);
 		} else {
 			return null;
 		}
 
 		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
-		$groupHelper = new GroupHelperDisabled(
-			$this->l,
-			$this->activityManager,
-			$this->richObjectValidator,
-			$this->logger
-		);
+		$groupHelper = Server::get(GroupHelperDisabled::class);
 		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
-		$userSettings = new UserSettings($this->activityManager, $this->config);
+		$userSettings = Server::get(UserSettings::class);
 		if (!method_exists($activityData, 'get') ||
 			!method_exists($activityData, 'getById')
 		) {
