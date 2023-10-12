@@ -75,7 +75,7 @@ jobs:
         run: |
           if [[ ${{ matrix.nextcloudVersion }} == "master" ]]
           then
-            make psalm
+            composer run psalm
           else
             make phpstan
           fi

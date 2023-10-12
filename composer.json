@@ -14,7 +14,8 @@
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
-		"phpstan": "phpstan analyse"
+		"phpstan": "phpstan analyse",
+		"psalm": "psalm --no-cache"
 	},
 	"config": {
 		"allow-plugins": {
