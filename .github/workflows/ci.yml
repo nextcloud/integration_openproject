@@ -73,10 +73,8 @@ jobs:
 
       - name: PHP code analysis
         run: |
-          if [[ ${{ matrix.nextcloudVersion }} == "master" ]]
+          if [[ ${{ matrix.nextcloudVersion }} != "master" ]]
           then
-            make psalm
-          else
             make phpstan
           fi
 
