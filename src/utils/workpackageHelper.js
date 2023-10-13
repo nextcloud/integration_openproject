@@ -148,9 +148,9 @@ export const workpackageHelper = {
 				break
 			} finally {
 				if (isRemaining) {
-					component.getChunkedInformations(chunkingInformation)
+					component.setChunkedInformations(chunkingInformation)
 				} else {
-					component.$emit('get-chunked-informations', chunkingInformation)
+					component.$emit('set-chunked-informations', chunkingInformation)
 				}
 			}
 		}

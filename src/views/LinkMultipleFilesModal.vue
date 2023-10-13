@@ -52,7 +52,7 @@
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
 						:search-origin="searchOrigin"
-						@get-chunked-informations="getChunkedInformations"
+						@set-chunked-informations="setChunkedInformations"
 						@close="closeRequestModal" />
 					<EmptyContent
 						id="openproject-empty-content"
@@ -166,7 +166,7 @@ export default {
 				)
 			}
 		},
-		getChunkedInformations(data) {
+		setChunkedInformations(data) {
 			this.chunkingInformation = data
 		},
 		showModal() {

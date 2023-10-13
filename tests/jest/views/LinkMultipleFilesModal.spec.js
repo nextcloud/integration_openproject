@@ -482,7 +482,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				})
 
 				it('should show error dialog on failure', async () => {
-					const postSpy = jest.spyOn(axios, 'post')
+					jest.spyOn(axios, 'post')
 						.mockImplementation(() => Promise.reject(new Error('Throw eror')))
 					dialogs.showError
 						.mockImplementationOnce()
