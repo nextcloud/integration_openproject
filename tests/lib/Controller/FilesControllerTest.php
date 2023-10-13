@@ -7,13 +7,10 @@ use OCP\Activity\IManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\DavUtil;
 use OCP\Files\Node;
-use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
-use OCP\RichObjectStrings\IValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
@@ -1012,10 +1009,7 @@ class FilesControllerTest extends TestCase {
 			$this->createMock(IManager::class),
 			$appManagerMock,
 			$this->createMock(IDBConnection::class),
-			$this->createMock(IValidator::class),
 			$this->createMock(ILogger::class),
-			$this->createMock(IL10N::class),
-			$this->createMock(IConfig::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(DavUtil::class)
 		);
@@ -1078,10 +1072,7 @@ class FilesControllerTest extends TestCase {
 				$this->createMock(IManager::class),
 				$appManagerMock,
 				$this->createMock(IDBConnection::class),
-				$this->createMock(IValidator::class),
 				$this->createMock(ILogger::class),
-				$this->createMock(IL10N::class),
-				$this->createMock(IConfig::class),
 				$this->createMock(IUserManager::class),
 				$davUtilsMock
 			])
