@@ -12,7 +12,6 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
-use OC_Util;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
@@ -82,11 +81,6 @@ class FilesController extends OCSController {
 	private $davUtils;
 
 	/**
-	 * @var LoggerInterface
-	 */
-	private $log;
-
-	/**
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IRootFolder $rootFolder
@@ -95,13 +89,9 @@ class FilesController extends OCSController {
 	 * @param IManager $activityManager
 	 * @param IAppManager $appManager
 	 * @param IDBConnection $connection
-	 * @param IValidator $richObjectValidator
 	 * @param ILogger $logger
-	 * @param IL10N $l
-	 * @param IConfig $config
 	 * @param IUserManager $userManager
 	 * @param DavUtil $davUtils
-	 * @param LoggerInterface $log
 	 */
 
 	public function __construct(string $appName,
@@ -114,8 +104,7 @@ class FilesController extends OCSController {
 								IDBConnection $connection,
 								ILogger $logger,
 								IUserManager $userManager,
-								DavUtil $davUtils,
-								LoggerInterface $log
+								DavUtil $davUtils
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -127,7 +116,6 @@ class FilesController extends OCSController {
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
 		$this->davUtils = $davUtils;
-		$this->log = $log;
 	}
 
 	/**

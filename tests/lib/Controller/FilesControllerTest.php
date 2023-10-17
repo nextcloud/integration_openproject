@@ -13,7 +13,6 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use function PHPUnit\Framework\assertSame;
 
 /**
@@ -1014,7 +1013,6 @@ class FilesControllerTest extends TestCase {
 			$this->createMock(ILogger::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(DavUtil::class),
-			$this->createMock(LoggerInterface::class)
 		);
 		if ($trashManagerMock === null) {
 			$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
@@ -1077,8 +1075,7 @@ class FilesControllerTest extends TestCase {
 				$this->createMock(IDBConnection::class),
 				$this->createMock(ILogger::class),
 				$this->createMock(IUserManager::class),
-				$davUtilsMock,
-				$this->createMock(LoggerInterface::class)
+				$davUtilsMock
 			])
 		->onlyMethods($onlyMethods)
 		->getMock();
