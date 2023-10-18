@@ -699,7 +699,7 @@ Feature: retrieve file information of a single file, using the file ID
       "required": [
       "status",
       "statuscode",
-      "size",
+      "size"
       "name",
       "mtime",
       "ctime",
@@ -900,7 +900,7 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_name": {"type": "null"},
       "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVCK$"},
-      "path": {"type": "string", "pattern":"^files\/folder$"}
+      "path": {"type": "string", "pattern":"^files\/folder/$"}
       }
       }
       """
@@ -1173,7 +1173,7 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
       "dav_permissions": {"type": "string", "pattern":"^<requester-dav-permissions>$"},
-      "path": {"type": "string", "pattern":"^files\/folder$"}
+      "path": {"type": "string", "pattern":"^files\/folder/$"}
       }
       }
       """
@@ -1205,7 +1205,7 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
       "dav_permissions": {"type": "string", "pattern":"^<owner-dav-permissions>$"},
-      "path": {"type": "string", "pattern":"^files\/folder$"}
+      "path": {"type": "string", "pattern":"^files\/folder/$"}
       }
       }
       """
@@ -1260,7 +1260,7 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
       "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK$"},
-      "path": {"type": "string", "pattern":"^files/groupFolder$"}
+      "path": {"type": "string", "pattern":"^files/groupFolder/$"}
       }
       }
       """
