@@ -1108,7 +1108,7 @@ class OpenProjectAPIService {
 	public function generateAppPasswordTokenForUser(): string {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$userID = $user->getUID();
-		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS.ISecureRandom::CHAR_SYMBOLS);
 		$generatedToken = $this->tokenProvider->generateToken(
 			$token,
 			$userID,
