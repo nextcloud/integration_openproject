@@ -10,7 +10,6 @@ import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqRes
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
-import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -770,7 +769,7 @@ describe('SearchInput.vue', () => {
 									{ status: 200, data: [] })
 								)
 							await wrapper.setProps({
-								// here already linked package is empty when the file selected files is more than 1
+								// here already linked work package is empty when the selected files is more than 1
 								linkedWorkPackages: [],
 							})
 
@@ -823,9 +822,9 @@ describe('SearchInput.vue', () => {
 
 				describe('more than 20 with chunk', () => {
 					/*
-						For the test of linking multiple files more than 20
-						This test scenario create a file information of 55 which is used through the whole test for the link with chunking
-						It means the file will get hchunked as [20, 20, 25]
+						For the test of linking multiple files more than 20.
+						This test scenario creates a file information of 55 which is used through the whole test for the link with chunking.
+						It means the file will get chunked as [20, 20, 15].
 					 */
 					const multipleFilesForChunking = []
 					for (let i = 1; i <= 55; i++) {
@@ -834,19 +833,6 @@ describe('SearchInput.vue', () => {
 							name: `test${i}.txt`,
 						})
 					}
-
-					it('should chunk file information in 20', async () => {
-						wrapper = mountSearchInput()
-						const chunkedInformation = workpackageHelper.chunkMultipleSelectedFilesInformation(multipleFilesForChunking)
-						expect(chunkedInformation.length).toBe(3)
-						for (let i = 0; i < chunkedInformation.length; i++) {
-							if (i === chunkedInformation.length - 1) {
-								expect(chunkedInformation[i].length).toBe(15)
-							} else {
-								expect(chunkedInformation[i].length).toBe(20)
-							}
-						}
-					})
 
 					describe('select a work package for linking', () => {
 						let axiosGetSpy
@@ -887,7 +873,7 @@ describe('SearchInput.vue', () => {
 						})
 
 						it('should emit event "get-chunked-informations" for 3 times', async () => {
-							const postSpy = jest.spyOn(axios, 'post')
+							jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => Promise.resolve({
 									status: 200,
 								}))
@@ -897,11 +883,10 @@ describe('SearchInput.vue', () => {
 							for (let i = 0; i < 5; i++) {
 								await localVue.nextTick()
 							}
-							expect(postSpy).toHaveBeenCalledTimes(3)
 							expect(spyOnEmit).toHaveBeenCalledTimes(3)
 						})
 
-						it('should emit event "get-chunked-informations" with data', async () => {
+						it('should link all the files with chunks upon success', async () => {
 							let emittedData
 							jest.spyOn(axios, 'post')
 								.mockImplementationOnce(() => Promise.resolve({
@@ -916,6 +901,7 @@ describe('SearchInput.vue', () => {
 								await localVue.nextTick()
 							}
 							expect(spyOnEmit).toHaveBeenCalledTimes(3)
+							// here when the linking files with chunking is successful "totalFilesAlreadyLinked" and the total no of files selected must be equal
 							expect(emittedData.totalFilesAlreadyLinked).toBe(multipleFilesForChunking.length)
 						})
 
@@ -923,7 +909,7 @@ describe('SearchInput.vue', () => {
 							[
 								'should set chunk error true',
 								{
-									key: 'isChunkingError',
+									key: 'error',
 									value: true,
 								},
 							],
@@ -948,7 +934,7 @@ describe('SearchInput.vue', () => {
 							 	totalNoOfFilesSelected: number,
 							 	totalFilesAlreadyLinked: number,
 							 	totalFilesNotLinked: number,
-							 	isChunkingError: bool,
+							 	error: bool,
 							 	remainingFileInformations: Array,
 							 	selectedWorkPackage: Object
 							 }

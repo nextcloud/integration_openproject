@@ -169,8 +169,7 @@ export default {
 					this.resetState()
 				} else {
 					// the selected files will be linked in chunks
-					const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(this.fileInfo)
-					await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedOption, false, this)
+					await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(this.fileInfo, selectedOption, false, this)
 					this.resetState()
 				}
 			}

@@ -423,7 +423,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				totalNoOfFilesSelected: 100,
 				totalFilesAlreadyLinked: 65,
 				totalFilesNotLinked: 35,
-				isChunkingError: true,
+				error: true,
 				remainingFileInformations,
 				selectedWorkPackage: { fileId: 123, id: 999 },
 			}
@@ -466,7 +466,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 					await wrapper.setData({
 						chunkingInformation: {
 							totalNoOfFilesSelected: 100,
-							isChunkingError: true,
+							error: true,
 							totalFilesAlreadyLinked: 65,
 							totalFilesNotLinked: 35,
 							remainingFileInformations,
@@ -483,14 +483,14 @@ describe('LinkMultipleFilesModal.vue', () => {
 
 				it('should show error dialog on failure', async () => {
 					jest.spyOn(axios, 'post')
-						.mockImplementation(() => Promise.reject(new Error('Throw eror')))
+						.mockImplementation(() => Promise.reject(new Error('Throw error')))
 					dialogs.showError
 						.mockImplementationOnce()
 					const wrapper = mountWrapper()
 					await wrapper.setData({
 						chunkingInformation: {
 							totalNoOfFilesSelected: 100,
-							isChunkingError: true,
+							error: true,
 							totalFilesAlreadyLinked: 65,
 							totalFilesNotLinked: 35,
 							remainingFileInformations,
@@ -513,14 +513,18 @@ describe('LinkMultipleFilesModal.vue', () => {
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
 			})
 
-			it('should make chunkng information empty', async () => {
-				await wrapper.vm.closeRequestModal()
-				expect(wrapper.vm.chunkingInformation).toBe(null)
-			})
-
-			it('should make chunkng information empty when not empty', async () => {
+			it.each([
+				[
+					'should clean chunkng information',
+					null,
+				],
+				[
+					'should clean chunkng information when not empty',
+					{},
+				],
+			])('%s', async (name, chunkingInformation) => {
 				await wrapper.setData({
-					chunkingInformation: {},
+					chunkingInformation,
 				})
 				await wrapper.vm.closeRequestModal()
 				expect(wrapper.vm.chunkingInformation).toBe(null)

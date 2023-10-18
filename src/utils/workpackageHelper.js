@@ -91,7 +91,7 @@ export const workpackageHelper = {
 		}
 	},
 	chunkMultipleSelectedFilesInformation(fileInformation) {
-		// this function chunks 20 files information in an array and returns array of it
+		// this function chunks 20 files of information in an array and returns an array of it, `20` because Openproject api only allows linking of 20 files per request
 		const chunkedResult = []
 		for (let i = 0; i < fileInformation.length; i += 20) {
 			chunkedResult.push(fileInformation.slice(i, i + 20))
@@ -99,25 +99,28 @@ export const workpackageHelper = {
 		return chunkedResult
 	},
 	getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations) {
-		const totalFiles = []
+		let totalNoFiles = 0
 		for (let i = 0; i < chunkedFilesInformations.length; i++) {
-			totalFiles.push(...chunkedFilesInformations[i])
+			totalNoFiles = totalNoFiles + chunkedFilesInformations[i].length
 		}
-		return totalFiles.length
+		return totalNoFiles
 	},
 
-	/*
-		Here the chunkedFilesInformation is the array that contains the array of chunked files information in 20
-	*/
-	async linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkpackage, isRemaining, component) {
+	// Here the chunkedFilesInformation is the array that contains the array of chunked files information in 20
+	async linkMultipleFilesToWorkPackageWithChunking(filesInformations, selectedWorkpackage, isRemaining, component) {
+		const chunkedFilesInformations = []
+		for (let i = 0; i < filesInformations.length; i += 20) {
+			chunkedFilesInformations.push(filesInformations.slice(i, i + 20))
+		}
 		const chunkingInformation = {
 			totalNoOfFilesSelected: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
 			totalFilesAlreadyLinked: 0,
 			totalFilesNotLinked: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
-			isChunkingError: false,
+			error: false,
 			remainingFileInformations: [],
 			selectedWorkPackage: selectedWorkpackage,
 		}
+
 		for (const fileInfoForBody of chunkedFilesInformations) {
 			try {
 				let retry = 0
@@ -140,7 +143,7 @@ export const workpackageHelper = {
 				}
 				chunkingInformation.totalFilesNotLinked = chunkingInformation.totalNoOfFilesSelected - chunkingInformation.totalFilesAlreadyLinked
 			} catch (e) {
-				chunkingInformation.isChunkingError = true
+				chunkingInformation.error = true
 				// when error encounters while chunking we compute the information of files for relinking  again
 				for (let i = chunkedFilesInformations.indexOf(fileInfoForBody); i < chunkedFilesInformations.length; i++) {
 					chunkingInformation.remainingFileInformations.push(...chunkedFilesInformations[i])

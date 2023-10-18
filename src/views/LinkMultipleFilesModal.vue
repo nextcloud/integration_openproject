@@ -2,21 +2,21 @@
 	<div class="multiple-link-modal-container">
 		<NcModal
 			v-if="show"
-			:can-close="canCloseModal"
+			:can-close="isError"
 			@close="closeRequestModal">
 			<div class="multiple-link-modal-content">
 				<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 				<div v-else-if="chunkingInformation !== null" class="link-progress-information-wrapper">
-					<div v-if="getChunkStateInChunking" class="link-progress-information-failed">
+					<div v-if="getError" class="link-progress-information-failed">
 						<div class="link-progress-information-failed--details">
 							<div class="link-progress-information-failed--details--info">
-								<AlertCircleOutline fill-color="#e9322d" :size="70" />
+								<AlertCircleOutline fill-color="var(--color-error)" :size="70" />
 							</div>
 							<div class="link-progress-information-failed--details--info">
 								<p>{{ t('integration_openproject', `Files selected: ${getTotalNoOfFilesSelectedInChunking}`) }}</p>
 								<p>{{ t('integration_openproject', `Files successfully linked: ${getTotalNoOfFilesAlreadyLinkedInChunking}`) }}</p>
 								<p class="link-progress-information-failed--details--info--error">
-									{{ t('integration_openproject', `Files failed to linked: ${getTotalNoOfFilesNotLinkedInChunking}`) }}
+									{{ t('integration_openproject', `Files failed to be linked: ${getTotalNoOfFilesNotLinkedInChunking}`) }}
 								</p>
 							</div>
 							<div class="link-progress-information-failed--details--info">
@@ -142,11 +142,11 @@ export default {
 			}
 			return progressPercentage
 		},
-		getChunkStateInChunking() {
-			return this.chunkingInformation?.isChunkingError
+		getError() {
+			return this.chunkingInformation?.error
 		},
-		canCloseModal() {
-			return this.chunkingInformation?.isChunkingError !== false
+		isError() {
+			return this.chunkingInformation?.error !== false
 		},
 	},
 
@@ -155,11 +155,10 @@ export default {
 	},
 	methods: {
 		async relinkRemainingFilesToWorkPackage() {
-			this.chunkingInformation.isChunkingError = false
+			this.chunkingInformation.error = false
 			const remainingFilesToChunk = this.chunkingInformation.remainingFileInformations
 			const selectedWorkPackage = this.chunkingInformation.selectedWorkPackage
-			const chunkedFilesInformations = workpackageHelper.chunkMultipleSelectedFilesInformation(remainingFilesToChunk)
-			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(chunkedFilesInformations, selectedWorkPackage, true, this)
+			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(remainingFilesToChunk, selectedWorkPackage, true, this)
 			if (this.getTotalNoOfFilesAlreadyLinkedInChunking !== remainingFilesToChunk.length) {
 				showError(
 					t('integration_openproject', 'Failed to link selected files to work package')
