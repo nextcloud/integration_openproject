@@ -233,7 +233,7 @@ Feature: retrieve information of multiple files using the file IDs
               "modifier_name": {"type": "null"},
               "trashed": {"type": "boolean", "enum": [false]},
               "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK"},
-              "path": {"type": "string", "pattern":"^files/groupFolder$"}
+              "path": {"type": "string", "pattern":"^files/groupFolder/$"}
             }
           }
       }
