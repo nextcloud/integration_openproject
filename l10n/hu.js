@@ -48,6 +48,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nincs OpenProject-fiók csatlakoztatva",
     "Search for work packages" : "Munkacsomagok keresése",
     "Search for a work package to create a relation" : "Keressen egy munkacsomagot, hogy létrehozzon egy kapcsolatot",
+    "Link to work package created successfully!" : "Hivatkozás a munkacsomaghoz sikeresen létrehozva!",
     "Failed to link file to work package" : "A fájl munkacsomaghoz kapcsolása sikertelen",
     "Mark as read" : "Megjelölés olvasottként",
     "Failed to get OpenProject notifications" : "Az OpenProject értesítések lekérése sikertelen",
