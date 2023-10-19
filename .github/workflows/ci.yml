@@ -3,6 +3,8 @@ on:
     branches:
       - 'master'
   pull_request:
+  schedule:
+    - cron: '0 22 * * *' # run at 10 PM UTC 
 
 name: CI
 
