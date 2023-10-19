@@ -212,16 +212,18 @@ class FilesController extends OCSController {
 				$modifierId = null;
 				$modifierName = null;
 			}
-			if ($file->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
-				$mimeType = 'application/x-op-directory';
-			} else {
-				$mimeType = $file->getMimeType();
-			}
 			$fullpath = $file->getpath();
 			// full path is in format `<user-name>/files/a/b/`
 			// since we don't want to send it with username, only get the `files/a/b` and send it
 			$path = explode('/', $fullpath, 3);
 			$davPermission = $this->getDavPermissions($file);
+			if ($file->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
+				$mimeType = 'application/x-op-directory';
+				$path = $path[2] . '/';
+			} else {
+				$mimeType = $file->getMimeType();
+				$path = $path[2];
+			}
 			return [
 				'status' => 'OK',
 				'statuscode' => 200,
@@ -237,7 +239,7 @@ class FilesController extends OCSController {
 				'modifier_name' => $modifierName,
 				'modifier_id' => $modifierId,
 				'dav_permissions' => $davPermission,
-				'path' => $path[2]
+				'path' => $path
 			];
 		}
 
