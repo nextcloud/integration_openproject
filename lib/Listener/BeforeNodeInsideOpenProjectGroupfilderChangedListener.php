@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
+use OC_User;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
@@ -48,6 +49,10 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		} elseif (($event instanceof BeforeNodeRenamedEvent)) {
 			$parentNode = $event->getSource()->getParent();
 		} else {
+			return;
+		}
+		// we do not listen event where user is not logged or there is no user session (e.g. public link )
+		if (OC_User::isIncognitoMode()) {
 			return;
 		}
 		$currentUserId = $this->userSession->getUser()->getUID();

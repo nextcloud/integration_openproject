@@ -37,49 +37,54 @@ class FilesControllerTest extends TestCase {
 			// getById returns only one result
 			[
 				[
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png', 'files/logo.png')
 				],
 				'files/logo.png',
 				'logo.png',
-				'image/png'
+				'image/png',
+				'files/logo.png'
 			],
 			// getById returns multiple results e.g. if the file was received through multiple path
 			[
 				[
-					$this->getNodeMock('image/png'),
-					$this->getNodeMock('image/png')
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/receivedAsFolderShare/logo.png', 'files/receivedAsFolderShare/logo.png'),
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/receivedAsFolderShare/logo.png', 'files/receivedAsFolderShare/logo.png')
 
 				],
 				'files/receivedAsFolderShare/logo.png',
 				'logo.png',
 				'image/png',
+				'files/receivedAsFolderShare/logo.png'
 			],
 			// getById returns a folder
 			[
 				[
-					$this->getNodeMock('httpd/unix-directory')
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/myFolder', 'files/myFolder')
 				],
 				'files/myFolder',
 				'myFolder',
-				'application/x-op-directory'
+				'application/x-op-directory',
+				'files/myFolder/'
 			],
 			// getById returns a sub folder
 			[
 				[
-					$this->getNodeMock('httpd/unix-directory')
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files/myFolder/a-sub-folder', 'files/myFolder/a-sub-folder')
 				],
 				'files/myFolder/a-sub-folder',
 				'a-sub-folder',
-				'application/x-op-directory'
+				'application/x-op-directory',
+				'files/myFolder/a-sub-folder/'
 			],
 			// getById returns the root folder
 			[
 				[
-					$this->getNodeMock('httpd/unix-directory')
+					$this->getNodeMock('httpd/unix-directory', 123, 'dir', '/testUser/files', 'files')
 				],
 				'files',
 				'files',
-				'application/x-op-directory'
+				'application/x-op-directory',
+				'files/'
 			],
 		];
 	}
@@ -90,13 +95,15 @@ class FilesControllerTest extends TestCase {
 	 * @param string $internalPath
 	 * @param string $expectedName
 	 * @param string $expectedMimeType
+	 * @param string $expectedPath
 	 * @return void
 	 */
 	public function testGetFileInfo(
 		$nodeMocks,
 		$internalPath,
 		$expectedName,
-		$expectedMimeType
+		$expectedMimeType,
+		$expectedPath
 	) {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')->willReturn($nodeMocks);
@@ -123,7 +130,7 @@ class FilesControllerTest extends TestCase {
 				'modifier_name' => null,
 				'modifier_id' => null,
 				'dav_permissions' => 'RGDNVCK',
-				'path' => 'files/test'
+				'path' => $expectedPath
 			],
 			$result->getData()
 		);
@@ -579,7 +586,7 @@ class FilesControllerTest extends TestCase {
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
-					'path' => 'files/myFolder/a-sub-folder'
+					'path' => 'files/myFolder/a-sub-folder/'
 				],
 				3 => [
 					'status' => 'OK',
@@ -596,7 +603,7 @@ class FilesControllerTest extends TestCase {
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
-					'path' => 'files'
+					'path' => 'files/'
 				]
 			],
 			$result->getData()
@@ -681,7 +688,7 @@ class FilesControllerTest extends TestCase {
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
-					'path' => 'files/myFolder/a-sub-folder'
+					'path' => 'files/myFolder/a-sub-folder/'
 				],
 				3 => [
 					'status' => 'OK',
@@ -698,7 +705,7 @@ class FilesControllerTest extends TestCase {
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
-					'path' => 'files/testFolder'
+					'path' => 'files/testFolder/'
 				]
 			],
 			$result->getData()
@@ -729,7 +736,7 @@ class FilesControllerTest extends TestCase {
 				'SRMGDNVCK',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 			// only read permision set for file
 			[
@@ -749,7 +756,7 @@ class FilesControllerTest extends TestCase {
 				'G',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 			// create+update permision set for folder
 			[
@@ -759,7 +766,7 @@ class FilesControllerTest extends TestCase {
 				'NVCK',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 			// share+read permision set for file
 			[
@@ -779,7 +786,7 @@ class FilesControllerTest extends TestCase {
 				'RG',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 			// shared+shareable+update permision set for file
 			[
@@ -799,7 +806,7 @@ class FilesControllerTest extends TestCase {
 				'SRNV',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 			// shared+shareable+update+create permision set for folder
 			[
@@ -809,7 +816,7 @@ class FilesControllerTest extends TestCase {
 				'SRNVCK',
 				'application/x-op-directory',
 				'Folder',
-				'files/Folder'
+				'files/Folder/'
 			],
 		];
 	}
