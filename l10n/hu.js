@@ -41,6 +41,7 @@ OC.L10N.register(
     "Error connecting to OpenProject" : "Hiba történt az OpenProjecthez történő csatlakozáskor",
     "Could not fetch work packages from OpenProject" : "Nem sikerült a munkacsomagok lekérése az OpenProjecttől",
     "No OpenProject notifications!" : "Nincsenek OpenProject-értesítések.",
+    "Add a new link to all selected files" : "Új hivatkozás hozzáadása a kijelölt fájlokhoz",
     "No OpenProject links yet" : "Még nincsenek OpenProject hivatkozások",
     "Unexpected Error" : "Váratlan hiba",
     "To add a link, use the search bar above to find the desired work package" : "Hivatkozás hozzáadásához használja a fenti keresősávot, hogy megtalálja a kívánt munkacsomagot",
