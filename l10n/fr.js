@@ -24,6 +24,7 @@ OC.L10N.register(
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
     "Yes, I have copied these values" : "Oui, j'ai copié ces valeurs",
     "Replace Nextcloud OAuth values" : "Remplacez les valeurs OAuth de Nextcloud",
+    "Create Nextcloud OAuth values" : "Créer les valeurs OAuth Nextcloud",
     "Copied!" : "Copié !",
     "Copy value" : "Copier la valeur",
     "Copied to the clipboard" : "Copié dans le presse-papiers",
