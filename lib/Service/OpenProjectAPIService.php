@@ -45,12 +45,11 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
 use OCP\Files\IMimeTypeLoader;
-use OC_Util;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Security\ISecureRandom;
-
+use OCP\Server;
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
 
@@ -1031,13 +1030,8 @@ class OpenProjectAPIService {
 	 * @throws NoUserException
 	 */
 	public function createGroupfolder(): void {
-		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
-		} else {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
-		}
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -1064,13 +1058,8 @@ class OpenProjectAPIService {
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 	public function getGroupFolderManager(): FolderManager {
-		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
-		} else {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
-		}
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		return $groupfoldersFolderManager;
 	}
 
