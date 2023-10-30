@@ -30,7 +30,6 @@ use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IGroupManager;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -44,7 +43,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
-use OCP\Files\IMimeTypeLoader;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -115,15 +113,6 @@ class OpenProjectAPIService {
 	private ISubAdmin $subAdminManager;
 
 	/**
-	 * @var IDBConnection
-	 */
-	private $dbConnection;
-
-	/**
-	 * @var IMimeTypeLoader
-	 */
-	private $mimeTypeLoader;
-	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 
@@ -144,12 +133,10 @@ class OpenProjectAPIService {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								IAppManager $appManager,
-								IDBConnection $dbConnection,
 								IProvider $tokenProvider,
 								ISecureRandom $random,
 								IEventDispatcher $eventDispatcher,
-								ISubAdmin $subAdminManager,
-								IMimeTypeLoader $mimeTypeLoader
+								ISubAdmin $subAdminManager
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -163,9 +150,7 @@ class OpenProjectAPIService {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->appManager = $appManager;
-		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
-		$this->mimeTypeLoader = $mimeTypeLoader;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->eventDispatcher = $eventDispatcher;
