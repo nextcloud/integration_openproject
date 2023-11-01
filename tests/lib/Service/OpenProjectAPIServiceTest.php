@@ -22,7 +22,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\App\IAppManager;
-use OCP\Files\IMimeTypeLoader;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -32,7 +31,6 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -462,12 +460,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
-			$this->createMock(IDBConnection::class),
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IMimeTypeLoader::class)
+			$this->createMock(ISubAdmin::class)
 		);
 	}
 
@@ -539,12 +535,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$userManagerMock,
 					$groupManagerMock,
 					$appManagerMock,
-					$this->createMock(IDBConnection::class),
 					$tokenProviderMock,
 					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
-					$this->createMock(IMimeTypeLoader::class)
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1663,12 +1657,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
-			$this->createMock(IDBConnection::class),
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IMimeTypeLoader::class)
+			$this->createMock(ISubAdmin::class)
 		);
 
 		$response = $service->request('', '', []);

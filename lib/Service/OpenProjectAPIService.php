@@ -30,7 +30,6 @@ use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IGroupManager;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -44,13 +43,11 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use OCP\AppFramework\Http;
-use OCP\Files\IMimeTypeLoader;
-use OC_Util;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Security\ISecureRandom;
-
+use OCP\Server;
 use OCA\OpenProject\AppInfo\Application;
 use Safe\Exceptions\JsonException;
 
@@ -116,15 +113,6 @@ class OpenProjectAPIService {
 	private ISubAdmin $subAdminManager;
 
 	/**
-	 * @var IDBConnection
-	 */
-	private $dbConnection;
-
-	/**
-	 * @var IMimeTypeLoader
-	 */
-	private $mimeTypeLoader;
-	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
 
@@ -145,12 +133,10 @@ class OpenProjectAPIService {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								IAppManager $appManager,
-								IDBConnection $dbConnection,
 								IProvider $tokenProvider,
 								ISecureRandom $random,
 								IEventDispatcher $eventDispatcher,
-								ISubAdmin $subAdminManager,
-								IMimeTypeLoader $mimeTypeLoader
+								ISubAdmin $subAdminManager
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -164,9 +150,7 @@ class OpenProjectAPIService {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->appManager = $appManager;
-		$this->dbConnection = $dbConnection;
 		$this->subAdminManager = $subAdminManager;
-		$this->mimeTypeLoader = $mimeTypeLoader;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->eventDispatcher = $eventDispatcher;
@@ -1031,13 +1015,8 @@ class OpenProjectAPIService {
 	 * @throws NoUserException
 	 */
 	public function createGroupfolder(): void {
-		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
-		} else {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
-		}
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
@@ -1064,13 +1043,8 @@ class OpenProjectAPIService {
 
 	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 	public function getGroupFolderManager(): FolderManager {
-		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection, $this->groupManager, $this->mimeTypeLoader, $this->logger);
-		} else {
-			// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
-			$groupfoldersFolderManager = new FolderManager($this->dbConnection);
-		}
+		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
+		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		return $groupfoldersFolderManager;
 	}
 
