@@ -1361,4 +1361,29 @@ class OpenProjectAPIService {
 		}
 		return $result;
 	}
+
+	/**
+	 * @param string $userId
+	 *
+	 * @return array<mixed>
+	 * @throws OpenprojectErrorException
+	 * @throws OpenprojectResponseException
+	 */
+	public function getOpenProjectConfiguration(string $userId): array {
+		$result = $this->request(
+			$userId, '/configuration'
+		);
+
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
+		}
+
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Configuration'
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result;
+	}
 }

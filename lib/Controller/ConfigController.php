@@ -416,6 +416,8 @@ class ConfigController extends Controller {
 					'dir' => $oauthJourneyStartingPageDecoded->file->dir,
 					'scrollto' => $oauthJourneyStartingPageDecoded->file->name
 				]);
+			} elseif ($oauthJourneyStartingPageDecoded->page === 'spreed') {
+				$newUrl = $oauthJourneyStartingPageDecoded->callUrl;
 			} else {
 				$this->logger->error(
 					'could not determine where the OAuth journey ' .
