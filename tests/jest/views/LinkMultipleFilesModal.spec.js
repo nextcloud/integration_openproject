@@ -7,10 +7,15 @@ import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../../../src/utils.js'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
+import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/auth')
 jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 const localVue = createLocalVue()
 
 const singleFileInfo = [{
@@ -38,6 +43,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 	const loadingIndicatorSelector = '.loading-spinner'
 	const emptyContentSelector = '#openproject-empty-content'
 	const emptyContentTitleMessageSelector = '.empty-content--message--title'
+	const relinkRemainingFilesButtonSelector = '[data-test-id="relink-remaining-files"]'
 	beforeEach(() => {
 		jest.useFakeTimers()
 		// eslint-disable-next-line no-import-assign,import/namespace
@@ -165,7 +171,6 @@ describe('LinkMultipleFilesModal.vue', () => {
 			axiosGetSpy.mockRestore()
 			workpackageHelper.clearCache()
 		})
-
 		describe('single file selected', () => {
 			it.each([
 				{ HTTPStatus: 400, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
@@ -385,7 +390,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 			it('sets the "error" state if the admin config is not okay', async () => {
 				const returnValue = { isAdmin: false }
 				getCurrentUser.mockReturnValue(returnValue)
-				const wrapper = mountWrapper()
+				wrapper = mountWrapper()
 				axios.get
 					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
 				await wrapper.setData({
@@ -405,10 +410,124 @@ describe('LinkMultipleFilesModal.vue', () => {
 			})
 		})
 
-		describe('onSave', () => {
+		describe('relink remaining multiple selected files', () => {
+			const remainingFileInformations = []
+			for (let i = 1; i <= 35; i++) {
+				remainingFileInformations.push({
+					id: i,
+					name: `test${i}.txt`,
+				})
+			}
+			// this is the chunking information that get set when there is some error while linking files in chunking
+			const chunkingInformations = {
+				totalNoOfFilesSelected: 100,
+				totalFilesAlreadyLinked: 65,
+				totalFilesNotLinked: 35,
+				error: true,
+				remainingFileInformations,
+				selectedWorkPackage: { fileId: 123, id: 999 },
+			}
+			it('should have a relink remanining files button', async () => {
+				const wrapper = mountWrapper()
+				await wrapper.setData({
+					chunkingInformation: chunkingInformations,
+				})
+				const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
+				expect(relinkRemainingButton.isVisible()).toBe(true)
+			})
+
+			describe('on trigger relink remaining files button', () => {
+				let postSpy, wrapper
+				beforeEach(() => {
+					postSpy = jest.spyOn(axios, 'post')
+						.mockImplementationOnce(() => Promise.resolve({
+							status: 200,
+						}))
+					wrapper = mountWrapper()
+				})
+				afterEach(() => {
+					axios.post.mockReset()
+					dialogs.showSuccess.mockReset()
+					dialogs.showError.mockReset()
+				})
+				it('should send request 2 times to link chunked file to workpackage', async () => {
+					await wrapper.setData({
+						chunkingInformation: chunkingInformations,
+					})
+					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
+					await relinkRemainingButton.trigger('click')
+					for (let i = 0; i < 5; i++) {
+						await localVue.nextTick()
+					}
+					expect(postSpy).toHaveBeenCalledTimes(2)
+				})
+
+				it('should close modal on success', async () => {
+					await wrapper.setData({
+						chunkingInformation: {
+							totalNoOfFilesSelected: 100,
+							error: true,
+							totalFilesAlreadyLinked: 65,
+							totalFilesNotLinked: 35,
+							remainingFileInformations,
+							selectedWorkPackage: { fileId: 123, id: 999 },
+						},
+					})
+					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
+					await relinkRemainingButton.trigger('click')
+					for (let i = 0; i < 5; i++) {
+						await localVue.nextTick()
+					}
+					expect(wrapper.vm.show).toBe(false)
+				})
+
+				it('should show error dialog on failure', async () => {
+					jest.spyOn(axios, 'post')
+						.mockImplementation(() => Promise.reject(new Error('Throw error')))
+					dialogs.showError
+						.mockImplementationOnce()
+					const wrapper = mountWrapper()
+					await wrapper.setData({
+						chunkingInformation: {
+							totalNoOfFilesSelected: 100,
+							error: true,
+							totalFilesAlreadyLinked: 65,
+							totalFilesNotLinked: 35,
+							remainingFileInformations,
+							selectedWorkPackage: { fileId: 123, id: 999 },
+						},
+					})
+					const relinkRemainingButton = wrapper.find(relinkRemainingFilesButtonSelector)
+					await relinkRemainingButton.trigger('click')
+					for (let i = 0; i < 5; i++) {
+						await localVue.nextTick()
+					}
+					expect(dialogs.showError).toBeCalledTimes(1)
+				})
+			})
+		})
+
+		describe('close', () => {
 			it('should closed the modal', async () => {
-				await wrapper.vm.onSaved()
+				await wrapper.vm.closeRequestModal()
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
+			})
+
+			it.each([
+				[
+					'should clean chunkng information',
+					null,
+				],
+				[
+					'should clean chunkng information when not empty',
+					{},
+				],
+			])('%s', async (name, chunkingInformation) => {
+				await wrapper.setData({
+					chunkingInformation,
+				})
+				await wrapper.vm.closeRequestModal()
+				expect(wrapper.vm.chunkingInformation).toBe(null)
 			})
 
 			it('should empty "alreadyLinkedWorkPackage", "fileInfos" and close modal', async () => {
@@ -428,7 +547,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 						picture: '/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System',
 					}],
 				})
-				await wrapper.vm.onSaved()
+				await wrapper.vm.closeRequestModal()
 				expect(wrapper.find(ncModalStubSelector).exists()).toBeFalsy()
 			})
 		})
@@ -456,6 +575,7 @@ function mountWrapper() {
 			alreadyLinkedWorkPackage: [],
 			isAdminConfigOk: true,
 			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
+			chunkingInformation: null,
 		}),
 	})
 }

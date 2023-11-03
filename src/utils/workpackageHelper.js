@@ -1,5 +1,6 @@
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 let cachedStatusColors = {}
 let cachedTypeColors = {}
@@ -87,6 +88,101 @@ export const workpackageHelper = {
 			typeCol: typeColor,
 			picture: avatarUrl,
 			fileId: workPackage.fileId,
+		}
+	},
+	chunkMultipleSelectedFilesInformation(fileInformation) {
+		// this function chunks 20 files of information in an array and returns an array of it, `20` because Openproject api only allows linking of 20 files per request
+		const chunkedResult = []
+		for (let i = 0; i < fileInformation.length; i += 20) {
+			chunkedResult.push(fileInformation.slice(i, i + 20))
+		}
+		return chunkedResult
+	},
+	getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations) {
+		let totalNoFiles = 0
+		for (let i = 0; i < chunkedFilesInformations.length; i++) {
+			totalNoFiles = totalNoFiles + chunkedFilesInformations[i].length
+		}
+		return totalNoFiles
+	},
+
+	// Here the chunkedFilesInformation is the array that contains the array of chunked files information in 20
+	async linkMultipleFilesToWorkPackageWithChunking(filesInformations, selectedWorkpackage, isRemaining, component) {
+		const chunkedFilesInformations = []
+		for (let i = 0; i < filesInformations.length; i += 20) {
+			chunkedFilesInformations.push(filesInformations.slice(i, i + 20))
+		}
+		const chunkingInformation = {
+			totalNoOfFilesSelected: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
+			totalFilesAlreadyLinked: 0,
+			totalFilesNotLinked: this.getTotalNoOfFilesInAlreadyChunkedFilesInformation(chunkedFilesInformations),
+			error: false,
+			remainingFileInformations: [],
+			selectedWorkPackage: selectedWorkpackage,
+		}
+
+		for (const fileInfoForBody of chunkedFilesInformations) {
+			try {
+				let retry = 0
+				while (retry <= 1) {
+					try {
+						await this.makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage)
+						break
+					} catch (e) {
+						if (retry === 1) {
+							throw new Error()
+						}
+					}
+					retry++
+				}
+				if (chunkedFilesInformations.indexOf(fileInfoForBody) !== chunkedFilesInformations.length - 1) {
+					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + 20
+				} else {
+					// for the last chunked files information we only count the no of files which are not be 20
+					chunkingInformation.totalFilesAlreadyLinked = chunkingInformation.totalFilesAlreadyLinked + fileInfoForBody.length
+				}
+				chunkingInformation.totalFilesNotLinked = chunkingInformation.totalNoOfFilesSelected - chunkingInformation.totalFilesAlreadyLinked
+			} catch (e) {
+				chunkingInformation.error = true
+				// when error encounters while chunking we compute the information of files for relinking  again
+				for (let i = chunkedFilesInformations.indexOf(fileInfoForBody); i < chunkedFilesInformations.length; i++) {
+					chunkingInformation.remainingFileInformations.push(...chunkedFilesInformations[i])
+				}
+				break
+			} finally {
+				if (isRemaining) {
+					component.setChunkedInformations(chunkingInformation)
+				} else {
+					component.$emit('set-chunked-informations', chunkingInformation)
+				}
+			}
+		}
+	},
+
+	async makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage) {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+		const url = generateUrl('/apps/integration_openproject/work-packages')
+		const body = {
+			values: {
+				workpackageId: selectedWorkpackage.id,
+				fileinfo: fileInfoForBody,
+			},
+		}
+		await axios.post(url, body, config)
+	},
+	async linkFileToWorkPackageWithSingleRequest(fileInfoForBody, selectedWorkpackage, successMessage, component) {
+		try {
+			await this.makeRequestToLinkFilesToWorkPackage(fileInfoForBody, selectedWorkpackage)
+			component.$emit('saved', selectedWorkpackage)
+			showSuccess(successMessage)
+		} catch (e) {
+			showError(
+				t('integration_openproject', 'Failed to link file to work package')
+			)
 		}
 	},
 }
