@@ -1117,7 +1117,9 @@ describe('SearchInput.vue', () => {
 			})
 			await wrapper.vm.$nextTick()
 			wrapper.vm.onCreateWorkPackageEvent(workpackageCreationEventData)
-			await wrapper.vm.$nextTick()
+			for (let i = 0; i < 5; i++) {
+				await wrapper.vm.$nextTick()
+			}
 			expect(dialogs.showSuccess).toBeCalledTimes(2)
 			expect(dialogs.showSuccess).toBeCalledWith('Work package created successfully.')
 			expect(dialogs.showSuccess).toBeCalledWith('Link to work package created successfully!')

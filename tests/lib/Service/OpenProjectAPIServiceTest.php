@@ -1980,12 +1980,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 			$this->createMock(IAppManager::class),
-			$this->createMock(IDBConnection::class),
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IMimeTypeLoader::class)
 		);
 
 		$response = $service->request('', '', []);
