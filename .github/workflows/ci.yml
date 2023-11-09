@@ -4,7 +4,7 @@ on:
       - 'master'
   pull_request:
   schedule:
-    - cron: '0 22 * * *' # run at 10 PM UTC 
+    - cron: '0 22 * * *' # run at 10 PM UTC
 
 name: CI
 
@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event_name == 'schedule' && 'release/2.4' || 'master' }}
 
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
