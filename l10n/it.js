@@ -24,6 +24,7 @@ OC.L10N.register(
     "Mark as read" : "Segna come letto",
     "Failed to get OpenProject notifications" : "Impossibile ricevere le notifiche di OpenProject",
     "Existing relations:" : "Relazioni esistenti:",
+    "Unlink" : "Scollegare",
     "Successfully connected to OpenProject!" : "Connesso correttamente a OpenProject!",
     "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:",
     "OpenProject notifications" : "Notifiche OpenProject ",
@@ -46,6 +47,7 @@ OC.L10N.register(
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
     "OpenProject integration" : "Integrazione OpenProject",
+    "Response:" : "Risposta:",
     "Documentation" : "Documentazione"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
