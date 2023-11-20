@@ -286,7 +286,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 						"parent" => [
 							"href" => "/api/v3/projects/5",
 							"title" => "[dev] Large"
-						]
+						],
+						"storages" => [
+							[
+								"href" => "/api/v3/storages/37",
+								"title" => "nc-26"
+							]
+						],
 					]
 				],
 				[
@@ -3106,6 +3112,28 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function testGetAvailableOpenProjectProjectsPact(): void {
 		$expectedResult = [
+			6 => [
+				"_type" => "Project",
+				"id" => 6,
+				"identifier" => "dev-custom-fields",
+				"name" => "[dev] Custom fields",
+				"_links" => [
+					"self" => [
+						"href" => "/api/v3/projects/6",
+						"title" => "[dev] Custom fields"
+					],
+					"parent" => [
+						"href" => "/api/v3/projects/5",
+						"title" => "[dev] Large"
+					],
+					"storages" => [
+						[
+							"href" => "/api/v3/storages/37",
+							"title" => "nc-26"
+						]
+					],
+				]
+			],
 			5 => [
 				"_type" => "Project",
 				"id" => 5,
@@ -3133,32 +3161,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setMethod('GET')
 			->setPath($this->getProjectsPath)
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
-
-		$consumerRequestStorage = new ConsumerRequest();
-		$consumerRequestStorage
-			->setMethod('GET')
-			->setPath('/api/v3/storages/37')
-			->setHeaders(["Authorization" => "Bearer new-Token"]);
-
 		$providerResponse = new ProviderResponse();
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody($this->validOpenProjectGetProjectsResponse);
-		$providerResponseStorage = new ProviderResponse();
-		$providerResponseStorage
-			->setStatus(Http::STATUS_OK)
-			->addHeader('Content-Type', 'application/json')
-			->setBody($this->validStoragesResponse);
-
 		$this->builder
 			->uponReceiving('a GET request to /work_packages/available_projects')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$this->builder
-			->uponReceiving('a GET request to storages')
-			->with($consumerRequestStorage)
-			->willRespondWith($providerResponseStorage);
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getAvailableOpenProjectProjects('testUser');
