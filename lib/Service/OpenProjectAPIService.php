@@ -1264,7 +1264,16 @@ class OpenProjectAPIService {
 	 */
 	public function getAvailableOpenProjectProjects(string $userId): array {
 		$resultsById = [];
-		$result = $this->request($userId, 'work_packages/available_projects');
+		$filters[] = [
+			'storageUrl' =>
+				['operator' => '=', 'values' => [$this->urlGenerator->getBaseUrl()]],
+			'userAction' =>
+				['operator' => '=', 'values' => ["file_links/manage", "work_packages/create"]]
+		];
+		$params = [
+			'filters' => \Safe\json_encode($filters)
+		];
+		$result = $this->request($userId, 'work_packages/available_projects', $params);
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
 		}
@@ -1275,41 +1284,9 @@ class OpenProjectAPIService {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		foreach ($result['_embedded']['elements'] as $project) {
-			$hasStorage = [];
-			// check if the project has this nextcloud instance as storage
-			if (isset($project['_links']['storages']) && count($project['_links']['storages']) > 0) {
-				foreach ($project['_links']['storages'] as $storages) {
-					$href = explode('/api/v3/', $storages['href']);
-					$hasStorage[] = $this->getProjectStorages($userId, isset($href[1]) ? $href[1] : '');
-				}
-				if (in_array(true, $hasStorage)) {
-					$resultsById[$project['id']] = $project;
-				}
-			}
+			$resultsById[$project['id']] = $project;
 		}
 		return $resultsById;
-	}
-
-	/**
-	 * @throws OpenprojectErrorException
-	 * @throws OpenprojectResponseException
-	 */
-	public function getProjectStorages(string $userId, string $endpoint): bool {
-		$result = $this->request($userId, $endpoint);
-		if (isset($result['error'])) {
-			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
-		}
-		if (
-				!isset($result['_embedded']) ||
-				!isset($result['_embedded']['oauthApplication']) ||
-				!isset($result['_links'])
-			) {
-			throw new OpenprojectResponseException('Malformed response');
-		}
-		if ($result['_links']['origin']['href'] === $this->urlGenerator->getBaseUrl()) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
