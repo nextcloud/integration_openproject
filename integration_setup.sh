@@ -206,26 +206,26 @@ nextcloud_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME
 )
 if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_create_storage.json; fi
 
-# required information from the above response
-nextcloud_client_id=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_id")
-nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_secret")
-
-if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
-  openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
-  if [ ${openproject_user_app_password} == null ]; then
+if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
+  if [[ "$nextcloud_information_response" != *"openproject_user_app_password"* ]]; then
     deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
     log_info "Above response is missing one or more of nextcloud_client_id, nextcloud_client_secret, or openproject_user_app_password"
     log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder) then follow below link to resolve the error"
     log_info "Visit this link to resolve the error manually https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting"
     exit 1
   fi
+  openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
 else
-  if [[ ${nextcloud_client_id} == null ]] || ][ ${nextcloud_client_secret} == null ]]; then
+  if [[ "$nextcloud_information_response" != *"nextcloud_client_id"* ]] || [[ "$nextcloud_information_response" != *"nextcloud_client_secret"* ]]; then
     deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
-        log_info "Above response is missing nextcloud_client_id or nextcloud_client_secret"
-        exit 1
-    fi
+    log_info "Above response is missing nextcloud_client_id or nextcloud_client_secret"
+    exit 1
+  fi
 fi
+
+# required information from the above response
+nextcloud_client_id=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_id")
+nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_secret")
 
 log_info "success!"
 
@@ -247,10 +247,12 @@ set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_
 if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_op_set_nc_oauth_details.json; fi
 
 # if there is no error from the last api call then the integration can be declared successful
-response_type=$(echo $set_nextcloud_to_storage_response | jq -r "._type")
-if [[ ${nextcloud_client_id} == "Error" ]]; then
-  deleteOPStorageAndPrintErrorResponse "$set_nextcloud_to_storage_response"
-  exit 1
+if [[ "$set_nextcloud_to_storage_response" == *"_type"* ]]; then
+	response_type=$(echo $set_nextcloud_to_storage_response | jq -r "._type")
+	if [[ ${response_type} == "Error" ]]; then
+      deleteOPStorageAndPrintErrorResponse "$set_nextcloud_to_storage_response"
+      exit 1
+    fi
 fi
 
 log_info "success!"
@@ -271,13 +273,20 @@ EOF
                                     -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json
     )
     if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json; fi
-    app_password_response_type=$(echo $save_app_password_response | jq -r "._type")
-    has_application_password=$(echo $save_app_password_response | jq -r ".hasApplicationPassword")
-    if [[ ${app_password_response_type} == "Error" ]] || [[ ${has_application_password} == null ]]; then
-      deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
-      exit 1
+
+    if [[ "$save_app_password_response" == *"_type"* ]]; then
+    	app_password_response_type=$(echo $save_app_password_response | jq -r "._type")
+    	if [[ ${app_password_response_type} == "Error" ]]; then
+    		deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
+            exit 1
+    	fi
+    	has_application_password=$(echo $save_app_password_response | jq -r ".hasApplicationPassword")
+    	if [[ ${has_application_password} == false ]]; then
+              deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
+              exit 1
+        fi
+    	log_info "success!"
     fi
-    log_info "success!"
 fi
 
 log_success "Setup of the integration was successful!"
