@@ -17,14 +17,14 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable25, stable26, stable27, master ]
+        nextcloudVersion: [ stable25, stable26, stable27, stable28 ]
         phpVersion: [ 7.4, 8.0, 8.1 ]
         exclude:
           - nextcloudVersion: stable26
             phpVersion: 7.4
           - nextcloudVersion: stable27
             phpVersion: 7.4
-          - nextcloudVersion: master
+          - nextcloudVersion: stable28
             phpVersion: 7.4
     runs-on: ubuntu-20.04
     steps:
@@ -77,7 +77,7 @@ jobs:
 
       - name: PHP code analysis
         run: |
-          if [[ ${{ matrix.nextcloudVersion }} != "master" ]]
+          if [[ ${{ matrix.nextcloudVersion }} != "stable28" ]]
           then
             make phpstan
           fi
@@ -107,7 +107,7 @@ jobs:
           make jsunit
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -116,14 +116,14 @@ jobs:
           title: "JS Code Coverage"
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
         with:
           reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -142,7 +142,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -151,14 +151,14 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
           min_coverage: '59'
           path: './server/apps/integration_openproject/coverage/jest/lcov.info'
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable28' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
           min_coverage: '56'
@@ -168,7 +168,7 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable25, stable26, stable27, master ]
+        nextcloudVersion: [ stable25, stable26, stable27, stable28 ]
         phpVersionMajor: [ 7, 8 ]
         phpVersionMinor: [ 4, 1 ]
         database: [pgsql, mysql]
@@ -189,7 +189,7 @@ jobs:
             phpVersionMinor: 1
           - phpVersionMajor: 8
             phpVersionMinor: 4
-          - nextcloudVersion: master
+          - nextcloudVersion: stable28
             phpVersionMajor: 7
           - phpVersionMajor: 7
             phpVersionMinor: 0
