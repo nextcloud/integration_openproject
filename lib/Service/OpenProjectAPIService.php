@@ -1268,7 +1268,7 @@ class OpenProjectAPIService {
 			'storageUrl' =>
 				['operator' => '=', 'values' => [$this->urlGenerator->getBaseUrl()]],
 			'userAction' =>
-				['operator' => '=', 'values' => ["file_links/manage", "work_packages/create"]]
+				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
 		];
 		$params = [
 			'filters' => \Safe\json_encode($filters)
