@@ -1,0 +1,12 @@
+name: Nightly CI Release
+
+on:
+  schedule:
+    - cron: '0 22 * * *' # run at 10 PM UTC
+
+jobs:
+  builds:
+    uses: ./.github/workflows/shared_workflow.yml
+    secrets: inherit
+    with:
+      branch: release/2.4
