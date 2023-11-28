@@ -13,6 +13,7 @@ OC.L10N.register(
     "Mark as read" : "Marchează ca citit",
     "commented" : "comentat",
     "mentioned" : "menționat",
+    "Unlink" : "Deconectare",
     "Connected accounts" : "Conturile conectate",
     "Reset" : "Resetare",
     "Enable navigation link" : "Pornește link-ul de navifare",
