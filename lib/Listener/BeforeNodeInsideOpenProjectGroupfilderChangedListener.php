@@ -51,11 +51,13 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		} else {
 			return;
 		}
+		$currentUser = $this->userSession->getUser();
 		// we do not listen event where user is not logged or there is no user session (e.g. public link )
-		if (OC_User::isIncognitoMode()) {
+		// or if it's some background job in which case user will be null
+		if (OC_User::isIncognitoMode() || $currentUser === null) {
 			return;
 		}
-		$currentUserId = $this->userSession->getUser()->getUID();
+		$currentUserId = $currentUser->getUID();
 		if (
 			$this->openprojectAPIService->isProjectFoldersSetupComplete() &&
 			preg_match('/.*\/files\/' .  Application::OPEN_PROJECT_ENTITIES_NAME . '$/', $parentNode->getPath()) === 1 &&
