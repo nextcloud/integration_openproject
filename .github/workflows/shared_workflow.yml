@@ -6,10 +6,6 @@ on:
 
 name: CI
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   unittest-linting:
     name: unit tests and linting
@@ -26,10 +22,15 @@ jobs:
             phpVersion: 7.4
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v3
         with:
           ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
         uses: shivammathur/setup-php@v2
@@ -208,7 +209,7 @@ jobs:
 
     services:
       nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:latest
+        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:${{ matrix.phpVersionMajor == 7 && 'latest@sha256:2ab4bf7241fb6997d4819b5a32345b8cdb66ea27511c7b5698b77a592e09153f' || 'latest@sha256:7e9bb4cf6d232001b93add1b2a14628b000af1480ad11d6d7b3f93c14a9249b8' }}
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
@@ -248,11 +249,18 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     steps:
-      - name: Checkout
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v3
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v3
+        with:
+          path: integration_openproject
 
       - name: Checkout activity app
         uses: actions/checkout@v3
