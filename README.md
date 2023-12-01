@@ -381,7 +381,7 @@ It is highly recommended to regularly update the included containers.
 
 ```shell
 docker compose pull
-```
+```czcxzczxcz
 
 Now, run the containers. In order to expose a port of the `nextcloud` containers, make sure to provide
 a `docker-compose.override.yml` specifying the exposed ports. In this example, we assume you simply use the content of
