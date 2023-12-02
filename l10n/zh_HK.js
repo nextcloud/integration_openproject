@@ -69,6 +69,7 @@ OC.L10N.register(
     "Files successfully linked: ${getTotalNoOfFilesAlreadyLinkedInChunking}" : "已成功連結檔案︰${getTotalNoOfFilesAlreadyLinkedInChunking}",
     "Files failed to be linked: ${getTotalNoOfFilesNotLinkedInChunking}" : "無法連結檔案: ${getTotalNoOfFilesNotLinkedInChunking}",
     "${getTotalNoOfFilesAlreadyLinkedInChunking} of ${getTotalNoOfFilesSelectedInChunking} files linked" : "${getTotalNoOfFilesAlreadyLinkedInChunking}／${getTotalNoOfFilesSelectedInChunking} 檔案已連結",
+    "${getProgressValueOfMultipleFilesLinked}%" : "${getProgressValueOfMultipleFilesLinked}%",
     "Existing relations:" : "現有關係：",
     "Unlink Work Package" : "取消 WorkPackage 連結",
     "Are you sure you want to unlink the work package?" : "確定要取消連結工作包嗎？",
