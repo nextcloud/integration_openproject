@@ -301,3 +301,25 @@ jobs:
           composer install --no-progress --prefer-dist --optimize-autoloader
           until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
+
+  notify-nightly-report:
+    needs:
+      - unittest-linting
+      - api-tests
+    if: ${{ always() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Notify nightly report to element
+        env:
+          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: nextcloud
+          REPO_NAME: integration_openproject
+          RUN_ID: ${{ github.run_id }}
+          BRANCH_NAME: ${{ inputs.branch }}
+        run: ./.github/scripts/notify-to-element.sh
