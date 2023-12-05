@@ -600,12 +600,13 @@ export default {
 		margin: 30px 0;
 
 		&--create {
-			background-color: var(--color-primary) !important;
-			color: var(--color-primary-light) !important;
+			background-color: var(--color-primary-element) !important;
+			color: var(--color-primary-element-text) !important;
 		}
 		&--cancel {
-			background-color: var(--color-loading-light) !important;
+			background-color: var(--color-background-dark) !important;
 			color: var(--color-main-text) !important;
+			border: 1px solid var(--color-border-dark) !important;
 		}
 	}
 }
@@ -616,6 +617,10 @@ export default {
 
 .openProjectUrl {
 	color: var(--color-primary) !important;
+}
+
+.create-workpackage-form--button---create:hover, .create-workpackage-form--button--cancel:hover {
+	background-color: var(--color-background-hover) !important;
 }
 
 @media (max-width: 800px) {

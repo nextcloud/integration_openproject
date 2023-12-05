@@ -492,26 +492,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	];
 
 	/**
-	 * @var array<mixed>
-	 */
-	private $validStoragesResponse = [
-		"_type" => "Storage",
-		"id" => 37,
-		"name" => "nc-26",
-		"_embedded" => [
-			"oauthApplication" => [
-				"_type" => "OAuthApplication",
-				"id" => 56,
-			]
-		],
-		"_links" => [
-			"origin" => [
-				"href" => "https://nc.my-server.org",
-			]
-		]
-	];
-
-	/**
 	 * @return void
 	 * @before
 	 */
