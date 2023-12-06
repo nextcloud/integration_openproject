@@ -1,6 +1,7 @@
 Feature: get capabilities of the app
 
   Scenario: Get capabilities when group folder app is enabled
+    Given user "Carol" has been created
     When the administrator requests the nextcloud capabilities
     Then the HTTP status code should be "200"
     And the ocs data of the response should match

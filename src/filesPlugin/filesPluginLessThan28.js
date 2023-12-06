@@ -6,10 +6,14 @@
  *
  * See the COPYING-README file.
  *
+ * This script will no longer run when the support for the
+ * integration app with nextcloud is greater ro equal to version 28
+ * In that case this file can be removed.
+ *
  */
-import './bootstrap.js'
+import '../bootstrap.js'
 import Vue from 'vue'
-import LinkMultipleFilesModal from './views/LinkMultipleFilesModal.vue'
+import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
 
 (function() {
 	if (!OCA.OpenProject) {

@@ -10,11 +10,13 @@
 namespace OCA\OpenProject\AppInfo;
 
 use Closure;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Capabilities;
 use OCA\OpenProject\Listener\BeforeNodeInsideOpenProjectGroupfilderChangedListener;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
+use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
@@ -26,7 +28,6 @@ use OCP\IL10N;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
-use OCP\Util;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 
 use OCP\AppFramework\App;
@@ -75,6 +76,8 @@ class Application extends App implements IBootstrap {
 			LoadSidebar::class,
 			LoadSidebarScript::class
 		);
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalScriptsListener::class);
+
 		$context->registerEventListener(
 			BeforeNodeDeletedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
@@ -96,10 +99,6 @@ class Application extends App implements IBootstrap {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
-		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
-			Util::addScript(Application::APP_ID, 'integration_openproject-fileActions');
-			Util::addScript(Application::APP_ID, 'integration_openproject-filesPlugin');
-		});
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
