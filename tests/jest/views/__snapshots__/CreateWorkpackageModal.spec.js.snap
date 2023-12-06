@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateWorkPackageModal.vue workpackage creation form should display available projects in the project dropdown 1`] = `
+<div dir="auto" class="v-select select create-workpackage-form--select vs--open vs--single vs--searching vs--searchable" data-test-id="available-projects">
+  <div id="vs1__combobox" role="combobox" aria-expanded="true" aria-owns="vs1__listbox" aria-label="Search for option" class="vs__dropdown-toggle">
+    <div class="vs__selected-options"> <input placeholder="Select a project" id="createWorkPackageInput" aria-autocomplete="list" aria-labelledby="vs1__combobox" aria-controls="vs1__listbox" type="search" autocomplete="off" class="vs__search" aria-activedescendant="vs1__option-0"></div>
+    <div class="vs__actions"><button type="button" title="Clear Selected" aria-label="Clear Selected" class="vs__clear" style="display: none;"><span aria-hidden="true" role="img" class="material-design-icon close-icon" style="cursor: pointer;"><svg fill="var(--vs-controls-color)" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"><!----></path></svg></span></button> <span aria-hidden="true" role="presentation" class="material-design-icon chevron-down-icon vs__open-indicator"><svg fill="var(--vs-controls-color)" width="26" height="26" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"><!----></path></svg></span>
+      <div class="vs__spinner" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <transition-stub name="vs__fade">
+    <ul id="vs1__listbox" role="listbox" tabindex="-1" class="vs__dropdown-menu">
+      <li id="vs1__option-0" role="option" aria-selected="false" class="vs__dropdown-option vs__dropdown-option--highlight">
+        <!----> <span>Demo project</span>
+      </li>
+      <li id="vs1__option-1" role="option" aria-selected="false" class="vs__dropdown-option">
+        <!----> <span>[dev] Custom fields</span>
+      </li>
+      <li id="vs1__option-2" role="option" aria-selected="false" class="vs__dropdown-option">
+        <!----> <span>[dev] Empty</span>
+      </li>
+      <li id="vs1__option-3" role="option" aria-selected="false" class="vs__dropdown-option">
+        <!----> <span>[dev] Large</span>
+      </li>
+      <li id="vs1__option-4" role="option" aria-selected="false" class="vs__dropdown-option"><span style="padding-left: 2em;"></span> <span>[dev] Large child</span></li>
+      <li id="vs1__option-5" role="option" aria-selected="false" class="vs__dropdown-option"><span style="padding-left: 4em;"></span> <span>[dev] Large Grand Child</span></li>
+      <li id="vs1__option-6" role="option" aria-selected="false" class="vs__dropdown-option">
+        <!----> <span>Scrum project</span>
+      </li>
+      <!---->
+    </ul>
+  </transition-stub>
+</div>
+`;
+
+exports[`CreateWorkPackageModal.vue workpackage creation form should send the form validation request when type is changed 1`] = `
+<div dir="auto" class="v-select select create-workpackage-form--select vs--open vs--single vs--searching vs--searchable" data-test-id="available-statuses">
+  <div id="vs11__combobox" role="combobox" aria-expanded="true" aria-owns="vs11__listbox" aria-label="Search for option" class="vs__dropdown-toggle">
+    <div class="vs__selected-options"><span class="vs__selected"><span data-v-3daafbe0="" title="New" class="name-parts"><span data-v-3daafbe0="" class="name-parts__first">New</span>
+      <!----></span>
+      <!----></span> <input id="createWorkPackageStatusInput" aria-autocomplete="list" aria-labelledby="vs11__combobox" aria-controls="vs11__listbox" type="search" autocomplete="off" class="vs__search" aria-activedescendant="vs11__option-0">
+    </div>
+    <div class="vs__actions"><button type="button" title="Clear Selected" aria-label="Clear Selected" class="vs__clear" style="display: none;"><span aria-hidden="true" role="img" class="material-design-icon close-icon" style="cursor: pointer;"><svg fill="var(--vs-controls-color)" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"><!----></path></svg></span></button> <span aria-hidden="true" role="presentation" class="material-design-icon chevron-down-icon vs__open-indicator"><svg fill="var(--vs-controls-color)" width="26" height="26" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"><!----></path></svg></span>
+      <div class="vs__spinner" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <transition-stub name="vs__fade">
+    <ul id="vs11__listbox" role="listbox" tabindex="-1" class="vs__dropdown-menu">
+      <li id="vs11__option-0" role="option" aria-selected="false" class="vs__dropdown-option vs__dropdown-option--highlight">
+        To be scheduled
+      </li>
+      <li id="vs11__option-1" role="option" aria-selected="false" class="vs__dropdown-option">
+        In progress
+      </li>
+      <li id="vs11__option-2" role="option" aria-selected="false" class="vs__dropdown-option">
+        On hold
+      </li>
+      <!---->
+    </ul>
+  </transition-stub>
+</div>
+`;
+
+exports[`CreateWorkPackageModal.vue workpackage creation form should set the available types, status and assignee when a project is selected 1`] = `
+<div dir="auto" class="v-select select create-workpackage-form--select vs--open vs--single vs--searching vs--searchable" data-test-id="available-types">
+  <div id="vs6__combobox" role="combobox" aria-expanded="true" aria-owns="vs6__listbox" aria-label="Search for option" class="vs__dropdown-toggle">
+    <div class="vs__selected-options"><span class="vs__selected"><span data-v-3daafbe0="" title="Task" class="name-parts"><span data-v-3daafbe0="" class="name-parts__first">Task</span>
+      <!----></span>
+      <!----></span> <input id="createWorkPackageTypeInput" aria-autocomplete="list" aria-labelledby="vs6__combobox" aria-controls="vs6__listbox" type="search" autocomplete="off" class="vs__search" aria-activedescendant="vs6__option-0">
+    </div>
+    <div class="vs__actions"><button type="button" title="Clear Selected" aria-label="Clear Selected" class="vs__clear" style="display: none;"><span aria-hidden="true" role="img" class="material-design-icon close-icon" style="cursor: pointer;"><svg fill="var(--vs-controls-color)" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"><!----></path></svg></span></button> <span aria-hidden="true" role="presentation" class="material-design-icon chevron-down-icon vs__open-indicator"><svg fill="var(--vs-controls-color)" width="26" height="26" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"><!----></path></svg></span>
+      <div class="vs__spinner" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <transition-stub name="vs__fade">
+    <ul id="vs6__listbox" role="listbox" tabindex="-1" class="vs__dropdown-menu">
+      <li id="vs6__option-0" role="option" aria-selected="false" class="vs__dropdown-option vs__dropdown-option--highlight">
+        User story
+      </li>
+      <!---->
+    </ul>
+  </transition-stub>
+</div>
+`;
+
+exports[`CreateWorkPackageModal.vue workpackage creation form should set the available types, status and assignee when a project is selected 2`] = `
+<div dir="auto" class="v-select select create-workpackage-form--select vs--open vs--single vs--searching vs--searchable" data-test-id="available-statuses">
+  <div id="vs7__combobox" role="combobox" aria-expanded="true" aria-owns="vs7__listbox" aria-label="Search for option" class="vs__dropdown-toggle">
+    <div class="vs__selected-options"><span class="vs__selected"><span data-v-3daafbe0="" title="New" class="name-parts"><span data-v-3daafbe0="" class="name-parts__first">New</span>
+      <!----></span>
+      <!----></span> <input id="createWorkPackageStatusInput" aria-autocomplete="list" aria-labelledby="vs7__combobox" aria-controls="vs7__listbox" type="search" autocomplete="off" class="vs__search" aria-activedescendant="vs7__option-0">
+    </div>
+    <div class="vs__actions"><button type="button" title="Clear Selected" aria-label="Clear Selected" class="vs__clear" style="display: none;"><span aria-hidden="true" role="img" class="material-design-icon close-icon" style="cursor: pointer;"><svg fill="var(--vs-controls-color)" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"><!----></path></svg></span></button> <span aria-hidden="true" role="presentation" class="material-design-icon chevron-down-icon vs__open-indicator"><svg fill="var(--vs-controls-color)" width="26" height="26" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"><!----></path></svg></span>
+      <div class="vs__spinner" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <transition-stub name="vs__fade">
+    <ul id="vs7__listbox" role="listbox" tabindex="-1" class="vs__dropdown-menu">
+      <li id="vs7__option-0" role="option" aria-selected="false" class="vs__dropdown-option vs__dropdown-option--highlight">
+        In progress
+      </li>
+      <li id="vs7__option-1" role="option" aria-selected="false" class="vs__dropdown-option">
+        On hold
+      </li>
+      <!---->
+    </ul>
+  </transition-stub>
+</div>
+`;
+
+exports[`CreateWorkPackageModal.vue workpackage creation form should set the available types, status and assignee when a project is selected 3`] = `
+<div dir="auto" class="v-select select create-workpackage-form--select vs--open vs--single vs--searching vs--searchable" data-test-id="available-assignees">
+  <div id="vs8__combobox" role="combobox" aria-expanded="true" aria-owns="vs8__listbox" aria-label="Search for option" class="vs__dropdown-toggle">
+    <div class="vs__selected-options"> <input placeholder="Select a user or group" id="createWorkPackageAssigneeInput" aria-autocomplete="list" aria-labelledby="vs8__combobox" aria-controls="vs8__listbox" type="search" autocomplete="off" class="vs__search" aria-activedescendant="vs8__option-0"></div>
+    <div class="vs__actions"><button type="button" title="Clear Selected" aria-label="Clear Selected" class="vs__clear" style="display: none;"><span aria-hidden="true" role="img" class="material-design-icon close-icon" style="cursor: pointer;"><svg fill="var(--vs-controls-color)" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"><!----></path></svg></span></button> <span aria-hidden="true" role="presentation" class="material-design-icon chevron-down-icon vs__open-indicator"><svg fill="var(--vs-controls-color)" width="26" height="26" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"><!----></path></svg></span>
+      <div class="vs__spinner" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <transition-stub name="vs__fade">
+    <ul id="vs8__listbox" role="listbox" tabindex="-1" class="vs__dropdown-menu">
+      <li id="vs8__option-0" role="option" aria-selected="false" class="vs__dropdown-option vs__dropdown-option--highlight">
+        Second Admin
+      </li>
+      <li id="vs8__option-1" role="option" aria-selected="false" class="vs__dropdown-option">
+        swikriti tripathi
+      </li>
+      <li id="vs8__option-2" role="option" aria-selected="false" class="vs__dropdown-option">
+        OpenProject OpenProject
+      </li>
+      <li id="vs8__option-3" role="option" aria-selected="false" class="vs__dropdown-option">
+        Admin de DEV user
+      </li>
+      <li id="vs8__option-4" role="option" aria-selected="false" class="vs__dropdown-option">
+        OpenProject Admin
+      </li>
+      <!---->
+    </ul>
+  </transition-stub>
+</div>
+`;

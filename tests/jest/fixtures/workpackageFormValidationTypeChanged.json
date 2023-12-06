@@ -1,0 +1,462 @@
+{
+	"payload": {
+		"subject": null,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"scheduleManually": false,
+		"date": null,
+		"estimatedTime": null,
+		"ignoreNonWorkingDays": false,
+		"percentageDone": 0,
+		"remainingTime": null,
+		"_links": {
+			"category": {
+				"href": null
+			},
+			"type": {
+				"href": "/api/v3/types/2",
+				"title": "Milestone"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"status": {
+				"href": "/api/v3/statuses/1",
+				"title": "New"
+			},
+			"responsible": {
+				"href": null
+			},
+			"assignee": {
+				"href": null
+			},
+			"parent": {
+				"href": null,
+				"title": null
+			}
+		}
+	},
+	"schema": {
+		"_type": "Schema",
+		"_dependencies": [],
+		"_attributeGroups": [
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "People",
+				"attributes": [
+					"assignee",
+					"responsible"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Estimates and time",
+				"attributes": [
+					"estimatedTime",
+					"spentTime",
+					"remainingTime"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Details",
+				"attributes": [
+					"date",
+					"percentageDone",
+					"category",
+					"version",
+					"priority",
+					"derivedRemainingTime"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Costs",
+				"attributes": []
+			}
+		],
+		"id": {
+			"type": "Integer",
+			"name": "ID",
+			"required": true,
+			"hasDefault": false,
+			"writable": false,
+			"options": []
+		},
+		"subject": {
+			"type": "String",
+			"name": "Subject",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"minLength": 1,
+			"maxLength": 255,
+			"options": []
+		},
+		"description": {
+			"type": "Formattable",
+			"name": "Description",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"options": []
+		},
+		"project": {
+			"type": "Project",
+			"name": "Project",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_links": {
+				"allowedValues": {
+					"href": "/api/v3/work_packages/available_projects"
+				}
+			}
+		},
+		"parent": {
+			"type": "WorkPackage",
+			"name": "Parent",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_links": []
+		},
+		"assignee": {
+			"type": "User",
+			"name": "Assignee",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"attributeGroup": "People",
+			"location": "_links",
+			"_links": {
+				"allowedValues": {
+					"href": "/api/v3/projects/2/available_assignees"
+				}
+			}
+		},
+		"type": {
+			"type": "Type",
+			"name": "Type",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_embedded": {
+				"allowedValues": [
+					{
+						"_type": "Type",
+						"id": 1,
+						"name": "Task",
+						"color": "#FFFFFF",
+						"position": 1,
+						"isDefault": true,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-09-04T03:51:47Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/1",
+								"title": "Task"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 2,
+						"name": "Milestone",
+						"color": "#35C53F",
+						"position": 3,
+						"isDefault": true,
+						"isMilestone": true,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/2",
+								"title": "Milestone"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 3,
+						"name": "Phase",
+						"color": "#FF922B",
+						"position": 4,
+						"isDefault": true,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/3",
+								"title": "Phase"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 5,
+						"name": "Epic",
+						"color": "#845EF7",
+						"position": 6,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/5",
+								"title": "Epic"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 6,
+						"name": "User story",
+						"color": "#F8F9FA",
+						"position": 7,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-09-04T05:18:30Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/6",
+								"title": "User story"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 7,
+						"name": "Bug",
+						"color": "#F03E3E",
+						"position": 8,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/7",
+								"title": "Bug"
+							}
+						}
+					}
+				]
+			},
+			"_links": {
+				"allowedValues": [
+					{
+						"href": "/api/v3/types/1",
+						"title": "Task"
+					},
+					{
+						"href": "/api/v3/types/2",
+						"title": "Milestone"
+					},
+					{
+						"href": "/api/v3/types/3",
+						"title": "Phase"
+					},
+					{
+						"href": "/api/v3/types/5",
+						"title": "Epic"
+					},
+					{
+						"href": "/api/v3/types/6",
+						"title": "User story"
+					},
+					{
+						"href": "/api/v3/types/7",
+						"title": "Bug"
+					}
+				]
+			}
+		},
+		"status": {
+			"type": "Status",
+			"name": "Status",
+			"required": true,
+			"hasDefault": true,
+			"writable": true,
+			"location": "_links",
+			"_embedded": {
+				"allowedValues": [
+					{
+						"_type": "Status",
+						"id": 1,
+						"name": "New",
+						"isClosed": false,
+						"color": "#1098AD",
+						"isDefault": true,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 1,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/1",
+								"title": "New"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 5,
+						"name": "To be scheduled",
+						"isClosed": false,
+						"color": "#FFEC99",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 5,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/5",
+								"title": "To be scheduled"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 6,
+						"name": "Scheduled",
+						"isClosed": false,
+						"color": "#D8F5A2",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 6,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/6",
+								"title": "Scheduled"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 7,
+						"name": "In progress",
+						"isClosed": false,
+						"color": "#CC5DE8",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 7,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/7",
+								"title": "In progress"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 12,
+						"name": "Closed",
+						"isClosed": true,
+						"color": "#DEE2E6",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 12,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/12",
+								"title": "Closed"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 13,
+						"name": "On hold",
+						"isClosed": false,
+						"color": "#FFC078",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 13,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/13",
+								"title": "On hold"
+							}
+						}
+					},
+					{
+						"_type": "Status",
+						"id": 14,
+						"name": "Rejected",
+						"isClosed": true,
+						"color": "#FFA8A8",
+						"isDefault": false,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 14,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/14",
+								"title": "Rejected"
+							}
+						}
+					}
+				]
+			},
+			"_links": {
+				"allowedValues": [
+					{
+						"href": "/api/v3/statuses/1",
+						"title": "New"
+					},
+					{
+						"href": "/api/v3/statuses/5",
+						"title": "To be scheduled"
+					},
+					{
+						"href": "/api/v3/statuses/6",
+						"title": "Scheduled"
+					},
+					{
+						"href": "/api/v3/statuses/7",
+						"title": "In progress"
+					},
+					{
+						"href": "/api/v3/statuses/12",
+						"title": "Closed"
+					},
+					{
+						"href": "/api/v3/statuses/13",
+						"title": "On hold"
+					},
+					{
+						"href": "/api/v3/statuses/14",
+						"title": "Rejected"
+					}
+				]
+			}
+		}
+	},
+	"validationErrors": {
+		"subject": {
+			"_type": "Error",
+			"errorIdentifier": "urn:openproject-org:api:v3:errors:PropertyConstraintViolation",
+			"message": "Subject can't be blank.",
+			"_embedded": {
+				"details": {
+					"attribute": "subject"
+				}
+			}
+		}
+	}
+}

@@ -290,6 +290,7 @@ export default {
 <style scoped lang="scss">
 .projects {
 	width: 100%;
+
 	.existing-relations {
 		text-align: left;
 		font-weight: bold;
@@ -342,7 +343,7 @@ export default {
 	.workpackage-seperator {
 		height: 0;
 		margin: 0 10px;
-		border-bottom: 1px solid rgb(237 237 237);
+		border-bottom: 1px solid var(--color-background-dark);
 	}
 }
 

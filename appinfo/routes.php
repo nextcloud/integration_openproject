@@ -40,6 +40,10 @@ return [
 		['name' => 'openProjectAPI#isValidOpenProjectInstance', 'url' => '/is-valid-op-instance', 'verb' => 'POST'],
 		['name' => 'openProjectAPI#getOpenProjectOauthURLWithStateAndPKCE', 'url' => '/op-oauth-url', 'verb' => 'GET'],
 		['name' => 'openProjectAPI#getProjectFolderSetupStatus', 'url' => '/project-folder-status', 'verb' => 'GET'],
+		['name' => 'openProjectAPI#getAvailableOpenProjectProjects', 'url' => '/projects','verb' => 'GET'],
+		['name' => 'openProjectAPI#getOpenProjectWorkPackageForm', 'url' => '/projects/{projectId}/work-packages/form','verb' => 'POST'],
+		['name' => 'openProjectAPI#getAvailableAssigneesOfAProject', 'url' => '/projects/{projectId}/available-assignees','verb' => 'GET'],
+		['name' => 'openProjectAPI#createWorkPackage', 'url' => '/create/work-packages','verb' => 'POST'],
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],

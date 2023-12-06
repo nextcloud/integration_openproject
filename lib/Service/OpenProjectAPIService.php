@@ -451,7 +451,8 @@ class OpenProjectAPIService {
 				$this->logger->warning('OpenProject API error : '. $message, ['app' => $this->appName]);
 			}
 			return [
-				'error' => $e->getMessage(),
+				'error' => $response->getBody(),
+				'message' => $e->getMessage(),
 				'statusCode' => $response->getStatusCode(),
 			];
 		} catch (ConnectException $e) {
@@ -769,7 +770,7 @@ class OpenProjectAPIService {
 		);
 
 		if (isset($result['error'])) {
-			throw new OpenprojectErrorException($result['error']);
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
 		}
 		if (
 			!isset($result['_type']) ||
@@ -1251,5 +1252,113 @@ class OpenProjectAPIService {
 		return ($projectId !== '')
 			? $url . '/projects/' . $projectId . '/work_packages/' . $entry['id'] . '/activity'
 			: '';
+	}
+
+	/**
+	 * @param string $userId
+	 *
+	 * @return array<mixed>
+	 *
+	 * @throws OpenprojectErrorException
+	 * @throws OpenprojectResponseException|PreConditionNotMetException
+	 */
+	public function getAvailableOpenProjectProjects(string $userId): array {
+		$resultsById = [];
+		$filters[] = [
+			'storageUrl' =>
+				['operator' => '=', 'values' => [$this->urlGenerator->getBaseUrl()]],
+			'userAction' =>
+				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
+		];
+		$params = [
+			'filters' => \Safe\json_encode($filters)
+		];
+		$result = $this->request($userId, 'work_packages/available_projects', $params);
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
+		}
+		if (
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['elements'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		foreach ($result['_embedded']['elements'] as $project) {
+			$resultsById[$project['id']] = $project;
+		}
+		return $resultsById;
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $projectId
+	 * @param array<mixed> $body
+	 *
+	 * @return array<mixed>
+	 * @throws OpenprojectResponseException|PreConditionNotMetException|JsonException|OpenprojectErrorException
+	 */
+	public function getOpenProjectWorkPackageForm(string $userId, string $projectId, array $body): array {
+		$params['body'] = \Safe\json_encode($body);
+		$result = $this->request($userId, 'projects/'.$projectId.'/work_packages/form', $params, 'POST');
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Form' ||
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['payload']) ||
+				!isset($result['_embedded']['schema'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result['_embedded'];
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $projectId
+	 *
+	 * @return array<mixed>
+	 * @throws OpenprojectResponseException|PreConditionNotMetException|OpenprojectErrorException
+	 */
+	public function getAvailableAssigneesOfAProject(string $userId, string $projectId): array {
+		$result = $this->request($userId, 'projects/'.$projectId.'/available_assignees');
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'Collection' ||
+			!isset($result['_embedded']) ||
+			!isset($result['_embedded']['elements'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result['_embedded']['elements'];
+	}
+
+	/**
+	 * @param string $userId
+	 * @param array<mixed> $body
+	 *
+	 * @return array<mixed>
+	 * @throws OpenprojectResponseException|PreConditionNotMetException|JsonException|OpenprojectErrorException
+	 */
+	public function createWorkPackage(string $userId, array $body): array {
+		$params['body'] = \Safe\json_encode($body);
+		$result = $this->request($userId, 'work_packages', $params, 'POST');
+		if (isset($result['error'])) {
+			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
+		}
+		if (
+			!isset($result['_type']) ||
+			$result['_type'] !== 'WorkPackage' ||
+			!isset($result['_embedded']) ||
+			!isset($result['id'])
+		) {
+			throw new OpenprojectResponseException('Malformed response');
+		}
+		return $result;
 	}
 }

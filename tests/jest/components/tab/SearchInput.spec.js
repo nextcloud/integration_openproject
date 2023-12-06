@@ -10,6 +10,7 @@ import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqRes
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import * as initialState from '@nextcloud/initial-state'
+import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs')
@@ -67,6 +68,9 @@ describe('SearchInput.vue', () => {
 	const assigneeSelector = '.filterAssignee'
 	const loadingIconSelector = '.vs__spinner'
 	const firstWorkPackageSelector = '.searchInput .vs__dropdown-option'
+	const createWorkpackageButtonSelector = '.create-workpackage--button'
+	const createWorkPackageNcSelectOptionListSelector = '.create-workpackage-footer-option'
+	const createWorkpackageModalSelector = '[data-test-id="create-workpackage-modal"]'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -1016,6 +1020,109 @@ describe('SearchInput.vue', () => {
 					})
 				})
 			})
+
+		})
+	})
+
+	describe('create work package button at the footer of the NcSelect', () => {
+		wrapper = mountSearchInput()
+		it('should open create work package modal when clicked', async () => {
+			await wrapper.setData({
+				isSmartPicker: false,
+				state: STATE.OK,
+			})
+			const button = wrapper.find(createWorkpackageButtonSelector)
+			await button.trigger('click')
+			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
+		})
+	})
+
+	describe('create work package option at the footer of the NcSelect option list', () => {
+		wrapper = mountSearchInput()
+		it('should open create work package modal when clicked', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
+			await wrapper.setProps({
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
+			})
+			const inputField = wrapper.find(inputSelector)
+			await inputField.setValue(' ')
+			await wrapper.setData({
+				searchResults: workPackagesSearchResponse,
+				isSmartPicker: false,
+				state: STATE.OK,
+			})
+			await localVue.nextTick()
+			const optionList = wrapper.find(createWorkPackageNcSelectOptionListSelector)
+			await optionList.trigger('click')
+			expect(wrapper.find(createWorkpackageModalSelector).isVisible()).toBeTruthy()
+		})
+	})
+
+	describe('create work packages event handling', () => {
+		beforeEach(async () => {
+			wrapper = mountSearchInput()
+			jest.clearAllMocks()
+			dialogs.showSuccess.mockReset()
+			dialogs.showError.mockReset()
+		})
+		afterEach(async () => {
+			wrapper.destroy()
+		})
+		it('should show an error message if work package creation process gets canceled', () => {
+			dialogs.showError.mockImplementationOnce()
+			const workpackageCreationEventData = {
+				openProjectEventName: 'work_package_creation_cancellation',
+			}
+			wrapper.vm.onCreateWorkPackageEvent(workpackageCreationEventData)
+			expect(dialogs.showError).toBeCalledTimes(1)
+			expect(dialogs.showError).toBeCalledWith('Work package creation was not successful.')
+		})
+
+		it('should show a success message and link work package to a file if work package creation process is successful', async () => {
+			jest.spyOn(axios, 'post')
+				.mockImplementation(() => Promise.resolve({
+					status: 200,
+				}))
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [{
+						fileId: 1234,
+						id: 1,
+						subject: 'Organize open source conference',
+					}],
+				}))
+			// mock this method because we don't really care about this for this test
+			jest.spyOn(workpackageHelper, 'getAdditionalMetaData')
+				.mockImplementationOnce(() => Promise.resolve(workPackagesSearchResponse))
+
+			dialogs.showSuccess
+				.mockImplementation()
+			const workpackageCreationEventData = {
+				openProjectEventName: 'work_package_creation_success',
+				openProjectEventPayload: {
+					workPackageId: '1',
+				},
+			}
+			await wrapper.setData({
+				searchResults: workPackagesSearchResponse,
+				newWorkpackageCreated: true,
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
+				fileInfo: { id: 1234, name: 'file.txt' },
+			})
+			await wrapper.vm.$nextTick()
+			wrapper.vm.onCreateWorkPackageEvent(workpackageCreationEventData)
+			for (let i = 0; i < 5; i++) {
+				await wrapper.vm.$nextTick()
+			}
+			expect(dialogs.showSuccess).toBeCalledTimes(2)
+			expect(dialogs.showSuccess).toBeCalledWith('Work package created successfully.')
+			expect(dialogs.showSuccess).toBeCalledWith('Link to work package created successfully!')
 		})
 	})
 })
@@ -1035,6 +1142,7 @@ function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 		stubs: {
 			NcAvatar: true,
 			WorkPackage: true,
+			CreateWorkPackageModal: true,
 		},
 		propsData: {
 			fileInfo,

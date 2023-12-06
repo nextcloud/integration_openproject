@@ -152,10 +152,14 @@ class OpenProjectAPIController extends Controller {
 	 *
 	 * @param ?string $searchQuery
 	 * @param ?int $fileId
-	 *
+	 * @param bool $isSmartPicker
 	 * @return DataResponse
 	 */
-	public function getSearchedWorkPackages(?string $searchQuery = null, ?int $fileId = null, bool $isSmartPicker = false): DataResponse {
+	public function getSearchedWorkPackages(
+		?string $searchQuery = null,
+		?int $fileId = null,
+		bool $isSmartPicker = false
+	): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
@@ -205,8 +209,10 @@ class OpenProjectAPIController extends Controller {
 				$values,
 				$this->userId,
 			);
-		} catch (OpenprojectErrorException | InvalidArgumentException $e) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getcode());
 		} catch (NotPermittedException | NotFoundException $e) {
 			return new DataResponse('file not found', Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
@@ -266,7 +272,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotFoundException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_NOT_FOUND);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse($result);
@@ -293,7 +299,7 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (NotFoundException $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_NOT_FOUND);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse($result);
@@ -351,6 +357,154 @@ class OpenProjectAPIController extends Controller {
 			$response = new DataResponse($result, Http::STATUS_UNAUTHORIZED);
 		}
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function getAvailableOpenProjectProjects(): DataResponse {
+		if ($this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->getAvailableOpenProjectProjects($this->userId);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getCode());
+		} catch (\Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $projectId
+	 * @param array<mixed> $body body is same in the format that OpenProject api expects the body to be i.e
+	 *                             {
+	 *                                _links: {
+	 *                                    type: {
+	 *                                        href: '/api/v3/types/1'
+	 *                                        title: 'Task'
+	 *                                    },
+	 *                                    status: {
+	 *                                        href: '/api/v3/statuses/1'
+	 *                                        title: 'New'
+	 *                                    },
+	 *                                    assignee: {
+	 *                                        href: ''
+	 *                                        title: ''
+	 *                                    },
+	 *                                    project: {
+	 *                                         href: '...'
+	 *                                         title: '...'
+	 *                                     },
+	 *                                },
+	 *                                subject: "something",
+	 *                                description: {
+	 *                                    format: 'markdown',
+	 *                                    raw: '',
+	 *                                    html: ''
+	 *                                }
+	 *                                }
+	 *                           See POST request for create work package https://www.openproject.org/docs/api/endpoints/work-packages/
+	 * 							 Note that this api will send `200` even with empty body and the body content is similar to that of create workpackages
+	 * @return DataResponse
+	 */
+	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
+		if ($this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->getOpenProjectWorkPackageForm($this->userId, $projectId, $body);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getcode());
+		} catch (\Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $projectId
+	 * @return DataResponse
+	 */
+	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
+		if ($this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->getAvailableAssigneesOfAProject($this->userId, $projectId);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getcode());
+		} catch (\Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param array<mixed> $body body is same in the format that OpenProject api expects the body to be i.e
+	 *                            {
+	 * 								_links: {
+	 * 									type: {
+	 * 									 	href: '/api/v3/types/1'
+	 * 										title: 'Task'
+	 * 									},
+	 * 									status: {
+	 * 									 	href: '/api/v3/statuses/1'
+	 * 										title: 'New'
+	 * 									},
+	 * 									assignee: {
+	 * 									 	href: ''
+	 * 										title: ''
+	 * 									},
+	 * 									project: {
+	 *                                        href: '...'
+	 *                                        title: '...'
+	 *                                    },
+	 * 								},
+	 * 								subject: "something",
+	 * 								description: {
+	 * 									format: 'markdown',
+	 * 									raw: '',
+	 * 									html: ''
+	 * 								}
+	 * 								}
+	 *                          See POST request for create work package https://www.openproject.org/docs/api/endpoints/work-packages/
+	 * @return DataResponse
+	 */
+	public function createWorkPackage(array $body): DataResponse {
+		if ($this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		// we don't want to check if all the data in the body is set or not because
+		// that calculation will be done by the openproject api itself
+		// we don't want to duplicate the logic
+		if (empty($body)) {
+			return new DataResponse('Body cannot be empty', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->createWorkPackage($this->userId, $body);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getcode());
+		} catch (\Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result, Http::STATUS_CREATED);
 	}
 
 	/**
