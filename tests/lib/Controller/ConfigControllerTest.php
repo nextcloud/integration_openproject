@@ -1287,7 +1287,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url']
+				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
@@ -1301,8 +1301,11 @@ class ConfigControllerTest extends TestCase {
 		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
 		$secureRandomMock
 			->method('generate')
-			->with(10, ISecureRandom::CHAR_HUMAN_READABLE)
+			->with(15, ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS)
 			->willReturn('thisisapassword123');
+		$service
+			->method('getPasswordLength')
+			->willReturn(15);
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
 		$userManagerMock
