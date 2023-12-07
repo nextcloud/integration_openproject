@@ -268,6 +268,8 @@ export default {
 			font-size: 0.8rem;
 			height: 20px;
 			line-height: 20px;
+			display: flex;
+			align-self: center;
 		}
 
 		&__subject {
