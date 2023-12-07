@@ -51,6 +51,8 @@
     "Search for a work package to create a relation" : "Buscar un paquete de traballo para crear unha relación",
     "Link to work package created successfully!" : "Creáronse correctamente as ligazóns ao paquete de traballo!",
     "Links to work package created successfully for selected files!" : "Creáronse correctamente as ligazóns ao paquete de traballo para os ficheiros seleccionados.",
+    "Description" : "Descrición",
+    "Create" : "Crear",
     "Mark as read" : "Marcar como lido",
     "Failed to get OpenProject notifications" : "Produciuse un erro ao recibir as notificacións de OpenProject",
     "Date alert" : "Aviso de data",

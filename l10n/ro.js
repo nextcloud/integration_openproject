@@ -10,6 +10,8 @@ OC.L10N.register(
     "Copied!" : "S-a copiat!",
     "Details" : "Detalii",
     "Start typing to search" : "Tastați pentru căutare",
+    "Description" : "Descriere",
+    "Create" : "Crează",
     "Mark as read" : "Marchează ca citit",
     "commented" : "comentat",
     "mentioned" : "menționat",

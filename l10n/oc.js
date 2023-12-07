@@ -6,6 +6,8 @@ OC.L10N.register(
     "Copied!" : "Copiat !",
     "Details" : "Detalhs",
     "Start typing to search" : "Començatz de picar per recercar",
+    "Description" : "Descripcion",
+    "Create" : "Crear",
     "Mark as read" : "Marcar coma legit",
     "Connected accounts" : "Comptes connectats",
     "Reset" : "Reïnicializar",
