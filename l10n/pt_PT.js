@@ -8,6 +8,9 @@ OC.L10N.register(
     "Copied!" : "Copiado!",
     "Details" : "Detalhes",
     "Start typing to search" : "Digitar para pesquisar",
+    "Select a user or group" : "Selecionar utilizador ou grupo",
+    "Description" : "Descrição",
+    "Create" : "Criar",
     "Reset" : "Reiniciar",
     "Invalid token" : "token inválido",
     "Documentation" : "Documentação"

@@ -10,6 +10,8 @@ OC.L10N.register(
     "Copied!" : "Tersalin!",
     "Details" : "Detail",
     "Start typing to search" : "Mulai mengetik untuk mencari",
+    "Description" : "Deskrisi",
+    "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
     "Connected accounts" : "Akun terhubung",
     "Reset" : "Setel ulang",
