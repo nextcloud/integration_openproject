@@ -8,6 +8,8 @@ OC.L10N.register(
     "Copied!" : "Копирано!",
     "Details" : "Детали",
     "Start typing to search" : "Напишете нешто за пребарување",
+    "Select a user or group" : "Избери корисник или група",
+    "Create" : "Креирај",
     "Mark as read" : "Означи како прочитано",
     "Connected accounts" : "Поврзани сметки",
     "Reset" : "Ресетирање",
