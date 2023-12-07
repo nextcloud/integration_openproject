@@ -1,15 +1,19 @@
 <template>
 	<h2 class="settings-title">
-		<div class="icon-openproject" />
+		<OpenProjectIcon />
 		<span>{{ title }}</span>
 	</h2>
 </template>
 
 <script>
 import { translate as t } from '@nextcloud/l10n'
+import OpenProjectIcon from '../icons/OpenProjectIcon.vue'
 
 export default {
 	name: 'SettingsTitle',
+	components: {
+		OpenProjectIcon,
+	},
 	computed: {
 		title() {
 			return t('integration_openproject', 'OpenProject Integration')
