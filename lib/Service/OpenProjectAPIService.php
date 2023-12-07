@@ -1123,7 +1123,7 @@ class OpenProjectAPIService {
 	 * @return int
 	 */
 	public function getPasswordLength(): int {
-		$passLengthSet = (int) $this->config->getAppValue('password_policy', 'minLength', '');
+		$passLengthSet = (int) $this->config->getAppValue('password_policy', 'minLength', '0');
 		return $passLengthSet === 0 ? 72 : max(72, $passLengthSet);
 	}
 
