@@ -508,6 +508,29 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
+	 * get OpenProject configuration
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function getOpenProjectConfiguration(): DataResponse {
+		if ($this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$result = $this->openprojectAPIService->getOpenProjectConfiguration($this->userId);
+		} catch (OpenprojectErrorException $e) {
+			return new DataResponse($e->getMessage(), $e->getCode());
+		} catch (\Exception $e) {
+			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
 	 * check if there is a OpenProject behind a certain URL
 	 *
 	 * @NoAdminRequired

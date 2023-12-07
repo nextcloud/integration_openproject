@@ -4,14 +4,15 @@
 			<div class="empty-content--icon">
 				<CheckIcon v-if="isStateOk && dashboard" :size="60" />
 				<LinkPlusIcon v-else-if="!!isAdminConfigOk && isStateOk && !dashboard && !isSmartPicker" :size="60" />
-				<OpenProjectIcon v-else-if="!!isSmartPicker" class="empty-content--icon--openproject" />
+				<OpenProjectIcon v-else-if="!!isSmartPicker && isStateOk" class="empty-content--icon--openproject" />
 				<LinkOffIcon v-else :size="60" />
 			</div>
-			<div v-if="!!isAdminConfigOk && !isSmartPicker" class="empty-content--message">
-				<div class="empty-content--message--title">
+			<div v-if="!!isAdminConfigOk" class="empty-content--message">
+				<div v-if="!!isStateOk && isSmartPicker" class="empty-content--message--title" />
+				<div v-else class="empty-content--message--title">
 					{{ emptyContentTitleMessage }}
 				</div>
-				<div v-if="!!emptyContentSubTitleMessage" class="empty-content--message--sub-title">
+				<div v-if="!!emptyContentSubTitleMessage && !isSmartPicker" class="empty-content--message--sub-title">
 					{{ emptyContentSubTitleMessage }}
 				</div>
 			</div>

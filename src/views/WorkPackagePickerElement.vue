@@ -24,16 +24,22 @@
 		<h2 class="work-package-picker__header">
 			{{ t('integration_openproject', 'OpenProject work package picker') }}
 		</h2>
-		<SearchInput ref="linkPicker"
+		<SearchInput
+			ref="linkPicker"
 			:is-smart-picker="true"
 			:file-info="fileInfo"
+			:is-disabled="isLoading || !isAdminConfigOk || !isStateOk"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
-		<EmptyContent id="openproject-empty-content"
-			:state="state"
-			:file-info="fileInfo"
-			:is-smart-picker="true"
-			:is-admin-config-ok="isAdminConfigOk" />
+		<div id="openproject-empty-content">
+			<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="90" />
+			<EmptyContent
+				v-else
+				:state="state"
+				:file-info="fileInfo"
+				:is-smart-picker="true"
+				:is-admin-config-ok="isAdminConfigOk" />
+		</div>
 	</div>
 </template>
 
@@ -42,6 +48,9 @@ import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import { STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
+import { generateUrl } from '@nextcloud/router'
+import axios from '@nextcloud/axios'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 export default {
 	name: 'WorkPackagePickerElement',
@@ -49,6 +58,7 @@ export default {
 	components: {
 		EmptyContent,
 		SearchInput,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -61,21 +71,59 @@ export default {
 			default: false,
 		},
 	},
-
-	data: () => ({
-		fileInfo: {},
-		linkedWorkPackages: [],
-		state: STATE.OK,
-		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-	}),
-	mounted() {
-		if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
-			document.getElementById(`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`).focus()
+	data() {
+		return {
+			fileInfo: {},
+			linkedWorkPackages: [],
+			state: STATE.LOADING,
+			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 		}
+	},
+	computed: {
+		isStateOk() {
+			return this.state === STATE.OK
+		},
+		isLoading() {
+			return this.state === STATE.LOADING
+		},
+	},
+	mounted() {
+		this.checkIfOpenProjectIsAvailable()
 	},
 	methods: {
 		onSubmit(data) {
 			this.$emit('submit', data)
+		},
+		async checkIfOpenProjectIsAvailable() {
+			if (!this.isAdminConfigOk) {
+				this.state = STATE.ERROR
+				return
+			}
+			const configurationUrl = generateUrl('/apps/integration_openproject/configuration')
+			let response = null
+			try {
+				// send an axios request to fetch configuration to see if the connection is there
+				response = await axios.get(configurationUrl)
+				if (response.data) {
+					this.state = STATE.OK
+					if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
+						this.$nextTick(() => {
+							document.getElementById(`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`).focus()
+						})
+					}
+				} else {
+					this.state = STATE.ERROR
+				}
+			} catch (error) {
+				document.activeElement?.blur()
+				if (error.response && (error.response.status === 404 || error.response.status === 503)) {
+					this.state = STATE.CONNECTION_ERROR
+				} else if (error.response && error.response.status === 401) {
+					this.state = STATE.NO_TOKEN
+				} else {
+					this.state = STATE.ERROR
+				}
+			}
 		},
 	},
 }
@@ -92,5 +140,12 @@ export default {
 		align-items: center;
 		align-self: center;
 	}
+	#openproject-empty-content {
+		height: 400px !important;
+	}
+	.loading-spinner {
+		margin-top: 150px;
+	}
 }
+
 </style>

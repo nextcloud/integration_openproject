@@ -44,6 +44,7 @@ return [
 		['name' => 'openProjectAPI#getOpenProjectWorkPackageForm', 'url' => '/projects/{projectId}/work-packages/form','verb' => 'POST'],
 		['name' => 'openProjectAPI#getAvailableAssigneesOfAProject', 'url' => '/projects/{projectId}/available-assignees','verb' => 'GET'],
 		['name' => 'openProjectAPI#createWorkPackage', 'url' => '/create/work-packages','verb' => 'POST'],
+		['name' => 'openProjectAPI#getOpenProjectConfiguration', 'url' => '/configuration', 'verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],

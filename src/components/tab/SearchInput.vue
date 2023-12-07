@@ -11,6 +11,7 @@
 			:loading="isStateLoading"
 			:filterable="false"
 			:clear-search-on-blur="() => false"
+			:disabled="isDisabled"
 			@search="asyncFind"
 			@option:selected="linkWorkPackageToFile">
 			<template #option="option">
@@ -99,6 +100,10 @@ export default {
 			type: String,
 			required: false,
 			default: null,
+		},
+		isDisabled: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	data: () => ({

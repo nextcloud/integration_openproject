@@ -67,6 +67,9 @@ export default {
 			if (window.location.pathname.includes('apps/files') && Object.keys(this.fileInfo).length === 0) {
 				return { page: 'files' }
 			}
+			if (window.location.pathname.includes('call')) {
+				return { page: 'spreed', callUrl: window.location.href }
+			}
 			return { page: 'settings' }
 		},
 		async onOAuthClick() {
