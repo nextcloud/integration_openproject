@@ -10,6 +10,7 @@ OC.L10N.register(
     "Copied!" : "הועתק!",
     "Details" : "פרטים",
     "Start typing to search" : "להתחלת החיפוש יש להקליד",
+    "Description" : "תיאור",
     "Mark as read" : "סימון כנקרא",
     "Connected accounts" : "חשבונות מקושרים",
     "Reset" : "איפוס",
