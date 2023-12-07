@@ -2461,7 +2461,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->with(
-				'password_policy', 'minLength', ''
+				'password_policy', 'minLength'
 			)
 			->willReturn(
 				$passwordLength
