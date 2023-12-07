@@ -10,6 +10,7 @@ OC.L10N.register(
     "Copied!" : "Kopioitu!",
     "Details" : "Tiedot",
     "Start typing to search" : "Aloita kirjoittaminen hakeaksesi",
+    "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
     "Unlink" : "Poista linkitys",
     "Connected accounts" : "Yhdistetyt tilit",
