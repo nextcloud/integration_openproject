@@ -50,6 +50,8 @@ OC.L10N.register(
     "Search for work packages" : "Munkacsomagok keresése",
     "Search for a work package to create a relation" : "Keressen egy munkacsomagot, hogy létrehozzon egy kapcsolatot",
     "Link to work package created successfully!" : "Hivatkozás a munkacsomaghoz sikeresen létrehozva!",
+    "Description" : "Leírás",
+    "Create" : "Létrehozás",
     "Mark as read" : "Megjelölés olvasottként",
     "Failed to get OpenProject notifications" : "Az OpenProject értesítések lekérése sikertelen",
     "Date alert" : "Dátumriasztás",
