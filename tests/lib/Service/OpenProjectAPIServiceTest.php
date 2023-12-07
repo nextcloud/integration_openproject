@@ -3147,7 +3147,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->addHeader('Content-Type', 'application/json')
 			->setBody($this->validOpenProjectGetProjectsResponse);
 		$this->builder
-			->uponReceiving('a GET request to /work_packages/available_projects')
+			->uponReceiving('a GET request to /projects')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$storageMock = $this->getStorageMock();

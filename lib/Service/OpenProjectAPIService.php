@@ -1273,7 +1273,7 @@ class OpenProjectAPIService {
 		$params = [
 			'filters' => \Safe\json_encode($filters)
 		];
-		$result = $this->request($userId, 'work_packages/available_projects', $params);
+		$result = $this->request($userId, 'projects', $params);
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
 		}
