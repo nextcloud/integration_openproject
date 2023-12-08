@@ -3367,4 +3367,42 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->expectException(OpenprojectErrorException::class);
 		$service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
 	}
+	/**
+	 * @return array<int, array<int, int|string>>
+	 */
+	public function passwordLengthProvider(): array {
+		return [
+			['10', 72],
+			['100', 100]
+		];
+	}
+
+	/**
+	 * @dataProvider passwordLengthProvider
+	 * @return void
+	 */
+	public function testGetPasswordLength(string $passwordLength, int $expectedPasswordLength): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->with(
+				'password_policy', 'minLength'
+			)
+			->willReturn(
+				$passwordLength
+			);
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$configMock
+		);
+		$result = $service->getPasswordLength();
+		$this->assertEquals($expectedPasswordLength, $result);
+	}
 }

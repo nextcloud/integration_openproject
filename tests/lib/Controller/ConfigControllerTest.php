@@ -1301,8 +1301,11 @@ class ConfigControllerTest extends TestCase {
 		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
 		$secureRandomMock
 			->method('generate')
-			->with(10, ISecureRandom::CHAR_HUMAN_READABLE)
+			->with(15, ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS)
 			->willReturn('thisisapassword123');
+		$service
+			->method('getPasswordLength')
+			->willReturn(15);
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
 		$userManagerMock
