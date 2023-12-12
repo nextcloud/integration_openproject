@@ -30,7 +30,7 @@
 						<span>{{ label }}</span>
 					</template>
 					<template #no-options>
-						{{ t('integration_openproject', 'Please link a project to this nextcloud storage') }}
+						{{ t('integration_openproject', 'Please link a project to this Nextcloud storage') }}
 					</template>
 				</NcSelect>
 				<p v-if="error.error && error.attribute === 'project'" class="validation-error">
