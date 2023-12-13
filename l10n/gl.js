@@ -58,7 +58,6 @@ OC.L10N.register(
     "Links to work package created successfully for selected files!" : "Creáronse correctamente as ligazóns ao paquete de traballo para os ficheiros seleccionados.",
     "Project *" : "Proxecto *",
     "Select a project" : "Seleccione un proxecto",
-    "Please link a project to this nextcloud storage" : "Ligue un proxecto a este almacenamento nextcloud",
     "Subject *" : "Asunto *",
     "Work package subject" : "Asunto do paquete de traballo",
     "Type *" : "Tipo *",
