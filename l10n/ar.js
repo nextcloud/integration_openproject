@@ -1,7 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "OpenProject" : "برمجية أوبن بروجكت \"OpenProject\"",
+    "OpenProject" : "\"أوبن بروجكت\" OpenProject",
     "Error getting OAuth access token" : "حدث خطأ أثناء محاولة الحصول على أَمَارَة token للتصديق المفتوح OAuth",
     "Error getting OAuth refresh token" : "خطأ في الحصول على رمز تحقق تحديث تطبيق المصادقة OAuth ",
     "Error during OAuth exchanges" : "خطأ أثناء تبادل OAuth.",
@@ -58,6 +58,7 @@ OC.L10N.register(
     "Links to work package created successfully for selected files!" : "تمّ بنجاح إنشاء روابط لحِزَم العمل للملفات المُحدَّدة",
     "Project *" : "مشروع * ",
     "Select a project" : "إختَر مشروعاً",
+    "Please link a project to this Nextcloud storage" : "من فضلك، إربِط مشروعاً مع وحدة تخزين نكست كلاود هذه",
     "Subject *" : "الموضوع *",
     "Work package subject" : "موضوع حزمة العمل",
     "Type *" : "النوع *",

@@ -56,6 +56,7 @@
     "Links to work package created successfully for selected files!" : "Линкови на радни радни пакет су успешно креирани за изабране фајлове!",
     "Project *" : "Пројакат *",
     "Select a project" : "Изаберите пројекат",
+    "Please link a project to this Nextcloud storage" : "Молим да се пројекат повеже са овим Nextcloud складиштем",
     "Subject *" : "Тема *",
     "Work package subject" : "Тема радног пакета",
     "Type *" : "Тип *",
