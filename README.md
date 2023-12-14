@@ -573,13 +573,13 @@ npm run watch
 #### 1. Release Preparation
 
 ##### a. In case of a major/minor version
-
-1. Create a release branch from master with the name `release/<version>` e.g. `release/2.1`
-2. Protect that new branch the same way as `master`
+1. In case any new feature were added, update the feature description in `README.md` and `appinfo/info.xml`.
+2. Create a release branch from master with the name `release/<version>` e.g. `release/2.1`
 3. On the release branch update the version in `appinfo/info.xml`
-4. Also, allow transifex to write on release branch i.e. update in `.tx/backport`
+4. Allow transifex to write on release branch i.e. update in `.tx/backport`
 5. Do QA and fixes of bugs in the release branch
-6. Merge the release branch into the `master` branch, to get all good changes also into the current development
+6. Update `.github/workflows/nighlty-ci-release-branch.yml` to run nightly on release branch
+7. Merge the release branch into the `master` branch, to get all good changes also into the current development
 
 ##### b. In case of a patch version
 
