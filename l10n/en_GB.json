@@ -56,6 +56,7 @@
     "Links to work package created successfully for selected files!" : "Links to work package created successfully for selected files!",
     "Project *" : "Project *",
     "Select a project" : "Select a project",
+    "Please link a project to this Nextcloud storage" : "Please link a project to this Nextcloud storage",
     "Subject *" : "Subject *",
     "Work package subject" : "Work package subject",
     "Type *" : "Type *",
