@@ -56,6 +56,7 @@
     "Links to work package created successfully for selected files!" : "為所選檔案成功創建了工作包的連結！",
     "Project *" : "專案 *",
     "Select a project" : "選擇專案",
+    "Please link a project to this Nextcloud storage" : "請將專案連結到此 Nextcloud 儲存",
     "Subject *" : "主題 *",
     "Work package subject" : "工作軟件包主題",
     "Type *" : "類型 *",
