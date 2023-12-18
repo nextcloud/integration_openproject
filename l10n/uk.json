@@ -29,11 +29,12 @@
     "Start typing to search" : "Що шукаємо?",
     "Select a user or group" : "Виберіть користувача або групу",
     "Description" : "Опис",
-    "Create" : "Створювати",
+    "Create" : "Створити",
     "Mark as read" : "Позначити прочитаним",
     "OAuth access token could not be obtained:" : "Не вдалося отримати маркер доступу OAuth:",
     "Connected accounts" : "Підключені облікові записи",
     "Reset" : "Скидання",
+    "Enable unified search for tickets" : "Увімкнути універсальний пошук заявок",
     "Invalid token" : "Неприпустимий маркер",
     "Documentation" : "Документація"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
