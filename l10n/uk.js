@@ -31,11 +31,12 @@ OC.L10N.register(
     "Start typing to search" : "Що шукаємо?",
     "Select a user or group" : "Виберіть користувача або групу",
     "Description" : "Опис",
-    "Create" : "Створювати",
+    "Create" : "Створити",
     "Mark as read" : "Позначити прочитаним",
     "OAuth access token could not be obtained:" : "Не вдалося отримати маркер доступу OAuth:",
     "Connected accounts" : "Підключені облікові записи",
     "Reset" : "Скидання",
+    "Enable unified search for tickets" : "Увімкнути універсальний пошук заявок",
     "Invalid token" : "Неприпустимий маркер",
     "Documentation" : "Документація"
 },
