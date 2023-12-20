@@ -6,6 +6,7 @@ On the Nextcloud end, it allows users to:
 
 * Link files and folders with work packages in OpenProject
 * Find all work packages linked to a file or a folder
+* Create work packages directly in Nextcloud
 * View OpenProject notifications via the dashboard
 * Search for work packages using Nextcloud's search bar
 * Link work packages in rich text fields via Smart Picker
