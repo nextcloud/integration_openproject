@@ -8,11 +8,17 @@ On the Nextcloud end, it allows users to:
 * Find all work packages linked to a file or a folder
 * View OpenProject notifications via the dashboard
 * Search for work packages using Nextcloud's search bar
+* Link work packages in rich text fields via Smart Picker
+* Preview links to work packages in text fields
+* Link multiple files and folders to a work package at once
+* Create and link files and folders to a work package from Nextcloud
 
 On the OpenProject end, users are able to:
 
 * View all Nextcloud files and folders linked to a work package
 * Download linked files or open them in Nextcloud to edit them
+* Open linked files in Nextcloud to edit them
+* Let OpenProject create shared folders per project
 
 Please report issues and bugs here: https://community.openproject.org/projects/nextcloud-integration/work_packages
 
