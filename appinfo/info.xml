@@ -13,6 +13,8 @@ On the Nextcloud end, it allows users to:
 * Search for work packages using Nextcloud's search bar
 * Link work packages in rich text fields via Smart Picker
 * Preview links to work packages in text fields
+* Link multiple files and folder to a work package at once
+* Create and link files and folders to a work package from Nextcloud
 
 On the OpenProject end, users are able to:
 
