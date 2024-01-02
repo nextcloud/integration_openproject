@@ -12,7 +12,6 @@ On the Nextcloud end, it allows users to:
 * Link work packages in rich text fields via Smart Picker
 * Preview links to work packages in text fields
 * Link multiple files and folders to a work package at once
-* Create and link files and folders to a work package from Nextcloud
 
 On the OpenProject end, users are able to:
 
