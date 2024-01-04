@@ -18,9 +18,11 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\TermOfServiceAppEnabledEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
+use OCP\App\Events\AppEnableEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
@@ -102,6 +104,7 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
+		$dispatcher->addServiceListener(AppEnableEvent::class, TermOfServiceAppEnabledEventListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {

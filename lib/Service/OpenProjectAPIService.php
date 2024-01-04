@@ -18,6 +18,9 @@ use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
+use OCA\TermsOfService\Db\Entities\Signatory;
+use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
+use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCP\App\IAppManager;
 use OCP\Files\InvalidPathException;
 use OCP\Files\Node;
@@ -29,6 +32,7 @@ use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -111,6 +115,9 @@ class OpenProjectAPIService {
 	 * @var ISubAdmin
 	 */
 	private ISubAdmin $subAdminManager;
+	private IDBConnection $db;
+
+
 
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
@@ -136,7 +143,8 @@ class OpenProjectAPIService {
 								IProvider $tokenProvider,
 								ISecureRandom $random,
 								IEventDispatcher $eventDispatcher,
-								ISubAdmin $subAdminManager
+								ISubAdmin $subAdminManager,
+								IDBConnection $db,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -154,6 +162,7 @@ class OpenProjectAPIService {
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->db = $db;
 	}
 
 	/**
@@ -1071,6 +1080,38 @@ class OpenProjectAPIService {
 			$user
 			)
 		);
+	}
+
+	public function isTermOfServiceAppEnabled(): bool {
+		return (
+			$this->appManager->isInstalled(
+				'terms_of_service',
+			)
+		);
+	}
+
+
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function signTOSForUserOPenProject(): void {
+		$termsMapper = new TermsMapper($this->db);
+		$signatoryMapper = new SignatoryMapper($this->db);
+		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+			$signatoryMapper->deleteSignatoriesByUser($user);
+			$terms = $termsMapper->getTerms();
+			if ($terms) {
+				foreach ($terms as $term) {
+					$term_id = $term->id;
+					$signatory = new Signatory();
+					$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
+					$signatory->setTermsId($term_id);
+					$signatory->setTimestamp(time());
+					$signatoryMapper->insert($signatory);
+				}
+			}
+		}
 	}
 
 	public function isUserPartOfAndAdminOfGroup():bool {

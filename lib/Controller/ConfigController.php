@@ -207,6 +207,9 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
+				if ($this->openprojectAPIService->isTermOfServiceAppEnabled()) {
+					$this->openprojectAPIService->signTOSForUserOPenProject();
+				}
 			}
 		}
 
