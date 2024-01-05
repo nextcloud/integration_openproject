@@ -23,7 +23,7 @@ OC.L10N.register(
     "Yes, I have copied these values" : "Так, я скопіював ці значення",
     "Replace Nextcloud OAuth values" : "Замінити значення Nextcloud OAuth",
     "Create Nextcloud OAuth values" : "Створіть Nextcloud OAuth",
-    "Project folders (recommended)" : "Папки проекту (рекомендовано)",
+    "Project folders (recommended)" : "Каталоги проєкту (рекомендовано)",
     "Copied!" : "Скопійовано!",
     "Copied to the clipboard" : "Скопійовано в буфер обміну",
     "Details" : "Деталі",
