@@ -23,7 +23,6 @@
 namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\TermsOfService\Exceptions\TermsNotFoundException;
 use OCP\App\Events\AppEnableEvent;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\Event;
@@ -47,7 +46,6 @@ class TermOfServiceAppEnabledEventListener implements IEventListener {
 	}
 
 	/**
-	 * @throws TermsNotFoundException
 	 * @throws Exception
 	 */
 	public function handle(Event $event): void {

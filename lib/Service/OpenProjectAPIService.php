@@ -144,7 +144,7 @@ class OpenProjectAPIService {
 								ISecureRandom $random,
 								IEventDispatcher $eventDispatcher,
 								ISubAdmin $subAdminManager,
-								IDBConnection $db,
+								IDBConnection $db
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -1095,19 +1095,28 @@ class OpenProjectAPIService {
 	 * @throws \OCP\DB\Exception
 	 */
 	public function signTOSForUserOPenProject(): void {
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$termsMapper = new TermsMapper($this->db);
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$signatoryMapper = new SignatoryMapper($this->db);
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			$signatoryMapper->deleteSignatoriesByUser($user);
+			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			$terms = $termsMapper->getTerms();
 			if ($terms) {
 				foreach ($terms as $term) {
 					$term_id = $term->id;
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 					$signatory = new Signatory();
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 					$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 					$signatory->setTermsId($term_id);
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 					$signatory->setTimestamp(time());
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 					$signatoryMapper->insert($signatory);
 				}
 			}

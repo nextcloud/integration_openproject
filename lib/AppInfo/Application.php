@@ -104,6 +104,7 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermOfServiceAppEnabledEventListener::class);
 	}
 

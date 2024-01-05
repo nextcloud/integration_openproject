@@ -31,6 +31,7 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -697,7 +698,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class)
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 	}
 
@@ -712,6 +714,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param ISecureRandom|null $iSecureRandomMock
 	 * @param IConfig|null $configMock
 	 * @param IProvider|null $tokenProviderMock
+	 * @param IDBConnection|null $db
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -724,7 +727,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$subAdminManagerMock = null,
 		$iSecureRandomMock = null,
 		$configMock = null,
-		$tokenProviderMock = null
+		$tokenProviderMock = null,
+		$db = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -754,6 +758,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($tokenProviderMock === null) {
 			$tokenProviderMock = $this->createMock(IProvider::class);
 		}
+		if ($db === null) {
+			$db = $this->createMock(IDBConnection::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -773,6 +780,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
+					$db
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1901,7 +1909,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class)
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -1970,6 +1979,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 
 		$response = $service->request('', '', []);
