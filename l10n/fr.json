@@ -113,7 +113,7 @@
     "Yes, replace" : "Oui, écraser",
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Êtes-vous sûr de vouloir réinitialiser cette application et supprimer tous les paramètres et toutes les connexions de tous les utilisateurs de Nextcloud à OpenProject ?",
     "Reset OpenProject integration" : "Réinitialiser l'intégration OpenProject",
-    "Yes, reset" : "Oui, ré-initialiser",
+    "Yes, reset" : "Oui, réinitialiser",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "URL OpenProject invalide, donnez une URL de la forme « https://openproject.org »",
     "No OpenProject detected at the URL" : "Pas d'OpenProject détecté à cet URL",
     "OpenProject admin options saved" : "Options d'administration OpenProject enregistrées",
