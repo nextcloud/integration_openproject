@@ -70,7 +70,7 @@ class FilesVersionsContext implements Context {
 	public function listVersionFolder(
 		string $user,
 		string $fileId,
-		int $folderDepth,
+		int $folderDepth
 	):SimpleXMLElement {
 		$password = $this->featureContext->getRegularUserPassword();
 		$fullUrl = FeatureContext::sanitizeUrl(
