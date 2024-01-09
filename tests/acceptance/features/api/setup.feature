@@ -675,3 +675,20 @@ Feature: setup the integration through an API
     # user "OpenProject" cannot make api request using the old app password
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
+
+    # first upload the file inside folder "openProject"
+    Given user "Carol" has created folder "/OpenProject/OpenProject/project-abc"
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+    And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "0" element
+
+    # try to overwrite existing file
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 1234567890 |
+      | overwrite | true       |
+    Then the HTTP status code should be "200"
+    And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "2" element

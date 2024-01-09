@@ -891,3 +891,23 @@ Feature: API endpoint for direct upload
     And the content of file at "/.hidden" for user "Carol" should be "hidden file"
 
 
+  Scenario: upload a file with content inside normal folder
+    Given user "Carol" has created folder "/forOP"
+    And user "Carol" got a direct-upload token for "/forOP"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+    Then the HTTP status code should be "201"
+    And the version folder of file "/forOP/file.txt" for user "Carol" should contain "1" element
+
+
+  Scenario: try to overwrite an existing file with content inside normal folder
+    Given user "Carol" has created folder "/forOP"
+    And user "Carol" has uploaded file with content "1234567890" to "/forOP/file.txt"
+    And user "Carol" got a direct-upload token for "/forOP"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+      | overwrite | true       |
+    Then the HTTP status code should be "200"
+    And the version folder of file "/forOP/file.txt" for user "Carol" should contain "2" element
