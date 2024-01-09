@@ -14,3 +14,4 @@ default:
         - SharingContext:
         - DirectUploadContext:
         - GroupfoldersContext:
+        - FilesVersionsContext:
