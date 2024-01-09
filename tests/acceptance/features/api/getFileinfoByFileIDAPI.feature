@@ -22,7 +22,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -39,7 +38,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
       "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
@@ -69,7 +67,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -86,7 +83,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
       "path": {"type": "string", "pattern":"^files\/subfolder\/file.txt$"}
       }
@@ -98,14 +94,17 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Carol" has uploaded file with content "some data" to "file.txt"
     And user "Carol" has deleted file "file.txt"
     When user "Carol" gets the information of last created file
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "404"
     And the ocs data of the response should match
       """"
       {
       "type": "object",
       "required": [
       "status",
-      "statuscode",
+      "statuscode"
+      ],
+      "not": {
+      "required": [
       "id",
       "size",
       "name",
@@ -116,26 +115,13 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
-      ],
+      ]
+      },
       "properties": {
-      "status": {"type": "string", "pattern": "^OK$"},
-      "statuscode" : {"type" : "number", "enum": [200]},
-      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-      "size" : {"type" : "integer", "enum": [9] },
-      "mtime" : {"type" : "integer"},
-      "ctime" : {"type" : "integer", "enum": [0]},
-      "name": {"type": "string", "pattern": "^file.txt.d\\d{10}$"},
-      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-      "owner_id": {"type": "string", "pattern": "^Carol$"},
-      "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [true]},
-      "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
-      "path": {"type": "string", "pattern":"^files_trashbin\/files\/file.txt.d\\d{10}$"}
+      "status": {"type": "string", "pattern": "^Not Found$"},
+      "statuscode" : {"type" : "number", "enum": [404]}
       }
       }
       """
@@ -146,14 +132,17 @@ Feature: retrieve file information of a single file, using the file ID
     And user "Carol" has uploaded file with content "some data" to "/subfolder/file.txt"
     And user "Carol" has deleted folder "subfolder"
     When user "Carol" gets the information of last created file
-    Then the HTTP status code should be "200"
+    Then the HTTP status code should be "404"
     And the ocs data of the response should match
       """"
       {
       "type": "object",
       "required": [
       "status",
-      "statuscode",
+      "statuscode"
+      ],
+      "not": {
+      "required": [
       "id",
       "size",
       "name",
@@ -164,26 +153,13 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
-      ],
+      ]
+      },
       "properties": {
-      "status": {"type": "string", "pattern": "^OK$"},
-      "statuscode" : {"type" : "number", "enum": [200]},
-      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-      "size" : {"type" : "integer", "enum": [9] },
-      "mtime" : {"type" : "integer"},
-      "ctime" : {"type" : "integer", "enum": [0]},
-      "name": {"type": "string", "pattern": "^file.txt$"},
-      "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-      "owner_id": {"type": "string", "pattern": "^Carol$"},
-      "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [true]},
-      "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
-      "path": {"type": "string", "pattern":"^files_trashbin\/files\/subfolder.d\\d{10}\/file.txt"}
+      "status": {"type": "string", "pattern": "^Not Found$"},
+      "statuscode" : {"type" : "number", "enum": [404]}
       }
       }
       """
@@ -214,7 +190,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ]
@@ -250,7 +225,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ]
@@ -281,7 +255,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -293,7 +266,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
       "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
@@ -320,7 +292,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -332,7 +303,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
@@ -360,7 +330,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -372,7 +341,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
@@ -399,7 +367,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -411,7 +378,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
       "path": {"type": "string", "pattern":"^files\/renamed.txt$"}
       }
@@ -439,7 +405,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -451,7 +416,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/renamed.txt$"}
       }
@@ -517,7 +481,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ]
@@ -881,7 +844,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -898,7 +860,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVCK$"},
       "path": {"type": "string", "pattern":"^files\/folder\/$"}
       }
@@ -931,7 +892,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name",
       "modifier_id",
       "modifier_name",
-      "trashed",
       "dav_permissions",
       "path"
       ],
@@ -948,7 +908,6 @@ Feature: retrieve file information of a single file, using the file ID
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "modifier_id": {"type": "null"},
       "modifier_name": {"type": "null"},
-      "trashed": {"type": "boolean", "enum": [false]},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/folder\/file.txt$"}
       }
