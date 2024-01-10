@@ -2,13 +2,6 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-//use Behat\Gherkin\Node\PyStringNode;
-//use Behat\Gherkin\Node\TableNode;
-//use Helmich\JsonAssert\JsonAssertions;
-//use GuzzleHttp\Client;
-//use GuzzleHttp\Exception\RequestException;
-//use GuzzleHttp\Psr7\Request;
-//use GuzzleHttp\Cookie\CookieJar;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -76,20 +69,20 @@ class FilesVersionsContext implements Context {
 		$fullUrl = FeatureContext::sanitizeUrl(
 			$this->featureContext->getBaseUrl() . '/remote.php/dav/versions/' . strtolower($user) . '/versions/' . $fileId
 		);
-		$body = '<?xml version="1.0"?>
-<d:propfind xmlns:d="DAV:"
-							 xmlns:oc="http://owncloud.org/ns"
-							 xmlns:nc="http://nextcloud.org/ns"
-							 xmlns:ocs="http://open-collaboration-services.org/ns">
-	<d:prop>
-		<d:getcontentlength />
-		<d:getcontenttype />
-		<d:getlastmodified />
-		<d:getetag />
-		<nc:version-label />
-		<nc:has-preview />
-	</d:prop>
-</d:propfind>';
+		$body = '<?xml version="1.0"?>' .
+			'<d:propfind xmlns:d="DAV:"' .
+			' xmlns:oc="http://owncloud.org/ns"' .
+			' xmlns:nc="http://nextcloud.org/ns"' .
+			' xmlns:ocs="http://open-collaboration-services.org/ns">' .
+			'	<d:prop>' .
+			'		<d:getcontentlength />' .
+			'		<d:getcontenttype />' .
+			'		<d:getlastmodified />' .
+			'		<d:getetag />' .
+			'		<nc:version-label />' .
+			'		<nc:has-preview />' .
+			'	</d:prop>' .
+			'</d:propfind>';
 		$response = $this->featureContext->sendHttpRequest(
 			$fullUrl, $user, $password, 'PROPFIND', null, $body
 		);
