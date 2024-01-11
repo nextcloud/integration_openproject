@@ -14,9 +14,7 @@ namespace OCA\OpenProject\Controller;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
-use OCP\App\IAppManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
@@ -65,14 +63,6 @@ class FilesController extends OCSController {
 	 */
 	private $userManager;
 	/**
-	 * @var IAppManager
-	 */
-	private $appManager;
-	/**
-	 * @var ITrashManager
-	 */
-	private $trashManager = null;
-	/**
 	 * @var DavUtil
 	 */
 	private $davUtils;
@@ -84,7 +74,6 @@ class FilesController extends OCSController {
 	 * @param IUserSession $userSession
 	 * @param IMountProviderCollection $mountCollection
 	 * @param IManager $activityManager
-	 * @param IAppManager $appManager
 	 * @param IDBConnection $connection
 	 * @param ILogger $logger
 	 * @param IUserManager $userManager
@@ -97,7 +86,6 @@ class FilesController extends OCSController {
 								IUserSession $userSession,
 								IMountProviderCollection $mountCollection,
 								IManager $activityManager,
-								IAppManager $appManager,
 								IDBConnection $connection,
 								ILogger $logger,
 								IUserManager $userManager,
@@ -111,7 +99,6 @@ class FilesController extends OCSController {
 		$this->connection = $connection;
 		$this->logger = $logger;
 		$this->userManager = $userManager;
-		$this->appManager = $appManager;
 		$this->davUtils = $davUtils;
 	}
 
