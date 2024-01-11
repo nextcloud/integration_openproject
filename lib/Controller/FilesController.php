@@ -151,7 +151,9 @@ class FilesController extends OCSController {
 
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
-		$file = $files[0];
+		if (is_array($files) && count($files) > 0) {
+			$file = $files[0];
+		}
 		$mounts = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
 
 		if ($file !== null && is_array($mounts) && count($mounts) > 0) {

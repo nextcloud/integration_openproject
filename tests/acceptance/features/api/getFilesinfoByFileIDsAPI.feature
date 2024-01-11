@@ -119,7 +119,7 @@ Feature: retrieve information of multiple files using the file IDs
                 "owner_id",
                 "owner_name",
                 "modifier_id",
-                "modifier_name"
+                "modifier_name",
                 "dav_permissions",
                 "path"
               ]

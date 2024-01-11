@@ -204,8 +204,7 @@ class FilesControllerTest extends TestCase {
 			->willReturnOnConsecutiveCalls(
 				'files/logo.png',
 				'files_trashbin/files/welcome.txt.d1648724302',
-				[],
-				[]
+				'/anotherUser/files/logo.png'
 			);
 
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
@@ -876,7 +875,6 @@ class FilesControllerTest extends TestCase {
 	 * @param array<string> $onlyMethods
 	 * @param MockObject $folderMock
 	 * @param MockObject|null $mountCacheMock mock for Files that exist but cannot be accessed by this user
-	 * @param bool $isAppEnabled
 	 * @param MockObject|null $davUtilsMock
 	 * @return FilesController|MockObject
 	 */
@@ -916,7 +914,6 @@ class FilesControllerTest extends TestCase {
 					$userSessionMock,
 					$mountProviderCollectionMock,
 					$this->createMock(IManager::class),
-					$appManagerMock,
 					$this->createMock(IDBConnection::class),
 					$this->createMock(ILogger::class),
 					$this->createMock(IUserManager::class),
