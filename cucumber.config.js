@@ -1,8 +1,8 @@
 const { Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require('@cucumber/cucumber')
 const { chromium } = require('playwright')
-const { config } = require('./config')
-const apiHelper = require('./helpers/apiHelper')
-const { OpenprojectAdminPage } = require('./pageObjects/OpenprojectAdminPage')
+const { config } = require('./tests/e2e/config')
+const {apiHelper} = require('./tests/e2e/helpers/apiHelper')
+const { OpenprojectAdminPage } = require('./tests/e2e/pageObjects/OpenprojectAdminPage')
 
 setDefaultTimeout(120000)
 

@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const {fetch} = require('node-fetch')
 const { config } = require('../config')
 const { throwError } = require('@vue/vue2-jest/lib/utils')
 
