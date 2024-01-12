@@ -25,6 +25,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -70,6 +75,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -116,7 +126,8 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id",
       "modifier_name",
       "dav_permissions",
-      "path"
+      "path",
+      "trashed"
       ]
       },
       "properties": {
@@ -154,7 +165,8 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id",
       "modifier_name",
       "dav_permissions",
-      "path"
+      "path",
+      "trashed"
       ]
       },
       "properties": {
@@ -191,7 +203,8 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id",
       "modifier_name",
       "dav_permissions",
-      "path"
+      "path",
+      "trashed"
       ]
       },
       "properties": {
@@ -226,7 +239,8 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id",
       "modifier_name",
       "dav_permissions",
-      "path"
+      "path",
+      "trashed"
       ]
       },
       "properties": {
@@ -258,6 +272,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -295,6 +314,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -333,6 +357,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -370,6 +399,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -408,6 +442,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -446,6 +485,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number",  "enum": [200] },
@@ -482,7 +526,8 @@ Feature: retrieve file information of a single file, using the file ID
       "modifier_id",
       "modifier_name",
       "dav_permissions",
-      "path"
+      "path",
+      "trashed"
       ]
       },
       "properties": {
@@ -516,6 +561,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -562,6 +612,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -623,6 +678,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -673,6 +733,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -720,6 +785,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -766,6 +836,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -803,6 +878,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -847,6 +927,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -895,6 +980,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -940,6 +1030,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1003,6 +1098,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1041,6 +1141,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1073,6 +1178,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1122,6 +1232,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1154,6 +1269,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
@@ -1209,6 +1329,11 @@ Feature: retrieve file information of a single file, using the file ID
       "dav_permissions",
       "path"
       ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
       "properties": {
       "status": {"type": "string", "pattern": "^OK$"},
       "statuscode" : {"type" : "number", "enum": [200]},
