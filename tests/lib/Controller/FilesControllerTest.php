@@ -2,7 +2,6 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\DavUtil;
@@ -126,7 +125,6 @@ class FilesControllerTest extends TestCase {
 				"size" => 200245,
 				"owner_name" => "Test User",
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-				'trashed' => false,
 				'modifier_name' => null,
 				'modifier_id' => null,
 				'dav_permissions' => 'RGDNVCK',
@@ -148,80 +146,9 @@ class FilesControllerTest extends TestCase {
 		assertSame(404, $result->getStatus());
 	}
 
-	public function testGetFileInfoFileInTrash(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([]);
-
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302')
-		);
-
-		$mountCacheMock = $this->getSimpleMountCacheMock(
-			'files_trashbin/files/welcome.txt.d1648724302'
-		);
-		$filesController = $this->getFilesControllerMock(
-			['getDavPermissions'], $folderMock, $mountCacheMock, true, null, $trashManagerMock
-		);
-		$filesController->method('getDavPermissions')->willReturn('RGDNVW');
-
-		$result = $filesController->getFileInfo(759);
-		assertSame($this->trashedWelcomeTxtResult, $result->getData());
-		assertSame(200, $result->getStatus());
-	}
-
-	// this case happens for files that have been deleted before the trashbinapp got disabled
-	public function testGetFileInfoFileFileExistsTrashappDisabled(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([]);
-		$mountCacheMock = $this->getSimpleMountCacheMock(
-			'files_trashbin/files/welcome.txt.d1648724302'
-		);
-		$filesController = $this->createFilesController(
-			$folderMock, null, $mountCacheMock, false
-		);
-
-		$result = $filesController->getFileInfo(123);
-		assertSame($this->forbiddenResponse, $result->getData());
-		assertSame(403, $result->getStatus());
-	}
-
-	// this case happens for files that get deleted while the trashbinapp was disabled
-	public function testGetFileInfoFileFileDoesNotExistsTrashappDisabled(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([]);
-		$filesController = $this->createFilesController(
-			$folderMock, null, null, false
-		);
-
-		$result = $filesController->getFileInfo(123);
-		assertSame($this->notFoundResponse, $result->getData());
-		assertSame(404, $result->getStatus());
-	}
-
-	public function testGetFileInfoFileTrashappThrowsException(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([]);
-
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-		$trashManagerMock->method('getTrashNodeById')->willThrowException(new \Exception());
-
-		$filesController = $this->createFilesController(
-			$folderMock, $trashManagerMock
-		);
-
-		$result = $filesController->getFileInfo(123);
-		assertSame($this->notFoundResponse, $result->getData());
-		assertSame(404, $result->getStatus());
-	}
-
 	public function testGetFileInfoFileExistingButNotReadable(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')->willReturn([]);
-
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-		$trashManagerMock->method('getTrashNodeById')->willReturn(null);
-
 		$mountCacheMock = $this->getMockBuilder('\OCP\Files\Config\IUserMountCache')->getMock();
 		$mountCacheMock->method('getMountsForFileId')
 			->willReturn(
@@ -229,7 +156,7 @@ class FilesControllerTest extends TestCase {
 			);
 
 		$filesController = $this->createFilesController(
-			$folderMock, $trashManagerMock, $mountCacheMock
+			$folderMock, $mountCacheMock
 		);
 
 		$result = $filesController->getFileInfo(759);
@@ -258,38 +185,6 @@ class FilesControllerTest extends TestCase {
 		assertSame(200, $result->getStatus());
 	}
 
-	public function testGetFilesInfoOneIdRequestedFileInTrash(): void {
-		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
-		$folderMock->method('getById')->willReturn([]);
-
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-		$trashManagerMock->method('getTrashNodeById')->willReturn(
-			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302')
-		);
-
-		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
-		$appManagerMock->method('isEnabledForUser')->willReturn(
-			true
-		);
-
-		$mountCacheMock = $this->getSimpleMountCacheMock(
-			'files_trashbin/files/welcome.txt.d1648724302'
-		);
-
-		$filesController = $this->getFilesControllerMock(
-			['getDavPermissions'], $folderMock, $mountCacheMock, true, null, $trashManagerMock
-		);
-		$filesController->method('getDavPermissions')->willReturn('RGDNVW');
-		$result = $filesController->getFilesInfo([759]);
-		assertSame(
-			[
-				759 => $this->trashedWelcomeTxtResult,
-			],
-			$result->getData()
-		);
-		assertSame(200, $result->getStatus());
-	}
-
 	public function testGetFilesInfoFourIdsRequestedOneExistsOneInTrashOneNotExisitingOneForbidden(): void {
 		$folderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$folderMock->method('getById')
@@ -302,16 +197,6 @@ class FilesControllerTest extends TestCase {
 				[]
 			);
 
-		$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-		$trashManagerMock->method('getTrashNodeById')
-			->withConsecutive([$this->anything(), 759], [$this->anything(), 365], [$this->anything(), 956])
-			->willReturnOnConsecutiveCalls(
-			$this->getNodeMock('text/plain', 759, 'file', '/testUser/files_trashbin/files/welcome.txt.d1648724302'),
-			null,
-			null
-		);
-
-
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			'\OCP\Files\Config\ICachedMountFileInfo'
 		)->getMock();
@@ -319,8 +204,7 @@ class FilesControllerTest extends TestCase {
 			->willReturnOnConsecutiveCalls(
 				'files/logo.png',
 				'files_trashbin/files/welcome.txt.d1648724302',
-				[],
-				[]
+				'/anotherUser/files/logo.png'
 			);
 
 		$ownerMock = $this->getMockBuilder('\OCP\IUser')->getMock();
@@ -339,7 +223,7 @@ class FilesControllerTest extends TestCase {
 			);
 
 		$filesController = $this->getFilesControllerMock(
-			['getDavPermissions'], $folderMock, $mountCacheMock, true, null, $trashManagerMock
+			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
 			->willReturnOnConsecutiveCalls('RGDNVW', 'RGDNVW');
@@ -348,7 +232,7 @@ class FilesControllerTest extends TestCase {
 		assertSame(
 			[
 				123 => $this->logoPngResult,
-				759 => $this->trashedWelcomeTxtResult,
+				759 => $this->notFoundResponse,
 				365 => $this->notFoundResponse,
 				956 => $this->forbiddenResponse
 			],
@@ -387,11 +271,11 @@ class FilesControllerTest extends TestCase {
 		$folderMock->method('getById')
 			->withConsecutive([123], [256], [365])
 			->willReturnOnConsecutiveCalls(
-					[
-						$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
-					],
-					[],
-					[]
+				[
+					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
+				],
+				[],
+				[]
 			);
 
 		$cachedMountFileInfoMock = $this->getMockBuilder(
@@ -582,7 +466,6 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false,
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
@@ -599,7 +482,6 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false,
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
@@ -684,7 +566,6 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false,
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
@@ -701,7 +582,6 @@ class FilesControllerTest extends TestCase {
 					'size' => 200245,
 					'owner_name' => 'Test User',
 					'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-					'trashed' => false,
 					'modifier_name' => null,
 					'modifier_id' => null,
 					'dav_permissions' => 'RGDNVCK',
@@ -861,7 +741,6 @@ class FilesControllerTest extends TestCase {
 				"size" => 200245,
 				"owner_name" => "Test User",
 				"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-				'trashed' => false,
 				'modifier_name' => null,
 				'modifier_id' => null,
 				'dav_permissions' => $davPermission,
@@ -892,27 +771,6 @@ class FilesControllerTest extends TestCase {
 	/**
 	 * @var array<mixed>
 	 */
-	private array $trashedWelcomeTxtResult = [
-		'status' => 'OK',
-		'statuscode' => 200,
-		"id" => 759,
-		"name" => 'welcome.txt.d1648724302',
-		"mtime" => 1640008813,
-		"ctime" => 1639906930,
-		"mimetype" => 'text/plain',
-		"size" => 200245,
-		"owner_name" => "Test User",
-		"owner_id" => "3df8ff78-49cb-4d60-8d8b-171b29591fd3",
-		"trashed" => true,
-		'modifier_name' => null,
-		'modifier_id' => null,
-		'dav_permissions' => 'RGDNVW',
-		'path' => 'files_trashbin/files/welcome.txt.d1648724302'
-	];
-
-	/**
-	 * @var array<mixed>
-	 */
 	private array $logoPngResult = [
 		'status' => 'OK',
 		'statuscode' => 200,
@@ -924,7 +782,6 @@ class FilesControllerTest extends TestCase {
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-		'trashed' => false,
 		'modifier_name' => null,
 		'modifier_id' => null,
 		'dav_permissions' => 'RGDNVW',
@@ -945,7 +802,6 @@ class FilesControllerTest extends TestCase {
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-		'trashed' => false,
 		'modifier_name' => null,
 		'modifier_id' => null,
 		'dav_permissions' => 'RGDNVW',
@@ -966,7 +822,6 @@ class FilesControllerTest extends TestCase {
 		'size' => 200245,
 		'owner_name' => 'Test User',
 		'owner_id' => '3df8ff78-49cb-4d60-8d8b-171b29591fd3',
-		'trashed' => false,
 		'modifier_name' => null,
 		'modifier_id' => null,
 		'dav_permissions' => 'RGDNVW',
@@ -975,15 +830,12 @@ class FilesControllerTest extends TestCase {
 
 	/**
 	 * @param MockObject $folderMock
-	 * @param MockObject|ITrashManager|null $trashManagerMock
 	 * @param MockObject|null $mountCacheMock mock for Files that exist but cannot be accessed by this user
 	 * @return FilesController
 	 */
 	private function createFilesController(
 		MockObject $folderMock,
-		$trashManagerMock = null,
-		MockObject $mountCacheMock = null,
-		bool $isAppEnabled = true
+		MockObject $mountCacheMock = null
 	): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -1003,10 +855,6 @@ class FilesControllerTest extends TestCase {
 			'OCP\Files\Config\IMountProviderCollection'
 		)->getMock();
 		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
-		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
-		$appManagerMock->method('isEnabledForUser')->willReturn(
-			$isAppEnabled
-		);
 
 		$controller = new FilesController(
 			'integration_openproject',
@@ -1015,17 +863,11 @@ class FilesControllerTest extends TestCase {
 			$userSessionMock,
 			$mountProviderCollectionMock,
 			$this->createMock(IManager::class),
-			$appManagerMock,
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ILogger::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(DavUtil::class),
 		);
-		if ($trashManagerMock === null) {
-			$trashManagerMock = $this->getMockBuilder('\OCA\Files_Trashbin\Trash\ITrashManager')->getMock();
-			$trashManagerMock->method('getTrashNodeById')->willReturn(null);
-		}
-		$controller->setTrashManager($trashManagerMock);
 		return $controller;
 	}
 
@@ -1033,18 +875,14 @@ class FilesControllerTest extends TestCase {
 	 * @param array<string> $onlyMethods
 	 * @param MockObject $folderMock
 	 * @param MockObject|null $mountCacheMock mock for Files that exist but cannot be accessed by this user
-	 * @param bool $isAppEnabled
 	 * @param MockObject|null $davUtilsMock
-	 * @param MockObject|ITrashManager|null $trashManagerMock
 	 * @return FilesController|MockObject
 	 */
 	public function getFilesControllerMock(
 		array $onlyMethods,
 		MockObject $folderMock,
 		MockObject $mountCacheMock = null,
-		bool $isAppEnabled = true,
-		MockObject $davUtilsMock = null,
-		$trashManagerMock = null
+		MockObject $davUtilsMock = null
 	): FilesController {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
@@ -1064,31 +902,25 @@ class FilesControllerTest extends TestCase {
 		}
 
 		$mountProviderCollectionMock = $this->getMockBuilder(
-		'OCP\Files\Config\IMountProviderCollection'
+			'OCP\Files\Config\IMountProviderCollection'
 		)->getMock();
 		$mountProviderCollectionMock->method('getMountCache')->willReturn($mountCacheMock);
-		$appManagerMock = $this->getMockBuilder('\OCP\App\IAppManager')->getMock();
-		$appManagerMock->method('isEnabledForUser')->willReturn($isAppEnabled);
 		$controller = $this->getMockBuilder(FilesController::class)
-		->setConstructorArgs(
-			[
-				'integration_openproject',
-				$this->createMock(IRequest::class),
-				$storageMock,
-				$userSessionMock,
-				$mountProviderCollectionMock,
-				$this->createMock(IManager::class),
-				$appManagerMock,
-				$this->createMock(IDBConnection::class),
-				$this->createMock(ILogger::class),
-				$this->createMock(IUserManager::class),
-				$davUtilsMock
-			])
-		->onlyMethods($onlyMethods)
-		->getMock();
-		if ($trashManagerMock) {
-			$controller->setTrashManager($trashManagerMock);
-		}
+			->setConstructorArgs(
+				[
+					'integration_openproject',
+					$this->createMock(IRequest::class),
+					$storageMock,
+					$userSessionMock,
+					$mountProviderCollectionMock,
+					$this->createMock(IManager::class),
+					$this->createMock(IDBConnection::class),
+					$this->createMock(ILogger::class),
+					$this->createMock(IUserManager::class),
+					$davUtilsMock
+				])
+			->onlyMethods($onlyMethods)
+			->getMock();
 
 		return $controller;
 	}

@@ -47,7 +47,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed",
               "dav_permissions",
               "path"
             ],
@@ -64,7 +63,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Carol$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [false]},
               "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
               "path": {"type": "string", "pattern":"^files\/file.txt$"}
             }
@@ -84,7 +82,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed",
               "dav_permissions",
               "path"
             ],
@@ -101,7 +98,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Brian Adams$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [false]},
               "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
               "path": {"type": "string", "pattern":"^files\/renamedByCarol.txt$"}
             }
@@ -110,37 +106,27 @@ Feature: retrieve information of multiple files using the file IDs
             "type": "object",
             "required": [
               "status",
-              "statuscode",
-              "id",
-              "size",
-              "name",
-              "mtime",
-              "ctime",
-              "mimetype",
-              "owner_id",
-              "owner_name",
-              "modifier_id",
-              "modifier_name",
-              "trashed",
-              "dav_permissions",
-              "path"
+              "statuscode"
             ],
+            "not": {
+             "required": [
+                "id",
+                "size",
+                "name",
+                "mtime",
+                "ctime",
+                "mimetype",
+                "owner_id",
+                "owner_name",
+                "modifier_id",
+                "modifier_name",
+                "dav_permissions",
+                "path"
+              ]
+            },
             "properties": {
-              "status": {"type": "string", "pattern": "^OK$"},
-              "statuscode" : {"type" : "number", "enum": [200]},
-              "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
-              "size" : {"type" : "integer", "enum": [9] },
-              "mtime" : {"type" : "integer"},
-              "ctime" : {"type" : "integer", "enum": [0]},
-              "name": {"type": "string", "pattern": "^trashed.txt.d\\d{10}$"},
-              "mimetype": {"type": "string", "pattern": "^text\/plain$"},
-              "owner_id": {"type": "string", "pattern": "^Carol$"},
-              "owner_name": {"type": "string", "pattern": "^Carol$"},
-              "modifier_id": {"type": "null"},
-              "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [true]},
-              "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
-              "path": {"type": "string", "pattern":"^files_trashbin\/files\/trashed.txt.d\\d{10}$"}
+              "status": {"type": "string", "pattern": "^Not Found$"},
+              "statuscode" : {"type" : "number", "enum": [404]}
             }
           },
           "%ids[3]%": {
@@ -161,7 +147,6 @@ Feature: retrieve information of multiple files using the file IDs
                 "owner_name",
                 "modifier_id",
                 "modifier_name",
-                "trashed",
                 "dav_permissions",
                 "path"
               ]
@@ -189,7 +174,6 @@ Feature: retrieve information of multiple files using the file IDs
                 "owner_name",
                 "modifier_id",
                 "modifier_name",
-                "trashed",
                 "dav_permissions",
                 "path"
               ]
@@ -214,7 +198,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name",
               "modifier_id",
               "modifier_name",
-              "trashed",
               "dav_permissions",
               "path"
             ],
@@ -231,7 +214,6 @@ Feature: retrieve information of multiple files using the file IDs
               "owner_name": {"type": "string", "pattern": "^Carol$"},
               "modifier_id": {"type": "null"},
               "modifier_name": {"type": "null"},
-              "trashed": {"type": "boolean", "enum": [false]},
               "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK"},
               "path": {"type": "string", "pattern":"^files/groupFolder\/$"}
             }

@@ -11,14 +11,10 @@
 
 namespace OCA\OpenProject\Controller;
 
-use Exception;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCP\Activity\IManager;
-use OCP\App\IAppManager;
-use OCP\AppFramework\QueryException;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\FileInfo;
@@ -33,7 +29,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Server;
-use Throwable;
 use OCP\Files\DavUtil;
 
 class FilesController extends OCSController {
@@ -68,14 +63,6 @@ class FilesController extends OCSController {
 	 */
 	private $userManager;
 	/**
-	 * @var IAppManager
-	 */
-	private $appManager;
-	/**
-	 * @var ITrashManager
-	 */
-	private $trashManager = null;
-	/**
 	 * @var DavUtil
 	 */
 	private $davUtils;
@@ -87,7 +74,6 @@ class FilesController extends OCSController {
 	 * @param IUserSession $userSession
 	 * @param IMountProviderCollection $mountCollection
 	 * @param IManager $activityManager
-	 * @param IAppManager $appManager
 	 * @param IDBConnection $connection
 	 * @param ILogger $logger
 	 * @param IUserManager $userManager
@@ -100,7 +86,6 @@ class FilesController extends OCSController {
 								IUserSession $userSession,
 								IMountProviderCollection $mountCollection,
 								IManager $activityManager,
-								IAppManager $appManager,
 								IDBConnection $connection,
 								ILogger $logger,
 								IUserManager $userManager,
@@ -114,7 +99,6 @@ class FilesController extends OCSController {
 		$this->connection = $connection;
 		$this->logger = $logger;
 		$this->userManager = $userManager;
-		$this->appManager = $appManager;
 		$this->davUtils = $davUtils;
 	}
 
@@ -156,20 +140,6 @@ class FilesController extends OCSController {
 	}
 
 	/**
-	 * Function to make the trash-manager testable
-	 *
-	 * @param ITrashManager|null $trashManager
-	 * @return void
-	 * @throws QueryException
-	 */
-	public function setTrashManager(ITrashManager $trashManager = null): void {
-		if ($trashManager !== null) {
-			$this->trashManager = $trashManager;
-		} elseif ($this->trashManager === null) {
-			$this->trashManager = \OC::$server->get(ITrashManager::class);
-		}
-	}
-	/**
 	 * @param int $fileId
 	 * @return array<mixed>
 	 *
@@ -178,24 +148,12 @@ class FilesController extends OCSController {
 	 */
 	private function compileFileInfo($fileId) {
 		$file = null;
-		$trashed = false;
 
 		$userFolder = $this->rootFolder->getUserFolder($this->user->getUID());
 		$files = $userFolder->getById($fileId);
 		if (is_array($files) && count($files) > 0) {
 			$file = $files[0];
-		} elseif ($this->appManager->isEnabledForUser('files_trashbin')) {
-			try {
-				$this->setTrashManager();
-				$file = $this->trashManager->getTrashNodeById(
-					$this->user, $fileId
-				);
-				$trashed = true;
-			} catch (Exception | Throwable $e) {
-				$this->logger->error('failed to use the trashManager', ['exception' => $e]);
-			}
 		}
-
 		$mounts = $this->mountCollection->getMountCache()->getMountsForFileId($fileId);
 
 		if ($file !== null && is_array($mounts) && count($mounts) > 0) {
@@ -249,7 +207,6 @@ class FilesController extends OCSController {
 				'size' => $file->getSize(),
 				'owner_name' => $owner->getDisplayName(),
 				'owner_id' => $owner->getUID(),
-				'trashed' => $trashed,
 				'modifier_name' => $modifierName,
 				'modifier_id' => $modifierId,
 				'dav_permissions' => $davPermission,
@@ -258,6 +215,16 @@ class FilesController extends OCSController {
 		}
 
 		if (is_array($mounts) && count($mounts) > 0) {
+			// if the file is in trashbin send 404
+			foreach ($mounts as $mount) {
+				if (str_starts_with($mount->getInternalPath(), 'files_trashbin')) {
+					return [
+						'status' => 'Not Found',
+						'statuscode' => 404,
+					];
+				}
+			}
+			// if the file is of another user send 403
 			return [
 				'status' => 'Forbidden',
 				'statuscode' => 403,
