@@ -676,7 +676,10 @@ Feature: setup the integration through an API
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
 
-#    # upload file and no version is available inside group folder
+
+#  #this test will run after the upward test run sucessfully
+#  #issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+#  Scenario: upload file and no version is available inside group folder
 #    Given user "Carol" has created folder "/OpenProject/OpenProject/project-abc"
 #    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
 #    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
@@ -684,7 +687,10 @@ Feature: setup the integration through an API
 #      | data      | 0987654321 |
 #    And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "0" element
 #
-#    # upload a file twice with different content and version are available inside group folder
+#    #this test will run after the upward test run sucessfully
+#    #issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+#    @skipOnStable25 @skipOnStable26
+#    Scenario: upload a file twice with different content and version are available inside group folder
 #    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
 #    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
 #      | file_name | file.txt   |
