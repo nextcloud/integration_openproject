@@ -890,7 +890,7 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "/.hidden" for user "Carol" should be "hidden file"
 
-
+  @skipOnStable25
   Scenario: upload file and version is available inside normal folder
     Given user "Carol" has created folder "/forOP"
     And user "Carol" got a direct-upload token for "/forOP"
@@ -900,7 +900,7 @@ Feature: API endpoint for direct upload
     Then the HTTP status code should be "201"
     And the version folder of file "/forOP/file.txt" for user "Carol" should contain "1" element
 
-
+  @skipOnStable25
   Scenario: upload a file twice twice with different content and versions are available inside normal folder
     Given user "Carol" has created folder "/forOP"
     And user "Carol" has uploaded file with content "1234567890" to "/forOP/file.txt"
