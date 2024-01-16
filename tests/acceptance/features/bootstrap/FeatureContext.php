@@ -1128,4 +1128,15 @@ class FeatureContext implements Context {
 		}
 		$this->createdAppPasswords = [];
 	}
+
+	/**
+	 * @When the user waits for :time
+	 *
+	 * @param int $time
+	 *
+	 * @return void
+	 */
+	public function waitForCertainSecondsToExpireTheLock(int $time): void {
+		\sleep($time);
+	}
 }
