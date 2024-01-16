@@ -904,6 +904,7 @@ Feature: API endpoint for direct upload
   Scenario: upload a file twice twice with different content and versions are available inside normal folder
     Given user "Carol" has created folder "/forOP"
     And user "Carol" has uploaded file with content "1234567890" to "/forOP/file.txt"
+    When the user waits for "5"
     And user "Carol" got a direct-upload token for "/forOP"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
