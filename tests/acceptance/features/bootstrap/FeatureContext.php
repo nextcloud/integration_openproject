@@ -28,6 +28,7 @@ class FeatureContext implements Context {
 	private string $adminUsername = '';
 	private string $adminPassword = '';
 	private string $baseUrl = '';
+	public int $lastUpLoadTime;
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
 	/**
@@ -268,8 +269,8 @@ class FeatureContext implements Context {
 			["201", "204"],
 			"HTTP status code was not 201 or 204 while trying to upload file '$destination' for user '$user'"
 		);
-
 		$this->createdFiles[] = $fileId;
+		$this->lastUpLoadTime = \time();
 	}
 
 	/**
@@ -1129,14 +1130,4 @@ class FeatureContext implements Context {
 		$this->createdAppPasswords = [];
 	}
 
-	/**
-	 * @When the user waits for :time
-	 *
-	 * @param int $time
-	 *
-	 * @return void
-	 */
-	public function waitForCertainSecondsToExpireTheLock(int $time): void {
-		\sleep($time);
-	}
 }

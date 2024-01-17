@@ -97,6 +97,11 @@ class DirectUploadContext implements Context {
 				'contents' => $formDataHash['overwrite']
 			];
 		}
+		#TODO
+		#add comments
+		if (!empty($this->featureContext->lastUpLoadTime) && $this->featureContext->lastUpLoadTime >= time()) {
+			sleep(1);
+		}
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
