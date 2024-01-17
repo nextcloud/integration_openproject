@@ -2,17 +2,14 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
 
 /**
  * Defines application features from the specific context.
  */
 class FilesVersionsContext implements Context {
-	/**
-	 *
-	 * @var FeatureContext
-	 */
-	private $featureContext;
+	private FeatureContext $featureContext;
 
 	/**
 	 * @Then the version folder of file :path for user :user should contain :count element(s)
@@ -23,6 +20,7 @@ class FilesVersionsContext implements Context {
 	 *
 	 * @return void
 	 * @throws Exception
+	 * @throws GuzzleException
 	 */
 	public function theVersionFolderOfFileShouldContainElements(
 		string $path,
@@ -42,7 +40,7 @@ class FilesVersionsContext implements Context {
 	 * @param int $count
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws GuzzleException
 	 */
 	public function theVersionFolderOfFileIdShouldContainElements(
 		string $fileId,
@@ -65,9 +63,9 @@ class FilesVersionsContext implements Context {
 	 * @param string $user
 	 * @param string $fileId
 	 * @param int $folderDepth
-	 * @param string[]|null $properties
 	 *
 	 * @return SimpleXMLElement
+	 * @throws GuzzleException
 	 * @throws Exception
 	 */
 	public function listVersionFolder(
@@ -76,7 +74,7 @@ class FilesVersionsContext implements Context {
 		int $folderDepth
 	):SimpleXMLElement {
 		$password = $this->featureContext->getRegularUserPassword();
-		$fullUrl = FeatureContext::sanitizeUrl(
+		$fullUrl = $this->featureContext->sanitizeUrl(
 			$this->featureContext->getBaseUrl() . '/remote.php/dav/versions/' . strtolower($user) . '/versions/' . $fileId
 		);
 		$body = '<?xml version="1.0"?>' .
