@@ -29,25 +29,25 @@ class FilesVersionsContext implements Context {
 	):void {
 		$fileId = $this->featureContext->getIdOfElement($user, $path);
 		Assert::assertNotNull($fileId, __METHOD__ . " file $path user $user not found (the file may not exist)");
-		$this->theVersionFolderOfFileIdShouldContainElements($fileId, $user, $count);
+		$this->theVersionFolderOfFileIdShouldContainElements($user, $fileId, $count);
 	}
 
 	/**
 	 * assert file versions count
 	 *
 	 * @param string $user
-	 * @param string $fileId
+	 * @param int $fileId
 	 * @param int $count
 	 *
 	 * @return void
 	 * @throws GuzzleException
 	 */
 	public function theVersionFolderOfFileIdShouldContainElements(
-		string $fileId,
 		string $user,
+		int $fileId,
 		int $count
 	):void {
-		$responseXml = $this->listVersionFolder($user, $fileId, 1);
+		$responseXml = $this->listVersionFolder($user, $fileId);
 		$xmlPart = $responseXml->xpath("//d:prop/d:getetag");
 		Assert::assertEquals(
 			$count,
@@ -61,8 +61,7 @@ class FilesVersionsContext implements Context {
 	 * with a registered namespace with 'd' as prefix and 'DAV:' as namespace
 	 *
 	 * @param string $user
-	 * @param string $fileId
-	 * @param int $folderDepth
+	 * @param int $fileId
 	 *
 	 * @return SimpleXMLElement
 	 * @throws GuzzleException
@@ -70,8 +69,7 @@ class FilesVersionsContext implements Context {
 	 */
 	public function listVersionFolder(
 		string $user,
-		string $fileId,
-		int $folderDepth
+		int $fileId
 	):SimpleXMLElement {
 		$password = $this->featureContext->getRegularUserPassword();
 		$fullUrl = $this->featureContext->sanitizeUrl(

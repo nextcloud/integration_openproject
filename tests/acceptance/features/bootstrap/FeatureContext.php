@@ -1129,5 +1129,4 @@ class FeatureContext implements Context {
 		}
 		$this->createdAppPasswords = [];
 	}
-
 }
