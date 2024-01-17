@@ -28,7 +28,7 @@
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
 			@saved="onSaved" />
-		<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
+		<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 		<div v-else-if="filterWorkpackagesByFileId.length > 0" id="openproject-linked-workpackages">
 			<div class="existing-relations">
 				{{ t('integration_openproject', 'Existing relations:') }}
@@ -69,7 +69,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
-import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import axios from '@nextcloud/axios'
 
@@ -89,7 +89,7 @@ export default {
 		WorkPackage,
 		NcActions,
 		NcActionButton,
-		LoadingIcon,
+		NcLoadingIcon,
 		LinkOffIcon,
 	},
 	data: () => ({
