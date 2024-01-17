@@ -34,6 +34,16 @@ class FilesVersionsContext implements Context {
 		$this->theVersionFolderOfFileIdShouldContainElements($fileId, $user, $count);
 	}
 
+	/**
+	 * assert file versions count
+	 *
+	 * @param string $user
+	 * @param string $fileId
+	 * @param int $count
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	public function theVersionFolderOfFileIdShouldContainElements(
 		string $fileId,
 		string $user,
