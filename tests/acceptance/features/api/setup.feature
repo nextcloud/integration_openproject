@@ -689,9 +689,9 @@ Feature: setup the integration through an API
       | data      | 0987654321 |
     And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "0" element
 
-#    #this test will run after the upward test run sucessfully
-#    #issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
-  @skipOnStable25 @skipOnStable26
+    #this test will run after the upward test run sucessfully
+    # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+  @issue-2718 @skipOnStable25 @skipOnStable26
   Scenario: upload a file twice with different content and version are available inside group folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
@@ -703,4 +703,3 @@ Feature: setup the integration through an API
       | overwrite | true       |
     Then the HTTP status code should be "200"
     And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "2" element
-
