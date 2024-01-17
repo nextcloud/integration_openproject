@@ -6,10 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 2.6.0-20240117-nightly - 2024-01-15
+## 2.6.0 - 2024-01-17
 ### Changed
 - This release expects OpenProject version 13.2 or newer
-- [What's Changed](https://github.com/nextcloud/integration_openproject/releases/tag/v2.5.1)
+- [What's Changed](https://github.com/nextcloud/integration_openproject/releases/tag/v2.6.0)
 
 ## 1.0.5 – 2021-06-28
 ### Changed
