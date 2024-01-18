@@ -676,18 +676,20 @@ Feature: setup the integration through an API
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
 
-
   #this test will run after the upward test run sucessfully
   #issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+  @issue-2718 @skipOnStable25 @skipOnStable26
   Scenario: upload file and no version is available inside group folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
-    And user "Carol" has created folder "/OpenProject/OpenProject/project-abc"
-    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
+    And user "Carol" has created folder "/OpenProject/OpenProject/project-demo"
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-demo"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 0987654321 |
-    And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "0" element
+    And the version folder of file "/OpenProject/OpenProject/project-demo/file.txt" for user "Carol" should contain "1" element
+    #this step is done for deletion of folder
+    When user "Carol" deletes folder "/OpenProject/OpenProject/project-demo"
 
     #this test will run after the upward test run sucessfully
     # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
@@ -695,11 +697,14 @@ Feature: setup the integration through an API
   Scenario: upload a file twice with different content and version are available inside group folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
-    And user "OpenProject" has created folder "/OpenProject/project-abc"
-    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-abc"
+    And user "OpenProject" has created folder "/OpenProject/OpenProject/project-test"
+    And user "Carol" has uploaded file with content "0123456789" to "/OpenProject/OpenProject/project-test/file.txt"
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-test"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
       | data      | 1234567890 |
       | overwrite | true       |
     Then the HTTP status code should be "200"
-    And the version folder of file "/OpenProject/OpenProject/project-abc/file.txt" for user "Carol" should contain "2" element
+    And the version folder of file "/OpenProject/OpenProject/project-test/file.txt" for user "Carol" should contain "2" element
+    #this step is done for deletion of folder
+    When user "Carol" deletes folder "/OpenProject/OpenProject/project-test"
