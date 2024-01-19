@@ -48,11 +48,11 @@ class FilesVersionsContext implements Context {
 		int $count
 	):void {
 		$responseXml = $this->listVersionFolder($user, $fileId);
-		$xmlPart = $responseXml->xpath("//d:prop/d:getetag");
+		$actualCount = \count($responseXml->xpath("//d:prop/d:getetag")) - 1;
 		Assert::assertEquals(
 			$count,
-			\count($xmlPart) - 1,
-			"could not find $count version element(s) in \n" . $responseXml->asXML()
+			$actualCount,
+			"Expected number of versions to be $count but get the actual number of versions to be $actualCount"
 		);
 	}
 
