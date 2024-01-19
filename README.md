@@ -586,15 +586,15 @@ npm run watch
 5. Do QA and fixes of bugs in the release branch
 6. Update `.github/workflows/nighlty-ci-release-branch.yml` to run nightly on release branch
 7. Merge the release branch into the `master` branch, to get all good changes also into the current development
-8. Add change log in `CHANGELOG.md` with version to be released
-9. If any unreleased changes in `CHANGELOG.md` then add to the newly added change log
+8. Add change log in `CHANGELOG.md` with the version to be released
+9. If any unreleased changes in `CHANGELOG.md`, Add them to the newly added change log
 
 ##### b. In case of a patch version
 
 1. On the release branch of the current minor version update the version in `appinfo/info.xml` (not needed for nightly builds)
 2. Merge the release branch into the `master` branch, to get all good changes also into the current development
-3. Add change log in `CHANGELOG.md` with version to be released
-4. If any unreleased changes in `CHANGELOG.md` then add to the newly added change log
+3. Add change log in `CHANGELOG.md` with the version to be released
+4. If any unreleased changes in `CHANGELOG.md`, Add them to the newly added change log
 
 #### 2. Publish Release
 1. Tag a commit on the `release/<version>` branch. The tag must have the format `v2.1.1` for releases and `v2.1.1-20220928-nightly` for nightly builds.
