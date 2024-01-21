@@ -9,7 +9,7 @@ OC.L10N.register(
     "Save" : "Įrašyti",
     "Copied!" : "Nukopijuota!",
     "Details" : "Išsamiau",
-    "Start typing to search" : "Norėdami atlikti paiešką, pradėkite rašyti",
+    "Start typing to search" : "Rašykite norėdami atlikti paiešką",
     "Select a user or group" : "Pasirinkti naudotoją ar grupę",
     "Description" : "Aprašas",
     "Create" : "Sukurti",
