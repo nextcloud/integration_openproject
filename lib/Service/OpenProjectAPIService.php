@@ -1094,7 +1094,7 @@ class OpenProjectAPIService {
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function signTOSForUserOPenProject(): void {
+	public function signTOSForUserOpenProject(): void {
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$termsMapper = new TermsMapper($this->db);
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist

@@ -18,10 +18,12 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\NewTOSCreatedEventListener;
 use OCA\OpenProject\Listener\TermOfServiceAppEnabledEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
+use OCA\TermsOfService\Events\NewTOSCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
@@ -106,6 +108,8 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermOfServiceAppEnabledEventListener::class);
+		$dispatcher->addServiceListener(NewTOSCreatedEvent::class, NewTOSCreatedEventListener::class);
+
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {
