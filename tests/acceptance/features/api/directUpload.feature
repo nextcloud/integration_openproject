@@ -910,4 +910,4 @@ Feature: API endpoint for direct upload
       | data      | 0987654321 |
       | overwrite | true       |
     Then the HTTP status code should be "200"
-    And the version folder of file "/forOP/file.txt" for user "Carol" should contain "2" element
+    And the version folder of file "/forOP/file.txt" for user "Carol" should contain "2" elements

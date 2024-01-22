@@ -52,13 +52,12 @@ class FilesVersionsContext implements Context {
 		Assert::assertEquals(
 			$count,
 			$actualCount,
-			"Expected number of versions to be $count but get the actual number of versions to be $actualCount"
+			"Expected the number of versions to be $count but the actual number of versions is $actualCount"
 		);
 	}
 
 	/**
 	 * returns the result parsed into an SimpleXMLElement
-	 * with a registered namespace with 'd' as prefix and 'DAV:' as namespace
 	 *
 	 * @param string $user
 	 * @param int $fileId

@@ -705,6 +705,6 @@ Feature: setup the integration through an API
       | data      | 1234567890 |
       | overwrite | true       |
     Then the HTTP status code should be "200"
-    And the version folder of file "/OpenProject/OpenProject/project-test/file.txt" for user "Carol" should contain "2" element
+    And the version folder of file "/OpenProject/OpenProject/project-test/file.txt" for user "Carol" should contain "2" elements
     When user "Carol" deletes folder "/OpenProject/OpenProject/project-test"
     Then the HTTP status code should be 204
