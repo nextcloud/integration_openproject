@@ -11,3 +11,4 @@ parameters:
     	-  './lib/Reference/WorkPackageReferenceProvider.php'
     	- './tests/lib/Reference/WorkPackageReferenceProviderTest.php'
     	- './lib/Listener/TermOfServiceAppEnabledEventListener.php'
+    	- './lib/Listener/NewTOSCreatedEventListener.php'

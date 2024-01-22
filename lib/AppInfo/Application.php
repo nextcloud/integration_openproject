@@ -108,8 +108,8 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermOfServiceAppEnabledEventListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since NewTOSCreatedEvent event is not yet registered in terms_of_service app
 		$dispatcher->addServiceListener(NewTOSCreatedEvent::class, NewTOSCreatedEventListener::class);
-
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {
