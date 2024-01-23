@@ -115,7 +115,7 @@
     "Yes, reset" : "Si, restabelecer",
     "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "O URL de OpenProject non é válido, forneza un URL no formulario «https://openproject.org»",
     "No OpenProject detected at the URL" : "Non se detectou ningún OpenProject no URL",
-    "OpenProject admin options saved" : "Gardáronse as opcións de administrador de OpenProject",
+    "OpenProject admin options saved" : "Gardáronse as opcións de administración de OpenProject",
     "Failed to save OpenProject admin options" : "Non foi posíbel gardar as opcións de administrador de OpenProject",
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Se continúa, terá que actualizar os axustes do seu OpenProject coas novas credenciais de OAuth de Nextcloud. Ademais, todos os usuarios de OpenProject terán que volver autorizar o acceso á súa conta Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Produciuse un erro ao crear o cliente OAuth de Nextcloud",
