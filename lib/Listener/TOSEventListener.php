@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023 Swikriti Tripathi <swikriti@jankaritech.com>
+ * @copyright Copyright (c) 2024 Sagar Gurung <sagar@jankaritech.com>
  *
- * @author Swikriti Tripathi <swikriti@jankaritech.com>
+ * @author Sagar Gurung <sagar@jankaritech.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -28,14 +28,16 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\TermsOfService\Events\NewTOSCreatedEvent;
+use OCA\TermsOfService\Events\SignaturesResetEvent;
+use OCA\TermsOfService\Events\TermsCreatedEvent;
+use OCP\App\Events\AppEnableEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
 /**
  * @template-implements IEventListener<Event>
  */
-class NewTOSCreatedEventListener implements IEventListener {
+class TOSEventListener implements IEventListener {
 
 	/**
 	 * @var OpenProjectAPIService
@@ -49,14 +51,20 @@ class NewTOSCreatedEventListener implements IEventListener {
 		$this->openprojectAPIService = $openprojectAPIService;
 	}
 
-
 	/**
 	 * @throws \Exception
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof NewTOSCreatedEvent)) {
-			return;
+		if ($event instanceof TermsCreatedEvent) {
+			$this->openprojectAPIService->signTOSForUserOPenProject();
 		}
-		$this->openprojectAPIService->signTOSForUserOPenProject();
+		if ($event instanceof SignaturesResetEvent) {
+			$this->openprojectAPIService->signTOSForUserOPenProject();
+		}
+		if ($event instanceof AppEnableEvent) {
+			if ($event->getAppId() === 'terms_of_service') {
+				$this->openprojectAPIService->signTOSForUserOPenProject();
+			}
+		}
 	}
 }

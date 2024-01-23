@@ -18,12 +18,12 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
-use OCA\OpenProject\Listener\NewTOSCreatedEventListener;
-use OCA\OpenProject\Listener\TermOfServiceAppEnabledEventListener;
+use OCA\OpenProject\Listener\TOSEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
-use OCA\TermsOfService\Events\NewTOSCreatedEvent;
+use OCA\TermsOfService\Events\SignaturesResetEvent;
+use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
@@ -107,9 +107,11 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
-		$dispatcher->addServiceListener(AppEnableEvent::class, TermOfServiceAppEnabledEventListener::class);
-		// @phpstan-ignore-next-line - make phpstan not complain since NewTOSCreatedEvent event is not yet registered in terms_of_service app
-		$dispatcher->addServiceListener(NewTOSCreatedEvent::class, NewTOSCreatedEventListener::class);
+		$dispatcher->addServiceListener(AppEnableEvent::class, TOSEventListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since TermsCreatedEvent event is not yet registered in terms_of_service app
+		$dispatcher->addServiceListener(TermsCreatedEvent::class, TOSEventListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since SignaturesResetEvent event is not yet registered in terms_of_service app
+		$dispatcher->addServiceListener(SignaturesResetEvent::class, TOSEventListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {

@@ -10,5 +10,4 @@ parameters:
     excludePaths:
     	-  './lib/Reference/WorkPackageReferenceProvider.php'
     	- './tests/lib/Reference/WorkPackageReferenceProviderTest.php'
-    	- './lib/Listener/TermOfServiceAppEnabledEventListener.php'
-    	- './lib/Listener/NewTOSCreatedEventListener.php'
+    	- './lib/Listener/TOSEventListener.php'
