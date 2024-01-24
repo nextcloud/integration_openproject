@@ -297,7 +297,7 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://nextcloud
-          FILTER_TAGS: ${{
+          BEHAT_FILTER_TAGS: ${{
             matrix.nextcloudVersion == 'stable25' && '~@skipOnStable25' ||
             matrix.nextcloudVersion == 'stable26' && '~@skipOnStable26' ||
             ''
