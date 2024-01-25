@@ -573,10 +573,11 @@ Now you can watch for the app code changes using the following command and start
 cd $HOME/development/custom_apps/integration_openproject
 npm run watch
 ```
+
+### Running API tests
 > **_NOTE:_**  
 > Before running the API tests, the nextcloud instance needs to be ready, and also integration app needs to be enabled
 
-### API tests
 To run the whole of the acceptance tests locally run the command below.
 ```shell
 NEXTCLOUD_BASE_URL=http://<nextcloud_host> make api-test
