@@ -97,6 +97,10 @@ class DirectUploadContext implements Context {
 				'contents' => $formDataHash['overwrite']
 			];
 		}
+		# 1 second pause is required between the two file uploads in order to create the version of the file
+		if (!empty($this->featureContext->lastUpLoadTime) && $this->featureContext->lastUpLoadTime >= time()) {
+			sleep(1);
+		}
 		$this->featureContext->sendRequestsToAppEndpoint(
 			null,
 			null,
