@@ -79,7 +79,7 @@ jsunit:
 
 .PHONY: api-test
 api-test:
-	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '${FILTER_TAGS}'
+	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '${FILTER_TAGS}' ${FEATURE_PATH}
 
 .PHONY: test
 test: phpunit  jsunit api-test
