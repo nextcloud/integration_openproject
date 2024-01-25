@@ -675,3 +675,36 @@ Feature: setup the integration through an API
     # user "OpenProject" cannot make api request using the old app password
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
+
+  # to locally run this test the "project folder" needs to be setup already
+  # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+  @skipOnStable25 @skipOnStable26
+  Scenario: check version of uploaded file inside a group folder
+    Given user "Carol" has been created
+    And user "Carol" has been added to the group "OpenProject"
+    And user "Carol" has created folder "/OpenProject/OpenProject/project-demo"
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-demo"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 0987654321 |
+    Then the version folder of file "/OpenProject/OpenProject/project-demo/file.txt" for user "Carol" should contain "1" element
+    When user "Carol" deletes folder "/OpenProject/OpenProject/project-demo"
+    Then the HTTP status code should be 204
+
+  # to locally run this test the "project folder" needs to be setup already
+  # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
+  @skipOnStable25 @skipOnStable26
+  Scenario: check version of uploaded file after an update inside a group folder
+    Given user "Carol" has been created
+    And user "Carol" has been added to the group "OpenProject"
+    And user "OpenProject" has created folder "/OpenProject/OpenProject/project-test"
+    And user "Carol" has uploaded file with content "0123456789" to "/OpenProject/OpenProject/project-test/file.txt"
+    And user "Carol" got a direct-upload token for "/OpenProject/OpenProject/project-test"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | file.txt   |
+      | data      | 1234567890 |
+      | overwrite | true       |
+    Then the HTTP status code should be "200"
+    And the version folder of file "/OpenProject/OpenProject/project-test/file.txt" for user "Carol" should contain "2" elements
+    When user "Carol" deletes folder "/OpenProject/OpenProject/project-test"
+    Then the HTTP status code should be 204
