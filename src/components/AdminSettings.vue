@@ -1,12 +1,12 @@
 <template>
 	<div id="openproject_prefs" class="section">
+		<TermsOfServiceUnsigned :is-any-unsigned-terms-of-service-for-user-open-project="this.isAnyUnsignedTermsOfServiceForUserOpenProject"/>
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
 				:is-complete="isServerHostFormComplete"
 				:is-dark-theme="isDarkTheme" />
-
 			<FieldValue v-if="isServerHostFormInView"
 				is-required
 				class="pb-1"
@@ -363,6 +363,8 @@ import { F_MODES, FORM } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
+import TermsOfServiceUnsigned from "./admin/TermsOfServiceUnsigned.vue";
+import NcModal from "@nextcloud/vue/dist/Components/NcModal.js";
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -379,6 +381,8 @@ export default {
 		CheckBox,
 		NcCheckboxRadioSwitch,
 		ProjectFolderError,
+		TermsOfServiceUnsigned,
+		NcModal
 	},
 	data() {
 		return {
@@ -422,7 +426,7 @@ export default {
 			textLabelProjectFolderSetupButton: null,
 			// pointer for which form the request is coming
 			isFormStep: null,
-			isDarkTheme: null,
+			isDarkTheme: null
 		}
 	},
 	computed: {
@@ -495,6 +499,9 @@ export default {
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
+		isAnyUnsignedTermsOfServiceForUserOpenProject() {
+			return this.state.unsigned_terms_of_services_status
+		},
 		adminFileStorageHref() {
 			let hostPart = ''
 			const urlPart = '%sadmin/settings/storages'
@@ -553,6 +560,7 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				console.log(this.state)
 				if (this.state.project_folder_info) {
 					this.isProjectFolderSetupCorrect = this.state.project_folder_info.status
 					if (this.state.project_folder_info.status === true) {
@@ -618,6 +626,9 @@ export default {
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}
+		},
+		closeRequestModal() {
+			this.show = false
 		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW

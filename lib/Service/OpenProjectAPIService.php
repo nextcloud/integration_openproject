@@ -1089,46 +1089,80 @@ class OpenProjectAPIService {
 			)
 		);
 	}
-
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function getAllTermsOfServicesAvailable() {
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+		$termsMapper = new TermsMapper($this->db);
+		return $termsMapper->getTerms();
+	}
 
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function signTOSForUserOpenProject(): void {
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-		$termsMapper = new TermsMapper($this->db);
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-		$signatoryMapper = new SignatoryMapper($this->db);
-		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
-			// get all the signed TOS for user "OpenProject"
+	public function getAllTermsOfServicesSignedByUserOpenProject(): array {
+		$alreadySignedTermsIdForUserOpenProject = [];
+		if($this->isTermOfServiceAppEnabled()) {
 			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-			$signatoriesByUserOpenProject = $signatoryMapper->getSignatoriesByUser($user);
-			$alreadySignedTermsIdForUserOpenProject = [];
-			if ($signatoriesByUserOpenProject) {
-				foreach ($signatoriesByUserOpenProject as $signature) {
-					$alreadySignedTermsIdForUserOpenProject[] = $signature->getTermsId();
+			$signatoryMapper = new SignatoryMapper($this->db);
+			if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
+				// get all the signed TOS for user "OpenProject"
+				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+				$signatoriesByUserOpenProject = $signatoryMapper->getSignatoriesByUser($user);
+				if ($signatoriesByUserOpenProject) {
+					foreach ($signatoriesByUserOpenProject as $signature) {
+						$alreadySignedTermsIdForUserOpenProject[] = $signature->getTermsId();
+					}
 				}
 			}
-			// get all the available terms of services
-			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-			$terms = $termsMapper->getTerms();
-			if ($terms) {
-				foreach ($terms as $term) {
-					$term_id = $term->id;
-					// sign only not signed TOS for user "OpenProject"
-					if (!in_array($term_id, $alreadySignedTermsIdForUserOpenProject)) {
-						// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-						$signatory = new Signatory();
-						// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-						$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
-						// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-						$signatory->setTermsId($term_id);
-						// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-						$signatory->setTimestamp(time());
-						// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-						$signatoryMapper->insert($signatory);
-					}
+		}
+		return $alreadySignedTermsIdForUserOpenProject;
+	}
+
+	/**
+	 * @throws \OCP\DB\Exception
+	 */
+	public function isAnyTermsOfServiceUnSignedForUserOpenProject(): bool {
+		if($this->isTermOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			$terms = $this->getAllTermsOfServicesAvailable();
+			$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServicesSignedByUserOpenProject();
+			foreach ($terms as $term) {
+				$term_id = $term->id;
+				if (!in_array($term_id, $alreadySignedTermsIdForUserOpenProject)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @throws Exception
+	 * @throws \OCP\DB\Exception
+	 */
+	public function signTOSForUserOpenProject(): void {
+		// get all the available terms of services
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+		$signatoryMapper = new SignatoryMapper($this->db);
+		$terms = $this->getAllTermsOfServicesAvailable();
+		$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServicesSignedByUserOpenProject();
+		if ($terms) {
+			foreach ($terms as $term) {
+				$term_id = $term->id;
+				// sign only not signed TOS for user "OpenProject"
+				if (!in_array($term_id, $alreadySignedTermsIdForUserOpenProject)) {
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+					$signatory = new Signatory();
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+					$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+					$signatory->setTermsId($term_id);
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+					$signatory->setTimestamp(time());
+					// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+					$signatoryMapper->insert($signatory);
 				}
 			}
 		}

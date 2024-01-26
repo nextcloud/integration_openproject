@@ -18,6 +18,7 @@ use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
+use OCP\DB\Exception;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -688,5 +689,29 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 *
+	 * @throws Exception
+	 */
+	public function signTOSForUserOpenProject(): DataResponse {
+		try {
+			$this->openprojectAPIService->signTOSForUserOpenProject();
+			return new DataResponse(
+				[
+					'result' => true
+				]
+			);
+		} catch (\Exception $e) {
+			return new DataResponse(
+				[
+					'error' => $this->l->t($e->getMessage())
+				], Http::STATUS_BAD_REQUEST
+			);
+		}
 	}
 }
