@@ -47,7 +47,7 @@
 					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.openproject_instance_url"
 					@click="saveOpenProjectHostUrl">
 					<template #icon>
-						<LoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
+						<NcLoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
 						<CheckBoldIcon v-else :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
@@ -100,7 +100,7 @@
 						:disabled="!state.openproject_client_id || !state.openproject_client_secret"
 						@click="saveOPOAuthClientValues">
 						<template #icon>
-							<LoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
+							<NcLoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
 							<CheckBoldIcon v-else :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Save') }}
@@ -232,7 +232,7 @@
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
-									<LoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
+									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
 									<CheckBoldIcon v-else :size="20" />
 								</template>
 								{{ textLabelProjectFolderSetupButton }}
@@ -242,7 +242,7 @@
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
-									<LoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
+									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
 									<RestoreIcon v-else :size="20" />
 								</template>
 								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
@@ -351,7 +351,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput.vue'
@@ -373,7 +373,7 @@ export default {
 		SettingsTitle,
 		CheckBoldIcon,
 		PencilIcon,
-		LoadingIcon,
+		NcLoadingIcon,
 		AutoRenewIcon,
 		RestoreIcon,
 		CheckBox,
