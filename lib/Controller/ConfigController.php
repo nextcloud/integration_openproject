@@ -18,7 +18,7 @@ use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
-use OCP\DB\Exception;
+use OCA\OpenProject\Exception\TermsOfServiceException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -696,7 +696,6 @@ class ConfigController extends Controller {
 	 *
 	 * @return DataResponse
 	 *
-	 * @throws Exception
 	 */
 	public function signTOSForUserOpenProject(): DataResponse {
 		try {
@@ -706,7 +705,7 @@ class ConfigController extends Controller {
 					'result' => true
 				]
 			);
-		} catch (\Exception $e) {
+		} catch (TermsOfServiceException $e) {
 			return new DataResponse(
 				[
 					'error' => $this->l->t($e->getMessage())

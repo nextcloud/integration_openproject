@@ -1,6 +1,6 @@
 <template>
 	<div id="openproject_prefs" class="section">
-		<TermsOfServiceUnsigned :is-any-unsigned-terms-of-service-for-user-open-project="this.isAnyUnsignedTermsOfServiceForUserOpenProject"/>
+		<TermsOfServiceUnsigned :is-any-unsigned-terms-of-service-for-user-open-project="isAnyUnsignedTermsOfServiceForUserOpenProject" />
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
@@ -363,8 +363,7 @@ import { F_MODES, FORM } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
-import TermsOfServiceUnsigned from "./admin/TermsOfServiceUnsigned.vue";
-import NcModal from "@nextcloud/vue/dist/Components/NcModal.js";
+import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -382,7 +381,6 @@ export default {
 		NcCheckboxRadioSwitch,
 		ProjectFolderError,
 		TermsOfServiceUnsigned,
-		NcModal
 	},
 	data() {
 		return {
@@ -426,7 +424,7 @@ export default {
 			textLabelProjectFolderSetupButton: null,
 			// pointer for which form the request is coming
 			isFormStep: null,
-			isDarkTheme: null
+			isDarkTheme: null,
 		}
 	},
 	computed: {
@@ -560,7 +558,6 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
-				console.log(this.state)
 				if (this.state.project_folder_info) {
 					this.isProjectFolderSetupCorrect = this.state.project_folder_info.status
 					if (this.state.project_folder_info.status === true) {
