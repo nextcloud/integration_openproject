@@ -21,7 +21,7 @@
 				class="pb-1"
 				:label="t('integration_openproject', 'OpenProject host')"
 				place-holder="https://www.my-openproject.com"
-				:hint-text="t('integration_openproject', 'Please introduce your OpenProject host name')"
+				:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
 				:error-message="serverHostErrorMessage"
 				:error-message-details="openProjectNotReachableErrorMessageDetails"
 				@click="isServerHostUrlReadOnly = false"
@@ -809,7 +809,7 @@ export default {
 			this.openProjectNotReachableErrorMessageDetails = null
 			this.openProjectNotReachableErrorMessage = t(
 				'integration_openproject',
-				'Please introduce a valid OpenProject host name'
+				'Please introduce a valid OpenProject hostname'
 			)
 			if (response.data.result === true) {
 				this.isOpenProjectInstanceValid = true
