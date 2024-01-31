@@ -5,7 +5,7 @@
 			:can-close="isError"
 			@close="closeRequestModal">
 			<div class="multiple-link-modal-content">
-				<LoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
+				<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="60" />
 				<div v-else-if="chunkingInformation !== null" class="link-progress-information-wrapper">
 					<div v-if="getError" class="link-progress-information-failed">
 						<div class="link-progress-information-failed--details">
@@ -72,7 +72,7 @@ import EmptyContent from '../components/tab/EmptyContent.vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
@@ -95,7 +95,7 @@ export default {
 		EmptyContent,
 		SearchInput,
 		NcModal,
-		LoadingIcon,
+		NcLoadingIcon,
 		NcProgressBar,
 		AlertCircleOutline,
 		NcButton,
