@@ -13,6 +13,7 @@ OC.L10N.register(
     "Description" : "Beskrivelse",
     "Create" : "Opprett",
     "Mark as read" : "Merk som lest",
+    "Unlink" : "Fjern koblingen",
     "OAuth access token could not be obtained:" : "OAuth access token kunne ikke innhentes:",
     "Connected accounts" : "Tilknyttede kontoer",
     "Reset" : "Tilbakestill",
