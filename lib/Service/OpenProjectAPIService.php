@@ -39,7 +39,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 use OCP\IAvatarManager;
@@ -1171,7 +1170,7 @@ class OpenProjectAPIService {
 				}
 			}
 		} catch (\Exception $e) {
-			throw new TermsOfServiceException("Could not sign terms and services for user 'OpenProject'");
+			throw new TermsOfServiceException("Error signing terms and services for user 'OpenProject'");
 		}
 	}
 

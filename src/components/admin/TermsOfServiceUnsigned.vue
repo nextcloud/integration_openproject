@@ -3,34 +3,22 @@
 		v-if="showModal">
 		<div class="tos-modal-wrapper">
 			<div class="tos-modal-content">
-				<AlertCircleOutline v-if="!signTOSSuccessful" fill-color="#FF0000" :size="60" />
-				<CheckBoldIcon v-else fill-color="var(--color-success)" :size="60" />
+				<AlertCircleOutline fill-color="#FF0000" :size="60" />
 				<div class="tos-modal-content-description">
-					<p v-if="!signTOSSuccessful && !errorMessage" class="tos-modal-content-description-failure">
-						Some "Terms of services" has not been signed up for user OpenProject.<br>
-						Click below to sign all unsigned "Terms Of Services" for user OpenProject.
-					</p>
-					<p v-else-if="!signTOSSuccessful && errorMessage" class="tos-modal-content-description-failure">
-						{{ errorMessage }}
-					</p>
-					<p v-else class="tos-modal-content-description-success">
-						All the "Terms of services" signed for user OpenProject Succuessfully!"
+					<p class="tos-modal-content-description-failure">
+						For user "OpenProject", several "Terms of services" have not been signed.<br>
+						Sign any unsigned "Terms Of Services" for user "OpenProject".
 					</p>
 				</div>
 				<div class="tos-modal-content-button">
-					<NcButton v-if="!signTOSSuccessful"
-						data-test-id="sign-tos-for-openproject"
+					<NcButton
+						data-test-id="sign-tos-for-user-openproject"
 						@click="signTOSForUserOpenProject">
 						<template #icon>
-							<LoadingIcon v-if="isLoading" class="loading-spinner" :size="25" />
+							<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="25" />
 							<CheckBoldIcon v-else :size="20" />
 						</template>
-						{{ t('integration_openproject', signTOSButtonLabel) }}
-					</NcButton>
-					<NcButton v-else
-						data-test-id="close-modal"
-						@click="closeModal">
-						{{ t('integration_openproject', 'Close') }}
+						{{ t('integration_openproject', 'Sign Terms of services') }}
 					</NcButton>
 				</div>
 			</div>
@@ -45,7 +33,8 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import LoadingIcon from 'vue-material-design-icons/Loading.vue'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'TermsOfServiceUnsigned',
@@ -54,21 +43,18 @@ export default {
 		NcButton,
 		CheckBoldIcon,
 		AlertCircleOutline,
-		LoadingIcon,
+		NcLoadingIcon,
 	},
 	props: {
-		isAnyUnsignedTermsOfServiceForUserOpenProject: {
+		isAnyTermsOfServiceUnsignedForUserOpenProject: {
 			type: Boolean,
 			default: false,
 		},
 	},
 	data() {
 		return {
-			signTOSSuccessful: false,
 			isLoading: false,
-			showModal: this.isAnyUnsignedTermsOfServiceForUserOpenProject,
-			errorMessage: '',
-			signTOSButtonLabel: 'Sign Terms of Services',
+			showModal: this.isAnyTermsOfServiceUnsignedForUserOpenProject,
 		}
 	},
 	methods: {
@@ -81,13 +67,15 @@ export default {
 				success = response?.data?.result
 				if (success) {
 					this.isLoading = false
-					this.signTOSSuccessful = true
+					showSuccess(t('integration_openproject', 'All the Terms of services are singed for user "OpenProject" successfully!'))
 				}
 			} catch (error) {
 				console.error(error)
-				this.errorMessage = error.response.data.error
+				const errorMessage = error.response.data.error
 				this.isLoading = false
-				this.signTOSButtonLabel = 'Retry Again'
+				showError(t('integration_openproject', errorMessage))
+			} finally {
+				this.closeModal()
 			}
 		},
 		closeModal() {
@@ -106,6 +94,7 @@ export default {
 
 .tos-modal-content {
 	&-description {
+		text-align: center;
 		margin-top: 10px;
 		&-failure {
 			color: var(--color-error);
@@ -118,6 +107,7 @@ export default {
 		display: flex;
 		justify-content: center;
 		margin-top: 18px;
+		margin-bottom: 10px;
 	}
 }
 </style>

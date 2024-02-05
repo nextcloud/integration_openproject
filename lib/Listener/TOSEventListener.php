@@ -32,7 +32,6 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
-use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
@@ -54,7 +53,6 @@ class TOSEventListener implements IEventListener {
 	}
 
 	/**
-	 * @throws OCSBadRequestException
 	 */
 	public function handle(Event $event): void {
 		try {
@@ -65,7 +63,6 @@ class TOSEventListener implements IEventListener {
 				$this->openprojectAPIService->signTOSForUserOPenProject();
 			}
 		} catch (TermsOfServiceException $e) {
-			throw new OCSBadRequestException($e->getMessage());
 		}
 
 		if ($event instanceof AppEnableEvent) {

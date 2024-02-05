@@ -178,7 +178,7 @@ class ConfigController extends Controller {
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
-	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException
+	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException | TermsOfServiceException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
@@ -208,9 +208,7 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
-				if ($this->openprojectAPIService->isTermOfServiceAppEnabled()) {
-					$this->openprojectAPIService->signTOSForUserOPenProject();
-				}
+				$this->openprojectAPIService->signTOSForUserOPenProject();
 			}
 		}
 
@@ -375,7 +373,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException $e) {
+		} catch (InvalidArgumentException | TermsOfServiceException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -586,7 +584,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException $e) {
+		} catch (InvalidArgumentException | TermsOfServiceException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -636,7 +634,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException $e) {
+		} catch (InvalidArgumentException | TermsOfServiceException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
