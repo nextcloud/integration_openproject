@@ -1788,6 +1788,28 @@ describe('AdminSettings.vue', () => {
 
 		})
 	})
+
+	describe('terms of service', () => {
+		const termsOfServiceComponentStub = 'termsofserviceunsigned-stub'
+		const termsOfServiceComponentStubAttribute = 'isanytermsofserviceunsignedforuseropenproject'
+		it('should show modal when terms of services are not signed', () => {
+			const wrapper = getWrapper({
+				state: {
+					unsigned_terms_of_services_status: true,
+				},
+			})
+			expect(wrapper.find(termsOfServiceComponentStub).attributes(termsOfServiceComponentStubAttribute)).toBe('true')
+		})
+
+		it('should not show modal when all terms of services are signed', () => {
+			const wrapper = getWrapper({
+				state: {
+					unsigned_terms_of_services_status: false,
+				},
+			})
+			expect(wrapper.find(termsOfServiceComponentStub).attributes(termsOfServiceComponentStubAttribute)).toBeFalsy()
+		})
+	})
 })
 
 function getWrapper(data = {}) {

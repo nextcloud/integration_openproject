@@ -35,6 +35,7 @@ import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'TermsOfServiceUnsigned',
@@ -71,9 +72,8 @@ export default {
 				}
 			} catch (error) {
 				console.error(error)
-				const errorMessage = error.response.data.error
 				this.isLoading = false
-				showError(t('integration_openproject', errorMessage))
+				showError(t('integration_openproject', 'Failed to sign Terms and Services for user "OpenProject"'))
 			} finally {
 				this.closeModal()
 			}
