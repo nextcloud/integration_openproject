@@ -1,6 +1,5 @@
 <template>
-	<NcModal
-		v-if="showModal">
+	<NcModal v-if="showModal">
 		<div class="tos-modal-wrapper">
 			<div class="tos-modal-content">
 				<AlertCircleOutline fill-color="#FF0000" :size="60" />
@@ -47,7 +46,7 @@ export default {
 		NcLoadingIcon,
 	},
 	props: {
-		isAnyTermsOfServiceUnsignedForUserOpenProject: {
+		isAllTermsOfServiceSignedForUserOpenProject: {
 			type: Boolean,
 			default: false,
 		},
@@ -55,19 +54,18 @@ export default {
 	data() {
 		return {
 			isLoading: false,
-			showModal: this.isAnyTermsOfServiceUnsignedForUserOpenProject,
+			showModal: !this.isAllTermsOfServiceSignedForUserOpenProject,
 		}
 	},
 	methods: {
 		async signTOSForUserOpenProject() {
 			this.isLoading = true
-			let success = false
 			try {
 				const url = generateUrl('/apps/integration_openproject/sign-tos-openproject')
 				const response = await axios.post(url)
-				success = response?.data?.result
-				if (success) {
-					this.isLoading = false
+				const result = response?.data?.result
+				this.isLoading = false
+				if (result) {
 					showSuccess(t('integration_openproject', 'All the Terms of services are singed for user "OpenProject" successfully!'))
 				}
 			} catch (error) {

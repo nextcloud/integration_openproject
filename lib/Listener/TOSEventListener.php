@@ -27,11 +27,11 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
-use OCA\OpenProject\Exception\TermsOfServiceException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
+use OCP\DB\Exception;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
@@ -62,16 +62,14 @@ class TOSEventListener implements IEventListener {
 			if ($event instanceof SignaturesResetEvent) {
 				$this->openprojectAPIService->signTOSForUserOPenProject();
 			}
-		} catch (TermsOfServiceException $e) {
-		}
-
-		if ($event instanceof AppEnableEvent) {
-			try {
+			if ($event instanceof AppEnableEvent) {
 				if ($event->getAppId() === 'terms_of_service') {
 					$this->openprojectAPIService->signTOSForUserOPenProject();
 				}
-			} catch (TermsOfServiceException $e) {
 			}
+		} catch (Exception $e) {
+			//TODO
+			// Put Logger
 		}
 	}
 }

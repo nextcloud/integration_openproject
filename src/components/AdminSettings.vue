@@ -1,6 +1,6 @@
 <template>
 	<div id="openproject_prefs" class="section">
-		<TermsOfServiceUnsigned :is-any-terms-of-service-unsigned-for-user-open-project="isAnyTermsOfServiceUnsignedForUserOpenProject" />
+		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isALlTermsOfServiceSignedForUserOpenProject" />
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
@@ -497,8 +497,8 @@ export default {
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
-		isAnyTermsOfServiceUnsignedForUserOpenProject() {
-			return this.state.unsigned_terms_of_services_status
+		isALlTermsOfServiceSignedForUserOpenProject() {
+			return this.state.all_terms_of_services_signed
 		},
 		adminFileStorageHref() {
 			let hostPart = ''

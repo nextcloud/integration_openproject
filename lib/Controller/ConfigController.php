@@ -18,7 +18,6 @@ use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
-use OCA\OpenProject\Exception\TermsOfServiceException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -178,7 +177,7 @@ class ConfigController extends Controller {
 	 *
 	 * @return array<string, bool|int|string|null>
 	 * @throws \Exception
-	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException | TermsOfServiceException
+	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException
 	 */
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
@@ -208,7 +207,9 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
-				$this->openprojectAPIService->signTOSForUserOPenProject();
+				if ($this->openprojectAPIService->isTermOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+					$this->openprojectAPIService->signTOSForUserOPenProject();
+				}
 			}
 		}
 
@@ -373,7 +374,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException | TermsOfServiceException $e) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -584,7 +585,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException | TermsOfServiceException $e) {
+		} catch (InvalidArgumentException) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -634,7 +635,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException | TermsOfServiceException $e) {
+		} catch (InvalidArgumentException) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -698,16 +699,17 @@ class ConfigController extends Controller {
 	public function signTOSForUserOpenProject(): DataResponse {
 		try {
 			$this->openprojectAPIService->signTOSForUserOpenProject();
+			$result = $this->openprojectAPIService->isALlTermsOfServiceSignedForUserOpenProject();
 			return new DataResponse(
 				[
-					'result' => true
+					'result' => $result
 				]
 			);
-		} catch (TermsOfServiceException $e) {
+		} catch (\Exception $e) {
 			return new DataResponse(
 				[
 					'error' => $this->l->t($e->getMessage())
-				], Http::STATUS_BAD_REQUEST
+				], Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
 	}
