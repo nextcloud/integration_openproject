@@ -214,7 +214,7 @@ jobs:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders terms_of_service integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
@@ -274,6 +274,13 @@ jobs:
         with:
           repository: nextcloud/groupfolders
           path: groupfolders
+          ref: ${{ matrix.nextcloudVersion }}
+
+      - name: Checkout terms_of_service app
+        uses: actions/checkout@v3
+        with:
+          repository: nextcloud/terms_of_service
+          path: terms_of_service
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
