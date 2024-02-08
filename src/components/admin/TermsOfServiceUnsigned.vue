@@ -5,8 +5,10 @@
 				<AlertCircleOutline fill-color="#FF0000" :size="60" />
 				<div class="tos-modal-content-description">
 					<p class="tos-modal-content-description-failure">
-						For user "OpenProject", several "Terms of services" have not been signed.<br>
-						Sign any unsigned "Terms Of Services" for user "OpenProject".
+						{{ t('integration_openproject', 'For user "OpenProject", several "Terms of services" have not been signed.') }}
+					</p>
+					<p class="tos-modal-content-description-failure">
+						{{ t('integration_openproject', 'Sign any unsigned "Terms Of Services" for user "OpenProject".') }}
 					</p>
 				</div>
 				<div class="tos-modal-content-button">
@@ -96,9 +98,6 @@ export default {
 		margin-top: 10px;
 		&-failure {
 			color: var(--color-error);
-		}
-		&-success {
-			color: var(--color-success);
 		}
 	}
 	&-button {

@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
@@ -34,6 +35,7 @@ use OCP\App\Events\AppEnableEvent;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -45,15 +47,21 @@ class TOSEventListener implements IEventListener {
 	 */
 	private OpenProjectAPIService $openprojectAPIService;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	public function __construct(
-		OpenProjectAPIService $openprojectAPIService
+		OpenProjectAPIService $openprojectAPIService,
+		LoggerInterface $logger,
+
 
 	) {
 		$this->openprojectAPIService = $openprojectAPIService;
+		$this->logger = $logger;
 	}
 
-	/**
-	 */
 	public function handle(Event $event): void {
 		try {
 			if ($event instanceof TermsCreatedEvent) {
@@ -68,8 +76,10 @@ class TOSEventListener implements IEventListener {
 				}
 			}
 		} catch (Exception $e) {
-			//TODO
-			// Put Logger
+			$this->logger->error(
+				'Error: ' . $e->getMessage(),
+				['app' => Application::APP_ID]
+			);
 		}
 	}
 }
