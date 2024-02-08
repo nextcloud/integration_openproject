@@ -10,6 +10,7 @@ OC.L10N.register(
     "Copied!" : "Kopiert!",
     "Details" : "Detaljer",
     "Start typing to search" : "Start å skrive for å søke",
+    "Select a user or group" : "Velg en bruker eller gruppe",
     "Description" : "Beskrivelse",
     "Create" : "Opprett",
     "Mark as read" : "Merk som lest",
