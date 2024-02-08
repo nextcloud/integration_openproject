@@ -8,6 +8,7 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\DB\Exception;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -1355,5 +1356,78 @@ class ConfigControllerTest extends TestCase {
 		$data = $result->getData();
 		$this->assertArrayHasKey('oPUserAppPassword', $data);
 		$this->assertEquals("gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx", $data['oPUserAppPassword']);
+	}
+
+	public function testsignTOSForUserOpenProject():void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service->method('signTOSForUserOpenProject');
+		$service
+			->method('isALlTermsOfServiceSignedForUserOpenProject')
+			->willReturn(true);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
+		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
+		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
+
+		$configControllerMock = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManagerMock,
+			$this->l,
+			$service,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
+			$groupManagerMock,
+			$secureRandomMock,
+			$subAdminManagerMock,
+			'admin'
+		);
+
+		$result = $configControllerMock->signTOSForUserOpenProject();
+		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
+		$data = $result->getData();
+		$this->assertTrue($data['result']);
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function testsignTOSForUserOpenProjectError():void {
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$service->method('signTOSForUserOpenProject')->willThrowException(new Exception("Database Error!"));
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
+		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
+		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
+		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
+
+		$configControllerMock = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManagerMock,
+			$this->l,
+			$service,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
+			$groupManagerMock,
+			$secureRandomMock,
+			$subAdminManagerMock,
+			'admin'
+		);
+		$result = $configControllerMock->signTOSForUserOpenProject();
+		$this->assertEquals(Http::STATUS_INTERNAL_SERVER_ERROR, $result->getStatus());
+		$data = $result->getData();
+		$this->assertEquals("Database Error!", $data['error']);
 	}
 }

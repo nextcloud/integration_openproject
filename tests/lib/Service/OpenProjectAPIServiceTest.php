@@ -3415,4 +3415,57 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $service->getPasswordLength();
 		$this->assertEquals($expectedPasswordLength, $result);
 	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function termsOfServicesDataProvider(): array {
+		return [
+			[
+				[ (object)['id' => 1], (object)['id' => 2]],
+				[1,2],
+				true
+			],
+			[
+				[ (object)['id' => 1],  (object)['id' => 2]],
+				[1],
+				false
+			],
+		];
+	}
+
+
+	/**
+	 * @dataProvider termsOfServicesDataProvider
+	 * @param array<mixed> $availableTermsOfServices
+	 * @param array<mixed> $alreadySignedTemrsOfServices
+	 * @param bool $expectedResult
+	 *
+	 * @return void
+	 */
+	public function testIsALlTermsOfServiceSignedForUserOpenProject(array $availableTermsOfServices, array $alreadySignedTemrsOfServices, bool $expectedResult): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(true);
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+
+		$service = $this->getServiceMock(
+			['isTermOfServiceAppEnabled', 'getAllTermsOfServicesAvailable', 'getAllTermsOfServicesSignedByUserOpenProject'],
+			null,
+			null,
+			$userManagerMock
+		);
+		$service->method('isTermOfServiceAppEnabled')->willReturn(true);
+		$service->method('getAllTermsOfServicesAvailable')->willReturn($availableTermsOfServices);
+		$service->method('getAllTermsOfServicesSignedByUserOpenProject')->willReturn($alreadySignedTemrsOfServices);
+		$result = $service->isALlTermsOfServiceSignedForUserOpenProject();
+		$this->assertSame($expectedResult, $result);
+	}
 }

@@ -585,7 +585,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
@@ -635,7 +635,7 @@ class ConfigController extends Controller {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
-		} catch (InvalidArgumentException) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
