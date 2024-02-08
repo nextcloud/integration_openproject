@@ -3457,15 +3457,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn($userMock);
 
 		$service = $this->getServiceMock(
-			['isTermOfServiceAppEnabled', 'getAllTermsOfServicesAvailable', 'getAllTermsOfServicesSignedByUserOpenProject'],
+			['isTermsOfServiceAppEnabled', 'getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject'],
 			null,
 			null,
 			$userManagerMock
 		);
-		$service->method('isTermOfServiceAppEnabled')->willReturn(true);
-		$service->method('getAllTermsOfServicesAvailable')->willReturn($availableTermsOfServices);
-		$service->method('getAllTermsOfServicesSignedByUserOpenProject')->willReturn($alreadySignedTemrsOfServices);
-		$result = $service->isALlTermsOfServiceSignedForUserOpenProject();
+		$service->method('isTermsOfServiceAppEnabled')->willReturn(true);
+		$service->method('getAllTermsOfServiceAvailable')->willReturn($availableTermsOfServices);
+		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->willReturn($alreadySignedTemrsOfServices);
+		$result = $service->isAllTermsOfServiceSignedForUserOpenProject();
 		$this->assertSame($expectedResult, $result);
 	}
 }

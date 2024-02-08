@@ -14,8 +14,8 @@ jest.mock('@nextcloud/dialogs', () => ({
 }))
 
 describe('TermsOfServiceUnsigned.vue', () => {
-	const signTermsOfServiceButtonSelector = '[data-test-id="sign-tos-for-user-openproject"]'
-	const termsOfServiceModalSelector = '.tos-modal-wrapper'
+	const signTermsOfServiceButtonSelector = '[data-test-id="sign-terms-of-service-for-user-openproject"]'
+	const termsOfServiceModalSelector = '.terms-of-service-modal-wrapper'
 	describe('sign terms of services modal', () => {
 		it('should have a button "Sign Terms Of Services"', async () => {
 			const wrapper = mountWrapper()

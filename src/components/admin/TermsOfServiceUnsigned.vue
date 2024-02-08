@@ -1,20 +1,20 @@
 <template>
 	<NcModal v-if="showModal">
-		<div class="tos-modal-wrapper">
+		<div class="terms-of-service-modal-wrapper">
 			<div class="tos-modal-content">
 				<AlertCircleOutline fill-color="#FF0000" :size="60" />
-				<div class="tos-modal-content-description">
-					<p class="tos-modal-content-description-failure">
+				<div class="terms-of-service-modal-content-description">
+					<p class="terms-of-service-modal-content-description-failure">
 						{{ t('integration_openproject', 'For user "OpenProject", several "Terms of services" have not been signed.') }}
 					</p>
-					<p class="tos-modal-content-description-failure">
+					<p class="terms-of-service-modal-content-description-failure">
 						{{ t('integration_openproject', 'Sign any unsigned "Terms Of Services" for user "OpenProject".') }}
 					</p>
 				</div>
-				<div class="tos-modal-content-button">
+				<div class="terms-of-service-modal-content-button">
 					<NcButton
-						data-test-id="sign-tos-for-user-openproject"
-						@click="signTOSForUserOpenProject">
+						data-test-id="sign-terms-of-service-for-user-openproject"
+						@click="signTermsOfServiceForUserOpenProject">
 						<template #icon>
 							<NcLoadingIcon v-if="isLoading" class="loading-spinner" :size="25" />
 							<CheckBoldIcon v-else :size="20" />
@@ -60,10 +60,10 @@ export default {
 		}
 	},
 	methods: {
-		async signTOSForUserOpenProject() {
+		async signTermsOfServiceForUserOpenProject() {
 			this.isLoading = true
 			try {
-				const url = generateUrl('/apps/integration_openproject/sign-tos-openproject')
+				const url = generateUrl('/apps/integration_openproject/sign-term-of-service')
 				const response = await axios.post(url)
 				const result = response?.data?.result
 				this.isLoading = false
@@ -85,14 +85,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.tos-modal-wrapper {
+.terms-of-service-modal-wrapper {
 	height: 225px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.tos-modal-content {
+.terms-of-service-modal-content {
 	&-description {
 		text-align: center;
 		margin-top: 10px;

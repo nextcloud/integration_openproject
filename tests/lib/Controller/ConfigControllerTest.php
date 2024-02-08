@@ -1362,9 +1362,9 @@ class ConfigControllerTest extends TestCase {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$service->method('signTOSForUserOpenProject');
+		$service->method('signTermsOfServiceForUserOpenProject');
 		$service
-			->method('isALlTermsOfServiceSignedForUserOpenProject')
+			->method('isAllTermsOfServiceSignedForUserOpenProject')
 			->willReturn(true);
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
@@ -1389,7 +1389,7 @@ class ConfigControllerTest extends TestCase {
 			'admin'
 		);
 
-		$result = $configControllerMock->signTOSForUserOpenProject();
+		$result = $configControllerMock->signTermsOfServiceForUserOpenProject();
 		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
 		$data = $result->getData();
 		$this->assertTrue($data['result']);
@@ -1402,7 +1402,7 @@ class ConfigControllerTest extends TestCase {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$service->method('signTOSForUserOpenProject')->willThrowException(new Exception("Database Error!"));
+		$service->method('signTermsOfServiceForUserOpenProject')->willThrowException(new Exception("Database Error!"));
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
 		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
@@ -1425,7 +1425,7 @@ class ConfigControllerTest extends TestCase {
 			$subAdminManagerMock,
 			'admin'
 		);
-		$result = $configControllerMock->signTOSForUserOpenProject();
+		$result = $configControllerMock->signTermsOfServiceForUserOpenProject();
 		$this->assertEquals(Http::STATUS_INTERNAL_SERVER_ERROR, $result->getStatus());
 		$data = $result->getData();
 		$this->assertEquals("Database Error!", $data['error']);

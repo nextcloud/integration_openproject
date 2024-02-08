@@ -207,8 +207,8 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
-				if ($this->openprojectAPIService->isTermOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-					$this->openprojectAPIService->signTOSForUserOPenProject();
+				if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 				}
 			}
 		}
@@ -696,9 +696,9 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 *
 	 */
-	public function signTOSForUserOpenProject(): DataResponse {
+	public function signTermsOfServiceForUserOpenProject(): DataResponse {
 		try {
-			$this->openprojectAPIService->signTOSForUserOpenProject();
+			$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			$result = $this->openprojectAPIService->isALlTermsOfServiceSignedForUserOpenProject();
 			return new DataResponse(
 				[

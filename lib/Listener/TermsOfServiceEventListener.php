@@ -40,7 +40,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @template-implements IEventListener<Event>
  */
-class TOSEventListener implements IEventListener {
+class TermsOfServiceEventListener implements IEventListener {
 
 	/**
 	 * @var OpenProjectAPIService
@@ -54,9 +54,7 @@ class TOSEventListener implements IEventListener {
 
 	public function __construct(
 		OpenProjectAPIService $openprojectAPIService,
-		LoggerInterface $logger,
-
-
+		LoggerInterface $logger
 	) {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->logger = $logger;
@@ -65,14 +63,14 @@ class TOSEventListener implements IEventListener {
 	public function handle(Event $event): void {
 		try {
 			if ($event instanceof TermsCreatedEvent) {
-				$this->openprojectAPIService->signTOSForUserOPenProject();
+				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			}
 			if ($event instanceof SignaturesResetEvent) {
-				$this->openprojectAPIService->signTOSForUserOPenProject();
+				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			}
 			if ($event instanceof AppEnableEvent) {
 				if ($event->getAppId() === 'terms_of_service') {
-					$this->openprojectAPIService->signTOSForUserOPenProject();
+					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 				}
 			}
 		} catch (Exception $e) {

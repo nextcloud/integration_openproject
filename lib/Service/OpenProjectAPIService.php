@@ -118,7 +118,6 @@ class OpenProjectAPIService {
 	private IDBConnection $db;
 
 
-
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
 	 */
@@ -1082,7 +1081,7 @@ class OpenProjectAPIService {
 		);
 	}
 
-	public function isTermOfServiceAppEnabled(): bool {
+	public function isTermsOfServiceAppEnabled(): bool {
 		return (
 			class_exists('\OCA\TermsOfService\Db\Entities\Signatory') &&
 			class_exists('\OCA\TermsOfService\Db\Mapper\SignatoryMapper') &&
@@ -1096,7 +1095,7 @@ class OpenProjectAPIService {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getAllTermsOfServicesAvailable(): array {
+	public function getAllTermsOfServiceAvailable(): array {
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$termsMapper = new TermsMapper($this->db);
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
@@ -1106,7 +1105,7 @@ class OpenProjectAPIService {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getAllTermsOfServicesSignedByUserOpenProject(): array {
+	public function getAllTermsOfServiceSignedByUserOpenProject(): array {
 		$alreadySignedTermsIdForUserOpenProject = [];
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$signatoryMapper = new SignatoryMapper($this->db);
@@ -1124,13 +1123,13 @@ class OpenProjectAPIService {
 		return $alreadySignedTermsIdForUserOpenProject;
 	}
 
-	public function isALlTermsOfServiceSignedForUserOpenProject(): bool {
-		if ($this->isTermOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			$terms = $this->getAllTermsOfServicesAvailable();
-			$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServicesSignedByUserOpenProject();
+	public function isAllTermsOfServiceSignedForUserOpenProject(): bool {
+		if ($this->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+			$terms = $this->getAllTermsOfServiceAvailable();
+			$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServiceSignedByUserOpenProject();
 			foreach ($terms as $term) {
-				$term_id = $term->id;
-				if (!in_array($term_id, $alreadySignedTermsIdForUserOpenProject)) {
+				$termId = $term->id;
+				if (!in_array($termId, $alreadySignedTermsIdForUserOpenProject)) {
 					return false;
 				}
 			}
@@ -1141,22 +1140,22 @@ class OpenProjectAPIService {
 	/**
 	 * @throws \OCP\DB\Exception
 	 */
-	public function signTOSForUserOpenProject(): void {
+	public function signTermsOfServiceForUserOpenProject(): void {
 		// get all the available terms of services
 		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$signatoryMapper = new SignatoryMapper($this->db);
-		$terms = $this->getAllTermsOfServicesAvailable();
-		$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServicesSignedByUserOpenProject();
+		$terms = $this->getAllTermsOfServiceAvailable();
+		$alreadySignedTermsIdForUserOpenProject = $this->getAllTermsOfServiceSignedByUserOpenProject();
 		foreach ($terms as $term) {
-			$term_id = $term->id;
+			$termId = $term->id;
 			// sign only not signed TOS for user "OpenProject"
-			if (!in_array($term_id, $alreadySignedTermsIdForUserOpenProject)) {
+			if (!in_array($termId, $alreadySignedTermsIdForUserOpenProject)) {
 				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory = new Signatory();
 				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
 				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
-				$signatory->setTermsId($term_id);
+				$signatory->setTermsId($termId);
 				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory->setTimestamp(time());
 				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
