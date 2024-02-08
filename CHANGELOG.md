@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+- Replaced vue loading icon with default Nextcloud loading icon [#561](https://github.com/nextcloud/integration_openproject/pull/561)
 
 ## 2.6.0 - 2024-01-17
 ### Changed
