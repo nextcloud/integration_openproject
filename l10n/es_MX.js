@@ -5,6 +5,7 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Copied!" : "¡Copiado!",
     "Details" : "Detalles",
+    "Start typing to search" : "Empiece a escribir para buscar",
     "Description" : "Descripción",
     "Create" : "Crear",
     "Reset" : "Reiniciar",
