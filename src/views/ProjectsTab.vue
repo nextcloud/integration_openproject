@@ -118,7 +118,7 @@ export default {
 					return false
 				}
 				return wp.fileId === this.fileInfo.id
-			})
+			}).sort((wp1, wp2) => wp1.id - wp2.id)
 		},
 	},
 	mounted() {
