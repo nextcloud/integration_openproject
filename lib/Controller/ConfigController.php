@@ -13,6 +13,7 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
+use OCP\DB\Exception as DBException;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
@@ -699,13 +700,13 @@ class ConfigController extends Controller {
 	public function signTermsOfServiceForUserOpenProject(): DataResponse {
 		try {
 			$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
-			$result = $this->openprojectAPIService->isALlTermsOfServiceSignedForUserOpenProject();
+			$result = $this->openprojectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
 			return new DataResponse(
 				[
 					'result' => $result
 				]
 			);
-		} catch (\Exception $e) {
+		} catch (DBException $e) {
 			return new DataResponse(
 				[
 					'error' => $this->l->t($e->getMessage())

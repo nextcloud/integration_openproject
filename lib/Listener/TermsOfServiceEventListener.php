@@ -32,7 +32,7 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
-use OCP\DB\Exception;
+use OCP\DB\Exception as DBException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;
@@ -73,7 +73,7 @@ class TermsOfServiceEventListener implements IEventListener {
 					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 				}
 			}
-		} catch (Exception $e) {
+		} catch (DBException $e) {
 			$this->logger->error(
 				'Error: ' . $e->getMessage(),
 				['app' => Application::APP_ID]

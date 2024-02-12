@@ -21,6 +21,7 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCP\App\IAppManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -3431,6 +3432,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				[1],
 				false
 			],
+			[
+				[ (object)['id' => 1],  (object)['id' => 2]],
+				[],
+				false
+			],
 		];
 	}
 
@@ -3443,7 +3449,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testIsALlTermsOfServiceSignedForUserOpenProject(array $availableTermsOfServices, array $alreadySignedTemrsOfServices, bool $expectedResult): void {
+	public function testIsAllTermsOfServiceSignedForUserOpenProject(array $availableTermsOfServices, array $alreadySignedTemrsOfServices, bool $expectedResult): void {
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
@@ -3455,7 +3461,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('get')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($userMock);
-
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+		$signatoryMapperMock = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor()->getMock();
 		$service = $this->getServiceMock(
 			['isTermsOfServiceAppEnabled', 'getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject'],
 			null,
@@ -3464,8 +3471,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$service->method('isTermsOfServiceAppEnabled')->willReturn(true);
 		$service->method('getAllTermsOfServiceAvailable')->willReturn($availableTermsOfServices);
-		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->willReturn($alreadySignedTemrsOfServices);
-		$result = $service->isAllTermsOfServiceSignedForUserOpenProject();
+		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->with($signatoryMapperMock)->willReturn($alreadySignedTemrsOfServices);
+		$result = $service->isAllTermsOfServiceSignedForUserOpenProject($signatoryMapperMock);
 		$this->assertSame($expectedResult, $result);
 	}
 }

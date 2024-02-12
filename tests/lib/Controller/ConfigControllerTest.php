@@ -1358,7 +1358,7 @@ class ConfigControllerTest extends TestCase {
 		$this->assertEquals("gliAcIJ3RwcgpF6ijPramBVzujfSQwJw2AVcz3Uj7bdXqxDbmkSukQhljAUf9HXItQTglvfx", $data['oPUserAppPassword']);
 	}
 
-	public function testsignTOSForUserOpenProject():void {
+	public function testSignTOSForUserOpenProject():void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -1398,7 +1398,7 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @throws \Exception
 	 */
-	public function testsignTOSForUserOpenProjectError():void {
+	public function testSignTOSForUserOpenProjectError():void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
