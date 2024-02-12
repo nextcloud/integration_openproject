@@ -1280,19 +1280,23 @@ class OpenProjectAPIService {
 	 * @param string $userId
 	 * @param int $wpId
 	 *
-	 * @return array<mixed>
+	 * @return array<mixed>|null
 	 */
-	public function getWorkPackageInfo(string $userId, int $wpId): array {
-		$result[] = null;
+	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		if ($accessToken) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
+			if (isset($searchResult['error'])) {
+				return null;
+			}
+			$result = [];
 			$result['title'] = $this->getSubline($searchResult[0]);
 			$result['description'] = $this->getMainText($searchResult[0]);
 			$result['imageUrl'] = $this->getOpenProjectUserAvatarUrl($searchResult[0]);
 			$result['entry'] = $searchResult[0];
+			return $result;
 		}
-		return $result;
+		return null;
 	}
 
 	/**

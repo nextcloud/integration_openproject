@@ -128,21 +128,21 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
-
-				$reference = new Reference($referenceText);
-				// this is used if your custom reference widget cannot be loaded (in mobile/desktop clients for example)
-				$reference->setTitle($wpInfo['title']);
-				$reference->setDescription($wpInfo['description']);
-				$reference->setImageUrl($wpInfo['imageUrl']);
-				// this is the data you will get in your custom reference widget
-				$reference->setRichObject(
-					self::RICH_OBJECT_TYPE,
-					$wpInfo['entry']
-				);
-				return $reference;
+                if($wpInfo !== null) {
+                    $reference = new Reference($referenceText);
+                    // this is used if your custom reference widget cannot be loaded (in mobile/desktop clients for example)
+                    $reference->setTitle($wpInfo['title']);
+                    $reference->setDescription($wpInfo['description']);
+                    $reference->setImageUrl($wpInfo['imageUrl']);
+                    // this is the data you will get in your custom reference widget
+                    $reference->setRichObject(
+                        self::RICH_OBJECT_TYPE,
+                        $wpInfo['entry']
+                    );
+                    return $reference;
+                }
 			}
 		}
-
 		return null;
 	}
 
