@@ -11,6 +11,7 @@ OC.L10N.register(
     "Details" : "Detàllios",
     "Start typing to search" : "Cumintza a iscrìere pro chircare",
     "Select a user or group" : "Seletziona un'utente o grupu",
+    "Description" : "Descritzione",
     "Create" : "Crea",
     "Mark as read" : "Marca comente lèghidu",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
