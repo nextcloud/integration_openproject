@@ -21,6 +21,7 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCP\App\IAppManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -31,6 +32,7 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -697,7 +699,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class)
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 	}
 
@@ -712,6 +715,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param ISecureRandom|null $iSecureRandomMock
 	 * @param IConfig|null $configMock
 	 * @param IProvider|null $tokenProviderMock
+	 * @param IDBConnection|null $db
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -724,7 +728,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$subAdminManagerMock = null,
 		$iSecureRandomMock = null,
 		$configMock = null,
-		$tokenProviderMock = null
+		$tokenProviderMock = null,
+		$db = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -754,6 +759,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($tokenProviderMock === null) {
 			$tokenProviderMock = $this->createMock(IProvider::class);
 		}
+		if ($db === null) {
+			$db = $this->createMock(IDBConnection::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -773,6 +781,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
+					$db
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -1901,7 +1910,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class)
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -1970,6 +1980,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -3404,5 +3415,64 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$result = $service->getPasswordLength();
 		$this->assertEquals($expectedPasswordLength, $result);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function termsOfServicesDataProvider(): array {
+		return [
+			[
+				[ (object)['id' => 1], (object)['id' => 2]],
+				[1,2],
+				true
+			],
+			[
+				[ (object)['id' => 1],  (object)['id' => 2]],
+				[1],
+				false
+			],
+			[
+				[ (object)['id' => 1],  (object)['id' => 2]],
+				[],
+				false
+			],
+		];
+	}
+
+
+	/**
+	 * @dataProvider termsOfServicesDataProvider
+	 * @param array<mixed> $availableTermsOfServices
+	 * @param array<mixed> $alreadySignedTemrsOfServices
+	 * @param bool $expectedResult
+	 *
+	 * @return void
+	 */
+	public function testIsAllTermsOfServiceSignedForUserOpenProject(array $availableTermsOfServices, array $alreadySignedTemrsOfServices, bool $expectedResult): void {
+		$userMock = $this->createMock(IUser::class);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$userManagerMock
+			->method('userExists')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(true);
+		$userManagerMock
+			->method('get')
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn($userMock);
+		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
+		$signatoryMapperMock = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor()->getMock();
+		$service = $this->getServiceMock(
+			['isTermsOfServiceAppEnabled', 'getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject'],
+			null,
+			null,
+			$userManagerMock
+		);
+		$service->method('isTermsOfServiceAppEnabled')->willReturn(true);
+		$service->method('getAllTermsOfServiceAvailable')->willReturn($availableTermsOfServices);
+		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->with($signatoryMapperMock)->willReturn($alreadySignedTemrsOfServices);
+		$result = $service->isAllTermsOfServiceSignedForUserOpenProject($signatoryMapperMock);
+		$this->assertSame($expectedResult, $result);
 	}
 }

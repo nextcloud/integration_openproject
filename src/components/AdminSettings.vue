@@ -1,12 +1,12 @@
 <template>
 	<div id="openproject_prefs" class="section">
+		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
 		<SettingsTitle />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
 				:is-complete="isServerHostFormComplete"
 				:is-dark-theme="isDarkTheme" />
-
 			<FieldValue v-if="isServerHostFormInView"
 				is-required
 				class="pb-1"
@@ -363,6 +363,7 @@ import { F_MODES, FORM } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
+import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -379,6 +380,7 @@ export default {
 		CheckBox,
 		NcCheckboxRadioSwitch,
 		ProjectFolderError,
+		TermsOfServiceUnsigned,
 	},
 	data() {
 		return {
@@ -494,6 +496,9 @@ export default {
 		},
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
+		},
+		isAllTermsOfServiceSignedForUserOpenProject() {
+			return this.state.all_terms_of_services_signed
 		},
 		adminFileStorageHref() {
 			let hostPart = ''
@@ -618,6 +623,9 @@ export default {
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}
+		},
+		closeRequestModal() {
+			this.show = false
 		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW

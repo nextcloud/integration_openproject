@@ -18,9 +18,13 @@ use OCA\OpenProject\Listener\BeforeUserDeletedListener;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\TermsOfServiceEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
+use OCA\TermsOfService\Events\SignaturesResetEvent;
+use OCA\TermsOfService\Events\TermsCreatedEvent;
+use OCP\App\Events\AppEnableEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IConfig;
@@ -102,6 +106,12 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
+		$dispatcher->addServiceListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since TermsCreatedEvent event is not yet registered in terms_of_service app
+		$dispatcher->addServiceListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
+		// @phpstan-ignore-next-line - make phpstan not complain since SignaturesResetEvent event is not yet registered in terms_of_service app
+		$dispatcher->addServiceListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {
