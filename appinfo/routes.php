@@ -16,6 +16,7 @@ return [
 		['name' => 'config#setAdminConfig', 'url' => '/admin-config', 'verb' => 'PUT'],
 		['name' => 'config#autoOauthCreation', 'url' => '/nc-oauth', 'verb' => 'POST'],
 		['name' => 'config#checkConfig', 'url' => '/check-config', 'verb' => 'GET'],
+		['name' => 'config#signTermsOfServiceForUserOpenProject', 'url' => '/sign-term-of-service', 'verb' => 'POST'],
 
 		['name' => 'directDownload#directDownload', 'url' => '/direct/{token}/{fileName}', 'verb' => 'GET'],
 

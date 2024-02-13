@@ -13,6 +13,7 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
+use OCP\DB\Exception as DBException;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
@@ -207,6 +208,9 @@ class ConfigController extends Controller {
 				$group->addUser($user);
 				$this->subAdminManager->createSubAdmin($user, $group);
 				$this->openprojectAPIService->createGroupfolder();
+				if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
+				}
 			}
 		}
 
@@ -685,5 +689,29 @@ class ConfigController extends Controller {
 		$this->config->setAppValue(Application::APP_ID, 'nc_oauth_client_id', $clientInfo['id']);
 		unset($clientInfo['id']);
 		return $clientInfo;
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 *
+	 */
+	public function signTermsOfServiceForUserOpenProject(): DataResponse {
+		try {
+			$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
+			$result = $this->openprojectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
+			return new DataResponse(
+				[
+					'result' => $result
+				]
+			);
+		} catch (DBException $e) {
+			return new DataResponse(
+				[
+					'error' => $this->l->t($e->getMessage())
+				], Http::STATUS_INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 }
