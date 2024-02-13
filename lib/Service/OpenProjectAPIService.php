@@ -827,6 +827,9 @@ class OpenProjectAPIService {
 		return $result;
 	}
 	/**
+	 *
+	 * @NoCSRFRequired
+	 *
 	 * @param int $workpackageId
 	 * @param string $userId
 	 * @return array<mixed>

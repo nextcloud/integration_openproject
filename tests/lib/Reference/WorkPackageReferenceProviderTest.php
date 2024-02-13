@@ -79,4 +79,52 @@ class WorkPackageReferenceProviderTest extends TestCase {
 
 		$this->assertSame(1111, $result);
 	}
+
+	/**
+	 * @return void
+	 */
+	public function testResolveReferenceWithExistentWorkPackage() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')->with(Application::APP_ID, 'openproject_instance_url')
+			->willReturn("https://openproject.org");
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)->disableOriginalConstructor()->getMock();
+		$service->method('getWorkPackageInfo')->willReturn(['title' => 'title', 'description' => 'description', 'imageUrl' => 'some image url', 'entry' => []]);
+		$refrenceProviderMock = $this->getMockBuilder(WorkPackageReferenceProvider::class)->setConstructorArgs([
+			$configMock,
+			$this->createMock(IL10N::class),
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(ReferenceManager::class),
+			$service,
+			'testUser'
+		])->onlyMethods(['getIsAdminConfigOk', 'matchReference'])->getMock();
+		$referenceText = 'https://openproject.org/projects/123/work_packages/1111';
+		$refrenceProviderMock->method('matchReference')->with($referenceText)->willReturn(true);
+		$refrenceProviderMock->method('getIsAdminConfigOk')->willReturn(true);
+		$result = $refrenceProviderMock->resolveReference("https://openproject.org/projects/123/work_packages/1111");
+		$this->assertNotNull($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testResolveReferenceWithNonExistentWorkPackage() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')->with(Application::APP_ID, 'openproject_instance_url')
+			->willReturn("https://openproject.org");
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)->disableOriginalConstructor()->getMock();
+		$service->method('getWorkPackageInfo')->willReturn(null);
+		$refrenceProviderMock = $this->getMockBuilder(WorkPackageReferenceProvider::class)->setConstructorArgs([
+			$configMock,
+			$this->createMock(IL10N::class),
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(ReferenceManager::class),
+			$service,
+			'testUser'
+		])->onlyMethods(['getIsAdminConfigOk', 'matchReference'])->getMock();
+		$referenceText = 'https://openproject.org/projects/123/work_packages/1111';
+		$refrenceProviderMock->method('matchReference')->with($referenceText)->willReturn(true);
+		$refrenceProviderMock->method('getIsAdminConfigOk')->willReturn(true);
+		$result = $refrenceProviderMock->resolveReference("https://openproject.org/projects/123/work_packages/1111");
+		$this->assertNull($result);
+	}
 }

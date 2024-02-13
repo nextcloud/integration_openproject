@@ -32,6 +32,7 @@ use OCP\Collaboration\Reference\IReference;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use phpDocumentor\Reflection\Types\This;
 
 class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
@@ -103,7 +104,6 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	}
 
 	/**
-	 * @inheritDoc
 	 */
 	public function matchReference(string $referenceText): bool {
 		if ($this->userId !== null) {
@@ -120,11 +120,14 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 		return $this->getWorkPackageIdFromUrl($referenceText) !== null;
 	}
 
+	public function getIsAdminConfigOk(): bool {
+		return OpenProjectAPIService::isAdminConfigOk($this->config);
+	}
+
 	/**
-	 * @inheritDoc
 	 */
 	public function resolveReference(string $referenceText): ?IReference {
-		if ($this->matchReference($referenceText) && OpenProjectAPIService::isAdminConfigOk($this->config)) {
+		if ($this->matchReference($referenceText) && $this->getIsAdminConfigOk() ) {
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
