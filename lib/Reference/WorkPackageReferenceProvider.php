@@ -32,7 +32,6 @@ use OCP\Collaboration\Reference\IReference;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-use phpDocumentor\Reflection\Types\This;
 
 class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	private const RICH_OBJECT_TYPE = Application::APP_ID . '_work_package';
