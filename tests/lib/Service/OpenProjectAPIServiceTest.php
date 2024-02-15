@@ -494,6 +494,31 @@ class OpenProjectAPIServiceTest extends TestCase {
 	];
 
 	/**
+	 * @var array<mixed>
+	 */
+	private $wpInformationResponse = [
+		"_type" => "WorkPackage",
+		"id" => 123,
+		"identifier" => "dev-custom-fields",
+		"subject" => "New login screen",
+		"_links" => [
+			"type" => [
+				"title" => "User story"
+			],
+			"status" => [
+				"title" => "In specification"
+			],
+			"project" => [
+				"title" => "Scrum project"
+			],
+			"assignee" => [
+				"href" => "/api/v3/users/3",
+				"title" => "OpenProject Admin"
+			]
+		]
+	];
+
+	/**
 	 * @return void
 	 * @before
 	 */
@@ -716,6 +741,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IConfig|null $configMock
 	 * @param IProvider|null $tokenProviderMock
 	 * @param IDBConnection|null $db
+	 * @param IURLGenerator|null $iURLGenerator
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -729,7 +755,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iSecureRandomMock = null,
 		$configMock = null,
 		$tokenProviderMock = null,
-		$db = null
+		$db = null,
+		$iURLGenerator = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -762,6 +789,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($db === null) {
 			$db = $this->createMock(IDBConnection::class);
 		}
+		if ($iURLGenerator === null) {
+			$iURLGenerator = $this->createMock(IURLGenerator::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -772,7 +802,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$configMock,
 					$this->createMock(IClientService::class),
 					$rootMock,
-					$this->createMock(IURLGenerator::class),
+					$iURLGenerator,
 					$cacheFactoryMock,
 					$userManagerMock,
 					$groupManagerMock,
@@ -781,7 +811,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$iSecureRandomMock,
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
-					$db
+					$db,
+					$iURLGenerator
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();
@@ -3474,5 +3505,127 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('getAllTermsOfServiceSignedByUserOpenProject')->with($signatoryMapperMock)->willReturn($alreadySignedTemrsOfServices);
 		$result = $service->isAllTermsOfServiceSignedForUserOpenProject($signatoryMapperMock);
 		$this->assertSame($expectedResult, $result);
+	}
+
+	public function testGetSubline(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
+			->willReturn("access-token");
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$service = $this->getServiceMock(
+			['searchWorkPackage'],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			null,
+			null,
+			null,
+			$configMock
+		);
+		$resultTitle = $service->getSubline($this->wpInformationResponse);
+		$this->assertSame("#123 [In specification] Scrum project", $resultTitle);
+	}
+
+	public function testGetMainText() : void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
+			->willReturn("access-token");
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$service = $this->getServiceMock(
+			['searchWorkPackage'],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			null,
+			null,
+			null,
+			$configMock
+		);
+		$resultMainText = $service->getMainText($this->wpInformationResponse);
+		$this->assertSame("USER STORY: New login screen", $resultMainText);
+	}
+
+	public function testGetWorkPackageInfoForExistentWorkPackage(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
+			->willReturn("access-token");
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$iULGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
+		$service = $this->getServiceMock(
+			['searchWorkPackage'],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			null,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			$iULGeneratorMock
+		);
+		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
+		$iULGeneratorMock->method('getAbsoluteURL')->willReturn($imageURL);
+		$testUser = 'testUser';
+		$workPackageId = 123;
+		$service->method('searchWorkPackage')->with($testUser, null, null, false, $workPackageId)->willReturn([$this->wpInformationResponse]);
+		$resultGetWorkPackageInfo = $service->getWorkPackageInfo($testUser, $workPackageId);
+		$expectedGetWorkPackageInfo = [
+			"title" => '#123 [In specification] Scrum project',
+			"description" => 'USER STORY: New login screen',
+			"imageUrl" => $imageURL,
+			"entry" => $this->wpInformationResponse,
+		];
+		self::assertSame($expectedGetWorkPackageInfo, $resultGetWorkPackageInfo);
+	}
+
+	public function testGetWorkPackageInfoForNonExistentWorkPackage(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
+			->willReturn("access-token");
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$service = $this->getServiceMock(
+			['searchWorkPackage'],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			null,
+			null,
+			null,
+			$configMock
+		);
+		$wpInformationResponse = ["error" => []];
+		$service->method('searchWorkPackage')->with('testUser', null, null, false, 123)->willReturn($wpInformationResponse);
+		$resultGetWorkPackageInfo = $service->getWorkPackageInfo('testUser', 123);
+		$this->assertNull($resultGetWorkPackageInfo);
+	}
+
+	public function testGetWorkPackageInfoForNoUserAccessToken(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
+			->willReturn(null);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$service = $this->getServiceMock(
+			['searchWorkPackage'],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			null,
+			null,
+			null,
+			$configMock
+		);
+		$resultGetWorkPackageInfo = $service->getWorkPackageInfo('testUser', 123);
+		$this->assertNull($resultGetWorkPackageInfo);
 	}
 }
