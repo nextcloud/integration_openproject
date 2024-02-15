@@ -103,7 +103,6 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	}
 
 	/**
-	 * @inheritDoc
 	 */
 	public function matchReference(string $referenceText): bool {
 		if ($this->userId !== null) {
@@ -120,29 +119,32 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 		return $this->getWorkPackageIdFromUrl($referenceText) !== null;
 	}
 
+	public function getIsAdminConfigOk(): bool {
+		return OpenProjectAPIService::isAdminConfigOk($this->config);
+	}
+
 	/**
-	 * @inheritDoc
 	 */
 	public function resolveReference(string $referenceText): ?IReference {
-		if ($this->matchReference($referenceText) && OpenProjectAPIService::isAdminConfigOk($this->config)) {
+		if ($this->matchReference($referenceText) && $this->getIsAdminConfigOk() ) {
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
-
-				$reference = new Reference($referenceText);
-				// this is used if your custom reference widget cannot be loaded (in mobile/desktop clients for example)
-				$reference->setTitle($wpInfo['title']);
-				$reference->setDescription($wpInfo['description']);
-				$reference->setImageUrl($wpInfo['imageUrl']);
-				// this is the data you will get in your custom reference widget
-				$reference->setRichObject(
-					self::RICH_OBJECT_TYPE,
-					$wpInfo['entry']
-				);
-				return $reference;
+                if($wpInfo !== null) {
+                    $reference = new Reference($referenceText);
+                    // this is used if your custom reference widget cannot be loaded (in mobile/desktop clients for example)
+                    $reference->setTitle($wpInfo['title']);
+                    $reference->setDescription($wpInfo['description']);
+                    $reference->setImageUrl($wpInfo['imageUrl']);
+                    // this is the data you will get in your custom reference widget
+                    $reference->setRichObject(
+                        self::RICH_OBJECT_TYPE,
+                        $wpInfo['entry']
+                    );
+                    return $reference;
+                }
 			}
 		}
-
 		return null;
 	}
 
