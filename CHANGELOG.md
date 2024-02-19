@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-- Replaced vue loading icon with default Nextcloud loading icon [#561](https://github.com/nextcloud/integration_openproject/pull/561)
-- Fixes: Signing terms and services for special user "OpenProject" when `terms_of_service` app is enabled [#552](https://github.com/nextcloud/integration_openproject/pull/552)
-- Fix error log when fetching non-existent work package [#573](https://github.com/nextcloud/integration_openproject/pull/573)
+
+## 2.6.1 - 2024-02-19
+### Changed
+- This release expects OpenProject version 13.2 or newer
+- Fixes: Signing terms and services for special user "OpenProject" when `terms_of_service` app is enabled
+- Fixes: Error when fetching non-existent work package from `talk` app chat
 
 ## 2.6.0 - 2024-01-17
 ### Changed
