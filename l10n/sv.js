@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "Avbryt",
     "Save" : "Spara",
     "Copied!" : "Kopierad!",
+    "Copied to the clipboard" : "Kopierat till urklipp",
     "Details" : "Detaljer",
     "Start typing to search" : "Börja skriva för att söka",
     "Select a user or group" : "Välj en användare eller grupp",
