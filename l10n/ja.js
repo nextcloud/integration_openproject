@@ -7,6 +7,7 @@ OC.L10N.register(
     "Cancel" : "キャンセル",
     "Save" : "保存",
     "Copied!" : "コピーしました！",
+    "Copied to the clipboard" : "クリップボードにコピーされました",
     "Details" : "詳細",
     "Start typing to search" : "入力して検索を開始します",
     "Select a user or group" : "ユーザーまたはグループを選択",
