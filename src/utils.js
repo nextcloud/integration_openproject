@@ -54,7 +54,7 @@ export const WORKPACKAGES_SEARCH_ORIGIN = {
 	LINK_MULTIPLE_FILES_MODAL: 'link-multiple-files-modal',
 }
 
-export const NO_OPTION_TEXT = {
+export const NO_OPTION_TEXT_STATE = {
 	START_TYPING: 0,
 	SEARCHING: 1,
 	RESULT: 2,
