@@ -63,7 +63,7 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
-import { NO_OPTION_TEXT, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
+import { NO_OPTION_TEXT_STATE, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
@@ -113,7 +113,7 @@ export default {
 		isCreateWorkpackageModalVisible: false,
 		newWorkpackageCreated: false,
 		workpackageData: [], // only for newly created workpackages
-		noOptionTextState: NO_OPTION_TEXT.START_TYPING,
+		noOptionTextState: NO_OPTION_TEXT_STATE.START_TYPING,
 	}),
 	computed: {
 		isStateOk() {
@@ -131,9 +131,9 @@ export default {
 			return ''
 		},
 		getNoOptionText() {
-			if (this.noOptionTextState === NO_OPTION_TEXT.START_TYPING) {
+			if (this.noOptionTextState === NO_OPTION_TEXT_STATE.START_TYPING) {
 				return t('integration_openproject', 'Start typing to search')
-			} else if (this.noOptionTextState === NO_OPTION_TEXT.RESULT && this.searchResults.length === 0) {
+			} else if (this.noOptionTextState === NO_OPTION_TEXT_STATE.RESULT && this.searchResults.length === 0) {
 				return t('integration_openproject', 'There were no workpackages found!')
 			} else {
 				// while workpackages are being searched we make the no text option empty
@@ -207,7 +207,7 @@ export default {
 			}
 		},
 		async asyncFind(query) {
-			this.noOptionTextState = (!query) ? NO_OPTION_TEXT.START_TYPING : NO_OPTION_TEXT.SEARCHING
+			this.noOptionTextState = (query.trim() === '') ? NO_OPTION_TEXT_STATE.START_TYPING : NO_OPTION_TEXT_STATE.SEARCHING
 			this.resetState()
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
@@ -272,9 +272,10 @@ export default {
 			}
 			if (this.isStateLoading) {
 				this.state = STATE.OK
-				this.noOptionTextState = NO_OPTION_TEXT.RESULT
 			}
-
+			if (search.trim() !== '') {
+				this.noOptionTextState = NO_OPTION_TEXT_STATE.RESULT
+			}
 		},
 		async processWorkPackages(workPackages, fileId) {
 			for (let workPackage of workPackages) {

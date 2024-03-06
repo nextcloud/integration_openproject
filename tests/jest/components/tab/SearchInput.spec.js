@@ -71,6 +71,7 @@ describe('SearchInput.vue', () => {
 	const createWorkpackageButtonSelector = '.create-workpackage--button'
 	const createWorkPackageNcSelectOptionListSelector = '.create-workpackage-footer-option'
 	const createWorkpackageModalSelector = '[data-test-id="create-workpackage-modal"]'
+	const noOptionTextSelector = '[role="listbox"] .vs__no-options'
 
 	afterEach(() => {
 		wrapper.destroy()
@@ -593,6 +594,40 @@ describe('SearchInput.vue', () => {
 			id: 456,
 			name: 'pogo.png',
 		}]
+
+		it.only.each([
+			[
+				'should set no option text to "Start typing to search" for empty search',
+				{
+					searchQuery: ' ',
+					expectedNoOptionText: 'Start typing to search',
+				},
+			],
+			[
+				'should set no option text to "There were no workpackages found!" for search query not matched',
+				{
+					searchQuery: 'query-not-matched',
+					expectedNoOptionText: 'There were no workpackages found!',
+				},
+			],
+		])('%s', async (name, expectedDetails) => {
+			wrapper = mountSearchInput(singleFileInfo)
+			await wrapper.setProps({
+				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
+			})
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: [],
+				}))
+			const inputField = wrapper.find(inputSelector)
+			await inputField.setValue(expectedDetails.searchQuery)
+			await localVue.nextTick()
+			const noOptionText = wrapper.find(noOptionTextSelector)
+			expect(noOptionText.isVisible()).toBe(true)
+			expect(noOptionText.text()).toBe(expectedDetails.expectedNoOptionText)
+		})
+
 		describe('single file selected', () => {
 			describe('select a work package for linking', () => {
 				let axiosGetSpy
