@@ -134,7 +134,7 @@ export default {
 			if (this.noOptionTextState === NO_OPTION_TEXT_STATE.START_TYPING) {
 				return t('integration_openproject', 'Start typing to search')
 			} else if (this.noOptionTextState === NO_OPTION_TEXT_STATE.RESULT && this.searchResults.length === 0) {
-				return t('integration_openproject', 'There were no workpackages found!')
+				return t('integration_openproject', 'There were no workpackages found')
 			} else {
 				// while workpackages are being searched we make the no text option empty
 				return t('integration_openproject', '')
