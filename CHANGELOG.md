@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add quick link for `group folder` app when not downloaded and enabled (project folder setup)
 - Adjust dashboard panel of `integration app` consistent to that dashboard panel of other nextcloud apps
 - Adjust padding for assignee avatar in `workpackage` template
-- Fixes wrong option text while searching workpackage. [582](https://github.com/nextcloud/integration_openproject/pull/582)
+- Fixes wrong option text while searching workpackage.
 
 ## 2.6.1 - 2024-02-19
 ### Changed
