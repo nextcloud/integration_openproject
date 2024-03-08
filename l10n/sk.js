@@ -38,6 +38,7 @@ OC.L10N.register(
     "Failed to get OpenProject notifications" : "Chyba pri získavaní upozornení z OpenProject",
     "Existing relations:" : "Existujúce vzťahy:",
     "Confirm unlink" : "Potvrdiť odpojenie",
+    "Unlink" : "Odpojiť",
     "Successfully connected to OpenProject!" : "Úspešne pripojené k OpenProject!",
     "OAuth access token could not be obtained:" : "Prístupový token OAuth sa nepodarilo získať:",
     "OpenProject notifications" : "Notifikácie OpenProject",
