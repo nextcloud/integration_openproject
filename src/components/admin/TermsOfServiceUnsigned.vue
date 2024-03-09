@@ -68,12 +68,12 @@ export default {
 				const result = response?.data?.result
 				this.isLoading = false
 				if (result) {
-					showSuccess(t('integration_openproject', 'All the Terms of services are singed for user "OpenProject" successfully!'))
+					showSuccess(t('integration_openproject', 'All terms of services are signed for user "OpenProject" successfully!'))
 				}
 			} catch (error) {
 				console.error(error)
 				this.isLoading = false
-				showError(t('integration_openproject', 'Failed to sign Terms and Services for user "OpenProject"'))
+				showError(t('integration_openproject', 'Failed to sign terms of services for user "OpenProject"'))
 			} finally {
 				this.closeModal()
 			}
