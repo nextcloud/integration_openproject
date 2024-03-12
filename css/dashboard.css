@@ -22,6 +22,16 @@ body.theme--dark .icon-openproject {
 	height: 100%;
 	align-items: start;
 	justify-content: center;
+	color: var(--color-text-maxcontrast);
+}
+
+.panel--content .empty-content .empty-content--message--title {
+	font-weight: normal;
+	font-size: 100%;
+}
+
+.panel--content .empty-content .empty-content--icon {
+	opacity: .4;
 }
 
 .panel > .panel--header .icon-openproject::before {
