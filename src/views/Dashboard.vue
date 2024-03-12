@@ -90,7 +90,7 @@ export default {
 			} else if (this.state === STATE.CONNECTION_ERROR) {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			} else if (this.state === STATE.OK) {
-				return t('integration_openproject', 'No OpenProject notifications!')
+				return t('integration_openproject', 'No OpenProject notifications')
 			}
 			return 'Cannot connect to OpenProject'
 		},

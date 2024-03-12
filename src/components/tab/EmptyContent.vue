@@ -90,7 +90,7 @@ export default {
 				return t('integration_openproject', 'Could not fetch work packages from OpenProject')
 			} else if (this.isStateOk) {
 				if (this.dashboard) {
-					return t('integration_openproject', 'No OpenProject notifications!')
+					return t('integration_openproject', 'No OpenProject notifications')
 				} else if (this.isMultipleWorkpackageLinking) {
 					return t('integration_openproject', 'Add a new link to all selected files')
 				}
