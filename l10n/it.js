@@ -14,7 +14,6 @@ OC.L10N.register(
     "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
     "Could not fetch work packages from OpenProject" : "Impossibile recuperare i pacchetti di lavoro da OpenProject",
-    "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "No OpenProject links yet" : "Ancora nessun collegamento OpenProject",
     "Unexpected Error" : "Si è verificato un errore inatteso",
     "To add a link, use the search bar above to find the desired work package" : "Per aggiungere un collegamento, utilizza la barra di ricerca in alto per trovare il pacchetto di lavoro desiderato",
@@ -50,6 +49,7 @@ OC.L10N.register(
     "OpenProject instance not found" : "Istanza OpenProject non trovata",
     "Failed to save OpenProject options" : "Salvataggio delle opzioni di OpenProject non riuscito",
     "OpenProject integration" : "Integrazione OpenProject",
+    "No OpenProject notifications!" : "Nessuna notifica OpenProject!",
     "Response:" : "Risposta:",
     "Documentation" : "Documentazione"
 },
