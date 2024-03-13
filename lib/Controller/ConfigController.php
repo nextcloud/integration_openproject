@@ -263,13 +263,13 @@ class ConfigController extends Controller {
 
 		$runningFullReset = (
 
-			$oldClientSecret &&
-
-			$oldClientId &&
+			key_exists('openproject_instance_url', $values) &&
 
 			key_exists('openproject_client_id', $values) &&
 
 			key_exists('openproject_client_secret', $values) &&
+
+			$values['openproject_instance_url'] === null &&
 
 			$values['openproject_client_id'] === null &&
 
