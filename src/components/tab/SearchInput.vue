@@ -131,14 +131,17 @@ export default {
 			return ''
 		},
 		getNoOptionText() {
-			if (this.noOptionTextState === NO_OPTION_TEXT_STATE.START_TYPING) {
+			switch (this.noOptionTextState) {
+			case NO_OPTION_TEXT_STATE.START_TYPING :
 				return t('integration_openproject', 'Start typing to search')
-			} else if (this.noOptionTextState === NO_OPTION_TEXT_STATE.RESULT && this.searchResults.length === 0) {
-				return t('integration_openproject', 'There were no workpackages found')
-			} else {
-				// while workpackages are being searched we make the no text option empty
-				return t('integration_openproject', '')
+			case NO_OPTION_TEXT_STATE.RESULT :
+				if (this.searchResults.length === 0) {
+					return t('integration_openproject', 'There were no workpackages found')
+				}
+				break
 			}
+			// while workpackages are being searched we make the no text option empty
+			return ''
 		},
 		setOptionForSearch() {
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB || this.isSmartPicker) {
