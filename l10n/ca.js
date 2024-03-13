@@ -28,7 +28,6 @@ OC.L10N.register(
     "No connection with OpenProject" : "No hi ha connexió amb OpenProject",
     "Error connecting to OpenProject" : "Error en connectar-se a OpenProject",
     "Could not fetch work packages from OpenProject" : "No s'han pogut recuperar els paquets de treball d'OpenProject",
-    "No OpenProject notifications!" : "No hi ha notificacions d'OpenProject!",
     "No OpenProject links yet" : "Encara no hi ha enllaços d'OpenProject",
     "Unexpected Error" : "Error inesperat",
     "To add a link, use the search bar above to find the desired work package" : "Per afegir un enllaç, utilitzeu la barra de cerca de dalt per trobar el paquet de treball desitjat",
@@ -87,6 +86,7 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "No s'han pogut desar les opcions d'OpenProject",
     "OpenProject integration" : "Integració OpenProject",
     "Work package linked successfully!" : "El paquet de treball s'ha enllaçat correctament!",
+    "No OpenProject notifications!" : "No hi ha notificacions d'OpenProject!",
     "Documentation" : "Documentació"
 },
 "nplurals=2; plural=(n != 1);");
