@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 - Add quick link for `group folder` app when not downloaded and enabled (project folder setup)
 - Adjust dashboard panel of `integration app` consistent to that dashboard panel of other nextcloud apps
+- Adjust padding for assignee avatar in `workpackage` template
 
 ## 2.6.1 - 2024-02-19
 ### Changed

@@ -294,7 +294,6 @@ export default {
 		&__assignee {
 			display: flex;
 			flex-direction: row;
-			padding: 5px;
 
 			&__assignee {
 				font-size: 0.81rem;
