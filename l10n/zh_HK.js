@@ -38,6 +38,8 @@ OC.L10N.register(
     "For user \"OpenProject\", several \"Terms of services\" have not been signed." : "對於用戶\"OpenProject\"，有幾個\"服務條款\"尚未簽署。",
     "Sign any unsigned \"Terms Of Services\" for user \"OpenProject\"." : "簽署任何未簽署的「服務條款」給用戶「OpenProject」。",
     "Sign Terms of services" : "簽署服務條款",
+    "All terms of services are signed for user \"OpenProject\" successfully!" : "所有服務條款已成功簽署給用戶 \"OpenProject\"！",
+    "Failed to sign terms of services for user \"OpenProject\"" : "無法簽署用戶\"OpenProject\"的服務條款。",
     "Copied!" : "已複製！",
     "Copy value" : "複製值",
     "Copied to the clipboard" : "已複製到剪貼板",
@@ -45,7 +47,6 @@ OC.L10N.register(
     "No connection with OpenProject" : "與 OpenProject 沒有連接",
     "Error connecting to OpenProject" : "連線至 OpenProject 時發生錯誤",
     "Could not fetch work packages from OpenProject" : "無法從 OpenProject 獲取工作包",
-    "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Add a new link to all selected files" : "添加指向所有所選檔案的新連結",
     "No OpenProject links yet" : "還沒有 OpenProject 連結",
     "Unexpected Error" : "發生意外錯誤",
@@ -142,6 +143,7 @@ OC.L10N.register(
     "Failed to save OpenProject options" : "儲存 OpenProject 選項失敗",
     "OpenProject integration" : "OpenProject 整合",
     "Work package linked successfully!" : "工作包鏈接成功！",
+    "No OpenProject notifications!" : "無 OpenProject 通告！",
     "Invalid key" : "無效的密鑰",
     "Default user settings" : "默認用戶設定",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "新用戶將收到這些默認值，它們將應用於集成應用程式，直到用戶更改它們。",
@@ -163,8 +165,6 @@ OC.L10N.register(
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "要能夠使用具有近端地址的 OpenProject 伺服器，請啟用“allow_local_remote_servers” 設置。{html鏈接}。",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "無法撤銷某些用戶的 OpenProject OAuth 存取權杖",
     "Successfully revoked users' OpenProject OAuth access tokens" : "已成功撤銷用戶 OpenProject OAuth 存取權杖",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "該應用程式可以與開源項目管理和協作軟件 OpenProject 無縫集成。\n\n在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作軟件包連結\n* 查找連結到檔案或資料夾的所有工作軟件包\n* 通過儀表板查看 OpenProject 通知\n* 使用 Nextcloud 的搜索欄搜索工作軟件包\n* 通過智能選擇器在富文本字段中鏈接工作軟件包\n* 在文本字段中預覽工作軟件包的連結\n\n在 OpenProject 方面，用戶能夠：\n\n* 將工作軟件包與 Nextcloud 中的檔案和資料夾連結\n* 從工作軟件包中直接上傳和下載檔案到 Nextcloud\n* 在 Nextcloud 中打開連結檔案進行編輯\n* 讓 OpenProject 為每個項目創建共享資料夾\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員和 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/)用戶指南] (https://www.openproject.org/docs/user-guide/nextcloud-integration/)。",
-    "All the Terms of services are singed for user \"OpenProject\" successfully!" : "所有服務條款已成功簽署給用戶 \"OpenProject\"！",
-    "Failed to sign Terms and Services for user \"OpenProject\"" : "無法簽署用戶\"OpenProject\"的服務條款和服務。"
+    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "該應用程式可以與開源項目管理和協作軟件 OpenProject 無縫集成。\n\n在 Nextcloud 方面，用戶能夠：\n\n* 將檔案和資料夾與 OpenProject 中的工作軟件包連結\n* 查找連結到檔案或資料夾的所有工作軟件包\n* 通過儀表板查看 OpenProject 通知\n* 使用 Nextcloud 的搜索欄搜索工作軟件包\n* 通過智能選擇器在富文本字段中鏈接工作軟件包\n* 在文本字段中預覽工作軟件包的連結\n\n在 OpenProject 方面，用戶能夠：\n\n* 將工作軟件包與 Nextcloud 中的檔案和資料夾連結\n* 從工作軟件包中直接上傳和下載檔案到 Nextcloud\n* 在 Nextcloud 中打開連結檔案進行編輯\n* 讓 OpenProject 為每個項目創建共享資料夾\n\n有關如何設置和使用 OpenProject 應用程式的更多資訊，請參閱管理員和 [集成設置指南](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/)用戶指南] (https://www.openproject.org/docs/user-guide/nextcloud-integration/)。"
 },
 "nplurals=1; plural=0;");
