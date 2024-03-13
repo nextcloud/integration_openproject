@@ -617,9 +617,12 @@ export default {
 			}
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
+			const linkText = t('integration_openproject', 'Download and enable it here')
+			const url = generateUrl('settings/apps/files/groupfolders')
+			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
 			case 'The "Group folders" app is not installed' :
-				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatic managed folders or deactivate the automatically managed folders.')
+				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders, {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}
