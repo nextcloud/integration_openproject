@@ -425,6 +425,7 @@ export default {
 			// pointer for which form the request is coming
 			isFormStep: null,
 			isDarkTheme: null,
+			isAllTermsOfServiceSignedForUserOpenProject: true,
 		}
 	},
 	computed: {
@@ -497,9 +498,6 @@ export default {
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
-		isAllTermsOfServiceSignedForUserOpenProject() {
-			return this.state.all_terms_of_services_signed
-		},
 		adminFileStorageHref() {
 			let hostPart = ''
 			const urlPart = '%sadmin/settings/storages'
@@ -558,6 +556,9 @@ export default {
 	methods: {
 		init() {
 			if (this.state) {
+				if (this.state.all_terms_of_services_signed === false) {
+					this.isAllTermsOfServiceSignedForUserOpenProject = false
+				}
 				if (this.state.project_folder_info) {
 					this.isProjectFolderSetupCorrect = this.state.project_folder_info.status
 					if (this.state.project_folder_info.status === true) {
