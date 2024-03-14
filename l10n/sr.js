@@ -47,6 +47,7 @@ OC.L10N.register(
     "No connection with OpenProject" : "Нема везе са OpenProject",
     "Error connecting to OpenProject" : "Грешка приликом повезивања са OpenProject",
     "Could not fetch work packages from OpenProject" : "Нису могли да се добаве радни пакети са OpenProject",
+    "No OpenProject notifications" : "Без OpenProject обавештења",
     "Add a new link to all selected files" : "Додај нови линк на све изабране фајлове",
     "No OpenProject links yet" : "Још увек нема OpenProject линкова",
     "Unexpected Error" : "Неочекивана грешка",
