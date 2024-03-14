@@ -20,7 +20,7 @@
 					:is-smart-picker="isSmartPicker" />
 			</template>
 			<template #no-options>
-				{{ noOptionsText }}
+				{{ getNoOptionText }}
 			</template>
 			<template v-if="!isSmartPicker" #list-footer>
 				<li class="create-workpackage-footer-option" @click="openCreateWorkpackageModal()">
@@ -63,7 +63,7 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
-import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
+import { NO_OPTION_TEXT_STATE, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
@@ -109,11 +109,11 @@ export default {
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
-		noOptionsText: t('integration_openproject', 'Start typing to search'),
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 		isCreateWorkpackageModalVisible: false,
 		newWorkpackageCreated: false,
 		workpackageData: [], // only for newly created workpackages
+		noOptionTextState: NO_OPTION_TEXT_STATE.START_TYPING,
 	}),
 	computed: {
 		isStateOk() {
@@ -128,6 +128,19 @@ export default {
 			} else if (this.state === STATE.ERROR) {
 				return t('integration_openproject', 'Error connecting to OpenProject')
 			}
+			return ''
+		},
+		getNoOptionText() {
+			switch (this.noOptionTextState) {
+			case NO_OPTION_TEXT_STATE.START_TYPING :
+				return t('integration_openproject', 'Start typing to search')
+			case NO_OPTION_TEXT_STATE.RESULT :
+				if (this.searchResults.length === 0) {
+					return t('integration_openproject', 'There were no workpackages found')
+				}
+				break
+			}
+			// while workpackages are being searched we make the no text option empty
 			return ''
 		},
 		setOptionForSearch() {
@@ -197,6 +210,7 @@ export default {
 			}
 		},
 		async asyncFind(query) {
+			this.noOptionTextState = (query.trim() === '') ? NO_OPTION_TEXT_STATE.START_TYPING : NO_OPTION_TEXT_STATE.SEARCHING
 			this.resetState()
 			if (this.searchOrigin === WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB) {
 				await this.debounceMakeSearchRequest(query, this.fileInfo.id)
@@ -256,8 +270,15 @@ export default {
 				response = e.response
 			}
 			this.checkForErrorCode(response.status)
-			if (response.status === 200) await this.processWorkPackages(response.data, fileId)
-			if (this.isStateLoading) this.state = STATE.OK
+			if (response.status === 200) {
+				await this.processWorkPackages(response.data, fileId)
+			}
+			if (this.isStateLoading) {
+				this.state = STATE.OK
+			}
+			if (search.trim() !== '') {
+				this.noOptionTextState = NO_OPTION_TEXT_STATE.RESULT
+			}
 		},
 		async processWorkPackages(workPackages, fileId) {
 			for (let workPackage of workPackages) {
