@@ -47,6 +47,7 @@ OC.L10N.register(
     "No connection with OpenProject" : "Keine Verbindung mit OpenProject",
     "Error connecting to OpenProject" : "Fehler bei der Verbindung zu OpenProject",
     "Could not fetch work packages from OpenProject" : "Arbeitspakete konnten nicht von OpenProject abgerufen werden",
+    "No OpenProject notifications" : "Keine OpenProject-Benachrichtigungen",
     "Add a new link to all selected files" : "Einen neuen Link zu allen ausgewählten Dateien hinzufügen",
     "No OpenProject links yet" : "Bis jetzt noch keine OpenProject-Links",
     "Unexpected Error" : "Unerwarteter Fehler",
