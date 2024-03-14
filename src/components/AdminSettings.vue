@@ -574,6 +574,7 @@ export default {
 				}
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedProjectFolders = true
+					this.showIntegrationSetupLinkInformation = false
 				}
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
@@ -607,7 +608,6 @@ export default {
 				if (this.showDefaultManagedProjectFolders) {
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.projectFolderSetUp = true
-					this.showIntegrationSetupLinkInformation = false
 				}
 				if (this.state.app_password_set) {
 					this.formMode.opUserAppPassword = F_MODES.VIEW

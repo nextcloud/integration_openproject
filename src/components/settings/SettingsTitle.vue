@@ -4,7 +4,7 @@
 			<OpenProjectIcon />
 			<span>{{ title }}</span>
 		</h2>
-		<p v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+		<p class="documentation-info" v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 	</div>
 </template>
 
@@ -44,7 +44,7 @@ export default {
 		getUserGuideDocumentationLinkText() {
 			const linkText = t('integration_openproject', 'Nextcloud integration user guide')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/user-guide/file-management/nextcloud-integration/" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Please go to our {htmlLink} to learn more about how to work with the Nextcloud integration.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'Please go to our {htmlLink} to learn more about how to work with the OpenProject integration.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		sanitizedHintText() {
 			if (this.isSetting === 'admin' && this.showIntegrationSetupLinkInformation) {

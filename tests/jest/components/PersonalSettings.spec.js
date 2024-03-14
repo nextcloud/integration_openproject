@@ -29,6 +29,7 @@ describe('PersonalSettings.vue', () => {
 		const personalSettingsFormSelector = '.openproject-prefs--form'
 		const personalEnableNavigationSelector = '#openproject-prefs--link'
 		const personalEnableSearchSelector = '#openproject-prefs--u-search'
+		const userGuideIntegrationDocumentationLinkSelector = '.settings .documentation-info'
 		let wrapper
 
 		beforeEach(() => {
@@ -72,6 +73,11 @@ describe('PersonalSettings.vue', () => {
 				it('oAuth disconnect button is not displayed', () => {
 					expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeFalsy()
 				})
+				it('should show not show user guide documentation link', () => {
+					const wrapper = getMountedWrapper({ state: { admin_config_ok: true, cases } })
+					const userGuideIntegrationDocumentationLink = wrapper.find(userGuideIntegrationDocumentationLinkSelector)
+					expect(userGuideIntegrationDocumentationLink.text()).toBe('')
+				})
 			})
 			describe('when username and token are given', () => {
 				beforeEach(async () => {
@@ -91,7 +97,13 @@ describe('PersonalSettings.vue', () => {
 				it('personal settings form is displayed', () => {
 					expect(wrapper.find(personalSettingsFormSelector).exists()).toBeTruthy()
 				})
+				it('should show not show user guide documentation link', () => {
+					const wrapper = getMountedWrapper({ state: { user_name: 'test', token: '123', admin_config_ok: true } })
+					const userGuideIntegrationDocumentationLink = wrapper.find(userGuideIntegrationDocumentationLinkSelector)
+					expect(userGuideIntegrationDocumentationLink.text()).toBe('Please go to our {htmlLink} to learn more about how to work with the OpenProject integration.')
+				})
 			})
+
 		})
 		describe('when the admin config is not okay', () => {
 			beforeEach(async () => {
