@@ -47,6 +47,7 @@ OC.L10N.register(
     "No connection with OpenProject" : "Ingen forbindelse med OpenProject",
     "Error connecting to OpenProject" : "Feil under tilkobling til OpenProject",
     "Could not fetch work packages from OpenProject" : "Kunne ikke hente arbeidspakker fra OpenProject",
+    "No OpenProject notifications" : "Ingen OpenProject-varslinger",
     "Add a new link to all selected files" : "Legg til en ny kobling til alle valgte filer",
     "No OpenProject links yet" : "Ingen OpenProject-koblinger enda",
     "Unexpected Error" : "Uventet feil",
