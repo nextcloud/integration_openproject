@@ -34,14 +34,12 @@
 			{{ stateMessages }}
 		</div>
 		<div v-if="!!isStateOk && !isSmartPicker" class="create-workpackage">
-			<NcActions class="create-workpackage--action">
-				<NcActionButton class="create-workpackage--button" @click="openCreateWorkpackageModal()">
-					<template #icon>
-						<Plus class="plus" :size="26" />
-					</template>
-				</NcActionButton>
-			</NcActions>
-			<span class="create-workpackage--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
+			<NcButton class="create-workpackage--button" @click="openCreateWorkpackageModal()">
+				<template #icon>
+					<Plus class="plus" :size="26" />
+				</template>
+				{{ t('integration_openproject', 'Create and link a new work package') }}
+			</NcButton>
 		</div>
 		<CreateWorkPackageModal
 			v-if="!isSmartPicker"
@@ -67,8 +65,7 @@ import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -76,8 +73,7 @@ const DEBOUNCE_THRESHOLD = 500
 export default {
 	name: 'SearchInput',
 	components: {
-		NcActions,
-		NcActionButton,
+		NcButton,
 		CreateWorkPackageModal,
 		Plus,
 		WorkPackage,
