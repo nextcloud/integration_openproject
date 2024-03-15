@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Adjust dashboard panel of `integration app` consistent to that dashboard panel of other nextcloud apps
 - Adjust padding for assignee avatar in `workpackage` template
 - Fixes wrong option text while searching workpackage.
+- Added description for settings in admin and personal panel
 
 ## 2.6.1 - 2024-02-19
 ### Changed
