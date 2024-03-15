@@ -126,10 +126,14 @@ exports[`AdminSettings.vue default user configurations form should be visible wh
   </p> <br>
   <div class="form-check-input"><input id="default-prefs--link" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--link">
       Enable navigation link
-    </label> </div>
+    </label>
+    <p class="user-setting-description">This check will show "OpenProject Icon" in the navigation bar to navigate directly to OpenProject instance.</p>
+  </div>
   <div class="form-check-input"><input id="default-prefs--u-search" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--u-search">
       Enable unified search for tickets
-    </label> </div>
+    </label>
+    <p class="user-setting-description">This check will allow to unified or global search for the OpenProject tickets from the Nextcloud.</p>
+  </div>
 </div>
 `;
 
