@@ -595,7 +595,7 @@ describe('SearchInput.vue', () => {
 			name: 'pogo.png',
 		}]
 
-		it.only.each([
+		it.each([
 			[
 				'should set no option text to "Start typing to search" for empty search',
 				{
