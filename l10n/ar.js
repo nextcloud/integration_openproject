@@ -55,6 +55,7 @@ OC.L10N.register(
     "Create and link a new work package" : "أنشِئْ و اربِط رزمة عمل جديدة",
     "No OpenProject account connected" : "لا يوجد حساب OpenProject متصل",
     "Start typing to search" : "اكتب هنا للبحث",
+    "There were no workpackages found" : "لا توجد أي حزم عمل workpackages",
     "Search for work packages" : "البحث في حزم العمل work packages",
     "Search for a work package to create a relation" : "بحث عن حزمة عمل work package لإنشاء علاقة",
     "Work package creation was not successful." : "إنشاء حزمة العمل لم يكن ناجحاً",
