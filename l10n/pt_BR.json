@@ -53,6 +53,7 @@
     "Create and link a new work package" : "Criar e vincular um novo pacote de trabalho",
     "No OpenProject account connected" : "Nenhuma conta OpenProject conectada",
     "Start typing to search" : "Comece a digitar para pesquisar",
+    "There were no workpackages found" : "Nenhum pacote de trabalho foi encontrado",
     "Search for work packages" : "Pesquisar pacotes de trabalho",
     "Search for a work package to create a relation" : "Procure um pacote de trabalho para criar uma relação",
     "Work package creation was not successful." : "A criação do pacote de trabalho não foi bem-sucedida.",
