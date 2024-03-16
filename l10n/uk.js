@@ -6,7 +6,7 @@ OC.L10N.register(
     "Error getting OAuth refresh token" : "Помилка при отриманні токена доступу OAuth",
     "Error during OAuth exchanges" : "Помилка під час обміну OAuth",
     "Direct download error" : "Помилка прямого посилання",
-    "This direct download link is invalid or has expired" : "Це пряме посилання для завантаження є недійсним або застарілим",
+    "This direct download link is invalid or has expired" : "Це пряме посилання для звантаження є недійсним або застарілим",
     "Bad HTTP method" : "Поганий метод HTTP",
     "OAuth access token refused" : "Маркер доступу OAuth відхилено",
     "OpenProject Integration" : "Інтеграція OpenProject",

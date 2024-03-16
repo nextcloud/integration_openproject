@@ -53,6 +53,7 @@
     "Create and link a new work package" : "Opprett og koble en ny arbeidspakke",
     "No OpenProject account connected" : "Ingen OpenProject-konto tilkoblet",
     "Start typing to search" : "Start å skrive for å søke",
+    "There were no workpackages found" : "Det ble ikke funnet noen arbeidspakker",
     "Search for work packages" : "Søk etter arbeidspakker",
     "Search for a work package to create a relation" : "Søke etter en arbeidspakke for å opprette en relasjon",
     "Work package creation was not successful." : "Opprettelse av arbeidspakke var ikke vellykket",
