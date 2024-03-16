@@ -55,6 +55,7 @@ OC.L10N.register(
     "Create and link a new work package" : "Креира и повезује нови радни пакет",
     "No OpenProject account connected" : "Није повезан ниједан OpenProject налог",
     "Start typing to search" : "Почните да куцате да бисте претраживали",
+    "There were no workpackages found" : "Није пронађен ниједан радни пакет",
     "Search for work packages" : "Претрага радних пакета",
     "Search for a work package to create a relation" : "Претражите радни пакет да креирате везу",
     "Work package creation was not successful." : "Креирање радног пакета није успело.",
