@@ -37,6 +37,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .form-check-input {
-	margin-bottom: 0.7rem;
+	margin-bottom: 1rem;
 }
 </style>
