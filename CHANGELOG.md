@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improves form validation for creating workpackages from nextcloud.
 - Added setup and user guide documentation link for integration app
 - Added description for settings in admin and personal panel
-- Improves form validation for creating workpackages from nextcloud.
 
 ## 2.6.1 - 2024-02-19
 ### Changed
