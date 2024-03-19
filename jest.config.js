@@ -15,5 +15,6 @@ module.exports = {
 	coverageReporters: ['lcov', 'html', 'text'],
 	transformIgnorePatterns: [
 		'node_modules/(?!(vue-material-design-icons|@nextcloud/vue-select)/)',
-	]
+	],
+	setupFiles: ["<rootDir>/tests/jest/global.mock.js"]
 }
