@@ -17,11 +17,16 @@
 		<div v-if="connected" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
 				input-id="openproject-prefs--link"
-				:label="t('integration_openproject', 'Enable navigation link')" />
+				:label="t('integration_openproject', 'Enable navigation link')">
+				<template #hint>
+					<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
+				</template>
+			</CheckBox>
 			<CheckBox v-model="state.search_enabled"
 				input-id="openproject-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')">
 				<template #hint>
+					<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
 					<p v-if="state.search_enabled" class="openproject-prefs--hint">
 						<InformationVariant />
 						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
@@ -46,7 +51,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import OAuthConnectButton from './OAuthConnectButton.vue'
 import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
-import { checkOauthConnectionResult } from '../utils.js'
+import { checkOauthConnectionResult, USER_SETTINGS } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
@@ -62,6 +67,7 @@ export default {
 			state: loadState('integration_openproject', 'user-config'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
+			userSettingDescription: USER_SETTINGS,
 		}
 	},
 	computed: {
@@ -146,6 +152,13 @@ export default {
 		display: flex;
 		align-items: center;
 		padding-top: 1rem;
+	}
+	&--form {
+		.user-setting-description {
+			opacity: .7;
+			margin-top: 0.2rem;
+			padding-left: 5px;
+		}
 	}
 	.oauth-connect--message {
 		text-align: left;
