@@ -333,11 +333,19 @@
 			<CheckBox v-model="state.default_enable_navigation"
 				input-id="default-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="setDefaultConfig" />
+				@input="setDefaultConfig">
+				<template #hint>
+					<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
+				</template>
+			</CheckBox>
 			<CheckBox v-model="state.default_enable_unified_search"
 				input-id="default-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="setDefaultConfig" />
+				@input="setDefaultConfig">
+				<template #hint>
+					<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
+				</template>
+			</CheckBox>
 		</div>
 	</div>
 </template>
@@ -359,7 +367,7 @@ import FieldValue from './admin/FieldValue.vue'
 import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
-import { F_MODES, FORM } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS } from '../utils.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
@@ -426,6 +434,7 @@ export default {
 			isFormStep: null,
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
+			userSettingDescription: USER_SETTINGS,
 			showIntegrationSetupLinkInformation: true,
 		}
 	},
@@ -1165,6 +1174,13 @@ export default {
 		display: flex;
 		align-items: center;
 		padding: 15px 0;
+	}
+	.default-prefs {
+		.user-setting-description {
+			opacity: .7;
+			margin-top: 0.2rem;
+			padding-left: 5px;
+		}
 	}
 }
 </style>
