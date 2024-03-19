@@ -54,8 +54,8 @@ export const WORKPACKAGES_SEARCH_ORIGIN = {
 	LINK_MULTIPLE_FILES_MODAL: 'link-multiple-files-modal',
 }
 export const USER_SETTINGS = {
-	NAVIGATION_LINK_DESCRIPTION: 'This check will show "OpenProject Icon" in the navigation bar to navigate directly to OpenProject instance.',
-	UNIFIED_SEARCH_DESCRIPTION: 'This check will allow to unified or global search for the OpenProject tickets from the Nextcloud.',
+	NAVIGATION_LINK_DESCRIPTION: t('integration_openproject', 'This check will show "OpenProject Icon" in the navigation bar to navigate directly to OpenProject instance.'),
+	UNIFIED_SEARCH_DESCRIPTION: t('integration_openproject', 'This check will allow to unified or global search for the OpenProject tickets from the Nextcloud.'),
 }
 
 export const NO_OPTION_TEXT_STATE = {
