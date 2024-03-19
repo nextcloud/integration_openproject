@@ -86,11 +86,6 @@ describe('CreateWorkPackageModal.vue', () => {
 							title: 'Task',
 						},
 					},
-					description: {
-						format: 'markdown',
-						html: '',
-						raw: '',
-					},
 					subject: null,
 				},
 			}
@@ -158,11 +153,6 @@ describe('CreateWorkPackageModal.vue', () => {
 							href: '/api/v3/types/2',
 							title: 'Milestone',
 						},
-					},
-					description: {
-						format: 'markdown',
-						html: '',
-						raw: '',
 					},
 					subject: null,
 				},
@@ -346,6 +336,9 @@ describe('CreateWorkPackageModal.vue', () => {
 					data: expectedErrorDetails.data,
 				}))
 			wrapper = mountWrapper(true, {
+				status: {
+					label: 'New',
+				},
 				project: expectedErrorDetails.project,
 				projectId: expectedErrorDetails.projectId,
 				subject: expectedErrorDetails.subject,
@@ -397,7 +390,11 @@ describe('CreateWorkPackageModal.vue', () => {
 					status: 422,
 					data: "{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}",
 				}))
-			wrapper = mountWrapper(true)
+			wrapper = mountWrapper(true, {
+				status: {
+					label: 'New',
+				},
+			})
 			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
 			await wrapper.vm.$nextTick()
 			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/create/work-packages', createWorkpackageBody)
@@ -407,6 +404,217 @@ describe('CreateWorkPackageModal.vue', () => {
 			const subjectError = wrapper.find(validationErrorSubjectSelector)
 			expect(subjectError.isVisible()).toBe(true)
 			expect(subjectError.text()).toBe("Subject can't be blank.")
+		})
+
+		it('should not change description template once edited (changed)', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectsResponse,
+				}))
+			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: workpackageFormValidationProjectSelected,
+				}))
+			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectAssignees,
+				}))
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					label: 'Task',
+				},
+				status: {
+					self: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					label: 'New',
+				},
+				subject: 'This is a workpackage',
+				description: {
+					format: 'markdown',
+					raw: 'New task template',
+					html: '',
+				},
+				previousDescriptionTemplate: 'New task template',
+				isDescriptionTemplateChanged: false,
+			})
+			// change the description template
+			await wrapper.setData({
+				description: {
+					format: 'markdown',
+					raw: 'New task template has been changed',
+					html: '',
+				},
+			})
+			// now switching to another project or validating form again should not change the value of the description since it was changed or edited
+			wrapper.vm.validateWorkPackageForm(2, true, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			expect(wrapper.vm.description.raw).toBe('New task template has been changed')
+		})
+
+		it('should change description when template is not edited or (changed)', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectsResponse,
+				}))
+			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: workpackageFormValidationProjectSelected,
+				}))
+			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectAssignees,
+				}))
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/1',
+						title: 'Task',
+					},
+					label: 'Task',
+				},
+				status: {
+					self: {
+						href: '/api/v3/statuses/1',
+						title: 'New',
+					},
+					label: 'New',
+				},
+				subject: 'This is a workpackage',
+				description: {
+					format: 'markdown',
+					raw: 'Previous template',
+					html: '',
+				},
+				previousDescriptionTemplate: 'Previous template',
+				isDescriptionTemplateChanged: false,
+			})
+			wrapper.vm.validateWorkPackageForm(2, false, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await wrapper.vm.$nextTick()
+			expect(wrapper.vm.description.raw).toBe('Default New task template')
+		})
+
+		it('should empty the type if that type is not available for the selected project', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectsResponse,
+				}))
+			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: workpackageFormValidationProjectSelected,
+				}))
+			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectAssignees,
+				}))
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/8',
+						title: 'TypeNotInResponse',
+					},
+					label: 'TypeNotInResponse',
+				},
+			})
+			// changing project
+			wrapper.vm.validateWorkPackageForm(2, true, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await wrapper.vm.$nextTick()
+			expect(wrapper.vm.type.label).toBe('')
+		})
+
+		it('should empty the status if this status is not available for the selected type', async () => {
+			jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectsResponse,
+				}))
+			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: workpackageFormValidationProjectSelected,
+				}))
+			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => Promise.resolve({
+					status: 200,
+					data: availableProjectAssignees,
+				}))
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: '[dev] Large',
+					},
+					label: '[dev] Large',
+					children: [],
+				},
+				type: {
+					self: {
+						href: '/api/v3/types/7',
+						title: 'Bug',
+					},
+					label: 'Bug',
+				},
+				status: {
+					self: {
+						href: '/api/v3/status/8',
+						title: 'StatusNotInResponse',
+					},
+					label: 'StatusNotInResponse',
+				},
+			})
+			// changing project type
+			wrapper.vm.validateWorkPackageForm(4, false, true)
+			expect(axiosSpyWorkPackageValidationForm).toHaveBeenCalledTimes(1)
+			expect(assigneeAxiosSpy).toHaveBeenCalledTimes(1)
+			await wrapper.vm.$nextTick()
+			expect(wrapper.vm.status.label).toBe('')
 		})
 	})
 
@@ -458,6 +666,12 @@ describe('CreateWorkPackageModal.vue', () => {
 				label: 'Scrum project',
 				children: [],
 			},
+			type: {
+				label: 'Task',
+			},
+			status: {
+				label: 'New',
+			},
 			assignee: {
 				self: {
 					href: '/api/v3/users/15',
@@ -504,11 +718,6 @@ describe('CreateWorkPackageModal.vue', () => {
 					},
 				},
 				subject: 'This is a workpackage',
-				description: {
-					format: 'markdown',
-					raw: '',
-					html: '',
-				},
 			},
 		}
 		const allowedTypes = [
@@ -564,6 +773,57 @@ describe('CreateWorkPackageModal.vue', () => {
 	it('should emit an event when the modal is closed', async () => {
 		wrapper.vm.closeModal()
 		expect(wrapper.emitted('close-create-work-package-modal')).toBeTruthy()
+	})
+
+	it('should reset all values when the modal is closed', async () => {
+		wrapper.vm.closeModal()
+		expect(wrapper.vm.project.label).toBe(null)
+		expect(wrapper.vm.type.label).toBe('')
+		expect(wrapper.vm.status.label).toBe('')
+		expect(wrapper.vm.subject).toBe(null)
+		expect(wrapper.vm.assignee.label).toBe(null)
+	})
+
+	it('should display an error when the project status is empty', async () => {
+		jest.spyOn(axios, 'get')
+			.mockImplementationOnce(() => Promise.resolve({
+				status: 200,
+				data: availableProjectsResponse,
+			}))
+
+		wrapper = mountWrapper(true, {
+			project: {
+				self: {
+					href: '/api/v3/projects/4',
+					title: '[dev] Large',
+				},
+				label: '[dev] Large',
+				children: [],
+			},
+			type: {
+				self: {
+					href: '/api/v3/types/9',
+					title: 'Required CF',
+				},
+				label: 'Required CF',
+			},
+			status: {
+				self: {
+					href: '/api/v3/statuses/1',
+					title: 'New',
+				},
+				label: '',
+			},
+			subject: 'This is a workpackage',
+			projectId: 2,
+			openProjectUrl: 'https://openproject.example.com',
+		})
+		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
+		await wrapper.vm.$nextTick()
+		await wrapper.vm.$nextTick()
+		const error = wrapper.find(validationErrorSelector)
+		expect(error.isVisible()).toBe(true)
+		expect(error.text()).toBe('Status is not set to one of the allowed values.')
 	})
 })
 function mountWrapper(showModal, data) {
