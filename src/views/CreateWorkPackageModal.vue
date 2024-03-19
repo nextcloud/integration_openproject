@@ -22,7 +22,7 @@
 					:close-on-select="true"
 					:clear-search-on-blur="() => false"
 					:append-to-body="false"
-					:value="project.label"
+					:value="getSelectedProject"
 					:no-drop="noDropAvailableProjectDropDown"
 					@option:selected="onSelectProject">
 					<template #option="{ label, relation, counter }">
@@ -68,7 +68,8 @@
 							:close-on-select="true"
 							:clear-search-on-blur="() => false"
 							:append-to-body="false"
-							:value="type.label"
+							:placeholder="t('integration_openproject', 'Select project type')"
+							:value="getSelectedProjectType"
 							@option:selected="onSelectType">
 							<template #option="option">
 								{{ option.label }}
@@ -78,6 +79,12 @@
 							</template>
 						</NcSelect>
 						<p v-if="customTypeError" class="validation-error type-error" v-html="sanitizedRequiredCustomTypeValidationErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p v-else-if="error.error && error.attribute === 'type'" class="validation-error">
+							{{ error.message }}
+						</p>
+						<p v-else-if="error.error && error.multipleErrors.type" class="validation-error multiple-error-project">
+							{{ error.multipleErrors.type }}
+						</p>
 					</div>
 					<div class="create-workpackage-form--status">
 						<div class="create-workpackage-form--label">
@@ -91,7 +98,8 @@
 							:close-on-select="true"
 							:clear-search-on-blur="() => false"
 							:append-to-body="false"
-							:value="status.label"
+							:placeholder="t('integration_openproject', 'Select project status')"
+							:value="getSelectedProjectStatus"
 							@option:selected="onSelectStatus">
 							<template #option="option">
 								{{ option.label }}
@@ -100,6 +108,9 @@
 								{{ t('integration_openproject', 'Please select a project') }}
 							</template>
 						</NcSelect>
+						<p v-if="error.error && error.attribute === 'status'" class="validation-error">
+							{{ error.message }}
+						</p>
 					</div>
 				</div>
 				<div class="create-workpackage-form--label">
@@ -114,7 +125,7 @@
 					:close-on-select="true"
 					:clear-search-on-blur="() => false"
 					:append-to-body="false"
-					:value="assignee.label"
+					:value="getSelectedProjectAssignee"
 					@option:selected="onSelectAssignee">
 					<template #option="option">
 						{{ option.label }}
@@ -155,7 +166,7 @@ const DEFAULT_TYPE_VALUE = {
 		href: '/api/v3/types/1',
 		title: 'Task',
 	},
-	label: 'Task',
+	label: '',
 }
 
 const DEFAULT_STATUS_VALUE = {
@@ -163,7 +174,7 @@ const DEFAULT_STATUS_VALUE = {
 		href: '/api/v3/statuses/1',
 		title: 'New',
 	},
-	label: 'New',
+	label: '',
 }
 
 const DEFAULT_ASSIGNEE_VALUE = {
@@ -219,23 +230,40 @@ export default {
 		allowedTypes: [],
 		allowedStatues: [],
 		availableAssignees: [],
-		project: DEFAULT_PROJECT_VALUE,
+		// here structuredClone() is used for the all values that are passed during form validation as payload since all the values can be mutated during form validation
+		// we need all unmutated values when resetting the form
+		project: structuredClone(DEFAULT_PROJECT_VALUE),
+		type: structuredClone(DEFAULT_TYPE_VALUE),
+		status: structuredClone(DEFAULT_STATUS_VALUE),
+		assignee: structuredClone(DEFAULT_ASSIGNEE_VALUE),
+		description: structuredClone(DEFAULT_DESCRIPTION_VALUE),
+		error: structuredClone(DEFAULT_ERROR_VALUE),
 		subject: null,
-		type: DEFAULT_TYPE_VALUE,
-		status: DEFAULT_STATUS_VALUE,
-		assignee: DEFAULT_ASSIGNEE_VALUE,
 		projectId: null,
-		description: DEFAULT_DESCRIPTION_VALUE,
-		error: DEFAULT_ERROR_VALUE,
 		customTypeError: false,
 		// when the modal opens the dropdown for selecting project gains focus automatically
 		// this is a workaround to prevent that by setting the dropdown to noDrop at the beginning
 		noDropAvailableProjectDropDown: true,
+		previousProjectId: null,
+		previousDescriptionTemplate: '',
+		isDescriptionTemplateChanged: false,
 	}),
 	computed: {
 		openModal() {
 			this.searchForProjects()
 			return this.showModal
+		},
+		getSelectedProject() {
+			return this.project.label
+		},
+		getSelectedProjectType() {
+			return this.type.label
+		},
+		getSelectedProjectStatus() {
+			return this.status.label
+		},
+		getSelectedProjectAssignee() {
+			return this.assignee.label
 		},
 		getBodyForRequest() {
 			return {
@@ -247,7 +275,6 @@ export default {
 						project: this.project.self,
 					},
 					subject: this.subject,
-					description: this.description,
 				},
 			}
 		},
@@ -296,6 +323,24 @@ export default {
 			}
 			return mappedNodes
 		},
+		setToDefaultProjectType() {
+			this.type = structuredClone(DEFAULT_TYPE_VALUE)
+		},
+		setDefaultProjectStatus() {
+			this.status = structuredClone(DEFAULT_STATUS_VALUE)
+		},
+		setToDefaultProject() {
+			this.project = structuredClone(DEFAULT_PROJECT_VALUE)
+		},
+		setToDefaultDescription() {
+			this.description = structuredClone(DEFAULT_DESCRIPTION_VALUE)
+		},
+		setToDefaultProjectAssignee() {
+			this.assignee = structuredClone(DEFAULT_ASSIGNEE_VALUE)
+		},
+		setToDefaultError() {
+			this.error = structuredClone(DEFAULT_ERROR_VALUE)
+		},
 		closeModal() {
 			this.$emit('close-create-work-package-modal')
 			this.resetData()
@@ -304,16 +349,20 @@ export default {
 			this.allowedTypes = []
 			this.allowedStatues = []
 			this.availableAssignees = []
-			this.project = DEFAULT_PROJECT_VALUE
-			this.type = DEFAULT_TYPE_VALUE
-			this.status = DEFAULT_STATUS_VALUE
-			this.assignee = DEFAULT_ASSIGNEE_VALUE
-			this.description = DEFAULT_DESCRIPTION_VALUE
+			this.setToDefaultError()
+			this.setToDefaultDescription()
+			this.setToDefaultProject()
+			this.setToDefaultProjectType()
+			this.setDefaultProjectStatus()
+			this.setToDefaultProjectAssignee()
 			this.subject = null
 			this.projectId = null
-			this.error = DEFAULT_ERROR_VALUE
 			this.availableProjects = []
 			this.noDropAvailableProjectDropDown = true
+			this.customTypeError = false
+			this.previousProjectId = null
+			this.isDescriptionTemplateChanged = false
+			this.previousDescriptionTemplate = ''
 		},
 		async searchForProjects() {
 			const url = generateUrl('/apps/integration_openproject/projects')
@@ -358,20 +407,26 @@ export default {
 		},
 		onSubjectChange(value) {
 			if (this.error.error) {
-				this.error = DEFAULT_ERROR_VALUE
+				this.setToDefaultError()
 			}
 			this.subject = value
 		},
 		async onSelectProject(selectedOption) {
 			this.project = selectedOption
 			this.projectId = selectedOption.id
+			if (this.previousProjectId === this.projectId) {
+				return
+			}
 			if (this.error.error) {
-				this.error = DEFAULT_ERROR_VALUE
+				this.setToDefaultError()
 			}
 			// set the allowed values for both type and status when project selection changes
 			await this.validateWorkPackageForm(this.projectId, true, true)
 		},
 		async onSelectType(selectedOption) {
+			if (this.error.error) {
+				this.setToDefaultError()
+			}
 			if (this.customTypeError) {
 				this.customTypeError = false
 			}
@@ -380,32 +435,60 @@ export default {
 			await this.validateWorkPackageForm(this.projectId, false, true)
 		},
 		onSelectStatus(selectedOption) {
+			if (this.error.error) {
+				this.setToDefaultError()
+			}
 			this.status = selectedOption
 		},
 		onSelectAssignee(selectedOption) {
 			this.assignee = selectedOption
 		},
+		isTypeOrStatusAlreadyInAllowedList(prevTypeOrStatus, allowedTypesOrStatus) {
+			const listTypes = []
+			allowedTypesOrStatus.forEach((type) => {
+				listTypes.push(type.label)
+			})
+			return !(!listTypes.includes(prevTypeOrStatus) && prevTypeOrStatus !== '')
+		},
+		checkIfTheDescriptionTemplateIsChanged() {
+			if (this.isDescriptionTemplateChanged === false) {
+				if (this.previousDescriptionTemplate !== this.description.raw) {
+					this.isDescriptionTemplateChanged = true
+				}
+			}
+		},
 		async validateWorkPackageForm(id, setAllowedType = false, setAllowedStatus = false) {
+			this.checkIfTheDescriptionTemplateIsChanged()
 			const url = generateUrl(`/apps/integration_openproject/projects/${id}/work-packages/form`)
 			const body = this.getBodyForRequest
+			const previousProjectType = this.type.label
+			const previousProjectStatus = this.status.label
+			this.previousProjectId = id
 			try {
 				const response = await axios.post(url, body)
 				if (setAllowedType && setAllowedStatus) {
 					// when project is changed set all the values to default and
 					// set new allowed values for types, status, assignee to display as the option in dropdown
-					this.type = DEFAULT_TYPE_VALUE
-					this.status = DEFAULT_STATUS_VALUE
-					this.assignee = DEFAULT_ASSIGNEE_VALUE
+					this.setDefaultProjectStatus()
+					this.setToDefaultProjectType()
+					this.setToDefaultProjectAssignee()
 					this.allowedTypes = []
 					this.allowedStatues = []
 					this.allowedTypes.push(...this.setAllowedValues(response.data.schema.type._embedded.allowedValues))
 					this.allowedStatues.push(...this.setAllowedValues(response.data.schema.status._embedded.allowedValues))
 					await this.setAvailableAssigneesForProject(id)
+					this.type.label = (this.isTypeOrStatusAlreadyInAllowedList(previousProjectType, this.allowedTypes))
+						? response.data.payload._links.type.title
+						: ''
+					this.status.label = response.data.payload._links.status.title
 				} else if (setAllowedStatus) {
 					// when only type changes then reset status only
-					this.status = DEFAULT_STATUS_VALUE
+					this.setDefaultProjectStatus()
 					this.allowedStatues = []
 					this.allowedStatues.push(...this.setAllowedValues(response.data.schema.status._embedded.allowedValues))
+					this.status.label = (this.isTypeOrStatusAlreadyInAllowedList(previousProjectStatus, this.allowedStatues))
+						? response.data.payload._links.status.title
+						: ''
 				}
 				if (response.data.validationErrors) {
 					const validationErrors = response.data.validationErrors
@@ -416,20 +499,18 @@ export default {
 						}
 						if (errors.startsWith('type')) {
 							if (validationErrors[errors].message === 'Type is not set to one of the allowed values.') {
-								this.type = DEFAULT_TYPE_VALUE
+								this.setToDefaultProjectType()
 							}
 						}
 					}
-				} else {
-					// if there's no validation error then only set type and status
-					this.type.self = response.data.payload._links.type
-					this.type.label = response.data.payload._links.type.title
-					this.status.self = response.data.payload._links.status
-					this.status.label = response.data.payload._links.status.title
 				}
-				// set the value to form from payload of the forms endpoint
+				this.type.self = response.data.payload._links.type
+				this.status.self = response.data.payload._links.status
 				this.subject = response.data.payload.subject
-				this.description = response.data.payload.description
+				if (this.isDescriptionTemplateChanged === false) {
+					this.description = response.data.payload.description
+					this.previousDescriptionTemplate = this.description.raw
+				}
 			} catch (e) {
 				console.error('Form validation failed')
 			}
@@ -464,12 +545,25 @@ export default {
 			}
 		},
 		async createWorkpackage() {
+
 			const url = generateUrl('/apps/integration_openproject/create/work-packages')
-			const body = this.getBodyForRequest
+			const payload = this.getBodyForRequest
+			payload.body.description = this.description
 			let response = null
 			const eventData = {}
 			try {
-				response = await axios.post(url, body)
+				// the status is not validated by the /from endpoint which when not set is default to in progress
+				// we need to validate the status explicitly
+				if (this.project.label !== '' && this.type.label !== '' && this.status.label === '') {
+					this.error = {
+						error: true,
+						multipleErrors: {},
+						attribute: 'status',
+						message: t('integration_openproject', 'Status is not set to one of the allowed values.'),
+					}
+					return
+				}
+				response = await axios.post(url, payload)
 			} catch (e) {
 				response = e.response
 			}
@@ -494,6 +588,8 @@ export default {
 								multipleErrors.subject = err.message
 							} else if ((err._embedded.details.attribute === 'project')) {
 								multipleErrors.project = err.message
+							} else if ((err._embedded.details.attribute === 'type')) {
+								multipleErrors.type = err.message
 							}
 						}
 					}
@@ -582,14 +678,15 @@ export default {
 	}
 	&--type-status-container {
 		display: flex;
-		flex-flow: row wrap;
+		flex-flow: wrap;
 		justify-content: space-between;
 		width: 100%;
 	}
 	&--type {
-		width: 50%;
-		display: flex;
-		flex-flow: row wrap;
+		width: 48%;
+	}
+	&--status {
+		width: 48%;
 	}
 	&--button {
 		width: 100%;
