@@ -1,7 +1,7 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
-		<SettingsTitle />
+		<SettingsTitle :show-integration-setup-link-information="showIntegrationSetupLinkInformation" is-setting="admin" />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
@@ -426,6 +426,7 @@ export default {
 			isFormStep: null,
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
+			showIntegrationSetupLinkInformation: true,
 		}
 	},
 	computed: {
@@ -573,6 +574,7 @@ export default {
 				}
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedProjectFolders = true
+					this.showIntegrationSetupLinkInformation = false
 				}
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
