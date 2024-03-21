@@ -1040,7 +1040,7 @@ describe('AdminSettings.vue', () => {
 								'should set the project folder error message and error details when group folders app is not enabled',
 								{
 									error: 'The "Group folders" app is not installed',
-									expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders, {htmlLink}',
+									expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}',
 								},
 							],
 							[
@@ -1493,7 +1493,7 @@ describe('AdminSettings.vue', () => {
 				'should set the project folder error message and error details when group folders app is not enabled',
 				{
 					error: 'The "Group folders" app is not installed',
-					expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders, {htmlLink}',
+					expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}',
 				},
 			],
 			[
