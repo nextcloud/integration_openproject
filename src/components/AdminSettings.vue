@@ -634,7 +634,7 @@ export default {
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
 			case 'The "Group folders" app is not installed' :
-				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders, {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
+				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}
