@@ -607,7 +607,7 @@ describe('SearchInput.vue', () => {
 				'should set no option text to "There were no workpackages found" for search query not matched',
 				{
 					searchQuery: 'query-not-matched',
-					expectedNoOptionText: 'There were no workpackages found',
+					expectedNoOptionText: 'No matching work packages found',
 				},
 			],
 		])('%s', async (name, expectedDetails) => {
