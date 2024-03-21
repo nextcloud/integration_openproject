@@ -132,7 +132,7 @@ export default {
 				return t('integration_openproject', 'Start typing to search')
 			case NO_OPTION_TEXT_STATE.RESULT :
 				if (this.searchResults.length === 0) {
-					return t('integration_openproject', 'There were no workpackages found')
+					return t('integration_openproject', 'No matching work packages found')
 				}
 				break
 			}
