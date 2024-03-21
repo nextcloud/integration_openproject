@@ -35,7 +35,7 @@ OC.L10N.register(
     "Automatically managed folders:" : "Cartafoles xestionados automaticamente:",
     "Copied!" : "Copiado!",
     "Copy value" : "Copiar valor",
-    "Copied to the clipboard" : "Copiouse no portapapeis",
+    "Copied to the clipboard" : "Copiado no portapapeis.",
     "Details" : "Detalles",
     "No connection with OpenProject" : "Non hai conexión con OpenProject",
     "Error connecting to OpenProject" : "Produciuse un erro ao conectarse a OpenProject",
