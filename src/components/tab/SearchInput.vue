@@ -36,7 +36,7 @@
 		<div v-if="!!isStateOk && !isSmartPicker" class="create-workpackage">
 			<NcButton class="create-workpackage--button" @click="openCreateWorkpackageModal()">
 				<template #icon>
-					<Plus class="plus" :size="26" />
+					<Plus :size="20" />
 				</template>
 				{{ t('integration_openproject', 'Create and link a new work package') }}
 			</NcButton>
@@ -358,7 +358,6 @@ export default {
 		display: flex;
 		align-items: center;
 		&--button {
-			border: 1px solid var(--color-border-dark);
 			&--label {
 				padding-left: 15px;
 				font-size: 1rem;
