@@ -267,10 +267,10 @@ describe('AdminSettings.vue', () => {
 			expect(setupIntegrationDocumentationLink.text()).toBe('Visit our documentation for in-depth information on {htmlLink} integration.')
 		})
 
-		it('should not be visible when integration is completed', () => {
+		it('should be visible when integration is completed', () => {
 			const wrapper = getMountedWrapper({ state: completeIntegrationState })
 			const setupIntegrationDocumentationLink = wrapper.find(selectors.setupIntegrationDocumentationLinkSelector)
-			expect(setupIntegrationDocumentationLink.text()).toBe('')
+			expect(setupIntegrationDocumentationLink.text()).toBe('Visit our documentation for in-depth information on {htmlLink} integration.')
 		})
 	})
 
