@@ -4,7 +4,7 @@ OC.L10N.register(
     "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "OAuth erişim kodu alınırken sorun çıktı",
     "Error getting OAuth refresh token" : "OAuth yenileme kodu alınırken sorun çıktı.",
-    "Error during OAuth exchanges" : "OAuth alış verişinde sorun çıktı",
+    "Error during OAuth exchanges" : "OAuth alışverişinde sorun çıktı",
     "Direct download error" : "Doğrudan indirme sorunu",
     "This direct download link is invalid or has expired" : "Bu doğrudan indirme bağlantısı geçersiz ya da geçerlilik süresi dolmuş",
     "folder not found or not enough permissions" : "klasör bulunamadı ya da erişim izinleri yeterli değil",
