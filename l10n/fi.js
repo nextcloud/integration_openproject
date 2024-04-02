@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
     "Copied!" : "Kopioitu!",
+    "Copied to the clipboard" : "Kopioitu leikepöydälle",
     "Details" : "Tiedot",
     "Start typing to search" : "Aloita kirjoittaminen hakeaksesi",
     "Select a user or group" : "Valitse käyttäjä tai ryhmä",
