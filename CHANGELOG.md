@@ -5,13 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-- Add quick link for `group folder` app when not downloaded and enabled (project folder setup)
-- Adjust dashboard panel of `integration app` consistent to that dashboard panel of other nextcloud apps
-- Adjust padding for assignee avatar in `workpackage` template
-- Fixes wrong option text while searching workpackage.
+
+## 2.6.2 - 2024-04-04
+### Changed
+- This release expects OpenProject version 13.2 or newer
 - Improves form validation for creating workpackages from nextcloud.
-- Added setup and user guide documentation link for integration app
-- Added description for settings in admin and personal panel
+- Fixes wrong option text while searching workpackage.
+- Add quick link for `group folder` app when not downloaded and enabled (project folder setup).
+- Adjust dashboard panel of `integration app` consistent to that dashboard panel of other nextcloud apps.
+- Adjust padding for assignee avatar in `workpackage` template.
+- Added setup and user guide documentation link for integration app.
+- Added description for settings in admin and personal panel.
 
 ## 2.6.1 - 2024-02-19
 ### Changed
