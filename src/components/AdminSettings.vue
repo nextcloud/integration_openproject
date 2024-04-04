@@ -435,7 +435,6 @@ export default {
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
-			showIntegrationSetupLinkInformation: true,
 		}
 	},
 	computed: {
