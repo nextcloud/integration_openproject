@@ -1,7 +1,7 @@
 <template>
 	<div id="openproject_prefs" class="section">
 		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
-		<SettingsTitle :show-integration-setup-link-information="showIntegrationSetupLinkInformation" is-setting="admin" />
+		<SettingsTitle is-setting="admin" />
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
@@ -583,7 +583,6 @@ export default {
 				}
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedProjectFolders = true
-					this.showIntegrationSetupLinkInformation = false
 				}
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
@@ -634,7 +633,7 @@ export default {
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
 			case 'The "Group folders" app is not installed' :
-				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders, {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
+				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}

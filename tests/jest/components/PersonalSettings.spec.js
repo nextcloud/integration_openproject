@@ -73,10 +73,10 @@ describe('PersonalSettings.vue', () => {
 				it('oAuth disconnect button is not displayed', () => {
 					expect(wrapper.find(oAuthDisconnectButtonSelector).exists()).toBeFalsy()
 				})
-				it('should show not show user guide documentation link', () => {
+				it('should show show user guide documentation link', () => {
 					const wrapper = getMountedWrapper({ state: { admin_config_ok: true, cases } })
 					const userGuideIntegrationDocumentationLink = wrapper.find(userGuideIntegrationDocumentationLinkSelector)
-					expect(userGuideIntegrationDocumentationLink.text()).toBe('')
+					expect(userGuideIntegrationDocumentationLink.text()).toBe('Learn how to get the most out of the OpenProject integration by visiting our {htmlLink}.')
 				})
 			})
 			describe('when username and token are given', () => {
@@ -100,7 +100,7 @@ describe('PersonalSettings.vue', () => {
 				it('should show not show user guide documentation link', () => {
 					const wrapper = getMountedWrapper({ state: { user_name: 'test', token: '123', admin_config_ok: true } })
 					const userGuideIntegrationDocumentationLink = wrapper.find(userGuideIntegrationDocumentationLinkSelector)
-					expect(userGuideIntegrationDocumentationLink.text()).toBe('Please go to our {htmlLink} to learn more about how to work with the OpenProject integration.')
+					expect(userGuideIntegrationDocumentationLink.text()).toBe('Learn how to get the most out of the OpenProject integration by visiting our {htmlLink}.')
 				})
 			})
 

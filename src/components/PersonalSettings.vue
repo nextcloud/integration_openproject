@@ -1,6 +1,6 @@
 <template>
 	<div class="openproject-prefs section">
-		<SettingsTitle :is-connected-with-openproject="!!connected" is-setting="personal" />
+		<SettingsTitle is-setting="personal" />
 		<div v-if="connected" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
