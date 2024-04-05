@@ -6,7 +6,6 @@ OC.L10N.register(
     "Copied!" : "Kopieret!",
     "Details" : "Detaljer",
     "Start typing to search" : "Start med at skrive for at søge",
-    "There were no workpackages found" : "Der blev ikke fundet nogen arbejdspakker",
     "Select a user or group" : "Vælg en bruger eller gruppe",
     "Description" : "Beskrivelse",
     "Create" : "Opret",
