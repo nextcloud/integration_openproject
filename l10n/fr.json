@@ -51,6 +51,7 @@
     "Create and link a new work package" : "Créer et lier un nouveau lot de travaux",
     "No OpenProject account connected" : "Aucun compte OpenProject connecté",
     "Start typing to search" : "Tapez pour lancer la recherche",
+    "No matching work packages found" : "Aucun lot de travaux correspondant trouvé",
     "Search for work packages" : "Rechercher des lots de travaux",
     "Search for a work package to create a relation" : "Rechercher un lot de travaux pour créer une relation",
     "Work package creation was not successful." : "La création du lot de travaux a échoué.",
