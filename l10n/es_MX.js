@@ -4,6 +4,7 @@ OC.L10N.register(
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
     "Copied!" : "¡Copiado!",
+    "Copied to the clipboard" : "Copiado al portapapeles",
     "Details" : "Detalles",
     "Start typing to search" : "Empiece a escribir para buscar",
     "Description" : "Descripción",
