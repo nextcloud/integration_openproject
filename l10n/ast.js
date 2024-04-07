@@ -4,6 +4,7 @@ OC.L10N.register(
     "Cancel" : "Encaboxar",
     "Save" : "Guardar",
     "Copied!" : "¡Copióse!",
+    "Copied to the clipboard" : "Copióse nel cartafueyu",
     "Details" : "Detalles",
     "Description" : "Descripción",
     "Create" : "Crear",
@@ -11,6 +12,9 @@ OC.L10N.register(
     "Reset" : "Reafitar",
     "Invalid token" : "El pase ye inválidu",
     "Failed to save OpenProject options" : "Nun se puen guardar les opciones d'OpenProject",
+    "Invalid key" : "La clave ye inválida",
+    "URL is invalid" : "La URL ye inválida",
+    "Response:" : "Rempuesta:",
     "Documentation" : "Documentación"
 },
 "nplurals=2; plural=(n != 1);");
