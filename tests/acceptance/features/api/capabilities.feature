@@ -32,7 +32,7 @@ Feature: get capabilities of the app
                 },
                 "groupfolder_version": {
                   "type": "string",
-                  "pattern": "^\\d+\\.\\d+\\.\\d+(\\-\\w+)?$"
+                  "pattern": "^\\d+\\.\\d+\\.\\d+(?:-\\w+.\\d+)?$"
                 },
                 "groupfolders_enabled": {
                   "type": "boolean",

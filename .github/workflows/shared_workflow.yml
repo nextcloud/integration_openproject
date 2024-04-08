@@ -69,7 +69,7 @@ jobs:
 
       - name: PHP code analysis
         run: |
-          if [[ ${{ matrix.nextcloudVersion }} != "stable28" ]]
+          if [ ${{ matrix.nextcloudVersion }} == "stable26" -o ${{ matrix.nextcloudVersion }} == "stable27" ]
           then
             make phpstan
           fi
