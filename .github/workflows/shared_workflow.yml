@@ -160,7 +160,7 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28 ]
+        nextcloudVersion: [ stable26, stable27, stable28, stable29 ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 1 ]
         database: [pgsql, mysql]
