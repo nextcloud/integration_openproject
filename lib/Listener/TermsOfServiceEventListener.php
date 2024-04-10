@@ -29,7 +29,9 @@ namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 use OCA\TermsOfService\Events\SignaturesResetEvent;
+// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
 use OCP\DB\Exception as DBException;
@@ -62,13 +64,17 @@ class TermsOfServiceEventListener implements IEventListener {
 
 	public function handle(Event $event): void {
 		try {
+			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			if ($event instanceof TermsCreatedEvent) {
 				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			}
+			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			if ($event instanceof SignaturesResetEvent) {
 				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 			}
+			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			if ($event instanceof AppEnableEvent) {
+				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				if ($event->getAppId() === 'terms_of_service') {
 					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
 				}
