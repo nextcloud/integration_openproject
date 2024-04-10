@@ -6,6 +6,7 @@ OC.L10N.register(
     "Copied!" : "¡Copióse!",
     "Copied to the clipboard" : "Copióse nel cartafueyu",
     "Details" : "Detalles",
+    "Start typing to search" : "Comienza a escribir pa buscar",
     "Description" : "Descripción",
     "Create" : "Crear",
     "Failed to get OpenProject notifications" : "Nun se puen consiguir los avisos d'OpenProject",
