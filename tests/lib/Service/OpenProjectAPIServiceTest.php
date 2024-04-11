@@ -632,19 +632,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$client,                                                       // @phpstan-ignore-line
 				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
 			);
-		} elseif (version_compare(OC_Util::getVersionString(), '25') >= 0) {
-			$clientConfigMock
-			->method('getSystemValueBool')
-			->with('allow_local_remote_servers', false)
-			->willReturn(true);
-			//changed from nextcloud 24
-			// @phpstan-ignore-next-line
-			$ocClient = new Client(
-				$clientConfigMock,                                             // @phpstan-ignore-line
-				$certificateManager,                                           // @phpstan-ignore-line
-				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(\OC\Http\Client\LocalAddressChecker::class)  // @phpstan-ignore-line
-			);
 		}
 
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
