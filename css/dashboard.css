@@ -51,9 +51,3 @@ but, we have to use the dark svg for NC v24 and below. */
 body.theme--dark .panel > .panel--header .icon-openproject::before {
 	background-image: url('../img/bell-ring-dark.svg');
 }
-
-/*for NC <= v24 the icon needs less margin at left and zero at the top */
-.panel > .panel--header .nc-before-v24.icon-openproject::before {
-	top: 28%;
-	left: 195px;
-}
