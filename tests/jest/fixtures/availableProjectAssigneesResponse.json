@@ -1,0 +1,112 @@
+[
+	{
+		"_type": "User",
+		"id": 15,
+		"name": "Second Admin",
+		"createdAt": "2023-09-01T06:05:15Z",
+		"updatedAt": "2023-09-01T09:28:16Z",
+		"login": "admin2",
+		"admin": true,
+		"firstName": "Second",
+		"lastName": "Admin",
+		"email": "admin@mail.com",
+		"avatar": "https://secure.gravatar.com/avatar/edb0e96701c209ab4b50211c856c50c4?default=404&secure=true",
+		"status": "active",
+		"identityUrl": null,
+		"language": "en",
+		"_links": {
+			"self": {
+				"href": "/api/v3/users/15",
+				"title": "Second Admin"
+			}
+		}
+	},
+	{
+		"_type": "User",
+		"id": 10,
+		"name": "swikriti tripathi",
+		"createdAt": "2023-07-21T08:45:41Z",
+		"updatedAt": "2023-08-16T10:47:05Z",
+		"login": "swikriti@test.com",
+		"admin": false,
+		"firstName": "swikriti",
+		"lastName": "tripathi",
+		"email": "swikriti@test.com",
+		"avatar": "https://secure.gravatar.com/avatar/d7ba164b2da8167e4dd8bd8891efda36?default=404&secure=true",
+		"status": "active",
+		"identityUrl": null,
+		"language": "en",
+		"_links": {
+			"self": {
+				"href": "/api/v3/users/10",
+				"title": "swikriti tripathi"
+			}
+		}
+	},
+	{
+		"_type": "User",
+		"id": 9,
+		"name": "OpenProject OpenProject",
+		"createdAt": "2023-07-18T07:11:02Z",
+		"updatedAt": "2023-07-18T07:11:34Z",
+		"login": "openproject@example.com",
+		"admin": false,
+		"firstName": "OpenProject",
+		"lastName": "OpenProject",
+		"email": "openproject@example.com",
+		"avatar": "https://secure.gravatar.com/avatar/249027f5598cd1f2a2fca1bfd0d0f38f?default=404&secure=true",
+		"status": "active",
+		"identityUrl": null,
+		"language": "en",
+		"_links": {
+			"self": {
+				"href": "/api/v3/users/9",
+				"title": "OpenProject OpenProject"
+			}
+		}
+	},
+	{
+		"_type": "User",
+		"id": 8,
+		"name": "Admin de DEV user",
+		"createdAt": "2023-07-18T06:42:15Z",
+		"updatedAt": "2023-07-18T06:42:15Z",
+		"login": "admin_de",
+		"admin": true,
+		"firstName": "Admin de",
+		"lastName": "DEV user",
+		"email": "admin_de@example.net",
+		"avatar": "https://secure.gravatar.com/avatar/d9676871c7ee63f7938ad4a13982a8ef?default=404&secure=true",
+		"status": "active",
+		"identityUrl": null,
+		"language": "de",
+		"_links": {
+			"self": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			}
+		}
+	},
+	{
+		"_type": "User",
+		"id": 4,
+		"name": "OpenProject Admin",
+		"createdAt": "2023-07-18T06:42:11Z",
+		"updatedAt": "2023-10-11T06:00:37Z",
+		"login": "admin",
+		"admin": true,
+		"firstName": "OpenProject",
+		"lastName": "Admin",
+		"email": "admin@example.net",
+		"avatar": "https://secure.gravatar.com/avatar/cb4f282fed12016bd18a879c1f27ff97?default=404&secure=true",
+		"status": "active",
+		"identityUrl": null,
+		"language": "en",
+		"_links": {
+			"self": {
+				"href": "/api/v3/users/4",
+				"title": "OpenProject Admin"
+			}
+		}
+	}
+]

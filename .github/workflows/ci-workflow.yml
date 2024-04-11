@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  schedule:
+    - cron: '0 22 * * *' # run at 10 PM UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  builds:
+    uses: ./.github/workflows/shared_workflow.yml
+    secrets: inherit
+    with:
+      branch: master

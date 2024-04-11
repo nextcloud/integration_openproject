@@ -1,0 +1,342 @@
+[
+	{
+		"_type": "Notification",
+		"id": 47,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-17T10:27:01Z",
+		"updatedAt": "2022-08-17T10:28:12Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/47"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/47/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			},
+			"project": {
+				"href": "/api/v3/projects/4",
+				"title": "Dev-large"
+			},
+			"activity": {
+				"href": "/api/v3/activities/261"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/36",
+				"title": "write a software"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 46,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-17T10:26:28Z",
+		"updatedAt": "2022-08-17T10:27:41Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/46"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/46/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/260"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 45,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-17T10:12:47Z",
+		"updatedAt": "2022-08-17T10:13:53Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/45"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/45/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/259"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 43,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-17T10:12:19Z",
+		"updatedAt": "2022-08-17T10:13:25Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/43"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/43/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			},
+			"project": {
+				"href": "/api/v3/projects/4",
+				"title": "Dev-large"
+			},
+			"activity": {
+				"href": "/api/v3/activities/258"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/36",
+				"title": "write a software"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 42,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-17T10:05:36Z",
+		"updatedAt": "2022-08-17T10:06:39Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/42"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/42/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/9",
+				"title": "Artur Neumann"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/257"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 41,
+		"readIAN": false,
+		"reason": "mentioned",
+		"createdAt": "2022-08-15T09:15:26Z",
+		"updatedAt": "2022-08-15T09:15:26Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/41"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/41/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/8",
+				"title": "Admin de DEV user"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/256"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 38,
+		"readIAN": false,
+		"reason": "mentioned",
+		"createdAt": "2022-08-09T07:28:54Z",
+		"updatedAt": "2022-08-09T08:00:08Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/38"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/38/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/9",
+				"title": "Artur Neumann"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/134"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/18",
+				"title": "Contact form"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 37,
+		"readIAN": false,
+		"reason": "assigned",
+		"createdAt": "2022-08-09T07:28:54Z",
+		"updatedAt": "2022-08-09T08:00:08Z",
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/37"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/37/read_ian",
+				"method": "post"
+			},
+			"actor": {
+				"href": "/api/v3/users/9",
+				"title": "Artur Neumann"
+			},
+			"project": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"activity": {
+				"href": "/api/v3/activities/133"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 83,
+		"readIAN": false,
+		"reason": "dateAlert",
+		"createdAt": "2022-11-24T08:08:47Z",
+		"updatedAt": "2022-11-24T08:08:47Z",
+		"_embedded": {
+			"details": [
+				{
+					"_type": "Values::Property",
+					"property": "startDate",
+					"value": "2022-01-13",
+					"_links": {
+						"self": {
+							"href": "/api/v3/notifications/83/details/0"
+						},
+						"schema": {
+							"href": "/api/v3/values/schemas/startDate"
+						}
+					}
+				}
+			]
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/83"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/83/read_ian",
+				"method": "post"
+			},
+			"project": {
+				"href": "/api/v3/projects/1",
+				"title": "Demo project"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/24",
+				"title": "Choose a content management system"
+			}
+		}
+	},
+	{
+		"_type": "Notification",
+		"id": 81,
+		"readIAN": false,
+		"reason": "dateAlert",
+		"createdAt": "2022-11-23T06:10:38Z",
+		"updatedAt": "2022-11-24T08:00:12Z",
+		"_embedded": {
+			"details": [
+				{
+					"_type": "Values::Property",
+					"property": "dueDate",
+					"value": "2022-11-24",
+					"_links": {
+						"self": {
+							"href": "/api/v3/notifications/81/details/0"
+						},
+						"schema": {
+							"href": "/api/v3/values/schemas/dueDate"
+						}
+					}
+				}
+			]
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/notifications/81"
+			},
+			"readIAN": {
+				"href": "/api/v3/notifications/81/read_ian",
+				"method": "post"
+			},
+			"project": {
+				"href": "/api/v3/projects/1",
+				"title": "Demo project"
+			},
+			"resource": {
+				"href": "/api/v3/work_packages/17",
+				"title": "Create wireframes for new landing page"
+			}
+		}
+	}
+]

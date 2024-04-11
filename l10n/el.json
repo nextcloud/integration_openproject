@@ -1,0 +1,26 @@
+{ "translations": {
+    "Error getting OAuth access token" : "Σφάλμα κατά τη λήψη διακριτικού πρόσβασης OAuth",
+    "Error during OAuth exchanges" : "Σφάλμα κατά την ανταλλαγή OAuth",
+    "Bad HTTP method" : "Κακή μέθοδος HTTP",
+    "OAuth access token refused" : "Το διακριτικό πρόσβασης OAuth απορρίφθηκε",
+    "Cancel" : "Ακύρωση",
+    "Save" : "Αποθήκευση",
+    "Copied!" : "Αντιγράφηκαν!",
+    "Details" : "Λεπτομέρειες",
+    "Start typing to search" : "Ξεκινήστε την πληκτρολόγηση για αναζήτηση",
+    "Select a user or group" : "Επιλογή χρήστη ή ομάδας",
+    "Description" : "Περιγραφή",
+    "Create" : "Δημιουργία",
+    "Mark as read" : "Σήμανση ως αναγνωσμένο",
+    "commented" : "σχολίασε",
+    "mentioned" : "ανέφερε",
+    "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
+    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
+    "Reset" : "Επαναφορά",
+    "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
+    "Connected as {user}" : "Συνδεδεμένος ως {user}",
+    "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
+    "Incorrect access token" : "Λανθασμένο token πρόσβασης",
+    "Documentation" : "Τεκμηρίωση"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<psalm
+	errorLevel="6"
+	resolveFromConfigFile="true"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://getpsalm.org/schema/config"
+	xsi:schemaLocation="https://getpsalm.org/schema/config"
+	findUnusedBaselineEntry="false"
+	findUnusedCode="false"
+	autoloader="bootstrap.php"
+>
+    <projectFiles>
+        <directory name="lib" />
+		<directory name="tests" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+	<issueHandlers>
+		<UndefinedClass>
+			<errorLevel type="suppress">
+				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
+				<!-- these are classes form activity app, which isn't cloned while doing static code analysis -->
+				<referencedClass name="OCA\Activity\UserSettings" />
+				<referencedClass name="OCA\Activity\GroupHelperDisabled" />
+				<referencedClass name="OCA\Activity\Data" />
+				<!-- this is a class form groupsfolder app, which isn't available while doing static code analysis -->
+				<referencedClass name="OCA\GroupFolders\Folder\FolderManager" />
+				<referencedClass name="Helmich\JsonAssert\JsonAssertions" />
+			</errorLevel>
+		</UndefinedClass>
+		<TooFewArguments>
+			<errorLevel type="suppress">
+				<!-- supress because constructor needs more arguments on nc version 27 > and the code has conditions to handel this for lower versions-->
+				<referencedFunction name="OCA\GroupFolders\Folder\FolderManager::__construct"/>
+				<referencedFunction name="OC\Http\Client\Client::__construct"/>
+				<referencedFunction name="OCA\DAV\Controller\DirectController::__construct"/>
+			</errorLevel>
+		</TooFewArguments>
+		<UndefinedDocblockClass>
+			<errorLevel type="suppress">
+				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
+			</errorLevel>
+		</UndefinedDocblockClass>
+		<InvalidArgument>
+			<errorLevel type="suppress">
+				<referencedFunction name="OC\Http\Client\Client::__construct"/>
+				<!-- setBody() expects iterable but we want to have raw data here and it seems to work fine-->
+				<referencedFunction name="PhpPact\Consumer\Model\ProviderResponse::setBody"/>
+			</errorLevel>
+		</InvalidArgument>
+		<NoValue>
+			<errorLevel type="suppress">
+				<!-- make psalm not complain if activity app does not exist -->
+				<file name="lib/Controller/FilesController.php"/>
+			</errorLevel>
+		</NoValue>
+		<UndefinedDocblockClass>
+			<errorLevel type="suppress">
+				<!-- make psalm not complain if groupfolders app does not exist -->
+				<referencedClass name="OCA\GroupFolders\Folder\FolderManager"/>
+				<referencedClass name="OC\Http\Client\LocalAddressChecker"/>
+			</errorLevel>
+		</UndefinedDocblockClass>
+	</issueHandlers>
+</psalm>

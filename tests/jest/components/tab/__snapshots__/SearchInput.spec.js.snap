@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchInput.vue state messages any: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+
+</div>
+`;
+
+exports[`SearchInput.vue state messages error: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+  Error connecting to OpenProject
+</div>
+`;
+
+exports[`SearchInput.vue state messages no-token: should display the correct state message 1`] = `
+<div class="stateMsg text-center">
+  No OpenProject account connected
+</div>
+`;
+
+exports[`SearchInput.vue work packages select search list should display correct options list of search results 1`] = `
+Object {
+  "isLinkPreviews": false,
+  "isSmartPicker": false,
+  "workpackage": Object {
+    "assignee": "test",
+    "fileId": 1234,
+    "id": "1",
+    "picture": "/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System",
+    "project": "test",
+    "projectId": "15",
+    "statusCol": "blue",
+    "statusTitle": "in-progress",
+    "subject": "Organize work-packages",
+    "typeCol": "red",
+    "typeTitle": "task",
+  },
+}
+`;
+
+exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `<ul id="vs12__listbox" role="listbox" style="display: none; visibility: hidden;"></ul>`;
+
+exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
+Object {
+  "isLinkPreviews": false,
+  "isSmartPicker": false,
+  "workpackage": Object {
+    "assignee": "some assignee",
+    "fileId": 111,
+    "id": 1,
+    "picture": "http://localhost/apps/integration_openproject/avatar?userId=&userName=some assignee",
+    "project": "some project",
+    "projectId": "",
+    "statusCol": "",
+    "statusTitle": "some status",
+    "subject": "some subject",
+    "typeCol": "",
+    "typeTitle": "some type",
+  },
+}
+`;

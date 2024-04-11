@@ -1,0 +1,13 @@
+parameters:
+    level: 6
+    paths:
+        - lib
+        - tests
+    bootstrapFiles:
+        - bootstrap.php
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: false
+    excludePaths:
+    	-  './lib/Reference/WorkPackageReferenceProvider.php'
+    	- './tests/lib/Reference/WorkPackageReferenceProviderTest.php'
+    	- './lib/Listener/TermsOfServiceEventListener.php'

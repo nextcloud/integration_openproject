@@ -1,0 +1,53 @@
+.icon-openproject {
+	background-image: url('../img/app-dark.svg');
+	filter: var(--background-invert-if-dark);
+}
+
+/* for NC <= 24 */
+body.theme--dark .icon-openproject {
+	background-image: url('../img/app.svg');
+}
+
+.panel--content .item-list__entry:hover > .avatardiv {
+	border: 1px solid #dbdbdb;
+}
+
+.panel > .panel--header .icon-openproject {
+	margin-top: -4px;
+	position: relative;
+}
+
+.panel--content .empty-content {
+	margin: 0 !important;
+	height: 100%;
+	align-items: start;
+	justify-content: center;
+	color: var(--color-text-maxcontrast);
+}
+
+.panel--content .empty-content .empty-content--message--title {
+	font-weight: normal;
+	font-size: 100%;
+}
+
+.panel--content .empty-content .empty-content--icon {
+	opacity: .4;
+}
+
+.panel > .panel--header .icon-openproject::before {
+	content: '';
+	position: absolute;
+	height: 24px; width: 24px;
+	background-size: 24px;
+	top: 3px;
+	left: 180px;
+	background-image: url('../img/bell-ring.svg');
+}
+
+/* there is a default filter for the svgs in the dark mode for NC v25+
+so, we do not have to use the dark svg anymore for NC v25+,
+the icon will change the color automatically
+but, we have to use the dark svg for NC v24 and below. */
+body.theme--dark .panel > .panel--header .icon-openproject::before {
+	background-image: url('../img/bell-ring-dark.svg');
+}

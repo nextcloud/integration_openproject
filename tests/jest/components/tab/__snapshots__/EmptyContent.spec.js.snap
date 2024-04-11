@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmptyContent.vue content title shows the correct empty message depending on states if the admin config is okay 1`] = `
+<div class="empty-content--message">
+  <div class="empty-content--message--title">
+    No connection with OpenProject
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`EmptyContent.vue content title shows the correct empty message depending on states if the admin config is okay 2`] = `
+<div class="empty-content--message">
+  <div class="empty-content--message--title">
+    Unexpected Error
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`EmptyContent.vue content title shows the correct empty message depending on states if the admin config is okay 3`] = `
+<div class="empty-content--message">
+  <div class="empty-content--message--title">
+    Error connecting to OpenProject
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`EmptyContent.vue content title shows the correct empty message depending on states if the admin config is okay 4`] = `
+<div class="empty-content--message">
+  <div class="empty-content--message--title">
+    Could not fetch work packages from OpenProject
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`EmptyContent.vue content title shows the correct empty message depending on states if the admin config is okay 5`] = `
+<div class="empty-content--message">
+  <div class="empty-content--message--title">
+    No OpenProject links yet
+  </div>
+  <div class="empty-content--message--sub-title">
+    To add a link, use the search bar above to find the desired work package
+  </div>
+</div>
+`;
