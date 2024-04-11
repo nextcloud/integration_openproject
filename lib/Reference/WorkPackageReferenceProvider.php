@@ -163,7 +163,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 	 */
 	public function getCacheKey(string $referenceId): ?string {
 		$wpId = $this->getWorkPackageIdFromUrl($referenceId);
-		return $wpId ?? $referenceId;
+		return (string) ($wpId ?? $referenceId);
 	}
 
 	/**

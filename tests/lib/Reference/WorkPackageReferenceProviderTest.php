@@ -53,13 +53,13 @@ class WorkPackageReferenceProviderTest extends TestCase {
 	 * @return WorkPackageReferenceProvider|MockObject
 	 */
 	public function getWorkReferenceProviderMock(
-		array                 $onlyMethods = ['request'],
-		MockObject            $configMock = null,
-		IL10N                 $iL10N = null,
-		IURLGenerator         $iURLGenerator = null,
-		ReferenceManager      $refrenceMangager = null,
-		OpenProjectAPIService $openProjectAPIService = null,
-		string $userId = null
+		array $onlyMethods = ['request'],
+		$configMock = null,
+		$iL10N = null,
+		$iURLGenerator = null,
+		$refrenceMangager = null,
+		$openProjectAPIService = null,
+		$userId = null
 	): WorkPackageReferenceProvider {
 		if ($configMock === null) {
 			$configMock = $this->createMock(IConfig::class);
