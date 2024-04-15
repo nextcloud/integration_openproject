@@ -43,14 +43,14 @@ class WorkPackageReferenceProviderTest extends TestCase {
 	/**
 	 *
 	 * @param array<string> $onlyMethods
-	 * @param null $configMock
-	 * @param null $iL10N
-	 * @param null $iURLGenerator
-	 * @param null $refrenceMangager
-	 * @param null $openProjectAPIService
-	 * @param null $userId
+	 * @param MockObject|null $configMock
+	 * @param IL10N|null $iL10N
+	 * @param IURLGenerator|null $iURLGenerator
+	 * @param ReferenceManager|null $refrenceMangager
+	 * @param OpenProjectAPIService|null $openProjectAPIService
+	 * @param string|null $userId
 	 *
-	 * @return MockObject
+	 * @return WorkPackageReferenceProvider|MockObject
 	 */
 	public function getWorkReferenceProviderMock(
 		array $onlyMethods = ['request'],
