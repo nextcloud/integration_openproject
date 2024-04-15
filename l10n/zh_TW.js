@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "integration_openproject",
+    {
+    "Error getting OAuth access token" : "取得 OAuth 存取權杖時發生錯誤",
+    "Error during OAuth exchanges" : "OAuth 交換時發生錯誤",
+    "Bad HTTP method" : "錯誤的 HTTP 方法",
+    "OAuth access token refused" : "OAuth 存取權杖被拒絕",
+    "Cancel" : "取消",
+    "Save" : "儲存",
+    "Copied!" : "已複製！",
+    "Copied to the clipboard" : "已複製到剪貼簿",
+    "Details" : "詳細資訊",
+    "Start typing to search" : "開始輸入以搜尋",
+    "Select a user or group" : "選取使用者或群組",
+    "Description" : "描述",
+    "Create" : "建立",
+    "Mark as read" : "標為已讀",
+    "Unlink" : "取消連結",
+    "OAuth access token could not be obtained:" : "無法取得 OAuth 存取權杖：",
+    "Connected accounts" : "已連線的帳號",
+    "Reset" : "重設",
+    "Enable navigation link" : "啟用導覽連結",
+    "Connected as {user}" : "以 {user} 身份連線",
+    "Incorrect access token" : "不正確的存取權杖",
+    "Invalid token" : "無效的權杖",
+    "Documentation" : "文件"
+},
+"nplurals=1; plural=0;");

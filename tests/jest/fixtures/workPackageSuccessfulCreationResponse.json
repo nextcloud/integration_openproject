@@ -1,0 +1,289 @@
+{
+	"derivedStartDate": null,
+	"derivedDueDate": null,
+	"_embedded": {
+		"fileLinks": {
+			"_type": "Collection",
+			"total": 0,
+			"count": 0,
+			"_embedded": {
+				"elements": []
+			},
+			"_links": {
+				"self": {
+					"href": "/api/v3/work_packages/41/file_links"
+				}
+			}
+		},
+		"relations": {
+			"_type": "Collection",
+			"total": 0,
+			"count": 0,
+			"_embedded": {
+				"elements": []
+			},
+			"_links": {
+				"self": {
+					"href": "/api/v3/work_packages/41/relations"
+				}
+			}
+		},
+		"type": {
+			"_type": "Type",
+			"id": 1,
+			"name": "Task",
+			"color": "#FFFFFF",
+			"position": 1,
+			"isDefault": true,
+			"isMilestone": false,
+			"createdAt": "2023-07-18T06:42:09Z",
+			"updatedAt": "2023-09-04T03:51:47Z",
+			"_links": {
+				"self": {
+					"href": "/api/v3/types/1",
+					"title": "Task"
+				}
+			}
+		},
+		"project": {
+			"_type": "Project",
+			"id": 2,
+			"identifier": "your-scrum-project",
+			"name": "Scrum project",
+			"active": true,
+			"public": true,
+			"description": {
+				"format": "markdown",
+				"raw": "This is a short summary of the goals of this demo Scrum project.",
+				"html": "<p class=\"op-uc-p\">This is a short summary of the goals of this demo Scrum project.</p>"
+			},
+			"createdAt": "2023-07-18T06:42:13Z",
+			"updatedAt": "2023-10-10T11:20:55Z",
+			"statusExplanation": {
+				"format": "markdown",
+				"raw": "All tasks are on schedule. The people involved know their tasks. The system is completely set up.",
+				"html": "<p class=\"op-uc-p\">All tasks are on schedule. The people involved know their tasks. The system is completely set up.</p>"
+			},
+			"_links": {
+				"self": {
+					"href": "/api/v3/projects/2",
+					"title": "Scrum project"
+				},
+				"createWorkPackage": {
+					"href": "/api/v3/projects/2/work_packages/form",
+					"method": "post"
+				},
+				"createWorkPackageImmediately": {
+					"href": "/api/v3/projects/2/work_packages",
+					"method": "post"
+				},
+				"workPackages": {
+					"href": "/api/v3/projects/2/work_packages"
+				},
+				"storages": [
+					{
+						"href": "/api/v3/storages/37",
+						"title": "nc-26"
+					},
+					{
+						"href": "/api/v3/storages/19",
+						"title": "stable26"
+					},
+					{
+						"href": "/api/v3/storages/11",
+						"title": "stable25"
+					},
+					{
+						"href": "/api/v3/storages/15",
+						"title": "nc27"
+					}
+				],
+				"types": {
+					"href": "/api/v3/projects/2/types"
+				},
+				"status": {
+					"href": "/api/v3/project_statuses/on_track",
+					"title": "On track"
+				},
+				"ancestors": [],
+				"projectStorages": {
+					"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%222%22%5D%7D%7D%5D"
+				},
+				"parent": {
+					"href": null
+				}
+			}
+		},
+		"status": {
+			"_type": "Status",
+			"id": 1,
+			"name": "New",
+			"isClosed": false,
+			"color": "#1098AD",
+			"isDefault": true,
+			"isReadonly": false,
+			"defaultDoneRatio": null,
+			"position": 1,
+			"_links": {
+				"self": {
+					"href": "/api/v3/statuses/1",
+					"title": "New"
+				}
+			}
+		},
+		"author": {
+			"_type": "User",
+			"id": 4,
+			"name": "OpenProject Admin",
+			"createdAt": "2023-07-18T06:42:11Z",
+			"updatedAt": "2023-10-11T06:00:37Z",
+			"login": "admin",
+			"admin": true,
+			"firstName": "OpenProject",
+			"lastName": "Admin",
+			"email": "admin@example.net",
+			"avatar": "https://secure.gravatar.com/avatar/cb4f282fed12016bd18a879c1f27ff97?default=404&secure=true",
+			"status": "active",
+			"identityUrl": null,
+			"language": "en",
+			"_links": {
+				"self": {
+					"href": "/api/v3/users/4",
+					"title": "OpenProject Admin"
+				},
+				"memberships": {
+					"href": "/api/v3/memberships?filters=%5B%7B%22principal%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D",
+					"title": "Members"
+				},
+				"showUser": {
+					"href": "/users/4",
+					"type": "text/html"
+				},
+				"updateImmediately": {
+					"href": "/api/v3/users/4",
+					"title": "Update admin",
+					"method": "patch"
+				},
+				"lock": {
+					"href": "/api/v3/users/4/lock",
+					"title": "Set lock on admin",
+					"method": "post"
+				}
+			}
+		},
+		"assignee": {
+			"_type": "User",
+			"id": 15,
+			"name": "Second Admin",
+			"createdAt": "2023-09-01T06:05:15Z",
+			"updatedAt": "2023-09-01T09:28:16Z",
+			"login": "admin2",
+			"admin": true,
+			"firstName": "Second",
+			"lastName": "Admin",
+			"email": "admin@mail.com",
+			"avatar": "https://secure.gravatar.com/avatar/edb0e96701c209ab4b50211c856c50c4?default=404&secure=true",
+			"status": "active",
+			"identityUrl": null,
+			"language": "en",
+			"_links": {
+				"self": {
+					"href": "/api/v3/users/15",
+					"title": "Second Admin"
+				},
+				"memberships": {
+					"href": "/api/v3/memberships?filters=%5B%7B%22principal%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%2215%22%5D%7D%7D%5D",
+					"title": "Members"
+				},
+				"showUser": {
+					"href": "/users/15",
+					"type": "text/html"
+				},
+				"updateImmediately": {
+					"href": "/api/v3/users/15",
+					"title": "Update admin2",
+					"method": "patch"
+				},
+				"lock": {
+					"href": "/api/v3/users/15/lock",
+					"title": "Set lock on admin2",
+					"method": "post"
+				},
+				"delete": {
+					"href": "/api/v3/users/15",
+					"title": "Delete admin2",
+					"method": "delete"
+				}
+			}
+		},
+		"customActions": []
+	},
+	"_type": "WorkPackage",
+	"id": 41,
+	"lockVersion": 0,
+	"subject": "This is a workpackage",
+	"description": {
+		"format": "markdown",
+		"raw": "description for workpackage",
+		"html": "<p class=\"op-uc-p\">description for workpackage</p>"
+	},
+	"scheduleManually": false,
+	"startDate": null,
+	"dueDate": null,
+	"estimatedTime": null,
+	"derivedEstimatedTime": null,
+	"duration": null,
+	"ignoreNonWorkingDays": false,
+	"percentageDone": 0,
+	"createdAt": "2023-10-11T10:03:39Z",
+	"updatedAt": "2023-10-11T10:03:39Z",
+	"remainingTime": null,
+	"derivedRemainingTime": null,
+	"_links": {
+		"fileLinks": {
+			"href": "/api/v3/work_packages/41/file_links"
+		},
+		"addFileLink": {
+			"href": "/api/v3/work_packages/41/file_links",
+			"method": "post"
+		},
+		"customFields": {
+			"href": "/projects/your-scrum-project/settings/custom_fields",
+			"type": "text/html",
+			"title": "Custom fields"
+		},
+		"relations": {
+			"href": "/api/v3/work_packages/41/relations"
+		},
+		"type": {
+			"href": "/api/v3/types/1",
+			"title": "Task"
+		},
+		"priority": {
+			"href": "/api/v3/priorities/8",
+			"title": "Normal"
+		},
+		"project": {
+			"href": "/api/v3/projects/2",
+			"title": "Scrum project"
+		},
+		"status": {
+			"href": "/api/v3/statuses/1",
+			"title": "New"
+		},
+		"assignee": {
+			"href": "/api/v3/users/15",
+			"title": "Second Admin"
+		},
+		"self": {
+			"href": "/api/v3/work_packages/41",
+			"title": "This is a workpackage"
+		},
+		"ancestors": [],
+		"parent": {
+			"href": null,
+			"title": null
+		},
+		"customActions": []
+	}
+}

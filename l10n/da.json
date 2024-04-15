@@ -1,0 +1,16 @@
+{ "translations": {
+    "Cancel" : "Annuller",
+    "Save" : "Gem",
+    "Copied!" : "Kopieret!",
+    "Details" : "Detaljer",
+    "Start typing to search" : "Start med at skrive for at søge",
+    "Select a user or group" : "Vælg en bruger eller gruppe",
+    "Description" : "Beskrivelse",
+    "Create" : "Opret",
+    "Mark as read" : "Marker som læst",
+    "Connected accounts" : "Forbundne konti",
+    "Reset" : "Nulstil",
+    "Connected as {user}" : "Forbundet som {user}",
+    "Documentation" : "Dokumentation"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

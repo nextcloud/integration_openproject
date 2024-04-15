@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormHeading.vue is complete prop should hide the checkmark icon and show the index if not complete 1`] = `
+<div class="form-heading">
+  <div class="index index-light-mode">
+    1
+  </div>
+  <div class="title">
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading.vue is complete prop should show checkmark icon, add green title and hide the index if complete 1`] = `
+<div class="form-heading">
+  <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
+  <div class="title green-text">
+    Some Field Title
+  </div>
+</div>
+`;
+
+exports[`FormHeading.vue is disabled prop should add disabled class to the form heading 1`] = `
+<div class="form-heading disabled">
+  <div class="index index-light-mode">
+    1
+  </div>
+  <div class="title">
+    Some Field Title
+  </div>
+</div>
+`;

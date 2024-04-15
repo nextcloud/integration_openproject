@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - internal
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+
+  nextcloud:
+    image: nextcloud:apache
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - nextcloud:/var/www/html
+      - apache-config:/etc/apache2
+      - ${APP_DIR:-./../../custom_apps}:/var/www/html/custom_apps
+    networks:
+      - internal
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+    depends_on:
+      - db
+
+  cron:
+    image: nextcloud:apache
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+      - apache-config:/etc/apache2
+    networks:
+      - internal
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+
+volumes:
+  db:
+  nextcloud:
+  apache-config:
+
+networks:
+  internal:

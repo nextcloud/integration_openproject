@@ -1,0 +1,532 @@
+{
+	"7": {
+		"_type": "Project",
+		"id": 7,
+		"identifier": "dev-large-grand-child",
+		"name": "[dev] Large Grand Child",
+		"active": true,
+		"public": false,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-10-10T11:20:55Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/7",
+				"title": "[dev] Large Grand Child"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/7/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/7/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/7/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/7/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/7/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%227%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/7/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/7/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/7",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/7",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"ancestors": [
+				{
+					"href": "/api/v3/projects/4",
+					"title": "[dev] Large"
+				},
+				{
+					"href": "/api/v3/projects/5",
+					"title": "[dev] Large child"
+				}
+			],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%227%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": "/api/v3/projects/5",
+				"title": "[dev] Large child"
+			}
+		}
+	},
+	"6": {
+		"_type": "Project",
+		"id": 6,
+		"identifier": "dev-custom-fields",
+		"name": "[dev] Custom fields",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-07-18T06:42:15Z",
+		"updatedAt": "2023-07-18T06:42:15Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/6",
+				"title": "[dev] Custom fields"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/6/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/6/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/6/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/6/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/6/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%226%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/6/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/6/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/6",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/6",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"ancestors": [],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%226%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": null
+			}
+		}
+	},
+	"5": {
+		"_type": "Project",
+		"id": 5,
+		"identifier": "dev-large-child",
+		"name": "[dev] Large child",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-07-18T06:42:15Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/5",
+				"title": "[dev] Large child"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/5/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/5/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/5/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/5/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/5/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%225%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/5/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/5/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/5",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/5",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"ancestors": [
+				{
+					"href": "/api/v3/projects/4",
+					"title": "[dev] Large"
+				}
+			],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%225%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": "/api/v3/projects/4",
+				"title": "[dev] Large"
+			}
+		}
+	},
+	"4": {
+		"_type": "Project",
+		"id": 4,
+		"identifier": "dev-large",
+		"name": "[dev] Large",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-07-18T06:42:15Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/4",
+				"title": "[dev] Large"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/4/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/4/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/4/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/4/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/4/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/4/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/4/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/4",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/4",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"ancestors": [],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": null
+			}
+		}
+	},
+	"3": {
+		"_type": "Project",
+		"id": 3,
+		"identifier": "dev-empty",
+		"name": "[dev] Empty",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-07-18T06:42:15Z",
+		"updatedAt": "2023-07-18T06:42:15Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/3",
+				"title": "[dev] Empty"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/3/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/3/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/3/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/3/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/3/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%223%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/3/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/3/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/3",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/3",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"ancestors": [],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%223%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": null
+			}
+		}
+	},
+	"2": {
+		"_type": "Project",
+		"id": 2,
+		"identifier": "your-scrum-project",
+		"name": "Scrum project",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "This is a short summary of the goals of this demo Scrum project.",
+			"html": "<p class=\"op-uc-p\">This is a short summary of the goals of this demo Scrum project.</p>"
+		},
+		"createdAt": "2023-07-18T06:42:13Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "All tasks are on schedule. The people involved know their tasks. The system is completely set up.",
+			"html": "<p class=\"op-uc-p\">All tasks are on schedule. The people involved know their tasks. The system is completely set up.</p>"
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/2",
+				"title": "Scrum project"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/2/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/2/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/2/work_packages"
+			},
+			"storages": [
+				{
+					"href": "/api/v3/storages/37",
+					"title": "nc-26"
+				},
+				{
+					"href": "/api/v3/storages/19",
+					"title": "stable26"
+				},
+				{
+					"href": "/api/v3/storages/11",
+					"title": "stable25"
+				},
+				{
+					"href": "/api/v3/storages/15",
+					"title": "nc27"
+				}
+			],
+			"categories": {
+				"href": "/api/v3/projects/2/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/2/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%222%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/2/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/2/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/2",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/2",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": "/api/v3/project_statuses/on_track",
+				"title": "On track"
+			},
+			"ancestors": [],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%222%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": null
+			}
+		}
+	},
+	"1": {
+		"_type": "Project",
+		"id": 1,
+		"identifier": "demo-project",
+		"name": "Demo project",
+		"active": true,
+		"public": true,
+		"description": {
+			"format": "markdown",
+			"raw": "This is a short summary of the goals of this demo project.",
+			"html": "<p class=\"op-uc-p\">This is a short summary of the goals of this demo project.</p>"
+		},
+		"createdAt": "2023-07-18T06:42:11Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "All tasks are on schedule. The people involved know their tasks. The system is completely set up.",
+			"html": "<p class=\"op-uc-p\">All tasks are on schedule. The people involved know their tasks. The system is completely set up.</p>"
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/1",
+				"title": "Demo project"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/1/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/1/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/1/work_packages"
+			},
+			"types": {
+				"href": "/api/v3/projects/1/types"
+			},
+			"status": {
+				"href": "/api/v3/project_statuses/on_track",
+				"title": "On track"
+			},
+			"ancestors": [],
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%221%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": null
+			}
+		}
+	}
+}

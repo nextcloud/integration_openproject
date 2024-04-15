@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<info>
+	<id>integration_openproject</id>
+	<name>OpenProject Integration</name>
+	<summary>Link Nextcloud files to OpenProject work packages</summary>
+	<description><![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject.
+
+On the Nextcloud end, it allows users to:
+
+* Link files and folders with work packages in OpenProject
+* Find all work packages linked to a file or a folder
+* Create work packages directly in Nextcloud
+* View OpenProject notifications via the dashboard
+* Search for work packages using Nextcloud's search bar
+* Link work packages in rich text fields via Smart Picker
+* Preview links to work packages in text fields
+* Link multiple files and folder to a work package at once
+
+On the OpenProject end, users are able to:
+
+* Link work packages with files and folders in Nextcloud
+* Upload and download files directly to Nextcloud from within a work package
+* Open linked files in Nextcloud to edit them
+* Let OpenProject create shared folders per project
+
+For more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/).
+	]]></description>
+	<version>2.6.2</version>
+	<licence>agpl</licence>
+	<author>Julien Veyssier</author>
+	<namespace>OpenProject</namespace>
+	<documentation>
+		<user>https://openproject.org/docs/user-guide/nextcloud-integration/</user>
+		<admin>https://openproject.org/docs/system-admin-guide/integrations/nextcloud/</admin>
+		<developer>https://github.com/nextcloud/integration_openproject</developer>
+	</documentation>
+	<category>integration</category>
+	<category>dashboard</category>
+	<website>https://github.com/nextcloud/integration_openproject</website>
+	<bugs>https://community.openproject.org/projects/nextcloud-integration/work_packages</bugs>
+	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png</screenshot>
+	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot2.png</screenshot>
+	<dependencies>
+		<nextcloud min-version="26" max-version="29" />
+	</dependencies>
+	<background-jobs>
+		<job>OCA\OpenProject\BackgroundJob\RemoveExpiredDirectUploadTokens</job>
+	</background-jobs>
+	<settings>
+		<admin>OCA\OpenProject\Settings\Admin</admin>
+		<admin-section>OCA\OpenProject\Settings\AdminSection</admin-section>
+		<personal>OCA\OpenProject\Settings\Personal</personal>
+		<personal-section>OCA\OpenProject\Settings\PersonalSection</personal-section>
+	</settings>
+</info>

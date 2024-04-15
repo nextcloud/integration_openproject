@@ -1,0 +1,445 @@
+{
+	"payload": {
+		"subject": "This is a workpackage",
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"scheduleManually": false,
+		"startDate": null,
+		"dueDate": null,
+		"estimatedTime": null,
+		"duration": null,
+		"ignoreNonWorkingDays": false,
+		"percentageDone": 0,
+		"remainingTime": null,
+		"customField10": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"customField12": null,
+		"_links": {
+			"category": {
+				"href": null
+			},
+			"type": {
+				"href": "/api/v3/types/9",
+				"title": "Required CF"
+			},
+			"priority": {
+				"href": "/api/v3/priorities/8",
+				"title": "Normal"
+			},
+			"project": {
+				"href": "/api/v3/projects/4",
+				"title": "[dev] Large"
+			},
+			"status": {
+				"href": "/api/v3/statuses/1",
+				"title": "New"
+			},
+			"responsible": {
+				"href": null
+			},
+			"assignee": {
+				"href": null
+			},
+			"version": {
+				"href": null
+			},
+			"parent": {
+				"href": null,
+				"title": null
+			}
+		}
+	},
+	"schema": {
+		"_type": "Schema",
+		"_dependencies": [],
+		"_attributeGroups": [
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "People",
+				"attributes": [
+					"assignee",
+					"responsible",
+					"customField12"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Estimates and time",
+				"attributes": [
+					"estimatedTime",
+					"spentTime",
+					"remainingTime"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Details",
+				"attributes": [
+					"date",
+					"percentageDone",
+					"category",
+					"version",
+					"priority"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Costs",
+				"attributes": [
+					"overallCosts",
+					"laborCosts",
+					"materialCosts",
+					"costsByType"
+				]
+			},
+			{
+				"_type": "WorkPackageFormAttributeGroup",
+				"name": "Custom fields",
+				"attributes": [
+					"customField10"
+				]
+			}
+		],
+		"id": {
+			"type": "Integer",
+			"name": "ID",
+			"required": true,
+			"hasDefault": false,
+			"writable": false,
+			"options": []
+		},
+		"subject": {
+			"type": "String",
+			"name": "Subject",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"minLength": 1,
+			"maxLength": 255,
+			"options": []
+		},
+		"description": {
+			"type": "Formattable",
+			"name": "Description",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"options": []
+		},
+		"author": {
+			"type": "User",
+			"name": "Author",
+			"required": true,
+			"hasDefault": false,
+			"writable": false,
+			"options": [],
+			"location": "_links"
+		},
+		"project": {
+			"type": "Project",
+			"name": "Project",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_links": {
+				"allowedValues": {
+					"href": "/api/v3/work_packages/available_projects"
+				}
+			}
+		},
+		"parent": {
+			"type": "WorkPackage",
+			"name": "Parent",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_links": []
+		},
+		"assignee": {
+			"type": "User",
+			"name": "Assignee",
+			"required": false,
+			"hasDefault": false,
+			"writable": true,
+			"attributeGroup": "People",
+			"location": "_links",
+			"_links": {
+				"allowedValues": {
+					"href": "/api/v3/projects/4/available_assignees"
+				}
+			}
+		},
+		"type": {
+			"type": "Type",
+			"name": "Type",
+			"required": true,
+			"hasDefault": false,
+			"writable": true,
+			"location": "_links",
+			"_embedded": {
+				"allowedValues": [
+					{
+						"_type": "Type",
+						"id": 1,
+						"name": "Task",
+						"color": "#FFFFFF",
+						"position": 1,
+						"isDefault": true,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-09-04T03:51:47Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/1",
+								"title": "Task"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 9,
+						"name": "Required CF",
+						"color": null,
+						"position": 2,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:15Z",
+						"updatedAt": "2023-10-12T05:03:44Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/9",
+								"title": "Required CF"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 2,
+						"name": "Milestone",
+						"color": "#35C53F",
+						"position": 3,
+						"isDefault": true,
+						"isMilestone": true,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/2",
+								"title": "Milestone"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 3,
+						"name": "Phase",
+						"color": "#FF922B",
+						"position": 4,
+						"isDefault": true,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/3",
+								"title": "Phase"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 4,
+						"name": "Feature",
+						"color": "#5C7CFA",
+						"position": 5,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/4",
+								"title": "Feature"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 5,
+						"name": "Epic",
+						"color": "#845EF7",
+						"position": 6,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/5",
+								"title": "Epic"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 6,
+						"name": "User story",
+						"color": "#F8F9FA",
+						"position": 7,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-09-04T05:18:30Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/6",
+								"title": "User story"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 7,
+						"name": "Bug",
+						"color": "#F03E3E",
+						"position": 8,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:09Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/7",
+								"title": "Bug"
+							}
+						}
+					},
+					{
+						"_type": "Type",
+						"id": 8,
+						"name": "All CFS",
+						"color": null,
+						"position": 9,
+						"isDefault": false,
+						"isMilestone": false,
+						"createdAt": "2023-07-18T06:42:15Z",
+						"updatedAt": "2023-07-18T06:42:15Z",
+						"_links": {
+							"self": {
+								"href": "/api/v3/types/8",
+								"title": "All CFS"
+							}
+						}
+					}
+				]
+			},
+			"_links": {
+				"allowedValues": [
+					{
+						"href": "/api/v3/types/1",
+						"title": "Task"
+					},
+					{
+						"href": "/api/v3/types/9",
+						"title": "Required CF"
+					},
+					{
+						"href": "/api/v3/types/2",
+						"title": "Milestone"
+					},
+					{
+						"href": "/api/v3/types/3",
+						"title": "Phase"
+					},
+					{
+						"href": "/api/v3/types/4",
+						"title": "Feature"
+					},
+					{
+						"href": "/api/v3/types/5",
+						"title": "Epic"
+					},
+					{
+						"href": "/api/v3/types/6",
+						"title": "User story"
+					},
+					{
+						"href": "/api/v3/types/7",
+						"title": "Bug"
+					},
+					{
+						"href": "/api/v3/types/8",
+						"title": "All CFS"
+					}
+				]
+			}
+		},
+		"status": {
+			"type": "Status",
+			"name": "Status",
+			"required": true,
+			"hasDefault": true,
+			"writable": true,
+			"location": "_links",
+			"_embedded": {
+				"allowedValues": [
+					{
+						"_type": "Status",
+						"id": 1,
+						"name": "New",
+						"isClosed": false,
+						"color": "#1098AD",
+						"isDefault": true,
+						"isReadonly": false,
+						"defaultDoneRatio": null,
+						"position": 1,
+						"_links": {
+							"self": {
+								"href": "/api/v3/statuses/1",
+								"title": "New"
+							}
+						}
+					}
+				]
+			},
+			"_links": {
+				"allowedValues": [
+					{
+						"href": "/api/v3/statuses/1",
+						"title": "New"
+					}
+				]
+			}
+		}
+	},
+	"validationErrors": {
+		"customField10": {
+			"_type": "Error",
+			"errorIdentifier": "urn:openproject-org:api:v3:errors:PropertyConstraintViolation",
+			"message": "CF DEV required text can't be blank.",
+			"_embedded": {
+				"details": {
+					"attribute": "customField10"
+				}
+			}
+		},
+		"customField12": {
+			"_type": "Error",
+			"errorIdentifier": "urn:openproject-org:api:v3:errors:PropertyConstraintViolation",
+			"message": "required type can't be blank.",
+			"_embedded": {
+				"details": {
+					"attribute": "customField12"
+				}
+			}
+		}
+	}
+}

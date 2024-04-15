@@ -1,0 +1,4 @@
+services:
+  nextcloud:
+    ports:
+      - "8080:80"
