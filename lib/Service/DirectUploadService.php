@@ -25,12 +25,12 @@
 namespace OCA\OpenProject\Service;
 
 use DateTime;
-use OCP\Files\NotFoundException;
-use OCP\DB\Exception;
 use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
+use OCP\DB\Exception;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
-use OCP\Security\ISecureRandom;
 use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 
 class DirectUploadService {
 

@@ -8,22 +8,22 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Http;
 use OCP\DB\Exception;
+use OCP\Group\ISubAdmin;
 use OCP\IConfig;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
-use OCP\IUserManager;
 use OCP\IUser;
-use OCP\IGroup;
-use OCP\AppFramework\Http;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
-use OCP\Security\ISecureRandom;
-use OCP\IGroupManager;
-use OCP\Group\ISubAdmin;
+use Psr\Log\LoggerInterface;
 
 class ConfigControllerTest extends TestCase {
 
@@ -1332,21 +1332,21 @@ class ConfigControllerTest extends TestCase {
 			->with($userMock, $groupMock);
 
 		$configControllerMock = new ConfigController(
-					'integration_openproject',
-					$this->createMock(IRequest::class),
-					$configMock,
-					$this->createMock(IURLGenerator::class),
-					$userManagerMock,
-					$this->l,
-					$service,
-					$this->createMock(LoggerInterface::class),
-					$this->createMock(OauthService::class),
-					$this->createMock(SettingsController::class),
-					$groupManagerMock,
-					$secureRandomMock,
-					$subAdminManagerMock,
-					'admin'
-				);
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManagerMock,
+			$this->l,
+			$service,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
+			$groupManagerMock,
+			$secureRandomMock,
+			$subAdminManagerMock,
+			'admin'
+		);
 
 		$result = $configControllerMock->setAdminConfig([
 			"setup_project_folder" => true,

@@ -138,7 +138,7 @@ class SharingContext implements Context {
 				);
 			}
 		}
-		if ($permissionSum < 1 || $permissionSum > 31) {
+		if ($permissionSum > 31) {
 			throw new InvalidArgumentException(
 				"invalid permission total ($permissionSum)"
 			);

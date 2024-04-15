@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 - Drop application's support for Nextcloud 25
+- Add support for PHP version 8.2 and 8.3
 
 ## 2.6.2 - 2024-04-04
 ### Changed
