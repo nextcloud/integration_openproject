@@ -11,12 +11,12 @@
 
 namespace OCA\OpenProject\Service;
 
+use OC_Util;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
-use OCP\Security\ISecureRandom;
 use OCP\Security\ICrypto;
-use OC_Util;
+use OCP\Security\ISecureRandom;
 
 class OauthService {
 	/**
@@ -39,9 +39,9 @@ class OauthService {
 	 * Service to manipulate Nextcloud oauth clients
 	 */
 	public function __construct(ClientMapper $clientMapper,
-								ISecureRandom $secureRandom,
-								ICrypto $crypto
-								) {
+		ISecureRandom $secureRandom,
+		ICrypto $crypto
+	) {
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
 		$this->crypto = $crypto;

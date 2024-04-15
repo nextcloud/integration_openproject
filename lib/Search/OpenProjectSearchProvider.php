@@ -24,11 +24,11 @@ declare(strict_types=1);
  */
 namespace OCA\OpenProject\Search;
 
-use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
-use OCP\IL10N;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
@@ -60,9 +60,9 @@ class OpenProjectSearchProvider implements IProvider {
 	 * @param OpenProjectAPIService $service
 	 */
 	public function __construct(IAppManager $appManager,
-								IL10N $l10n,
-								IConfig $config,
-								OpenProjectAPIService $service) {
+		IL10N $l10n,
+		IConfig $config,
+		OpenProjectAPIService $service) {
 		$this->appManager = $appManager;
 		$this->l10n = $l10n;
 		$this->config = $config;
@@ -111,9 +111,9 @@ class OpenProjectSearchProvider implements IProvider {
 		$openprojectUrl = OpenProjectAPIService::sanitizeUrl($this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 		$searchEnabled = $this->config->getUserValue(
-				$user->getUID(),
-				Application::APP_ID, 'search_enabled',
-				$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
+			$user->getUID(),
+			Application::APP_ID, 'search_enabled',
+			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
 		if ($accessToken === '' || !$searchEnabled) {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}

@@ -24,32 +24,32 @@
 
 namespace OCA\OpenProject\Controller;
 
+use \OCP\AppFramework\ApiController;
+use InvalidArgumentException;
 use OC\Files\Filesystem;
 use OC\Files\Node\Folder;
-use OC\User\NoUserException;
-use InvalidArgumentException;
 use OC\ForbiddenException;
+use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
 use OCA\OpenProject\Exception\OpenprojectUnauthorizedUserException;
-use \OCP\AppFramework\ApiController;
+use OCA\OpenProject\Service\DatabaseService;
+use OCA\OpenProject\Service\DirectUploadService;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\File;
+use OCP\Files\FileInfo;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidContentException;
 use OCP\Files\InvalidPathException;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
-use OCP\Lock\LockedException;
-use OCA\OpenProject\Service\DirectUploadService;
-use OCA\OpenProject\Service\DatabaseService;
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Files\FileInfo;
+use OCP\Lock\LockedException;
 use Sabre\DAV\Exception\Conflict;
 
 class DirectUploadController extends ApiController {

@@ -9,25 +9,25 @@
 
 namespace OCA\OpenProject\Controller;
 
-use _PHPStan_3e014c27f\Nette\InvalidArgumentException;
+use Exception;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use InvalidArgumentException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Http;
+use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
-use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
-use Exception;
-use OCP\Files\NotFoundException;
 use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIControllerTest extends TestCase {

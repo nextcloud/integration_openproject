@@ -23,12 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\BackgroundJob;
 
-use OCP\BackgroundJob\TimedJob;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\DB\Exception;
-use Psr\Log\LoggerInterface;
-
 use OCA\OpenProject\Service\DatabaseService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
+use OCP\DB\Exception;
+
+use Psr\Log\LoggerInterface;
 
 class RemoveExpiredDirectUploadTokens extends TimedJob {
 

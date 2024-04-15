@@ -31,7 +31,7 @@ class DirectDownloadService {
 	 * Service to check and get direct download links
 	 */
 	public function __construct(IDBConnection $db,
-								IRootFolder $root) {
+		IRootFolder $root) {
 		$this->db = $db;
 		$this->root = $root;
 	}
@@ -42,7 +42,7 @@ class DirectDownloadService {
 		$qb->select('id', 'user_id', 'file_id', 'token', 'expiration')
 		   ->from('directlink')
 		   ->where(
-			   $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+		   	$qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
 		   );
 		$req = $qb->executeQuery();
 

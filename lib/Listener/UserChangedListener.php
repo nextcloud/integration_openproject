@@ -28,11 +28,11 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\AppInfo\Application;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserChangedEvent;
 use Psr\Log\LoggerInterface;
-use OCP\AppFramework\OCS\OCSBadRequestException;
 
 /**
  * @template-implements IEventListener<Event>

@@ -13,29 +13,29 @@ namespace OCA\OpenProject\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
-use OCP\DB\Exception as DBException;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\OAuth2\Controller\SettingsController;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
-use OCP\Group\ISubAdmin;
-use OCP\IGroupManager;
-use OCP\IURLGenerator;
-use OCP\IConfig;
-use OCP\IL10N;
-use OCP\IRequest;
-use OCP\IUser;
-use OCP\IUserManager;
+use OCA\OpenProject\Service\OauthService;
+use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
-use OCP\AppFramework\Controller;
+use OCP\DB\Exception as DBException;
+use OCP\Group\ISubAdmin;
+use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IL10N;
 
-use OCA\OpenProject\Service\OauthService;
-use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCP\IRequest;
+use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
@@ -98,19 +98,19 @@ class ConfigController extends Controller {
 	private ISubAdmin $subAdminManager;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IConfig $config,
-								IURLGenerator $urlGenerator,
-								IUserManager $userManager,
-								IL10N $l,
-								OpenProjectAPIService $openprojectAPIService,
-								LoggerInterface $logger,
-								OauthService $oauthService,
-								SettingsController $oauthSettingsController,
-								IGroupManager $groupManager,
-								ISecureRandom $secureRandom,
-								ISubAdmin $subAdminManager,
-								?string $userId) {
+		IRequest $request,
+		IConfig $config,
+		IURLGenerator $urlGenerator,
+		IUserManager $userManager,
+		IL10N $l,
+		OpenProjectAPIService $openprojectAPIService,
+		LoggerInterface $logger,
+		OauthService $oauthService,
+		SettingsController $oauthSettingsController,
+		IGroupManager $groupManager,
+		ISecureRandom $secureRandom,
+		ISubAdmin $subAdminManager,
+		?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;

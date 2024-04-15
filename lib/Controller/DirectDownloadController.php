@@ -12,11 +12,11 @@
 namespace OCA\OpenProject\Controller;
 
 use OCA\OpenProject\Service\DirectDownloadService;
+use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\AppFramework\Controller;
 
 class DirectDownloadController extends Controller {
 
@@ -30,9 +30,9 @@ class DirectDownloadController extends Controller {
 	private $directDownloadService;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IL10N $l,
-								DirectDownloadService $directDownloadService) {
+		IRequest $request,
+		IL10N $l,
+		DirectDownloadService $directDownloadService) {
 		parent::__construct($appName, $request);
 		$this->l = $l;
 		$this->directDownloadService = $directDownloadService;

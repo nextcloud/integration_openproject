@@ -14,45 +14,45 @@ namespace OCA\OpenProject\Service;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 use InvalidArgumentException;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IProvider;
 use OC\User\NoUserException;
-use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\GroupFolders\Folder\FolderManager;
+use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
+use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\TermsOfService\Db\Entities\Signatory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
-use OCP\Files\Node;
-use OCA\OpenProject\Exception\OpenprojectErrorException;
-use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\Group\ISubAdmin;
+use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
+use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use Psr\Log\LoggerInterface;
-use OCP\IConfig;
-use OCP\IAvatarManager;
-use OCP\Http\Client\IClientService;
-use OCP\Files\NotPermittedException;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Exception\ConnectException;
-use OCP\AppFramework\Http;
-use OC\Authentication\Events\AppPasswordCreatedEvent;
-use OC\Authentication\Token\IProvider;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
-use OCA\OpenProject\AppInfo\Application;
+use Psr\Log\LoggerInterface;
 use Safe\Exceptions\JsonException;
 
 define('CACHE_TTL', 3600);
@@ -127,23 +127,23 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	public function __construct(
-								string $appName,
-								IAvatarManager $avatarManager,
-								LoggerInterface $logger,
-								IL10N $l10n,
-								IConfig $config,
-								IClientService $clientService,
-								IRootFolder $storage,
-								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory,
-								IUserManager $userManager,
-								IGroupManager $groupManager,
-								IAppManager $appManager,
-								IProvider $tokenProvider,
-								ISecureRandom $random,
-								IEventDispatcher $eventDispatcher,
-								ISubAdmin $subAdminManager,
-								IDBConnection $db
+		string $appName,
+		IAvatarManager $avatarManager,
+		LoggerInterface $logger,
+		IL10N $l10n,
+		IConfig $config,
+		IClientService $clientService,
+		IRootFolder $storage,
+		IURLGenerator $urlGenerator,
+		ICacheFactory $cacheFactory,
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		IAppManager $appManager,
+		IProvider $tokenProvider,
+		ISecureRandom $random,
+		IEventDispatcher $eventDispatcher,
+		ISubAdmin $subAdminManager,
+		IDBConnection $db
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -337,9 +337,9 @@ class OpenProjectAPIService {
 	 * @return array{error: string} | IResponse
 	 */
 	public function rawRequest(string $accessToken, string $openprojectUrl,
-							   string $endPoint, array $params = [],
-							   string $method = 'GET',
-							   array $options = []
+		string $endPoint, array $params = [],
+		string $method = 'GET',
+		array $options = []
 	) {
 		$url = $openprojectUrl . '/api/v3/' . $endPoint;
 		if (!isset($options['headers']['Authorization'])) {
@@ -399,7 +399,7 @@ class OpenProjectAPIService {
 	 * @throws \OCP\PreConditionNotMetException
 	 */
 	public function request(string $userId,
-							string $endPoint, array $params = [], string $method = 'GET'): array {
+		string $endPoint, array $params = [], string $method = 'GET'): array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
@@ -613,9 +613,9 @@ class OpenProjectAPIService {
 		}
 
 		$this->cache->set(
-				Application::APP_ID . '/statuses/' . $statusId,
-				$result,
-				CACHE_TTL
+			Application::APP_ID . '/statuses/' . $statusId,
+			$result,
+			CACHE_TTL
 		);
 		return $result;
 	}
@@ -971,10 +971,10 @@ class OpenProjectAPIService {
 			throw new \Exception('The "Group folders" app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
 			throw new OpenprojectGroupfolderSetupConflictException(
-					'The group folder name "' .
-					Application::OPEN_PROJECT_ENTITIES_NAME .
-					'" already exists'
-				);
+				'The group folder name "' .
+				Application::OPEN_PROJECT_ENTITIES_NAME .
+				'" already exists'
+			);
 		}
 		return true;
 	}
@@ -1075,8 +1075,8 @@ class OpenProjectAPIService {
 		return (
 			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
 			$this->appManager->isEnabledForUser(
-			'groupfolders',
-			$user
+				'groupfolders',
+				$user
 			)
 		);
 	}
@@ -1175,7 +1175,7 @@ class OpenProjectAPIService {
 		if ($this->groupManager->isInGroup(
 			Application::OPEN_PROJECT_ENTITIES_NAME,
 			Application::OPEN_PROJECT_ENTITIES_NAME
-			) &&
+		) &&
 			$this->subAdminManager->isSubAdminOfGroup(
 				$this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME),
 				$this->groupManager->get(Application::OPEN_PROJECT_ENTITIES_NAME)

@@ -13,37 +13,37 @@ use Closure;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\Capabilities;
+use OCA\OpenProject\Dashboard\OpenProjectWidget;
+use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\BeforeNodeInsideOpenProjectGroupfilderChangedListener;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
-use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
+use OCA\OpenProject\Listener\OpenProjectReferenceListener;
 use OCA\OpenProject\Listener\TermsOfServiceEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
-use OCA\OpenProject\Listener\OpenProjectReferenceListener;
+use OCA\OpenProject\Search\OpenProjectSearchProvider;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
 use OCP\App\Events\AppEnableEvent;
+use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
+use OCP\EventDispatcher\IEventDispatcher;
+
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
+use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
-use OCP\Collaboration\Reference\RenderReferenceEvent;
-
-use OCP\AppFramework\App;
-use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\AppFramework\Bootstrap\IBootContext;
-use OCP\AppFramework\Bootstrap\IBootstrap;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\User\Events\BeforeUserDeletedEvent;
-use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
-use OCA\OpenProject\Dashboard\OpenProjectWidget;
-use OCA\OpenProject\Search\OpenProjectSearchProvider;
 
 /**
  * Class Application

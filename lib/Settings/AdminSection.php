@@ -2,8 +2,8 @@
 
 namespace OCA\OpenProject\Settings;
 
-use OCP\IURLGenerator;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
 class AdminSection implements IIconSection {
@@ -15,7 +15,7 @@ class AdminSection implements IIconSection {
 	private $urlGenerator;
 
 	public function __construct(IURLGenerator $urlGenerator,
-								IL10N $l) {
+		IL10N $l) {
 		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;
 	}
