@@ -98,15 +98,7 @@ class OpenProjectWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		$iconClass = 'icon-openproject';
-		$currNcVersion = $this->config->getSystemValue('version', '0.0.0.0');
-
-		switch ($currNcVersion) {
-			case (version_compare($currNcVersion, '25', "<")):
-				return $iconClass . ' nc-before-v24';
-			default:
-				return $iconClass;
-		}
+		return 'icon-openproject';
 	}
 
 	/**
