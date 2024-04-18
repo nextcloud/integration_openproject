@@ -15,21 +15,21 @@ use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
 use OCP\Activity\IManager;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IMountProviderCollection;
+use OCP\Files\DavUtil;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\AppFramework\OCSController;
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Server;
-use OCP\Files\DavUtil;
 
 class FilesController extends OCSController {
 
@@ -81,15 +81,15 @@ class FilesController extends OCSController {
 	 */
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IRootFolder $rootFolder,
-								IUserSession $userSession,
-								IMountProviderCollection $mountCollection,
-								IManager $activityManager,
-								IDBConnection $connection,
-								ILogger $logger,
-								IUserManager $userManager,
-								DavUtil $davUtils
+		IRequest $request,
+		IRootFolder $rootFolder,
+		IUserSession $userSession,
+		IMountProviderCollection $mountCollection,
+		IManager $activityManager,
+		IDBConnection $connection,
+		ILogger $logger,
+		IUserManager $userManager,
+		DavUtil $davUtils
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -241,6 +241,7 @@ class FilesController extends OCSController {
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&
 			class_exists('\OCA\Activity\UserSettings')
 		) {
+			// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 			$activityData = Server::get(Data::class);
 		} else {
 			return null;

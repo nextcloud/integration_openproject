@@ -2,14 +2,14 @@
 
 namespace OCA\OpenProject\Settings;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OauthService;
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+
 use OCP\IConfig;
 use OCP\Settings\ISettings;
-
-use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\OpenProject\AppInfo\Application;
 
 class Admin implements ISettings {
 
@@ -32,9 +32,9 @@ class Admin implements ISettings {
 	private $openProjectAPIService;
 
 	public function __construct(IConfig $config,
-								OauthService $oauthService,
-								OpenProjectAPIService $openProjectAPIService,
-								IInitialState $initialStateService) {
+		OauthService $oauthService,
+		OpenProjectAPIService $openProjectAPIService,
+		IInitialState $initialStateService) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;

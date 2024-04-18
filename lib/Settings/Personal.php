@@ -2,13 +2,13 @@
 
 namespace OCA\OpenProject\Settings;
 
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
-use OCP\Settings\ISettings;
-
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
+
+use OCP\IConfig;
+use OCP\Settings\ISettings;
 
 class Personal implements ISettings {
 
@@ -27,9 +27,9 @@ class Personal implements ISettings {
 
 
 	public function __construct(
-								IConfig $config,
-								IInitialState $initialStateService,
-								?string $userId) {
+		IConfig $config,
+		IInitialState $initialStateService,
+		?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;

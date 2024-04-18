@@ -63,16 +63,16 @@ class DirectDownloadServiceTest extends TestCase {
 		$root = $c->get(IRootFolder::class);
 		$this->userFolder = $root->getUserFolder(self::USER_ID);
 		$this->directController = new DirectController(
-				'dav',
-				$c->get(IRequest::class),
-				$root,
-				self::USER_ID,
-				$c->get(DirectMapper::class),
-				$c->get(ISecureRandom::class),
-				$c->get(ITimeFactory::class),
-				$c->get(IURLGenerator::class),
-				$c->get(IEventDispatcher::class)
-			);
+			'dav',
+			$c->get(IRequest::class),
+			$root,
+			self::USER_ID,
+			$c->get(DirectMapper::class),
+			$c->get(ISecureRandom::class),
+			$c->get(ITimeFactory::class),
+			$c->get(IURLGenerator::class),
+			$c->get(IEventDispatcher::class)
+		);
 	}
 
 	public static function tearDownAfterClass(): void {

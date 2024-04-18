@@ -12,8 +12,11 @@ namespace OCA\OpenProject\Service;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
+use OC\Authentication\Events\AppPasswordCreatedEvent;
+use OC\Authentication\Token\IProvider;
+use OC\Authentication\Token\IToken;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OC_Util;
@@ -23,6 +26,8 @@ use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -37,22 +42,17 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-use OC\Authentication\Token\IProvider;
-use OCP\Security\ISecureRandom;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IRemoteHostValidator;
+use OCP\Security\ISecureRandom;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
-use OC\Authentication\Token\IToken;
-use OC\Authentication\Events\AppPasswordCreatedEvent;
 
 /**
  * overriding the class_exists method, so that the unit tests always pass,
@@ -868,17 +868,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->with(
-					'user', 'work_packages',
-					[
-						'filters' => '[' .
-							'{"typeahead":' .
-								'{"operator":"**","values":["search query"]}'.
-							'},'.
-							'{"linkable_to_storage_url":'.
-								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
-							']',
-						'sortBy' => '[["updatedAt","desc"]]',
-					]
+				'user', 'work_packages',
+				[
+					'filters' => '[' .
+						'{"typeahead":' .
+							'{"operator":"**","values":["search query"]}'.
+						'},'.
+						'{"linkable_to_storage_url":'.
+							'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
+						']',
+					'sortBy' => '[["updatedAt","desc"]]',
+				]
 			)
 			->willReturn($response);
 		$result = $service->searchWorkPackage('user', 'search query');
@@ -942,17 +942,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service = $this->getServiceMock();
 		$service->method('request')
 			->with(
-					'user', 'work_packages',
-					[
-						'filters' => '['.
-							'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
-							'{"typeahead":{"operator":"**","values":["search query"]}},'.
-							'{"linkable_to_storage_url":'.
-								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
-							'}'.
-						']',
-						'sortBy' => '[["updatedAt","desc"]]',
-					]
+				'user', 'work_packages',
+				[
+					'filters' => '['.
+						'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
+						'{"typeahead":{"operator":"**","values":["search query"]}},'.
+						'{"linkable_to_storage_url":'.
+							'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}'.
+						'}'.
+					']',
+					'sortBy' => '[["updatedAt","desc"]]',
+				]
 			)
 			->willReturn(
 				["_embedded" => ["elements" => [['id' => 4], ['id' => 5], ['id' => 6]]]]
@@ -2675,7 +2675,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock,
 			'1234567890',
 			'http://not-existing'
-			);
+		);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = $this->singleFileInformation;

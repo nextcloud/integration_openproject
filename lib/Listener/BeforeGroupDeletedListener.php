@@ -27,12 +27,12 @@ declare(strict_types=1);
 
 namespace OCA\OpenProject\Listener;
 
-use OCP\Group\Events\BeforeGroupDeletedEvent;
+use OCA\OpenProject\AppInfo\Application;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Group\Events\BeforeGroupDeletedEvent;
 use Psr\Log\LoggerInterface;
-use OCP\AppFramework\OCS\OCSBadRequestException;
-use OCA\OpenProject\AppInfo\Application;
 
 /**
  * @template-implements IEventListener<Event>

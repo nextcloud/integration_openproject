@@ -23,6 +23,7 @@
 
 namespace OCA\OpenProject\Dashboard;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Dashboard\IWidget;
@@ -31,9 +32,8 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Util;
 
-use OCA\OpenProject\AppInfo\Application;
+use OCP\Util;
 
 class OpenProjectWidget implements IWidget {
 
