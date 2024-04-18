@@ -17,20 +17,20 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use InvalidArgumentException;
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
+use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Http\Client\LocalServerException;
+
 use OCP\IConfig;
 use OCP\IRequest;
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Controller;
-
-use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\OpenProject\AppInfo\Application;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
 
@@ -70,12 +70,12 @@ class OpenProjectAPIController extends Controller {
 	private $logger;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IConfig $config,
-								OpenProjectAPIService $openprojectAPIService,
-								IURLGenerator $urlGenerator,
-								LoggerInterface $logger,
-								?string $userId) {
+		IRequest $request,
+		IConfig $config,
+		OpenProjectAPIService $openprojectAPIService,
+		IURLGenerator $urlGenerator,
+		LoggerInterface $logger,
+		?string $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;

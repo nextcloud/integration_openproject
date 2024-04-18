@@ -9,7 +9,7 @@
 		"phpstan/extension-installer": "^1.1",
 		"behat/behat": "^3.10",
 		"helmich/phpunit-json-assert": "^3.4",
-		"vimeo/psalm": "5.0.0"
+		"vimeo/psalm": "5.23.1"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",

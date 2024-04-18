@@ -4,11 +4,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Helmich\JsonAssert\JsonAssertions;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Cookie\CookieJar;
+use Helmich\JsonAssert\JsonAssertions;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
@@ -613,10 +613,10 @@ class FeatureContext implements Context {
 		);
 
 		$input = str_replace(
-				"%last-created-direct-upload-token%",
-				$this->directUploadContext->getLastCreatedDirectUploadToken(),
-				$input
-			);
+			"%last-created-direct-upload-token%",
+			$this->directUploadContext->getLastCreatedDirectUploadToken(),
+			$input
+		);
 		return $input;
 	}
 

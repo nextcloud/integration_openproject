@@ -23,12 +23,12 @@
 
 namespace OCA\OpenProject\Service;
 
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
-use OCP\Files\NotFoundException;
 
 class DirectUploadServiceTest extends TestCase {
 	protected function getDirectUploadService(int $expiresOn): DirectUploadService {

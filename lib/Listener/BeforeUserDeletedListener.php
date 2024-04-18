@@ -29,9 +29,9 @@ namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\OCS\OCSBadRequestException;
-use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\User\Events\BeforeUserDeletedEvent;
 use Psr\Log\LoggerInterface;
 
 /**
