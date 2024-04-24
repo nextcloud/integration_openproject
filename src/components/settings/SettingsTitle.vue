@@ -4,7 +4,7 @@
 			<OpenProjectIcon />
 			<span>{{ title }}</span>
 		</h2>
-		<p class="documentation-info" v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+		<p class="settings--documentation-info" v-html="sanitizedHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 	</div>
 </template>
 
@@ -67,6 +67,9 @@ export default {
 		span {
 			padding-left: 10px;
 		}
+	}
+	&--documentation-info {
+		font-size: 1rem;
 	}
 }
 

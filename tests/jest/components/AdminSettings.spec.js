@@ -64,7 +64,7 @@ const selectors = {
 	projectFolderErrorMessage: '.project-folder-error-alert-message',
 	projectFolderErrorMessageDetails: '.project-folder-error > p',
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
-	setupIntegrationDocumentationLinkSelector: '.settings .documentation-info',
+	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 }
 
 const completeIntegrationState = {
