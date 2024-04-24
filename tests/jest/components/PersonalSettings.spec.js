@@ -29,7 +29,7 @@ describe('PersonalSettings.vue', () => {
 		const personalSettingsFormSelector = '.openproject-prefs--form'
 		const personalEnableNavigationSelector = '#openproject-prefs--link'
 		const personalEnableSearchSelector = '#openproject-prefs--u-search'
-		const userGuideIntegrationDocumentationLinkSelector = '.settings .documentation-info'
+		const userGuideIntegrationDocumentationLinkSelector = '.settings--documentation-info'
 		let wrapper
 
 		beforeEach(() => {
