@@ -7,6 +7,7 @@ OC.L10N.register(
     "Copied to the clipboard" : "Copiado al portapapeles",
     "Details" : "Detalles",
     "Start typing to search" : "Empiece a escribir para buscar",
+    "Select a user or group" : "Seleccionar un usuario o grupo",
     "Description" : "Descripción",
     "Create" : "Crear",
     "Reset" : "Reiniciar",
