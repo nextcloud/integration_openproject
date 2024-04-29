@@ -16,7 +16,7 @@ log_success() {
 log_info "Fetching all workflow jobs....."
 
 response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID/jobs")
+  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID/jobs?per_page=50")
 
 log_info "Fetching jobs informations succeeded!
 "
