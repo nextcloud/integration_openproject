@@ -83,6 +83,20 @@ openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADM
 setup_project_folder=false
 setup_app_password=false
 
+isNextcloudAdminConfigOk() {
+ 	admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
+                  ${NC_INTEGRATION_BASE_URL}/check-admin-config \
+                  -H 'accept: application/hal+json' \
+                  -H 'Content-Type: application/json' \
+                  -H 'X-Requested-With: XMLHttpRequest')
+    admin_config_status=$(echo $admin_config_response | jq -r ".status")
+  if [[ ${admin_config_status} == 'true' ]]; then
+      return 0
+  else
+      return 1
+  fi
+}
+
 # check if both instances are started or not
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
@@ -146,26 +160,25 @@ create_storage_response=$(curl -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWOR
   -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_op_create_storage.json
 )
 if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_op_create_storage.json; fi
-
 # check for errors
 response_type=$(echo $create_storage_response | jq -r "._type")
 if [[ ${response_type} == "Error" ]]; then
   error_message=$(echo $create_storage_response | jq -r ".message")
   error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
   if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
-    error_messages=$(echo $create_storage_response | jq -r "._embedded.errors[].message")
-    log_error "Got multiple errors when setting up
-      OP storage: ${OPENPROJECT_STORAGE_NAME}
-      for Nextcloud: '${NEXTCLOUD_HOST}
-      using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
-    log_error "Error Message(s): ${error_messages}"
-    log_info "You could try deleting the file storage in OpenProject and run the script again."
+    # if files storage is already created with the provided hostname (nextcloud) and storage name
+    # we assume that the integration set up is done in both application
+    error_messages=$(echo $create_storage_response | jq -r "._embedded.errors[]._embedded.details.attribute")
+    if [[ " ${error_messages[*]} " =~ "host" || " ${error_messages[*]} " =~ "name" ]]; then
+        echo "Both exist!!"
+    fi
+    exit 0
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
   else
-    log_error "Unhandled error while create storage '${OPENPROJECT_STORAGE_NAME}'"
+    log_error "Unhandled error while create file storage '${OPENPROJECT_STORAGE_NAME}'"
     log_error "OpenProject returned the following error: '${error_message}'"
     log_info "You could try deleting the file storage in OpenProject and run the script again."
   fi

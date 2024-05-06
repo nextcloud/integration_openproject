@@ -559,6 +559,16 @@ class ConfigController extends Controller {
 
 	/**
 	 * @NoCSRFRequired
+	 * @return DataResponse
+	 */
+	public function checkAdminConfigOk(): DataResponse {
+		return new DataResponse([
+			'status' => OpenProjectAPIService::isAdminConfigOk($this->config)
+		]);
+	}
+
+	/**
+	 * @NoCSRFRequired
 	 * set up integration
 	 *  @param array<string, string|null|bool> $values
 	 *
