@@ -91,9 +91,9 @@ isNextcloudAdminConfigOk() {
                   -H 'X-Requested-With: XMLHttpRequest')
     admin_config_status=$(echo $admin_config_response | jq -r ".status")
   if [[ ${admin_config_status} == 'true' ]]; then
-      return 0
+      echo 0
   else
-      return 1
+      echo 1
   fi
 }
 
@@ -135,7 +135,6 @@ else
   setup_method=POST
 fi
 
-log_info "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject ..."
 # api call to get openproject_client_id and openproject_client_secret
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_op_create_storage.json <<EOF
 {
@@ -168,10 +167,33 @@ if [[ ${response_type} == "Error" ]]; then
   if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
     # if files storage is already created with the provided hostname (nextcloud) and storage name
     # we assume that the integration set up is done in both application
-    error_messages=$(echo $create_storage_response | jq -r "._embedded.errors[]._embedded.details.attribute")
-    if [[ " ${error_messages[*]} " =~ "host" || " ${error_messages[*]} " =~ "name" ]]; then
-        echo "Both exist!!"
+    error_messages=($(echo $create_storage_response | jq -r "._embedded.errors[]._embedded.details.attribute"))
+    count=0
+    for element in "${error_messages[@]}"; do
+      if [[ "$element" == "host" ]]; then
+          (( count +=1 ))
+      elif [[ "$element" == "name" ]]; then
+          (( count +=1 ))
+      fi
+    done
+    if [[ "$count" -ne 2 ]]; then
+    	log_error "Got multiple errors when setting up
+              OP storage: ${OPENPROJECT_STORAGE_NAME}
+              for Nextcloud: '${NEXTCLOUD_HOST}
+              using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
+		log_error "Error Message(s): ${error_messages}"
+		log_info "You could try deleting the file storage in OpenProject and run the script again."
+    	exit 1
     fi
+    log_success "File storage with name '${OPENPROJECT_STORAGE_NAME}' with host '${NEXTCLOUD_HOST}' has already been created on 'OpenProject'."
+    status=$(isNextcloudAdminConfigOk)
+    if [[ "$status" -ne 0 ]]; then
+    	log_error "Some admin config for integration is missing on Nextcloud '${NEXTCLOUD_HOST}'."
+    	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+        exit 1
+    fi
+    log_success "Admin config on Nextcloud is already setup."
+    log_success "Setting of the integration was already successful!"
     exit 0
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
@@ -196,9 +218,9 @@ if [[ ${storage_id} == null ]] || [[ ${openproject_client_id} == null ]] || [[ $
   log_error "Setup of the integration failed!"
   exit 1
 fi
-log_info "success!"
 
-log_info "Setting up OpenProject integration in Nextcloud..."
+log_success "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject was successful."
+
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_create_storage.json <<EOF
 {
   "values":{
@@ -240,7 +262,7 @@ fi
 nextcloud_client_id=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_id")
 nextcloud_client_secret=$(echo $nextcloud_information_response | jq -e ".nextcloud_client_secret")
 
-log_info "success!"
+log_success "Setting up OpenProject integration in Nextcloud was successful."
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_op_set_nc_oauth_details.json <<EOF
 {
@@ -248,7 +270,6 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_op_set_nc_oauth_details.json <
   "clientSecret": ${nextcloud_client_secret}
 }
 EOF
-log_info "Setting up Nextcloud integration in OpenProject..."
 # api call to set the nextcloud_client_id and nextcloud_client_secret to OpenProject files storage
 set_nextcloud_to_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                                   ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id}/oauth_client_credentials \
@@ -268,11 +289,10 @@ if [[ "$set_nextcloud_to_storage_response" == *"_type"* ]]; then
     fi
 fi
 
-log_info "success!"
+log_success "Setting up Nextcloud integration in OpenProject was successful."
 
 if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
 # save the application password to OpenProject
-  log_info "Saving 'OpenProject' user application password to OpenProject...."
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json <<EOF
   {
     "applicationPassword": ${openproject_user_app_password}
@@ -298,7 +318,7 @@ EOF
               deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
               exit 1
         fi
-    	log_info "success!"
+    	  log_success "Saving 'OpenProject' user application password to OpenProject was successful."
     fi
 fi
 
