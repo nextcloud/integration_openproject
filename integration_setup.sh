@@ -84,17 +84,24 @@ setup_project_folder=false
 setup_app_password=false
 
 isNextcloudAdminConfigOk() {
- 	admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-                  ${NC_INTEGRATION_BASE_URL}/check-admin-config \
-                  -H 'accept: application/hal+json' \
-                  -H 'Content-Type: application/json' \
-                  -H 'X-Requested-With: XMLHttpRequest')
-    admin_config_status=$(echo $admin_config_response | jq -r ".status")
-  if [[ ${admin_config_status} == 'true' ]]; then
-      echo 0
-  else
-      echo 1
-  fi
+	admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
+				  ${NC_INTEGRATION_BASE_URL}/check-admin-config \
+				  -H 'accept: application/hal+json' \
+				  -H 'Content-Type: application/json' \
+				  -H 'X-Requested-With: XMLHttpRequest')
+	admin_config_status_without_project_folder=$(echo $admin_config_response | jq -r ".status_without_project_folder_setup_status")
+	admin_config_status_with_project_folder=$(echo $admin_config_response | jq -r ".status_with_project_folder_setup_status")
+	if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+		if [[ ${admin_config_status_with_project_folder} == 'true' && ${admin_config_status_without_project_folder} == 'true' ]]; then
+			echo 0
+		else
+			echo 1
+		fi
+	elif [[ ${admin_config_status_without_project_folder} == 'true' ]]; then
+		echo 0
+	else
+		echo 1
+	fi
 }
 
 # check if both instances are started or not
@@ -165,7 +172,7 @@ if [[ ${response_type} == "Error" ]]; then
   error_message=$(echo $create_storage_response | jq -r ".message")
   error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
   if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
-    # if files storage is already created with the provided hostname (nextcloud) and storage name
+    # if files storage is already created with the provided host and storage name
     # we assume that the integration set up is done in both application
     error_messages=($(echo $create_storage_response | jq -r "._embedded.errors[]._embedded.details.attribute"))
     count=0
@@ -177,18 +184,21 @@ if [[ ${response_type} == "Error" ]]; then
       fi
     done
     if [[ "$count" -ne 2 ]]; then
-    	log_error "Got multiple errors when setting up
-              OP storage: ${OPENPROJECT_STORAGE_NAME}
-              for Nextcloud: '${NEXTCLOUD_HOST}
-              using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
+		log_error "Got multiple errors when setting up
+		  OP storage: ${OPENPROJECT_STORAGE_NAME}
+		  for Nextcloud: '${NEXTCLOUD_HOST}
+		  using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
 		log_error "Error Message(s): ${error_messages}"
 		log_info "You could try deleting the file storage in OpenProject and run the script again."
-    	exit 1
+		exit 1
     fi
     log_success "File storage with name '${OPENPROJECT_STORAGE_NAME}' with host '${NEXTCLOUD_HOST}' has already been created on 'OpenProject'."
     status=$(isNextcloudAdminConfigOk)
     if [[ "$status" -ne 0 ]]; then
     	log_error "Some admin config for integration is missing on Nextcloud '${NEXTCLOUD_HOST}'."
+    	if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+    		log_error "Or project folder setup might be missing on Nextcloud '${NEXTCLOUD_HOST}'."
+    	fi
     	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
         exit 1
     fi
