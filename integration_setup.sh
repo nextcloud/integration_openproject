@@ -89,15 +89,15 @@ isNextcloudAdminConfigOk() {
 				  -H 'accept: application/hal+json' \
 				  -H 'Content-Type: application/json' \
 				  -H 'X-Requested-With: XMLHttpRequest')
-	admin_config_status_without_project_folder=$(echo $admin_config_response | jq -r ".status_without_project_folder_setup_status")
-	admin_config_status_with_project_folder=$(echo $admin_config_response | jq -r ".status_with_project_folder_setup_status")
+	config_status_without_project_folder=$(echo $admin_config_response | jq -r ".config_status_without_project_folder")
+	project_folder_setup_status=$(echo $admin_config_response | jq -r ".project_folder_setup_status")
 	if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-		if [[ ${admin_config_status_with_project_folder} == 'true' && ${admin_config_status_without_project_folder} == 'true' ]]; then
+		if [[ ${project_folder_setup_status} == 'true' && ${config_status_without_project_folder} == 'true' ]]; then
 			echo 0
 		else
 			echo 1
 		fi
-	elif [[ ${admin_config_status_without_project_folder} == 'true' ]]; then
+	elif [[ ${config_status_without_project_folder} == 'true' ]]; then
 		echo 0
 	else
 		echo 1
@@ -172,23 +172,30 @@ if [[ ${response_type} == "Error" ]]; then
   error_message=$(echo $create_storage_response | jq -r ".message")
   error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
   if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
-    # if files storage is already created with the provided host and storage name
-    # we assume that the integration set up is done in both application
-    error_messages=($(echo $create_storage_response | jq -r "._embedded.errors[]._embedded.details.attribute"))
-    count=0
-    for element in "${error_messages[@]}"; do
-      if [[ "$element" == "host" ]]; then
-          (( count +=1 ))
-      elif [[ "$element" == "name" ]]; then
-          (( count +=1 ))
-      fi
-    done
-    if [[ "$count" -ne 2 ]]; then
+    # if the files storage is already created with the provided host and storage name
+	# we assume that the integration set up is done in both application
+	# to check that, we parse the error messages
+	# if there are only two error messages and those are about the host and name being taken
+	# we assume the setup is complete with the given parameters
+    error_messages_grep=$(echo $create_storage_response | jq -r '.["_embedded"]["errors"] | .[].message')
+    readarray -t error_messages <<<"$error_messages_grep"
+    error_count=0
+    host_already_taken=false
+    name_already_taken=false
+	for element in "${error_messages[@]}"; do
+	  if [[ "$element" == "Host has already been taken." ]]; then
+		  host_already_taken=true
+	  elif [[ "$element" == "Name has already been taken." ]]; then
+		  name_already_taken=true
+	  fi
+	  (( error_count +=1 ))
+	done
+    if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2  ]]; then
 		log_error "Got multiple errors when setting up
 		  OP storage: ${OPENPROJECT_STORAGE_NAME}
 		  for Nextcloud: '${NEXTCLOUD_HOST}
 		  using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
-		log_error "Error Message(s): ${error_messages}"
+		log_error "Error Message(s): ${error_messages_grep}"
 		log_info "You could try deleting the file storage in OpenProject and run the script again."
 		exit 1
     fi
@@ -328,7 +335,7 @@ EOF
               deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
               exit 1
         fi
-    	  log_success "Saving 'OpenProject' user application password to OpenProject was successful."
+    	log_success "Saving 'OpenProject' user application password to OpenProject was successful."
     fi
 fi
 

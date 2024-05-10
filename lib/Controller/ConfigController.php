@@ -564,12 +564,12 @@ class ConfigController extends Controller {
 	public function checkAdminConfigOk(): DataResponse {
 		$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
 		$appPasswordSetStatus = $this->openprojectAPIService->hasAppPassword();
-		// admin config completion can be checked in 2 phase
-		// 1. with project folder setup (with app password)
-		// 2. without project folder setup (no app password)
+		// Admin config can be set in two parts
+		// 1. config without project folder set up (which is compulsory for integration)
+		// 2. config with project folder set up (which is optional for admin)
 		return new DataResponse([
-			'status_without_project_folder_setup_status' => $adminConfigStatusWithoutGroupFolderSetupStatus,
-			'status_with_project_folder_setup_status' => $appPasswordSetStatus
+			'config_status_without_project_folder' => $adminConfigStatusWithoutGroupFolderSetupStatus,
+			'project_folder_setup_status' => $appPasswordSetStatus
 		]);
 	}
 
