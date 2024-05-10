@@ -92,6 +92,7 @@ class OauthService {
 				'nextcloud_oauth_client_name' => $client->getName(),
 				'openproject_redirect_uri' => $client->getRedirectUri(),
 				'nextcloud_client_id' => $client->getClientIdentifier(),
+				'nextcloud_client_secret' => $this->crypto->decrypt($client->getSecret()),
 			];
 		} catch (ClientNotFoundException $e) {
 			return null;
