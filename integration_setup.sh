@@ -217,7 +217,7 @@ if [[ ${response_type} == "Error" ]]; then
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
   else
-    log_error "Unhandled error while create file storage '${OPENPROJECT_STORAGE_NAME}'"
+    log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
     log_error "OpenProject returned the following error: '${error_message}'"
     log_info "You could try deleting the file storage in OpenProject and run the script again."
   fi
