@@ -656,12 +656,14 @@ Feature: setup the integration through an API
       "required": [
           "nextcloud_oauth_client_name",
           "openproject_redirect_uri",
-          "nextcloud_client_id"
+          "nextcloud_client_id",
+          "nextcloud_client_secret"
        ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
+          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "openproject_user_app_password": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
