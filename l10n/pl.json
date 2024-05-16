@@ -34,6 +34,7 @@
     "Search for a work package to create a relation" : "Wyszukaj pakiet roboczy, aby stworzyć relację",
     "Select a user or group" : "Wybierz użytkownika lub grupę",
     "Description" : "Opis",
+    "Work package description" : "Opis pakietu roboczego",
     "Create" : "Utwórz",
     "Mark as read" : "Oznacz jako przeczytane",
     "Failed to get OpenProject notifications" : "Nie udało się pobrać powiadomień OpenProject",
