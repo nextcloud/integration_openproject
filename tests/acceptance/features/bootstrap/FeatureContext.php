@@ -108,6 +108,39 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * When we run API tests in CI, the user file system frequently does not get deleted.
+	 * So user is created with retry in order to comeback the flakiness in CI
+	 */
+	private function createUserWithRetry($user, $userAttributes): void {
+		$retryCreate = 1;
+		$isUserCreated = false;
+		while ($retryCreate <= 5) {
+			$response = $this->sendOCSRequest(
+				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+			);
+			if ($response->getStatusCode() === 200) {
+				$isUserCreated = true;
+				break;
+			} else {
+				var_dump("Error: " . $response->getBody()->getContents());
+				var_dump('Creating user ' . $user . ' failed!');
+				var_dump('Deleting the file system of ' . $user . ' and retrying the user creation again...');
+				exec(
+					"docker exec nextcloud  /bin/bash -c 'cd data && rm -rf $user'",
+					$output,
+					$return_var
+				);
+				if ($return_var === 0) {
+					var_dump('File system for user ' . $user . ' has been deleted successfully!');
+				}
+				$retryCreate++;
+				sleep(5);
+			}
+		}
+		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created!');
+	}
+
+	/**
 	 * @Given user :user has been created
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
@@ -118,11 +151,7 @@ class FeatureContext implements Context {
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-
-		$this->response = $this->sendOCSRequest(
-			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-		);
-		$this->theHttpStatusCodeShouldBe(200);
+		$this->createUserWithRetry($user, $userAttributes);
 		$userid = \strtolower((string)$user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(

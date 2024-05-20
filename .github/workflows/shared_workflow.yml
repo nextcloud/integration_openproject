@@ -169,19 +169,19 @@ jobs:
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 0, 1, 2, 3 ]
         database: [pgsql, mysql]
-        isScheduledEventNightly:
-          - ${{github.event_name != 'schedule'}}
+#        isScheduledEventNightly:
+#          - ${{github.event_name != 'schedule'}}
         exclude:
           - nextcloudVersion: stable26
             phpVersionMinor: 3
           - nextcloudVersion: stable27
             phpVersionMinor: 3
-          - isScheduledEventNightly: true
-            phpVersionMinor: 0
-          - isScheduledEventNightly: true
-            phpVersionMinor: 1
-          - isScheduledEventNightly: true
-            phpVersionMinor: 3
+#          - isScheduledEventNightly: true
+#            phpVersionMinor: 0
+#          - isScheduledEventNightly: true
+#            phpVersionMinor: 1
+#          - isScheduledEventNightly: true
+#            phpVersionMinor: 3
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:latest
@@ -205,6 +205,7 @@ jobs:
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
+        options: --name=nextcloud
         volumes:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
@@ -261,6 +262,9 @@ jobs:
           repository: nextcloud/groupfolders
           path: groupfolders
           ref: ${{ matrix.nextcloudVersion }}
+
+      - name: install docker
+        uses: papodaca/install-docker-action@main
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@v2
