@@ -110,8 +110,12 @@ class FeatureContext implements Context {
 	/**
 	 * When we run API tests in CI, the user file system frequently does not get deleted.
 	 * So user is created with retry in order to comeback the flakiness in CI
+	 *
+	 * @param string $user
+	 * @param array<mixed> $userAttributes
+	 *
 	 */
-	private function createUserWithRetry($user, $userAttributes): void {
+	private function createUserWithRetry(string $user, array $userAttributes): void {
 		$retryCreate = 1;
 		$isUserCreated = false;
 		while ($retryCreate <= 5) {
