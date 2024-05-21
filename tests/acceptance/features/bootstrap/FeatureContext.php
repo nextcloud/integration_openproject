@@ -108,7 +108,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * When we run API tests in CI, the user file system frequently does not get deleted.
+	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
 	 * So user is created with retry in order to comeback the flakiness in CI
 	 *
 	 * @param string $user
@@ -118,30 +118,35 @@ class FeatureContext implements Context {
 	private function createUserWithRetry(string $user, array $userAttributes): void {
 		$retryCreate = 1;
 		$isUserCreated = false;
-		while ($retryCreate <= 5) {
+		$response = null;
+		while ($retryCreate <= 3) {
 			$response = $this->sendOCSRequest(
 				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 			);
 			if ($response->getStatusCode() === 200) {
 				$isUserCreated = true;
 				break;
-			} else {
+			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
 				var_dump("Error: " . $response->getBody()->getContents());
 				var_dump('Creating user ' . $user . ' failed!');
 				var_dump('Deleting the file system of ' . $user . ' and retrying the user creation again...');
 				exec(
-					"docker exec nextcloud  /bin/bash -c 'cd data && rm -rf $user'",
+					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
 					$output,
-					$return_var
+					$command_result_code
 				);
-				if ($return_var === 0) {
+				if ($command_result_code === 0) {
 					var_dump('File system for user ' . $user . ' has been deleted successfully!');
 				}
-				$retryCreate++;
-				sleep(5);
+			} else {
+				// in case of any other error we just log the response
+				var_dump("Status Code: " . $response->getStatusCode());
+				var_dump("Error: " . $response->getBody()->getContents());
 			}
+			sleep(2);
+			$retryCreate++;
 		}
-		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created!');
+		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
 	}
 
 	/**
