@@ -108,6 +108,48 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
+	 * So user is created with retry in order to comeback the flakiness in CI
+	 *
+	 * @param string $user
+	 * @param array<mixed> $userAttributes
+	 *
+	 */
+	private function createUserWithRetry(string $user, array $userAttributes): void {
+		$retryCreate = 1;
+		$isUserCreated = false;
+		$response = null;
+		while ($retryCreate <= 3) {
+			$response = $this->sendOCSRequest(
+				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+			);
+			if ($response->getStatusCode() === 200) {
+				$isUserCreated = true;
+				break;
+			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
+				var_dump("Error: " . $response->getBody()->getContents());
+				var_dump('Creating user ' . $user . ' failed!');
+				var_dump('Deleting the file system of ' . $user . ' and retrying the user creation again...');
+				exec(
+					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
+					$output,
+					$command_result_code
+				);
+				if ($command_result_code === 0) {
+					var_dump('File system for user ' . $user . ' has been deleted successfully!');
+				}
+			} else {
+				// in case of any other error we just log the response
+				var_dump("Status Code: " . $response->getStatusCode());
+				var_dump("Error: " . $response->getBody()->getContents());
+			}
+			sleep(2);
+			$retryCreate++;
+		}
+		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
+	}
+
+	/**
 	 * @Given user :user has been created
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
@@ -118,11 +160,7 @@ class FeatureContext implements Context {
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-
-		$this->response = $this->sendOCSRequest(
-			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-		);
-		$this->theHttpStatusCodeShouldBe(200);
+		$this->createUserWithRetry($user, $userAttributes);
 		$userid = \strtolower((string)$user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
