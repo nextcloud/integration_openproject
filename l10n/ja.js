@@ -14,6 +14,7 @@ OC.L10N.register(
     "Description" : "説明",
     "Create" : "作成",
     "Mark as read" : "既読にする",
+    "Unlink" : "アンリンク",
     "Connected accounts" : "接続済みアカウント",
     "Reset" : "リセット",
     "Enable navigation link" : "ナビゲーションリンクを有効化",
