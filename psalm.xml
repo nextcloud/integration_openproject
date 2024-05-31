@@ -9,24 +9,35 @@
 	findUnusedCode="false"
 	autoloader="bootstrap.php"
 >
-    <projectFiles>
-        <directory name="lib" />
+	<projectFiles>
+		<directory name="lib" />
 		<directory name="tests" />
-        <ignoreFiles>
-            <directory name="vendor" />
-        </ignoreFiles>
-    </projectFiles>
+		<ignoreFiles>
+			<directory name="vendor" />
+		</ignoreFiles>
+	</projectFiles>
+	<stubs>
+		<file name="tests/stub.phpstub" preloadClasses="true"/>
+	</stubs>
 	<issueHandlers>
 		<UndefinedClass>
 			<errorLevel type="suppress">
 				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
-				<!-- these are classes form activity app, which isn't cloned while doing static code analysis -->
+				<!-- these classes belong to the terms_of_service app, which isn't compulsory, so might not exist while running psalm -->
+				<referencedClass name="OCA\TermsOfService\Events\TermsCreatedEvent" />
+				<referencedClass name="OCA\TermsOfService\Events\SignaturesResetEvent" />
+				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
+				<referencedClass name="OCA\TermsOfService\Db\Entities\Signatory" />
+				<referencedClass name="OCA\TermsOfService\Db\Mapper\TermsMapper" />
+				<!-- these classes belong to the activity app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\Activity\UserSettings" />
 				<referencedClass name="OCA\Activity\GroupHelperDisabled" />
 				<referencedClass name="OCA\Activity\Data" />
-				<!-- this is a class form groupsfolder app, which isn't available while doing static code analysis -->
+				<!-- these classes belong to the groupfolders app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\GroupFolders\Folder\FolderManager" />
 				<referencedClass name="Helmich\JsonAssert\JsonAssertions" />
+				<!-- these classes belong to the event app, which isn't compulsory, so might not exist while running psalm -->
+				<referencedClass name="OCP\App\Events\AppEnableEvent" />
 			</errorLevel>
 		</UndefinedClass>
 		<TooFewArguments>
@@ -60,6 +71,12 @@
 				<!-- make psalm not complain if groupfolders app does not exist -->
 				<referencedClass name="OCA\GroupFolders\Folder\FolderManager"/>
 				<referencedClass name="OC\Http\Client\LocalAddressChecker"/>
+				<!-- these are classes form terms_of_service app, which isn't cloned while doing static code analysis -->
+				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
+				<!-- these are classes form activity app, which isn't cloned while doing static code analysis -->
+				<referencedClass name="OCA\Activity\UserSettings" />
+				<referencedClass name="OCA\Activity\GroupHelperDisabled" />
+				<referencedClass name="OCA\Activity\Data" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 	</issueHandlers>

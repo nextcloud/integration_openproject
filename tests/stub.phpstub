@@ -1,0 +1,63 @@
+// CacheItem implementation of CacheItemInterface doesn't have the exact structure in terms of return type
+// and the psalm analyzer fails early with this error:
+// PHP Fatal error:  Declaration of Doctrine\Common\Cache\Psr6\CacheItem::get() must be compatible
+// with Psr\Cache\CacheItemInterface::get(): mixed in nextcloud/master/3rdparty/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/CacheItem.php on line 51
+// So the class CacheItem is stubbed
+
+<?php
+
+declare(strict_types=1);
+/**
+ * @copyright Copyright (c) 2024 Nabin Ale <nabin@jankaritech.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+namespace Doctrine\Common\Cache\Psr6 {
+	use Psr\Cache\CacheItemInterface;
+
+	class CacheItem implements CacheItemInterface
+	{
+		public function getKey(): string
+		{
+		}
+
+		public function get(): mixed
+		{
+		}
+
+		public function isHit(): bool
+		{
+		}
+
+		public function set($value): self
+		{
+		}
+
+		public function expiresAt($expiration): self
+		{
+		}
+
+		public function expiresAfter($time): self
+		{
+		}
+
+		public function getExpiry(): ?float
+		{
+		}
+	}
+}
