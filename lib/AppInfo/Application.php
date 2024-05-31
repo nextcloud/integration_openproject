@@ -106,10 +106,13 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
+		/** @psalm-suppress InvalidArgument AppEnableEvent event is not in stable25 so making psalm not complain*/
 		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
+		/** @psalm-suppress InvalidArgument TermsCreatedEvent event is not yet registered in terms_of_service app, so making psalm not complain */
 		// @phpstan-ignore-next-line - make phpstan not complain since TermsCreatedEvent event is not yet registered in terms_of_service app
 		$dispatcher->addServiceListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
+		/** @psalm-suppress InvalidArgument SignaturesResetEvent event is not yet registered in terms_of_service app, so making psalm not complain*/
 		// @phpstan-ignore-next-line - make phpstan not complain since SignaturesResetEvent event is not yet registered in terms_of_service app
 		$dispatcher->addServiceListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
 	}

@@ -836,6 +836,7 @@ class ConfigControllerTest extends TestCase {
 	public function checkForUsersCountBeforeTest($expectedCount = 1): IUserManager {
 		$actualCount = 1;
 		$userManager = \OC::$server->getUserManager();
+		$count = 0;
 		$function = function (IUser $user) use (&$count) {
 			$count++;
 			return null;

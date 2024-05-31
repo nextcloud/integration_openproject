@@ -73,11 +73,7 @@ jobs:
           ./occ maintenance:install --admin-pass=admin
 
       - name: PHP code analysis
-        run: |
-          if [ ${{ matrix.nextcloudVersion }} == "stable26" -o ${{ matrix.nextcloudVersion }} == "stable27" ]
-          then
-            make phpstan
-          fi
+        run: make psalm
 
       - name: PHP code style
         run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
