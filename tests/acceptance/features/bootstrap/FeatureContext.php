@@ -609,6 +609,7 @@ class FeatureContext implements Context {
 			$expectedHeaderValue = $header['value'];
 			$returnedHeader = $this->response->getHeader($headerName);
 
+			$headerValue = $returnedHeader;
 			if (\is_array($returnedHeader)) {
 				if (empty($returnedHeader)) {
 					throw new Exception(
@@ -619,10 +620,6 @@ class FeatureContext implements Context {
 					);
 				}
 				$headerValue = $returnedHeader[0];
-			}
-			// @phpstan-ignore-next-line
-			else {
-				$headerValue = $returnedHeader;
 			}
 
 			Assert::assertEquals(

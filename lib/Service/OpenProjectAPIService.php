@@ -1404,7 +1404,7 @@ class OpenProjectAPIService {
 	 * @param string $projectId
 	 * @param array<mixed> $body
 	 *
-	 * @return array<mixed>
+	 * @return array<string,mixed>
 	 * @throws OpenprojectResponseException|PreConditionNotMetException|JsonException|OpenprojectErrorException
 	 */
 	public function getOpenProjectWorkPackageForm(string $userId, string $projectId, array $body): array {
@@ -1418,7 +1418,7 @@ class OpenProjectAPIService {
 			$result['_type'] !== 'Form' ||
 			!isset($result['_embedded']) ||
 			!isset($result['_embedded']['payload']) ||
-				!isset($result['_embedded']['schema'])
+			!isset($result['_embedded']['schema'])
 		) {
 			throw new OpenprojectResponseException('Malformed response');
 		}
