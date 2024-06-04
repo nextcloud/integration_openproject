@@ -1,9 +1,0 @@
-parameters:
-    level: 6
-    paths:
-        - lib
-        - tests
-    bootstrapFiles:
-        - bootstrap.php
-    checkGenericClassInNonGenericObjectType: false
-    reportUnmatchedIgnoredErrors: false
