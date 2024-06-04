@@ -9,6 +9,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
+/**
+ *	@template-implements IEventListener<Event>
+ */
 class LoadAdditionalScriptsListener implements IEventListener {
 	public function __construct() {
 	}
