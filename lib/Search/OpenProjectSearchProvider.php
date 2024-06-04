@@ -125,7 +125,6 @@ class OpenProjectSearchProvider implements IProvider {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		// @phpstan-ignore-next-line array_map supports also lambda functions
 		$formattedResults = array_map(function (array $entry) use ($openprojectUrl): OpenProjectSearchResultEntry {
 			return new OpenProjectSearchResultEntry(
 				$this->service->getOpenProjectUserAvatarUrl($entry),

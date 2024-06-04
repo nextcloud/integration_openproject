@@ -241,15 +241,12 @@ class FilesController extends OCSController {
 			class_exists('\OCA\Activity\GroupHelperDisabled') &&
 			class_exists('\OCA\Activity\UserSettings')
 		) {
-			// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 			$activityData = Server::get(Data::class);
 		} else {
 			return null;
 		}
 
-		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$groupHelper = Server::get(GroupHelperDisabled::class);
-		// @phpstan-ignore-next-line - make phpstan not complain if activity app does not exist
 		$userSettings = Server::get(UserSettings::class);
 		if (!method_exists($activityData, 'get') ||
 			!method_exists($activityData, 'getById')

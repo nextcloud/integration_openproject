@@ -1143,9 +1143,7 @@ class FeatureContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		/** @phpstan-ignore-next-line */
 		$this->sharingContext = $environment->getContext('SharingContext');
-		/** @phpstan-ignore-next-line */
 		$this->directUploadContext = $environment->getContext('DirectUploadContext');
 	}
 

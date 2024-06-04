@@ -543,14 +543,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($nodeClassName === null) {
 			$nodeClassName = '\OCP\Files\Node';
 		}
-		// @phpstan-ignore-next-line
 		$fileMock = $this->createMock($nodeClassName);
 		$fileMock->method('isReadable')->willReturn(true);
 		$fileMock->method('getName')->willReturn('logo.png');
 		$fileMock->method('getMimeType')->willReturn('image/png');
 		$fileMock->method('getCreationTime')->willReturn(1639906930);
 		$fileMock->method('getMTime')->willReturn(1640008813);
-		// @phpstan-ignore-next-line
 		return $fileMock;
 	}
 
@@ -611,13 +609,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 					true
 				);
 			//changed from nextcloud 26
-			// @phpstan-ignore-next-line
 			$ocClient = new Client(
-				$clientConfigMock,                                             // @phpstan-ignore-line
-				$certificateManager,                                           // @phpstan-ignore-line
-				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(IRemoteHostValidator::class), // @phpstan-ignore-line
-				$this->createMock(LoggerInterface::class));               // @phpstan-ignore-line
+				$clientConfigMock,
+				$certificateManager,
+				$client,
+				$this->createMock(IRemoteHostValidator::class),
+				$this->createMock(LoggerInterface::class));
 		} elseif (version_compare(OC_Util::getVersionString(), '26') >= 0) {
 			$clientConfigMock
 			->method('getSystemValueBool')
@@ -625,12 +622,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 			//changed from nextcloud 26
-			// @phpstan-ignore-next-line
 			$ocClient = new Client(
-				$clientConfigMock,                                             // @phpstan-ignore-line
-				$certificateManager,                                           // @phpstan-ignore-line
-				$client,                                                       // @phpstan-ignore-line
-				$this->createMock(IRemoteHostValidator::class)                 // @phpstan-ignore-line
+				$clientConfigMock,
+				$certificateManager,
+				$client,
+				$this->createMock(IRemoteHostValidator::class)
 			);
 		}
 
@@ -1182,7 +1178,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setStatus(Http::STATUS_OK)
 			->setHeaders(['Content-Type' => 'image/jpeg'])
 			//setBody() expects iterable but we want to have raw data here and it seems to work fine
-			// @phpstan-ignore-next-line
 			->setBody('dataOfTheImage');
 
 		$this->builder
@@ -1227,7 +1222,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$this->assertArrayHasKey('avatar', $result);
 		//make sure its an image, if something else is returned it will throw an exception
-		// @phpstan-ignore-next-line
 		imagecreatefromstring($result['avatar']);
 	}
 
@@ -2016,9 +2010,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		string $mountPoint = Application::OPEN_PROJECT_ENTITIES_NAME,
 		bool $canManageACL = true,
 		array $getFoldersForGroupResponse = null): MockObject {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock = $this->getMockBuilder(FolderManager::class)->disableOriginalConstructor()->getMock();
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock
 			->method('getAllFolders')
 			->willReturn([ 0 => [
@@ -2038,13 +2030,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'acl' => true
 			]];
 		}
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock
 			->method('getFoldersForGroup')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($getFoldersForGroupResponse);
 
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderManagerMock
 			->method('canManageACL')
 			->willReturn($canManageACL);
@@ -3479,7 +3469,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('get')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($userMock);
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$signatoryMapperMock = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor()->getMock();
 		$service = $this->getServiceMock(
 			['isTermsOfServiceAppEnabled', 'getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject'],
