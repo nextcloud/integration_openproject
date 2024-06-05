@@ -61,10 +61,6 @@ npm-dev:
 	$(npm) ci
 	$(npm) run dev
 
-.PHONY: phpstan
-phpstan:
-	composer run phpstan
-
 .PHONY: psalm
 psalm:
 	vendor/bin/psalm

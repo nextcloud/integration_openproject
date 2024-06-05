@@ -102,7 +102,6 @@ class LoadSidebarScript implements IEventListener {
 		$currentVersion = implode('.', Util::getVersion());
 		//changed from nextcloud 24
 		if (version_compare($currentVersion, '24') >= 0) {
-			// @phpstan-ignore-next-line
 			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab', 'files');
 		} else {
 			Util::addScript(Application::APP_ID, 'integration_openproject-projectTab');

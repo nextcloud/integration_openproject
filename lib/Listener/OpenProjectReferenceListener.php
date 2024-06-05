@@ -54,7 +54,6 @@ class OpenProjectReferenceListener implements IEventListener {
 		$this->config = $config;
 	}
 	public function handle(Event $event): void {
-		// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
 		if (!$event instanceof RenderReferenceEvent) {
 			return;
 		}

@@ -65,7 +65,6 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
 		) {
 			if (!class_exists("\OCP\HintException")) {
-				// @phpstan-ignore-next-line that public class only exists from NC 23
 				throw new \OCP\HintException(
 					'project folders cannot be deleted or renamed'
 				);

@@ -90,11 +90,9 @@ class Application extends App implements IBootstrap {
 		);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
-			// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
 			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);
 			// RenderReferenceEvent is dispatched when we know the smart picker or link previews will be used
 			// so we need to load our scripts at this moment
-			// @phpstan-ignore-next-line - make phpstan not complain in nextcloud version other than 26
 			$context->registerEventListener(RenderReferenceEvent::class, OpenProjectReferenceListener::class);
 		}
 	}
@@ -107,13 +105,10 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 		/** @psalm-suppress InvalidArgument AppEnableEvent event is not in stable25 so making psalm not complain*/
-		// @phpstan-ignore-next-line - make phpstan not complain since AppEnableEvent event is not in stable25
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
 		/** @psalm-suppress InvalidArgument TermsCreatedEvent event is not yet registered in terms_of_service app, so making psalm not complain */
-		// @phpstan-ignore-next-line - make phpstan not complain since TermsCreatedEvent event is not yet registered in terms_of_service app
 		$dispatcher->addServiceListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
 		/** @psalm-suppress InvalidArgument SignaturesResetEvent event is not yet registered in terms_of_service app, so making psalm not complain*/
-		// @phpstan-ignore-next-line - make phpstan not complain since SignaturesResetEvent event is not yet registered in terms_of_service app
 		$dispatcher->addServiceListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
 	}
 

@@ -110,7 +110,6 @@ class FilesVersionsContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		/** @phpstan-ignore-next-line */
 		$this->featureContext = $environment->getContext('FeatureContext');
 	}
 }

@@ -1024,24 +1024,19 @@ class OpenProjectAPIService {
 	 * @throws NoUserException
 	 */
 	public function createGroupfolder(): void {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = Server::get(FolderManager::class);
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folderId = $groupfoldersFolderManager->createFolder(
 			Application::OPEN_PROJECT_ENTITIES_NAME
 		);
 
 		// this also works if the group does not exist
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->addApplicableGroup(
 			$folderId, Application::OPEN_PROJECT_ENTITIES_NAME
 		);
 
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->setFolderACL($folderId, true);
 
 		// this also works if the user does not exist
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager->setManageACL(
 			$folderId,
 			'user',
@@ -1050,17 +1045,13 @@ class OpenProjectAPIService {
 		);
 	}
 
-	// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 	public function getGroupFolderManager(): FolderManager {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = Server::get(FolderManager::class);
 		return $groupfoldersFolderManager;
 	}
 
 	public function isOpenProjectGroupfolderCreated(): bool {
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$groupfoldersFolderManager = $this->getGroupFolderManager();
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folders = $groupfoldersFolderManager->getAllFolders();
 		foreach ($folders as $folder) {
 			if ($folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME) {
@@ -1096,22 +1087,18 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 */
 	public function getAllTermsOfServiceAvailable(): array {
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$termsMapper = new TermsMapper($this->db);
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		return $termsMapper->getTerms();
 	}
 
 	/**
 	 * @return array<mixed>
 	 */
-	// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 	public function getAllTermsOfServiceSignedByUserOpenProject($signatoryMapper): array {
 		$alreadySignedTermsIdForUserOpenProject = [];
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 			// get all the signed TOS for user "OpenProject"
-			// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 			$signatoriesByUserOpenProject = $signatoryMapper->getSignatoriesByUser($user);
 			if ($signatoriesByUserOpenProject) {
 				foreach ($signatoriesByUserOpenProject as $signature) {
@@ -1125,11 +1112,9 @@ class OpenProjectAPIService {
 	/**
 	 * @return bool
 	 */
-	// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 	public function isAllTermsOfServiceSignedForUserOpenProject($signatoryMapper = null): bool {
 		if ($this->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			if ($signatoryMapper === null) {
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatoryMapper = new SignatoryMapper($this->db);
 			}
 			$terms = $this->getAllTermsOfServiceAvailable();
@@ -1148,7 +1133,6 @@ class OpenProjectAPIService {
 	 * @throws \OCP\DB\Exception
 	 */
 	public function signTermsOfServiceForUserOpenProject(): void {
-		// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 		$signatoryMapper = new SignatoryMapper($this->db);
 		// get all the available terms of services
 		$terms = $this->getAllTermsOfServiceAvailable();
@@ -1157,15 +1141,10 @@ class OpenProjectAPIService {
 			$termId = $term->id;
 			// sign only not signed TOS for user "OpenProject"
 			if (!in_array($termId, $alreadySignedTermsIdForUserOpenProject)) {
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory = new Signatory();
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory->setUserId(Application::OPEN_PROJECT_ENTITIES_NAME);
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory->setTermsId($termId);
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatory->setTimestamp(time());
-				// @phpstan-ignore-next-line - make phpstan not complain if terms_of_service app does not exist
 				$signatoryMapper->insert($signatory);
 			}
 		}
@@ -1195,7 +1174,6 @@ class OpenProjectAPIService {
 	 */
 	private function isGroupfolderAppCorrectlySetup():bool {
 		$groupFolderManager = $this->getGroupFolderManager();
-		// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 		$folders = $groupFolderManager->getFoldersForGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($folders as $folder) {
 			if (
@@ -1203,7 +1181,6 @@ class OpenProjectAPIService {
 				$folder['permissions'] === 31 &&
 				$folder['acl'] === true
 			) {
-				// @phpstan-ignore-next-line - make phpstan not complain if groupfolders app does not exist
 				if ($groupFolderManager->canManageACL(
 					$folder['folder_id'],
 					$this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME)
