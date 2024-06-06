@@ -177,6 +177,10 @@ jobs:
           - isScheduledEventNightly: false
             phpVersionMinor: 1
           - isScheduledEventNightly: false
+            nextcloudVersion: stable28
+            phpVersionMinor: 2
+          - isScheduledEventNightly: false
+            nextcloudVersion: stable29
             phpVersionMinor: 2
     runs-on: ubuntu-20.04
     container:
