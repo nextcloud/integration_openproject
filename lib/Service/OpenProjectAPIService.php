@@ -53,7 +53,6 @@ use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
-use Safe\Exceptions\JsonException;
 
 define('CACHE_TTL', 3600);
 
@@ -189,7 +188,7 @@ class OpenProjectAPIService {
 
 		$params = [
 			'pageSize' => -1,
-			'filters' => \Safe\json_encode($filters)
+			'filters' => json_encode($filters)
 		];
 		$result = $this->request($userId, 'notifications', $params);
 		if (isset($result['error'])) {
@@ -222,7 +221,6 @@ class OpenProjectAPIService {
 	 * @param bool $onlyLinkableWorkPackages
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
-	 * @throws \Safe\Exceptions\JsonException
 	 */
 	public function searchWorkPackage(
 		string $userId,
@@ -261,7 +259,6 @@ class OpenProjectAPIService {
 	 * @param bool $onlyLinkableWorkPackages
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
-	 * @throws \Safe\Exceptions\JsonException
 	 */
 	private function searchRequest(string $userId, array $filters, bool $onlyLinkableWorkPackages = true): array {
 		$resultsById = [];
@@ -274,8 +271,8 @@ class OpenProjectAPIService {
 		}
 
 		$params = [
-			'filters' => \Safe\json_encode($filters),
-			'sortBy' => \Safe\json_encode($sortBy),
+			'filters' => json_encode($filters),
+			'sortBy' => json_encode($sortBy),
 		];
 		$searchResult = $this->request($userId, 'work_packages', $params);
 
@@ -772,7 +769,7 @@ class OpenProjectAPIService {
 			]
 		];
 
-		$params['body'] = \Safe\json_encode($body);
+		$params['body'] = json_encode($body);
 		$result = $this->request(
 			$userId, 'work_packages/' . $values["workpackageId"] . '/file_links', $params, 'POST'
 		);
@@ -804,7 +801,6 @@ class OpenProjectAPIService {
 	/**
 	 * @throws OpenprojectErrorException
 	 * @throws PreConditionNotMetException
-	 * @throws JsonException
 	 * @throws Exception
 	 * @return array<mixed>
 	 */
@@ -816,7 +812,7 @@ class OpenProjectAPIService {
 				['operator' => '=', 'values' => [(string)$workpackageId]]
 		];
 		$params['body'] = '';
-		$fullUrl = 'notifications/read_ian?filters=' . urlencode(\Safe\json_encode($filters));
+		$fullUrl = 'notifications/read_ian?filters=' . urlencode(json_encode($filters));
 
 		$result = $this->request(
 			$userId, $fullUrl, $params, 'POST'
@@ -1358,7 +1354,7 @@ class OpenProjectAPIService {
 				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
 		];
 		$params = [
-			'filters' => \Safe\json_encode($filters)
+			'filters' => json_encode($filters)
 		];
 		$result = $this->request($userId, 'work_packages/available_projects', $params);
 		if (isset($result['error'])) {
@@ -1382,10 +1378,10 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $body
 	 *
 	 * @return array<string,mixed>
-	 * @throws OpenprojectResponseException|PreConditionNotMetException|JsonException|OpenprojectErrorException
+	 * @throws OpenprojectResponseException|PreConditionNotMetException|OpenprojectErrorException
 	 */
 	public function getOpenProjectWorkPackageForm(string $userId, string $projectId, array $body): array {
-		$params['body'] = \Safe\json_encode($body);
+		$params['body'] = json_encode($body);
 		$result = $this->request($userId, 'projects/'.$projectId.'/work_packages/form', $params, 'POST');
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
@@ -1430,10 +1426,10 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $body
 	 *
 	 * @return array<mixed>
-	 * @throws OpenprojectResponseException|PreConditionNotMetException|JsonException|OpenprojectErrorException
+	 * @throws OpenprojectResponseException|PreConditionNotMetException|OpenprojectErrorException
 	 */
 	public function createWorkPackage(string $userId, array $body): array {
-		$params['body'] = \Safe\json_encode($body);
+		$params['body'] = json_encode($body);
 		$result = $this->request($userId, 'work_packages', $params, 'POST');
 		if (isset($result['error'])) {
 			throw new OpenprojectErrorException($result['error'], $result['statusCode']);
