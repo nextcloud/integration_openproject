@@ -980,7 +980,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
-			->setQuery("pageSize=-1&filters=" . \Safe\json_encode([[
+			->setQuery("pageSize=-1&filters=" . json_encode([[
 				'readIAN' =>
 					['operator' => '=', 'values' => ['f']]
 			]]))
@@ -1600,7 +1600,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request')
 			->with(
 				'user', 'work_packages/123/file_links',
-				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
+				['body' => json_encode($this->validFileLinkRequestBody)]
 			);
 		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
@@ -1858,7 +1858,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request')
 			->with(
 				'user', 'work_packages/123/file_links',
-				['body' => \Safe\json_encode($this->validFileLinkRequestBodyForMultipleFiles)]
+				['body' => json_encode($this->validFileLinkRequestBodyForMultipleFiles)]
 			);
 		$values = $this->multipleFileInformation;
 		$result = $service->linkWorkPackageToFile(

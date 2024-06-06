@@ -407,7 +407,7 @@ class ConfigController extends Controller {
 		);
 
 		try {
-			$oauthJourneyStartingPageDecoded = \Safe\json_decode($oauthJourneyStartingPage);
+			$oauthJourneyStartingPageDecoded = json_decode($oauthJourneyStartingPage);
 
 			if ($oauthJourneyStartingPageDecoded->page === 'dashboard') {
 				$newUrl = $this->urlGenerator->linkToRoute('dashboard.dashboard.index');
@@ -438,12 +438,12 @@ class ConfigController extends Controller {
 
 		$validCodeVerifier = false;
 		if (is_string($codeVerifier)) {
-			$validCodeVerifier = (\Safe\preg_match('/^[A-Za-z0-9\-._~]{43,128}$/', $codeVerifier) === 1);
+			$validCodeVerifier = (preg_match('/^[A-Za-z0-9\-._~]{43,128}$/', $codeVerifier) === 1);
 		}
 
 		$validClientSecret = false;
 		if (is_string($clientSecret)) {
-			$validClientSecret = (\Safe\preg_match('/^.{10,}$/', $clientSecret) === 1);
+			$validClientSecret = (preg_match('/^.{10,}$/', $clientSecret) === 1);
 		}
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
