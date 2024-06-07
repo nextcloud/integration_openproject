@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Add application's support for Nextcloud 30
 
 ## 2.6.3 - 2024-04-17
 ### Changed

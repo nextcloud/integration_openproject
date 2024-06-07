@@ -388,12 +388,14 @@ class ConfigController extends Controller {
 
 	/**
 	 * receive oauth code and get oauth access token
+	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
 	 * @param string $code
 	 * @param string $state
 	 * @return RedirectResponse
+	 * @throws PreConditionNotMetException
 	 */
 	public function oauthRedirect(string $code = '', string $state = ''): RedirectResponse {
 		$configState = $this->config->getUserValue($this->userId, Application::APP_ID, 'oauth_state');
@@ -407,7 +409,7 @@ class ConfigController extends Controller {
 		);
 
 		try {
-			$oauthJourneyStartingPageDecoded = json_decode($oauthJourneyStartingPage);
+			$oauthJourneyStartingPageDecoded = json_decode($oauthJourneyStartingPage, false, 512, JSON_THROW_ON_ERROR);
 
 			if ($oauthJourneyStartingPageDecoded->page === 'dashboard') {
 				$newUrl = $this->urlGenerator->linkToRoute('dashboard.dashboard.index');
