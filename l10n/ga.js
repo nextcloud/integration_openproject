@@ -11,6 +11,7 @@ OC.L10N.register(
     "Description" : "Cur síos",
     "Create" : "Cruthaigh",
     "Mark as read" : "Marcáil mar léite",
+    "Unlink" : "Dínascadh",
     "Reset" : "Athshocraigh",
     "Documentation" : "Doiciméadúchán"
 },
