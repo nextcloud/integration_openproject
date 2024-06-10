@@ -16,7 +16,7 @@ On the Nextcloud end, it allows users to:
 * Preview links to work packages in text fields
 * Link multiple files and folders to a work package at once
 
-On the OpenProject end, users are able to:
+On the OpenProject end, users are able to: 
 
 * View all Nextcloud files and folders linked to a work package
 * Download linked files or open them in Nextcloud to edit them
