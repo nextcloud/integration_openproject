@@ -82,6 +82,8 @@ openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADM
 # these two data are set to "false" when the integration is done without project folder setup
 setup_project_folder=false
 setup_app_password=false
+# Minimum OpenProject version required in order to run this script.
+MINIMUM_OP_VERSION="14.2.0"
 
 isNextcloudAdminConfigOk() {
 	admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
@@ -104,6 +106,28 @@ isNextcloudAdminConfigOk() {
 	fi
 }
 
+isOpenProjectFileStorageConfigOk() {
+	all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+      ${OPENPROJECT_BASEURL_FOR_STORAGE} \
+      -H 'accept: application/hal+json' \
+      -H 'Content-Type: application/json' \
+      -H 'X-Requested-With: XMLHttpRequest'
+    )
+    oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
+    has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
+	if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+		if [[ ${oauth_configured_status} == 'true' && ${has_nc_application_password_status} == 'true' ]]; then
+			echo 0
+		else
+			echo 1
+		fi
+	elif [[ ${oauth_configured_status} == 'true' ]]; then
+		echo 0
+	else
+		echo 1
+	fi
+}
+
 # check if both instances are started or not
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
@@ -118,6 +142,14 @@ fi
 if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]; then
   log_error "Nextcloud host cannot be reached or is in maintenance mode!"
   exit 1
+fi
+
+# This script requires OpenProject Version >= MINIMUM_OP_VERSION
+openproject_info_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3)
+openproject_version=$(echo $openproject_info_response | jq -r ".coreVersion")
+if [[ "$openproject_version" < "$MINIMUM_OP_VERSION" ]]; then
+	log_error "This script requires OpenProject Version greater than or equal to '$MINIMUM_OP_VERSION' but found version '$openproject_version'"
+	exit 1
 fi
 
 # we can set whether we want the integration with project folder or without it using environment variable 'SETUP_PROJECT_FOLDER'
@@ -158,7 +190,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_op_create_storage.json <<EOF
 }
 EOF
 
-create_storage_response=$(curl -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
   ${OPENPROJECT_BASEURL_FOR_STORAGE} \
   -H 'accept: application/hal+json' \
   -H 'Content-Type: application/json' \
@@ -199,17 +231,28 @@ if [[ ${response_type} == "Error" ]]; then
 		log_info "You could try deleting the file storage in OpenProject and run the script again."
 		exit 1
     fi
-    log_success "File storage with name '${OPENPROJECT_STORAGE_NAME}' with host '${NEXTCLOUD_HOST}' has already been created on 'OpenProject'."
-    status=$(isNextcloudAdminConfigOk)
-    if [[ "$status" -ne 0 ]]; then
-    	log_error "Some admin config for integration is missing on Nextcloud '${NEXTCLOUD_HOST}'."
+    log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject exist already."
+	# At this point we know that the file storage already exists, so we only check the if it is configured completely in OpenProject
+	status_op=$(isOpenProjectFileStorageConfigOk)
+	if [[ "$status_op" -ne 0 ]]; then
+		log_error "File storage '$OPENPROJECT_STORAGE_NAME' config is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
+		if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+			log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
+		fi
+		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+		exit 1
+	fi
+	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration has already been set up."
+    status_nc=$(isNextcloudAdminConfigOk)
+    if [[ "$status_nc" -ne 0 ]]; then
+    	log_error "Some admin config is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
     	if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-    		log_error "Or project folder setup might be missing on Nextcloud '${NEXTCLOUD_HOST}'."
+    		log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
     	fi
     	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
         exit 1
     fi
-    log_success "Admin config on Nextcloud is already setup."
+    log_success "Admin config in Nextcloud for integration is already setup."
     log_success "Setting of the integration was already successful!"
     exit 0
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
