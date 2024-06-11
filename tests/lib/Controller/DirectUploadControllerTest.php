@@ -197,7 +197,7 @@ class DirectUploadControllerTest extends TestCase {
 	):void {
 		$nodeMock = $this->getNodeMock('folder');
 		$tmpFileName = '/tmp/integration_openproject_unit_test';
-		\Safe\touch($tmpFileName);
+		touch($tmpFileName);
 		$nodeMock[0]->method('newFile')->will($this->throwException($exception));
 		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();
 		$userFolderMock->method('getById')->willReturn($nodeMock);
@@ -219,7 +219,7 @@ class DirectUploadControllerTest extends TestCase {
 		$fileMock->method('getId')->willReturn(123);
 		$nodeMock = $this->getNodeMock('folder');
 		$tmpFileName = '/tmp/integration_openproject_unit_test';
-		\Safe\touch($tmpFileName);
+		touch($tmpFileName);
 		$nodeMock[0]->method('getFreeSpace')->willReturn(-3);
 		$nodeMock[0]->method('newFile')->willReturn($fileMock);
 		$userFolderMock = $this->getMockBuilder('\OCP\Files\Folder')->getMock();

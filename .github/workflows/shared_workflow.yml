@@ -11,13 +11,15 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29 ]
+        nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
         phpVersion: [ 8.0, 8.1, 8.2, 8.3]
         exclude:
           - nextcloudVersion: stable26
             phpVersion: 8.3
           - nextcloudVersion: stable27
             phpVersion: 8.3
+          - nextcloudVersion: master
+            phpVersion: 8.0
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -161,7 +163,7 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29 ]
+        nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 2 ]
         database: [pgsql, mysql]

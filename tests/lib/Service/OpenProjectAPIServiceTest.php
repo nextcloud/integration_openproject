@@ -974,16 +974,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @throws \JsonException
 	 */
 	public function testGetNotificationsRequest() {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
-			->setQuery("pageSize=-1&filters=" . \Safe\json_encode([[
+			->setQuery("pageSize=-1&filters=" . json_encode([[
 				'readIAN' =>
 					['operator' => '=', 'values' => ['f']]
-			]]))
+			]], JSON_THROW_ON_ERROR))
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -1587,6 +1588,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @throws \JsonException
 	 */
 	public function testLinkWorkPackageToFileRequest(): void {
 		$service = $this->getServiceMock(['request', 'getNode']);
@@ -1600,7 +1602,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request')
 			->with(
 				'user', 'work_packages/123/file_links',
-				['body' => \Safe\json_encode($this->validFileLinkRequestBody)]
+				['body' => json_encode($this->validFileLinkRequestBody, JSON_THROW_ON_ERROR)]
 			);
 		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
@@ -1845,6 +1847,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @throws \JsonException
 	 */
 	public function testLinkWorkPackageToMultipleFileRequest(): void {
 		$service = $this->getServiceMock(['request', 'getNode']);
@@ -1858,7 +1861,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('request')
 			->with(
 				'user', 'work_packages/123/file_links',
-				['body' => \Safe\json_encode($this->validFileLinkRequestBodyForMultipleFiles)]
+				['body' => json_encode($this->validFileLinkRequestBodyForMultipleFiles, JSON_THROW_ON_ERROR)]
 			);
 		$values = $this->multipleFileInformation;
 		$result = $service->linkWorkPackageToFile(
