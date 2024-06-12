@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "取消",
     "Save" : "保存",
     "Copied!" : "已复制！",
+    "Copied to the clipboard" : "已复制到剪切板",
     "Details" : "详情",
     "Start typing to search" : "开始输入搜索内容",
     "Select a user or group" : "选择用户或分组",
