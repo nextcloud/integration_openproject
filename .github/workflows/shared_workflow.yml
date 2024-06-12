@@ -165,8 +165,21 @@ jobs:
       matrix:
         nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
         phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 2 ]
+        phpVersionMinor: [ 0, 1, 2, 3 ]
         database: [pgsql, mysql]
+        isScheduledEventNightly:
+          - ${{github.event_name != 'schedule'}}
+        exclude:
+          - nextcloudVersion: stable26
+            phpVersionMinor: 3
+          - nextcloudVersion: stable27
+            phpVersionMinor: 3
+          - isScheduledEventNightly: true
+            phpVersionMinor: 0
+          - isScheduledEventNightly: true
+            phpVersionMinor: 1
+          - isScheduledEventNightly: true
+            phpVersionMinor: 3
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:latest
