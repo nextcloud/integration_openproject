@@ -17,7 +17,7 @@ import { showError } from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
 import { translate as t } from '@nextcloud/l10n'
 import '@nextcloud/dialogs/styles/toast.scss'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcButton } from '@nextcloud/vue'
 import dompurify from 'dompurify'
 
 export default {

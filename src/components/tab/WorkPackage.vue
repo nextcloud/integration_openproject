@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import { NcAvatar } from '@nextcloud/vue'
 
 export default {
 	name: 'WorkPackage',

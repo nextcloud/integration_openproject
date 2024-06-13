@@ -66,18 +66,15 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import { NcModal, NcLoadingIcon, NcButton, NcProgressBar } from '@nextcloud/vue'
 import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
-import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import { translate as t } from '@nextcloud/l10n'
 
 import {

@@ -52,7 +52,7 @@ import OAuthConnectButton from './OAuthConnectButton.vue'
 import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult, USER_SETTINGS } from '../utils.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'PersonalSettings',

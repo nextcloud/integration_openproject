@@ -51,8 +51,7 @@
 import { translate as t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import '@nextcloud/dialogs/styles/toast.scss'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import { NcButton, NcPopover } from '@nextcloud/vue'
 import ClippyIcon from '../icons/ClippyIcon.vue'
 import dompurify from 'dompurify'
 
