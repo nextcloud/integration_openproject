@@ -28,13 +28,11 @@
 </template>
 <script>
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcButton, NcModal, NcLoadingIcon } from '@nextcloud/vue'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 

@@ -65,11 +65,9 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import WorkPackage from '../components/tab/WorkPackage.vue'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcActions, NcLoadingIcon, NcActionButton } from '@nextcloud/vue'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import axios from '@nextcloud/axios'
 
