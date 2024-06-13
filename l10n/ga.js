@@ -1,6 +1,10 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Error getting OAuth access token" : "Earráid agus comhartha rochtana OAuth á fháil",
+    "Error during OAuth exchanges" : "Earráid le linn malartuithe OAuth",
+    "Bad HTTP method" : "Droch-mhodh HTTP",
+    "OAuth access token refused" : "Diúltaíodh comhartha rochtana OAuth",
     "Cancel" : "Cealaigh",
     "Save" : "Sábháil",
     "Copied!" : "Cóipeáladh!",
@@ -12,6 +16,7 @@ OC.L10N.register(
     "Create" : "Cruthaigh",
     "Mark as read" : "Marcáil mar léite",
     "Unlink" : "Dínascadh",
+    "OAuth access token could not be obtained:" : "Níorbh fhéidir comhartha rochtana OAuth a fháil:",
     "Reset" : "Athshocraigh",
     "Invalid token" : "Comhartha neamhbhailí",
     "Documentation" : "Doiciméadúchán"
