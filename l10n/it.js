@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "Annulla",
     "Save" : "Salva",
     "Copied!" : "Copiato!",
+    "Copied to the clipboard" : "Copiato negli appunti",
     "Details" : "Dettagli",
     "No connection with OpenProject" : "Nessuna connessione a OpenProject",
     "Error connecting to OpenProject" : "Errore durante la connessione a OpenProject",
