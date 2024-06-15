@@ -17,7 +17,9 @@ OC.L10N.register(
     "Mark as read" : "Marcáil mar léite",
     "Unlink" : "Dínascadh",
     "OAuth access token could not be obtained:" : "Níorbh fhéidir comhartha rochtana OAuth a fháil:",
+    "Connected accounts" : "Cuntais nasctha",
     "Reset" : "Athshocraigh",
+    "Connected as {user}" : "Ceangailte mar {user}",
     "Invalid token" : "Comhartha neamhbhailí",
     "Documentation" : "Doiciméadúchán"
 },
