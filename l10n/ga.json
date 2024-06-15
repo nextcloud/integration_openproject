@@ -15,7 +15,9 @@
     "Mark as read" : "Marcáil mar léite",
     "Unlink" : "Dínascadh",
     "OAuth access token could not be obtained:" : "Níorbh fhéidir comhartha rochtana OAuth a fháil:",
+    "Connected accounts" : "Cuntais nasctha",
     "Reset" : "Athshocraigh",
+    "Connected as {user}" : "Ceangailte mar {user}",
     "Invalid token" : "Comhartha neamhbhailí",
     "Documentation" : "Doiciméadúchán"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
