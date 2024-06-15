@@ -1,6 +1,6 @@
 { "translations": {
-    "Error getting OAuth access token" : "OAuth 접근 토큰을 구하는 에러",
-    "Error during OAuth exchanges" : "OAuth 교환 중 발생한 에러",
+    "Error getting OAuth access token" : "OAuth 접근 토큰을 구하는 오류",
+    "Error during OAuth exchanges" : "OAuth 교환 중 발생한 오류",
     "Bad HTTP method" : "옳지 않은 HTTP 메소드",
     "OAuth access token refused" : "OAuth 접근 토큰 거부됨",
     "Cancel" : "취소",
