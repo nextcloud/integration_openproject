@@ -19,7 +19,10 @@ OC.L10N.register(
     "OAuth access token could not be obtained:" : "Níorbh fhéidir comhartha rochtana OAuth a fháil:",
     "Connected accounts" : "Cuntais nasctha",
     "Reset" : "Athshocraigh",
+    "Enable navigation link" : "Cumasaigh nasc nascleanúna",
     "Connected as {user}" : "Ceangailte mar {user}",
+    "Enable unified search for tickets" : "Cumasaigh cuardach aontaithe le haghaidh ticéid",
+    "Incorrect access token" : "Comhartha rochtana mícheart",
     "Invalid token" : "Comhartha neamhbhailí",
     "Documentation" : "Doiciméadúchán"
 },
