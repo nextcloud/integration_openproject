@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Add application's support for Nextcloud 30
+- Audit logging in `/audit.log` for admin configuration.
 
 ## 2.6.3 - 2024-04-17
 ### Changed

@@ -48,7 +48,6 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Log\ILogFactory;
@@ -1084,8 +1083,7 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	public function logToAuditFile($auditLogMessage): void {
-		$result = $this->isAdminAuditConfigSetCorrectly();
-		if($result) {
+		if($this->isAdminAuditConfigSetCorrectly()) {
 			$this->auditLogger = new AuditLogger($this->logFactory, $this->config);
 			$this->auditLogger->info($auditLogMessage,
 				['app' => 'admin_audit']
@@ -1094,9 +1092,9 @@ class OpenProjectAPIService {
 	}
 
 	public function isAdminAuditConfigSetCorrectly(): bool {
-		$logLevel = $this->config->getSystemValue('loglevel', ILogger::WARN);
-		$configAuditFile = $this->config->getSystemValue('logfile_audit', ILogger::WARN);
-		$logCondition = $this->config->getSystemValue('log.condition', []);
+		$logLevel = $this->config->getSystemValue('loglevel');
+		$configAuditFile = $this->config->getSystemValue('logfile_audit');
+		$logCondition = $this->config->getSystemValue('log.condition');
 		// All the above config should be satisfied in order for admin audit log for the integration application
 		// if any of the config is failed to be set then we are not able to send the admin audit logging in the audit.log file
 		return (
