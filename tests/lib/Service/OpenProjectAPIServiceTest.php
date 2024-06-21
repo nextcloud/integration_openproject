@@ -727,6 +727,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IProvider|null $tokenProviderMock
 	 * @param IDBConnection|null $db
 	 * @param IURLGenerator|null $iURLGenerator
+	 * @param ILogFactory|null $iLogFactory
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -741,7 +742,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = null,
 		$tokenProviderMock = null,
 		$db = null,
-		$iURLGenerator = null
+		$iURLGenerator = null,
+		$iLogFactory = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
@@ -777,6 +779,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($iURLGenerator === null) {
 			$iURLGenerator = $this->createMock(IURLGenerator::class);
 		}
+		if ($iLogFactory === null) {
+			$iLogFactory = $this->createMock(ILogFactory::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -797,6 +802,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
 					$db,
+					$iLogFactory,
 					$iURLGenerator
 				])
 			->onlyMethods($onlyMethods)
