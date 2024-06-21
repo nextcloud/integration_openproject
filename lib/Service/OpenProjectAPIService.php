@@ -21,6 +21,7 @@ use InvalidArgumentException;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Token\IProvider;
 use OC\User\NoUserException;
+use OCA\AdminAudit\AuditLogger;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
@@ -47,11 +48,14 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 
 define('CACHE_TTL', 3600);
@@ -115,6 +119,7 @@ class OpenProjectAPIService {
 	 */
 	private ISubAdmin $subAdminManager;
 	private IDBConnection $db;
+	private ILogFactory $logFactory;
 
 
 	/**
@@ -125,6 +130,8 @@ class OpenProjectAPIService {
 	private IProvider $tokenProvider;
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
+	private AuditLogger $auditLogger;
+
 	public function __construct(
 		string $appName,
 		IAvatarManager $avatarManager,
@@ -142,7 +149,8 @@ class OpenProjectAPIService {
 		ISecureRandom $random,
 		IEventDispatcher $eventDispatcher,
 		ISubAdmin $subAdminManager,
-		IDBConnection $db
+		IDBConnection $db,
+		ILogFactory $logFactory,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -161,6 +169,7 @@ class OpenProjectAPIService {
 		$this->random = $random;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
+		$this->logFactory = $logFactory;
 	}
 
 	/**
@@ -1070,6 +1079,33 @@ class OpenProjectAPIService {
 		);
 	}
 
+	/**
+	 * @param $auditLogMessage
+	 * @return void
+	 */
+	public function logToAuditFile($auditLogMessage): void {
+		if($this->isAdminAuditConfigSetCorrectly()) {
+			$this->auditLogger = new AuditLogger($this->logFactory, $this->config);
+			$this->auditLogger->info($auditLogMessage,
+				['app' => 'admin_audit']
+			);
+		}
+	}
+
+	public function isAdminAuditConfigSetCorrectly(): bool {
+		$logLevel = $this->config->getSystemValue('loglevel', ILogger::WARN);
+		$configAuditFile = $this->config->getSystemValue('logfile_audit', ILogger::WARN);
+		$logCondition = $this->config->getSystemValue('log.condition', []);
+		// All the above config should be satisfied in order for admin audit log for the integration application
+		// if any of the config is failed to be set then we are not able to send the admin audit logging in the audit.log file
+		return (
+			$this->appManager->isInstalled('admin_audit') &&
+			$configAuditFile === $this->config->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') . '/audit.log' &&
+			(isset($logCondition["apps"]) && in_array('admin_audit', $logCondition["apps"])) &&
+			$logLevel >= 1
+		);
+	}
+
 	public function isTermsOfServiceAppEnabled(): bool {
 		return (
 			class_exists('\OCA\TermsOfService\Db\Entities\Signatory') &&
@@ -1080,6 +1116,8 @@ class OpenProjectAPIService {
 			)
 		);
 	}
+
+
 
 	/**
 	 * @return array<mixed>
@@ -1245,6 +1283,7 @@ class OpenProjectAPIService {
 		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($tokens as $token) {
 			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
+				$this->logger->info('Application password for user "OpenProject" has been deleted.', ['app' => $this->appName]);
 				return true;
 			}
 		}

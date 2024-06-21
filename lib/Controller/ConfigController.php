@@ -216,11 +216,21 @@ class ConfigController extends Controller {
 
 		// creates or replace the app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
+			$isAppPasswordBeingReplaced = $this->openprojectAPIService->hasAppPassword();
 			$this->openprojectAPIService->deleteAppPassword();
 			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 				throw new NoUserException('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
 			}
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
+			if($isAppPasswordBeingReplaced) {
+				$this->openprojectAPIService->logToAuditFile(
+					"Application password for user 'OpenProject has been replaced' in application " . Application::APP_ID
+				);
+			} else {
+				$this->openprojectAPIService->logToAuditFile(
+					"New application password for user 'OpenProject' has been created in application " . Application::APP_ID
+				);
+			}
 		}
 
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
@@ -280,6 +290,11 @@ class ConfigController extends Controller {
 		// resetting and keeping the project folder setup should delete the user app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
 			$this->openprojectAPIService->deleteAppPassword();
+			if(!$runningFullReset) {
+				$this->openprojectAPIService->logToAuditFile(
+					"Project folder setup has been deactivated in application " . Application::APP_ID
+				);
+			}
 		}
 
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
@@ -337,6 +352,9 @@ class ConfigController extends Controller {
 		// so setting `fresh_project_folder_setup` as true
 		if ($runningFullReset) {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
+			$this->openprojectAPIService->logToAuditFile(
+				"OpenProject Integration admin configuration has been reset in application " . Application::APP_ID, true
+			);
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false
 			// assuming user has either fully set the integration or partially without project folder/app password
@@ -366,6 +384,15 @@ class ConfigController extends Controller {
 	public function setAdminConfig(array $values): DataResponse {
 		try {
 			$result = $this->setIntegrationConfig($values);
+			if(key_exists('openproject_client_id', $values) &&
+				key_exists('openproject_client_secret', $values) &&
+				$values['openproject_client_id'] &&
+				$values['openproject_client_secret']
+			) {
+				$this->openprojectAPIService->logToAuditFile(
+					"OpenProject OAuth credential has been set in application " . Application::APP_ID
+				);
+			}
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
@@ -528,7 +555,11 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function autoOauthCreation(): DataResponse {
-		return new DataResponse($this->recreateOauthClientInformation());
+		$result = $this->recreateOauthClientInformation();
+		$this->openprojectAPIService->logToAuditFile(
+			"Nextcloud OAuth credential has been set on application " . Application::APP_ID
+		);
+		return new DataResponse($result);
 	}
 
 	private function deleteOauthClient(): void {
