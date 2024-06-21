@@ -224,7 +224,7 @@ class ConfigController extends Controller {
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
 			if($isAppPasswordBeingReplaced) {
 				$this->openprojectAPIService->logToAuditFile(
-					"Application password for user 'OpenProject has been replaced' in application " . Application::APP_ID
+					"Application password for user 'OpenProject has been replaced' with new password in application " . Application::APP_ID
 				);
 			} else {
 				$this->openprojectAPIService->logToAuditFile(

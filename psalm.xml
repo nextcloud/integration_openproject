@@ -38,6 +38,8 @@
 				<referencedClass name="Helmich\JsonAssert\JsonAssertions" />
 				<!-- these classes belong to the event app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCP\App\Events\AppEnableEvent" />
+				<referencedClass name="OCA\AdminAudit\AuditLogger" />
+
 			</errorLevel>
 		</UndefinedClass>
 		<TooFewArguments>

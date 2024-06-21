@@ -44,6 +44,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use PhpPact\Consumer\InteractionBuilder;
@@ -708,7 +709,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
 		);
 	}
 
@@ -1926,7 +1928,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
+
 		);
 
 		$response = $service->request('', '', []);
@@ -1995,7 +1999,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
 		);
 
 		$response = $service->request('', '', []);

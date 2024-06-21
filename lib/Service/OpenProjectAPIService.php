@@ -1269,6 +1269,9 @@ class OpenProjectAPIService {
 			foreach ($tokens as $token) {
 				if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 					$this->tokenProvider->invalidateTokenById(Application::OPEN_PROJECT_ENTITIES_NAME, $token->getId());
+					$this->logToAuditFile(
+						"Application password for user 'OpenProject has been deleted' in application " . Application::APP_ID
+					);
 				}
 			}
 		}
@@ -1283,7 +1286,6 @@ class OpenProjectAPIService {
 		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($tokens as $token) {
 			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-				$this->logger->info('Application password for user "OpenProject" has been deleted.', ['app' => $this->appName]);
 				return true;
 			}
 		}
