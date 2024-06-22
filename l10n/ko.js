@@ -11,6 +11,7 @@ OC.L10N.register(
     "Details" : "세부사항",
     "No OpenProject account connected" : "연결된 OpenProject 계정 없음",
     "Start typing to search" : "검색어 입력",
+    "Select a user or group" : "사용자 또는 그룹 선택",
     "Description" : "설명",
     "Create" : "생성",
     "Mark as read" : "읽은 것으로 표시",
