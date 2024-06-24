@@ -74,7 +74,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] Uploaded file is linked to the work package in `OpenProject`
 - [ ] Also Navigate to `Nextcloud` and see in the `OpenProject` tab for file (local.txt), the work package should be linked.
 
-### 9. Create a WorkPackage from the Nextcloud
+### 9. Create a WorkPackage from Nextcloud
 - [ ] Complete Smoke Test No 1.
 - [ ] Complete Smoke Test No 2.
 - [ ] Complete Smoke Test No 3.
@@ -107,7 +107,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 > Before Running the script make sure that your `Nextcloud` and `OpenProject` instance is up and running
 
-- [ ] Run the `integration_setup.sh` script with to set up integration without project folder with the following command:
+- [ ] Run the `integration_setup.sh` script to set up integration without project folder with the following command:
 ```bash
 SETUP_PROJECT_FOLDER=true \
 NEXTCLOUD_HOST=<nextcloud_instance_url> \
