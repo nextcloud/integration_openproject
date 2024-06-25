@@ -192,7 +192,7 @@ class ConfigController extends Controller {
 		];
 		// if values contains a key that is not in the allowedKeys array,
 		// return a response with status code 400 and an error message
-		foreach ($values as $key => $value) {
+		foreach (array_keys($values) as $key) {
 			if (!in_array($key, $allowedKeys)) {
 				throw new InvalidArgumentException('Invalid key');
 			}
