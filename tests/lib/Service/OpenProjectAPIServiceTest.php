@@ -3684,7 +3684,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 
-	public function testIsAdminAuditConfigSetCorrectly(int $logLevel, string $pathToAuditLog, array $logCondition, bool $isAdminAuditAppInstalled, bool $expectedResult): void {
+	public function testIsAdminAuditConfigSetCorrectly(
+		int $logLevel,
+		string $pathToAuditLog,
+		array $logCondition,
+		bool $isAdminAuditAppInstalled,
+		bool $expectedResult
+	): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$configMock

@@ -547,9 +547,6 @@ class OpenProjectAPIController extends Controller {
 			);
 			return new DataResponse(['result' => 'invalid']);
 		}
-		$oldOpenProjectOauthUrl = $this->config->getAppValue(
-			Application::APP_ID, 'openproject_instance_url', ''
-		);
 		try {
 			$response = $this->openprojectAPIService->rawRequest(
 				'', $url, '', [], 'GET',

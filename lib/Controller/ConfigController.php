@@ -353,7 +353,7 @@ class ConfigController extends Controller {
 		if ($runningFullReset) {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "1");
 			$this->openprojectAPIService->logToAuditFile(
-				"OpenProject Integration admin configuration has been reset in application " . Application::APP_ID, true
+				"OpenProject Integration admin configuration has been reset in application " . Application::APP_ID
 			);
 		} elseif (key_exists('setup_app_password', $values) && key_exists('setup_project_folder', $values)) {
 			// for other cases when api has key 'setup_app_password' and 'setup_project_folder' we set it to false

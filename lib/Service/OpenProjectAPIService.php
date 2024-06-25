@@ -54,7 +54,6 @@ use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
-use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 
 define('CACHE_TTL', 3600);
