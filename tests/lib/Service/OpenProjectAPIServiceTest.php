@@ -2816,10 +2816,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-
 		$service = $this->getOpenProjectAPIService();
 		$this->expectException(OpenprojectErrorException::class);
-		$result = $service->markAllNotificationsOfWorkPackageAsRead(
+		$service->markAllNotificationsOfWorkPackageAsRead(
 			789,
 			'testUser'
 		);
