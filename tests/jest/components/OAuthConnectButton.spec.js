@@ -1,14 +1,48 @@
 /* jshint esversion: 8 */
 
 import { mount, createLocalVue } from '@vue/test-utils'
-import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
+
+// mocks
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+		},
+	}
+})
+
+jest.mock('@nextcloud/dialogs', () => {
+	const originalModule = jest.requireActual('@nextcloud/dialogs')
+
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			showError: jest.fn()
+		},
+	}
+})
+
+jest.mock('@nextcloud/auth', () => {
+	const originalModule = jest.requireActual('@nextcloud/auth')
+
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
+	}
+})
+
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
-
-jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs')
-jest.mock('@nextcloud/auth')
+import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 
 const realLocation = global.window.location
 const localVue = createLocalVue()

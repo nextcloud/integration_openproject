@@ -1,30 +1,25 @@
 const path = require('path')
 const rootDir = path.resolve(__dirname, '../../../')
 
-const ignorePatterns = [
-	'vue-material-design-icons',
-	'@nextcloud/vue',
-]
-
 module.exports = {
 	testMatch: ['**/tests/**/*.spec.{js,ts}'],
 	moduleNameMapper: {
-		'\\.(css|scss)$': '<rootDir>/tests/jest/stubs/empty.js',
-		'@nextcloud/l10n/gettext': require.resolve('@nextcloud/l10n/gettext')
+		'\\.(scss)$': '<rootDir>/tests/jest/stubs/empty.js',
+		'@nextcloud/l10n/gettext': require.resolve('@nextcloud/l10n/gettext'),
 	},
 	transform: {
-		// process `*.js` files with `babel-jest`
-		'^.+\\.c?js$': 'babel-jest',
-		'^.+\\.vue$': '@vue/vue2-jest'
+		// process *.vue files with vue-jest
+		'\\.vue$': '@vue/vue2-jest',
+		'.+\\.(css|styl|less|sass|scss|jpg|jpeg|png|svg|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|avif)$':
+			'jest-transform-stub',
+		'\\.c?js$': 'babel-jest',
 	},
-	collectCoverage: true,
 	testEnvironment: 'jest-environment-jsdom',
+	collectCoverage: true,
 	coverageProvider: 'v8',
 	collectCoverageFrom: ['./src/**'],
 	coverageDirectory: '<rootDir>/coverage/jest/',
 	coverageReporters: ['lcov', 'html', 'text'],
-	transformIgnorePatterns: [
-		'node_modules/(?!(' + ignorePatterns.join('|') + ')/)',
-	],
-	setupFiles: ["<rootDir>/tests/jest/global.mock.js"]
+	transformIgnorePatterns: ['node_modules/(?!@ckeditor)/.+\\.js$'],
+	setupFiles: ['<rootDir>/tests/jest/global.mock.js'],
 }

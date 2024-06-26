@@ -1,33 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkPackage.vue shows work packages information 1`] = `
-<div class="workpackage">
-  <div class="row">
-    <div class="row__status" style="background-color: blue; border: 0px;">
-      <div class="row__status__title" style="color: rgb(255, 255, 255);">
-        in-progress
-      </div>
-    </div>
-    <div class="row__workpackage">
-      #1 - test
-    </div>
-  </div>
-  <div class="row">
-    <div class="row__subject"><span class="row__subject__type" style="color: red;">
-				task
-			</span>
-      Organize work-packages
-    </div>
-  </div>
-  <div class="row">
-    <div class="row__assignee">
-      <div class="row__assignee__avatar">
-        <ncavatar-stub url="/server/index.php/apps/integration_openproject/avatar?userId=1&amp;userName=System" user="test" showuserstatus="true" showuserstatuscompact="true" displayname="test" size="23" allowplaceholder="true" menuposition="center" menucontainer="body" class="item-avatar"></ncavatar-stub>
-      </div>
-      <div class="row__assignee__assignee">
-        test
-      </div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+  "selector": ".workpackage",
+}
 `;
