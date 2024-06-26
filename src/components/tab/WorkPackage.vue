@@ -87,7 +87,7 @@ export default {
 			try {
 				const contrast = this.contrastRatio(
 					this.wpStatusFontColor,
-					this.getWPStatusColor()
+					this.getWPStatusColor(),
 				)
 				if (contrast <= 2) {
 					this.wpStatusFontColor = '#000000'

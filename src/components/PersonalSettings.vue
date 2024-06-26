@@ -123,7 +123,7 @@ export default {
 							: error.response?.request?.responseText
 					showError(
 						t('integration_openproject', 'Failed to save OpenProject options')
-						+ ': ' + msg
+						+ ': ' + msg,
 					)
 				})
 				.finally(() => {

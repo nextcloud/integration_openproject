@@ -98,7 +98,7 @@ describe('Dashboard.vue', () => {
 		})
 		it('should mark notifications as read', async () => {
 			const axiosSpyDelete = jest.spyOn(axios, 'delete')
-				.mockImplementationOnce(() => Promise.resolve({})
+				.mockImplementationOnce(() => Promise.resolve({}),
 				)
 			dialogs.showSuccess.mockImplementationOnce()
 			await wrapper.vm.fetchNotifications()
@@ -108,10 +108,10 @@ describe('Dashboard.vue', () => {
 			await wrapper.find(markAsReadButtonSelector).trigger('click')
 			await localVue.nextTick()
 			expect(axiosSpyDelete).toHaveBeenCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages/36/notifications'
+				'http://localhost/apps/integration_openproject/work-packages/36/notifications',
 			)
 			expect(dialogs.showSuccess).toHaveBeenCalledWith(
-				'Notifications associated with Work package marked as read'
+				'Notifications associated with Work package marked as read',
 			)
 			wrapper.destroy()
 			axiosSpyDelete.mockRestore()
@@ -127,7 +127,7 @@ describe('Dashboard.vue', () => {
 			await wrapper.find(markAsReadButtonSelector).trigger('click')
 			await localVue.nextTick()
 			expect(dialogs.showError).toHaveBeenCalledWith(
-				'Failed to mark notifications as read'
+				'Failed to mark notifications as read',
 			)
 			wrapper.destroy()
 			axiosSpyDelete.mockRestore()

@@ -257,16 +257,16 @@ export default {
 		},
 		onMarkAsRead(item) {
 			const url = generateUrl(
-				'/apps/integration_openproject/work-packages/' + item.id + '/notifications'
+				'/apps/integration_openproject/work-packages/' + item.id + '/notifications',
 			)
 			axios.delete(url).then((response) => {
 				showSuccess(
-					t('integration_openproject', 'Notifications associated with Work package marked as read')
+					t('integration_openproject', 'Notifications associated with Work package marked as read'),
 				)
 				this.fetchNotifications()
 			}).catch((error) => {
 				showError(
-					t('integration_openproject', 'Failed to mark notifications as read')
+					t('integration_openproject', 'Failed to mark notifications as read'),
 				)
 				console.debug(error)
 			})

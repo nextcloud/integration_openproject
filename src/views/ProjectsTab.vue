@@ -73,7 +73,6 @@ import axios from '@nextcloud/axios'
 
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
@@ -176,7 +175,7 @@ export default {
 		unlink(workpackageId, fileId) {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject',
-					'Are you sure you want to unlink the work package?'
+					'Are you sure you want to unlink the work package?',
 				),
 				t('integration_openproject', 'Confirm unlink'),
 				{
@@ -192,13 +191,13 @@ export default {
 							showSuccess(t('integration_openproject', 'Work package unlinked'))
 						}).catch((error) => {
 							showError(
-								t('integration_openproject', 'Failed to unlink work package')
+								t('integration_openproject', 'Failed to unlink work package'),
 							)
 							this.checkForErrorCode(error.response.status)
 						})
 					}
 				},
-				true
+				true,
 			)
 		},
 		async unlinkWorkPackage(workpackageId, fileId) {
