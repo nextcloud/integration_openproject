@@ -305,21 +305,21 @@ describe('ProjectsTab.vue', () => {
 				}))
 				// mock for color requests
 				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.statusColor })
+					{ status: 200, data: testCase.statusColor }),
 				)
 				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.typeColor })
+					{ status: 200, data: testCase.typeColor }),
 				)
 				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.statusColor })
+					{ status: 200, data: testCase.statusColor }),
 				)
 				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.typeColor })
+					{ status: 200, data: testCase.typeColor }),
 				)
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
-				{}
+				{},
 			)
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/statuses/12',
@@ -386,7 +386,7 @@ describe('ProjectsTab.vue', () => {
 			await wrapper.vm.update({ id: 2222 })
 			expect(axiosGetSpy).toBeCalledWith(
 				'http://localhost/apps/integration_openproject/work-packages?fileId=2222',
-				{}
+				{},
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
 			const workPackages = wrapper.find(workPackagesSelector)
@@ -447,11 +447,11 @@ describe('ProjectsTab.vue', () => {
 			expect(axiosGetSpy).toBeCalledTimes(3)
 			expect(axiosGetSpy).toHaveBeenNthCalledWith(
 				2,
-				'http://localhost/apps/integration_openproject/statuses/12'
+				'http://localhost/apps/integration_openproject/statuses/12',
 			)
 			expect(axiosGetSpy).toHaveBeenNthCalledWith(
 				3,
-				'http://localhost/apps/integration_openproject/types/6'
+				'http://localhost/apps/integration_openproject/types/6',
 			)
 		})
 	})
@@ -487,7 +487,7 @@ describe('ProjectsTab.vue', () => {
 			await localVue.nextTick()
 			expect(window.open).toHaveBeenCalledTimes(1)
 			expect(window.open).toHaveBeenCalledWith(
-				'http://openproject/projects/15/work_packages/1'
+				'http://openproject/projects/15/work_packages/1',
 			)
 		})
 	})
@@ -508,7 +508,7 @@ describe('ProjectsTab.vue', () => {
 				'Confirm unlink',
 				{ cancel: 'Cancel', confirm: 'Unlink', confirmClasses: 'error', type: 70 },
 				expect.any(Function),
-				true
+				true,
 			)
 		})
 	})
@@ -540,12 +540,12 @@ describe('ProjectsTab.vue', () => {
 					}],
 				}))
 			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => Promise.resolve(
-				{ status: 200 })
+				{ status: 200 }),
 			)
 			wrapper = mountWrapper()
 			await wrapper.vm.unlinkWorkPackage(15, 6)
 			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages/15/file-links'
+				'http://localhost/apps/integration_openproject/work-packages/15/file-links',
 			)
 			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
 			axiosGetSpy.mockRestore()

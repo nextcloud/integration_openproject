@@ -2,6 +2,11 @@
 
 import { mount, createLocalVue } from '@vue/test-utils'
 
+import axios from '@nextcloud/axios'
+import * as dialogs from '@nextcloud/dialogs'
+import { getCurrentUser } from '@nextcloud/auth'
+import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
+
 // mocks
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -15,19 +20,6 @@ jest.mock('@nextcloud/axios', () => {
 		},
 	}
 })
-
-jest.mock('@nextcloud/dialogs', () => {
-	const originalModule = jest.requireActual('@nextcloud/dialogs')
-
-	return {
-		__esModule: true,
-		...originalModule,
-		default: {
-			showError: jest.fn()
-		},
-	}
-})
-
 jest.mock('@nextcloud/auth', () => {
 	const originalModule = jest.requireActual('@nextcloud/auth')
 
@@ -38,11 +30,7 @@ jest.mock('@nextcloud/auth', () => {
 		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-
-import axios from '@nextcloud/axios'
-import * as dialogs from '@nextcloud/dialogs'
-import { getCurrentUser } from '@nextcloud/auth'
-import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
+jest.mock('@nextcloud/dialogs')
 
 const realLocation = global.window.location
 const localVue = createLocalVue()
@@ -80,7 +68,7 @@ describe('OAuthConnectButton.vue', () => {
 		describe('on successful retrieving of the OP OAuth URI', () => {
 			beforeEach(() => {
 				axios.get.mockImplementationOnce(() =>
-					Promise.resolve({ data: 'http://openproject/oauth' })
+					Promise.resolve({ data: 'http://openproject/oauth' }),
 				)
 				axios.put.mockImplementationOnce(() =>
 					Promise.resolve({}),
@@ -113,11 +101,12 @@ describe('OAuthConnectButton.vue', () => {
 				axios.get.mockRejectedValueOnce(err)
 			})
 			it('shows an error', async () => {
+				console.log(wrapper.html())
 				dialogs.showError.mockImplementationOnce()
 				wrapper.find('button').trigger('click')
 				await localVue.nextTick()
 				expect(dialogs.showError).toHaveBeenCalledWith(
-					'Failed to redirect to OpenProject: some issue'
+					'Failed to redirect to OpenProject: some issue',
 				)
 				expect(window.location.replace).not.toHaveBeenCalled()
 			})

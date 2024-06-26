@@ -134,7 +134,7 @@ export default {
 			if (progressPercentage === 100) {
 				this.closeRequestModal()
 				showSuccess(
-					t('integration_openproject', 'Links to work package created successfully for selected files!')
+					t('integration_openproject', 'Links to work package created successfully for selected files!'),
 				)
 			}
 			return progressPercentage
@@ -158,7 +158,7 @@ export default {
 			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(remainingFilesToChunk, selectedWorkPackage, true, this)
 			if (this.getTotalNoOfFilesAlreadyLinkedInChunking !== remainingFilesToChunk.length) {
 				showError(
-					t('integration_openproject', 'Failed to link selected files to work package')
+					t('integration_openproject', 'Failed to link selected files to work package'),
 				)
 			}
 		},

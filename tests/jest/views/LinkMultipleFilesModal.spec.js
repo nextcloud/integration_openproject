@@ -379,7 +379,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(axiosGetSpy).toBeCalledWith(
 					'http://localhost/apps/integration_openproject/work-packages?fileId=123',
-					{}
+					{},
 				)
 				expect(wrapper.vm.state).toBe(STATE.OK)
 				expect(wrapper.vm.alreadyLinkedWorkPackage.length).toBe(2)

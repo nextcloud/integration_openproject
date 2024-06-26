@@ -166,7 +166,7 @@ describe('PersonalSettings.vue', () => {
 						values: {
 							navigation_enabled: '1',
 						},
-					}
+					},
 				)
 				expect(dialogs.showSuccess).toBeCalledTimes(1)
 				expect(dialogs.showSuccess).toBeCalledWith('OpenProject options saved')
@@ -198,7 +198,7 @@ describe('PersonalSettings.vue', () => {
 						values: {
 							search_enabled: '1',
 						},
-					}
+					},
 				)
 				expect(dialogs.showSuccess).toBeCalledTimes(1)
 				expect(dialogs.showSuccess).toBeCalledWith('OpenProject options saved')

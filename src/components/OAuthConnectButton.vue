@@ -15,7 +15,6 @@ import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
 import { translate as t } from '@nextcloud/l10n'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { NcButton } from '@nextcloud/vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import dompurify from 'dompurify'
@@ -89,7 +88,7 @@ export default {
 				.catch((error) => {
 					showError(
 						t('integration_openproject', 'Failed to redirect to OpenProject')
-						+ ': ' + error.message
+						+ ': ' + error.message,
 					)
 				})
 		},

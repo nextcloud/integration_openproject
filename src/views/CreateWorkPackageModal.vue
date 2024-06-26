@@ -289,7 +289,7 @@ export default {
 				'This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}.',
 				{ htmlLink },
 				null,
-				{ escape: false, sanitize: false }
+				{ escape: false, sanitize: false },
 			)
 			return dompurify.sanitize(message, { ADD_ATTR: ['target'] })
 		},
