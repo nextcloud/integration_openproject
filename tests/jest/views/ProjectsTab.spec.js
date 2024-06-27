@@ -3,19 +3,54 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import ProjectsTab from '../../../src/views/ProjectsTab.vue'
 import axios from '@nextcloud/axios'
-import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils.js'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 import { getCurrentUser } from '@nextcloud/auth'
 
-jest.mock('@nextcloud/auth')
-jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+			post: jest.fn(),
+			delete: jest.fn(),
+		},
+	}
+})
+
+jest.mock('@nextcloud/auth', () => {
+	const originalModule = jest.requireActual('@nextcloud/auth')
+
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
+	}
+})
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(),
 }))
+
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => true),
+	}
+})
 
 global.OC = {
 	dialogs: {
@@ -41,8 +76,6 @@ describe('ProjectsTab.vue', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers()
-		// eslint-disable-next-line no-import-assign,import/namespace
-		initialState.loadState = jest.fn(() => true)
 		wrapper = shallowMount(ProjectsTab, { localVue })
 	})
 	describe('search input existence', () => {

@@ -3,11 +3,21 @@
 import axios from '@nextcloud/axios'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import * as initialState from '@nextcloud/initial-state'
 import { F_MODES } from '../../../src/utils.js'
 import * as dialogs from '@nextcloud/dialogs'
 
-jest.mock('@nextcloud/axios')
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+			post: jest.fn(),
+		},
+	}
+})
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -17,6 +27,22 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
+
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: null,
+				oauth_client_id: null,
+				oauth_client_secret: null,
+			}
+		}),
+	}
+})
 
 const localVue = createLocalVue()
 
@@ -56,7 +82,7 @@ const selectors = {
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
-	projectFolderSetupSwitch: '.checkbox-radio-switch__label',
+	projectFolderSetupSwitch: '[type="checkbox"]',
 	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
 	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
 	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
@@ -76,15 +102,6 @@ const completeIntegrationState = {
 		nextcloud_client_secret: 'something-else',
 	},
 }
-
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
-	return {
-		openproject_instance_url: null,
-		oauth_client_id: null,
-		oauth_client_secret: null,
-	}
-})
 
 describe('AdminSettings.vue', () => {
 	afterEach(() => {

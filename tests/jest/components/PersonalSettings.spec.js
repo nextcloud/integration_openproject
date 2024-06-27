@@ -2,16 +2,24 @@
 
 import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
 import PersonalSettings from '../../../src/components/PersonalSettings.vue'
-import * as initialState from '@nextcloud/initial-state'
 import * as dialogs from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
 
 const localVue = createLocalVue()
 
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
-		admin_config_ok: true,
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: null,
+				oauth_client_id: null,
+				oauth_client_secret: null,
+			}
+		}),
 	}
 })
 

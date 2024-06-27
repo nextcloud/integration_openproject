@@ -5,8 +5,6 @@ import TermsOfServiceUnsigned from '../../../../src/components/admin/TermsOfServ
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 const localVue = createLocalVue()
-jest.mock('@nextcloud/auth')
-jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/dialogs', () => ({
 	getLanguage: jest.fn(() => ''),
 	showError: jest.fn(),

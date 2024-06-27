@@ -9,11 +9,25 @@ import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSea
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
-import * as initialState from '@nextcloud/initial-state'
 import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
-jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+			post: jest.fn(),
+		},
+	}
+})
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -25,10 +39,17 @@ jest.mock('lodash/debounce', () =>
 	}),
 )
 
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
-		openproject_instance_url: null,
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: null,
+			}
+		}),
 	}
 })
 
