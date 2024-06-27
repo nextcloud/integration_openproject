@@ -3,7 +3,6 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import Dashboard from '../../../src/views/Dashboard.vue'
 import axios from '@nextcloud/axios'
-import * as initialState from '@nextcloud/initial-state'
 import { STATE } from '../../../src/utils.js'
 import notificationsResponse from '../fixtures/notificationsResponse.json'
 import * as dialogs from '@nextcloud/dialogs'
@@ -19,6 +18,16 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 }))
 
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => true),
+	}
+})
+
 global.OCA = {}
 global.OC = {}
 const localVue = createLocalVue()
@@ -28,9 +37,6 @@ describe('Dashboard.vue', () => {
 	const markAsReadButtonSelector = '.action-item__popperr .v-popper__wrapper .v-popper__inner div.open'
 	let wrapper
 	beforeEach(() => {
-		// eslint-disable-next-line no-import-assign,import/namespace
-		initialState.loadState = jest.fn(() => true)
-
 		// mock the beforeMount() method, so that the loop is not called automatically
 		// we first need to mount the component, and the tests will call the loop themselves
 		Dashboard.beforeMount = jest.fn()

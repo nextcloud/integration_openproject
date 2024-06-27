@@ -1,51 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PersonalSettings.vue oAuth user settings admin and user should be able to enable and disable the setting simultaneously 1`] = `
-<div class="openproject-prefs--form">
-  <div class="form-check-input"><input id="openproject-prefs--link" type="checkbox" class="checkbox" value="true"> <label for="openproject-prefs--link">
-      Enable navigation link
-    </label>
-    <p class="user-setting-description">Displays a link to your OpenProject instance in the Nextcloud header.</p>
-  </div>
-  <div class="form-check-input"><input id="openproject-prefs--u-search" type="checkbox" class="checkbox" value="true"> <label for="openproject-prefs--u-search">
-      Enable unified search for tickets
-    </label>
-    <p class="user-setting-description">Allows you to search OpenProject work packages via the universal search bar in Nextcloud.</p>
-    <p class="openproject-prefs--hint"><span aria-hidden="true" role="img" class="material-design-icon information-variant-icon"><svg fill="currentColor" width="24" height="24" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z"><!----></path></svg></span>
-      Warning, everything you type in the search bar will be sent to your OpenProject instance.
-    </p>
-  </div>
-</div>
+Wrapper {
+  "selector": ".openproject-prefs--form",
+}
 `;
 
 exports[`PersonalSettings.vue oAuth user settings admin and user should be able to enable and disable the setting simultaneously 2`] = `
-<div class="openproject-prefs--form">
-  <div class="form-check-input"><input id="openproject-prefs--link" type="checkbox" class="checkbox" value="false"> <label for="openproject-prefs--link">
-      Enable navigation link
-    </label>
-    <p class="user-setting-description">Displays a link to your OpenProject instance in the Nextcloud header.</p>
-  </div>
-  <div class="form-check-input"><input id="openproject-prefs--u-search" type="checkbox" class="checkbox" value="true"> <label for="openproject-prefs--u-search">
-      Enable unified search for tickets
-    </label>
-    <p class="user-setting-description">Allows you to search OpenProject work packages via the universal search bar in Nextcloud.</p>
-    <p class="openproject-prefs--hint"><span aria-hidden="true" role="img" class="material-design-icon information-variant-icon"><svg fill="currentColor" width="24" height="24" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z"><!----></path></svg></span>
-      Warning, everything you type in the search bar will be sent to your OpenProject instance.
-    </p>
-  </div>
-</div>
+Wrapper {
+  "selector": ".openproject-prefs--form",
+}
 `;
 
 exports[`PersonalSettings.vue oAuth user settings should be disabled if the admin has not enabled the settings 1`] = `
-<div class="openproject-prefs--form">
-  <checkbox-stub inputid="openproject-prefs--link" label="Enable navigation link"></checkbox-stub>
-  <checkbox-stub inputid="openproject-prefs--u-search" label="Enable unified search for tickets"></checkbox-stub>
-</div>
+Wrapper {
+  "selector": ".openproject-prefs--form",
+}
 `;
 
 exports[`PersonalSettings.vue oAuth user settings should be enabled if the admin has enabled the settings 1`] = `
-<div class="openproject-prefs--form">
-  <checkbox-stub value="true" inputid="openproject-prefs--link" label="Enable navigation link"></checkbox-stub>
-  <checkbox-stub value="true" inputid="openproject-prefs--u-search" label="Enable unified search for tickets"></checkbox-stub>
-</div>
+Wrapper {
+  "selector": ".openproject-prefs--form",
+}
 `;

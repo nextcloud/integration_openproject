@@ -10,7 +10,6 @@ import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 // mocks
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
-
 	return {
 		__esModule: true,
 		...originalModule,
@@ -101,7 +100,6 @@ describe('OAuthConnectButton.vue', () => {
 				axios.get.mockRejectedValueOnce(err)
 			})
 			it('shows an error', async () => {
-				console.log(wrapper.html())
 				dialogs.showError.mockImplementationOnce()
 				wrapper.find('button').trigger('click')
 				await localVue.nextTick()

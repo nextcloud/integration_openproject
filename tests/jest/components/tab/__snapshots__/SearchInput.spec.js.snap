@@ -1,28 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SearchInput.vue state messages any: should display the correct state message 1`] = `
-<div class="stateMsg text-center">
-
-</div>
+Wrapper {
+  "selector": ".stateMsg",
+}
 `;
 
 exports[`SearchInput.vue state messages error: should display the correct state message 1`] = `
-<div class="stateMsg text-center">
-  Error connecting to OpenProject
-</div>
+Wrapper {
+  "selector": ".stateMsg",
+}
 `;
 
 exports[`SearchInput.vue state messages no-token: should display the correct state message 1`] = `
-<div class="stateMsg text-center">
-  No OpenProject account connected
-</div>
+Wrapper {
+  "selector": ".stateMsg",
+}
 `;
 
 exports[`SearchInput.vue work packages select search list should display correct options list of search results 1`] = `
-Object {
+{
   "isLinkPreviews": false,
   "isSmartPicker": false,
-  "workpackage": Object {
+  "workpackage": {
     "assignee": "test",
     "fileId": 1234,
     "id": "1",
@@ -38,13 +38,17 @@ Object {
 }
 `;
 
-exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `<ul id="vs12__listbox" role="listbox" style="display: none; visibility: hidden;"></ul>`;
+exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `
+Wrapper {
+  "selector": "[role="listbox"]",
+}
+`;
 
 exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
-Object {
+{
   "isLinkPreviews": false,
   "isSmartPicker": false,
-  "workpackage": Object {
+  "workpackage": {
     "assignee": "some assignee",
     "fileId": 111,
     "id": 1,

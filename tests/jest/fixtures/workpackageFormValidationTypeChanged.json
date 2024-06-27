@@ -1,6 +1,6 @@
 {
 	"payload": {
-		"subject": null,
+		"subject": "",
 		"description": {
 			"format": "markdown",
 			"raw": "",
