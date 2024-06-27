@@ -127,21 +127,21 @@ class FeatureContext implements Context {
 				$isUserCreated = true;
 				break;
 			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
-				var_dump("Error: " . $response->getBody()->getContents());
-				var_dump('Creating user ' . $user . ' failed!');
-				var_dump('Deleting the file system of ' . $user . ' and retrying the user creation again...');
+				echo("Error: " . $response->getBody()->getContents());
+				echo('Creating user ' . $user . ' failed!');
+				echo('Deleting the file system of ' . $user . ' and retrying the user creation again...');
 				exec(
 					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
 					$output,
 					$command_result_code
 				);
 				if ($command_result_code === 0) {
-					var_dump('File system for user ' . $user . ' has been deleted successfully!');
+					echo('File system for user ' . $user . ' has been deleted successfully!');
 				}
 			} else {
 				// in case of any other error we just log the response
-				var_dump("Status Code: " . $response->getStatusCode());
-				var_dump("Error: " . $response->getBody()->getContents());
+				echo("Status Code: " . $response->getStatusCode());
+				echo("Error: " . $response->getBody()->getContents());
 			}
 			sleep(2);
 			$retryCreate++;
@@ -161,7 +161,7 @@ class FeatureContext implements Context {
 			$userAttributes['displayName'] = $displayName;
 		}
 		$this->createUserWithRetry($user, $userAttributes);
-		$userid = \strtolower((string)$user);
+		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
 			$user,

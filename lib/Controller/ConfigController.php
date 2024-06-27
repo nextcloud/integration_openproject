@@ -155,7 +155,7 @@ class ConfigController extends Controller {
 		$result = [];
 
 		if (isset($values['token'])) {
-			if ($values['token'] && $values['token'] !== '') {
+			if ($values['token']) {
 				$result = $this->storeUserInfo();
 			} else {
 				$this->clearUserInfo();
@@ -247,7 +247,7 @@ class ConfigController extends Controller {
 			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
 				continue;
 			}
-			$this->config->setAppValue(Application::APP_ID, $key, trim($value));
+			$this->config->setAppValue(Application::APP_ID, $key, trim((string)$value));
 		}
 
 		// if the OpenProject OAuth URL has changed
@@ -266,7 +266,7 @@ class ConfigController extends Controller {
 					Application::APP_ID, 'nc_oauth_client_id', ''
 				);
 				$this->oauthService->setClientRedirectUri(
-					(int)$oauthClientInternalId, $values['openproject_instance_url']
+					(int)$oauthClientInternalId, (string)$values['openproject_instance_url']
 				);
 			}
 		}
