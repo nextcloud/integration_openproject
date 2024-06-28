@@ -548,9 +548,9 @@ class FeatureContext implements Context {
 		PyStringNode $schemaString
 	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
-		$responseAsJson = $responseAsJson->ocs->data;
+		$_responseAsJson = $responseAsJson->ocs->data;
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson,
+			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
 	}
@@ -564,9 +564,9 @@ class FeatureContext implements Context {
 	public function theDataOfTheResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
-		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		$_responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson,
+			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
 	}
