@@ -31,6 +31,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\DirectEditing\IToken;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -53,6 +54,7 @@ use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
+use OCP\Authentication\Token\IToken as OCPIToken;
 
 define('CACHE_TTL', 3600);
 
@@ -1212,7 +1214,8 @@ class OpenProjectAPIService {
 			$userID,
 			$userID,
 			null,
-			Application::OPEN_PROJECT_ENTITIES_NAME
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			OCPIToken::PERMANENT_TOKEN
 		);
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
