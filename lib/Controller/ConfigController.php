@@ -384,13 +384,21 @@ class ConfigController extends Controller {
 	public function setAdminConfig(array $values): DataResponse {
 		try {
 			$result = $this->setIntegrationConfig($values);
-			if(key_exists('openproject_client_id', $values) &&
+			$isOPOAuthCrdentialSet = key_exists('openproject_client_id', $values) &&
 				key_exists('openproject_client_secret', $values) &&
 				$values['openproject_client_id'] &&
-				$values['openproject_client_secret']
-			) {
+				$values['openproject_client_secret'];
+
+			if(key_exists('openproject_instance_url', $values) &&
+				$values['openproject_instance_url'] && !$isOPOAuthCrdentialSet) {
+				// sending admin audit log if admin has changed or added the openproject host url
 				$this->openprojectAPIService->logToAuditFile(
-					"OpenProject OAuth credential has been set in application " . Application::APP_ID
+					"OpenProject host url has been set to '" . $values['openproject_instance_url'] . "' in application " . Application::APP_ID
+				);
+			}
+			if($isOPOAuthCrdentialSet) {
+				$this->openprojectAPIService->logToAuditFile(
+					"OpenProject OAuth credential 'openproject_client_id' and 'openproject_client_secret' has been set in application " . Application::APP_ID
 				);
 			}
 			return new DataResponse($result);
@@ -557,7 +565,7 @@ class ConfigController extends Controller {
 	public function autoOauthCreation(): DataResponse {
 		$result = $this->recreateOauthClientInformation();
 		$this->openprojectAPIService->logToAuditFile(
-			"Nextcloud OAuth credential has been set on application " . Application::APP_ID
+			"Nextcloud OAuth credential has been set in application " . Application::APP_ID
 		);
 		return new DataResponse($result);
 	}

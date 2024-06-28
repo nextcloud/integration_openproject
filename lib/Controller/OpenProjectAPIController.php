@@ -585,10 +585,6 @@ class OpenProjectAPIController extends Controller {
 				$decodedBody['_type'] === 'Root' &&
 				$decodedBody['instanceName'] !== ''
 			) {
-				// sending admin audit log if admin has changed or added the openproject host url
-				$this->openprojectAPIService->logToAuditFile(
-					"OpenProject host url has been set to '$url' in application " . Application::APP_ID
-				);
 				return new DataResponse(['result' => true]);
 			}
 		} catch (ClientException $e) {
@@ -602,10 +598,6 @@ class OpenProjectAPIController extends Controller {
 				$decodedBody['_type'] === 'Error' &&
 				$decodedBody['errorIdentifier'] !== ''
 			) {
-				// sending admin audit log if admin has changed or added the openproject host url
-				$this->openprojectAPIService->logToAuditFile(
-					"OpenProject host url has been set to '$url' in application " . Application::APP_ID
-				);
 				return new DataResponse(['result' => true]);
 			}
 			$this->logger->error(
