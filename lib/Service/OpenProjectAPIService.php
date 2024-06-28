@@ -31,7 +31,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
-use OCP\DirectEditing\IToken;
+use OCP\Authentication\Token\IToken as OCPIToken;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -54,7 +54,6 @@ use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
-use OCP\Authentication\Token\IToken as OCPIToken;
 
 define('CACHE_TTL', 3600);
 
