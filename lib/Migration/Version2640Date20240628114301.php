@@ -40,7 +40,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version2640Date20240628114300 extends SimpleMigrationStep {
+class Version2640Date20240628114301 extends SimpleMigrationStep {
 
 	/**
 	 * @var PublicKeyTokenMapper
@@ -69,14 +69,13 @@ class Version2640Date20240628114300 extends SimpleMigrationStep {
 	 * @throws Exception
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
+//		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$tokens = $this->mapper->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($tokens as $token) {
 			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-				$tokenId = $token->getId();
 				// We convert current "OpenProject" user with temporary token types to permanent one.
-				$publicTokenForOpenProjectUser = $this->mapper->getTokenById($tokenId);
-				$publicTokenForOpenProjectUser->setType(IToken::PERMANENT_TOKEN);
-				$this->mapper->update($publicTokenForOpenProjectUser);
+				$token->setType(IToken::PERMANENT_TOKEN);
+				$this->mapper->update($token);
 			}
 		}
 		return null;
