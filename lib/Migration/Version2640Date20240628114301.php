@@ -27,11 +27,9 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Migration;
 
 use Closure;
-use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\PublicKeyTokenMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\Authentication\Token\IToken;
 use OCP\DB\Exception;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
@@ -46,18 +44,12 @@ class Version2640Date20240628114301 extends SimpleMigrationStep {
 	 * @var PublicKeyTokenMapper
 	 */
 	private $mapper;
-	/**
-	 * @var IProvider
-	 */
-	private $tokenProvider;
 
 
 	public function __construct(
-		PublicKeyTokenMapper $mapper,
-		IProvider $tokenProvider
+		PublicKeyTokenMapper $mapper
 	) {
 		$this->mapper = $mapper;
-		$this->tokenProvider = $tokenProvider;
 	}
 
 	/**
@@ -69,12 +61,11 @@ class Version2640Date20240628114301 extends SimpleMigrationStep {
 	 * @throws Exception
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-//		$tokens = $this->tokenProvider->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		$tokens = $this->mapper->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($tokens as $token) {
 			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
 				// We convert current "OpenProject" user with temporary token types to permanent one.
-				$token->setType(IToken::PERMANENT_TOKEN);
+				$token->setType(1);
 				$this->mapper->update($token);
 			}
 		}
