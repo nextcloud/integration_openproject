@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Add application's support for Nextcloud 30
+- Fix random deactivation of automatically managed project folder
 
 ## 2.6.3 - 2024-04-17
 ### Changed
