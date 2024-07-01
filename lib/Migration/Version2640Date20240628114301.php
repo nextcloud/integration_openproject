@@ -64,7 +64,8 @@ class Version2640Date20240628114301 extends SimpleMigrationStep {
 		$tokens = $this->mapper->getTokenByUser(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($tokens as $token) {
 			if ($token->getName() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-				// We convert current "OpenProject" user with temporary token types to permanent one.
+				// We convert current "OpenProject" user with temporary app password token types to permanent one.
+				// type 0 => Temporary app password token where as type 1 => Permanent app password token
 				$token->setType(1);
 				$this->mapper->update($token);
 			}
