@@ -1,14 +1,35 @@
 /* jshint esversion: 8 */
 
 import { mount, createLocalVue } from '@vue/test-utils'
-import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
+
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
+import OAuthConnectButton from '../../../src/components/OAuthConnectButton.vue'
 
-jest.mock('@nextcloud/axios')
+// mocks
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+		},
+	}
+})
+jest.mock('@nextcloud/auth', () => {
+	const originalModule = jest.requireActual('@nextcloud/auth')
+
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
+	}
+})
 jest.mock('@nextcloud/dialogs')
-jest.mock('@nextcloud/auth')
 
 const realLocation = global.window.location
 const localVue = createLocalVue()
@@ -46,7 +67,7 @@ describe('OAuthConnectButton.vue', () => {
 		describe('on successful retrieving of the OP OAuth URI', () => {
 			beforeEach(() => {
 				axios.get.mockImplementationOnce(() =>
-					Promise.resolve({ data: 'http://openproject/oauth' })
+					Promise.resolve({ data: 'http://openproject/oauth' }),
 				)
 				axios.put.mockImplementationOnce(() =>
 					Promise.resolve({}),
@@ -83,7 +104,7 @@ describe('OAuthConnectButton.vue', () => {
 				wrapper.find('button').trigger('click')
 				await localVue.nextTick()
 				expect(dialogs.showError).toHaveBeenCalledWith(
-					'Failed to redirect to OpenProject: some issue'
+					'Failed to redirect to OpenProject: some issue',
 				)
 				expect(window.location.replace).not.toHaveBeenCalled()
 			})

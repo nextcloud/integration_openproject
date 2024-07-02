@@ -9,11 +9,25 @@ import workPackagesSearchResponseNoAssignee from '../../fixtures/workPackagesSea
 import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqResponse.json'
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
-import * as initialState from '@nextcloud/initial-state'
 import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
 
-jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+			post: jest.fn(),
+		},
+	}
+})
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -22,13 +36,20 @@ jest.mock('lodash/debounce', () =>
 	jest.fn(fn => {
 		fn.cancel = jest.fn()
 		return fn
-	})
+	}),
 )
 
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
-		openproject_instance_url: null,
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: null,
+			}
+		}),
 	}
 })
 
@@ -295,7 +316,7 @@ describe('SearchInput.vue', () => {
 					}))
 					// any other requests e.g. for types and statuses
 					.mockImplementation(() => Promise.resolve(
-						{ status: 200, data: [] })
+						{ status: 200, data: [] }),
 					)
 
 				const inputField = wrapper.find(inputSelector)
@@ -343,7 +364,7 @@ describe('SearchInput.vue', () => {
 						data: workPackageSearchReqResponse,
 					}))
 					.mockImplementation(() => Promise.resolve(
-						{ status: 200, data: [] })
+						{ status: 200, data: [] }),
 					)
 				await wrapper.setData({
 					fileInfo: { id: 111 },
@@ -395,7 +416,7 @@ describe('SearchInput.vue', () => {
 				axiosSpy.mockRestore()
 			})
 			it.each(
-				[STATE.NO_TOKEN, STATE.ERROR, STATE.OK]
+				[STATE.NO_TOKEN, STATE.ERROR, STATE.OK],
 			)(
 				'should only add work packages to the list in loading state',
 				async (state) => {
@@ -407,7 +428,7 @@ describe('SearchInput.vue', () => {
 						}))
 					// any other requests e.g. for types and statuses
 						.mockImplementation(() => Promise.resolve(
-							{ status: 200, data: [] })
+							{ status: 200, data: [] }),
 						)
 
 					const inputField = wrapper.find(inputSelector)
@@ -487,7 +508,7 @@ describe('SearchInput.vue', () => {
 				expect(postSpy).toBeCalledWith(
 					'http://localhost/apps/integration_openproject/work-packages',
 					body,
-					{ headers: { 'Content-Type': 'application/json' } }
+					{ headers: { 'Content-Type': 'application/json' } },
 				)
 				postSpy.mockRestore()
 			})
@@ -669,7 +690,7 @@ describe('SearchInput.vue', () => {
 					expect(postSpy).toBeCalledWith(
 						'http://localhost/apps/integration_openproject/work-packages',
 						body,
-						{ headers: { 'Content-Type': 'application/json' } }
+						{ headers: { 'Content-Type': 'application/json' } },
 					)
 					postSpy.mockRestore()
 				})
@@ -693,7 +714,7 @@ describe('SearchInput.vue', () => {
 							data: workPackageSearchReqResponse,
 						}))
 						.mockImplementation(() => Promise.resolve(
-							{ status: 200, data: [] })
+							{ status: 200, data: [] }),
 						)
 					await wrapper.setProps({
 						linkedWorkPackages: [{
@@ -781,7 +802,7 @@ describe('SearchInput.vue', () => {
 							expect(postSpy).toBeCalledWith(
 								'http://localhost/apps/integration_openproject/work-packages',
 								body,
-								{ headers: { 'Content-Type': 'application/json' } }
+								{ headers: { 'Content-Type': 'application/json' } },
 							)
 							postSpy.mockRestore()
 						})
@@ -805,7 +826,7 @@ describe('SearchInput.vue', () => {
 									data: workPackageSearchReqResponse,
 								}))
 								.mockImplementation(() => Promise.resolve(
-									{ status: 200, data: [] })
+									{ status: 200, data: [] }),
 								)
 							await wrapper.setProps({
 								// here already linked work package is empty when the selected files is more than 1
@@ -988,7 +1009,7 @@ describe('SearchInput.vue', () => {
 									status: 200,
 								}))
 								.mockImplementation(() => Promise.reject(
-									new Error('Throw eror')
+									new Error('Throw eror'),
 								))
 							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
 								emittedData = data

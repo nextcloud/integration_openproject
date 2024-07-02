@@ -66,18 +66,15 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import { NcModal, NcLoadingIcon, NcButton, NcProgressBar } from '@nextcloud/vue'
 import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
-import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import { translate as t } from '@nextcloud/l10n'
 
 import {
@@ -137,7 +134,7 @@ export default {
 			if (progressPercentage === 100) {
 				this.closeRequestModal()
 				showSuccess(
-					t('integration_openproject', 'Links to work package created successfully for selected files!')
+					t('integration_openproject', 'Links to work package created successfully for selected files!'),
 				)
 			}
 			return progressPercentage
@@ -161,7 +158,7 @@ export default {
 			await workpackageHelper.linkMultipleFilesToWorkPackageWithChunking(remainingFilesToChunk, selectedWorkPackage, true, this)
 			if (this.getTotalNoOfFilesAlreadyLinkedInChunking !== remainingFilesToChunk.length) {
 				showError(
-					t('integration_openproject', 'Failed to link selected files to work package')
+					t('integration_openproject', 'Failed to link selected files to work package'),
 				)
 			}
 		},

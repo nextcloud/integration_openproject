@@ -65,17 +65,14 @@
 <script>
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import WorkPackage from '../components/tab/WorkPackage.vue'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcActions, NcLoadingIcon, NcActionButton } from '@nextcloud/vue'
 import SearchInput from '../components/tab/SearchInput.vue'
 import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import axios from '@nextcloud/axios'
 
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
@@ -178,7 +175,7 @@ export default {
 		unlink(workpackageId, fileId) {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject',
-					'Are you sure you want to unlink the work package?'
+					'Are you sure you want to unlink the work package?',
 				),
 				t('integration_openproject', 'Confirm unlink'),
 				{
@@ -194,13 +191,13 @@ export default {
 							showSuccess(t('integration_openproject', 'Work package unlinked'))
 						}).catch((error) => {
 							showError(
-								t('integration_openproject', 'Failed to unlink work package')
+								t('integration_openproject', 'Failed to unlink work package'),
 							)
 							this.checkForErrorCode(error.response.status)
 						})
 					}
 				},
-				true
+				true,
 			)
 		},
 		async unlinkWorkPackage(workpackageId, fileId) {
