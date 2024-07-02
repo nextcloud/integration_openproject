@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dashboard.vue should show the notification items in the Dashboard 1`] = `
-Array [
-  Object {
+[
+  {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
     "avatarUsername": "Admin de DEV userz",
     "id": "17",
@@ -11,7 +11,7 @@ Array [
     "subText": "Scrum project - assignee, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
-  Object {
+  {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur Neumann",
     "avatarUsername": "Artur Neumannz",
     "id": "18",
@@ -20,7 +20,7 @@ Array [
     "subText": "Scrum project - mentioned",
     "targetUrl": "http://openproject.org/notifications/details/18/activity/",
   },
-  Object {
+  {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userName=",
     "avatarUsername": "undefinedz",
     "id": "24",
@@ -29,7 +29,7 @@ Array [
     "subText": "Demo project - Date alert",
     "targetUrl": "http://openproject.org/notifications/details/24/activity/",
   },
-  Object {
+  {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
     "avatarUsername": "Admin de DEV userz",
     "id": "36",

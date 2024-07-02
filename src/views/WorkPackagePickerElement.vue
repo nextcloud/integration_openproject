@@ -50,7 +50,7 @@ import { STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import { NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'WorkPackagePickerElement',

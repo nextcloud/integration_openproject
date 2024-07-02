@@ -181,7 +181,7 @@ export const workpackageHelper = {
 			showSuccess(successMessage)
 		} catch (e) {
 			showError(
-				t('integration_openproject', 'Failed to link file to work package')
+				t('integration_openproject', 'Failed to link file to work package'),
 			)
 		}
 	},

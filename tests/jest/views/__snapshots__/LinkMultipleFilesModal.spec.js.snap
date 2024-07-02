@@ -1,49 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages multiple files selected sets the "error" state if the admin config is not okay 1`] = `
-<div class="multiple-link-modal-container">
-  <ncmodal-stub title="" slideshowdelay="5000" enableswipe="true" size="normal" canclose="true" container="body" closebuttoncontained="true" additionaltrapelements="" inlineactions="0">
-    <div class="multiple-link-modal-content">
-      <div class="multiple-link-modal-inside-content">
-        <h2>
-          Link to work package
-        </h2>
-        <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" ismultipleworkpackagelinking="true" id="openproject-empty-content"></emptycontent-stub>
-      </div>
-    </div>
-  </ncmodal-stub>
-</div>
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+}
 `;
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 1`] = `
-<div class="multiple-link-modal-container">
-  <ncmodal-stub title="" slideshowdelay="5000" enableswipe="true" size="normal" canclose="true" container="body" closebuttoncontained="true" additionaltrapelements="" inlineactions="0">
-    <div class="multiple-link-modal-content">
-      <div class="multiple-link-modal-inside-content">
-        <h2>
-          Link to work package
-        </h2>
-        <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" ismultipleworkpackagelinking="true" id="openproject-empty-content"></emptycontent-stub>
-      </div>
-    </div>
-  </ncmodal-stub>
-</div>
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+}
 `;
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 2`] = `
-<div class="multiple-link-modal-container">
-  <ncmodal-stub title="" slideshowdelay="5000" enableswipe="true" size="normal" canclose="true" container="body" closebuttoncontained="true" additionaltrapelements="" inlineactions="0">
-    <div class="multiple-link-modal-content">
-      <div class="multiple-link-modal-inside-content">
-        <h2>
-          Link to work package
-        </h2>
-        <!---->
-        <emptycontent-stub state="error" errormessage="" fileinfo="[object Object]" ismultipleworkpackagelinking="true" id="openproject-empty-content"></emptycontent-stub>
-      </div>
-    </div>
-  </ncmodal-stub>
-</div>
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+}
 `;

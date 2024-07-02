@@ -3,11 +3,21 @@
 import axios from '@nextcloud/axios'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import * as initialState from '@nextcloud/initial-state'
 import { F_MODES } from '../../../src/utils.js'
 import * as dialogs from '@nextcloud/dialogs'
 
-jest.mock('@nextcloud/axios')
+jest.mock('@nextcloud/axios', () => {
+	const originalModule = jest.requireActual('@nextcloud/axios')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: {
+			get: jest.fn(),
+			put: jest.fn(),
+			post: jest.fn(),
+		},
+	}
+})
 jest.mock('@nextcloud/l10n', () => ({
 	translate: jest.fn((app, msg) => msg),
 	getLanguage: jest.fn(() => ''),
@@ -17,6 +27,22 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
+
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
+	return {
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: null,
+				oauth_client_id: null,
+				oauth_client_secret: null,
+			}
+		}),
+	}
+})
 
 const localVue = createLocalVue()
 
@@ -56,7 +82,7 @@ const selectors = {
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
-	projectFolderSetupSwitch: '.checkbox-radio-switch__label',
+	projectFolderSetupSwitch: '[type="checkbox"]',
 	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
 	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
 	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
@@ -76,15 +102,6 @@ const completeIntegrationState = {
 		nextcloud_client_secret: 'something-else',
 	},
 }
-
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
-	return {
-		openproject_instance_url: null,
-		oauth_client_id: null,
-		oauth_client_secret: null,
-	}
-})
 
 describe('AdminSettings.vue', () => {
 	afterEach(() => {
@@ -568,7 +585,7 @@ describe('AdminSettings.vue', () => {
 						expectedDialogTitle,
 						expectedDialogOpts,
 						expect.any(Function),
-						true
+						true,
 					)
 					jest.clearAllMocks()
 					wrapper.destroy()
@@ -692,7 +709,7 @@ describe('AdminSettings.vue', () => {
 										openproject_client_id: 'qwerty',
 										openproject_client_secret: 'qwerty',
 									},
-								}
+								},
 							)
 							expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
 						})
@@ -755,7 +772,7 @@ describe('AdminSettings.vue', () => {
 						expectedConfirmTitle,
 						expectedConfirmOpts,
 						expect.any(Function),
-						true
+						true,
 					)
 					wrapper.destroy()
 				})
@@ -1007,7 +1024,7 @@ describe('AdminSettings.vue', () => {
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
-							}
+							},
 						)
 					})
 
@@ -1107,7 +1124,7 @@ describe('AdminSettings.vue', () => {
 								.mockImplementationOnce(() => Promise.reject(err))
 							if (expectedErrorDetails.error !== 'The "Group folders" app is not installed') {
 								jest.spyOn(wrapper.vm, 'projectFolderSetUpErrorMessageDescription').mockReturnValue(
-									'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.'
+									'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								)
 							}
 							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
@@ -1121,7 +1138,7 @@ describe('AdminSettings.vue', () => {
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
-								}
+								},
 							)
 							await wrapper.vm.$nextTick()
 							const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
@@ -1180,7 +1197,7 @@ describe('AdminSettings.vue', () => {
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
-								}
+								},
 							)
 							await wrapper.vm.$nextTick()
 						})
@@ -1257,7 +1274,7 @@ describe('AdminSettings.vue', () => {
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
-							}
+							},
 						)
 						expect(wrapper.vm.state.app_password_set).toBe(false)
 						expect(wrapper.vm.state.oPUserAppPassword).not.toBe('userAppPassword')
@@ -1272,7 +1289,7 @@ describe('AdminSettings.vue', () => {
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
-							}
+							},
 						)
 						const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
 						const actualProjectFolderStatusValue = projectFolderStatus.text()
@@ -1455,7 +1472,7 @@ describe('AdminSettings.vue', () => {
 				expectedConfirmTitle,
 				expectedConfirmOpts,
 				expect.any(Function),
-				true
+				true,
 			)
 			wrapper.destroy()
 		})
@@ -1474,7 +1491,7 @@ describe('AdminSettings.vue', () => {
 					values: {
 						setup_app_password: true,
 					},
-				}
+				},
 			)
 			expect(wrapper.vm.oPUserAppPassword).toBe('newUserAppPassword')
 			expect(wrapper.vm.oPUserAppPassword).not.toBe('oldUserAppPassword')
@@ -1581,7 +1598,7 @@ describe('AdminSettings.vue', () => {
 					expectedConfirmTitle,
 					expectedConfirmOpts,
 					expect.any(Function),
-					true
+					true,
 				)
 			})
 
@@ -1602,7 +1619,7 @@ describe('AdminSettings.vue', () => {
 							setup_app_password: false,
 							setup_project_folder: false,
 						},
-					}
+					},
 				)
 				axios.put.mockReset()
 			})
@@ -1638,7 +1655,7 @@ describe('AdminSettings.vue', () => {
 							setup_project_folder: false,
 							setup_app_password: false,
 						},
-					}
+					},
 				)
 				// no new app password is received on response
 				expect(wrapper.vm.oPUserAppPassword).toBe(null)
@@ -1746,7 +1763,7 @@ describe('AdminSettings.vue', () => {
 						default_enable_navigation: true,
 						default_enable_unified_search: false,
 					},
-				}
+				},
 			)
 			expect(dialogs.showSuccess).toBeCalledTimes(1)
 			expect(dialogs.showSuccess).toBeCalledWith('Default user configuration saved')
@@ -1790,7 +1807,7 @@ describe('AdminSettings.vue', () => {
 				.mockImplementationOnce()
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 				.mockImplementationOnce(
-					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } })
+					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }),
 				)
 			const wrapper = getMountedWrapper({
 				state: completeIntegrationState,
@@ -1814,7 +1831,7 @@ describe('AdminSettings.vue', () => {
 				.mockImplementationOnce()
 			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 				.mockImplementationOnce(
-					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: errorCode } })
+					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: errorCode } }),
 				)
 			const wrapper = getMountedWrapper({
 				state: completeIntegrationState,

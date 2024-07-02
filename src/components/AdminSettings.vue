@@ -356,10 +356,9 @@ import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import { NcLoadingIcon, NcCheckboxRadioSwitch, NcButton } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput.vue'
@@ -368,8 +367,6 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM, USER_SETTINGS } from '../utils.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 export default {
@@ -766,7 +763,7 @@ export default {
 						await this.clearOPOAuthClientValues()
 					}
 				},
-				true
+				true,
 			)
 		},
 		async clearOPOAuthClientValues() {
@@ -796,7 +793,7 @@ export default {
 						await this.resetAllAppValues()
 					}
 				},
-				true
+				true,
 			)
 		},
 		async resetAllAppValues() {
@@ -822,7 +819,7 @@ export default {
 			this.openProjectNotReachableErrorMessageDetails = null
 			this.openProjectNotReachableErrorMessage = t(
 				'integration_openproject',
-				'Please introduce a valid OpenProject hostname'
+				'Please introduce a valid OpenProject hostname',
 			)
 			if (response.data.result === true) {
 				this.isOpenProjectInstanceValid = true
@@ -836,30 +833,30 @@ export default {
 					)
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
-						'The URL should have the form "https://openproject.org"'
+						'The URL should have the form "https://openproject.org"',
 					)
 					break
 				case 'not_valid_body':
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs'
+						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
 					)
 					break
 				case 'client_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs'
+						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
 					)
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
-						'Response:'
+						'Response:',
 					) + ' "' + response.data.details + '"'
 					break
 				}
 				case 'server_exception': {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Server replied with an error message, please check the Nextcloud logs'
+						'Server replied with an error message, please check the Nextcloud logs',
 					)
 					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
@@ -870,14 +867,14 @@ export default {
 
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Accessing OpenProject servers with local addresses is not allowed.'
+						'Accessing OpenProject servers with local addresses is not allowed.',
 					)
 					this.openProjectNotReachableErrorMessageDetails = t(
 						'integration_openproject',
 						'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
 						{ htmlLink },
 						null,
-						{ escape: false, sanitize: false }
+						{ escape: false, sanitize: false },
 					)
 					break
 				}
@@ -887,7 +884,7 @@ export default {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
 						'The given URL redirects to \'{location}\'. Please do not use a URL that leads to a redirect.',
-						{ location }
+						{ location },
 					)
 					break
 				}
@@ -897,7 +894,7 @@ export default {
 				default: {
 					this.openProjectNotReachableErrorMessage = t(
 						'integration_openproject',
-						'Could not connect to the given URL, please check the Nextcloud logs'
+						'Could not connect to the given URL, please check the Nextcloud logs',
 					)
 					this.openProjectNotReachableErrorMessageDetails = response.data.details
 					break
@@ -967,7 +964,7 @@ export default {
 					this.projectFolderSetupError = error.response.data.error
 				}
 				showError(
-					t('integration_openproject', 'Failed to save OpenProject admin options')
+					t('integration_openproject', 'Failed to save OpenProject admin options'),
 				)
 			}
 			this.notifyAboutOPOAuthTokenRevoke()
@@ -988,17 +985,17 @@ export default {
 			switch (this.oPOAuthTokenRevokeStatus) {
 			case 'connection_error':
 				showError(
-					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server')
+					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server'),
 				)
 				break
 			case 'other_error':
 				showError(
-					t('integration_openproject', 'Failed to revoke some users\' OpenProject OAuth access tokens')
+					t('integration_openproject', 'Failed to revoke some users\' OpenProject OAuth access tokens'),
 				)
 				break
 			case 'success':
 				showSuccess(
-					t('integration_openproject', 'Successfully revoked users\' OpenProject OAuth access tokens')
+					t('integration_openproject', 'Successfully revoked users\' OpenProject OAuth access tokens'),
 				)
 				break
 			default:
@@ -1021,7 +1018,7 @@ export default {
 						this.createNCOAuthClient()
 					}
 				},
-				true
+				true,
 			)
 		},
 		async completeIntegrationWithoutProjectFolderSetUp() {
@@ -1059,7 +1056,7 @@ export default {
 						await this.createNewAppPassword()
 					}
 				},
-				true
+				true,
 			)
 		},
 		async createNewAppPassword() {
@@ -1079,7 +1076,7 @@ export default {
 			}).catch((error) => {
 				showError(
 					t('integration_openproject', 'Failed to create Nextcloud OAuth client')
-					+ ': ' + error.response.request.responseText
+					+ ': ' + error.response.request.responseText,
 				)
 			})
 		},
@@ -1096,7 +1093,7 @@ export default {
 			}).catch(error => {
 				showError(
 					t('integration_openproject', 'Failed to save default user configuration')
-					+ ': ' + error.response.request.responseText
+					+ ': ' + error.response.request.responseText,
 				)
 			})
 		},

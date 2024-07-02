@@ -42,11 +42,12 @@
 				<div class="create-workpackage-form--label">
 					{{ t('integration_openproject', 'Subject *') }}
 				</div>
-				<NcInputField :value="subject"
+				<NcTextField :value.sync="subject"
 					class="create-workpackage-form--subject"
 					input-class="workpackage-subject"
 					:placeholder="t('integration_openproject', 'Work package subject')"
 					:class="{'subject-error': error}"
+					:label-outside="true"
 					type="text"
 					@update:value="onSubjectChange" />
 				<p v-if="error.error && error.attribute === 'subject'" class="validation-error">
@@ -151,12 +152,9 @@
 	</NcModal>
 </template>
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import { NcModal, NcSelect, NcButton, NcTextField } from '@nextcloud/vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
 import dompurify from 'dompurify'
 import { loadState } from '@nextcloud/initial-state'
 import { translate as t } from '@nextcloud/l10n'
@@ -206,7 +204,7 @@ const DEFAULT_ERROR_VALUE = {
 	message: null,
 	multipleErrors: {
 		project: null,
-		subject: null,
+		subject: '',
 	},
 }
 
@@ -216,7 +214,7 @@ export default {
 		NcButton,
 		NcSelect,
 		NcModal,
-		NcInputField,
+		NcTextField,
 	},
 	props: {
 		showModal: {
@@ -238,7 +236,7 @@ export default {
 		assignee: structuredClone(DEFAULT_ASSIGNEE_VALUE),
 		description: structuredClone(DEFAULT_DESCRIPTION_VALUE),
 		error: structuredClone(DEFAULT_ERROR_VALUE),
-		subject: null,
+		subject: '',
 		projectId: null,
 		customTypeError: false,
 		// when the modal opens the dropdown for selecting project gains focus automatically
@@ -291,7 +289,7 @@ export default {
 				'This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}.',
 				{ htmlLink },
 				null,
-				{ escape: false, sanitize: false }
+				{ escape: false, sanitize: false },
 			)
 			return dompurify.sanitize(message, { ADD_ATTR: ['target'] })
 		},
@@ -355,7 +353,7 @@ export default {
 			this.setToDefaultProjectType()
 			this.setDefaultProjectStatus()
 			this.setToDefaultProjectAssignee()
-			this.subject = null
+			this.subject = ''
 			this.projectId = null
 			this.availableProjects = []
 			this.noDropAvailableProjectDropDown = true
