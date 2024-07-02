@@ -810,8 +810,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$response->method('getBody')->willReturn($body);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['rawRequest'])
+			->onlyMethods(['rawRequest','isAdminAuditConfigSetCorrectly'])
 			->getMock();
+		$service
+			->method('isAdminAuditConfigSetCorrectly')
+			->willReturn(false);
 		$service
 			->method('rawRequest')
 			->willReturn($response);
@@ -873,11 +876,14 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn('');
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['rawRequest'])
+			->onlyMethods(['rawRequest','isAdminAuditConfigSetCorrectly'])
 			->getMock();
 		$service
 			->method('rawRequest')
 			->willReturn($response);
+		$service
+			->method('isAdminAuditConfigSetCorrectly')
+			->willReturn(false);
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -971,8 +977,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 	): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['rawRequest'])
+			->onlyMethods(['rawRequest', 'isAdminAuditConfigSetCorrectly'])
 			->getMock();
+		$service
+			->method('isAdminAuditConfigSetCorrectly')
+			->willReturn(false);
 		$service
 			->method('rawRequest')
 			->willThrowException($thrownException);

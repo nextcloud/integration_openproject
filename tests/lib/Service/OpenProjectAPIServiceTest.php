@@ -44,6 +44,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use PhpPact\Consumer\InteractionBuilder;
@@ -708,7 +709,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
 		);
 	}
 
@@ -725,6 +727,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IProvider|null $tokenProviderMock
 	 * @param IDBConnection|null $db
 	 * @param IURLGenerator|null $iURLGenerator
+	 * @param ILogFactory|null $iLogFactory
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -739,6 +742,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = null,
 		$tokenProviderMock = null,
 		$db = null,
+		$iLogFactory = null,
 		$iURLGenerator = null
 	): OpenProjectAPIService {
 		$onlyMethods[] = 'getBaseUrl';
@@ -775,6 +779,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($iURLGenerator === null) {
 			$iURLGenerator = $this->createMock(IURLGenerator::class);
 		}
+		if ($iLogFactory === null) {
+			$iLogFactory = $this->createMock(ILogFactory::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -795,6 +802,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$this->createMock(IEventDispatcher::class),
 					$subAdminManagerMock,
 					$db,
+					$iLogFactory,
 					$iURLGenerator
 				])
 			->onlyMethods($onlyMethods)
@@ -1926,7 +1934,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
+
 		);
 
 		$response = $service->request('', '', []);
@@ -1995,7 +2005,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -3547,6 +3558,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$configMock,
 			null,
 			null,
+			null,
 			$iULGeneratorMock
 		);
 		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
@@ -3606,5 +3618,104 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$resultGetWorkPackageInfo = $service->getWorkPackageInfo('testUser', 123);
 		$this->assertNull($resultGetWorkPackageInfo);
+	}
+
+	public function auditLogDataProvider(): array {
+		return [
+			[
+				// log level less than 1
+				0,
+				\OC::$SERVERROOT . '/data/audit.log',
+				[],
+				true,
+				false
+			],
+			[
+				// wrong path to audit file
+				1,
+				'wrong-path-to-audit-log/audit.log',
+				[],
+				true,
+				false
+			],
+			[
+				// no audit apps in apps section
+				1,
+				'/audit.log',
+				['apps' => ['no_audit_app']],
+				true,
+				false
+			],
+			[
+				// multiple values including apps with no audit apps in apps section
+				1,
+				'/audit.log',
+				['apps' => ['no_audit_app'], 'others' => []],
+				true,
+				false
+			],
+			[
+				// all values configured correctly
+				1,
+				'/audit.log',
+				['apps' => ['admin_audit']],
+				true,
+				true
+			],
+			[
+				// admin_audit app not installed
+				1,
+				'/audit.log',
+				['apps' => ['admin_audit']],
+				false,
+				false
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider auditLogDataProvider
+	 * @param int $logLevel
+	 * @param string $pathToAuditLog
+	 * @param array<mixed> $logCondition
+	 * @param string $isAdminAuditAppInstalled
+	 * @param bool $expectedResult
+	 *
+	 * @return void
+	 */
+
+	public function testIsAdminAuditConfigSetCorrectly(
+		int $logLevel,
+		string $pathToAuditLog,
+		array $logCondition,
+		bool $isAdminAuditAppInstalled,
+		bool $expectedResult
+	): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$configMock
+			->method('getSystemValue')
+			->withConsecutive(
+				['loglevel'],
+				['logfile_audit'],
+				['log.condition']
+			)->willReturnOnConsecutiveCalls($logLevel, $pathToAuditLog, $logCondition);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$iAppManagerMock->method('isInstalled')->with('admin_audit')
+			->willReturn($isAdminAuditAppInstalled);
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock
+		);
+		$actualResult = $service->isAdminAuditConfigSetCorrectly();
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 }
