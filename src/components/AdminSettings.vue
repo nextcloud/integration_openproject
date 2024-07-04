@@ -48,7 +48,7 @@
 					@click="saveOpenProjectHostUrl">
 					<template #icon>
 						<NcLoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else :size="20" />
+						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
 					</template>
 					{{ t('integration_openproject', 'Save') }}
 				</NcButton>
@@ -101,7 +101,7 @@
 						@click="saveOPOAuthClientValues">
 						<template #icon>
 							<NcLoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else :size="20" />
+							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Save') }}
 					</NcButton>
@@ -149,7 +149,7 @@
 						data-test-id="submit-nc-oauth-values-form-btn"
 						@click="setNCOAuthFormToViewMode">
 						<template #icon>
-							<CheckBoldIcon :size="20" />
+							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Yes, I have copied these values') }}
 					</NcButton>
@@ -198,7 +198,7 @@
 								data-test-id="complete-without-project-folder-form-btn"
 								@click="completeIntegrationWithoutProjectFolderSetUp">
 								<template #icon>
-									<CheckBoldIcon :size="20" />
+									<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
 								</template>
 								{{
 									textLabelProjectFolderSetupButton
@@ -233,7 +233,7 @@
 								@click="setUpProjectGroupFolders">
 								<template #icon>
 									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
-									<CheckBoldIcon v-else :size="20" />
+									<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
 								</template>
 								{{ textLabelProjectFolderSetupButton }}
 							</NcButton>
@@ -300,7 +300,7 @@
 						data-test-id="submit-op-system-password-form-btn"
 						@click="setOPUserAppPasswordToViewMode">
 						<template #icon>
-							<CheckBoldIcon :size="20" />
+							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
 						</template>
 						{{ t('integration_openproject', 'Done, complete setup') }}
 					</NcButton>
