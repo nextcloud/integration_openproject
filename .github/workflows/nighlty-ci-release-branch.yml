@@ -2,7 +2,7 @@ name: Nightly CI Release
 
 on:
   schedule:
-    - cron: '0 22 * * *' # run at 10 PM UTC
+    - cron: '0 23 * * *' # run at 10 PM UTC
 
 jobs:
   builds:
