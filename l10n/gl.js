@@ -33,7 +33,7 @@ OC.L10N.register(
     "OpenProject user, group and folder" : "Usuario, grupo e cartafol de OpenProject",
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para xestionar automaticamente os cartafoles do proxecto, esta aplicación necesita configurar un cartafol de grupo especial, asignado a un grupo e xestionado por un usuario, cada un chamado «OpenProject».",
     "The app will never delete files or folders, even if you deactivate this later." : "A aplicación nunca eliminará ficheiros ou cartafoles, aínda que a desactive máis tarde.",
-    "Retry setup OpenProject user, group and folder" : "Volva tentar estabelecer o usuario, o grupo e o cartafol de OpenProject",
+    "Retry setup OpenProject user, group and folder" : "Volva tentar definir o usuario, o grupo e o cartafol de OpenProject",
     "Automatically managed folders:" : "Cartafoles xestionados automaticamente:",
     "For user \"OpenProject\", several \"Terms of services\" have not been signed." : "Para o usuario de «OpenProject», non foron asinadas varias «Condicións de servizo».",
     "Sign any unsigned \"Terms Of Services\" for user \"OpenProject\"." : "Asinar calquera «Condicións de servizo» sen asinar para o usuario «OpenProject».",
