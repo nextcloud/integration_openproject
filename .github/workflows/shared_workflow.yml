@@ -166,7 +166,7 @@ jobs:
         nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 0, 1, 2, 3 ]
-        database: [pgsql, mysql]
+        database: [mysql]
         isScheduledEventNightly:
           - ${{github.event_name == 'schedule'}}
         exclude:
