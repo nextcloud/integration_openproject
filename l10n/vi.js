@@ -10,6 +10,7 @@ OC.L10N.register(
     "Description" : "Mô tả",
     "Create" : "‎Tạo‎",
     "Mark as read" : "Đánh dấu đã đọc",
+    "Connected accounts" : "Đã kết nối tài khoản",
     "Reset" : "Đặt lại",
     "Connected as {user}" : "Kết nối bởi {user}",
     "Documentation" : "Tài liệu"
