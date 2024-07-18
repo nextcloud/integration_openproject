@@ -24,7 +24,7 @@
 			</template>
 			<template v-if="!isSmartPicker" #list-footer>
 				<li class="create-workpackage-footer-option" @click="openCreateWorkpackageModal()">
-					<Plus :size="20" fill-color="var(--color-primary)" />
+					<Plus :size="20" fill-color="var(--color-primary-element)" />
 					<span class="create-workpackage-footer-option--label">{{ t('integration_openproject', 'Create and link a new work package') }}</span>
 				</li>
 			</template>
@@ -343,7 +343,7 @@ export default {
 		background: var(--color-main-background);
 		overflow-y: hidden;
 		&--label {
-			color: var(--color-primary);
+			color: var(--color-primary-element);
 			padding-left: 5px;
 			font-size: 14px;
 			font-weight: 400;
