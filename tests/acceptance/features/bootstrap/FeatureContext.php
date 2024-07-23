@@ -639,9 +639,10 @@ class FeatureContext implements Context {
 		}
 
 		$input = preg_replace_callback(
-			'/%now\\+(\\d+)s%/',
+			'/%now([+-])(\\d+)s%/',
 			function ($matches) {
-				$result = time() + (int)$matches[1];
+				$operator = $matches[1];
+				$result = ($operator === '+') ? time() + (int)$matches[2] : time() - (int)$matches[2];
 				return (string) $result;
 			},
 			$input
