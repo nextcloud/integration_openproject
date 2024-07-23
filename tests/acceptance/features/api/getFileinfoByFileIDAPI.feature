@@ -1348,3 +1348,33 @@ Feature: retrieve file information of a single file, using the file ID
       }
       }
       """
+
+  Scenario: check creation date with direct upload
+    Given user "Carol" has been created
+    And user "Carol" got a direct-upload token for "/"
+    When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
+      | file_name | textfile0.txt |
+      | data      | some data     |
+    And user "Carol" gets the information of the folder "/textfile0.txt"
+    Then the HTTP status code should be "200"
+    And the ocs data of the response should match
+    """"
+      {
+      "type": "object",
+      "required": [
+      "id",
+      "name",
+      "ctime"
+      ],
+      "not": {
+      "required": [
+      "trashed"
+      ]
+      },
+      "properties": {
+      "id" : {"type" : "integer", "minimum": 1, "maximum": 99999},
+      "ctime" : {"type" : "integer", "pattern": "^\\d{10}$"},
+      "name": {"type": "string", "pattern": "^textfile0.txt$"}
+      }
+      }
+      """
