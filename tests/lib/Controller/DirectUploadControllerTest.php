@@ -23,6 +23,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OC\Files\View;
 use OCP\Files\Folder;
 use OCP\Files\InvalidContentException;
 use OCP\IL10N;
@@ -291,12 +292,14 @@ class DirectUploadControllerTest extends TestCase {
 		$userManagerMock->method('get')->willReturn($userMock);
 
 		$requestMock = $this->getMockBuilder(IRequest::class)->disableOriginalConstructor()->getMock();
+
 		$requestMock->method('getUploadedFile')->willReturn([
 			'name' => 'file.txt',
 			'tmp_name' => $uploadedFileTmpName,
 			'size' => $uploadedFileSize,
 			'error' => $uploadedFileError
 		]);
+		$viewMock = $this->getMockBuilder(View::class)->disableOriginalConstructor()->getMock();
 		return new DirectUploadController(
 			'integration_openproject',
 			$requestMock,
@@ -307,6 +310,7 @@ class DirectUploadControllerTest extends TestCase {
 			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
 			$this->l,
 			'testUser',
+			$viewMock
 		);
 	}
 
