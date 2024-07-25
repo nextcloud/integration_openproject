@@ -319,10 +319,9 @@ class OpenProjectAPIService {
 			$response = $this->rawRequest(
 				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar'
 			);
-			$headers = $response->getHeaders();
 			return [
 				'avatar' => $response->getBody(),
-				'type' => implode(',', $headers['Content-Type']),
+				'type' => $response->getHeader('Content-Type'),
 			];
 		} catch (ServerException | ClientException | ConnectException | Exception $e) {
 			$this->logger->debug('Error while getting OpenProject avatar for user ' . $openprojectUserId . ': ' . $e->getMessage(), ['app' => $this->appName]);
