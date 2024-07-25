@@ -990,10 +990,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
-			->setQuery("pageSize=-1&filters=" . json_encode([[
-				'readIAN' =>
-					['operator' => '=', 'values' => ['f']]
-			]], JSON_THROW_ON_ERROR))
+			->setQuery(
+				[
+					"pageSize" => "-1",
+					"filters" => json_encode([[
+						'readIAN' =>
+							['operator' => '=', 'values' => ['f']]
+					]], JSON_THROW_ON_ERROR)
+				]
+			)
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -2790,7 +2795,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('POST')
 			->setPath($this->notificationsPath . '/read_ian')
-			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["123"]}}]'))
+			->setQuery(['filters' => '[{"resourceId":{"operator":"=","values":["123"]}}]'])
 			->setHeaders(['Authorization' => 'Bearer 1234567890'])
 			->setBody(null);
 		$providerResponse = new ProviderResponse();
@@ -2818,7 +2823,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('POST')
 			->setPath($this->notificationsPath . '/read_ian')
-			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["789"]}}]'))
+			->setQuery(['filters' => '[{"resourceId":{"operator":"=","values":["789"]}}]'])
 			->setHeaders(['Authorization' => 'Bearer 1234567890'])
 			->setBody(null);
 		$providerResponse = new ProviderResponse();
