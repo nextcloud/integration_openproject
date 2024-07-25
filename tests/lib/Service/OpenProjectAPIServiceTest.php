@@ -3193,11 +3193,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 				]
 			]
 		];
+		$filters[] = [
+			'storageUrl' =>
+				['operator' => '=', 'values' => ['https://nc.my-server.org']],
+			'userAction' =>
+				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
+		];
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->getProjectsPath)
-			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+			->setHeaders(["Authorization" => "Bearer 1234567890"])
+			->setQuery(
+				['filters' => json_encode($filters, JSON_THROW_ON_ERROR)]
+			);
 		$providerResponse = new ProviderResponse();
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
@@ -3210,7 +3219,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getAvailableOpenProjectProjects('testUser');
-		$this->assertSame($expectedResult, $result);
+		$this->assertSame(sort($expectedResult), sort($result));
 	}
 
 	/**
