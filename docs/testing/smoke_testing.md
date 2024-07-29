@@ -11,7 +11,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 ### 2. Connect Nextcloud with OpenProject (Without project folder setup)
 - [ ] Complete Smoke Test No 1.
-- [ ] In `Nextcloud`, navigate to `Personal Settings > Openproject` and connect to `Openproject`.
+- [ ] In `Nextcloud`, navigate to `Personal Settings > Openproject` and click on `Connect to OpenProject` button.
 - [ ] `Nextcloud` admin should be connected as an `OpenProject` admin.
 - [ ] Also, create a user in both `Nextcloud` as well as `OpenProject`.
 - [ ] From the personal section of the created user in `Nextcloud`, connect to `OpenProject`.
