@@ -3,7 +3,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 ## Smoke Test for `integration_openproject` (In Nextcloud and OpenProject)
 ### 1. Oauth configuration (without project folder setup/Automatically managed folders)
-- [ ] In `OpenProject`, navigate to `Administration > File storages`.
+- [ ] In `OpenProject`, navigate to `Administration > Files`.
 - [ ] Create a file storage type `Nextcloud` and name it as `Nextcloud` in `OpenProject`.
 - [ ] In admin setting of `Nextcloud`, navigate to `Administration Settings > OpenProject`.
 - [ ] Copy `OpenProject` Oauth Credential (client_id and client_secret) and save them in `Nextcloud`.
@@ -11,7 +11,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 ### 2. Connect Nextcloud with OpenProject (Without project folder setup)
 - [ ] Complete Smoke Test No 1.
-- [ ] In personal setting of `Nextcloud` admin, navigate to `Administration Settings > OpenProject`  and connect to `OpenProject`.
+- [ ] In `Nextcloud`, navigate to `Personal Settings > Openproject` and click on `Connect to OpenProject` button.
 - [ ] `Nextcloud` admin should be connected as an `OpenProject` admin.
 - [ ] Also, create a user in both `Nextcloud` as well as `OpenProject`.
 - [ ] From the personal section of the created user in `Nextcloud`, connect to `OpenProject`.
@@ -20,10 +20,8 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 ### 3. Add File storage (Nextcloud) to an OpenProject project
 - [ ] Complete Smoke Test No 1.
 - [ ] Select an `OpenProject` Project (for example, `Demo Project`) in `OpenProject`.
-- [ ] Navigate to `Project settings > modules` of `Demo Project`.
-- [ ] In modules, check `File storages`, choose `No specific Folder` option and save the setting.
-- [ ] Now `Project settings > File storages` option is visible
-- [ ] Navigate to `Project settings > File storages` and add a file storage name `Nextcloud` for `Demo Project`.
+- [ ] Navigate to `Project settings > Files` of `Demo Project`.
+- [ ] Add a file storage name `Nextcloud`( choose `No specific Folder` option ) for `Demo Project`.
 
 ### 4. Connect OpenProject with Nextcloud
 - [ ] Complete Smoke Test No 1.
@@ -32,6 +30,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] Navigate to `Files` tab, and login to `Nextcloud`.
 - [ ] `OpenProject` admin is connected to `Nextcloud` as a `Nextcloud` admin.
 - [ ] Also, create a user in both `Nextcloud` as well as `OpenProject`.
+- [ ] Add the created `OpenProject` user as the member of `Demo Project` project (admin can add members to a project).
 - [ ] Try to connect the created `OpenProject` user as created `Nextcloud` user.
 - [ ] `OpenProject` user should be connected as a `Nextcloud` user.
 
