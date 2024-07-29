@@ -1098,12 +1098,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->builder
 			->uponReceiving('an OAuth GET request to /work_packages with invalid OAuth Token')
 			->with($consumerRequestInvalidOAuthToken)
-			->willRespondWith($providerResponseInvalidOAuthToken);
+			->willRespondWith($providerResponseInvalidOAuthToken, false);
 
 		$refreshTokenRequest = new ConsumerRequest();
 		$refreshTokenRequest
 			->setMethod('POST')
 			->setPath('/oauth/token')
+			->addHeader('Content-Type','application/x-www-form-urlencoded')
+			->addHeader('User-Agent', 'Nextcloud OpenProject integration')
 			->setBody(
 				'client_id=' . $this->clientId .
 				'&client_secret=' . $this->clientSecret .
@@ -1113,14 +1115,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$refreshTokenResponse = new ProviderResponse();
 		$refreshTokenResponse
 			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
 			->setBody([
 				"access_token" => "new-Token",
 				"refresh_token" => "newRefreshToken"
 			]);
 
-		$this->builder->uponReceiving('a POST request to renew token')
+		$this->builder->newInteraction();
+		$this->builder
+			->uponReceiving('a POST request to renew token')
 			->with($refreshTokenRequest)
-			->willRespondWith($refreshTokenResponse);
+			->willRespondWith($refreshTokenResponse, false);
 
 		$consumerRequestNewOAuthToken = new ConsumerRequest();
 		$consumerRequestNewOAuthToken
@@ -1134,6 +1139,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]]);
 
+		$this->builder->newInteraction();
 		$this->builder
 			->uponReceiving('an OAuth GET request to /work_packages with new Token')
 			->with($consumerRequestNewOAuthToken)
