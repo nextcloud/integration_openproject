@@ -1104,7 +1104,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$refreshTokenRequest
 			->setMethod('POST')
 			->setPath('/oauth/token')
-			->addHeader('Content-Type','application/x-www-form-urlencoded')
+			->addHeader('Content-Type', 'application/x-www-form-urlencoded')
 			->addHeader('User-Agent', 'Nextcloud OpenProject integration')
 			->setBody(
 				'client_id=' . $this->clientId .
