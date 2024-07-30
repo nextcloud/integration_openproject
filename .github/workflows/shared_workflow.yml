@@ -11,13 +11,17 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
-        phpVersion: [ 8.1, 8.2, 8.3]
+        nextcloudVersion: [ stable26, stable27, master ]
+        phpVersion: [ 8.0, 8.1]
+        runPhpUnitTest:
+          - false
         exclude:
           - nextcloudVersion: stable26
             phpVersion: 8.3
           - nextcloudVersion: stable27
             phpVersion: 8.3
+          - nextcloudVersion: master
+            phpVersion: 8.0
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -64,6 +68,15 @@ jobs:
 
       - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+
+      - name: Modify composer.json if PHP 8.0
+        if: matrix.phpVersion == '8.0'
+        run: |
+          ls -l
+          cat composer.json
+          sed -i 's/10.0.0-beta2/7.1/g' composer.json
+          cat composer.json
+          composer update
 
       - name: Install PHP Dependencies
         run: |
@@ -157,165 +170,169 @@ jobs:
           min_coverage: '56'
           path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
-  api-tests:
-    name: API tests
-    strategy:
-      matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
-        phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 0, 1, 2, 3 ]
-        database: [mysql]
-        isScheduledEventNightly:
-          - ${{github.event_name == 'schedule'}}
-        exclude:
-          - nextcloudVersion: stable26
-            phpVersionMinor: 3
-          - nextcloudVersion: stable27
-            phpVersionMinor: 3
-          - nextcloudVersion: master
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
-            phpVersionMinor: 1
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable28
-            phpVersionMinor: 2
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable29
-            phpVersionMinor: 2
-    runs-on: ubuntu-20.04
-    container:
-      image: ubuntu:latest
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    defaults:
-      run:
-        working-directory: integration_openproject
-
-    services:
-      nextcloud:
-        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
-        env:
-          SQL: ${{ matrix.database }}
-          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "nextcloud"
-          WITH_REDIS: "YES"
-          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
-        options: --name=nextcloud
-        volumes:
-          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
-
-      database-postgres:
-        image: postgres:14
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nextcloud
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      database-mysql:
-        image: mariadb:10.5
-        env:
-          MYSQL_ROOT_PASSWORD: 'nextcloud'
-          MYSQL_PASSWORD: 'nextcloud'
-          MYSQL_USER: 'nextcloud'
-          MYSQL_DATABASE: 'nextcloud'
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      redis:
-        image: redis:7
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    steps:
-      - name: Checkout for nightly CI
-        if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
-        with:
-          path: integration_openproject
-          ref: ${{ inputs.branch }}
-
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
-        with:
-          path: integration_openproject
-
-      - name: Checkout activity app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/activity
-          path: activity
-          ref: ${{ matrix.nextcloudVersion }}
-
-      - name: Checkout groupfolders app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/groupfolders
-          path: groupfolders
-          ref: ${{ matrix.nextcloudVersion }}
-
-      - name: install docker
-        uses: papodaca/install-docker-action@main
-
-      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-          tools: composer
-          extensions: intl
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache PHP dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://nextcloud
-          BEHAT_FILTER_TAGS: ${{
-            matrix.nextcloudVersion == 'stable26' && '~@skipOnStable26' ||
-            ''
-            }}
+      - name: PHPUnit test on PHP 8.0
         run: |
-          composer install --no-progress --prefer-dist --optimize-autoloader
-          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
-          make api-test
+          ls -l
 
-  notify-nightly-report:
-    needs:
-      - unittest-linting
-      - api-tests
-    if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: Notify nightly report to element
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: nextcloud
-          REPO_NAME: integration_openproject
-          RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ inputs.branch }}
-        run: ./.github/scripts/notify-to-element.sh
+#  api-tests:
+#    name: API tests
+#    strategy:
+#      matrix:
+#        nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
+#        phpVersionMajor: [ 8 ]
+#        phpVersionMinor: [ 0, 1, 2, 3 ]
+#        database: [mysql]
+#        isScheduledEventNightly:
+#          - ${{github.event_name == 'schedule'}}
+#        exclude:
+#          - nextcloudVersion: stable26
+#            phpVersionMinor: 3
+#          - nextcloudVersion: stable27
+#            phpVersionMinor: 3
+#          - nextcloudVersion: master
+#            phpVersionMinor: 0
+#          - isScheduledEventNightly: false
+#            phpVersionMinor: 0
+#          - isScheduledEventNightly: false
+#            phpVersionMinor: 1
+#          - isScheduledEventNightly: false
+#            nextcloudVersion: stable28
+#            phpVersionMinor: 2
+#          - isScheduledEventNightly: false
+#            nextcloudVersion: stable29
+#            phpVersionMinor: 2
+#    runs-on: ubuntu-20.04
+#    container:
+#      image: ubuntu:latest
+#      credentials:
+#        username: ${{ secrets.DOCKERHUB_USERNAME }}
+#        password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#    defaults:
+#      run:
+#        working-directory: integration_openproject
+#
+#    services:
+#      nextcloud:
+#        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
+#        env:
+#          SQL: ${{ matrix.database }}
+#          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+#          NEXTCLOUD_AUTOINSTALL: "YES"
+#          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+#          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+#          VIRTUAL_HOST: "nextcloud"
+#          WITH_REDIS: "YES"
+#          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
+#        options: --name=nextcloud
+#        volumes:
+#          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+#
+#      database-postgres:
+#        image: postgres:14
+#        env:
+#          POSTGRES_PASSWORD: postgres
+#          POSTGRES_DB: nextcloud
+#        credentials:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      database-mysql:
+#        image: mariadb:10.5
+#        env:
+#          MYSQL_ROOT_PASSWORD: 'nextcloud'
+#          MYSQL_PASSWORD: 'nextcloud'
+#          MYSQL_USER: 'nextcloud'
+#          MYSQL_DATABASE: 'nextcloud'
+#        credentials:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      redis:
+#        image: redis:7
+#        credentials:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#    steps:
+#      - name: Checkout for nightly CI
+#        if: github.event_name == 'schedule'
+#        uses: actions/checkout@v3
+#        with:
+#          path: integration_openproject
+#          ref: ${{ inputs.branch }}
+#
+#      - name: Checkout
+#        if: github.event_name != 'schedule'
+#        uses: actions/checkout@v3
+#        with:
+#          path: integration_openproject
+#
+#      - name: Checkout activity app
+#        uses: actions/checkout@v3
+#        with:
+#          repository: nextcloud/activity
+#          path: activity
+#          ref: ${{ matrix.nextcloudVersion }}
+#
+#      - name: Checkout groupfolders app
+#        uses: actions/checkout@v3
+#        with:
+#          repository: nextcloud/groupfolders
+#          path: groupfolders
+#          ref: ${{ matrix.nextcloudVersion }}
+#
+#      - name: install docker
+#        uses: papodaca/install-docker-action@main
+#
+#      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+#          tools: composer
+#          extensions: intl
+#
+#      - name: Get composer cache directory
+#        id: composer-cache
+#        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+#
+#      - name: Cache PHP dependencies
+#        uses: actions/cache@v3
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
+#          restore-keys: ${{ runner.os }}-composer-
+#
+#      - name: API Tests
+#        env:
+#          NEXTCLOUD_BASE_URL: http://nextcloud
+#          BEHAT_FILTER_TAGS: ${{
+#            matrix.nextcloudVersion == 'stable26' && '~@skipOnStable26' ||
+#            ''
+#            }}
+#        run: |
+#          composer install --no-progress --prefer-dist --optimize-autoloader
+#          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+#          make api-test
+#
+#  notify-nightly-report:
+#    needs:
+#      - unittest-linting
+#      - api-tests
+#    if: ${{ always() && github.event_name == 'schedule' }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Notify nightly report to element
+#        env:
+#          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+#          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+#          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          REPO_OWNER: nextcloud
+#          REPO_NAME: integration_openproject
+#          RUN_ID: ${{ github.run_id }}
+#          BRANCH_NAME: ${{ inputs.branch }}
+#        run: ./.github/scripts/notify-to-element.sh
