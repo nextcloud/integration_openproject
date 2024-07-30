@@ -6,7 +6,8 @@
 		"nextcloud/coding-standard": "^1.0",
 		"behat/behat": "^3.10",
 		"helmich/phpunit-json-assert": "^3.4",
-		"vimeo/psalm": "5.23.1"
+		"vimeo/psalm": "5.23.1",
+		"guzzlehttp/guzzle": "^7.9"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
