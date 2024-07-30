@@ -56,16 +56,14 @@ import { loadState } from '@nextcloud/initial-state'
 import debounce from 'lodash/debounce.js'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import { NcSelect, NcButton } from '@nextcloud/vue'
 import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { NO_OPTION_TEXT_STATE, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500

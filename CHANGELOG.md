@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add application's support for Nextcloud 30
 - Log admin configuration to  audit log (`/audit.log`)
 - Improve button text visibility when selecting different background images in Nextcloud's UI
+- Bump packages version
 
 ## 2.6.3 - 2024-04-17
 ### Changed

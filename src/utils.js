@@ -20,8 +20,8 @@ export function checkOauthConnectionResult(oauthConnectionResult, oauthConnectio
 		showError(
 			t(
 				'integration_openproject',
-				'OAuth access token could not be obtained:'
-			) + ' ' + oauthConnectionErrorMessage
+				'OAuth access token could not be obtained:',
+			) + ' ' + oauthConnectionErrorMessage,
 		)
 	}
 }

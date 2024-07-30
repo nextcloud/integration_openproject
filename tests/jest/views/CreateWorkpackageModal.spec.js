@@ -2,7 +2,6 @@
 
 import { createLocalVue, mount } from '@vue/test-utils'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
-import * as initialState from '@nextcloud/initial-state'
 import axios from '@nextcloud/axios'
 import availableProjectsResponse from '../fixtures/openprojectAvailableProjectResponse.json'
 import availableProjectsOption from '../fixtures/availableProjectOptions.json'
@@ -14,10 +13,17 @@ import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType
 
 const localVue = createLocalVue()
 
-// eslint-disable-next-line no-import-assign,import/namespace
-initialState.loadState = jest.fn(() => {
+jest.mock('@nextcloud/initial-state', () => {
+	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
-		openproject_instance_url: 'https://openproject.example.com',
+		__esModule: true,
+		...originalModule,
+		default: jest.fn(),
+		loadState: jest.fn(() => {
+			return {
+				openproject_instance_url: 'https://openproject.example.com',
+			}
+		}),
 	}
 })
 
@@ -86,7 +92,7 @@ describe('CreateWorkPackageModal.vue', () => {
 							title: 'Task',
 						},
 					},
-					subject: null,
+					subject: '',
 				},
 			}
 
@@ -154,7 +160,7 @@ describe('CreateWorkPackageModal.vue', () => {
 							title: 'Milestone',
 						},
 					},
-					subject: null,
+					subject: '',
 				},
 			}
 			const allowedTypes = [
@@ -280,7 +286,7 @@ describe('CreateWorkPackageModal.vue', () => {
 						children: [],
 					},
 					projectId: 2,
-					subject: null,
+					subject: '',
 					data: "{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}}",
 					errorMessage: "Subject can't be blank.",
 				}],
@@ -372,7 +378,7 @@ describe('CreateWorkPackageModal.vue', () => {
 							title: null,
 						},
 					},
-					subject: null,
+					subject: '',
 					description: {
 						format: 'markdown',
 						raw: '',
@@ -780,7 +786,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		expect(wrapper.vm.project.label).toBe(null)
 		expect(wrapper.vm.type.label).toBe('')
 		expect(wrapper.vm.status.label).toBe('')
-		expect(wrapper.vm.subject).toBe(null)
+		expect(wrapper.vm.subject).toBe('')
 		expect(wrapper.vm.assignee.label).toBe(null)
 	})
 

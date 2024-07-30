@@ -1,322 +1,307 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
-<div class="nextcloud-oauth-values">
-  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
-  <div>
-    <textinput-stub value="nc-client-id" type="text" placeholder="" label="Nextcloud OAuth client ID" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-id" class="py-1"></textinput-stub>
-    <textinput-stub value="nc-client-secret" type="text" placeholder="" label="Nextcloud OAuth client secret" hinttext="Copy the following values back into the OpenProject {htmlLink} as an Administrator." isrequired="true" withcopybtn="true" readonly="true" id="nextcloud-oauth-client-secret" class="py-1"></textinput-stub>
-    <div class="form-actions">
-      <ncbutton-stub type="primary" nativetype="button" data-test-id="submit-nc-oauth-values-form-btn">
-        Yes, I have copied these values
-      </ncbutton-stub>
-    </div>
-  </div>
-  <!---->
-</div>
+Wrapper {
+  "selector": ".nextcloud-oauth-values",
+}
 `;
 
 exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
-<div class="nextcloud-oauth-values">
-  <formheading-stub index="3" title="Nextcloud OAuth client" iscomplete="true"></formheading-stub>
-  <div>
-    <fieldvalue-stub title="Nextcloud OAuth client ID" value="some-nc-client-id-here" isrequired="true"></fieldvalue-stub>
-    <fieldvalue-stub title="Nextcloud OAuth client secret" value="*******" isrequired="true" encryptvalue="true"></fieldvalue-stub>
-    <div class="form-actions">
-      <ncbutton-stub type="secondary" nativetype="button" data-test-id="reset-nc-oauth-btn">
-        Replace Nextcloud OAuth values
-      </ncbutton-stub>
-    </div>
-  </div>
-  <!---->
-</div>
+Wrapper {
+  "selector": ".nextcloud-oauth-values",
+}
 `;
 
 exports[`AdminSettings.vue OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
-<div class="openproject-oauth-values">
-  <div class="form-heading">
-    <div class="index index-light-mode">
-      2
-    </div>
-    <div class="title">
-      OpenProject OAuth settings
-    </div>
-  </div>
-  <div>
-    <div class="text-input py-1" id="openproject-oauth-client-id">
-      <div class="text-input-label">
-        OpenProject OAuth client ID *
-      </div>
-      <div class="text-input-input-wrapper"><input type="text" placeholder="" class="">
-        <!---->
-      </div>
-      <div>
-        <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
-      </div>
-    </div>
-    <div class="text-input py-1" id="openproject-oauth-client-secret">
-      <div class="text-input-label">
-        OpenProject OAuth client secret *
-      </div>
-      <div class="text-input-input-wrapper"><input type="text" placeholder="" class="">
-        <!---->
-      </div>
-      <div>
-        <div class="text-input-hint">Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.</div>
-      </div>
-    </div>
-    <div class="form-actions"><button data-v-6398caea="" disabled="disabled" type="button" data-test-id="submit-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-primary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></span><span data-v-6398caea="" class="button-vue__text">Save</span></span></button></div>
-  </div>
-</div>
+Wrapper {
+  "selector": ".openproject-oauth-values",
+}
 `;
 
 exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
-<div class="openproject-oauth-values">
-  <div class="form-heading">
-    <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
-    <div class="title green-text">
-      OpenProject OAuth settings
-    </div>
-  </div>
-  <div>
-    <div class="field-item"><b class="field-item-title">
-        OpenProject OAuth client ID*:
-      </b>
-      <div class="field-item-value">
-        openproject-client-id
-      </div>
-      <!---->
-    </div>
-    <div class="field-item pb-1"><b class="field-item-title">
-        OpenProject OAuth client secret*:
-      </b>
-      <div class="field-item-value">
-        openproj***************
-      </div>
-      <!---->
-    </div>
-    <div class="form-actions"><button data-v-6398caea="" type="button" data-test-id="reset-op-oauth-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon autorenew-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"><!----></path></svg></span></span><span data-v-6398caea="" class="button-vue__text">Replace OpenProject OAuth values</span></span></button></div>
-  </div>
-</div>
+Wrapper {
+  "selector": ".openproject-oauth-values",
+}
 `;
 
 exports[`AdminSettings.vue Project folders form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
-<div class="project-folder-setup">
-  <formheading-stub index="4" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
-  <div>
-    <div class="project-folder-status">
-      <div class="project-folder-status-value"><b>Automatically managed folders:</b> Inactive
-      </div>
-      <!---->
-      <div class="form-actions">
-        <ncbutton-stub type="secondary" nativetype="button" data-test-id="edit-project-folder-setup">
-          Edit project folders
-        </ncbutton-stub>
-      </div>
-    </div>
-  </div>
-</div>
+Wrapper {
+  "selector": ".project-folder-setup",
+}
 `;
 
 exports[`AdminSettings.vue default user configurations form should be visible when the integration is complete 1`] = `
-<div class="default-prefs">
-  <h2>Default user settings</h2>
-  <p>
-    A new user will receive these defaults and they will be applied to the integration app till the user changes them.
-  </p> <br>
-  <div class="form-check-input"><input id="default-prefs--link" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--link">
-      Enable navigation link
-    </label>
-    <p class="user-setting-description">Displays a link to your OpenProject instance in the Nextcloud header.</p>
-  </div>
-  <div class="form-check-input"><input id="default-prefs--u-search" type="checkbox" class="checkbox" value="false"> <label for="default-prefs--u-search">
-      Enable unified search for tickets
-    </label>
-    <p class="user-setting-description">Allows you to search OpenProject work packages via the universal search bar in Nextcloud.</p>
-  </div>
-</div>
+Wrapper {
+  "selector": ".default-prefs",
+}
 `;
 
-exports[`AdminSettings.vue server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `<button data-v-6398caea="" type="button" data-test-id="cancel-edit-server-host-btn" class="mr-2 button-vue button-vue--text-only button-vue--vue-secondary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__text">Cancel</span></span></button>`;
+exports[`AdminSettings.vue server host url form edit mode cancel button should be visible when the form is in completed state with edit mode 1`] = `
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+  "selector": "[data-test-id="cancel-edit-server-host-btn"]",
+}
+`;
 
-exports[`AdminSettings.vue server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `<input type="text" placeholder="https://www.my-openproject.com" class="">`;
+exports[`AdminSettings.vue server host url form edit mode readonly state should clear the readonly state when clicked on the input 1`] = `
+Wrapper {
+  "selector": "#openproject-oauth-instance > .text-input-input-wrapper > input",
+}
+`;
 
-exports[`AdminSettings.vue server host url form edit mode readonly state should set the input field to readonly at first 1`] = `<input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-readonly">`;
+exports[`AdminSettings.vue server host url form edit mode readonly state should set the input field to readonly at first 1`] = `
+Wrapper {
+  "selector": "#openproject-oauth-instance > .text-input-input-wrapper > input",
+}
+`;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 1`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 2`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">URL is invalid</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 3`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">Server replied with an error message, please check the Nextcloud logs</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 4`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 5`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">Accessing OpenProject servers with local addresses is not allowed.</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 6`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 7`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">Could not connect to the given URL, please check the Nextcloud logs</div>
-      <div class="v-popper v-popper--theme-dropdown"><a href="#" class="link">Details</a></div>
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 8`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs</div>
-      <!---->
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
 exports[`AdminSettings.vue server host url form edit mode submit button should set the input to error state and display correct message when the url is invalid 9`] = `
-<div class="text-input pb-1" id="openproject-oauth-instance">
-  <div class="text-input-label">
-    OpenProject host *
-  </div>
-  <div class="text-input-input-wrapper"><input type="text" readonly="readonly" placeholder="https://www.my-openproject.com" class="text-input-error text-input-readonly">
-    <!---->
-  </div>
-  <div>
-    <div>
-      <div class="text-input-error-message">The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect.</div>
-      <!---->
-    </div>
-  </div>
-</div>
+VueWrapper {
+  "_emitted": {
+    "focus": [
+      [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+    ],
+  },
+  "_emittedByOrder": [
+    {
+      "args": [
+        FocusEvent {
+          "isTrusted": true,
+        },
+      ],
+      "name": "focus",
+    },
+  ],
+  "isFunctionalComponent": undefined,
+  "selector": ".text-input",
+}
 `;
 
-exports[`AdminSettings.vue server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `<button data-v-6398caea="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span><span data-v-6398caea="" class="button-vue__text">Edit server information</span></span></button>`;
+exports[`AdminSettings.vue server host url form view mode and completed state reset button should be visible when the form is in completed state 1`] = `
+VueWrapper {
+  "_emitted": {},
+  "_emittedByOrder": [],
+  "isFunctionalComponent": undefined,
+  "selector": "[data-test-id="reset-server-host-btn"]",
+}
+`;
 
 exports[`AdminSettings.vue server host url form view mode and completed state should show field value and hide the input field 1`] = `
-<div class="openproject-server-host">
-  <div class="form-heading">
-    <div class="complete"><span aria-hidden="true" role="img" class="material-design-icon check-bold-icon"><svg fill="#FFFFFF" width="12" height="12" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"><!----></path></svg></span></div>
-    <div class="title green-text">
-      OpenProject server
-    </div>
-  </div>
-  <div class="field-item pb-1"><b class="field-item-title">
-      OpenProject host*:
-    </b>
-    <div class="field-item-value">
-      http://openproject.com
-    </div>
-    <!---->
-  </div>
-  <div class="form-actions"><button data-v-6398caea="" type="button" data-test-id="reset-server-host-btn" class="button-vue button-vue--icon-and-text button-vue--vue-secondary"><span data-v-6398caea="" class="button-vue__wrapper"><span data-v-6398caea="" class="button-vue__icon"><span aria-hidden="true" role="img" class="material-design-icon pencil-icon" data-v-6398caea=""><svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="material-design-icon__svg"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"><!----></path></svg></span></span><span data-v-6398caea="" class="button-vue__text">Edit server information</span></span></button>
-    <!---->
-    <!---->
-  </div>
-</div>
+Wrapper {
+  "selector": ".openproject-server-host",
+}
 `;

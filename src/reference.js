@@ -20,7 +20,7 @@
  */
 
 // this requires @nextcloud/vue >= 7.9.0
-import { registerWidget, registerCustomPickerElement, NcCustomPickerRenderResult } from '@nextcloud/vue/dist/Components/NcRichText.js'
+import { registerWidget, registerCustomPickerElement, NcCustomPickerRenderResult } from '@nextcloud/vue'
 
 // this is required for lazy loading
 __webpack_nonce__ = btoa(OC.requestToken) // eslint-disable-line
