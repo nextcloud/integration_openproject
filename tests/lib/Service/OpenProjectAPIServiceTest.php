@@ -2255,14 +2255,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$itokenMock = $this->createMock(IToken::class);
 		$tokenProviderMock = $this->getMockBuilder(IProvider::class)->getMock();
 		$tokenProviderMock
+			->expects($this->once())
 			->method('generateToken')
-			->with($token, Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME, null, Application::OPEN_PROJECT_ENTITIES_NAME)
+			->with($token, Application::OPEN_PROJECT_ENTITIES_NAME, Application::OPEN_PROJECT_ENTITIES_NAME, null, Application::OPEN_PROJECT_ENTITIES_NAME, $this->equalTo(1))
 			->willReturn($itokenMock);
 		$eventDispatcherMock = $this->getMockBuilder(IEventDispatcher::class)->getMock();
 		$eventDispatcherMock
 			->method('dispatchTyped')
 			->with($this->createMock(AppPasswordCreatedEvent::class));
-		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock);
+		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock, null, $tokenProviderMock);
 		$result = $service->generateAppPasswordTokenForUser();
 		$this->assertSame($token, $result);
 	}

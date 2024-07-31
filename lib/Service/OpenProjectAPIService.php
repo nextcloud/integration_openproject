@@ -1248,7 +1248,8 @@ class OpenProjectAPIService {
 			$userID,
 			$userID,
 			null,
-			Application::OPEN_PROJECT_ENTITIES_NAME
+			Application::OPEN_PROJECT_ENTITIES_NAME,
+			1 // type 0 => Temporary app password token where as type 1 => Permanent app password token
 		);
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
