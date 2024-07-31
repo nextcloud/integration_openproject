@@ -69,6 +69,11 @@ psalm:
 phpunit:
 	vendor/phpunit/phpunit/phpunit
 
+# The following make block can be removed once Nextcloud no longer supports PHP 8.0
+.PHONY: phpunitforphp8.0
+phpunitforphp8.0:
+	vendor/phpunit/phpunit/phpunit --exclude-group ignoreWithPHP8.0
+
 .PHONY: jsunit
 jsunit:
 	npm run test:unit

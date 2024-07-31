@@ -982,6 +982,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 * @throws \JsonException
 	 */
@@ -1053,6 +1054,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestUsingOAuthToken() {
@@ -1081,6 +1083,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestRefreshOAuthToken() {
@@ -1162,6 +1165,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestToNotExistingPath() {
@@ -1192,6 +1196,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectAvatar() {
@@ -1233,6 +1238,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectAvatarNoAvatar() {
@@ -1262,6 +1268,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageStatusRequest(): void {
@@ -1340,6 +1347,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeRequest(): void {
@@ -2547,6 +2555,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->deleteAppPassword();
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testLinkWorkPackageToFilePact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2578,6 +2589,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testLinkWorkPackageToMultipleFileRequestPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2608,6 +2622,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileEmptyStorageUrlPact(): void {
@@ -2663,6 +2678,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileNotAvailableStorageUrlPact(): void {
@@ -2717,6 +2733,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileMissingPermissionPact(): void {
@@ -2753,6 +2770,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileNotFoundPact(): void {
@@ -2796,6 +2814,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testMarkAllNotificationsOfWorkPackageAsReadPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2824,6 +2845,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(['success' => true], $result);
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testMarkAllNotificationsOfANotExistingWorkPackageAsReadPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2982,6 +3006,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksPact(): void {
@@ -3031,6 +3056,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			sort($result));
 	}
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinkNotFoundPact(): void {
@@ -3090,6 +3116,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileDeleteLinksPact(): void {
@@ -3119,6 +3146,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileDeleteLinkNotFoundPact(): void {
@@ -3151,6 +3179,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsPact(): void {
@@ -3253,6 +3282,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testWorkpackagesFormValidationPact(): void {
@@ -3321,6 +3351,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetAvailableAssigneesOfAProjectPact(): void {
@@ -3386,6 +3417,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testCreateWorkpackagePact(): void {
