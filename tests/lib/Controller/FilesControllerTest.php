@@ -883,7 +883,7 @@ class FilesControllerTest extends TestCase {
 		MockObject $folderMock,
 		MockObject $mountCacheMock = null,
 		MockObject $davUtilsMock = null
-	): FilesController {
+	): FilesController|MockObject {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 

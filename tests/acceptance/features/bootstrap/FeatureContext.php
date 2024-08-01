@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -32,7 +33,7 @@ class FeatureContext implements Context {
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
 	/**
-	 * @var array<int>
+	 * @var array<int|null>
 	 */
 	private array $createdFiles = [];
 
@@ -575,7 +576,7 @@ class FeatureContext implements Context {
 		string $user,
 		?string $content,
 		string $destination
-	): int {
+	): ?int {
 		$this->response = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
@@ -692,28 +693,39 @@ class FeatureContext implements Context {
 		}
 	}
 
-	public function getIdOfElement(string $user, string $element): int {
-		$propfindResponse = $this->makeDavRequest(
-			$user,
-			$this->regularUserPassword,
-			"PROPFIND",
-			$element,
-			null,
-			'<?xml version="1.0"?>
+	/**
+	 * @param string $user
+	 * @param string $element
+	 *
+	 * @return int|null
+	 */
+	public function getIdOfElement(string $user, string $element): ?int {
+		try {
+			$propfindResponse = $this->makeDavRequest(
+				$user,
+				$this->regularUserPassword,
+				"PROPFIND",
+				$element,
+				null,
+				'<?xml version="1.0"?>
 					<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns">
 					  <d:prop>
 						<oc:fileid />
 					  </d:prop>
 					</d:propfind>'
-		);
-		$xmlBody = $propfindResponse->getBody()->getContents();
-		$responseXmlObject = new SimpleXMLElement($xmlBody);
-		$responseXmlObject->registerXPathNamespace(
-			'oc',
-			'http://owncloud.org/ns'
-		);
-		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
+			);
+			$xmlBody = $propfindResponse->getBody()->getContents();
+			$responseXmlObject = new SimpleXMLElement($xmlBody);
+			$responseXmlObject->registerXPathNamespace(
+				'oc',
+				'http://owncloud.org/ns'
+			);
+			return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
+		} catch (Exception $e) {
+			return null;
+		}
 	}
+
 	/**
 	 * @param string $path
 	 * @param string $method
@@ -1077,6 +1089,11 @@ class FeatureContext implements Context {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
 
+		// Handle PyStringNode
+		if ($data instanceof PyStringNode) {
+			$data = (string)$data;
+		}
+
 		// don't set content-type for multipart requests
 		if (is_array($data) && $headers === null) {
 			$options['multipart'] = $data;
@@ -1144,8 +1161,10 @@ class FeatureContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		$this->sharingContext = $environment->getContext('SharingContext');
-		$this->directUploadContext = $environment->getContext('DirectUploadContext');
+		if($environment instanceof InitializedContextEnvironment) {
+			$this->sharingContext = $environment->getContext('SharingContext');
+			$this->directUploadContext = $environment->getContext('DirectUploadContext');
+		}
 	}
 
 	/**

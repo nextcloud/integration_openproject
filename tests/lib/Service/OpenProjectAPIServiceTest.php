@@ -744,7 +744,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$db = null,
 		$iLogFactory = null,
 		$iURLGenerator = null
-	): OpenProjectAPIService {
+	): OpenProjectAPIService|MockObject {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
 			$rootMock = $this->createMock(IRootFolder::class);
@@ -3678,7 +3678,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param int $logLevel
 	 * @param string $pathToAuditLog
 	 * @param array<mixed> $logCondition
-	 * @param string $isAdminAuditAppInstalled
+	 * @param bool $isAdminAuditAppInstalled
 	 * @param bool $expectedResult
 	 *
 	 * @return void

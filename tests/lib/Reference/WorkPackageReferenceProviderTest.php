@@ -60,7 +60,7 @@ class WorkPackageReferenceProviderTest extends TestCase {
 		$refrenceMangager = null,
 		$openProjectAPIService = null,
 		$userId = null
-	): WorkPackageReferenceProvider {
+	): WorkPackageReferenceProvider|MockObject {
 		if ($configMock === null) {
 			$configMock = $this->createMock(IConfig::class);
 		}
