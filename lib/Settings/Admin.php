@@ -58,6 +58,7 @@ class Admin implements ISettings {
 		}
 		$projectFolderStatusInformation = $this->openProjectAPIService->getProjectFolderSetupInformation();
 		$isAllTermsOfServiceSignedForUserOpenProject = $this->openProjectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
+		$isAdminAuditConfigurationSetUpCorrectly = $this->openProjectAPIService->isAdminAuditConfigSetCorrectly();
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
@@ -68,7 +69,8 @@ class Admin implements ISettings {
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			'project_folder_info' => $projectFolderStatusInformation,
 			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
-			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject
+			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
+			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

@@ -2,6 +2,9 @@
 	<div id="openproject_prefs" class="section">
 		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
 		<SettingsTitle is-setting="admin" />
+		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="audit-info-card" type="info">
+			<p class="audit-info-card--info" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
+		</NcNoteCard>
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
@@ -358,7 +361,7 @@ import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import { NcLoadingIcon, NcCheckboxRadioSwitch, NcButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcCheckboxRadioSwitch, NcButton, NcNoteCard } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput.vue'
@@ -369,6 +372,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM, USER_SETTINGS } from '../utils.js'
 import ProjectFolderError from './admin/ProjectFolderError.vue'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
+import dompurify from 'dompurify'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -386,6 +390,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		ProjectFolderError,
 		TermsOfServiceUnsigned,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -444,6 +449,9 @@ export default {
 		},
 		opUserAppPassword() {
 			return this.state.app_password_set
+		},
+		isAdminAuditConfigurationSetUpCorrectly() {
+			return this.state.admin_audit_configuration_correct
 		},
 		serverHostErrorMessage() {
 			if (
@@ -531,6 +539,15 @@ export default {
 			const linkText = t('integration_openproject', 'troubleshooting guide')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
+		getAdminAuditConfigurationHint() {
+			const linkTextForAdminAudit = t('integration_openproject', 'Admin Audit')
+			const adminAuditAppUrlForDownload = generateUrl('settings/apps/featured/admin_audit')
+			const linkTextForDocumentation = t('integration_openproject', 'documentation')
+			const htmlLinkForAdminAudit = `<a class="link" href="${adminAuditAppUrlForDownload}" target="_blank" title="${linkTextForAdminAudit}">${linkTextForAdminAudit}</a>`
+			const htmlLinkForDocumentaion = `<a class="link" href="https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/logging_configuration.html#admin-audit-log-optional" target="_blank" title="${linkTextForDocumentation}">${linkTextForDocumentation}</a>`
+			const hintTextForAdminAudit = t('integration_openproject', 'To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.', { htmlLinkForAdminAudit, htmlLinkForDocumentaion }, null, { escape: false, sanitize: false })
+			return dompurify.sanitize(hintTextForAdminAudit, { ADD_ATTR: ['target'] })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
@@ -1175,6 +1192,15 @@ export default {
 			opacity: .7;
 			margin-top: 0.2rem;
 			padding-left: 5px;
+		}
+	}
+	.audit-info-card {
+		max-width: 900px;
+		&--info {
+			.link {
+				color: #1a67a3 !important;
+				font-style: normal;
+			}
 		}
 	}
 }

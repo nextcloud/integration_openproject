@@ -91,6 +91,7 @@ const selectors = {
 	projectFolderErrorMessageDetails: '.project-folder-error > p',
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
+	adminAuditNoteCardInforSelector: '[type="info"]',
 }
 
 const completeIntegrationState = {
@@ -1868,6 +1869,29 @@ describe('AdminSettings.vue', () => {
 				},
 			})
 			expect(wrapper.find(termsOfServiceComponentStub).attributes(termsOfServiceComponentStubAttribute)).toBeFalsy()
+		})
+	})
+
+	describe('admin audit logging', () => {
+		it.each([
+			[
+				'should show information for admin audit logging configuration',
+				{
+					admin_audit_configuration_correct: false,
+				},
+				true,
+			],
+			[
+				'should not show information for admin audit logging configuration',
+				{
+					admin_audit_configuration_correct: true,
+				},
+				false,
+			],
+		])('%s', (name, state, expectedResult) => {
+			const wrapper = getWrapper({ state })
+			const adminAuditLogNoteCard = wrapper.find(selectors.adminAuditNoteCardInforSelector)
+			expect(adminAuditLogNoteCard.exists()).toBe(expectedResult)
 		})
 	})
 })
