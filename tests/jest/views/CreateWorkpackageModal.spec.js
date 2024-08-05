@@ -4,6 +4,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
 import axios from '@nextcloud/axios'
 import availableProjectsResponse from '../fixtures/openprojectAvailableProjectResponse.json'
+import availableProjectsResponseAfterSearch from '../fixtures/openprojectAvailableProjectResponseAfterSearch.json'
 import availableProjectsOption from '../fixtures/availableProjectOptions.json'
 import workpackageFormValidationProjectSelected from '../fixtures/workpackageFormValidationProjectSelectedResponse.json'
 import workpackageFormValidationTypeChanged from '../fixtures/workpackageFormValidationTypeChanged.json'
@@ -30,6 +31,7 @@ jest.mock('@nextcloud/initial-state', () => {
 describe('CreateWorkPackageModal.vue', () => {
 	const createWorkPackageSelector = '.create-workpackage-modal'
 	const projectSelectSelector = '[data-test-id="available-projects"]'
+	const firstProjectSelectorSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
 	const statusSelectSelector = '[data-test-id="available-statuses"]'
 	const typeSelectSelector = '[data-test-id="available-types"]'
 	const assigneesSelectSelector = '[data-test-id="available-assignees"]'
@@ -65,12 +67,99 @@ describe('CreateWorkPackageModal.vue', () => {
 				}))
 			wrapper = mountWrapper(true)
 			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects')
+			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects', {})
 			await wrapper.find(projectInputField).setValue(' ')
 			expect(wrapper.find(projectSelectSelector)).toMatchSnapshot()
 			axiosSpy.mockRestore()
 			jest.clearAllMocks()
 		})
+
+		describe('search projects with query', () => {
+			let axiosSpy, inputField
+			beforeEach(async () => {
+				axiosSpy = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: availableProjectsResponse,
+					}))
+				wrapper = mountWrapper(true)
+				expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects', {})
+				inputField = wrapper.find(projectInputField)
+				await inputField.setValue('Sc')
+			})
+			it('should send a search query request when searched project is not found', async () => {
+				await inputField.setValue('Scw')
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+			})
+
+			it('should send a search query request when searched project is not found', async () => {
+				await inputField.setValue('Scw')
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+			})
+			it('should show "No matching work projects found!" when the searched project is not found', async () => {
+				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: [],
+					}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				expect(searchResult.text()).toBe('No matching work projects found!')
+			})
+
+			it('should fetch searched when project is not found in initial list', async () => {
+				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => Promise.resolve({
+						status: 200,
+						data: availableProjectsResponseAfterSearch,
+					}))
+				const inputField = wrapper.find(projectInputField)
+				await inputField.setValue('se')
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+					{
+						params: {
+							searchQuery: 'se',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				expect(searchResult.text()).toBe('searchedProject')
+			})
+
+			it('should always initially fetched projects when nothing searched', async () => {
+				await inputField.setValue(' ')
+				const searchResult = wrapper.findAll(projectOptionsSelector)
+				// the initially fetched available project includes 7 openproject projects
+				expect(searchResult.length).toBe(7)
+			})
+		})
+
 		it('should set the available types, status and assignee when a project is selected', async () => {
 			const formValidationBody = {
 				body: {

@@ -24,13 +24,15 @@
 					:append-to-body="false"
 					:value="getSelectedProject"
 					:no-drop="noDropAvailableProjectDropDown"
+					:loading="isStateLoading"
+					@search="asyncFindProjects"
 					@option:selected="onSelectProject">
 					<template #option="{ label, relation, counter }">
 						<span v-if="relation === 'child'" :style="{paddingLeft: counter + 'em' }" />
 						<span>{{ label }}</span>
 					</template>
 					<template #no-options>
-						{{ t('integration_openproject', 'Please link a project to this Nextcloud storage') }}
+						{{ getNoOptionText }}
 					</template>
 				</NcSelect>
 				<p v-if="error.error && error.attribute === 'project'" class="validation-error">
@@ -158,6 +160,11 @@ import axios from '@nextcloud/axios'
 import dompurify from 'dompurify'
 import { loadState } from '@nextcloud/initial-state'
 import { translate as t } from '@nextcloud/l10n'
+import { STATE } from '../utils.js'
+import debounce from 'lodash/debounce.js'
+
+const SEARCH_CHAR_LIMIT = 1
+const DEBOUNCE_THRESHOLD = 500
 
 const DEFAULT_TYPE_VALUE = {
 	self: {
@@ -245,6 +252,9 @@ export default {
 		previousProjectId: null,
 		previousDescriptionTemplate: '',
 		isDescriptionTemplateChanged: false,
+		isFetchingProjectsFromOpenProjectWithQuery: false,
+		initialAvailableProjects: [],
+		state: STATE.OK,
 	}),
 	computed: {
 		openModal() {
@@ -263,6 +273,9 @@ export default {
 		getSelectedProjectAssignee() {
 			return this.assignee.label
 		},
+		isStateLoading() {
+			return this.state === STATE.LOADING
+		},
 		getBodyForRequest() {
 			return {
 				body: {
@@ -278,6 +291,13 @@ export default {
 		},
 		mappedNodes() {
 			return this.mappedProjects()
+		},
+		getNoOptionText() {
+			if(this.availableProjects.length === 0) {
+				return t('integration_openproject', 'No matching work projects found!')
+			}
+			// while projects are being searched we make the no text option empty
+			return ''
 		},
 		sanitizedRequiredCustomTypeValidationErrorMessage() {
 			// get the last number from the href i.e `/api/v3/types/1`, which is the type id
@@ -315,12 +335,29 @@ export default {
 			// when the modal opens the dropdown for selecting project gains focus automatically
 			// this is a workaround to prevent that by bluring the focus and the enabling the dropDown that was
 			// disabled initially in data
-			if (this.$refs?.createWorkPackageProjectInput) {
+			if (this.$refs?.createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
 				document.getElementById(`${this.$refs?.createWorkPackageProjectInput?.inputId}`).blur()
 				this.noDropAvailableProjectDropDown = false
 			}
 			return mappedNodes
 		},
+		async asyncFindProjects(query) {
+			// before fetching we do some filter search in the default available projects
+			let searchedAvailableProjects = []
+			searchedAvailableProjects = this.availableProjects.filter(element => element.label.toLowerCase().includes(query.toLowerCase()))
+			if (searchedAvailableProjects.length === 0) {
+				this.isFetchingProjectsFromOpenProjectWithQuery = true
+				await this.debounceMakeSearchRequest(query)
+			}
+			// After we have searched and we clear the searched query (empty), we list the initial default fetched available projects
+			if (query.trim() === '' && this.isFetchingProjectsFromOpenProjectWithQuery === true) {
+				this.availableProjects = this.initialAvailableProjects
+			}
+		},
+		debounceMakeSearchRequest: debounce(function(...args) {
+			if (args[0].length < SEARCH_CHAR_LIMIT) return
+			return this.searchForProjects(...args)
+		}, DEBOUNCE_THRESHOLD),
 		setToDefaultProjectType() {
 			this.type = structuredClone(DEFAULT_TYPE_VALUE)
 		},
@@ -361,14 +398,29 @@ export default {
 			this.previousProjectId = null
 			this.isDescriptionTemplateChanged = false
 			this.previousDescriptionTemplate = ''
+			this.isFetchingProjectsFromOpenProjectWithQuery = false
+			this.initialAvailableProjects = []
 		},
-		async searchForProjects() {
+		async searchForProjects(searchQuery = null) {
+			const req = {}
+			if (searchQuery) {
+				this.state = STATE.LOADING
+				req.params = {
+					searchQuery,
+				}
+			}
 			const url = generateUrl('/apps/integration_openproject/projects')
 			try {
-				const response = await axios.get(url)
+				const response = await axios.get(url, req)
 				await this.processProjects(response.data)
 			} catch (e) {
 				console.error('Couldn\'t fetch openproject projects')
+			}
+			if (this.isFetchingProjectsFromOpenProjectWithQuery === false) {
+				this.initialAvailableProjects = this.availableProjects
+			}
+			if (this.isStateLoading) {
+				this.state = STATE.OK
 			}
 		},
 		async processProjects(projects) {
