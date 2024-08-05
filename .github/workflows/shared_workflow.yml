@@ -69,13 +69,25 @@ jobs:
 
       - name: Install PHP Dependencies
         run: |
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+            sed -i 's/10.0.0-beta2/7.1/g' composer.json
+            composer update
+          fi
           composer install --no-progress --prefer-dist --optimize-autoloader
           git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
       - name: PHP code analysis
-        run: make psalm
+        run: |
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+            # Ignoring the pact test for php 8.0
+            sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
+          fi
+          make psalm
 
       - name: PHP code style
         run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
@@ -98,7 +110,14 @@ jobs:
           ./occ a:e groupfolders
           ./occ a:e integration_openproject
           cd apps/integration_openproject
-          make phpunit
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+            # add PACT_MOCK_SERVER_PORT env needed for the pact 7.1 with php 8.0
+            sed -i '/<php>/a \ <env name="PACT_MOCK_SERVER_PORT" value="7200"/>' phpunit.xml
+            make phpunitforphp8.0
+          else
+            make phpunit
+          fi
           make jsunit
 
       - name: JS Code Coverage Summary Report

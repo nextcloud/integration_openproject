@@ -1,17 +1,23 @@
 {
 	"require-dev": {
 		"phpunit/phpunit": "^9.5",
-		"pact-foundation/pact-php": "^7.1",
+		"pact-foundation/pact-php": "^10.0.0-beta2",
 		"friendsofphp/php-cs-fixer": "^3.5",
 		"nextcloud/coding-standard": "^1.0",
 		"behat/behat": "^3.10",
 		"helmich/phpunit-json-assert": "^3.4",
-		"vimeo/psalm": "5.23.1"
+		"vimeo/psalm": "5.23.1",
+		"guzzlehttp/guzzle": "^7.9"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
 		"cs:check": "php-cs-fixer fix --dry-run --diff"
 	},
 	"config": {
+		"allow-plugins": {
+			"phpstan/extension-installer": true,
+			"tienvx/composer-downloads-plugin": true,
+			"pact-foundation/composer-downloads-plugin": true
+		}
 	}
 }

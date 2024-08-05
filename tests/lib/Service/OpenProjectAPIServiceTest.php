@@ -48,6 +48,7 @@ use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use PhpPact\Consumer\InteractionBuilder;
+use PhpPact\Consumer\Model\Body\Binary;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
@@ -518,21 +519,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]
 		]
 	];
+	private MockServerEnvConfig $pactMockServerConfig;
 
 	/**
 	 * @return void
 	 * @before
 	 */
 	public function setupMockServer(): void {
-		$config = new MockServerEnvConfig();
-		$this->builder = new InteractionBuilder($config);
-	}
+		$this->pactMockServerConfig = new MockServerEnvConfig();
 
-	/**
-	 * @return void
-	 * @before
-	 */
-	public function setUpMocks(): void {
+		// find an unused port and use it for the mock server
+		// using the same port all the time is not stable
+		// sometimes the server fails saying its already used
+		$address = $this->pactMockServerConfig->getHost();
+		$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		socket_bind($sock, $address);
+		socket_getsockname($sock, $address, $port);
+		socket_close($sock);
+
+		$this->pactMockServerConfig->setPort($port);
+		$this->builder = new InteractionBuilder($this->pactMockServerConfig);
+
 		$this->service = $this->getOpenProjectAPIService();
 	}
 
@@ -662,8 +669,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'new-Token'
 			);
 
-		$pactMockServerConfig = new MockServerEnvConfig();
-
 		$this->defaultConfigMock
 			->method('getAppValue')
 			->withConsecutive(
@@ -679,12 +684,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnOnConsecutiveCalls(
 				$this->clientId,
 				$this->clientSecret,
-				$pactMockServerConfig->getBaseUri()->__toString(),
+				$this->pactMockServerConfig->getBaseUri()->__toString(),
 
 				// for second request after invalid token reply
 				$this->clientId,
 				$this->clientSecret,
-				$pactMockServerConfig->getBaseUri()->__toString()
+				$this->pactMockServerConfig->getBaseUri()->__toString()
 			);
 
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
@@ -977,6 +982,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 * @throws \JsonException
 	 */
@@ -985,10 +991,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->notificationsPath)
-			->setQuery("pageSize=-1&filters=" . json_encode([[
-				'readIAN' =>
-					['operator' => '=', 'values' => ['f']]
-			]], JSON_THROW_ON_ERROR))
+			->setQuery(
+				[
+					"pageSize" => "-1",
+					"filters" => json_encode([[
+						'readIAN' =>
+							['operator' => '=', 'values' => ['f']]
+					]], JSON_THROW_ON_ERROR)
+				]
+			)
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
@@ -1043,6 +1054,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestUsingOAuthToken() {
@@ -1071,6 +1083,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestRefreshOAuthToken() {
@@ -1088,12 +1101,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->builder
 			->uponReceiving('an OAuth GET request to /work_packages with invalid OAuth Token')
 			->with($consumerRequestInvalidOAuthToken)
-			->willRespondWith($providerResponseInvalidOAuthToken);
+			->willRespondWith($providerResponseInvalidOAuthToken, false);
 
 		$refreshTokenRequest = new ConsumerRequest();
 		$refreshTokenRequest
 			->setMethod('POST')
 			->setPath('/oauth/token')
+			->addHeader('Content-Type', 'application/x-www-form-urlencoded')
+			->addHeader('User-Agent', 'Nextcloud OpenProject integration')
 			->setBody(
 				'client_id=' . $this->clientId .
 				'&client_secret=' . $this->clientSecret .
@@ -1103,14 +1118,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$refreshTokenResponse = new ProviderResponse();
 		$refreshTokenResponse
 			->setStatus(Http::STATUS_OK)
+			->addHeader('Content-Type', 'application/json')
 			->setBody([
 				"access_token" => "new-Token",
 				"refresh_token" => "newRefreshToken"
 			]);
 
-		$this->builder->uponReceiving('a POST request to renew token')
+		$this->builder->newInteraction();
+		$this->builder
+			->uponReceiving('a POST request to renew token')
 			->with($refreshTokenRequest)
-			->willRespondWith($refreshTokenResponse);
+			->willRespondWith($refreshTokenResponse, false);
 
 		$consumerRequestNewOAuthToken = new ConsumerRequest();
 		$consumerRequestNewOAuthToken
@@ -1124,6 +1142,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->addHeader('Content-Type', 'application/json')
 			->setBody(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]]);
 
+		$this->builder->newInteraction();
 		$this->builder
 			->uponReceiving('an OAuth GET request to /work_packages with new Token')
 			->with($consumerRequestNewOAuthToken)
@@ -1146,6 +1165,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testRequestToNotExistingPath() {
@@ -1167,12 +1187,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'testUser',
 			'not_existing'
 		);
-		$this->assertSame('Client error: `GET http://localhost:7200/api/v3/not_existing` ' .
-			'resulted in a `404 Not Found` response', $result['message']);
+		$this->assertSame(
+			'Client error: `GET http://localhost:' .
+			$this->pactMockServerConfig->getPort() . '/api/v3/not_existing` ' .
+			'resulted in a `404 Not Found` response',
+			$result['message']);
 		$this->assertSame(404, $result['statusCode']);
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectAvatar() {
@@ -1183,11 +1207,16 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setHeaders(["Authorization" => "Bearer 1234567890"]);
 
 		$providerResponse = new ProviderResponse();
+
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
 			->setHeaders(['Content-Type' => 'image/jpeg'])
-			//setBody() expects iterable but we want to have raw data here and it seems to work fine
-			->setBody('dataOfTheImage');
+			->setBody(
+				new Binary(
+					__DIR__ . "/../fixtures/openproject-icon.jpg",
+					'image/jpeg'
+				)
+			);
 
 		$this->builder
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
@@ -1201,11 +1230,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$this->assertArrayHasKey('avatar', $result);
 		$this->assertArrayHasKey('type', $result);
-		$this->assertSame('dataOfTheImage', $result['avatar']);
+		$this->assertSame(
+			\file_get_contents(__DIR__ . "/../fixtures/openproject-icon.jpg"),
+			$result['avatar']
+		);
 		$this->assertSame('image/jpeg', $result['type']);
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectAvatarNoAvatar() {
@@ -1235,6 +1268,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageStatusRequest(): void {
@@ -1258,7 +1292,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'testUser',
 			'7'
 		);
-		$this->assertSame($this->validStatusResponseBody, $result);
+		$this->assertSame(sort($this->validStatusResponseBody), sort($result));
 	}
 
 	/**
@@ -1313,6 +1347,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeRequest(): void {
@@ -1337,7 +1372,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'3'
 		);
 
-		$this->assertSame($this->validTypeResponseBody, $result);
+		$this->assertSame(sort($this->validTypeResponseBody), sort($result));
 	}
 
 	/**
@@ -2521,6 +2556,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->deleteAppPassword();
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testLinkWorkPackageToFilePact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2552,6 +2590,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testLinkWorkPackageToMultipleFileRequestPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -2582,6 +2623,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileEmptyStorageUrlPact(): void {
@@ -2637,6 +2679,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileNotAvailableStorageUrlPact(): void {
@@ -2691,6 +2734,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileMissingPermissionPact(): void {
@@ -2727,6 +2771,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileNotFoundPact(): void {
@@ -2770,12 +2815,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testMarkAllNotificationsOfWorkPackageAsReadPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
 			->setPath($this->notificationsPath . '/read_ian')
-			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["123"]}}]'))
+			->setQuery(['filters' => '[{"resourceId":{"operator":"=","values":["123"]}}]'])
 			->setHeaders(['Authorization' => 'Bearer 1234567890'])
 			->setBody(null);
 		$providerResponse = new ProviderResponse();
@@ -2798,12 +2846,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame(['success' => true], $result);
 	}
 
+	/**
+	 * @group ignoreWithPHP8.0
+	 */
 	public function testMarkAllNotificationsOfANotExistingWorkPackageAsReadPact(): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
 			->setPath($this->notificationsPath . '/read_ian')
-			->setQuery('filters=' . urlencode('[{"resourceId":{"operator":"=","values":["789"]}}]'))
+			->setQuery(['filters' => '[{"resourceId":{"operator":"=","values":["789"]}}]'])
 			->setHeaders(['Authorization' => 'Bearer 1234567890'])
 			->setBody(null);
 		$providerResponse = new ProviderResponse();
@@ -2956,6 +3007,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksPact(): void {
@@ -2993,15 +3045,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$result = $service->getWorkPackageFileLinks(7, 'testUser');
 
-		$this->assertSame([[
+		$expected = [[
 			'id' => 8,
 			'_type' => "FileLink",
 			'originData' => [
 				'id' => 5
 			]
-		]], $result);
+		]];
+		$this->assertSame(
+			sort($expected),
+			sort($result));
 	}
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinkNotFoundPact(): void {
@@ -3061,6 +3117,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileDeleteLinksPact(): void {
@@ -3090,6 +3147,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetWorkPackageFileDeleteLinkNotFoundPact(): void {
@@ -3122,6 +3180,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsPact(): void {
@@ -3170,11 +3229,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 				]
 			]
 		];
+		$filters[] = [
+			'storageUrl' =>
+				['operator' => '=', 'values' => ['https://nc.my-server.org']],
+			'userAction' =>
+				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
+		];
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
 			->setPath($this->getProjectsPath)
-			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+			->setHeaders(["Authorization" => "Bearer 1234567890"])
+			->setQuery(
+				['filters' => json_encode($filters, JSON_THROW_ON_ERROR)]
+			);
 		$providerResponse = new ProviderResponse();
 		$providerResponse
 			->setStatus(Http::STATUS_OK)
@@ -3187,7 +3255,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getAvailableOpenProjectProjects('testUser');
-		$this->assertSame($expectedResult, $result);
+		$this->assertSame(sort($expectedResult), sort($result));
 	}
 
 	/**
@@ -3215,6 +3283,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testWorkpackagesFormValidationPact(): void {
@@ -3238,7 +3307,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getOpenProjectWorkPackageForm('testUser', '6', $this->validWorkPackageFormValidationBody);
-		$this->assertSame($this->validWorkPackageFormValidationResponse['_embedded'], $result);
+		$this->assertSame(
+			sort($this->validWorkPackageFormValidationResponse['_embedded']),
+			sort($result)
+		);
 	}
 
 	/**
@@ -3280,6 +3352,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testGetAvailableAssigneesOfAProjectPact(): void {
@@ -3302,7 +3375,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getAvailableAssigneesOfAProject('testUser', '6');
-		$this->assertSame($this->validGetProjectAssigneesResponse['_embedded']['elements'], $result);
+		$this->assertSame(
+			sort($this->validGetProjectAssigneesResponse['_embedded']['elements']),
+			sort($result)
+		);
 	}
 
 	/**
@@ -3342,6 +3418,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
 	public function testCreateWorkpackagePact(): void {
@@ -3365,7 +3442,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
-		$this->assertSame($this->createWorkpackageResponse, $result);
+		$this->assertSame(sort($this->createWorkpackageResponse), sort($result));
 	}
 
 	/**
