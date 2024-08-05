@@ -24,6 +24,7 @@ use OC\User\NoUserException;
 use OCA\AdminAudit\AuditLogger;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
+use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -319,11 +320,41 @@ class OpenProjectAPIService {
 			$response = $this->rawRequest(
 				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar'
 			);
+			$imageMimeType = $response->getHeader('Content-Type');
+			$imageData = $response->getBody();
+
+			// Check if the 'Content-Type' header exists
+			if (empty($imageMimeType)) {
+				throw new OpenprojectAvatarErrorException(
+					'The response does not contain an image content-type.'
+				);
+			}
+
+			// check if response contains image
+			if (!@imagecreatefromstring($imageData)) {
+				throw new OpenprojectAvatarErrorException(
+					'The response contains invalid image data.'
+				);
+			}
+
+			// check mimetype of response with content-type value
+			// Create a temporary file
+			$tempImageFile = tempnam(sys_get_temp_dir(), 'image');
+			file_put_contents($tempImageFile, $imageData);
+
+			// Get the MIME type of the temporary file
+			$imageMimeTypeFromImageData = mime_content_type($tempImageFile);
+			unlink($tempImageFile);
+			if ($imageMimeType != $imageMimeTypeFromImageData) {
+				throw new OpenprojectAvatarErrorException(
+					"The content-type header is '$imageMimeType ' but the mime-type of the image is '$imageMimeTypeFromImageData'."
+				);
+			}
 			return [
-				'avatar' => $response->getBody(),
-				'type' => $response->getHeader('Content-Type'),
+				'avatar' => $imageData,
+				'type' => $imageMimeType ,
 			];
-		} catch (ServerException | ClientException | ConnectException | Exception $e) {
+		} catch (ServerException | ClientException | ConnectException | OpenprojectAvatarErrorException | Exception $e) {
 			$this->logger->debug('Error while getting OpenProject avatar for user ' . $openprojectUserId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($openprojectUserName);
 			$avatarContent = $avatar->getFile(64)->getContent();

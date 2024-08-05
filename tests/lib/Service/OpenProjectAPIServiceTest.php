@@ -1241,6 +1241,110 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
+	public function testGetOpenProjectAvatarWithNoContentType() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/users/openProjectUserWithAvatar/avatar')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->setBody(null);
+
+		$this->builder
+			->uponReceiving('a request to get the avatar of a user that has an avatar')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$result = $service->getOpenProjectAvatar(
+			'openProjectUserWithAvatar',
+			'Me',
+			'NCuser'
+		);
+		$this->assertArrayHasKey('avatar', $result);
+		// make sure its an image
+		$this->assertNotFalse(imagecreatefromstring($result['avatar']));
+	}
+
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatarWithMisMatchContentType() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/users/openProjectUserWithAvatar/avatar')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->setHeaders(['Content-Type' => 'image/png'])
+			->setBody(
+				new Binary(
+					__DIR__ . "/../fixtures/openproject-icon.jpg",
+					'image/jpeg'
+				)
+			);
+
+		$this->builder
+			->uponReceiving('a request to get the avatar of a user that has an avatar')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$result = $service->getOpenProjectAvatar(
+			'openProjectUserWithAvatar',
+			'Me',
+			'NCuser'
+		);
+		$this->assertArrayHasKey('avatar', $result);
+		// make sure its an image
+		$this->assertNotFalse(imagecreatefromstring($result['avatar']));
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @return void
+	 */
+	public function testGetOpenProjectAvatarWithInvalidImageData() {
+		$consumerRequest = new ConsumerRequest();
+		$consumerRequest
+			->setMethod('GET')
+			->setPath('/api/v3/users/openProjectUserWithAvatar/avatar')
+			->setHeaders(["Authorization" => "Bearer 1234567890"]);
+
+		$providerResponse = new ProviderResponse();
+
+		$providerResponse
+			->setStatus(Http::STATUS_OK)
+			->setHeaders(['Content-Type' => 'text/plain'])
+			->setBody("Something in text form");
+
+		$this->builder
+			->uponReceiving('a request to get the avatar of a user that has an avatar')
+			->with($consumerRequest)
+			->willRespondWith($providerResponse);
+		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$result = $service->getOpenProjectAvatar(
+			'openProjectUserWithAvatar',
+			'Me',
+			'NCuser'
+		);
+		$this->assertArrayHasKey('avatar', $result);
+		// make sure its an image
+		$this->assertNotFalse(imagecreatefromstring($result['avatar']));
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @return void
+	 */
 	public function testGetOpenProjectAvatarNoAvatar() {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
@@ -1263,8 +1367,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'testUser'
 		);
 		$this->assertArrayHasKey('avatar', $result);
-		//make sure its an image, if something else is returned it will throw an exception
-		imagecreatefromstring($result['avatar']);
+		// make sure its an image
+		$this->assertNotFalse(imagecreatefromstring($result['avatar']));
 	}
 
 	/**

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improve button text visibility when selecting different background images in Nextcloud's UI
 - Bump packages version
 - Fix random deactivation of automatically managed project folder
+- Fix avatar not found in openproject
 
 ## 2.6.3 - 2024-04-17
 ### Changed
