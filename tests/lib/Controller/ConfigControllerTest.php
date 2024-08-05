@@ -662,6 +662,7 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @param array<string> $oldCreds
 	 * @param array<string> $credsToUpdate
 	 * @param bool $deleteUserValues
@@ -880,6 +881,7 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @param array<mixed> $newConfig
 	 * @param bool $adminConfigStatus
 	 * @param string $mode
@@ -1058,6 +1060,7 @@ class ConfigControllerTest extends TestCase {
 
 
 	/**
+	 * @group ignoreWithPHP8.0
 	 * @param string $errorCode
 	 * @param ConnectException|OpenprojectErrorException $exception
 	 * @param array<mixed> $errMessage
