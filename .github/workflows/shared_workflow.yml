@@ -315,6 +315,12 @@ jobs:
             ''
             }}
         run: |
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
+            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+            sed -i 's/10.0.0-beta2/7.1/g' composer.json
+            composer update
+          fi
           composer install --no-progress --prefer-dist --optimize-autoloader
           until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
