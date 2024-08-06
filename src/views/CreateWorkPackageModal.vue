@@ -293,7 +293,7 @@ export default {
 			return this.mappedProjects()
 		},
 		getNoOptionText() {
-			if(this.availableProjects.length === 0) {
+			if (this.availableProjects.length === 0) {
 				return t('integration_openproject', 'No matching work projects found!')
 			}
 			// while projects are being searched we make the no text option empty

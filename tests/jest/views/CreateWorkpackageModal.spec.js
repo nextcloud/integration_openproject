@@ -90,6 +90,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			})
 			it('should send a search query request when searched project is not found', async () => {
 				await inputField.setValue('Scw')
+				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
 				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
 					{
@@ -100,18 +101,6 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 			})
 
-			it('should send a search query request when searched project is not found', async () => {
-				await inputField.setValue('Scw')
-				await new Promise(resolve => setTimeout(resolve, 500))
-				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
-				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
-					{
-						params: {
-							searchQuery: 'Scw',
-						},
-					},
-				)
-			})
 			it('should show "No matching work projects found!" when the searched project is not found', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
@@ -120,6 +109,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					}))
 				await inputField.setValue('Scw')
 				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
 				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
 					{
@@ -132,7 +122,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				expect(searchResult.text()).toBe('No matching work projects found!')
 			})
 
-			it('should fetch searched when project is not found in initial list', async () => {
+			it('should fetch projects when not found in initial available projects', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => Promise.resolve({
 						status: 200,
@@ -140,6 +130,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					}))
 				const inputField = wrapper.find(projectInputField)
 				await inputField.setValue('se')
+				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
 				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
 					{
@@ -152,10 +143,10 @@ describe('CreateWorkPackageModal.vue', () => {
 				expect(searchResult.text()).toBe('searchedProject')
 			})
 
-			it('should always initially fetched projects when nothing searched', async () => {
+			it('should set available projects to initially fetched projects when nothing searched', async () => {
 				await inputField.setValue(' ')
 				const searchResult = wrapper.findAll(projectOptionsSelector)
-				// the initially fetched available project includes 7 openproject projects
+				// the initially fetched available projects include 7 openproject projects
 				expect(searchResult.length).toBe(7)
 			})
 		})

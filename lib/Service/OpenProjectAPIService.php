@@ -1421,7 +1421,7 @@ class OpenProjectAPIService {
 	public function getAvailableOpenProjectProjects(string $userId, string $searchQuery = null): array {
 		$resultsById = [];
 		$filters = [];
-		if($searchQuery) {
+		if ($searchQuery) {
 			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$searchQuery]]];
 		}
 		$filters[] = [
