@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
@@ -112,8 +112,6 @@ jobs:
           cd apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersion}}" -eq 8 ]; then
-            # add PACT_MOCK_SERVER_PORT env needed for the pact 7.1 with php 8.0
-            sed -i '/<php>/a \ <env name="PACT_MOCK_SERVER_PORT" value="7200"/>' phpunit.xml
             make phpunitforphp8.0
           else
             make phpunit
@@ -185,26 +183,29 @@ jobs:
         nextcloudVersion: [ stable26, stable27, stable28, stable29, master ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 0, 1, 2, 3 ]
-        database: [pgsql, mysql]
+        database: [mysql]
         isScheduledEventNightly:
-          - ${{github.event_name != 'schedule'}}
+          - ${{github.event_name == 'schedule'}}
         exclude:
           - nextcloudVersion: stable26
             phpVersionMinor: 3
           - nextcloudVersion: stable27
             phpVersionMinor: 3
-          - isScheduledEventNightly: true
+          - nextcloudVersion: master
             phpVersionMinor: 0
-          - isScheduledEventNightly: true
+          - isScheduledEventNightly: false
+            phpVersionMinor: 0
+          - isScheduledEventNightly: false
             phpVersionMinor: 1
-          - isScheduledEventNightly: true
-            phpVersionMinor: 3
+          - isScheduledEventNightly: false
+            nextcloudVersion: stable28
+            phpVersionMinor: 2
+          - isScheduledEventNightly: false
+            nextcloudVersion: stable29
+            phpVersionMinor: 2
     runs-on: ubuntu-20.04
     container:
-      image: ubuntu:latest
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      image: public.ecr.aws/ubuntu/ubuntu:latest
 
     defaults:
       run:
@@ -227,30 +228,22 @@ jobs:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
       database-postgres:
-        image: postgres:14
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nextcloud
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       database-mysql:
-        image: mariadb:10.5
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
           MYSQL_USER: 'nextcloud'
           MYSQL_DATABASE: 'nextcloud'
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       redis:
-        image: redis:7
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        image: ghcr.io/nextcloud/continuous-integration-redis:latest
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout for nightly CI
@@ -284,7 +277,7 @@ jobs:
         uses: papodaca/install-docker-action@main
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
@@ -309,6 +302,12 @@ jobs:
             ''
             }}
         run: |
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
+            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+            sed -i 's/10.0.0-beta2/7.1/g' composer.json
+            composer update
+          fi
           composer install --no-progress --prefer-dist --optimize-autoloader
           until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
