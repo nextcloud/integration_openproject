@@ -1411,14 +1411,19 @@ class OpenProjectAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param string|null $searchQuery
 	 *
 	 * @return array<mixed>
 	 *
 	 * @throws OpenprojectErrorException
 	 * @throws OpenprojectResponseException|PreConditionNotMetException|\JsonException
 	 */
-	public function getAvailableOpenProjectProjects(string $userId): array {
+	public function getAvailableOpenProjectProjects(string $userId, string $searchQuery = null): array {
 		$resultsById = [];
+		$filters = [];
+		if ($searchQuery) {
+			$filters[] = ['typeahead' => ['operator' => '**', 'values' => [$searchQuery]]];
+		}
 		$filters[] = [
 			'storageUrl' =>
 				['operator' => '=', 'values' => [$this->urlGenerator->getBaseUrl()]],
@@ -1426,7 +1431,8 @@ class OpenProjectAPIService {
 				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
 		];
 		$params = [
-			'filters' => json_encode($filters, JSON_THROW_ON_ERROR)
+			'filters' => json_encode($filters, JSON_THROW_ON_ERROR),
+			'pageSize' => 100
 		];
 		$result = $this->request($userId, 'work_packages/available_projects', $params);
 		if (isset($result['error'])) {

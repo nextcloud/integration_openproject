@@ -361,15 +361,17 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @param string|null $searchQuery
+	 * @return DataResponse
 	 */
-	public function getAvailableOpenProjectProjects(): DataResponse {
+	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
 		if ($this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		try {
-			$result = $this->openprojectAPIService->getAvailableOpenProjectProjects($this->userId);
+			$result = $this->openprojectAPIService->getAvailableOpenProjectProjects($this->userId, $searchQuery);
 		} catch (OpenprojectErrorException $e) {
 			return new DataResponse($e->getMessage(), $e->getCode());
 		} catch (\Exception $e) {

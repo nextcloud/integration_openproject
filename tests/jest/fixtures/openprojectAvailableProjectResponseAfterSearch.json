@@ -1,0 +1,76 @@
+{
+	"12": {
+		"_type": "Project",
+		"id": 12,
+		"identifier": "searchedProject",
+		"name": "searchedProject",
+		"active": true,
+		"public": false,
+		"description": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"createdAt": "2023-10-10T11:20:55Z",
+		"updatedAt": "2023-10-10T11:20:55Z",
+		"statusExplanation": {
+			"format": "markdown",
+			"raw": "",
+			"html": ""
+		},
+		"_links": {
+			"self": {
+				"href": "/api/v3/projects/12",
+				"title": "searchedProject"
+			},
+			"createWorkPackage": {
+				"href": "/api/v3/projects/12/work_packages/form",
+				"method": "post"
+			},
+			"createWorkPackageImmediately": {
+				"href": "/api/v3/projects/12/work_packages",
+				"method": "post"
+			},
+			"workPackages": {
+				"href": "/api/v3/projects/12/work_packages"
+			},
+			"categories": {
+				"href": "/api/v3/projects/12/categories"
+			},
+			"versions": {
+				"href": "/api/v3/projects/12/versions"
+			},
+			"memberships": {
+				"href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%227%22%5D%7D%7D%5D"
+			},
+			"types": {
+				"href": "/api/v3/projects/12/types"
+			},
+			"update": {
+				"href": "/api/v3/projects/12/form",
+				"method": "post"
+			},
+			"updateImmediately": {
+				"href": "/api/v3/projects/12",
+				"method": "patch"
+			},
+			"delete": {
+				"href": "/api/v3/projects/12",
+				"method": "delete"
+			},
+			"schema": {
+				"href": "/api/v3/projects/schema"
+			},
+			"status": {
+				"href": null
+			},
+			"projectStorages": {
+				"href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%227%22%5D%7D%7D%5D"
+			},
+			"parent": {
+				"href": "/api/v3/projects/5",
+				"title": "[dev] Large child"
+			}
+		}
+	}
+}

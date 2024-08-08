@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Bump packages version
 - Fix random deactivation of automatically managed project folder
 - Fix avatar not found in openproject
+- Enhance project search when creating workpackages from Nextcloud
 
 ## 2.6.3 - 2024-04-17
 ### Changed

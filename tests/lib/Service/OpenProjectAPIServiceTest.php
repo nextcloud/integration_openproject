@@ -327,6 +327,55 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @var array<mixed>
 	 */
+	private $expectedValidOpenProjectResponse = [
+		6 => [
+			"_type" => "Project",
+			"id" => 6,
+			"identifier" => "dev-custom-fields",
+			"name" => "[dev] Custom fields",
+			"_links" => [
+				"self" => [
+					"href" => "/api/v3/projects/6",
+					"title" => "[dev] Custom fields"
+				],
+				"parent" => [
+					"href" => "/api/v3/projects/5",
+					"title" => "[dev] Large"
+				],
+				"storages" => [
+					[
+						"href" => "/api/v3/storages/37",
+						"title" => "nc-26"
+					]
+				],
+			]
+		],
+		5 => [
+			"_type" => "Project",
+			"id" => 5,
+			"identifier" => "dev-large",
+			"name" => "[dev] Large",
+			"_links" => [
+				"self" => [
+					"href" => "/api/v3/projects/5",
+					"title" => "[dev] Large"
+				],
+				"parent" => [
+					"href" => null
+				],
+				"storages" => [
+					[
+						"href" => "/api/v3/storages/37",
+						"title" => "nc-26"
+					]
+				]
+			]
+		]
+	];
+
+	/**
+	 * @var array<mixed>
+	 */
 	private $validWorkPackageFormValidationBody = [
 		"_links" => [
 			"type" => [
@@ -3288,51 +3337,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsPact(): void {
-		$expectedResult = [
-			6 => [
-				"_type" => "Project",
-				"id" => 6,
-				"identifier" => "dev-custom-fields",
-				"name" => "[dev] Custom fields",
-				"_links" => [
-					"self" => [
-						"href" => "/api/v3/projects/6",
-						"title" => "[dev] Custom fields"
-					],
-					"parent" => [
-						"href" => "/api/v3/projects/5",
-						"title" => "[dev] Large"
-					],
-					"storages" => [
-						[
-							"href" => "/api/v3/storages/37",
-							"title" => "nc-26"
-						]
-					],
-				]
-			],
-			5 => [
-				"_type" => "Project",
-				"id" => 5,
-				"identifier" => "dev-large",
-				"name" => "[dev] Large",
-				"_links" => [
-					"self" => [
-						"href" => "/api/v3/projects/5",
-						"title" => "[dev] Large"
-					],
-					"parent" => [
-						"href" => null
-					],
-					"storages" => [
-						[
-							"href" => "/api/v3/storages/37",
-							"title" => "nc-26"
-						]
-					]
-				]
-			]
-		];
 		$filters[] = [
 			'storageUrl' =>
 				['operator' => '=', 'values' => ['https://nc.my-server.org']],
@@ -3345,7 +3349,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->setPath($this->getProjectsPath)
 			->setHeaders(["Authorization" => "Bearer 1234567890"])
 			->setQuery(
-				['filters' => json_encode($filters, JSON_THROW_ON_ERROR)]
+				[
+					'filters' => json_encode($filters, JSON_THROW_ON_ERROR),
+					'pageSize' => (string) 100
+				]
 			);
 		$providerResponse = new ProviderResponse();
 		$providerResponse
@@ -3359,7 +3366,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService($storageMock);
 		$result = $service->getAvailableOpenProjectProjects('testUser');
-		$this->assertSame(sort($expectedResult), sort($result));
+		$this->assertSame(sort($this->expectedValidOpenProjectResponse), sort($result));
 	}
 
 	/**
@@ -3384,6 +3391,48 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
 		$this->expectException(OpenprojectErrorException::class);
 		$service->getAvailableOpenProjectProjects('testUser');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetAvailableOpenProjectProjectsQueryOnly() {
+		$iUrlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->disableOriginalConstructor()->getMock();
+		$iUrlGeneratorMock->method('getBaseUrl')->willReturn('https%3A%2F%2Fnc.my-server.org');
+		$service = $this->getServiceMock(
+			['request'],
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$iUrlGeneratorMock
+		);
+		$service->method('request')
+			->with(
+				'user', 'work_packages/available_projects',
+				[
+					'filters' => '[' .
+						'{"typeahead":' .
+						'{"operator":"**","values":["search query"]}'.
+						'},'.
+						'{"storageUrl":'.
+						'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]},'.
+						'"userAction":'.
+						'{"operator":"&=","values":["file_links\/manage","work_packages\/create"]}}'.
+						']',
+					'pageSize' => 100
+				],
+			)
+			->willReturn($this->validOpenProjectGetProjectsResponse);
+		$result = $service->getAvailableOpenProjectProjects('user', 'search query');
+		$this->assertSame($this->expectedValidOpenProjectResponse, $result);
 	}
 
 	/**
