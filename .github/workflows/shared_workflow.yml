@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
@@ -112,8 +112,6 @@ jobs:
           cd apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersion}}" -eq 8 ]; then
-            # add PACT_MOCK_SERVER_PORT env needed for the pact 7.1 with php 8.0
-            sed -i '/<php>/a \ <env name="PACT_MOCK_SERVER_PORT" value="7200"/>' phpunit.xml
             make phpunitforphp8.0
           else
             make phpunit
@@ -230,13 +228,13 @@ jobs:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
       database-postgres:
-        image: ghcr.io/cloudnative-pg/postgresql:14
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nextcloud
 
       database-mysql:
-        image: ghcr.io/linuxserver/mariadb:10.5.16
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
@@ -279,7 +277,7 @@ jobs:
         uses: papodaca/install-docker-action@main
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
