@@ -207,10 +207,7 @@ jobs:
             phpVersionMinor: 2
     runs-on: ubuntu-20.04
     container:
-      image: ubuntu:latest
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      image: public.ecr.aws/ubuntu/ubuntu:latest
 
     defaults:
       run:
@@ -233,30 +230,22 @@ jobs:
           - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
 
       database-postgres:
-        image: postgres:14
+        image: ghcr.io/cloudnative-pg/postgresql:14
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nextcloud
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       database-mysql:
-        image: mariadb:10.5
+        image: ghcr.io/linuxserver/mariadb:10.5.16
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
           MYSQL_USER: 'nextcloud'
           MYSQL_DATABASE: 'nextcloud'
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       redis:
-        image: redis:7
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        image: ghcr.io/nextcloud/continuous-integration-redis:latest
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout for nightly CI
