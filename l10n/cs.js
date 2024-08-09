@@ -60,7 +60,6 @@ OC.L10N.register(
     "Links to work package created successfully for selected files!" : "Odkazy na balíček práce pro označené soubory úspěšně vytvořeny!",
     "Project *" : "Projekt *",
     "Select a project" : "Vyberte projekt",
-    "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm",
     "Subject *" : "Předmět *",
     "Work package subject" : "Předmět balíčku práce",
     "Type *" : "Typ *",
@@ -165,6 +164,7 @@ OC.L10N.register(
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Pokud chcete použít OpenProject server s místní adresou, zapněte nastavení `allow_local_remote_servers`. {htmlLink}.",
     "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
-    "Successfully revoked users' OpenProject OAuth access tokens" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele"
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
+    "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
