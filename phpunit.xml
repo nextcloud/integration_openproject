@@ -22,7 +22,7 @@
 	</testsuites>
 	<php>
 		<env name="PACT_MOCK_SERVER_HEALTH_CHECK_TIMEOUT" value="10"/>
-		<env name="PACT_MOCK_SERVER_PORT" value="7200"/>
+		<env name="PACT_MOCK_SERVER_PORT" value="7300"/>
 		<env name="PACT_MOCK_SERVER_HOST" value="localhost"/>
 		<env name="PACT_CONSUMER_NAME" value="integration_openproject"/>
 		<env name="PACT_CONSUMER_VERSION" value="1.0.0"/>
