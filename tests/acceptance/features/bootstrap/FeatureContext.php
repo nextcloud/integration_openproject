@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -32,7 +33,7 @@ class FeatureContext implements Context {
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
 	/**
-	 * @var array<int>
+	 * @var array<int|null>
 	 */
 	private array $createdFiles = [];
 
@@ -127,21 +128,21 @@ class FeatureContext implements Context {
 				$isUserCreated = true;
 				break;
 			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
-				var_dump("Error: " . $response->getBody()->getContents());
-				var_dump('Creating user ' . $user . ' failed!');
-				var_dump('Deleting the file system of ' . $user . ' and retrying the user creation again...');
+				echo("Error: " . $response->getBody()->getContents());
+				echo('Creating user ' . $user . ' failed!');
+				echo('Deleting the file system of ' . $user . ' and retrying the user creation again...');
 				exec(
 					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
 					$output,
 					$command_result_code
 				);
 				if ($command_result_code === 0) {
-					var_dump('File system for user ' . $user . ' has been deleted successfully!');
+					echo('File system for user ' . $user . ' has been deleted successfully!');
 				}
 			} else {
 				// in case of any other error we just log the response
-				var_dump("Status Code: " . $response->getStatusCode());
-				var_dump("Error: " . $response->getBody()->getContents());
+				echo("Status Code: " . $response->getStatusCode());
+				echo("Error: " . $response->getBody()->getContents());
 			}
 			sleep(2);
 			$retryCreate++;
@@ -161,7 +162,7 @@ class FeatureContext implements Context {
 			$userAttributes['displayName'] = $displayName;
 		}
 		$this->createUserWithRetry($user, $userAttributes);
-		$userid = \strtolower((string)$user);
+		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
 			$user,
@@ -548,9 +549,9 @@ class FeatureContext implements Context {
 		PyStringNode $schemaString
 	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
-		$responseAsJson = $responseAsJson->ocs->data;
+		$_responseAsJson = $responseAsJson->ocs->data;
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson,
+			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
 	}
@@ -564,9 +565,9 @@ class FeatureContext implements Context {
 	public function theDataOfTheResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
-		$responseAsJson = json_decode($this->response->getBody()->getContents());
+		$_responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
-			$responseAsJson,
+			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
 	}
@@ -575,7 +576,7 @@ class FeatureContext implements Context {
 		string $user,
 		?string $content,
 		string $destination
-	): int {
+	): ?int {
 		$this->response = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
@@ -692,28 +693,39 @@ class FeatureContext implements Context {
 		}
 	}
 
-	public function getIdOfElement(string $user, string $element): int {
-		$propfindResponse = $this->makeDavRequest(
-			$user,
-			$this->regularUserPassword,
-			"PROPFIND",
-			$element,
-			null,
-			'<?xml version="1.0"?>
+	/**
+	 * @param string $user
+	 * @param string $element
+	 *
+	 * @return int|null
+	 */
+	public function getIdOfElement(string $user, string $element): ?int {
+		try {
+			$propfindResponse = $this->makeDavRequest(
+				$user,
+				$this->regularUserPassword,
+				"PROPFIND",
+				$element,
+				null,
+				'<?xml version="1.0"?>
 					<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns">
 					  <d:prop>
 						<oc:fileid />
 					  </d:prop>
 					</d:propfind>'
-		);
-		$xmlBody = $propfindResponse->getBody()->getContents();
-		$responseXmlObject = new SimpleXMLElement($xmlBody);
-		$responseXmlObject->registerXPathNamespace(
-			'oc',
-			'http://owncloud.org/ns'
-		);
-		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
+			);
+			$xmlBody = $propfindResponse->getBody()->getContents();
+			$responseXmlObject = new SimpleXMLElement($xmlBody);
+			$responseXmlObject->registerXPathNamespace(
+				'oc',
+				'http://owncloud.org/ns'
+			);
+			return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
+		} catch (Exception $e) {
+			return null;
+		}
 	}
+
 	/**
 	 * @param string $path
 	 * @param string $method
@@ -1077,6 +1089,11 @@ class FeatureContext implements Context {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "index.php/apps/integration_openproject/" . $endpoint;
 
+		// Handle PyStringNode
+		if ($data instanceof PyStringNode) {
+			$data = (string)$data;
+		}
+
 		// don't set content-type for multipart requests
 		if (is_array($data) && $headers === null) {
 			$options['multipart'] = $data;
@@ -1144,8 +1161,10 @@ class FeatureContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		$this->sharingContext = $environment->getContext('SharingContext');
-		$this->directUploadContext = $environment->getContext('DirectUploadContext');
+		if($environment instanceof InitializedContextEnvironment) {
+			$this->sharingContext = $environment->getContext('SharingContext');
+			$this->directUploadContext = $environment->getContext('DirectUploadContext');
+		}
 	}
 
 	/**

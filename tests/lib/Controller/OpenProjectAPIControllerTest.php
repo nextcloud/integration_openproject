@@ -82,6 +82,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function getUserValueMock($token = '123') {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getUserValue')
 			->withConsecutive(
