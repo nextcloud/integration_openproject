@@ -77,6 +77,7 @@
     "Select a user or group" : "Bir kullanıcı ya da grup seçin",
     "Description" : "Açıklama",
     "Work package description" : "Çalışma paketi açıklaması",
+    "No matching work projects found!" : "Eşleşen bir çalışma projesi bulunamadı!",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Bu türün burada doldurulamayan zorunlu alanları vardır. Lütfen bu türdeki çalışma paketlerini doğrudan {htmlLink} içinden oluşturun.",
     "Status is not set to one of the allowed values." : "Durum için izin verilen değerlerden biri ayarlanmamış.",
     "Create" : "Ekle",
