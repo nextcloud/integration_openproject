@@ -79,6 +79,7 @@ OC.L10N.register(
     "Select a user or group" : "Selecionar um usuário ou grupo",
     "Description" : "Descrição",
     "Work package description" : "Descrição do pacote de trabalho",
+    "No matching work projects found!" : "Nenhum projeto de trabalho correspondente encontrado!",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Este tipo possui campos obrigatórios que não podem ser preenchidos aqui. Por favor, crie pacotes de trabalho deste tipo diretamente em {htmlLink}.",
     "Status is not set to one of the allowed values." : "O status não está definido para um dos valores permitidos.",
     "Create" : "Criar",

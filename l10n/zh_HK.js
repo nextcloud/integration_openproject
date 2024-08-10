@@ -79,6 +79,7 @@ OC.L10N.register(
     "Select a user or group" : "選擇用戶或群組",
     "Description" : "描述",
     "Work package description" : "工作軟件包描述",
+    "No matching work projects found!" : "未找到匹配的工作軟件包",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "此類型具有此處無法填寫的必填欄位。 請直接在 {htmlLink} 中建立此類工作軟件包。",
     "Status is not set to one of the allowed values." : "狀態未設定為允許的數值之一。",
     "Create" : "創建",
