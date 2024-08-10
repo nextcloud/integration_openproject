@@ -79,6 +79,7 @@ OC.L10N.register(
     "Select a user or group" : "إختر مستخدِماً أو مجموعةً",
     "Description" : "الوصف",
     "Work package description" : "وصف حزمة العمل",
+    "No matching work projects found!" : "لا توجد أي مشاريع عمل مطابقة!",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "يحتوي هذا النوع على حقول إلزامية لا يمكن ملؤها هنا. من فضلك، قم بإنشاء حزم العمل من هذا النوع في {htmlLink} مباشرةً.",
     "Status is not set to one of the allowed values." : "الحالة المحددة ليست ضمن القيم المسموح بها",
     "Create" : "أنشِيء",
