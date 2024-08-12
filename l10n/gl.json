@@ -77,6 +77,7 @@
     "Select a user or group" : "Seleccione un usuario ou grupo",
     "Description" : "Descrición",
     "Work package description" : "Descrición do paquete de traballo",
+    "No matching work projects found!" : "Non se atoparon proxectos de traballo coincidentes.",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Este tipo ten campos obrigatorios que non se poden cubrir aquí. Cree paquetes de traballo deste tipo directamente en {htmlLink}.",
     "Status is not set to one of the allowed values." : "O estado non está definido nun dos valores permitidos.",
     "Create" : "Crear",
