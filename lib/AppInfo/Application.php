@@ -102,7 +102,7 @@ class Application extends App implements IBootstrap {
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
-		$context->injectFn(Closure::fromCallable([$this, 'tokenRefreshWhenActionIsOn']));
+		$context->injectFn(Closure::fromCallable([$this, 'tokenRefreshWhenWithAnyBackgroundAction']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
@@ -120,20 +120,26 @@ class Application extends App implements IBootstrap {
     /**
      * @throws \JsonException
      */
-    public function tokenRefreshWhenActionIsOn(IUserSession $userSession, TokenService $tokenService,IConfig $config,): void {
-        //TODO
-        //you can write the function there for refreshing the token everytime any action is performed in the application
-        //to do the token refresh for every request we have to make sure that we the user is logged in with oidc provider
+    public function tokenRefreshWhenWithAnyBackgroundAction(IUserSession $userSession, TokenService $tokenService, IConfig $config,): void {
         $user = $userSession->getUser();
-        if ($user !== null) {
-            $token = $tokenService->getToken();
-            if ($token === null) {
+        if($user === null) {
+            return;
+        }
+        $userId = $user->getUID();
+        $token = $tokenService->getToken();
+        if ($token === null) {
+            // if we don't have a token but we had one once,
+            // it means the session (where we store the token) has died
+            // so we need to reauthenticate
+            if ($config->getUserValue($userId, self::APP_ID, 'had_token_once', '0') === '1') {
                 $tokenService->reauthenticate();
-                return;
             }
-            if ($token->isExpired()) {
-                $tokenService->reauthenticate();
-            }
+            return;
+        }
+        // remember that this user had a token once
+        $config->setUserValue($userId, self::APP_ID, 'had_token_once', '1');
+        if($token->isExpired()) {
+            $tokenService->reauthenticate();
         }
     }
 

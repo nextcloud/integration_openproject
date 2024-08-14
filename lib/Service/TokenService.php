@@ -161,12 +161,9 @@ class TokenService {
         if ($token === null) {
             return;
         }
-
+//        $redirectUri = 'https://keycloak.local/realms/opendesk/protocol/openid-connect/auth?client_id=nextcloud&response_type=code&scope=openid+email+profile&redirect_uri=https://nextcloud.local/apps/user_oidc/code';
         // Logout the user and redirect to the oidc login flow to gather a fresh token
+        header('Location: ' . $redirectUri);
         $this->userSession->logout();
-        $redirectUrl = $this->urlGenerator->getAbsoluteURL('/index.php/apps/user_oidc/login/' . $token->getProviderId()) .
-            '?redirectUrl=' . urlencode($this->request->getRequestUri());
-        header('Location: ' . $redirectUrl);
-        exit();
     }
 }
