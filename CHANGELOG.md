@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - This release expects OpenProject version 13.2 or newer
 - Add application's support for Nextcloud 30
-- Remove dependency from Nextcloud's `thecodingmachine` library
+- Remove Nextcloud's `thecodingmachine` dependency from integration app
 
 ## 2.6.3 - 2024-04-17
 ### Changed
