@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## 2.6.4 - 2024-08-15
 ### Changed
+- This release expects OpenProject version 13.2 or newer
 - Add application's support for Nextcloud 30
 
 ## 2.6.3 - 2024-04-17
