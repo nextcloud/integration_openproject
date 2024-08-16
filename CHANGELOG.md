@@ -14,11 +14,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix avatar not found in openproject
 - Enhance project search when creating workpackages from Nextcloud
 
+## 2.6.4 - 2024-08-15
+### Changed
+- This release expects OpenProject version 13.2 or newer
+- Add application's support for Nextcloud 30
+- Remove Nextcloud's `thecodingmachine` dependency from integration app
+
 ## 2.6.3 - 2024-04-17
 ### Changed
 - This release expects OpenProject version 13.2 or newer
 - Drop application's support for Nextcloud 25
 - Add application's support for Nextcloud 29
+- Add support for PHP version 8.2 and 8.3
 
 ## 2.6.2 - 2024-04-04
 ### Changed
