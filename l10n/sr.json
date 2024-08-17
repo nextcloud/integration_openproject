@@ -77,6 +77,7 @@
     "Select a user or group" : "Одаберите корисника или групу",
     "Description" : "Опис",
     "Work package description" : "Опид радног пакета",
+    "No matching work projects found!" : "Није пронађен ниједан пројекат рада који задовољава претрагу!",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Овај тип има обавезна поља која не могу да се попуне на овом месту. Молимо вас да радне пакете овог типа креирате директно у {htmlLink}.",
     "Status is not set to one of the allowed values." : "Статус није постављен на неку од дозвољених вредности.",
     "Create" : "Креирање",
