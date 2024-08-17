@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Error getting OAuth access token" : "Грешка при добивање на OAuth пристапен токен",
     "Error during OAuth exchanges" : "Грешка при размена на податоци со OAuth ",
     "OAuth access token refused" : "Одбиен OAuth пристапен токен ",
     "Cancel" : "Откажи",
