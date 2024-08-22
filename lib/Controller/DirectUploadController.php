@@ -40,6 +40,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\File;
 use OCP\Files\FileInfo;
+use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidContentException;
 use OCP\Files\InvalidPathException;
@@ -275,7 +276,7 @@ class DirectUploadController extends ApiController {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_BAD_REQUEST);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException | FileAccessForbiddenException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_FORBIDDEN);
