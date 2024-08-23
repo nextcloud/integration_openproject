@@ -277,6 +277,8 @@ class DirectUploadController extends ApiController {
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_BAD_REQUEST);
 		} catch (ForbiddenException | FileAccessForbiddenException $e) {
+			// the FileAccessForbiddenException can occur when we are not allowed to perform certain operation
+			// which is controlled by Nextcloud app File Access Control.
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_FORBIDDEN);
