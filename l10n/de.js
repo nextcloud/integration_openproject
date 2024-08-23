@@ -114,7 +114,7 @@ OC.L10N.register(
     "Failed to link file to work package" : "Fehler beim Verknüpfen der Datei mit dem Arbeitspaket",
     "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
     "OAuth access token could not be obtained:" : "OAuth-Zugriffstoken konnte nicht abgerufen werden:",
-    "Displays a link to your OpenProject instance in the Nextcloud header." : "Zeigt einen Link zu Ihrer OpenProject-Instanz im Nextcloud-Header an.",
+    "Displays a link to your OpenProject instance in the Nextcloud header." : "Zeigt einen Link zu deiner OpenProject-Instanz im Nextcloud-Header an.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Ermöglicht die Suche nach OpenProject-Arbeitspaketen über die universelle Suchleiste in Nextcloud.",
     "OpenProject notifications" : "OpenProject-Benachrichtigungen",
     "OpenProject activity" : "OpenProject-Aktivitäten",
