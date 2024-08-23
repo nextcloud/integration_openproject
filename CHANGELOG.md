@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix random deactivation of automatically managed project folder
 - Fix avatar not found in openproject
 - Enhance project search when creating workpackages from Nextcloud
+- Fix issue preventing direct uploading of resources in Nextcloud that are managed by app `Files Access Control`
 
 ## 2.6.4 - 2024-08-15
 ### Changed
