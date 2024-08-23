@@ -639,53 +639,37 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$ocClient = null;
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
-
-		if (version_compare(OC_Util::getVersionString(), '27') >= 0) {
-			$clientConfigMock
-				->method('getSystemValueBool')
-				->withConsecutive(
-					['allow_local_remote_servers', false],
-					['installed', false],
-					['allow_local_remote_servers', false],
-					['allow_local_remote_servers', false],
-					['installed', false],
-					['allow_local_remote_servers', false],
-					['allow_local_remote_servers', false],
-					['installed', false],
-					['allow_local_remote_servers', false]
-				)
-				->willReturnOnConsecutiveCalls(
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true,
-					true
-				);
-			//changed from nextcloud 26
-			$ocClient = new Client(
-				$clientConfigMock,
-				$certificateManager,
-				$client,
-				$this->createMock(IRemoteHostValidator::class),
-				$this->createMock(LoggerInterface::class));
-		} elseif (version_compare(OC_Util::getVersionString(), '26') >= 0) {
-			$clientConfigMock
+		$clientConfigMock
 			->method('getSystemValueBool')
-			->with('allow_local_remote_servers', false)
-			->willReturn(true);
-
-			//changed from nextcloud 26
-			$ocClient = new Client(
-				$clientConfigMock,
-				$certificateManager,
-				$client,
-				$this->createMock(IRemoteHostValidator::class)
+			->withConsecutive(
+				['allow_local_remote_servers', false],
+				['installed', false],
+				['allow_local_remote_servers', false],
+				['allow_local_remote_servers', false],
+				['installed', false],
+				['allow_local_remote_servers', false],
+				['allow_local_remote_servers', false],
+				['installed', false],
+				['allow_local_remote_servers', false]
+			)
+			->willReturnOnConsecutiveCalls(
+				true,
+				true,
+				true,
+				true,
+				true,
+				true,
+				true,
+				true,
+				true
 			);
-		}
+		//changed from nextcloud 26
+		$ocClient = new Client(
+			$clientConfigMock,
+			$certificateManager,
+			$client,
+			$this->createMock(IRemoteHostValidator::class),
+			$this->createMock(LoggerInterface::class));
 
 		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);

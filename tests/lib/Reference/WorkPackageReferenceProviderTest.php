@@ -34,12 +34,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class WorkPackageReferenceProviderTest extends TestCase {
-	protected function setUp(): void {
-		if (version_compare(OC_Util::getVersionString(), '26') < 0) {
-			$this->markTestSkipped('WorkPackageReferenceProvider is only available from nextcloud 26 so skip the tests on versions below');
-		}
-	}
-
 	/**
 	 *
 	 * @param array<string> $onlyMethods
