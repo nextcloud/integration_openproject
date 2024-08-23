@@ -24,7 +24,6 @@
 namespace OCA\OpenProject\Reference;
 
 use OC\Collaboration\Reference\ReferenceManager;
-use OC_Util;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\IConfig;
