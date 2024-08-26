@@ -11,11 +11,9 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, stable30 ]
+        nextcloudVersion: [ stable27, stable28, stable29, stable30 ]
         phpVersion: [ 8.0, 8.1, 8.2, 8.3]
         exclude:
-          - nextcloudVersion: stable26
-            phpVersion: 8.3
           - nextcloudVersion: stable27
             phpVersion: 8.3
           - nextcloudVersion: stable30
@@ -180,15 +178,13 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, stable30 ]
+        nextcloudVersion: [ stable27, stable28, stable29, stable30 ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 0, 1, 2, 3 ]
         database: [pgsql, mysql]
         isScheduledEventNightly:
           - ${{github.event_name == 'schedule'}}
         exclude:
-          - nextcloudVersion: stable26
-            phpVersionMinor: 3
           - nextcloudVersion: stable27
             phpVersionMinor: 3
           - nextcloudVersion: stable30
@@ -297,10 +293,6 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://nextcloud
-          BEHAT_FILTER_TAGS: ${{
-            matrix.nextcloudVersion == 'stable26' && '~@skipOnStable26' ||
-            ''
-            }}
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
