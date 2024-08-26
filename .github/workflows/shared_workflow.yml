@@ -14,8 +14,6 @@ jobs:
         nextcloudVersion: [ stable30 ]
         phpVersion: [ 8.1, 8.2, 8.3 ]
         include:
-          - nextcloudVersion: stable26
-            phpVersion: 8.0
           - nextcloudVersion: stable27
             phpVersion: 8.0
           - nextcloudVersion: stable28
@@ -192,11 +190,6 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: pgsql
-          # Each oldServer with the oldest PHP version and one database
-          - nextcloudVersion: stable26
-            phpVersionMajor: 8
-            phpVersionMinor: 0
-            database: mysql
           - nextcloudVersion: stable27
             phpVersionMajor: 8
             phpVersionMinor: 0
@@ -303,10 +296,6 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://nextcloud
-          BEHAT_FILTER_TAGS: ${{
-            matrix.nextcloudVersion == 'stable26' && '~@skipOnStable26' ||
-            ''
-            }}
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
