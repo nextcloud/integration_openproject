@@ -25,6 +25,7 @@ namespace OCA\OpenProject\Controller;
 
 use OC\Files\View;
 use OCP\Files\Folder;
+use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidContentException;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -185,6 +186,7 @@ class DirectUploadControllerTest extends TestCase {
 	public function newFileExceptionsDataProvider() {
 		return [
 			[new InvalidContentException('Virus detected'), 'Virus detected', 415],
+			[new FileAccessForbiddenException('Access denied by the access control', false), 'Access denied by the access control', 403],
 			[new \Exception('could not upload'), 'could not upload', 500],
 		];
 	}
