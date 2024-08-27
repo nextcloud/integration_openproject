@@ -11,15 +11,17 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, stable30 ]
-        phpVersion: [ 8.0, 8.1, 8.2, 8.3]
-        exclude:
+        nextcloudVersion: [ stable30 ]
+        phpVersion: [ 8.1, 8.2, 8.3 ]
+        include:
           - nextcloudVersion: stable26
-            phpVersion: 8.3
-          - nextcloudVersion: stable27
-            phpVersion: 8.3
-          - nextcloudVersion: stable30
             phpVersion: 8.0
+          - nextcloudVersion: stable27
+            phpVersion: 8.0
+          - nextcloudVersion: stable28
+            phpVersion: 8.1
+          - nextcloudVersion: stable29
+            phpVersion: 8.1
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -180,29 +182,40 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable26, stable27, stable28, stable29, stable30 ]
+        nextcloudVersion: [ stable30 ]
         phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 0, 1, 2, 3 ]
-        database: [pgsql, mysql]
+        phpVersionMinor: [ 1, 2, 3 ]
+        database: [ mysql ]
         isScheduledEventNightly:
           - ${{github.event_name == 'schedule'}}
-        exclude:
-          - nextcloudVersion: stable26
-            phpVersionMinor: 3
-          - nextcloudVersion: stable27
-            phpVersionMinor: 3
+        include:
+          # Each database once on the newest Server with preinstalled PHP version
           - nextcloudVersion: stable30
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
+            phpVersionMajor: 8
             phpVersionMinor: 1
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable28
-            phpVersionMinor: 2
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable29
-            phpVersionMinor: 2
+            database: pgsql
+            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
+          # Each oldServer with the oldest PHP version and one database
+          - nextcloudVersion: stable26
+            phpVersionMajor: 8
+            phpVersionMinor: 0
+            database: mysql
+            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
+          - nextcloudVersion: stable27
+            phpVersionMajor: 8
+            phpVersionMinor: 0
+            database: mysql
+            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
+          - nextcloudVersion: stable28
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
+            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
+          - nextcloudVersion: stable29
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
+            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/ubuntu/ubuntu:latest
