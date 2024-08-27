@@ -485,6 +485,10 @@ class ConfigController extends Controller {
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$options = [];
+			if($this->openprojectAPIService->isOpenProjectRunningAsExApp($openprojectUrl)) {
+				$options = $this->openprojectAPIService->setHeadersForProxy($this->userId, $options);
+			}
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -492,7 +496,7 @@ class ConfigController extends Controller {
 				'redirect_uri' => openprojectAPIService::getOauthRedirectUrl($this->urlGenerator),
 				'grant_type' => 'authorization_code',
 				'code_verifier' => $codeVerifier
-			], 'POST');
+			], 'POST', $options);
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				$accessToken = $result['access_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $accessToken);

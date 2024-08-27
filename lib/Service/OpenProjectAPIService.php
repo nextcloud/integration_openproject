@@ -55,7 +55,9 @@ use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use phpDocumentor\Reflection\Types\Self_;
 use Psr\Log\LoggerInterface;
+use OCA\AppAPI\Service\ExAppService;
 
 define('CACHE_TTL', 3600);
 
@@ -130,6 +132,7 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	private AuditLogger $auditLogger;
+	private ExAppService $exAppService;
 
 	public function __construct(
 		string $appName,
@@ -150,6 +153,7 @@ class OpenProjectAPIService {
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
 		ILogFactory $logFactory,
+		ExAppService $exAppService,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -169,6 +173,7 @@ class OpenProjectAPIService {
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
 		$this->logFactory = $logFactory;
+		$this->exAppService = $exAppService;
 	}
 
 	/**
@@ -316,9 +321,13 @@ class OpenProjectAPIService {
 		$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$options = [];
+		if($this->isOpenProjectRunningAsExApp($openprojectUrl)) {
+			$options = $this->setHeadersForProxy($nextcloudUserId, $options);
+		}
 		try {
 			$response = $this->rawRequest(
-				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar'
+				$accessToken, $openprojectUrl, 'users/'.$openprojectUserId.'/avatar', [], 'GET', $options
 			);
 			$imageMimeType = $response->getHeader('Content-Type');
 			$imageData = $response->getBody();
@@ -360,6 +369,21 @@ class OpenProjectAPIService {
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];
 		}
+	}
+
+	public function isOpenProjectRunningAsExApp(string $openprojectUrl) : bool {
+		return str_ends_with($openprojectUrl, '/proxy/openproject-nextcloud-app');
+	}
+
+	public function setHeadersForProxy(string $nextcloudUser, array $options): array {
+		$options = [];
+		$exAppconfigInformation = $this->exAppService->getExApp(Application::APP_ID_PROXY_OPENPROJECT);
+		$authorizationAppAPI = base64_encode($nextcloudUser . ":" . $exAppconfigInformation->getSecret());
+		$options['headers']['host'] = $exAppconfigInformation->getHost() . ":" . $exAppconfigInformation->getPort();
+		$options['headers']['ex-app-id'] = $exAppconfigInformation->getAppid();
+		$options['headers']['authorization-app-api'] = $authorizationAppAPI;
+		$options['headers']['ex-app-version'] = $exAppconfigInformation->getVersion();
+		return $options;
 	}
 
 	/**
@@ -443,8 +467,12 @@ class OpenProjectAPIService {
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
+		$options = [];
+		if($this->isOpenProjectRunningAsExApp($openprojectUrl)) {
+			$options = $this->setHeadersForProxy($userId, $options);
+		}
 		try {
-			$response = $this->rawRequest($accessToken, $openprojectUrl, $endPoint, $params, $method);
+			$response = $this->rawRequest($accessToken, $openprojectUrl, $endPoint, $params, $method, $options);
 			if (($method === 'DELETE' || $method === 'POST') &&
 				$response->getStatusCode() === Http::STATUS_NO_CONTENT
 			) {
@@ -464,7 +492,7 @@ class OpenProjectAPIService {
 					'client_secret' => $clientSecret,
 					'grant_type' => 'refresh_token',
 					'refresh_token' => $refreshToken,
-				], 'POST');
+				], 'POST', $options);
 				if (isset($result['refresh_token'])) {
 					$refreshToken = $result['refresh_token'];
 					$this->config->setUserValue(
@@ -517,17 +545,13 @@ class OpenProjectAPIService {
 	 * @param string $url
 	 * @param array<mixed> $params passed to `http_build_query` for GET requests, else send as body
 	 * @param string $method
+	 * @param array<mixed> $options
 	 * @return array<mixed>
 	 */
-	public function requestOAuthAccessToken(string $url, array $params = [], string $method = 'GET'): array {
+	public function requestOAuthAccessToken(string $url, array $params = [], string $method = 'GET', array $options = []): array {
 		try {
 			$url = $url . '/oauth/token';
-			$options = [
-				'headers' => [
-					'User-Agent' => 'Nextcloud OpenProject integration',
-				]
-			];
-
+			$options ['headers']['User-Agent'] = 'Nextcloud OpenProject integration';
 			if (count($params) > 0) {
 				if ($method === 'GET') {
 					$paramsContent = http_build_query($params);

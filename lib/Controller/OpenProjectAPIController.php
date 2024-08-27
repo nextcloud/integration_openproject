@@ -32,6 +32,7 @@ use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIController extends Controller {
@@ -549,10 +550,15 @@ class OpenProjectAPIController extends Controller {
 			);
 			return new DataResponse(['result' => 'invalid']);
 		}
+		$options = [];
+		if($this->openprojectAPIService->isOpenProjectRunningAsExApp($url)) {
+			$options = $this->openprojectAPIService->setHeadersForProxy($this->userId, $options);
+		}
+		$options['allow_redirects'] = false;
 		try {
 			$response = $this->openprojectAPIService->rawRequest(
 				'', $url, '', [], 'GET',
-				['allow_redirects' => false]
+				$options
 			);
 			$statusCode = $response->getStatusCode();
 			if ($statusCode >= 300 && $statusCode <= 399) {
