@@ -260,10 +260,6 @@ if [[ ${response_type} == "Error" ]]; then
     log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
-  elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
-    log_info "Integration for Name '${OPENPROJECT_STORAGE_NAME}' or Nextcloud host '${NEXTCLOUD_HOST}' already configured."
-    log_info "Details: ${create_storage_response}"
-    exit 0
   else
     log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
     log_error "OpenProject returned the following error: '${error_message}'"
