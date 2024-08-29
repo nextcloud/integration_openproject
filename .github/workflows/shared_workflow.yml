@@ -101,7 +101,7 @@ jobs:
       - name: Style Lint
         run: npm run stylelint
 
-      - name: PHP Unit Tests
+      - name: PHP & Vue Unit Tests
         run: |
           git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
           mkdir -p server/apps/integration_openproject
@@ -110,28 +110,12 @@ jobs:
           ./occ a:e groupfolders
           ./occ a:e integration_openproject
           cd apps/integration_openproject
-          pwd
-          ls -l
-
-      - name: Re Run PHPUnit Tests
-        uses: nick-fields/retry@v3
-        with:
-          max_attempts: 2
-          timeout_minutes: 5
-          command: |
-            pwd
-            ls -l
-            echo "Starting PHPUnit tests. Attempt ${{ steps.retry.outputs.attempt_number }}"
-            if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
-              make phpunitforphp8.0
-            else
-              make phpunit
-            fi
-
-      - name: Vue Unit Tests
-        run: |
-          pwd
-          ls -l
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
+            make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
+          else
+            make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
+          fi
           make jsunit
 
       - name: JS Code Coverage Summary Report
