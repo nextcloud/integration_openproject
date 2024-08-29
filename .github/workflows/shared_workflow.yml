@@ -186,36 +186,29 @@ jobs:
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 1, 2, 3 ]
         database: [ mysql ]
-        isScheduledEventNightly:
-          - ${{github.event_name == 'schedule'}}
         include:
           # Each database once on the newest Server with preinstalled PHP version
           - nextcloudVersion: stable30
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: pgsql
-            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
           # Each oldServer with the oldest PHP version and one database
           - nextcloudVersion: stable26
             phpVersionMajor: 8
             phpVersionMinor: 0
             database: mysql
-            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
           - nextcloudVersion: stable27
             phpVersionMajor: 8
             phpVersionMinor: 0
             database: mysql
-            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
           - nextcloudVersion: stable28
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
-            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
           - nextcloudVersion: stable29
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
-            isScheduledEventNightly: ${{github.event_name == 'schedule'}}
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/ubuntu/ubuntu:latest
