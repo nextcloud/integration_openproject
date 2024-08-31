@@ -15,18 +15,22 @@ OC.L10N.register(
     "Start typing to search" : "Начините вводить символы для поиска",
     "Select a user or group" : "Выберите пользователя или группу",
     "Description" : "Описание",
+    "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "У этого типа есть обязательные для заполнения поля, которые не могут быть заполнены здесь. Пожалуйста, создавайте рабочие пакеты этого типа непосредственно в {htmlLink}.",
     "Create" : "Создать",
     "Mark as read" : "Отметить прочитанным",
     "Confirm unlink" : "Подтвердите отмену связи",
     "OAuth access token could not be obtained:" : "Токен доступа OAuth не может быть получен:",
     "Connected accounts" : "Подключённые учётные записи",
     "Reset" : "Сброс",
+    "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Если вы продолжите, вам потребуется обновить эти настройки, используя новые учетные данные OpenProject OAuth. Кроме того, всем пользователям потребуется повторно авторизовать доступ к своей учетной записи OpenProject.",
     "Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?" : "Подтвердите сброс настроек приложения, удаление всех параметров и всех настроенных пользователями подключений к OpenProject.",
+    "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Если вы продолжите, вам потребуется обновить настройки в вашем OpenProject, указав новые учетные данные Nextcloud OAuth. Кроме того, всем пользователям OpenProject потребуется повторно авторизовать доступ к своей учетной записи Nextcloud.",
     "Enable navigation link" : "Включить ссылку для навигации",
     "Connected as {user}" : "Подключено под именем {user}",
     "Enable unified search for tickets" : "Включить унифицированный поиск билетов",
     "Incorrect access token" : "Неверный токен доступа",
     "Invalid token" : "Недопустимый токен",
-    "Documentation" : "Документация"
+    "Documentation" : "Документация",
+    "Failed to perform revoke request due to connection error with the OpenProject server" : "Не удалось выполнить запрос на отзыв из-за ошибки подключения к серверу OpenProject"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
