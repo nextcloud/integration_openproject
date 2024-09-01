@@ -42,7 +42,7 @@ OC.L10N.register(
     "Failed to sign terms of services for user \"OpenProject\"" : "Produciuse un fallo ao asinar as condicións de servizo do usuario «OpenProject»",
     "Copied!" : "Copiado!",
     "Copy value" : "Copiar valor",
-    "Copied to the clipboard" : "Copiado no portapapeis.",
+    "Copied to the clipboard" : "Copiado no portapapeis",
     "Details" : "Detalles",
     "setting up a Nextcloud file storage" : "configurar un almacenamento de ficheiros Nextcloud",
     "Visit our documentation for in-depth information on {htmlLink} integration." : "Visite a nosa documentación para obter información detallada sobre a integración de {htmlLink}.",
