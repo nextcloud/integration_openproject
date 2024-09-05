@@ -58,10 +58,18 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		if (version_compare(OC_Util::getVersionString(), '27.0.1') >= 0) {
-			$encryptedSecret = $this->crypto->encrypt($secret);
-		} else {
+		if (version_compare(OC_Util::getVersionString(), '30.0.0') >= 0) {
+			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+		} elseif (version_compare(OC_Util::getVersionString(), '29.0.7') >= 0 && version_compare(OC_Util::getVersionString(), '30.0.0') < 0) {
+			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+		} elseif (version_compare(OC_Util::getVersionString(), '28.0.10') >= 0 && version_compare(OC_Util::getVersionString(), '29.0.0') < 0) {
+			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+		} elseif (version_compare(OC_Util::getVersionString(), '27.1.11.8') >= 0 && version_compare(OC_Util::getVersionString(), '28.0.0') < 0) {
+			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+		} elseif (version_compare(OC_Util::getVersionString(), '27.0.0') === 0) {
 			$encryptedSecret = $secret;
+		} else {
+			$encryptedSecret = $this->crypto->encrypt($secret);
 		}
 		$client->setSecret($encryptedSecret);
 		$client->setClientIdentifier($clientId);
@@ -87,8 +95,7 @@ class OauthService {
 				'id' => $client->getId(),
 				'nextcloud_oauth_client_name' => $client->getName(),
 				'openproject_redirect_uri' => $client->getRedirectUri(),
-				'nextcloud_client_id' => $client->getClientIdentifier(),
-				'nextcloud_client_secret' => $this->crypto->decrypt($client->getSecret()),
+				'nextcloud_client_id' => $client->getClientIdentifier()
 			];
 		} catch (ClientNotFoundException $e) {
 			return null;
