@@ -58,7 +58,11 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		$encryptedSecret = $this->crypto->encrypt($secret);
+		if (version_compare(OC_Util::getVersionString(), '27.0.1') >= 0) {
+			$encryptedSecret = $this->crypto->encrypt($secret);
+		} else {
+			$encryptedSecret = $secret;
+		}
 		$client->setSecret($encryptedSecret);
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);

@@ -222,7 +222,7 @@ class ConfigController extends Controller {
 				throw new NoUserException('User "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" does not exists to create application password');
 			}
 			$appPassword = $this->openprojectAPIService->generateAppPasswordTokenForUser();
-			if($isAppPasswordBeingReplaced) {
+			if ($isAppPasswordBeingReplaced) {
 				$this->openprojectAPIService->logToAuditFile(
 					"Application password for user 'OpenProject has been replaced' with new password in application " . Application::APP_ID
 				);
@@ -290,7 +290,7 @@ class ConfigController extends Controller {
 		// resetting and keeping the project folder setup should delete the user app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
 			$this->openprojectAPIService->deleteAppPassword();
-			if(!$runningFullReset) {
+			if (!$runningFullReset) {
 				$this->openprojectAPIService->logToAuditFile(
 					"Project folder setup has been deactivated in application " . Application::APP_ID
 				);
@@ -389,14 +389,14 @@ class ConfigController extends Controller {
 				$values['openproject_client_id'] &&
 				$values['openproject_client_secret'];
 
-			if(key_exists('openproject_instance_url', $values) &&
+			if (key_exists('openproject_instance_url', $values) &&
 				$values['openproject_instance_url'] && !$isOPOAuthCrdentialSet) {
 				// sending admin audit log if admin has changed or added the openproject host url
 				$this->openprojectAPIService->logToAuditFile(
 					"OpenProject host url has been set to '" . $values['openproject_instance_url'] . "' in application " . Application::APP_ID
 				);
 			}
-			if($isOPOAuthCrdentialSet) {
+			if ($isOPOAuthCrdentialSet) {
 				$this->openprojectAPIService->logToAuditFile(
 					"OpenProject OAuth credential 'openproject_client_id' and 'openproject_client_secret' has been set in application " . Application::APP_ID
 				);

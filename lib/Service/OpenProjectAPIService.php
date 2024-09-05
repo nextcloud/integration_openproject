@@ -1112,7 +1112,7 @@ class OpenProjectAPIService {
 	 * @return void
 	 */
 	public function logToAuditFile($auditLogMessage): void {
-		if($this->isAdminAuditConfigSetCorrectly()) {
+		if ($this->isAdminAuditConfigSetCorrectly()) {
 			$this->auditLogger = new AuditLogger($this->logFactory, $this->config);
 			$this->auditLogger->info($auditLogMessage,
 				['app' => 'admin_audit']
