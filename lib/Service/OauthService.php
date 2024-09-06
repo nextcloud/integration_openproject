@@ -52,7 +52,7 @@ class OauthService {
 	 * @param string $nextcloudVersion
 	 * @return string
 	 */
-	public function getHashedOrEncryptedSecretBasedOnNextcloudVersions(string $secret, string $nextcloudVersion): string {
+	public function hashOrEncryptSecretBasedOnNextcloudVersion(string $secret, string $nextcloudVersion): string {
 		switch (true) {
 			case version_compare($nextcloudVersion, '30.0.0') >= 0:
 			case version_compare($nextcloudVersion, '29.0.7') >= 0 && version_compare($nextcloudVersion, '30.0.0') < 0:
@@ -82,7 +82,7 @@ class OauthService {
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
 		$nextcloudVersion = OC_Util::getVersionString();
-		$client->setSecret($this->getHashedOrEncryptedSecretBasedOnNextcloudVersions($secret, $nextcloudVersion));
+		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 

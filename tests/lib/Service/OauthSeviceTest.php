@@ -1,8 +1,8 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 Swikriti Tripathi <swikriti@jankaritech.com>
+ * @copyright Copyright (c) 2024 Sagar Gurung <sagar@jankaritech.com>
  *
- * @author Your name <swikriti@jankaritech.com>
+ * @author Your name <sagar@jankaritech.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -56,7 +56,7 @@ class OauthServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function getHashedOrEncryptedSecretBasedOnNextcloudVersionsDataProvider() {
+	public function gethashOrEncryptSecretBasedOnNextcloudVersion(): array {
 		return [
 			[
 				"30.0.0",
@@ -107,7 +107,7 @@ class OauthServiceTest extends TestCase {
 
 
 	/**
-	 * @dataProvider getHashedOrEncryptedSecretBasedOnNextcloudVersionsDataProvider
+	 * @dataProvider gethashOrEncryptSecretBasedOnNextcloudVersion
 	 * @param string $nextcloudVersion
 	 * @param string $hashOrEncryptFunction
 	 *
@@ -118,6 +118,6 @@ class OauthServiceTest extends TestCase {
 		$iCryptoMock = $this->getMockBuilder(ICrypto::class)->getMock();
 		$oAuthService = $this->getOauthServiceMock(null, null, $iCryptoMock);
 		$iCryptoMock->expects($this->once())->method($hashOrEncryptFunction);
-		$oAuthService->getHashedOrEncryptedSecretBasedOnNextcloudVersions("client_secret", $nextcloudVersion);
+		$oAuthService->hashOrEncryptSecretBasedOnNextcloudVersion("client_secret", $nextcloudVersion);
 	}
 }
