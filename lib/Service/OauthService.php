@@ -48,6 +48,29 @@ class OauthService {
 	}
 
 	/**
+	 * @param string $secret
+	 * @param string $nextcloudVersion
+	 * @return string
+	 */
+	public function hashOrEncryptSecretBasedOnNextcloudVersion(string $secret, string $nextcloudVersion): string {
+		switch (true) {
+			case version_compare($nextcloudVersion, '30.0.0') >= 0:
+			case version_compare($nextcloudVersion, '29.0.7') >= 0 && version_compare($nextcloudVersion, '30.0.0') < 0:
+			case version_compare($nextcloudVersion, '28.0.10') >= 0 && version_compare($nextcloudVersion, '29.0.0') < 0:
+			case version_compare($nextcloudVersion, '27.1.11.8') >= 0 && version_compare($nextcloudVersion, '28.0.0') < 0:
+				$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+				break;
+			case version_compare($nextcloudVersion, '27.0.0') === 0:
+				$encryptedSecret = $secret;
+				break;
+			default:
+				$encryptedSecret = $this->crypto->encrypt($secret);
+				break;
+		}
+		return $encryptedSecret;
+	}
+
+	/**
 	 * @param string $name
 	 * @param string $redirectUri
 	 * @return array<mixed>
@@ -58,12 +81,8 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		if (version_compare(OC_Util::getVersionString(), '27.0.1') >= 0) {
-			$encryptedSecret = $this->crypto->encrypt($secret);
-		} else {
-			$encryptedSecret = $secret;
-		}
-		$client->setSecret($encryptedSecret);
+		$nextcloudVersion = OC_Util::getVersionString();
+		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
@@ -87,8 +106,7 @@ class OauthService {
 				'id' => $client->getId(),
 				'nextcloud_oauth_client_name' => $client->getName(),
 				'openproject_redirect_uri' => $client->getRedirectUri(),
-				'nextcloud_client_id' => $client->getClientIdentifier(),
-				'nextcloud_client_secret' => $this->crypto->decrypt($client->getSecret()),
+				'nextcloud_client_id' => $client->getClientIdentifier()
 			];
 		} catch (ClientNotFoundException $e) {
 			return null;
