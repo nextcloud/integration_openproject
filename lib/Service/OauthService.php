@@ -58,18 +58,20 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		if (version_compare(OC_Util::getVersionString(), '30.0.0') >= 0) {
-			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
-		} elseif (version_compare(OC_Util::getVersionString(), '29.0.7') >= 0 && version_compare(OC_Util::getVersionString(), '30.0.0') < 0) {
-			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
-		} elseif (version_compare(OC_Util::getVersionString(), '28.0.10') >= 0 && version_compare(OC_Util::getVersionString(), '29.0.0') < 0) {
-			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
-		} elseif (version_compare(OC_Util::getVersionString(), '27.1.11.8') >= 0 && version_compare(OC_Util::getVersionString(), '28.0.0') < 0) {
-			$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
-		} elseif (version_compare(OC_Util::getVersionString(), '27.0.0') === 0) {
-			$encryptedSecret = $secret;
-		} else {
-			$encryptedSecret = $this->crypto->encrypt($secret);
+		$nextcloudVersion = OC_Util::getVersionString();
+		switch (true) {
+			case version_compare($nextcloudVersion, '30.0.0') >= 0:
+			case version_compare($nextcloudVersion, '29.0.7') >= 0 && version_compare($nextcloudVersion, '30.0.0') < 0:
+			case version_compare($nextcloudVersion, '28.0.10') >= 0 && version_compare($nextcloudVersion, '29.0.0') < 0:
+			case version_compare($nextcloudVersion, '27.1.11.8') >= 0 && version_compare($nextcloudVersion, '28.0.0') < 0:
+				$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
+				break;
+			case version_compare($nextcloudVersion, '27.0.0') === 0:
+				$encryptedSecret = $secret;
+				break;
+			default:
+				$encryptedSecret = $this->crypto->encrypt($secret);
+				break;
 		}
 		$client->setSecret($encryptedSecret);
 		$client->setClientIdentifier($clientId);
