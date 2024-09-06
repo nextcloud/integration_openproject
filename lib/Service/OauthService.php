@@ -48,17 +48,11 @@ class OauthService {
 	}
 
 	/**
-	 * @param string $name
-	 * @param string $redirectUri
-	 * @return array<mixed>
+	 * @param string $secret
+	 * @param string $nextcloudVersion
+	 * @return string
 	 */
-	public function createNcOauthClient(string $name, string $redirectUri): array {
-		$clientId = $this->secureRandom->generate(64, self::validChars);
-		$client = new Client();
-		$client->setName($name);
-		$client->setRedirectUri(sprintf($redirectUri, $clientId));
-		$secret = $this->secureRandom->generate(64, self::validChars);
-		$nextcloudVersion = OC_Util::getVersionString();
+	public function getHashedOrEncryptedSecretBasedOnNextcloudVersions(string $secret, string $nextcloudVersion): string {
 		switch (true) {
 			case version_compare($nextcloudVersion, '30.0.0') >= 0:
 			case version_compare($nextcloudVersion, '29.0.7') >= 0 && version_compare($nextcloudVersion, '30.0.0') < 0:
@@ -73,7 +67,22 @@ class OauthService {
 				$encryptedSecret = $this->crypto->encrypt($secret);
 				break;
 		}
-		$client->setSecret($encryptedSecret);
+		return $encryptedSecret;
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $redirectUri
+	 * @return array<mixed>
+	 */
+	public function createNcOauthClient(string $name, string $redirectUri): array {
+		$clientId = $this->secureRandom->generate(64, self::validChars);
+		$client = new Client();
+		$client->setName($name);
+		$client->setRedirectUri(sprintf($redirectUri, $clientId));
+		$secret = $this->secureRandom->generate(64, self::validChars);
+		$nextcloudVersion = OC_Util::getVersionString();
+		$client->setSecret($this->getHashedOrEncryptedSecretBasedOnNextcloudVersions($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
