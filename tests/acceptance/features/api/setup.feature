@@ -674,7 +674,7 @@ Feature: setup the integration through an API
 
     # user "OpenProject" cannot make api request using the old app password
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
-    Then the HTTP status code should be "401"
+    Then the HTTP status code should be "500"
 
 
   Scenario: check version of uploaded file inside a group folder

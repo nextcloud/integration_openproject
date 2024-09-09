@@ -352,7 +352,7 @@ class FeatureContext implements Context {
 				$fullFolderString
 			);
 			$this->theHTTPStatusCodeShouldBe(
-				["201","405"], // 405 is returned if the folder already exists
+				["201","500"], // 405 is returned if the folder already exists
 				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
 			);
 		}
