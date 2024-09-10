@@ -22,6 +22,7 @@ OC.L10N.register(
     "Connected as {user}" : "Ansluten som {user}",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varning, allt du skriver i sökfältet kommer att skickas till din OpenProject-instans.",
     "Incorrect access token" : "Ogiltig åtkomst-token",
+    "Invalid token" : "Ogiltig token",
     "Documentation" : "Dokumentation"
 },
 "nplurals=2; plural=(n != 1);");
