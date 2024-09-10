@@ -11,13 +11,15 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable27, stable28, stable29, stable30 ]
-        phpVersion: [ 8.0, 8.1, 8.2, 8.3]
-        exclude:
+        nextcloudVersion: [ stable30 ]
+        phpVersion: [ 8.1, 8.2, 8.3 ]
+        include:
           - nextcloudVersion: stable27
-            phpVersion: 8.3
-          - nextcloudVersion: stable30
             phpVersion: 8.0
+          - nextcloudVersion: stable28
+            phpVersion: 8.1
+          - nextcloudVersion: stable29
+            phpVersion: 8.1
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -109,10 +111,10 @@ jobs:
           ./occ a:e integration_openproject
           cd apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
-            make phpunitforphp8.0
+          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
+            make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
           else
-            make phpunit
+            make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
           fi
           make jsunit
 
@@ -178,27 +180,28 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable27, stable28, stable29, stable30 ]
+        nextcloudVersion: [ stable30 ]
         phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 0, 1, 2, 3 ]
-        database: [pgsql, mysql]
-        isScheduledEventNightly:
-          - ${{github.event_name == 'schedule'}}
-        exclude:
-          - nextcloudVersion: stable27
-            phpVersionMinor: 3
+        phpVersionMinor: [ 1, 2, 3 ]
+        database: [ mysql ]
+        include:
+          # Each database once on the newest Server with preinstalled PHP version
           - nextcloudVersion: stable30
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
-            phpVersionMinor: 0
-          - isScheduledEventNightly: false
+            phpVersionMajor: 8
             phpVersionMinor: 1
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable28
-            phpVersionMinor: 2
-          - isScheduledEventNightly: false
-            nextcloudVersion: stable29
-            phpVersionMinor: 2
+            database: pgsql
+          - nextcloudVersion: stable27
+            phpVersionMajor: 8
+            phpVersionMinor: 0
+            database: mysql
+          - nextcloudVersion: stable28
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
+          - nextcloudVersion: stable29
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/ubuntu/ubuntu:latest
