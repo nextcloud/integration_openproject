@@ -656,14 +656,12 @@ Feature: setup the integration through an API
       "required": [
           "nextcloud_oauth_client_name",
           "openproject_redirect_uri",
-          "nextcloud_client_id",
-          "nextcloud_client_secret"
+          "nextcloud_client_id"
        ],
       "properties": {
           "nextcloud_oauth_client_name": {"type": "string", "pattern": "^OpenProject client$"},
           "openproject_redirect_uri": {"type": "string", "pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"type": "string", "pattern": "[A-Za-z0-9]+"},
-          "nextcloud_client_secret": {"type": "string", "pattern": "[A-Za-z0-9]+"},
           "openproject_user_app_password": {"type": "string", "pattern": "[A-Za-z0-9]+"}
       }
     }
@@ -678,9 +676,7 @@ Feature: setup the integration through an API
     When user "OpenProject" sends a "PROPFIND" request to "/remote.php/webdav" using old app password
     Then the HTTP status code should be "401"
 
-  # to locally run this test the "project folder" needs to be setup already
-  # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
-  @skipOnStable25 @skipOnStable26
+
   Scenario: check version of uploaded file inside a group folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
@@ -693,9 +689,7 @@ Feature: setup the integration through an API
     When user "Carol" deletes folder "/OpenProject/OpenProject/project-demo"
     Then the HTTP status code should be 204
 
-  # to locally run this test the "project folder" needs to be setup already
-  # issue of group folder https://github.com/nextcloud/groupfolders/issues/2718
-  @skipOnStable25 @skipOnStable26
+
   Scenario: check version of uploaded file after an update inside a group folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
