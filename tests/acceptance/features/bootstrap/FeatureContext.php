@@ -345,6 +345,10 @@ class FeatureContext implements Context {
 				continue;
 			}
 			$fullFolderString .= "/" . trim($folder);
+			// check if the file or folder already exists
+			if ($this->isElementExist($user, $fullFolderString)) {
+				continue;
+			}
 			$this->response = $this->makeDavRequest(
 				$user,
 				$this->regularUserPassword,
@@ -352,7 +356,7 @@ class FeatureContext implements Context {
 				$fullFolderString
 			);
 			$this->theHTTPStatusCodeShouldBe(
-				["201","500"], // 405 is returned if the folder already exists
+				["201"],
 				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
 			);
 		}
@@ -692,8 +696,8 @@ class FeatureContext implements Context {
 		}
 	}
 
-	public function getIdOfElement(string $user, string $element): int {
-		$propfindResponse = $this->makeDavRequest(
+	public function getElementResponse(string $user, string $element): ResponseInterface {
+		return $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
 			"PROPFIND",
@@ -706,14 +710,23 @@ class FeatureContext implements Context {
 					  </d:prop>
 					</d:propfind>'
 		);
-		$xmlBody = $propfindResponse->getBody()->getContents();
-		$responseXmlObject = new SimpleXMLElement($xmlBody);
+	}
+
+	public function getIdOfElement(string $user, string $element): int {
+		$propfindResponse = $this->getElementResponse($user, $element);
+		$this->theHTTPStatusCodeShouldBe(207, "", $propfindResponse);
+		$responseXmlObject = new SimpleXMLElement($propfindResponse->getBody()->getContents());
 		$responseXmlObject->registerXPathNamespace(
 			'oc',
 			'http://owncloud.org/ns'
 		);
 		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
 	}
+
+	public function isElementExist(string $user, string $element): bool {
+		return $this->getElementResponse($user, $element)->getStatusCode() === 207;
+	}
+
 	/**
 	 * @param string $path
 	 * @param string $method
