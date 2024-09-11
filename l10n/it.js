@@ -37,7 +37,6 @@ OC.L10N.register(
     "OpenProject admin options saved" : "Opzioni amministrative di OpenProject salvate",
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Connect to OpenProject" : "Collegati a OpenProject",
-    "Some OpenProject integration application settings are not working." : "Alcune impostazioni dell'applicazione di integrazione OpenProject non funzionano.",
     "Enable navigation link" : "Abilita collegamento di navigazione",
     "Connected as {user}" : "Connesso come {user}",
     "Disconnect from OpenProject" : "Disconnetti da OpenProject",
