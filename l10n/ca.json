@@ -69,7 +69,6 @@
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Si continueu, haureu d'actualitzar la configuració del vostre OpenProject amb les noves credencials d'OAuth de Nextcloud. A més, tots els usuaris d'OpenProject hauran de tornar a autoritzar l'accés al seu compte Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "No s'ha pogut crear el client OAuth de Nextcloud",
     "Connect to OpenProject" : "Connecteu-vos a OpenProject",
-    "Some OpenProject integration application settings are not working." : "Alguns paràmetres de l'aplicació d'integració de l'OpenProject no funcionen.",
     "Failed to redirect to OpenProject" : "No s'ha pogut redirigir a OpenProject",
     "Enable navigation link" : "Habilita l'enllaç de navegació",
     "Connected as {user}" : "S'ha connectat com a {user}",
