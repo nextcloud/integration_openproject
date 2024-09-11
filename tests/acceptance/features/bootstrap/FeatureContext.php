@@ -345,6 +345,10 @@ class FeatureContext implements Context {
 				continue;
 			}
 			$fullFolderString .= "/" . trim($folder);
+			// check if the file or folder already exists
+			if ($this->fileOrFolderExists($user, $fullFolderString)) {
+				continue;
+			}
 			$this->response = $this->makeDavRequest(
 				$user,
 				$this->regularUserPassword,
@@ -352,7 +356,7 @@ class FeatureContext implements Context {
 				$fullFolderString
 			);
 			$this->theHTTPStatusCodeShouldBe(
-				["201","405"], // 405 is returned if the folder already exists
+				["201"],
 				"HTTP status code was not 201 while trying to create folder '$fullFolderString' for user '$user'"
 			);
 		}
@@ -457,7 +461,7 @@ class FeatureContext implements Context {
 	 * @When user :user gets the information of the folder :fileName
 	 */
 	public function userGetsTheInformationOfFileWithName(string $user, string $fileName): void {
-		$fileId = $this->getIdOfElement($user, $fileName);
+		$fileId = $this->getIdOfFileOrFolder($user, $fileName);
 		$this->response = $this->sendOCSRequest(
 			'/apps/integration_openproject/fileinfo/' . $fileId,
 			'GET',
@@ -469,7 +473,7 @@ class FeatureContext implements Context {
 	 * @When user :user gets the information of all files and group folder :groupFolder created in this scenario
 	 */
 	public function userGetsTheInformationOfAllCreatedFiles(string $user, string $groupFolder): void {
-		$this->createdFiles[] = $this->getIdOfElement($user, $groupFolder);
+		$this->createdFiles[] = $this->getIdOfFileOrFolder($user, $groupFolder);
 		$body = json_encode(["fileIds" => $this->createdFiles]);
 		Assert::assertNotFalse(
 			$body,
@@ -584,7 +588,7 @@ class FeatureContext implements Context {
 			[],
 			$content
 		);
-		return $this->getIdOfElement($user, $destination);
+		return $this->getIdOfFileOrFolder($user, $destination);
 	}
 
 
@@ -692,12 +696,12 @@ class FeatureContext implements Context {
 		}
 	}
 
-	public function getIdOfElement(string $user, string $element): int {
-		$propfindResponse = $this->makeDavRequest(
+	public function propfindFileOrFolder(string $user, string $path): ResponseInterface {
+		return $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
 			"PROPFIND",
-			$element,
+			$path,
 			null,
 			'<?xml version="1.0"?>
 					<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns">
@@ -706,14 +710,24 @@ class FeatureContext implements Context {
 					  </d:prop>
 					</d:propfind>'
 		);
-		$xmlBody = $propfindResponse->getBody()->getContents();
-		$responseXmlObject = new SimpleXMLElement($xmlBody);
+	}
+
+	public function getIdOfFileOrFolder(string $user, string $path): int {
+		$propfindResponse = $this->propfindFileOrFolder($user, $path);
+		// Ensure PROPFIND returned status 207
+		$this->theHTTPStatusCodeShouldBe(207, "", $propfindResponse);
+		$responseXmlObject = new SimpleXMLElement($propfindResponse->getBody()->getContents());
 		$responseXmlObject->registerXPathNamespace(
 			'oc',
 			'http://owncloud.org/ns'
 		);
 		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
 	}
+
+	public function fileOrFolderExists(string $user, string $path): bool {
+		return $this->propfindFileOrFolder($user, $path)->getStatusCode() === 207;
+	}
+
 	/**
 	 * @param string $path
 	 * @param string $method
