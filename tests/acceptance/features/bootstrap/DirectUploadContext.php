@@ -29,7 +29,7 @@ class DirectUploadContext implements Context {
 	public function userSendsAPOSTRequestToTheEndpointWithTheFileIdOf(
 		string $user, string $elementName
 	): void {
-		$elementId = $this->featureContext->getIdOfElement($user, $elementName);
+		$elementId = $this->featureContext->getIdOfFileOrFolder($user, $elementName);
 		$data = json_encode(array('folder_id' => $elementId));
 		$this->sendRequestToDirectUploadTokenEndpoint($user, $data);
 	}
