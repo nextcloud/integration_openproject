@@ -27,7 +27,7 @@ class FilesVersionsContext implements Context {
 		string $user,
 		int $count
 	):void {
-		$fileId = $this->featureContext->getIdOfElement($user, $path);
+		$fileId = $this->featureContext->getIdOfFileOrFolder($user, $path);
 		Assert::assertNotNull($fileId, __METHOD__ . " file $path user $user not found (the file may not exist)");
 		$this->theVersionFolderOfFileIdShouldContainElements($user, $fileId, $count);
 	}
