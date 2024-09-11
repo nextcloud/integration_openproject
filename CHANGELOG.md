@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## 2.7.0 - 2024-09-10
 ### Changed
+- This release expects OpenProject version 13.2 or newer
 - Add application's support for Nextcloud 30
 - Log admin configuration to  audit log (`/audit.log`)
 - Improve button text visibility when selecting different background images in Nextcloud's UI
