@@ -20,6 +20,8 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable29
             phpVersion: 8.1
+          - nextcloudVersion: master
+            phpVersion: 8.3
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -201,6 +203,10 @@ jobs:
           - nextcloudVersion: stable29
             phpVersionMajor: 8
             phpVersionMinor: 1
+            database: mysql
+          - nextcloudVersion: stable30
+            phpVersionMajor: 8
+            phpVersionMinor: 3
             database: mysql
     runs-on: ubuntu-20.04
     container:
