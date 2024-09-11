@@ -72,7 +72,6 @@ OC.L10N.register(
     "If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account." : "Jeśli będziesz kontynuować, będziesz musiał zaktualizować ustawienia w OpenProject przy użyciu nowych poświadczeń OAuth Nextcloud. Ponadto wszyscy użytkownicy OpenProject będą musieli ponownie autoryzować dostęp do swojego konta Nextcloud.",
     "Failed to create Nextcloud OAuth client" : "Nie udało się utworzyć klienta OAuth Nextcloud",
     "Connect to OpenProject" : "Połącz się z OpenProject",
-    "Some OpenProject integration application settings are not working." : "Niektóre ustawienia aplikacji integracyjnej OpenProject nie działają.",
     "Failed to redirect to OpenProject" : "Nie udało się przekierować do OpenProject",
     "Enable navigation link" : "Włącz link nawigacyjny",
     "Connected as {user}" : "Połączono jako {user}",
