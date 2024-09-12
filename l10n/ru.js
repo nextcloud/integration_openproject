@@ -138,6 +138,7 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Включить унифицированный поиск билетов",
     "Incorrect access token" : "Неверный токен доступа",
     "Invalid token" : "Недопустимый токен",
+    "Default user settings" : "Настройки пользователя по умолчанию",
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Новый пользователь получит эти значения по умолчанию, и они будут применяться к приложению интеграции, пока пользователь их не изменит.",
     "Documentation" : "Документация",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Не удалось выполнить запрос на отзыв из-за ошибки подключения к серверу OpenProject",
