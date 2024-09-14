@@ -24,12 +24,12 @@ use OCP\Files\DavUtil;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
 
 class FilesController extends OCSController {
 
@@ -54,7 +54,7 @@ class FilesController extends OCSController {
 	protected $connection;
 
 	/**
-	 * @var ILogger
+	 * @var LoggerInterface
 	 */
 	private $logger;
 
@@ -75,7 +75,7 @@ class FilesController extends OCSController {
 	 * @param IMountProviderCollection $mountCollection
 	 * @param IManager $activityManager
 	 * @param IDBConnection $connection
-	 * @param ILogger $logger
+	 * @param LoggerInterface $logger
 	 * @param IUserManager $userManager
 	 * @param DavUtil $davUtils
 	 */
@@ -87,7 +87,7 @@ class FilesController extends OCSController {
 		IMountProviderCollection $mountCollection,
 		IManager $activityManager,
 		IDBConnection $connection,
-		ILogger $logger,
+		LoggerInterface $logger,
 		IUserManager $userManager,
 		DavUtil $davUtils
 	) {
