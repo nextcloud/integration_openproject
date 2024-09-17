@@ -489,6 +489,7 @@ Feature: setup the integration through an API
 
   # this test wil not pass locally if your system already has a `OpenProject` user/group setup
   Scenario: Set up whole integration with project folder and user app password
+    Given groupfolder DAV path has been set
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {

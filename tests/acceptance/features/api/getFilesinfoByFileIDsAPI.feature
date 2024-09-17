@@ -4,6 +4,7 @@ Feature: retrieve information of multiple files using the file IDs
     Given user "Carol" has been created
     And group "grp1" has been created
     And user "Carol" has been added to the group "grp1"
+    And groupfolder DAV path has been set
     And group folder "groupFolder" has been created
     And  group "grp1" has been added to group folder "groupFolder"
     And user "Brian" has been created with display-name "Brian Adams"

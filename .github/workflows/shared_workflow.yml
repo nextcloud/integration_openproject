@@ -11,7 +11,7 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable30 ]
+        nextcloudVersion: [ stable30, master ]
         phpVersion: [ 8.1, 8.2, 8.3 ]
         include:
           - nextcloudVersion: stable27

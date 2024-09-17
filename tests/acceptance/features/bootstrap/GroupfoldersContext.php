@@ -16,32 +16,33 @@ class GroupfoldersContext implements Context {
 	/** @var array<mixed> */
 	private array $createdGroupFolders = [];
 
-	private function getDavPath():string {
-		// there is a change in the DAV path starting from version 19 of groupfolders, since this function returns
-		// "ocs/v2.php/" for versions 19 and above, and "index.php/" for versions below 19.
-		$capibilitiesResponse = $this->featureContext->sendOCSRequest(
+	/** @var string  */
+	private string $groupFolderDavPath;
+
+	/**
+	 * @Given groupfolder DAV path has been set
+	 */
+	public function groupfolderDavPathHasBeenSet(): void {
+		// groupfolder with version greater then 19.0.0 uses "ocs/v2.php/" endpoint
+		$capabilitiesResponse = $this->featureContext->sendOCSRequest(
 			'/cloud/capabilities', 'GET', $this->featureContext->getAdminUsername()
 		);
-
-		$responseAsJson = json_decode($capibilitiesResponse->getBody()->getContents());
-		$responseAsJson = $responseAsJson->ocs->data;
-
-		$getGroupFolderAppVersion = $responseAsJson->capabilities->integration_openproject->groupfolder_version;
-
-		if (version_compare($getGroupFolderAppVersion, '19') >= 0) {
-			return "ocs/v2.php/";
+		$this->featureContext->theHTTPStatusCodeShouldBe(200, "", $capabilitiesResponse);
+		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
+		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
+		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
+		$this->groupFolderDavPath = "index.php/";
+		if (version_compare($groupFolderVersion, '19') >= 0) {
+			$this->groupFolderDavPath = "ocs/v2.php/";
 		}
-		return "index.php/";
 	}
 
 	/**
 	 * @Given group folder :folderName has been created
 	 */
 	public function groupFolderHasBeenCreated(string $folderName): void {
-		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"$davPath" . "apps/groupfolders/folders";
-
+			"$this->groupFolderDavPath" . "apps/groupfolders/folders";
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
 			'multipart' => [
@@ -71,9 +72,8 @@ class GroupfoldersContext implements Context {
 	 */
 	public function groupHasBeenAddedToGroupFolder(string $group, string $groupfolder):void {
 		$groupfolderId = $this->createdGroupFolders[$groupfolder];
-		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"$davPath". "apps/groupfolders/folders/".$groupfolderId. "/groups";
+			"$this->groupFolderDavPath". "apps/groupfolders/folders/".$groupfolderId. "/groups";
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
 			'multipart' => [
@@ -176,9 +176,8 @@ class GroupfoldersContext implements Context {
 	 * @throws GuzzleException
 	 */
 	private function getAllGroupfolders() {
-		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"$davPath". "apps/groupfolders/folders?format=json";
+			"$this->groupFolderDavPath". "apps/groupfolders/folders?format=json";
 
 		$headers['Content-Type'] = 'application/json';
 		$headers['OCS-APIRequest'] = 'true';
@@ -197,9 +196,8 @@ class GroupfoldersContext implements Context {
 	}
 
 	private function adminDeletesGroupfolder(int $id): void {
-		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"$davPath". "apps/groupfolders/folders/" . $id;
+			"$this->groupFolderDavPath". "apps/groupfolders/folders/" . $id;
 		$headers['OCS-APIRequest'] = 'true';
 		$this->featureContext->sendHttpRequest(
 			$fullUrl,
