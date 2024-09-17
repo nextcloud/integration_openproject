@@ -16,13 +16,31 @@ class GroupfoldersContext implements Context {
 	/** @var array<mixed> */
 	private array $createdGroupFolders = [];
 
+	private function getDavPath():string {
+		// there is a change in the DAV path starting from version 19 of groupfolders, since this function returns
+		// "ocs/v2.php/" for versions 19 and above, and "index.php/" for versions below 19.
+		$capibilitiesResponse = $this->featureContext->sendOCSRequest(
+			'/cloud/capabilities', 'GET', $this->featureContext->getAdminUsername()
+		);
+
+		$responseAsJson = json_decode($capibilitiesResponse->getBody()->getContents());
+		$responseAsJson = $responseAsJson->ocs->data;
+
+		$getGroupFolderAppVersion = $responseAsJson->capabilities->integration_openproject->groupfolder_version;
+
+		if (version_compare($getGroupFolderAppVersion, '19') >= 0) {
+			return "ocs/v2.php/";
+		}
+		return "index.php/";
+	}
 
 	/**
 	 * @Given group folder :folderName has been created
 	 */
 	public function groupFolderHasBeenCreated(string $folderName): void {
+		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders";
+			"$davPath" . "apps/groupfolders/folders";
 
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
@@ -53,8 +71,9 @@ class GroupfoldersContext implements Context {
 	 */
 	public function groupHasBeenAddedToGroupFolder(string $group, string $groupfolder):void {
 		$groupfolderId = $this->createdGroupFolders[$groupfolder];
+		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders/".$groupfolderId. "/groups";
+			"$davPath". "apps/groupfolders/folders/".$groupfolderId. "/groups";
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
 			'multipart' => [
@@ -157,8 +176,9 @@ class GroupfoldersContext implements Context {
 	 * @throws GuzzleException
 	 */
 	private function getAllGroupfolders() {
+		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders?format=json";
+			"$davPath". "apps/groupfolders/folders?format=json";
 
 		$headers['Content-Type'] = 'application/json';
 		$headers['OCS-APIRequest'] = 'true';
@@ -177,8 +197,9 @@ class GroupfoldersContext implements Context {
 	}
 
 	private function adminDeletesGroupfolder(int $id): void {
+		$davPath = $this->getDavPath();
 		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders/" . $id;
+			"$davPath". "apps/groupfolders/folders/" . $id;
 		$headers['OCS-APIRequest'] = 'true';
 		$this->featureContext->sendHttpRequest(
 			$fullUrl,

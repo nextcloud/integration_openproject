@@ -204,7 +204,7 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
-          - nextcloudVersion: stable30
+          - nextcloudVersion: master
             phpVersionMajor: 8
             phpVersionMinor: 3
             database: mysql
