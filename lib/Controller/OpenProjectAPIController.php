@@ -28,12 +28,11 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Http\Client\LocalServerException;
-
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
-use phpDocumentor\Reflection\Types\This;
 use Psr\Log\LoggerInterface;
+use OCA\OpenProject\ExApp;
 
 class OpenProjectAPIController extends Controller {
 
@@ -69,14 +68,16 @@ class OpenProjectAPIController extends Controller {
 	 * @var LoggerInterface
 	 */
 	private $logger;
+	private ExApp $exApp;
 
-	public function __construct(string $appName,
-		IRequest $request,
-		IConfig $config,
-		OpenProjectAPIService $openprojectAPIService,
-		IURLGenerator $urlGenerator,
-		LoggerInterface $logger,
-		?string $userId) {
+	public function __construct(string                $appName,
+								IRequest              $request,
+								IConfig               $config,
+								OpenProjectAPIService $openprojectAPIService,
+								IURLGenerator         $urlGenerator,
+								LoggerInterface       $logger,
+								ExApp                 $exApp,
+								?string               $userId) {
 		parent::__construct($appName, $request);
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userId = $userId;
@@ -85,6 +86,7 @@ class OpenProjectAPIController extends Controller {
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $logger;
+		$this->exApp = $exApp;
 	}
 
 	/**
@@ -551,8 +553,8 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse(['result' => 'invalid']);
 		}
 		$options = [];
-		if($this->openprojectAPIService->isOpenProjectRunningAsExApp($url)) {
-			$options = $this->openprojectAPIService->setHeadersForProxy($this->userId, $options);
+		if($this->exApp->isOpenProjectRunningAsExApp($url)) {
+			$options = $this->exApp->setHeadersForProxyRequest($this->userId, $options);
 		}
 		$options['allow_redirects'] = false;
 		try {

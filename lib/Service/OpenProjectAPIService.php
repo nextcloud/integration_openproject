@@ -55,9 +55,8 @@ use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
-use phpDocumentor\Reflection\Types\Self_;
 use Psr\Log\LoggerInterface;
-use OCA\AppAPI\Service\ExAppService;
+use OCA\OpenProject\ExApp;
 
 define('CACHE_TTL', 3600);
 
@@ -132,7 +131,7 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	private AuditLogger $auditLogger;
-	private ExAppService $exAppService;
+	private ExApp $exApp;
 
 	public function __construct(
 		string $appName,
@@ -153,7 +152,7 @@ class OpenProjectAPIService {
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
 		ILogFactory $logFactory,
-		ExAppService $exAppService,
+		ExApp $exApp
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -173,7 +172,7 @@ class OpenProjectAPIService {
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
 		$this->logFactory = $logFactory;
-		$this->exAppService = $exAppService;
+		$this->exApp = $exApp;
 	}
 
 	/**
@@ -322,8 +321,8 @@ class OpenProjectAPIService {
 		$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$options = [];
-		if($this->isOpenProjectRunningAsExApp($openprojectUrl)) {
-			$options = $this->setHeadersForProxy($nextcloudUserId, $options);
+		if($this->exApp->isOpenProjectRunningAsExApp($openprojectUrl)) {
+			$options = $this->exApp->setHeadersForProxyRequest($nextcloudUserId, $options);
 		}
 		try {
 			$response = $this->rawRequest(
@@ -369,21 +368,6 @@ class OpenProjectAPIService {
 			$avatarContent = $avatar->getFile(64)->getContent();
 			return ['avatar' => $avatarContent];
 		}
-	}
-
-	public function isOpenProjectRunningAsExApp(string $openprojectUrl) : bool {
-		return str_ends_with($openprojectUrl, '/proxy/openproject-nextcloud-app');
-	}
-
-	public function setHeadersForProxy(string $nextcloudUser, array $options): array {
-		$options = [];
-		$exAppconfigInformation = $this->exAppService->getExApp(Application::APP_ID_PROXY_OPENPROJECT);
-		$authorizationAppAPI = base64_encode($nextcloudUser . ":" . $exAppconfigInformation->getSecret());
-		$options['headers']['host'] = $exAppconfigInformation->getHost() . ":" . $exAppconfigInformation->getPort();
-		$options['headers']['ex-app-id'] = $exAppconfigInformation->getAppid();
-		$options['headers']['authorization-app-api'] = $authorizationAppAPI;
-		$options['headers']['ex-app-version'] = $exAppconfigInformation->getVersion();
-		return $options;
 	}
 
 	/**
@@ -468,8 +452,8 @@ class OpenProjectAPIService {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
 		}
 		$options = [];
-		if($this->isOpenProjectRunningAsExApp($openprojectUrl)) {
-			$options = $this->setHeadersForProxy($userId, $options);
+		if($this->exApp->isOpenProjectRunningAsExApp($openprojectUrl)) {
+			$options = $this->exApp->setHeadersForProxyRequest($userId, $options);
 		}
 		try {
 			$response = $this->rawRequest($accessToken, $openprojectUrl, $endPoint, $params, $method, $options);
