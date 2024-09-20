@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <psalm
-	errorLevel="6"
+	errorLevel="4"
 	resolveFromConfigFile="true"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="https://getpsalm.org/schema/config"
 	xsi:schemaLocation="https://getpsalm.org/schema/config"
 	findUnusedBaselineEntry="false"
 	findUnusedCode="false"
+	findUnusedVariablesAndParams="true"
 	autoloader="bootstrap.php"
 >
 	<projectFiles>
@@ -14,6 +15,8 @@
 		<directory name="tests" />
 		<ignoreFiles>
 			<directory name="vendor" />
+			<directory name="../../**" />
+			<directory name="../**" />
 		</ignoreFiles>
 	</projectFiles>
 	<stubs>

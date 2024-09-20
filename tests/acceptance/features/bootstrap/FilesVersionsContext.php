@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
@@ -110,6 +111,8 @@ class FilesVersionsContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		$this->featureContext = $environment->getContext('FeatureContext');
+		if($environment instanceof InitializedContextEnvironment) {
+			$this->featureContext = $environment->getContext('FeatureContext');
+		}
 	}
 }
