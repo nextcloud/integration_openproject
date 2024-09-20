@@ -15,8 +15,8 @@
 		<directory name="tests" />
 		<ignoreFiles>
 			<directory name="vendor" />
-			<directory name="../../**" />
-			<directory name="../**" />
+<!--			<directory name="../../**" />-->
+<!--			<directory name="../**" />-->
 		</ignoreFiles>
 	</projectFiles>
 	<stubs>

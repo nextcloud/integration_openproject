@@ -719,7 +719,10 @@ class FeatureContext implements Context {
 			'oc',
 			'http://owncloud.org/ns'
 		);
-		return (int)(string)$responseXmlObject->xpath('//oc:fileid')[0];
+		$fileId = $responseXmlObject->xpath('//oc:fileid')[0];
+		Assert::assertNotNull($fileId, __METHOD__ . " file $path user $user not found (the file may not exist)");
+
+		return (int)(string) $fileId;
 	}
 
 	public function fileOrFolderExists(string $user, string $path): bool {
