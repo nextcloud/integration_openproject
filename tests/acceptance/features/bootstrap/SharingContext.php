@@ -162,7 +162,7 @@ class SharingContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		if($environment instanceof InitializedContextEnvironment) {
+		if ($environment instanceof InitializedContextEnvironment) {
 			$this->featureContext = $environment->getContext('FeatureContext');
 		}
 	}

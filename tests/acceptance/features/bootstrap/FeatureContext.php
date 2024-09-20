@@ -1161,7 +1161,7 @@ class FeatureContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		if($environment instanceof InitializedContextEnvironment) {
+		if ($environment instanceof InitializedContextEnvironment) {
 			$this->sharingContext = $environment->getContext('SharingContext');
 			$this->directUploadContext = $environment->getContext('DirectUploadContext');
 		}
