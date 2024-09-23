@@ -15,12 +15,11 @@
 		<directory name="tests" />
 		<ignoreFiles>
 			<directory name="vendor" />
-<!--			<directory name="../../**" />-->
-<!--			<directory name="../**" />-->
 		</ignoreFiles>
 	</projectFiles>
 	<stubs>
-		<file name="tests/stub.phpstub" preloadClasses="true"/>
+		<file name="tests/stub/doctrine_cacheItem.phpstub" preloadClasses="true"/>
+		<file name="tests/stub/timejob_joblist.phpstub" preloadClasses="true"/>
 	</stubs>
 	<issueHandlers>
 		<UndefinedClass>
