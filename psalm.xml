@@ -41,9 +41,15 @@
 				<!-- these classes belong to the event app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCP\App\Events\AppEnableEvent" />
 				<referencedClass name="OCA\AdminAudit\AuditLogger" />
-
+				<!-- this class is only in stable31 so not exist while running psalm on lower version-->
+				<referencedClass name="OCP\ServerVersion" />
 			</errorLevel>
 		</UndefinedClass>
+		<UndefinedMethod>
+			<errorLevel type="suppress">
+				<referencedMethod name="OC\legacy\OC_Util::getVersionString()"/>
+			</errorLevel>
+		</UndefinedMethod>
 		<TooFewArguments>
 			<errorLevel type="suppress">
 				<!-- supress because constructor needs more arguments on nc version 27 > and the code has conditions to handel this for lower versions-->
@@ -81,6 +87,8 @@
 				<referencedClass name="OCA\Activity\UserSettings" />
 				<referencedClass name="OCA\Activity\GroupHelperDisabled" />
 				<referencedClass name="OCA\Activity\Data" />
+				<!-- this class is only in stable31 so not exist while running psalm on lower version-->
+				<referencedClass name="OCP\ServerVersion" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 	</issueHandlers>
