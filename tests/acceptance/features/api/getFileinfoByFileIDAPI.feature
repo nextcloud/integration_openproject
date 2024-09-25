@@ -1307,7 +1307,6 @@ Feature: retrieve file information of a single file, using the file ID
 
   Scenario: get information of a group folder
     Given user "Carol" has been created
-    And groupfolder DAV path has been set
     And group "grp1" has been created
     And user "Carol" has been added to the group "grp1"
     And group folder "groupFolder" has been created

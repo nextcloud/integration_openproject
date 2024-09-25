@@ -32,6 +32,7 @@ class FeatureContext implements Context {
 	public int $lastUpLoadTime;
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
+
 	/**
 	 * @var array<string|null>
 	 */
@@ -1184,5 +1185,26 @@ class FeatureContext implements Context {
 			$this->theAdministratorDeletesTheGroup($groups);
 		}
 		$this->createdAppPasswords = [];
+	}
+
+	/**
+	 * @BeforeScenario
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getGroupFolderDavPath():string {
+		// groupfolder with version greater then 19.0.0 uses "ocs/v2.php/" endpoint
+		$capabilitiesResponse = $this->sendOCSRequest(
+			'/cloud/capabilities', 'GET', $this->getAdminUsername()
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "", $capabilitiesResponse);
+		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
+		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
+		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
+		if (version_compare($groupFolderVersion, '19') >= 0) {
+			return "ocs/v2.php/";
+		}
+		return "index.php/";
 	}
 }
