@@ -18,6 +18,7 @@
     "Reset" : "Återställ",
     "Enable navigation link" : "Aktivera navigeringslänk",
     "Connected as {user}" : "Ansluten som {user}",
+    "Enable unified search for tickets" : "Aktivera enhetlig sökning efter ärenden",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varning, allt du skriver i sökfältet kommer att skickas till din OpenProject-instans.",
     "Incorrect access token" : "Ogiltig åtkomst-token",
     "Invalid token" : "Ogiltig token",
