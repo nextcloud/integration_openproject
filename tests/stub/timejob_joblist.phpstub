@@ -1,4 +1,11 @@
-// The `TimedJob` class uses `JobList` in `execute()`, but the `IJob` interface expects `IJobList`.
+// The 'TimedJob' class uses 'JobList' in 'execute()'', but the `IJob` interface expects `IJobList`.
+// so we got the following error:
+//
+// ERROR: MoreSpecificImplementedParamType - ../../lib/public/BackgroundJob/TimedJob.php:92:32 -
+// Argument 1 of OCP\BackgroundJob\TimedJob::execute has the more specific type 'OC\BackgroundJob\JobList',
+// expecting 'OCP\BackgroundJob\IJobList' as defined by OCP\BackgroundJob\IJob::execute (see https://psalm.dev/140)
+// final public function execute($jobList, ILogger $logger = null) {
+//
 // The stub changes the type to `IJobList` to match the interface and prevent the error,
 // without changing the original code.
 

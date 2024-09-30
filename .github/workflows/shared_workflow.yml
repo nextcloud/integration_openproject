@@ -176,155 +176,155 @@ jobs:
           min_coverage: '56'
           path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
-#  api-tests:
-#    name: API tests
-#    strategy:
-#      matrix:
-#        nextcloudVersion: [ stable30 ]
-#        phpVersionMajor: [ 8 ]
-#        phpVersionMinor: [ 1, 2, 3 ]
-#        database: [ mysql ]
-#        include:
-#          # Each database once on the newest Server with preinstalled PHP version
-#          - nextcloudVersion: stable30
-#            phpVersionMajor: 8
-#            phpVersionMinor: 1
-#            database: pgsql
-#          - nextcloudVersion: stable27
-#            phpVersionMajor: 8
-#            phpVersionMinor: 0
-#            database: mysql
-#          - nextcloudVersion: stable28
-#            phpVersionMajor: 8
-#            phpVersionMinor: 1
-#            database: mysql
-#          - nextcloudVersion: stable29
-#            phpVersionMajor: 8
-#            phpVersionMinor: 1
-#            database: mysql
-#    runs-on: ubuntu-20.04
-#    container:
-#      image: public.ecr.aws/ubuntu/ubuntu:latest
-#
-#    defaults:
-#      run:
-#        working-directory: integration_openproject
-#
-#    services:
-#      nextcloud:
-#        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
-#        env:
-#          SQL: ${{ matrix.database }}
-#          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-#          NEXTCLOUD_AUTOINSTALL: "YES"
-#          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
-#          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-#          VIRTUAL_HOST: "nextcloud"
-#          WITH_REDIS: "YES"
-#          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
-#        options: --name=nextcloud
-#        volumes:
-#          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
-#
-#      database-postgres:
-#        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
-#        env:
-#          POSTGRES_PASSWORD: postgres
-#          POSTGRES_DB: nextcloud
-#
-#      database-mysql:
-#        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
-#        env:
-#          MYSQL_ROOT_PASSWORD: 'nextcloud'
-#          MYSQL_PASSWORD: 'nextcloud'
-#          MYSQL_USER: 'nextcloud'
-#          MYSQL_DATABASE: 'nextcloud'
-#
-#      redis:
-#        image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-#
-#    steps:
-#      - name: Checkout for nightly CI
-#        if: github.event_name == 'schedule'
-#        uses: actions/checkout@v3
-#        with:
-#          path: integration_openproject
-#          ref: ${{ inputs.branch }}
-#
-#      - name: Checkout
-#        if: github.event_name != 'schedule'
-#        uses: actions/checkout@v3
-#        with:
-#          path: integration_openproject
-#
-#      - name: Checkout activity app
-#        uses: actions/checkout@v3
-#        with:
-#          repository: nextcloud/activity
-#          path: activity
-#          ref: ${{ matrix.nextcloudVersion }}
-#
-#      - name: Checkout groupfolders app
-#        uses: actions/checkout@v3
-#        with:
-#          repository: nextcloud/groupfolders
-#          path: groupfolders
-#          ref: ${{ matrix.nextcloudVersion }}
-#
-#      - name: install docker
-#        uses: papodaca/install-docker-action@main
-#
-#      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-#        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
-#        with:
-#          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-#          tools: composer
-#          extensions: intl
-#
-#      - name: Get composer cache directory
-#        id: composer-cache
-#        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-#
-#      - name: Cache PHP dependencies
-#        uses: actions/cache@v3
-#        with:
-#          path: ${{ steps.composer-cache.outputs.dir }}
-#          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
-#          restore-keys: ${{ runner.os }}-composer-
-#
-#      - name: API Tests
-#        env:
-#          NEXTCLOUD_BASE_URL: http://nextcloud
-#        run: |
-#          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-#          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
-#            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
-#            sed -i 's/10.0.0-beta2/7.1/g' composer.json
-#            composer update
-#          fi
-#          composer install --no-progress --prefer-dist --optimize-autoloader
-#          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
-#          make api-test
-#
-#  notify-nightly-report:
-#    needs:
-#      - unittest-linting
-#      - api-tests
-#    if: ${{ always() && github.event_name == 'schedule' }}
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Notify nightly report to element
-#        env:
-#          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-#          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-#          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          REPO_OWNER: nextcloud
-#          REPO_NAME: integration_openproject
-#          RUN_ID: ${{ github.run_id }}
-#          BRANCH_NAME: ${{ inputs.branch }}
-#        run: ./.github/scripts/notify-to-element.sh
+  api-tests:
+    name: API tests
+    strategy:
+      matrix:
+        nextcloudVersion: [ stable30 ]
+        phpVersionMajor: [ 8 ]
+        phpVersionMinor: [ 1, 2, 3 ]
+        database: [ mysql ]
+        include:
+          # Each database once on the newest Server with preinstalled PHP version
+          - nextcloudVersion: stable30
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: pgsql
+          - nextcloudVersion: stable27
+            phpVersionMajor: 8
+            phpVersionMinor: 0
+            database: mysql
+          - nextcloudVersion: stable28
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
+          - nextcloudVersion: stable29
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+            database: mysql
+    runs-on: ubuntu-20.04
+    container:
+      image: public.ecr.aws/ubuntu/ubuntu:latest
+
+    defaults:
+      run:
+        working-directory: integration_openproject
+
+    services:
+      nextcloud:
+        image: ghcr.io/juliushaertl/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
+        env:
+          SQL: ${{ matrix.database }}
+          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+          NEXTCLOUD_AUTOINSTALL: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
+          VIRTUAL_HOST: "nextcloud"
+          WITH_REDIS: "YES"
+          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
+        options: --name=nextcloud
+        volumes:
+          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+
+      database-postgres:
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nextcloud
+
+      database-mysql:
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        env:
+          MYSQL_ROOT_PASSWORD: 'nextcloud'
+          MYSQL_PASSWORD: 'nextcloud'
+          MYSQL_USER: 'nextcloud'
+          MYSQL_DATABASE: 'nextcloud'
+
+      redis:
+        image: ghcr.io/nextcloud/continuous-integration-redis:latest
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v3
+        with:
+          path: integration_openproject
+          ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v3
+        with:
+          path: integration_openproject
+
+      - name: Checkout activity app
+        uses: actions/checkout@v3
+        with:
+          repository: nextcloud/activity
+          path: activity
+          ref: ${{ matrix.nextcloudVersion }}
+
+      - name: Checkout groupfolders app
+        uses: actions/checkout@v3
+        with:
+          repository: nextcloud/groupfolders
+          path: groupfolders
+          ref: ${{ matrix.nextcloudVersion }}
+
+      - name: install docker
+        uses: papodaca/install-docker-action@main
+
+      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+        with:
+          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+          tools: composer
+          extensions: intl
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/integration_openproject/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://nextcloud
+        run: |
+          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
+            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+            sed -i 's/10.0.0-beta2/7.1/g' composer.json
+            composer update
+          fi
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+          make api-test
+
+  notify-nightly-report:
+    needs:
+      - unittest-linting
+      - api-tests
+    if: ${{ always() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Notify nightly report to element
+        env:
+          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: nextcloud
+          REPO_NAME: integration_openproject
+          RUN_ID: ${{ github.run_id }}
+          BRANCH_NAME: ${{ inputs.branch }}
+        run: ./.github/scripts/notify-to-element.sh

@@ -36,7 +36,7 @@ class FilesVersionsContext implements Context {
 	 * assert file versions count
 	 *
 	 * @param string $user
-	 * @param int $fileId
+	 * @param string $fileId
 	 * @param int $count
 	 *
 	 * @return void
@@ -44,7 +44,7 @@ class FilesVersionsContext implements Context {
 	 */
 	public function theVersionFolderOfFileIdShouldContainElements(
 		string $user,
-		int $fileId,
+		string $fileId,
 		int $count
 	):void {
 		$responseXml = $this->listVersionFolder($user, $fileId);
@@ -60,7 +60,7 @@ class FilesVersionsContext implements Context {
 	 * returns the result parsed into an SimpleXMLElement
 	 *
 	 * @param string $user
-	 * @param int $fileId
+	 * @param string $fileId
 	 *
 	 * @return SimpleXMLElement
 	 * @throws GuzzleException
@@ -68,7 +68,7 @@ class FilesVersionsContext implements Context {
 	 */
 	public function listVersionFolder(
 		string $user,
-		int $fileId
+		string $fileId
 	):SimpleXMLElement {
 		$password = $this->featureContext->getRegularUserPassword();
 		$fullUrl = $this->featureContext->sanitizeUrl(

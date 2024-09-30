@@ -33,7 +33,7 @@ class FeatureContext implements Context {
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
 	/**
-	 * @var array<int|null>
+	 * @var array<string|null>
 	 */
 	private array $createdFiles = [];
 
@@ -580,7 +580,7 @@ class FeatureContext implements Context {
 		string $user,
 		?string $content,
 		string $destination
-	): ?int {
+	): ?string {
 		$this->response = $this->makeDavRequest(
 			$user,
 			$this->regularUserPassword,
@@ -710,7 +710,7 @@ class FeatureContext implements Context {
 		);
 	}
 
-	public function getIdOfFileOrFolder(string $user, string $path): int {
+	public function getIdOfFileOrFolder(string $user, string $path): string {
 		$propfindResponse = $this->propfindFileOrFolder($user, $path);
 		// Ensure PROPFIND returned status 207
 		$this->theHTTPStatusCodeShouldBe(207, "", $propfindResponse);
@@ -722,7 +722,7 @@ class FeatureContext implements Context {
 		$fileId = $responseXmlObject->xpath('//oc:fileid')[0];
 		Assert::assertNotNull($fileId, __METHOD__ . " file $path user $user not found (the file may not exist)");
 
-		return (int)(string) $fileId;
+		return (string) $fileId;
 	}
 
 	public function fileOrFolderExists(string $user, string $path): bool {
