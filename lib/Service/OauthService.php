@@ -11,13 +11,12 @@
 
 namespace OCA\OpenProject\Service;
 
-use OC_Util;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
+use OCA\OpenProject\VersionUtil;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
-use OCP\ServerVersion;
 
 class OauthService {
 	/**
@@ -32,14 +31,14 @@ class OauthService {
 	private $clientMapper;
 
 	/**
+	 * @var VersionUtil
+	 */
+	private $versionUtil;
+
+	/**
 	 * @var ICrypto
 	 */
 	private $crypto;
-
-	/**
-	 * @var ServerVersion
-	 */
-	private $serverVersion;
 
 	/**
 	 * Service to manipulate Nextcloud oauth clients
@@ -47,14 +46,12 @@ class OauthService {
 	public function __construct(ClientMapper $clientMapper,
 		ISecureRandom $secureRandom,
 		ICrypto $crypto,
-		ServerVersion $serverVersion = null
+		VersionUtil $versionUtil
 	) {
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
 		$this->crypto = $crypto;
-		if (class_exists('OCP\ServerVersion')) {
-			$this->serverVersion = $serverVersion;
-		}
+		$this->versionUtil = $versionUtil;
 	}
 
 	/**
@@ -91,13 +88,7 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		// for nextcloud above 31 OC_Util::getVersionString() method not exists
-		if ($this->serverVersion !== null) {
-			$nextcloudVersion = $this->serverVersion->getVersionString();
-		} else {
-			/** @psalm-suppress UndefinedMethod getVersionString() method is not in stable31 so making psalm not complain*/
-			$nextcloudVersion = OC_Util::getVersionString();
-		}
+		$nextcloudVersion = $this->versionUtil->getNextcloudVersion();
 		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
