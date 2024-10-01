@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
@@ -28,7 +29,6 @@ class FilesVersionsContext implements Context {
 		int $count
 	):void {
 		$fileId = $this->featureContext->getIdOfFileOrFolder($user, $path);
-		Assert::assertNotNull($fileId, __METHOD__ . " file $path user $user not found (the file may not exist)");
 		$this->theVersionFolderOfFileIdShouldContainElements($user, $fileId, $count);
 	}
 
@@ -36,7 +36,7 @@ class FilesVersionsContext implements Context {
 	 * assert file versions count
 	 *
 	 * @param string $user
-	 * @param int $fileId
+	 * @param string $fileId
 	 * @param int $count
 	 *
 	 * @return void
@@ -44,7 +44,7 @@ class FilesVersionsContext implements Context {
 	 */
 	public function theVersionFolderOfFileIdShouldContainElements(
 		string $user,
-		int $fileId,
+		string $fileId,
 		int $count
 	):void {
 		$responseXml = $this->listVersionFolder($user, $fileId);
@@ -60,7 +60,7 @@ class FilesVersionsContext implements Context {
 	 * returns the result parsed into an SimpleXMLElement
 	 *
 	 * @param string $user
-	 * @param int $fileId
+	 * @param string $fileId
 	 *
 	 * @return SimpleXMLElement
 	 * @throws GuzzleException
@@ -68,7 +68,7 @@ class FilesVersionsContext implements Context {
 	 */
 	public function listVersionFolder(
 		string $user,
-		int $fileId
+		string $fileId
 	):SimpleXMLElement {
 		$password = $this->featureContext->getRegularUserPassword();
 		$fullUrl = $this->featureContext->sanitizeUrl(
@@ -110,6 +110,8 @@ class FilesVersionsContext implements Context {
 		$environment = $scope->getEnvironment();
 
 		// Get all the contexts you need in this context
-		$this->featureContext = $environment->getContext('FeatureContext');
+		if ($environment instanceof InitializedContextEnvironment) {
+			$this->featureContext = $environment->getContext('FeatureContext');
+		}
 	}
 }
