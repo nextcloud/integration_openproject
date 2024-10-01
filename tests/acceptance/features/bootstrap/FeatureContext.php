@@ -47,6 +47,11 @@ class FeatureContext implements Context {
 
 	private CookieJar $cookieJar;
 	private string $requestToken;
+	private string $groupFolderDavPath;
+
+	public function getGroupfolderDavPath(): string {
+		return $this->groupFolderDavPath;
+	}
 
 	public function getAdminUsername(): string {
 		return $this->adminUsername;
@@ -1188,12 +1193,16 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 *  This will run before EVERY scenario.
+	 *  It will set the group folder dev path
+	 *
 	 * @BeforeScenario
 	 *
-	 * @return string
+	 * @param BeforeScenarioScope $scope
+	 * @return void
 	 * @throws Exception
 	 */
-	public function getGroupFolderDavPath():string {
+	final public function setgroupfolderDavPath(BeforeScenarioScope $scope): void {
 		// groupfolder with version greater then 19.0.0 uses "ocs/v2.php/" endpoint
 		$capabilitiesResponse = $this->sendOCSRequest(
 			'/cloud/capabilities', 'GET', $this->getAdminUsername()
@@ -1202,9 +1211,9 @@ class FeatureContext implements Context {
 		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
 		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
 		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
+		$this->groupFolderDavPath = "index.php/";
 		if (version_compare($groupFolderVersion, '19') >= 0) {
-			return "ocs/v2.php/";
+			$this->groupFolderDavPath = "ocs/v2.php/";
 		}
-		return "index.php/";
 	}
 }
