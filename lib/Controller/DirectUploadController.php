@@ -181,7 +181,6 @@ class DirectUploadController extends ApiController {
 				throw new NotFoundException('invalid token');
 			}
 			$tokenInfo = $this->directUploadService->getTokenInfo($token);
-			$fileId = null;
 			$directUploadFile = $this->request->getUploadedFile('file');
 			if (empty($directUploadFile)) {
 				throw new OpenprojectFileNotUploadedException(

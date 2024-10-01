@@ -635,7 +635,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-		$ocClient = null;
 		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$clientConfigMock
@@ -781,7 +780,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$db = null,
 		$iLogFactory = null,
 		$iURLGenerator = null
-	): OpenProjectAPIService {
+	): OpenProjectAPIService|MockObject {
 		$onlyMethods[] = 'getBaseUrl';
 		if ($rootMock === null) {
 			$rootMock = $this->createMock(IRootFolder::class);
@@ -3003,10 +3002,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-
 		$service = $this->getOpenProjectAPIService();
 		$this->expectException(OpenprojectErrorException::class);
-		$result = $service->markAllNotificationsOfWorkPackageAsRead(
+		$service->markAllNotificationsOfWorkPackageAsRead(
 			789,
 			'testUser'
 		);
@@ -3892,7 +3890,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param int $logLevel
 	 * @param string $pathToAuditLog
 	 * @param array<mixed> $logCondition
-	 * @param string $isAdminAuditAppInstalled
+	 * @param bool $isAdminAuditAppInstalled
 	 * @param bool $expectedResult
 	 *
 	 * @return void

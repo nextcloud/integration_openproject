@@ -31,10 +31,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class OpenProjectAPIControllerTest extends TestCase {
-	/** @var IConfig $configMock */
+	/** @var IConfig */
 	private $configMock;
 
-	/** @var IRequest $requestMock */
+	/** @var IRequest */
 	private $requestMock;
 
 	/**
@@ -79,9 +79,10 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 	/**
 	 * @param string $token
+	 * @psalm-suppress UndefinedInterfaceMethod
 	 * @return void
 	 */
-	public function getUserValueMock($token = '123') {
+	public function getUserValueMock(string $token = '123'): void {
 		$this->configMock
 			->method('getUserValue')
 			->withConsecutive(
@@ -93,7 +94,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetNotifications() {
+	public function testGetNotifications(): void {
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()

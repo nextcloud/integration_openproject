@@ -181,7 +181,7 @@ class DirectUploadControllerTest extends TestCase {
 	}
 
 	/**
-	 * @return array<int, array<int, int|string>>
+	 * @return array<int, array<int, \Exception|int|string>>
 	 */
 	public function newFileExceptionsDataProvider() {
 		return [
