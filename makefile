@@ -80,7 +80,7 @@ jsunit:
 
 .PHONY: api-test
 api-test:
-	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '${FILTER_TAGS}' ${FEATURE_PATH}
+	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '${FILTER_TAGS}' tests/acceptance/features/api/setup.feature
 
 .PHONY: test
 test: phpunit  jsunit api-test

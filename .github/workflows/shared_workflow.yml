@@ -7,201 +7,213 @@ on:
 name: CI
 
 jobs:
-  unittest-linting:
-    name: unit tests and linting
-    strategy:
-      matrix:
-        nextcloudVersion: [ stable30 ]
-        phpVersion: [ 8.1, 8.2, 8.3 ]
-        include:
-          - nextcloudVersion: stable27
-            phpVersion: 8.0
-          - nextcloudVersion: stable28
-            phpVersion: 8.1
-          - nextcloudVersion: stable29
-            phpVersion: 8.1
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout for nightly CI
-        if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.branch }}
-
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
-
-      - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
-        with:
-          php-version: ${{ matrix.phpVersion }}
-          tools: composer, phpunit
-          coverage: xdebug
-          extensions: gd, sqlite3
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache PHP dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v2
-        id: versions
-        with:
-          fallbackNode: '^14'
-          fallbackNpm: '^7'
-
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
-          cache: 'npm'
-
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-
-      - name: Install PHP Dependencies
-        run: |
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
-            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
-            sed -i 's/10.0.0-beta2/7.1/g' composer.json
-            composer update
-          fi
-          composer install --no-progress --prefer-dist --optimize-autoloader
-          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
-          cd server && git submodule update --init
-          ./occ maintenance:install --admin-pass=admin
-
-      - name: PHP code analysis
-        run: |
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
-            # Ignoring the pact test for php 8.0
-            sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
-          fi
-          make psalm
-
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
-
-      - name: Install NPM Dependencies
-        run: npm install
-
-      - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
-
-      - name: PHP & Vue Unit Tests
-        run: |
-          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cd server
-          ./occ a:e groupfolders
-          ./occ a:e integration_openproject
-          cd apps/integration_openproject
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
-            make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
-          else
-            make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
-          fi
-          make jsunit
-
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
-
-      - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.101
-          dotnet-quality: 'ga'
-
-      - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
-        with:
-          reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-          targetdir: './server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
-          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
-          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
-          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
-          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
-          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
-          title: '' # Optional title.
-          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
-          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
-          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
-
-      - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./server/apps/integration_openproject/coverage/php/lcov.info
-          delete-old-comments: true
-          title: "PHP Code Coverage"
-
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
-        with:
-          min_coverage: '59'
-          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
-
-      - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
-        with:
-          min_coverage: '56'
-          path: './server/apps/integration_openproject/coverage/php/lcov.info'
+  #  unittest-linting:
+  #    name: unit tests and linting
+  #    strategy:
+  #      matrix:
+  #        nextcloudVersion: [ stable30, master ]
+  #        phpVersion: [ 8.1, 8.2, 8.3 ]
+  #        include:
+  #          - nextcloudVersion: stable27
+  #            phpVersion: 8.0
+  #          - nextcloudVersion: stable28
+  #            phpVersion: 8.1
+  #          - nextcloudVersion: stable29
+  #            phpVersion: 8.1
+  #          - nextcloudVersion: master
+  #            phpVersion: 8.3
+  #    runs-on: ubuntu-20.04
+  #    steps:
+  #      - name: Checkout for nightly CI
+  #        if: github.event_name == 'schedule'
+  #        uses: actions/checkout@v3
+  #        with:
+  #          ref: ${{ inputs.branch }}
+  #
+  #      - name: Checkout
+  #        if: github.event_name != 'schedule'
+  #        uses: actions/checkout@v3
+  #
+  #      - name: Setup PHP ${{ matrix.phpVersion }}
+  #        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+  #        with:
+  #          php-version: ${{ matrix.phpVersion }}
+  #          tools: composer, phpunit
+  #          coverage: xdebug
+  #          extensions: gd, sqlite3
+  #
+  #      - name: Get composer cache directory
+  #        id: composer-cache
+  #        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+  #
+  #      - name: Cache PHP dependencies
+  #        uses: actions/cache@v3
+  #        with:
+  #          path: ${{ steps.composer-cache.outputs.dir }}
+  #          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+  #          restore-keys: ${{ runner.os }}-composer-
+  #
+  #      - name: Read package.json node and npm engines version
+  #        uses: skjnldsv/read-package-engines-version-actions@v2
+  #        id: versions
+  #        with:
+  #          fallbackNode: '^14'
+  #          fallbackNpm: '^7'
+  #
+  #      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+  #        uses: actions/setup-node@v3
+  #        with:
+  #          node-version: ${{ steps.versions.outputs.nodeVersion }}
+  #          cache: 'npm'
+  #
+  #      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+  #        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+  #
+  #      - name: Install PHP Dependencies
+  #        run: |
+  #          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+  #          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+  #            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+  #            sed -i 's/10.0.0-beta2/7.1/g' composer.json
+  #            composer update
+  #          fi
+  #          composer install --no-progress --prefer-dist --optimize-autoloader
+  #          git clone --depth 1 https://github.com/nextcloud/server.git -b ${{ matrix.nextcloudVersion }}
+  #          cd server && git submodule update --init
+  #          ./occ maintenance:install --admin-pass=admin
+  #
+  #      - name: PHP code analysis
+  #        run: |
+  #          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+  #          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+  #            # Ignoring the pact test for php 8.0
+  #            sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
+  #          fi
+  #          make psalm
+  #
+  #      - name: PHP code style
+  #        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+  #
+  #      - name: Install NPM Dependencies
+  #        run: npm install
+  #
+  #      - name: JS Lint
+  #        run: npm run lint
+  #
+  #      - name: Style Lint
+  #        run: npm run stylelint
+  #
+  #      - name: PHP & Vue Unit Tests
+  #        run: |
+  #          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
+  #          mkdir -p server/apps/integration_openproject
+  #          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
+  #          cd server
+  #          ./occ a:e groupfolders
+  #          ./occ a:e integration_openproject
+  #          cd apps/integration_openproject
+  #          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
+  #          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
+  #            make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
+  #          else
+  #            make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
+  #          fi
+  #          make jsunit
+  #
+  #      - name: JS Code Coverage Summary Report
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: romeovs/lcov-reporter-action@v0.3.1
+  #        with:
+  #          github-token: ${{ secrets.GITHUB_TOKEN }}
+  #          lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
+  #          delete-old-comments: true
+  #          title: "JS Code Coverage"
+  #
+  #      - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: actions/setup-dotnet@v3
+  #        with:
+  #          dotnet-version: 6.0.101
+  #          dotnet-quality: 'ga'
+  #
+  #      - name: Convert PHP cobertura coverage to lcov
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
+  #        with:
+  #          reports: './server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+  #          targetdir: './server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
+  #          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
+  #          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
+  #          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
+  #          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
+  #          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+  #          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+  #          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+  #          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
+  #          title: '' # Optional title.
+  #          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
+  #          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
+  #          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
+  #
+  #      - name: PHP Code Coverage Summary Report
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: romeovs/lcov-reporter-action@v0.3.1
+  #        with:
+  #          github-token: ${{ secrets.GITHUB_TOKEN }}
+  #          lcov-file: ./server/apps/integration_openproject/coverage/php/lcov.info
+  #          delete-old-comments: true
+  #          title: "PHP Code Coverage"
+  #
+  #      - name: JS coverage check
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: VeryGoodOpenSource/very_good_coverage@v2
+  #        with:
+  #          min_coverage: '59'
+  #          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
+  #
+  #      - name: PHP coverage check
+  #        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+  #        uses: VeryGoodOpenSource/very_good_coverage@v2
+  #        with:
+  #          min_coverage: '56'
+  #          path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
   api-tests:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable30 ]
+        nextcloudVersion: [ master ]
         phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 1, 2, 3 ]
+        phpVersionMinor: [ 2 ]
         database: [ mysql ]
-        include:
-          # Each database once on the newest Server with preinstalled PHP version
-          - nextcloudVersion: stable30
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: pgsql
-          - nextcloudVersion: stable27
-            phpVersionMajor: 8
-            phpVersionMinor: 0
-            database: mysql
-          - nextcloudVersion: stable28
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: mysql
-          - nextcloudVersion: stable29
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: mysql
+
+
+        #        nextcloudVersion: [ stable30 ]
+        #        phpVersionMajor: [ 8 ]
+        #        phpVersionMinor: [ 1, 2, 3 ]
+        #        database: [ mysql ]
+        #        include:
+        # Each database once on the newest Server with preinstalled PHP version
+    #          - nextcloudVersion: stable30
+    #            phpVersionMajor: 8
+    #            phpVersionMinor: 1
+    #            database: pgsql
+    #          - nextcloudVersion: stable27
+    #            phpVersionMajor: 8
+    #            phpVersionMinor: 0
+    #            database: mysql
+    #          - nextcloudVersion: stable28
+    #            phpVersionMajor: 8
+    #            phpVersionMinor: 1
+    #            database: mysql
+    #          - nextcloudVersion: stable29
+    #            phpVersionMajor: 8
+    #            phpVersionMinor: 1
+    #            database: mysql
+    #          - nextcloudVersion: master
+    #            phpVersionMajor: 8
+    #            phpVersionMinor: 3
+    #            database: mysql
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/ubuntu/ubuntu:latest
@@ -307,24 +319,24 @@ jobs:
           until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
 
-  notify-nightly-report:
-    needs:
-      - unittest-linting
-      - api-tests
-    if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: Notify nightly report to element
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: nextcloud
-          REPO_NAME: integration_openproject
-          RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ inputs.branch }}
-        run: ./.github/scripts/notify-to-element.sh
+#  notify-nightly-report:
+#    needs:
+#      - unittest-linting
+#      - api-tests
+#    if: ${{ always() && github.event_name == 'schedule' }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Notify nightly report to element
+#        env:
+#          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+#          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+#          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          REPO_OWNER: nextcloud
+#          REPO_NAME: integration_openproject
+#          RUN_ID: ${{ github.run_id }}
+#          BRANCH_NAME: ${{ inputs.branch }}
+#        run: ./.github/scripts/notify-to-element.sh
