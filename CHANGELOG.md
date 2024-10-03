@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Add application's support for Nextcloud 31
+- Make error handling better in `integration_setup.sh` file for integration configuration setup.
 
 ## 2.7.0 - 2024-09-10
 ### Changed
