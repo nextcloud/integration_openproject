@@ -136,8 +136,8 @@ logUnhandledError() {
 
 checkForOpenProjectOrNextcloudIntegrationConfiguration() {
 	# This function check whether the configuration is complete or not in both OpenProject and Nextcloud
-	# At this point we know that the file storage already exists, so we only check the if it is configured completely in OpenProject
-    log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
+	# At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
+	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
 	status_op=$(isOpenProjectFileStorageConfigOk)
 	if [[ "$status_op" -ne 0 ]]; then
 		log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
