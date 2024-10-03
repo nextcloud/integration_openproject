@@ -128,7 +128,14 @@ isOpenProjectFileStorageConfigOk() {
 	fi
 }
 
-checkConfiguration() {
+logUnhandledError() {
+	log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
+	log_error "OpenProject returned the following error: '${error_message}'"
+	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+}
+
+checkForOpenProjectOrNextcloudIntegrationConfiguration() {
+	# This function check whether the configuration is complete or not in both OpenProject and Nextcloud
 	# At this point we know that the file storage already exists, so we only check the if it is configured completely in OpenProject
     log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
 	status_op=$(isOpenProjectFileStorageConfigOk)
@@ -250,40 +257,25 @@ if [[ ${response_type} == "Error" ]]; then
 	  (( error_count +=1 ))
 	done
     if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2  ]]; then
-		log_error "Got multiple errors when setting up
-		  OP storage: ${OPENPROJECT_STORAGE_NAME}
-		  for Nextcloud: '${NEXTCLOUD_HOST}
-		  using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
-		log_error "Error Message(s): ${error_messages_grep}"
-		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+		logUnhandledError
 		exit 1
     fi
-	# At this point we know that the file storage already exists, so we only check the if it is configured completely in OpenProject
-	checkConfiguration
+	checkForOpenProjectOrNextcloudIntegrationConfiguration
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
 	# A PropertyConstraintViolation is always a single error
 	error_messages_grep=$(echo $create_storage_response | jq -r '.message')
 	if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
-		checkConfiguration
+		checkForOpenProjectOrNextcloudIntegrationConfiguration
 	else
-		log_error "Got multiple errors when setting up
-		  OP storage: ${OPENPROJECT_STORAGE_NAME}
-		  for Nextcloud: '${NEXTCLOUD_HOST}
-		  using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
-		log_error "Error Message(s): ${error_messages_grep}"
-		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+		logUnhandledError
 		exit 1
 	fi
-  elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
-	echo "Entered here!!"
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
   else
-    log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
-    log_error "OpenProject returned the following error: '${error_message}'"
-    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+    logUnhandledError
   fi
   exit 1
 fi
