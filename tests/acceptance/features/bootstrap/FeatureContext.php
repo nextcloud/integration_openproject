@@ -1162,6 +1162,7 @@ class FeatureContext implements Context {
 	 * @param BeforeScenarioScope $scope
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function before(BeforeScenarioScope $scope):void {
 		setlocale(LC_ALL, 'C.utf8');
@@ -1173,6 +1174,29 @@ class FeatureContext implements Context {
 		if ($environment instanceof InitializedContextEnvironment) {
 			$this->sharingContext = $environment->getContext('SharingContext');
 			$this->directUploadContext = $environment->getContext('DirectUploadContext');
+		}
+		$this->setGroupfolderDavPath();
+	}
+
+	/**
+	 *  This will run before EVERY scenario.
+	 *  It will set the group folder DAV path
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	private function setGroupfolderDavPath(): void {
+		// groupfolder with version greater then 19.0.0 uses "ocs/v2.php/" endpoint
+		$capabilitiesResponse = $this->sendOCSRequest(
+			'/cloud/capabilities', 'GET', $this->getAdminUsername()
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "", $capabilitiesResponse);
+		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
+		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
+		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
+		$this->groupFolderDavPath = "index.php/";
+		if (version_compare($groupFolderVersion, '19') >= 0) {
+			$this->groupFolderDavPath = "ocs/v2.php/";
 		}
 	}
 
@@ -1190,30 +1214,5 @@ class FeatureContext implements Context {
 			$this->theAdministratorDeletesTheGroup($groups);
 		}
 		$this->createdAppPasswords = [];
-	}
-
-	/**
-	 *  This will run before EVERY scenario.
-	 *  It will set the group folder dev path
-	 *
-	 * @BeforeScenario
-	 *
-	 * @param BeforeScenarioScope $scope
-	 * @return void
-	 * @throws Exception
-	 */
-	final public function setgroupfolderDavPath(BeforeScenarioScope $scope): void {
-		// groupfolder with version greater then 19.0.0 uses "ocs/v2.php/" endpoint
-		$capabilitiesResponse = $this->sendOCSRequest(
-			'/cloud/capabilities', 'GET', $this->getAdminUsername()
-		);
-		$this->theHTTPStatusCodeShouldBe(200, "", $capabilitiesResponse);
-		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
-		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
-		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
-		$this->groupFolderDavPath = "index.php/";
-		if (version_compare($groupFolderVersion, '19') >= 0) {
-			$this->groupFolderDavPath = "ocs/v2.php/";
-		}
 	}
 }

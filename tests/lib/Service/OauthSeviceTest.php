@@ -24,7 +24,6 @@
 namespace OCA\OpenProject\Service;
 
 use OCA\OAuth2\Db\ClientMapper;
-use OCA\OpenProject\VersionUtil;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +33,6 @@ class OauthServiceTest extends TestCase {
 		$clientMapperMock = null,
 		$iSecureRandomMock = null,
 		$iCryptoMock = null,
-		$versionUtil = null,
 	): OauthService {
 
 		if ($clientMapperMock === null) {
@@ -46,15 +44,11 @@ class OauthServiceTest extends TestCase {
 		if ($iCryptoMock === null) {
 			$iCryptoMock = $this->getMockBuilder(ICrypto::class)->getMock();
 		}
-		if ($versionUtil === null) {
-			$versionUtil = $this->getMockBuilder(VersionUtil::class)->disableOriginalConstructor()->getMock();
-		}
 
 		return new OauthService(
 			$clientMapperMock,
 			$iSecureRandomMock,
-			$iCryptoMock,
-			$versionUtil
+			$iCryptoMock
 		);
 	}
 

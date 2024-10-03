@@ -14,7 +14,7 @@ namespace OCA\OpenProject\Service;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
-use OCA\OpenProject\VersionUtil;
+use OCA\OpenProject\ServerVersionHelper;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 
@@ -29,12 +29,6 @@ class OauthService {
 	 * @var ClientMapper
 	 */
 	private $clientMapper;
-
-	/**
-	 * @var VersionUtil
-	 */
-	private $versionUtil;
-
 	/**
 	 * @var ICrypto
 	 */
@@ -45,13 +39,11 @@ class OauthService {
 	 */
 	public function __construct(ClientMapper $clientMapper,
 		ISecureRandom $secureRandom,
-		ICrypto $crypto,
-		VersionUtil $versionUtil
+		ICrypto $crypto
 	) {
 		$this->secureRandom = $secureRandom;
 		$this->clientMapper = $clientMapper;
 		$this->crypto = $crypto;
-		$this->versionUtil = $versionUtil;
 	}
 
 	/**
@@ -88,7 +80,7 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		$nextcloudVersion = $this->versionUtil->getNextcloudVersion();
+		$nextcloudVersion = ServerVersionHelper::getNextcloudVersion();
 		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
