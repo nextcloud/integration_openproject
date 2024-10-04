@@ -17,6 +17,11 @@ class GroupfoldersContext implements Context {
 	private array $createdGroupFolders = [];
 
 	/**
+	 * @var string|null
+	 */
+	private ?string $groupfolderDavPath = null;
+
+	/**
 	 * @Given group folder :folderName has been created
 	 */
 	public function groupFolderHasBeenCreated(string $folderName): void {
@@ -193,6 +198,9 @@ class GroupfoldersContext implements Context {
 	 */
 	private function getGroupfolderDavPath(): string {
 		// groupfolder with version greater than or equals to 19.0.0 uses "ocs/v2.php/" endpoint
+		if ($this->groupfolderDavPath !== null) {
+			return $this->groupfolderDavPath;
+		}
 		$capabilitiesResponse = $this->featureContext->sendOCSRequest(
 			'/cloud/capabilities', 'GET', $this->featureContext->getAdminUsername()
 		);
@@ -200,11 +208,10 @@ class GroupfoldersContext implements Context {
 		$responseAsJson = json_decode($capabilitiesResponse->getBody()->getContents());
 		$groupFolderVersion = $responseAsJson->ocs->data->capabilities->integration_openproject->groupfolder_version ?? null;
 		Assert::assertNotNull($groupFolderVersion, 'Group folder version not found in the response');
-		$groupFolderDavPath = "index.php/";
 		if (version_compare($groupFolderVersion, '19') >= 0) {
-			$groupFolderDavPath = "ocs/v2.php/";
+			return $this->groupfolderDavPath = "ocs/v2.php/";
 		}
-		return $groupFolderDavPath;
+		return $this->groupfolderDavPath = "index.php/";
 	}
 
 
