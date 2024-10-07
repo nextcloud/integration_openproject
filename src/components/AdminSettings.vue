@@ -246,7 +246,7 @@
 								@click="setUpProjectGroupFolders">
 								<template #icon>
 									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
-									<RestoreIcon v-else :size="20" />
+									<RestoreIcon v-else fill-color="#FFFFFF" :size="20" />
 								</template>
 								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
 							</NcButton>
