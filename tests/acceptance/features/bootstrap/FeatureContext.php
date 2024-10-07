@@ -510,7 +510,7 @@ class FeatureContext implements Context {
 		if (\is_array($expectedStatusCode)) {
 			if ($message === "") {
 				$message = "HTTP status code $actualStatusCode is not one of the expected values " .
-						\implode(" or ", $expectedStatusCode);
+					\implode(" or ", $expectedStatusCode);
 			}
 
 			Assert::assertContainsEquals(
