@@ -56,6 +56,7 @@ use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
+use OCP\Encryption\IManager;
 
 define('CACHE_TTL', 3600);
 
@@ -119,6 +120,7 @@ class OpenProjectAPIService {
 	private ISubAdmin $subAdminManager;
 	private IDBConnection $db;
 	private ILogFactory $logFactory;
+	private IManager $encryptionManager;
 
 
 	/**
@@ -150,6 +152,7 @@ class OpenProjectAPIService {
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
 		ILogFactory $logFactory,
+		IManager $encryptionManager
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -169,6 +172,7 @@ class OpenProjectAPIService {
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
 		$this->logFactory = $logFactory;
+		$this->encryptionManager = $encryptionManager;
 	}
 
 	/**
@@ -1145,7 +1149,14 @@ class OpenProjectAPIService {
 		);
 	}
 
-
+	public function isServerSideEncryptionAppEnabled(): bool {
+		$isEncryptionForHomeStorageEnabled = $this->config->getAppValue('encryption', 'encryptHomeStorage', '0') === '1';
+		return (
+			$this->appManager->isInstalled('encryption') &&
+			$this->encryptionManager->isEnabled() &&
+			$isEncryptionForHomeStorageEnabled
+		);
+	}
 
 	/**
 	 * @return array<mixed>
