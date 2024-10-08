@@ -11,8 +11,11 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable30, master ]
+        nextcloudVersion: [ stable30 ]
         phpVersion: [ 8.1, 8.2, 8.3 ]
+        # This condition is temporary and can be removed once Nextcloud 31 support is added in the integration app for the release/2.7 branch
+        isReleaseBranch:
+          - ${{ inputs.branch == 'release/2.7'}}
         include:
           - nextcloudVersion: stable27
             phpVersion: 8.0
@@ -22,6 +25,7 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: master
             phpVersion: 8.3
+            isReleaseBranch: false
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
