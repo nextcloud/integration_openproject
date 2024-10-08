@@ -5,6 +5,9 @@
 		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="audit-info-card" type="info">
 			<p class="audit-info-card--info" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
+		<NcNoteCard class="audit-info-card" v-if="isServerSideEncryptionEnabled" type="warning">
+			<p>Encryption for the group folder is currently disabled. Please reach out to your administrator to enable encryption for the group folder. </p>
+		</NcNoteCard>
 		<div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
@@ -452,6 +455,9 @@ export default {
 		},
 		isAdminAuditConfigurationSetUpCorrectly() {
 			return this.state.admin_audit_configuration_correct
+		},
+		isServerSideEncryptionEnabled() {
+			return this.state.server_side_encryption_enabled
 		},
 		serverHostErrorMessage() {
 			if (
