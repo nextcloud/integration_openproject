@@ -134,8 +134,12 @@ logUnhandledError() {
 	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
 }
 
-checkForOpenProjectOrNextcloudIntegrationConfiguration() {
-	# This function check whether the configuration is complete or not in both OpenProject and Nextcloud
+logCompleteIntegrationConfiguration() {
+	log_success "Setup of OpenProject and Nextcloud is complete."
+	exit 0
+}
+
+checkOpenProjectIntegrationConfiguration() {
 	# At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
 	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
 	status_op=$(isOpenProjectFileStorageConfigOk)
@@ -148,6 +152,9 @@ checkForOpenProjectOrNextcloudIntegrationConfiguration() {
 		exit 1
 	fi
 	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is configured."
+}
+
+checkNextcloudIntegrationConfiguration() {
 	status_nc=$(isNextcloudAdminConfigOk)
 	if [[ "$status_nc" -ne 0 ]]; then
 		log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
@@ -158,8 +165,6 @@ checkForOpenProjectOrNextcloudIntegrationConfiguration() {
 		exit 1
 	fi
 	log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
-	log_success "Setup of OpenProject and Nextcloud is complete."
-	exit 0
 }
 
 # check if both instances are started or not
@@ -260,12 +265,16 @@ if [[ ${response_type} == "Error" ]]; then
 		logUnhandledError
 		exit 1
     fi
-	checkForOpenProjectOrNextcloudIntegrationConfiguration
+	checkOpenProjectIntegrationConfiguration
+	checkNextcloudIntegrationConfiguration
+	logCompleteIntegrationConfiguration
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
 	# A PropertyConstraintViolation is always a single error
 	error_messages_grep=$(echo $create_storage_response | jq -r '.message')
 	if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
-		checkForOpenProjectOrNextcloudIntegrationConfiguration
+		checkOpenProjectIntegrationConfiguration
+		checkNextcloudIntegrationConfiguration
+		logCompleteIntegrationConfiguration
 	else
 		logUnhandledError
 		exit 1
@@ -395,4 +404,4 @@ EOF
   fi
 fi
 
-log_success "Setup of OpenProject and Nextcloud is complete."
+logCompleteIntegrationConfiguration
