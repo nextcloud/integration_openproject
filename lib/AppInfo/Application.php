@@ -24,8 +24,11 @@ use OCA\OpenProject\Listener\TermsOfServiceEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
+use OCA\OpenProject\Listener\TokenObtainedEventListener;
+use OCA\OpenProject\Service\TokenService;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
 use OCA\TermsOfService\Events\TermsCreatedEvent;
+use OCA\UserOIDC\Event\TokenObtainedEvent;
 use OCP\App\Events\AppEnableEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -99,6 +102,7 @@ class Application extends App implements IBootstrap {
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
+		$context->injectFn(Closure::fromCallable([$this, 'tokenRefreshWhenWithAnyBackgroundAction']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
@@ -110,7 +114,34 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
 		/** @psalm-suppress InvalidArgument SignaturesResetEvent event is not yet registered in terms_of_service app, so making psalm not complain*/
 		$dispatcher->addServiceListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
+        $dispatcher->addServiceListener(TokenObtainedEvent::class, TokenObtainedEventListener::class);
 	}
+
+    /**
+     * @throws \JsonException
+     */
+    public function tokenRefreshWhenWithAnyBackgroundAction(IUserSession $userSession, TokenService $tokenService, IConfig $config,): void {
+        $user = $userSession->getUser();
+        if($user === null) {
+            return;
+        }
+        $userId = $user->getUID();
+        $token = $tokenService->getToken();
+        if ($token === null) {
+            // if we don't have a token but we had one once,
+            // it means the session (where we store the token) has died
+            // so we need to reauthenticate
+            if ($config->getUserValue($userId, self::APP_ID, 'had_token_once', '0') === '1') {
+                $tokenService->reauthenticate();
+            }
+            return;
+        }
+        // remember that this user had a token once
+        $config->setUserValue($userId, self::APP_ID, 'had_token_once', '1');
+        if($token->isExpired()) {
+            $tokenService->reauthenticate();
+        }
+    }
 
 	public function registerNavigation(IUserSession $userSession): void {
 		$user = $userSession->getUser();
