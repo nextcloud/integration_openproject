@@ -128,6 +128,45 @@ isOpenProjectFileStorageConfigOk() {
   fi
 }
 
+logUnhandledError() {
+	log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
+	log_error "OpenProject returned the following error: '${error_message}'"
+	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+}
+
+logCompleteIntegrationConfiguration() {
+	log_success "Setup of OpenProject and Nextcloud is complete."
+	exit 0
+}
+
+checkOpenProjectIntegrationConfiguration() {
+	# At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
+	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
+	status_op=$(isOpenProjectFileStorageConfigOk)
+	if [[ "$status_op" -ne 0 ]]; then
+		log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
+		if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+			log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
+		fi
+		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+		exit 1
+	fi
+	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is configured."
+}
+
+checkNextcloudIntegrationConfiguration() {
+	status_nc=$(isNextcloudAdminConfigOk)
+	if [[ "$status_nc" -ne 0 ]]; then
+		log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
+		if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+			log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
+		fi
+		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+		exit 1
+	fi
+	log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
+}
+
 # check if both instances are started or not
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
@@ -200,7 +239,6 @@ create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASS
 if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_op_create_storage.json; fi
 # check for errors
 response_type=$(echo $create_storage_response | jq -r "._type")
-
 if [[ ${response_type} == "Error" ]]; then
   error_message=$(echo $create_storage_response | jq -r ".message")
   error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
@@ -224,46 +262,29 @@ if [[ ${response_type} == "Error" ]]; then
       (( error_count +=1 ))
     done
     if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2  ]]; then
-      log_error "Got multiple errors when setting up
-        OP storage: ${OPENPROJECT_STORAGE_NAME}
-        for Nextcloud: ${NEXTCLOUD_HOST}
-        using endpoint: ${OPENPROJECT_BASEURL_FOR_STORAGE}"
-      log_error "Error Message(s): ${error_messages_grep}"
-      log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-      exit 1
+		logUnhandledError
+		exit 1
     fi
-    log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
-    # At this point we know that the file storage already exists, so we only check the if it is configured completely in OpenProject
-    status_op=$(isOpenProjectFileStorageConfigOk)
-    if [[ "$status_op" -ne 0 ]]; then
-      log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
-      if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-        log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
-      fi
-      log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-      exit 1
-    fi
-    log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is configured."
-    status_nc=$(isNextcloudAdminConfigOk)
-    if [[ "$status_nc" -ne 0 ]]; then
-      log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
-      if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-        log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
-      fi
-      log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-      exit 1
-    fi
-    log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
-    log_success "Setup of OpenProject and Nextcloud is complete."
-    exit 0
+	checkOpenProjectIntegrationConfiguration
+	checkNextcloudIntegrationConfiguration
+	logCompleteIntegrationConfiguration
+  elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
+	# A PropertyConstraintViolation is always a single error
+	error_messages_grep=$(echo $create_storage_response | jq -r '.message')
+	if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
+		checkOpenProjectIntegrationConfiguration
+		checkNextcloudIntegrationConfiguration
+		logCompleteIntegrationConfiguration
+	else
+		logUnhandledError
+		exit 1
+	fi
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
     log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
   else
-    log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
-    log_error "OpenProject returned the following error: '${error_message}'"
-    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+    logUnhandledError
   fi
   exit 1
 fi
@@ -383,4 +404,4 @@ EOF
   fi
 fi
 
-log_success "Setup of OpenProject and Nextcloud is complete."
+logCompleteIntegrationConfiguration
