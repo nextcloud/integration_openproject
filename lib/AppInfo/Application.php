@@ -53,6 +53,7 @@ use OCP\User\Events\UserChangedEvent;
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const  OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
+	public const  APP_ID_PROXY_OPENPROJECT = 'openproject-nextcloud-app';
 	/**
 	 * @var mixed
 	 */

@@ -165,7 +165,6 @@ class DirectUploadController extends ApiController {
 	/**
 	 * direct upload
 	 *
-	 * @CORS
 	 * @NoCSRFRequired
 	 * @NoAdminRequired
 	 * @PublicPage
