@@ -23,9 +23,9 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable29
             phpVersion: 8.1
-          - nextcloudVersion: master
+          - isReleaseBranch: false
+            nextcloudVersion: master
             phpVersion: 8.3
-            isReleaseBranch: false
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
