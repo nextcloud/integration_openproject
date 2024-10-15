@@ -192,10 +192,12 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable30 ]
+        nextcloudVersion: [ stable30, master ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 1, 2, 3 ]
         database: [ mysql ]
+        isReleaseBranch:
+          - true
         include:
           # Each database once on the newest Server with preinstalled PHP version
           - nextcloudVersion: stable30
@@ -214,10 +216,20 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
-          - nextcloudVersion: master
+        exclude:
+          - isReleaseBranch: true
+            nextcloudVersion: master
+          - isReleaseBranch: false
+            nextcloudVersion: master
             phpVersionMajor: 8
-            phpVersionMinor: 3
+            phpVersionMinor: 1
             database: mysql
+          - isReleaseBranch: false
+            nextcloudVersion: master
+            phpVersionMajor: 8
+            phpVersionMinor: 2
+            database: mysql
+        
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/ubuntu/ubuntu:latest
