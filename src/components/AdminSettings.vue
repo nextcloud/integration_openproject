@@ -3,7 +3,7 @@
 		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
 		<SettingsTitle is-setting="admin" />
 		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="note-card" type="info">
-			<p class="note-card--info" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
+			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
 		<div class="openproject-server-host">
 			<FormHeading index="1"
@@ -226,8 +226,10 @@
 							}}
 						</p>
 						<NcNoteCard v-if="projectFolderSetupError !== null" class="note-card" type="error">
-							<p><b>{{ projectFolderSetupError }}</b></p>
-							<p class="note-card--info" v-html="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)" /> <!-- eslint-disable-line vue/no-v-html -->
+							<p class="note-card--title">
+								<b>{{ projectFolderSetupError }}</b>
+							</p>
+							<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)" /> <!-- eslint-disable-line vue/no-v-html -->
 						</NcNoteCard>
 						<div class="form-actions">
 							<NcButton v-if="projectFolderSetupError === null"
@@ -258,8 +260,10 @@
 						<b>{{ t('integration_openproject','Automatically managed folders:') }}</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
 					<NcNoteCard v-if="state.app_password_set && !isProjectFolderSetupCorrect" class="note-card" type="error">
-						<p><b>{{ state.project_folder_info.errorMessage }}</b></p>
-						<p class="note-card--info" v-html="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p class="note-card--title">
+							<b>{{ state.project_folder_info.errorMessage }}</b>
+						</p>
+						<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)" /> <!-- eslint-disable-line vue/no-v-html -->
 					</NcNoteCard>
 					<div class="form-actions">
 						<NcButton
@@ -1194,7 +1198,7 @@ export default {
 	}
 	.note-card {
 		max-width: 900px;
-		&--info {
+		&--info-description, &--error-description {
 			.link {
 				color: #1a67a3 !important;
 				font-style: normal;
