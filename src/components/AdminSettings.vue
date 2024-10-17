@@ -267,7 +267,9 @@
 						<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)" /> <!-- eslint-disable-line vue/no-v-html -->
 					</NcNoteCard>
 					<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
-						<p class="note-card--title"><b>Encryption for Group Folders are not enabled.</b></p>
+						<p class="note-card--title">
+							<b>Encryption for Group Folders are not enabled.</b>
+						</p>
 						<p class="note-card--warning-description" v-html="getGroupFolderEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
 					</NcNoteCard>
 					<div class="form-actions">
