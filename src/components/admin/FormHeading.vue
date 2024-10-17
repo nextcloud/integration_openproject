@@ -4,7 +4,10 @@
 		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
 			<MinusThickIcon :fill-color="isDarkTheme ? '#000000' : '#FFFFFF'" :size="12" />
 		</div>
-		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-status">
+		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-error">
+			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
+		</div>
+		<div v-else-if="isThereGroupFoldersEncryptionWarning" class="project-folder-setup-warning">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
@@ -21,7 +24,8 @@
 		<div class="title"
 			:class="{
 				'green-text': isComplete,
-				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup
+				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup,
+				'warn-text': isThereGroupFoldersEncryptionWarning
 			}">
 			{{ title }}
 		</div>
@@ -68,6 +72,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isThereGroupFoldersEncryptionWarning: {
+			type: Boolean,
+			default: false,
+		},
 		isDarkTheme: {
 			type: Boolean,
 			default: false,
@@ -90,6 +98,10 @@ export default {
 		color: var(--color-error);
 	}
 
+	.warn-text {
+		color: var(--color-warning);
+	}
+
 	.complete {
 		height: 16px;
 		width: 16px;
@@ -100,14 +112,21 @@ export default {
 		align-items: center;
 	}
 
-	.project-folder-setup-status {
+	.project-folder-setup-error, .project-folder-setup-warning {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		background-color: var(--color-error);
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	.project-folder-setup-error {
+		background: var(--color-error);
+	}
+
+	.project-folder-setup-warning {
+		background: var(--color-warning);
 	}
 
 	.setup-complete-without-project-folders {

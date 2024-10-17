@@ -91,7 +91,8 @@ const selectors = {
 	projectFolderErrorMessageDetails: '.note-card--error-description',
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
-	adminAuditNoteCardInforSelector: '[type="info"]',
+	adminAuditNoteCardInfoSelector: '[type="info"]',
+	encryptionNoteCardWarningSelector: '.notecard--warning',
 }
 
 const completeIntegrationState = {
@@ -1167,6 +1168,10 @@ describe('AdminSettings.vue', () => {
 									},
 									fresh_project_folder_setup: true,
 									app_password_set: false,
+									encryption_info: {
+										server_side_encryption_enabled: false,
+										encryption_enabled_for_groupfolders: false,
+									},
 								},
 								isGroupFolderAlreadySetup: null,
 							})
@@ -1245,6 +1250,10 @@ describe('AdminSettings.vue', () => {
 									status: true,
 								},
 								app_password_set: true,
+								encryption_info: {
+									server_side_encryption_enabled: false,
+									encryption_enabled_for_groupfolders: false,
+								},
 							},
 						})
 						await wrapper.setData({
@@ -1373,6 +1382,10 @@ describe('AdminSettings.vue', () => {
 									status: true,
 								},
 								app_password_set: true,
+								encryption_info: {
+									server_side_encryption_enabled: false,
+									encryption_enabled_for_groupfolders: false,
+								},
 							},
 							isGroupFolderAlreadySetup: null,
 						})
@@ -1551,6 +1564,61 @@ describe('AdminSettings.vue', () => {
 			} else {
 				expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 			}
+		})
+	})
+
+	describe('Encryption warning after project folder setup', () => {
+		beforeEach(async () => {
+			axios.put.mockReset()
+			axios.get.mockReset()
+		})
+
+		it.each([
+			[
+				'should show warning when server side encryption is enabled but encryption for groupfolders is not enabled',
+				{
+					server_side_encryption_enabled: true,
+					encryption_enabled_for_groupfolders: false,
+				},
+				true,
+			],
+			[
+				'should not show warning when server side encryption and groupfolders encryption is enabled',
+				{
+					server_side_encryption_enabled: true,
+					encryption_enabled_for_groupfolders: true,
+				},
+				false,
+			],
+			[
+				'should not show warning when server side encryption not enabled but groupfolders encryption is enabled',
+				{
+					server_side_encryption_enabled: false,
+					encryption_enabled_for_groupfolders: true,
+				},
+				false,
+			],
+		])('%s', (name, encryptionInfoState, expectedResult) => {
+			const wrapper = getMountedWrapper({
+				state: {
+					openproject_instance_url: 'http://openproject.com',
+					openproject_client_id: 'some-client-id-here',
+					openproject_client_secret: 'some-client-secret-here',
+					default_enable_unified_search: false,
+					default_enable_navigation: false,
+					nc_oauth_client: {
+						nextcloud_client_id: 'some-nc-client-id-here',
+						nextcloud_client_secret: 'some-nc-client-secret-here',
+					},
+					project_folder_info: {
+						status: true,
+					},
+					app_password_set: true,
+					encryption_info: encryptionInfoState,
+				},
+			})
+			const encryptionWarningNoteCard = wrapper.find(selectors.encryptionNoteCardWarningSelector)
+			expect(encryptionWarningNoteCard.exists()).toBe(expectedResult)
 		})
 	})
 
@@ -1890,7 +1958,7 @@ describe('AdminSettings.vue', () => {
 			],
 		])('%s', (name, state, expectedResult) => {
 			const wrapper = getWrapper({ state })
-			const adminAuditLogNoteCard = wrapper.find(selectors.adminAuditNoteCardInforSelector)
+			const adminAuditLogNoteCard = wrapper.find(selectors.adminAuditNoteCardInfoSelector)
 			expect(adminAuditLogNoteCard.exists()).toBe(expectedResult)
 		})
 	})
