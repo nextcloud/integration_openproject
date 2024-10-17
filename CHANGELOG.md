@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 - Make error handling better in `integration_setup.sh` file for integration configuration setup.
+- Improve UI by using Nextcloud's `NoteCard` in project folder setup error.
 
 ## 2.7.0 - 2024-09-10
 ### Changed
