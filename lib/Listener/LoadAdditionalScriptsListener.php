@@ -21,7 +21,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 			return;
 		}
 
-		if (version_compare(OC_Util::getVersionString(), '28') < 0) {
+		if (version_compare(implode('.', OC_Util::getVersion()), '28') < 0) {
 			Util::addScript(Application::APP_ID, Application::APP_ID . '-fileActions');
 			Util::addScript(Application::APP_ID, Application::APP_ID . '-filesPluginLessThan28', 'files');
 		} else {
