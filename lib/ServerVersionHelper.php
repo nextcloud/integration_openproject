@@ -13,12 +13,14 @@ class ServerVersionHelper {
 	 * @return string
 	 */
 	public static function getNextcloudVersion(): string {
-		// for nextcloud above 31 OC_Util::getVersionString() method does not exists
+		// for nextcloud above 31 OC_Util::getVersion() method does not exists
 		if (class_exists('OCP\ServerVersion')) {
-			return (new \OCP\ServerVersion())->getVersionString();
+			$versionArray = (new \OCP\ServerVersion())->getVersion();
+		} else {
+			/** @psalm-suppress UndefinedMethod getVersion() method is not in stable31 so making psalm not complain */
+			$versionArray = OC_Util::getVersion();
 		}
 
-		/** @psalm-suppress UndefinedMethod getVersionString() method is not in stable31 so making psalm not complain */
-		return OC_Util::getVersionString();
+		return implode('.', $versionArray);
 	}
 }

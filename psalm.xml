@@ -47,7 +47,7 @@
 		</UndefinedClass>
 		<UndefinedMethod>
 			<errorLevel type="suppress">
-				<referencedMethod name="OC\legacy\OC_Util::getVersionString()"/>
+				<referencedMethod name="OC\legacy\OC_Util::getVersion()"/>
 			</errorLevel>
 		</UndefinedMethod>
 		<TooFewArguments>
