@@ -1218,7 +1218,7 @@ export default {
 	}
 	.note-card {
 		max-width: 900px;
-		&--info-description, &--error-description, &&--warning-description {
+		&--info-description, &--error-description, &--warning-description {
 			.link {
 				color: #1a67a3 !important;
 				font-style: normal;
