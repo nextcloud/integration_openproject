@@ -70,7 +70,11 @@ class Admin implements ISettings {
 			'project_folder_info' => $projectFolderStatusInformation,
 			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
 			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
-			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly
+			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly,
+			'encryption_info' => [
+				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
+				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
+			]
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
