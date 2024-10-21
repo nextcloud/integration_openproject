@@ -10,7 +10,7 @@ OC.L10N.register(
     "Copied!" : "已复制！",
     "Copied to the clipboard" : "已复制到剪切板",
     "Details" : "详情",
-    "Start typing to search" : "开始输入搜索内容",
+    "Start typing to search" : "开始输入以搜索",
     "Select a user or group" : "选择用户或分组",
     "Description" : "描述",
     "Create" : "创建",
