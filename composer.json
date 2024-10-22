@@ -7,7 +7,8 @@
 		"behat/behat": "^3.10",
 		"helmich/phpunit-json-assert": "^3.4",
 		"vimeo/psalm": "5.23.1",
-		"guzzlehttp/guzzle": "^7.9"
+		"guzzlehttp/guzzle": "^7.9",
+		"behat/gherkin": "v4.9.0"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
