@@ -39,6 +39,7 @@ use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
+use OCA\OpenProject\ExApp;
 
 class ConfigController extends Controller {
 
@@ -96,21 +97,23 @@ class ConfigController extends Controller {
 	 * @var ISubAdmin
 	 */
 	private ISubAdmin $subAdminManager;
+	private ExApp $exApp;
 
 	public function __construct(string $appName,
-		IRequest $request,
-		IConfig $config,
-		IURLGenerator $urlGenerator,
-		IUserManager $userManager,
-		IL10N $l,
-		OpenProjectAPIService $openprojectAPIService,
-		LoggerInterface $logger,
-		OauthService $oauthService,
-		SettingsController $oauthSettingsController,
-		IGroupManager $groupManager,
-		ISecureRandom $secureRandom,
-		ISubAdmin $subAdminManager,
-		?string $userId) {
+								IRequest $request,
+								IConfig $config,
+								IURLGenerator         $urlGenerator,
+								IUserManager          $userManager,
+								IL10N                 $l,
+								OpenProjectAPIService $openprojectAPIService,
+								LoggerInterface       $logger,
+								OauthService          $oauthService,
+								SettingsController    $oauthSettingsController,
+								IGroupManager         $groupManager,
+								ISecureRandom         $secureRandom,
+								ISubAdmin             $subAdminManager,
+								ExApp                 $exApp,
+								?string               $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
@@ -124,6 +127,7 @@ class ConfigController extends Controller {
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
 		$this->subAdminManager = $subAdminManager;
+		$this->exApp = $exApp;
 	}
 
 	/**
@@ -485,6 +489,10 @@ class ConfigController extends Controller {
 
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$options = [];
+			if($this->exApp->isOpenProjectRunningAsExApp($openprojectUrl)) {
+				$options = $this->exApp->setHeadersForProxyRequest($this->userId, $options);
+			}
 			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
 				'client_id' => $clientID,
 				'client_secret' => $clientSecret,
@@ -492,7 +500,7 @@ class ConfigController extends Controller {
 				'redirect_uri' => openprojectAPIService::getOauthRedirectUrl($this->urlGenerator),
 				'grant_type' => 'authorization_code',
 				'code_verifier' => $codeVerifier
-			], 'POST');
+			], 'POST', $options);
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				$accessToken = $result['access_token'];
 				$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $accessToken);
