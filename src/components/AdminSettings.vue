@@ -182,7 +182,7 @@
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
 				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
-				:is-there-group-folders-encryption-warning="showEncryptionWarningForGroupFolders"
+				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
 				:is-dark-theme="isDarkTheme" />
@@ -268,9 +268,9 @@
 					</NcNoteCard>
 					<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
 						<p class="note-card--title">
-							<b>{{ t('integration_openproject', 'Encryption for Group Folders are not enabled.') }}</b>
+							<b>{{ t('integration_openproject', 'Encryption for the Group Folders App is not enabled.') }}</b>
 						</p>
-						<p class="note-card--warning-description" v-html="getGroupFolderEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
 					</NcNoteCard>
 					<div class="form-actions">
 						<NcButton
@@ -558,10 +558,10 @@ export default {
 			const hintTextForAdminAudit = t('integration_openproject', 'To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.', { htmlLinkForAdminAudit, htmlLinkForDocumentaion }, null, { escape: false, sanitize: false })
 			return dompurify.sanitize(hintTextForAdminAudit, { ADD_ATTR: ['target'] })
 		},
-		getGroupFolderEncryptionWarningHint() {
+		getGroupFoldersEncryptionWarningHint() {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Server-side encryption is active, but encryption for group folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete

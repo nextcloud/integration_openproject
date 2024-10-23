@@ -7,7 +7,7 @@
 		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-error">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
-		<div v-else-if="isThereGroupFoldersEncryptionWarning" class="project-folder-setup-warning">
+		<div v-else-if="showEncryptionWarningForGroupFolders" class="project-folder-setup-warning">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="isComplete" class="complete">
@@ -25,7 +25,7 @@
 			:class="{
 				'green-text': isComplete,
 				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup,
-				'warn-text': isThereGroupFoldersEncryptionWarning
+				'warn-text': showEncryptionWarningForGroupFolders
 			}">
 			{{ title }}
 		</div>
@@ -72,7 +72,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isThereGroupFoldersEncryptionWarning: {
+		showEncryptionWarningForGroupFolders: {
 			type: Boolean,
 			default: false,
 		},
