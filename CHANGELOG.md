@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Make error handling better in `integration_setup.sh` file for integration configuration setup.
 - Improve UI by using Nextcloud's `NoteCard` in project folder setup error.
 - Resolve the issue with retrieving the Nextcloud server version for version compare
+- Add warning UI when encryption is not explicitly enabled for `groupfolders`.
 
 ## 2.7.0 - 2024-09-10
 ### Changed
