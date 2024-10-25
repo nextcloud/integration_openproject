@@ -38,6 +38,8 @@
     "Copy value" : "Copier la valeur",
     "Copied to the clipboard" : "Copié dans le presse-papiers",
     "Details" : "Détails",
+    "setting up a Nextcloud file storage" : "paramètre d'un stockage de fichiers Nextcloud",
+    "Visit our documentation for in-depth information on {htmlLink} integration." : "Consultez notre documentation pour obtenir des informations détaillées sur l'intégration de {htmlLink}.",
     "user guide" : "Mode d'emploi",
     "Learn how to get the most out of the OpenProject integration by visiting our {htmlLink}." : "Apprenez comment exploiter le plein potentiel de l’intégration OpenProject en visitant {htmlLink}.",
     "No connection with OpenProject" : "Pas de connexion avec OpenProject",
