@@ -53,13 +53,13 @@ class OauthService {
 	 */
 	public function hashOrEncryptSecretBasedOnNextcloudVersion(string $secret, string $nextcloudVersion): string {
 		switch (true) {
-			case version_compare($nextcloudVersion, '30.0.0') >= 0:
-			case version_compare($nextcloudVersion, '29.0.7') >= 0 && version_compare($nextcloudVersion, '30.0.0') < 0:
-			case version_compare($nextcloudVersion, '28.0.10') >= 0 && version_compare($nextcloudVersion, '29.0.0') < 0:
-			case version_compare($nextcloudVersion, '27.1.11.8') >= 0 && version_compare($nextcloudVersion, '28.0.0') < 0:
+			case version_compare($nextcloudVersion, '30.0.0.0') >= 0:
+			case version_compare($nextcloudVersion, '29.0.7.0') >= 0 && version_compare($nextcloudVersion, '30.0.0.0') < 0:
+			case version_compare($nextcloudVersion, '28.0.10.0') >= 0 && version_compare($nextcloudVersion, '29.0.0.0') < 0:
+			case version_compare($nextcloudVersion, '27.1.11.8') >= 0 && version_compare($nextcloudVersion, '28.0.0.0') < 0:
 				$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
 				break;
-			case version_compare($nextcloudVersion, '27.0.0') === 0:
+			case version_compare($nextcloudVersion, '27.0.0.0') >= 0 && version_compare($nextcloudVersion, '27.0.1.0') < 0:
 				$encryptedSecret = $secret;
 				break;
 			default:

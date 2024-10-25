@@ -59,35 +59,51 @@ class OauthServiceTest extends TestCase {
 	public function gethashOrEncryptSecretBasedOnNextcloudVersion(): array {
 		return [
 			[
-				"30.0.0",
+				"30.0.0.0",
 				"calculateHMAC"
 			],
 			[
-				"29.0.7",
+				"30.0.0.1",
 				"calculateHMAC"
 			],
 			[
-				"29.1.0",
+				"29.0.7.0",
 				"calculateHMAC"
 			],
 			[
-				"29.0.6",
+				"29.1.0.0",
+				"calculateHMAC"
+			],
+			[
+				"29.0.6.0",
 				"encrypt"
 			],
 			[
-				"28.0.10",
+				"28.0.10.0",
 				"calculateHMAC"
 			],
 			[
-				"28.2.0",
+				"28.2.0.0",
 				"calculateHMAC"
 			],
 			[
-				"28.0.0",
+				"28.0.0.0",
 				"encrypt"
 			],
 			[
-				"29.0.0",
+				"28.0.10.1",
+				"calculateHMAC"
+			],
+			[
+				"28.0.0.1",
+				"encrypt"
+			],
+			[
+				"29.0.0.0",
+				"encrypt"
+			],
+			[
+				"29.0.0.1",
 				"encrypt"
 			],
 			[
@@ -101,6 +117,26 @@ class OauthServiceTest extends TestCase {
 			[
 				"27.1.1.0",
 				"encrypt"
+			],
+			[
+				"27.0.1.0",
+				"encrypt"
+			],
+			[
+				"27.0.1.1",
+				"encrypt"
+			],
+			[
+				"27.0.0.0",
+				null
+			],
+			[
+				"27.0.0.1",
+				null
+			],
+			[
+				"27.0.0.99",
+				null
 			]
 		];
 	}
@@ -109,15 +145,20 @@ class OauthServiceTest extends TestCase {
 	/**
 	 * @dataProvider gethashOrEncryptSecretBasedOnNextcloudVersion
 	 * @param string $nextcloudVersion
-	 * @param string $hashOrEncryptFunction
+	 * @param string|null $hashOrEncryptFunction
 	 *
 	 * @return void
 	 *
 	 */
-	public function testGetHashedOrEncryptedClientSecretBasedOnNextcloudVersions(string $nextcloudVersion, string $hashOrEncryptFunction) {
+	public function testGetHashedOrEncryptedClientSecretBasedOnNextcloudVersions(string $nextcloudVersion, ?string $hashOrEncryptFunction) {
 		$iCryptoMock = $this->getMockBuilder(ICrypto::class)->getMock();
 		$oAuthService = $this->getOauthServiceMock(null, null, $iCryptoMock);
-		$iCryptoMock->expects($this->once())->method($hashOrEncryptFunction);
+		if ($hashOrEncryptFunction !== null) {
+			$iCryptoMock->expects($this->once())->method($hashOrEncryptFunction);
+		} else {
+			$iCryptoMock->expects($this->never())->method('calculateHMAC');
+			$iCryptoMock->expects($this->never())->method('encrypt');
+		}
 		$oAuthService->hashOrEncryptSecretBasedOnNextcloudVersion("client_secret", $nextcloudVersion);
 	}
 }
