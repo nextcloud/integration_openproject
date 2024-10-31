@@ -450,9 +450,7 @@ class ConfigControllerTest extends TestCase {
 				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
 				['testUser', 'integration_openproject', 'oauth_connection_error_message', $expectedErrorMessage],
 			);
-		/**
-		 * @var ConfigController
-		 */
+
 		$configController = new ConfigController(
 			'integration_openproject',
 			$this->createMock(IRequest::class),
@@ -838,7 +836,7 @@ class ConfigControllerTest extends TestCase {
 		$actualCount = 1;
 		$userManager = \OC::$server->getUserManager();
 		$count = 0;
-		$function = function (IUser $user) use (&$count) {
+		$function = function () use (&$count) {
 			$count++;
 			return null;
 		};

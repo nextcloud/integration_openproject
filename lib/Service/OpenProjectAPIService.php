@@ -242,7 +242,6 @@ class OpenProjectAPIService {
 		bool $onlyLinkableWorkPackages = true,
 		int $workPackageId = null
 	): array {
-		$resultsById = [];
 		$filters = [];
 
 		// search by description
@@ -608,7 +607,7 @@ class OpenProjectAPIService {
 				throw new InvalidArgumentException('invalid data');
 			}
 		} else {
-			foreach ($values as $key => $value) {
+			foreach (array_keys($values) as $key) {
 				if (!in_array($key, $opKeys)) {
 					throw new InvalidArgumentException('invalid key');
 				}
@@ -765,7 +764,7 @@ class OpenProjectAPIService {
 			'workpackageId',
 			'fileinfo'
 		];
-		foreach ($values as $key => $value) {
+		foreach (array_keys($values) as $key) {
 			if (!in_array($key, $allowedKeys)) {
 				throw new InvalidArgumentException('invalid key');
 			}
