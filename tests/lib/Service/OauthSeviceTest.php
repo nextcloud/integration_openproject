@@ -59,7 +59,7 @@ class OauthServiceTest extends TestCase {
 	public function gethashOrEncryptSecretBasedOnNextcloudVersion(): array {
 		return [
 			[
-				"30.0.0.0",
+				"30.0.0.14",
 				"calculateHMAC"
 			],
 			[
@@ -108,7 +108,7 @@ class OauthServiceTest extends TestCase {
 			],
 			[
 				"27.1.11.8",
-				"calculateHMAC"
+				"encrypt"
 			],
 			[
 				"27.1.12.0",
@@ -137,6 +137,14 @@ class OauthServiceTest extends TestCase {
 			[
 				"27.0.0.99",
 				null
+			],
+			[
+				"27.1.11.9",
+				"calculateHMAC"
+			],
+			[
+				"29.0.7.1",
+				"calculateHMAC"
 			]
 		];
 	}
