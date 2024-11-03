@@ -5,7 +5,7 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Klaida „OAuth“ apsikeitimo metu",
     "Bad HTTP method" : "Blogas HTTP metodas",
     "OAuth access token refused" : "„OAuth“ prieigos raktas atmestas",
-    "Cancel" : "Atšaukti",
+    "Cancel" : "Atsisakyti",
     "Save" : "Įrašyti",
     "Copied!" : "Nukopijuota!",
     "Details" : "Išsamiau",
