@@ -26,6 +26,7 @@ use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -746,7 +747,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class)
+			$this->createMock(ILogFactory::class),
+			$this->createMock(IManager::class),
 		);
 	}
 
@@ -764,6 +766,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IDBConnection|null $db
 	 * @param IURLGenerator|null $iURLGenerator
 	 * @param ILogFactory|null $iLogFactory
+	 * @param IManager|null $iManager
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -779,6 +782,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$tokenProviderMock = null,
 		$db = null,
 		$iLogFactory = null,
+		$iManager = null,
 		$iURLGenerator = null
 	): OpenProjectAPIService|MockObject {
 		$onlyMethods[] = 'getBaseUrl';
@@ -818,6 +822,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($iLogFactory === null) {
 			$iLogFactory = $this->createMock(ILogFactory::class);
 		}
+		if ($iManager === null) {
+			$iManager = $this->createMock(IManager::class);
+		}
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs(
 				[
@@ -839,6 +846,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$subAdminManagerMock,
 					$db,
 					$iLogFactory,
+					$iManager,
 					$iURLGenerator
 				])
 			->onlyMethods($onlyMethods)
@@ -2105,8 +2113,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class)
-
+			$this->createMock(ILogFactory::class),
+			$this->createMock(IManager::class),
 		);
 
 		$response = $service->request('', '', []);
@@ -2176,7 +2184,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IEventDispatcher::class),
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class)
+			$this->createMock(ILogFactory::class),
+			$this->createMock(IManager::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -3393,6 +3402,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			null,
 			null,
+			null,
 			$iUrlGeneratorMock
 		);
 		$service->method('request')
@@ -3771,6 +3781,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			null,
 			null,
+			null,
 			$iULGeneratorMock
 		);
 		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
@@ -3928,6 +3939,98 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$configMock
 		);
 		$actualResult = $service->isAdminAuditConfigSetCorrectly();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	public function serverSideEncryptionEnabledDataProvider(): array {
+		return [
+			[
+				'1',
+				true,
+				true,
+				true
+			],
+			[
+				'0',
+				true,
+				true,
+				false
+			],
+			[
+				'1',
+				false,
+				true,
+				false
+			],
+			[
+				'1',
+				true,
+				false,
+				false
+			],
+			[
+				'1',
+				false,
+				false,
+				false
+			],
+			[
+				'0',
+				false,
+				false,
+				false
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider serverSideEncryptionEnabledDataProvider
+	 * @param string $encryptionForHomeStorageEnabled
+	 * @param bool $isEncryptionAppInstalled
+	 * @param bool $isEncryptionAppEnabled
+	 * @param bool $expectedResult
+	 *
+	 * @return void
+	 */
+
+	public function testIsServerSideEncryptionEnabled(
+		string $encryptionForHomeStorageEnabled,
+		bool $isEncryptionAppInstalled,
+		bool $isEncryptionAppEnabled,
+		bool $expectedResult
+	): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->with(
+				'encryption', 'encryptHomeStorage'
+			)
+			->willReturn(
+				$encryptionForHomeStorageEnabled
+			);
+		$userManagerMock = $this->getMockBuilder(IUserManager::class)
+			->getMock();
+		$iAppManagerMock->method('isInstalled')->with('encryption')
+			->willReturn($isEncryptionAppInstalled);
+		$iManagerMock->method('isEnabled')->willReturn($isEncryptionAppEnabled);
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			$userManagerMock,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			null,
+			$iManagerMock
+		);
+		$actualResult = $service->isServerSideEncryptionEnabled();
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 }

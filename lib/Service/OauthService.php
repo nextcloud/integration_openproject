@@ -82,6 +82,8 @@ class OauthService {
 		$secret = $this->secureRandom->generate(64, self::validChars);
 		$nextcloudVersion = ServerVersionHelper::getNextcloudVersion();
 		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
+		$nextcloudVersion = implode('.', OC_Util::getVersion());
+		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
