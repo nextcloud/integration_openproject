@@ -167,45 +167,6 @@ checkNextcloudIntegrationConfiguration() {
 	log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
 }
 
-logUnhandledError() {
-	log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
-	log_error "OpenProject returned the following error: '${error_message}'"
-	log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-}
-
-logCompleteIntegrationConfiguration() {
-	log_success "Setup of OpenProject and Nextcloud is complete."
-	exit 0
-}
-
-checkOpenProjectIntegrationConfiguration() {
-	# At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
-	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
-	status_op=$(isOpenProjectFileStorageConfigOk)
-	if [[ "$status_op" -ne 0 ]]; then
-		log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
-		if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-			log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
-		fi
-		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-		exit 1
-	fi
-	log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is configured."
-}
-
-checkNextcloudIntegrationConfiguration() {
-	status_nc=$(isNextcloudAdminConfigOk)
-	if [[ "$status_nc" -ne 0 ]]; then
-		log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
-		if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-			log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
-		fi
-		log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-		exit 1
-	fi
-	log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
-}
-
 # check if both instances are started or not
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
