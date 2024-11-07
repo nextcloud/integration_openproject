@@ -2,8 +2,8 @@
 	<div id="openproject_prefs" class="section">
 		<TermsOfServiceUnsigned :is-all-terms-of-service-signed-for-user-open-project="isAllTermsOfServiceSignedForUserOpenProject" />
 		<SettingsTitle is-setting="admin" />
-		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="audit-info-card" type="info">
-			<p class="audit-info-card--info" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
+		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="note-card" type="info">
+			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
 		<div class="openproject-server-host">
 			<FormHeading index="1"
@@ -182,6 +182,7 @@
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
 				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
+				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
 				:is-dark-theme="isDarkTheme" />
@@ -225,10 +226,12 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
 							}}
 						</p>
-						<ProjectFolderError
-							v-if="projectFolderSetupError !== null"
-							:project-folder-set-up-error-message-description="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)"
-							:project-folder-set-up-error="projectFolderSetupError" />
+						<NcNoteCard v-if="projectFolderSetupError !== null" class="note-card" type="error">
+							<p class="note-card--title">
+								<b>{{ projectFolderSetupError }}</b>
+							</p>
+							<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)" /> <!-- eslint-disable-line vue/no-v-html -->
+						</NcNoteCard>
 						<div class="form-actions">
 							<NcButton v-if="projectFolderSetupError === null"
 								type="primary"
@@ -257,10 +260,18 @@
 					<div class="project-folder-status-value">
 						<b>{{ t('integration_openproject','Automatically managed folders:') }}</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
-					<ProjectFolderError
-						v-if="state.app_password_set && !isProjectFolderSetupCorrect"
-						:project-folder-set-up-error-message-description="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)"
-						:project-folder-set-up-error="state.project_folder_info.errorMessage" />
+					<NcNoteCard v-if="state.app_password_set && !isProjectFolderSetupCorrect" class="note-card" type="error">
+						<p class="note-card--title">
+							<b>{{ state.project_folder_info.errorMessage }}</b>
+						</p>
+						<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)" /> <!-- eslint-disable-line vue/no-v-html -->
+					</NcNoteCard>
+					<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
+						<p class="note-card--title">
+							<b>{{ t('integration_openproject', 'Encryption for the Group Folders App is not enabled.') }}</b>
+						</p>
+						<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
+					</NcNoteCard>
 					<div class="form-actions">
 						<NcButton
 							data-test-id="edit-project-folder-setup"
@@ -370,7 +381,6 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM, USER_SETTINGS } from '../utils.js'
-import ProjectFolderError from './admin/ProjectFolderError.vue'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 export default {
@@ -388,7 +398,6 @@ export default {
 		RestoreIcon,
 		CheckBox,
 		NcCheckboxRadioSwitch,
-		ProjectFolderError,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
 	},
@@ -549,6 +558,11 @@ export default {
 			const hintTextForAdminAudit = t('integration_openproject', 'To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.', { htmlLinkForAdminAudit, htmlLinkForDocumentaion }, null, { escape: false, sanitize: false })
 			return dompurify.sanitize(hintTextForAdminAudit, { ADD_ATTR: ['target'] })
 		},
+		getGroupFoldersEncryptionWarningHint() {
+			const linkText = t('integration_openproject', 'documentation')
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
 				 && this.isOPOAuthFormComplete
@@ -568,6 +582,13 @@ export default {
 		},
 		isResetButtonDisabled() {
 			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
+		},
+		showEncryptionWarningForGroupFolders() {
+			if (!this.isProjectFolderAlreadySetup || !this.state.app_password_set || this.isProjectFolderSetupFormInEdit) {
+				return false
+			}
+			return this.state.encryption_info.server_side_encryption_enabled
+				&& !this.state.encryption_info.encryption_enabled_for_groupfolders
 		},
 	},
 	created() {
@@ -725,6 +746,7 @@ export default {
 				const success = await this.saveOPOptions()
 				if (success) {
 					this.setProjectFolderSetupToViewMode()
+					this.isProjectFolderAlreadySetup = true
 					if ((this.formMode.opUserAppPassword === F_MODES.DISABLE && !this.opUserAppPassword) || this.formMode.opUserAppPassword === F_MODES.DISABLE) {
 						this.formMode.opUserAppPassword = F_MODES.EDIT
 					}
@@ -1194,9 +1216,9 @@ export default {
 			padding-left: 5px;
 		}
 	}
-	.audit-info-card {
+	.note-card {
 		max-width: 900px;
-		&--info {
+		&--info-description, &--error-description, &--warning-description {
 			.link {
 				color: #1a67a3 !important;
 				font-style: normal;

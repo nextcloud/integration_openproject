@@ -33,6 +33,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -119,6 +120,7 @@ class OpenProjectAPIService {
 	private ISubAdmin $subAdminManager;
 	private IDBConnection $db;
 	private ILogFactory $logFactory;
+	private IManager $encryptionManager;
 
 
 	/**
@@ -150,6 +152,7 @@ class OpenProjectAPIService {
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
 		ILogFactory $logFactory,
+		IManager $encryptionManager
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -169,6 +172,7 @@ class OpenProjectAPIService {
 		$this->eventDispatcher = $eventDispatcher;
 		$this->db = $db;
 		$this->logFactory = $logFactory;
+		$this->encryptionManager = $encryptionManager;
 	}
 
 	/**
@@ -1144,7 +1148,14 @@ class OpenProjectAPIService {
 		);
 	}
 
-
+	public function isServerSideEncryptionEnabled(): bool {
+		$isEncryptionForHomeStorageEnabled = $this->config->getAppValue('encryption', 'encryptHomeStorage', '0') === '1';
+		return (
+			$this->appManager->isInstalled('encryption') &&
+			$this->encryptionManager->isEnabled() &&
+			$isEncryptionForHomeStorageEnabled
+		);
+	}
 
 	/**
 	 * @return array<mixed>
