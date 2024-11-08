@@ -57,13 +57,55 @@
 				</NcButton>
 			</div>
 		</div>
-		<div class="openproject-oauth-values">
+		<div class="authentication-method">
 			<FormHeading index="2"
+						 :title="t('integration_openproject', 'Authentication method')"
+						 :is-complete="isAuthenticationMethodFormComplete"
+						 :is-disabled="isAuthenticationFormInDisabledMode"
+						 :is-dark-theme="isDarkTheme" />
+			<div v-if="isServerHostFormComplete">
+				<div v-if="isAuthenticationFormInEditMode" class="authentication-method">
+					<div class="authentication-method--description">
+						<p class="title">{{ t('integration_openproject', 'Need help setting this up?') }}</p>
+						<p class="description" v-html="getAuthenticationMethodHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+					</div>
+					<div class="authentication-method--options">
+						<NcCheckboxRadioSwitch :checked.sync="authenticationMethod" value="oauth2" name="authentication_method_radio" type="radio">OAuth2 two-way authorization code flow</NcCheckboxRadioSwitch>
+						<NcCheckboxRadioSwitch :checked.sync="authenticationMethod" value="oidc" name="authentication_method_radio" type="radio">OpenID identity provider</NcCheckboxRadioSwitch>
+					</div>
+				</div>
+				<div v-else>
+					<p>OpenID identity provider</p>
+				</div>
+				<div class="form-actions">
+					<NcButton v-if="isAuthenticationFormInViewMode"
+							  data-test-id="reset-server-host-btn"
+							  @click="setAuthenticationMethodInEditMode">
+						<template #icon>
+							<PencilIcon :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Edit authentication method') }}
+					</NcButton>
+					<NcButton v-else
+							  data-test-id="submit-oidc-auth-values-btn"
+							  type="primary"
+							  @click="saveOIDCAuthValues">
+						<template #icon>
+							<NcLoadingIcon v-if="loadingAuthenticationMethodForm" class="loading-spinner" :size="20" />
+							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+						</template>
+						{{ t('integration_openproject', 'Save') }}
+					</NcButton>
+				</div>
+			</div>
+		</div>
+		<div class="openproject-oauth-values">
+			<FormHeading index="3"
 				:title="t('integration_openproject', 'OpenProject OAuth settings')"
 				:is-complete="isOPOAuthFormComplete"
 				:is-disabled="isOPOAuthFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="isServerHostFormComplete">
+			<div v-if="isAuthenticationMethodFormComplete">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.openproject_client_id"
@@ -112,7 +154,7 @@
 			</div>
 		</div>
 		<div class="nextcloud-oauth-values">
-			<FormHeading index="3"
+			<FormHeading index="4"
 				:title="t('integration_openproject', 'Nextcloud OAuth client')"
 				:is-complete="isNcOAuthFormComplete"
 				:is-disabled="isNcOAuthFormInDisableMode"
@@ -177,7 +219,7 @@
 			</div>
 		</div>
 		<div class="project-folder-setup">
-			<FormHeading index="4"
+			<FormHeading index="5"
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
@@ -286,7 +328,7 @@
 			</div>
 		</div>
 		<div v-if="state.app_password_set">
-			<FormHeading index="5"
+			<FormHeading index="6"
 				:title="t('integration_openproject', 'Project folders application connection')"
 				:is-complete="isOPUserAppPasswordFormComplete"
 				:is-disabled="isOPUserAppPasswordInDisableMode"
@@ -407,13 +449,14 @@ export default {
 				// server host form is never disabled.
 				// it's either editable or view only
 				server: F_MODES.EDIT,
+				authenticationMethod:F_MODES.DISABLE,
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
 				projectFolderSetUp: F_MODES.DISABLE,
 			},
 			isFormCompleted: {
-				server: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
+				server: false, authenticationMethod: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
@@ -423,6 +466,7 @@ export default {
 			loadingServerHostForm: false,
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
+			loadingAuthenticationMethodForm: false,
 			isOpenProjectInstanceValid: null,
 			openProjectNotReachableErrorMessage: null,
 			openProjectNotReachableErrorMessageDetails: null,
@@ -446,6 +490,7 @@ export default {
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
+			authenticationMethod: 'oauth2',
 		}
 	},
 	computed: {
@@ -473,6 +518,9 @@ export default {
 		isServerHostFormComplete() {
 			return this.isFormCompleted.server
 		},
+		isAuthenticationMethodFormComplete(){
+			return this.isFormCompleted.authenticationMethod
+		},
 		isOPOAuthFormComplete() {
 			return this.isFormCompleted.opOauth
 		},
@@ -488,6 +536,9 @@ export default {
 		isServerHostFormInView() {
 			return this.formMode.server === F_MODES.VIEW
 		},
+		isAuthenticationFormInViewMode() {
+			return this.formMode.authenticationMethod === F_MODES.VIEW
+		},
 		isOPOAuthFormInView() {
 			return this.formMode.opOauth === F_MODES.VIEW
 		},
@@ -500,11 +551,17 @@ export default {
 		isOPOAuthFormInDisableMode() {
 			return this.formMode.opOauth === F_MODES.DISABLE
 		},
+		isAuthenticationFormInDisabledMode() {
+			return this.formMode.authenticationMethod === F_MODES.DISABLE
+		},
 		isOPUserAppPasswordFormInEdit() {
 			return this.formMode.opUserAppPassword === F_MODES.EDIT
 		},
 		isProjectFolderSetupFormInEdit() {
 			return this.formMode.projectFolderSetUp === F_MODES.EDIT
+		},
+		isAuthenticationFormInEditMode() {
+			return this.formMode.authenticationMethod === F_MODES.EDIT
 		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
@@ -562,6 +619,11 @@ export default {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
+		getAuthenticationMethodHintText() {
+			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
@@ -621,6 +683,10 @@ export default {
 				if (this.state.openproject_instance_url) {
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
+				}
+				if (this.state.authentication_method) {
+					this.formMode.authenticationMethod = F_MODES.VIEW
+					this.isFormCompleted.authenticationMethod = true
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
@@ -683,6 +749,10 @@ export default {
 			// set the edit variable to the current saved value
 			this.serverHostUrlForEdit = this.state.openproject_instance_url
 			this.isOpenProjectInstanceValid = null
+		},
+		setAuthenticationMethodInEditMode() {
+			this.formMode.authenticationMethod = F_MODES.EDIT
+			this.isFormCompleted.authenticationMethod = true
 		},
 		setProjectFolderSetUpToEditMode() {
 			this.formMode.projectFolderSetUp = F_MODES.EDIT
@@ -767,8 +837,8 @@ export default {
 					this.state.openproject_instance_url = this.serverHostUrlForEdit
 					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
-					if (!this.isFormCompleted.opOauth) {
-						this.formMode.opOauth = F_MODES.EDIT
+					if (!this.isFormCompleted.authenticationMethod) {
+						this.formMode.authenticationMethod = F_MODES.EDIT
 					}
 				}
 			}
@@ -786,6 +856,17 @@ export default {
 					this.createNCOAuthClient()
 				}
 			}
+		},
+		async saveOIDCAuthValues() {
+			this.isFormStep = FORM.AUTHENTICATION_METHOD
+			this.loadingAuthenticationMethodForm = true
+			console.log('OIDC Auth values saved')
+			this.formMode.authenticationMethod = F_MODES.VIEW
+			this.isFormCompleted.authenticationMethod = true
+			if (!this.isFormCompleted.opOauth) {
+				this.formMode.opOauth = F_MODES.EDIT
+			}
+			this.loadingAuthenticationMethodForm = false
 		},
 		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(
@@ -1223,6 +1304,26 @@ export default {
 				color: #1a67a3 !important;
 				font-style: normal;
 			}
+		}
+	}
+
+	.authentication-method {
+		&--description {
+			color: var(--color-loading-dark);
+			font-size: 14px;
+			.title {
+				font-weight: 700;
+			}
+			.description {
+				.link {
+					color: #1a67a3 !important;
+					font-style: normal;
+				}
+				margin-top: 0.1rem;
+			}
+		}
+		&--options {
+			margin-top: 0.4rem;
 		}
 	}
 }
