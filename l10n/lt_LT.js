@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "Atsisakyti",
     "Save" : "Įrašyti",
     "Copied!" : "Nukopijuota!",
+    "Copied to the clipboard" : "Nukopijuota į iškarpinę",
     "Details" : "Išsamiau",
     "Start typing to search" : "Rašykite norėdami atlikti paiešką",
     "Select a user or group" : "Pasirinkti naudotoją ar grupę",
