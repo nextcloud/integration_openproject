@@ -106,7 +106,38 @@
 				</div>
 			</div>
 		</div>
-		<div class="openproject-oauth-values">
+		<div v-if="this.authenticationMethodSelected === 'oidc'" class="authentication-settings">
+			<FormHeading index="3"
+						 :title="t('integration_openproject', 'Authentication settings')"
+						 :is-complete="isOPOAuthFormComplete"
+						 :is-disabled="false"
+						 :is-dark-theme="isDarkTheme" />
+			<div v-if="isAuthenticationMethodFormComplete">
+				<div class="authentication-settings--content">
+					<p class="authentication-settings--content--label">OIDC provider *</p>
+					<NcSelect
+								inputId="inputId"
+							  :placeholder="t('integration_openproject', 'Select a user or group')"
+							  :options="['Keycloak', 'google', 'microsoft']"
+							  value="Keycloak">
+						<template #option="option">
+							{{ option.label }}
+						</template>
+						<template #no-options>
+							{{ t('integration_openproject', 'Please select a project') }}
+						</template>
+					</NcSelect>
+					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+					<TextInput
+							   id="authentication-method-target-client-id"
+							   class="py-1"
+							   is-required
+							   :label="t('integration_openproject', 'OpenProject client ID')"
+							   hint-text="You can get this value from Keycloak when you set-up define the client" />
+				</div>
+			</div>
+		</div>
+		<div v-if="this.authenticationMethodSelected === 'oauth2' || this.authenticationMethodSelected === null" class="openproject-oauth-values">
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'OpenProject OAuth settings')"
 				:is-complete="isOPOAuthFormComplete"
@@ -160,7 +191,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="nextcloud-oauth-values">
+		<div v-if="this.authenticationMethodSelected === 'oauth2' || this.authenticationMethodSelected === null" class="nextcloud-oauth-values">
 			<FormHeading index="4"
 				:title="t('integration_openproject', 'Nextcloud OAuth client')"
 				:is-complete="isNcOAuthFormComplete"
@@ -226,7 +257,7 @@
 			</div>
 		</div>
 		<div class="project-folder-setup">
-			<FormHeading index="5"
+			<FormHeading :index="this.authenticationMethod === 'oidc' ? '4' : '5'"
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
@@ -421,7 +452,13 @@ import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import { NcLoadingIcon, NcCheckboxRadioSwitch, NcButton, NcNoteCard } from '@nextcloud/vue'
+import {
+	NcLoadingIcon,
+	NcCheckboxRadioSwitch,
+	NcButton,
+	NcNoteCard,
+	NcSelect
+} from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import TextInput from './admin/TextInput.vue'
@@ -435,6 +472,7 @@ import dompurify from 'dompurify'
 export default {
 	name: 'AdminSettings',
 	components: {
+		NcSelect,
 		NcButton,
 		FieldValue,
 		FormHeading,
@@ -457,13 +495,14 @@ export default {
 				// it's either editable or view only
 				server: F_MODES.EDIT,
 				authenticationMethod:F_MODES.DISABLE,
+				authenticationSetting:F_MODES.DISABLE,
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
 				projectFolderSetUp: F_MODES.DISABLE,
 			},
 			isFormCompleted: {
-				server: false, authenticationMethod: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
+				server: false, authenticationMethod: false, authenticationSetting: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
@@ -632,6 +671,11 @@ export default {
 			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
+		getConfigureOIDCHintText() {
+			const linkText = t('integration_openproject', 'User OIDC app')
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'You can configure OIDC providers in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		isIntegrationComplete() {
 			return (this.isServerHostFormComplete
@@ -1346,6 +1390,26 @@ export default {
 		&--options {
 			margin-top: 0.4rem;
 		}
+	}
+
+	.authentication-settings {
+		&--content {
+			max-width: 700px;
+			&--label {
+				font-weight: 700;
+				font-size: .875rem;
+			}
+		}
+		.description {
+			.link {
+				color: #1a67a3 !important;
+				font-style: normal;
+			}
+			margin-top: 0.1rem;
+		}
+	}
+	#inputId{
+		height: 200px;
 	}
 }
 </style>
