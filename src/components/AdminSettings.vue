@@ -75,7 +75,7 @@
 					</div>
 				</div>
 				<div v-else>
-					<p>OpenID identity provider</p>
+					<p class="title">{{ t('integration_openproject', getSelectedAuthenticatedMethod) }}</p>
 				</div>
 				<div class="form-actions">
 					<NcButton v-if="isAuthenticationFormInViewMode"
@@ -86,9 +86,16 @@
 						</template>
 						{{ t('integration_openproject', 'Edit authentication method') }}
 					</NcButton>
-					<NcButton v-else
+					<NcButton v-if="isAuthenticationMethodFormComplete && isAuthenticationFormInEditMode"
+							  class="mr-2"
+							  data-test-id="cancel-edit-server-host-btn"
+							  @click="setAuthenticationMethodToViewMode">
+						{{ t('integration_openproject', 'Cancel') }}
+					</NcButton>
+					<NcButton v-if="isAuthenticationFormInEditMode"
 							  data-test-id="submit-oidc-auth-values-btn"
 							  type="primary"
+							  :disabled="isAuthenticationMethodAlreadySelected"
 							  @click="saveOIDCAuthValues">
 						<template #icon>
 							<NcLoadingIcon v-if="loadingAuthenticationMethodForm" class="loading-spinner" :size="20" />
@@ -491,6 +498,7 @@ export default {
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
 			authenticationMethod: 'oauth2',
+			authenticationMethodSelected: null
 		}
 	},
 	computed: {
@@ -652,6 +660,15 @@ export default {
 			return this.state.encryption_info.server_side_encryption_enabled
 				&& !this.state.encryption_info.encryption_enabled_for_groupfolders
 		},
+		getSelectedAuthenticatedMethod() {
+			return this.authenticationMethod === 'oidc'
+				? 'OpenID identity provider'
+				: 'OAuth2 two-way authorization code flow'
+		},
+		isAuthenticationMethodAlreadySelected() {
+			return this.authenticationMethodSelected === this.authenticationMethod
+				|| this.authenticationMethodSelected === this.state.authentication_method;
+		}
 	},
 	created() {
 		this.init()
@@ -687,6 +704,7 @@ export default {
 				if (this.state.authentication_method) {
 					this.formMode.authenticationMethod = F_MODES.VIEW
 					this.isFormCompleted.authenticationMethod = true
+					this.authenticationMethodSelected = this.state.authentication_method
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
@@ -743,6 +761,9 @@ export default {
 		},
 		setServerHostFormToViewMode() {
 			this.formMode.server = F_MODES.VIEW
+		},
+		setAuthenticationMethodToViewMode() {
+			this.formMode.authenticationMethod = F_MODES.VIEW
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -863,6 +884,7 @@ export default {
 			console.log('OIDC Auth values saved')
 			this.formMode.authenticationMethod = F_MODES.VIEW
 			this.isFormCompleted.authenticationMethod = true
+			this.authenticationMethodSelected = this.authenticationMethod
 			if (!this.isFormCompleted.opOauth) {
 				this.formMode.opOauth = F_MODES.EDIT
 			}
@@ -1309,7 +1331,6 @@ export default {
 
 	.authentication-method {
 		&--description {
-			color: var(--color-loading-dark);
 			font-size: 14px;
 			.title {
 				font-weight: 700;
