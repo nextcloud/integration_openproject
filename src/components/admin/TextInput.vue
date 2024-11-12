@@ -216,9 +216,6 @@ export default {
 		box-shadow: none !important;
 		border: 1px solid grey !important;
 	}
-	input {
-		height: 42px
-	}
 }
 </style>
 <style>

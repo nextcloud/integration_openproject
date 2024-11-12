@@ -63,7 +63,11 @@ class Admin implements ISettings {
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
 			'openproject_instance_url' => $oauthUrl,
-			'authentication_method' => "",
+			'authentication_method' => "oidc",
+			'authentication_settings' => [
+				'oidc_provider' => 'google',
+				'targeted_audience_client_id' => 'sagar'
+			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
@@ -75,7 +79,7 @@ class Admin implements ISettings {
 			'encryption_info' => [
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
-			]
+			],
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
