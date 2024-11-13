@@ -63,10 +63,10 @@ class Admin implements ISettings {
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
 			'openproject_instance_url' => $oauthUrl,
-			'authentication_method' => "oidc",
+			'authentication_method' => "",
 			'authentication_settings' => [
-				'oidc_provider' => 'google',
-				'targeted_audience_client_id' => 'sagar'
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
 			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',

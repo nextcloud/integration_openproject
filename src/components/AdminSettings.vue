@@ -100,7 +100,7 @@
 						</template>
 						{{ t('integration_openproject', 'Edit authentication method') }}
 					</NcButton>
-					<NcButton v-if="isAuthenticationMethodFormComplete && isAuthenticationFormInEditMode"
+					<NcButton v-if="isAuthenticationFormInEditMode && authenticationMethodSelected !== null"
 						class="mr-2"
 						data-test-id="cancel-edit-server-host-btn"
 						@click="setAuthenticationMethodToViewMode">
@@ -126,70 +126,69 @@
 				:is-complete="isAuthenticationSettingFormComplete"
 				:is-disabled="isAuthenticationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="isAuthenticationMethodFormComplete">
-				<div class="authentication-settings--content">
-					<FieldValue v-if="isAuthenticationSettingsInViewMode"
-						is-required
-						class="pb-1"
-						title="OIDC Provider"
-						:value="oidcProvider" />
-					<div v-else>
-						<p class="authentication-settings--content--label">
-							OIDC provider *
-						</p>
-						<NcSelect
-							input-id="provider-search-input"
-							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
-							:options="oidcProviders"
-							:value="getSelectedOIDCProvider"
-							:filterable="true"
-							:close-on-select="true"
-							:clear-search-on-blur="() => false"
-							:append-to-body="false"
-							@option:selected="onSelectOIDCProvider" />
-					</div>
-					<FieldValue v-if="isAuthenticationSettingsInViewMode"
-						is-required
-						class="pb-1"
-						title="OpenProject client ID"
-						:value="state.authentication_settings.targeted_audience_client_id" />
-					<div v-else>
-						<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<TextInput
-							id="authentication-method-target-client-id"
-							v-model="state.authentication_settings.targeted_audience_client_id"
-							class="py-1"
-							is-required
-							:label="t('integration_openproject', 'OpenProject client ID')"
-							hint-text="You can get this value from Keycloak when you set-up define the client" />
-					</div>
+			<div class="authentication-settings--content">
+				<FieldValue v-if="isAuthenticationSettingsInViewMode"
+					is-required
+					class="pb-1"
+					title="OIDC Provider"
+					:value="authenticationSetting.oidcProviderSet" />
+				<div v-else>
+					<p class="authentication-settings--content--label">
+						OIDC provider *
+					</p>
+					<NcSelect
+						input-id="provider-search-input"
+						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
+						:options="oidcProviders"
+						:value="getCurrentSelectedOIDCProvider"
+						:filterable="true"
+						:close-on-select="true"
+						:clear-search-on-blur="() => false"
+						:append-to-body="false"
+						@option:selected="onSelectOIDCProvider" />
 				</div>
-				<div class="form-actions">
-					<NcButton v-if="isAuthenticationSettingsInViewMode"
-						data-test-id="reset-server-host-btn"
-						@click="setAuthenticationSettingInEditMode">
-						<template #icon>
-							<PencilIcon :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Edit authentication settings') }}
-					</NcButton>
-					<NcButton v-if="isAuthenticationSettingFormComplete && isAuthenticationSettingInEditMode"
-						class="mr-2"
-						data-test-id="cancel-edit-server-host-btn"
-						@click="setAuthenticationSettingToViewMode">
-						{{ t('integration_openproject', 'Cancel') }}
-					</NcButton>
-					<NcButton v-if="isAuthenticationSettingInEditMode"
-						data-test-id="submit-oidc-auth-values-btn"
-						type="primary"
-						@click="saveOIDCAuthSetting">
-						<template #icon>
-							<NcLoadingIcon v-if="loadingAuthenticationMethodForm" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Save') }}
-					</NcButton>
+				<FieldValue v-if="isAuthenticationSettingsInViewMode"
+					is-required
+					class="pb-1"
+					title="OpenProject client ID"
+					:value="state.authentication_settings.targeted_audience_client_id" />
+				<div v-else>
+					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+					<TextInput
+						id="authentication-method-target-client-id"
+						v-model="state.authentication_settings.targeted_audience_client_id"
+						class="py-1"
+						is-required
+						:label="t('integration_openproject', 'OpenProject client ID')"
+						hint-text="You can get this value from Keycloak when you set-up define the client" />
 				</div>
+			</div>
+			<div class="form-actions">
+				<NcButton v-if="isAuthenticationSettingsInViewMode"
+					data-test-id="reset-server-host-btn"
+					@click="setAuthenticationSettingInEditMode">
+					<template #icon>
+						<PencilIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Edit authentication settings') }}
+				</NcButton>
+				<NcButton v-if="isAuthenticationSettingInEditMode && authenticationSetting.currentOIDCProviderSelected !== null && authenticationSetting.targetedAudienceClientIdSet !== null"
+					class="mr-2"
+					data-test-id="cancel-edit-server-host-btn"
+					@click="setAuthenticationSettingToViewMode">
+					{{ t('integration_openproject', 'Cancel') }}
+				</NcButton>
+				<NcButton v-if="isAuthenticationSettingInEditMode"
+					data-test-id="submit-oidc-auth-values-btn"
+					type="primary"
+					:disabled="isAuthenticationSettingsAlreadySet"
+					@click="saveOIDCAuthSetting">
+					<template #icon>
+						<NcLoadingIcon v-if="loadingAuthenticationMethodForm" class="loading-spinner" :size="20" />
+						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Save') }}
+				</NcButton>
 			</div>
 		</div>
 		<div v-if="authenticationMethodSelected === 'oauth2' || authenticationMethodSelected === null" class="openproject-oauth-values">
@@ -594,8 +593,13 @@ export default {
 			userSettingDescription: USER_SETTINGS,
 			authenticationMethod: 'oauth2',
 			authenticationMethodSelected: null,
-			oidcProvider: null,
-			oidcProviders: ['Keycloak', 'google', 'microsoft'],
+			authenticationSetting: {
+				oidcProviderSet: null,
+				targetedAudienceClientIdSet: null,
+				currentOIDCProviderSelected: null,
+				currentTargetedAudienceClientIdSelected: null,
+			},
+			oidcProviders: ['keycloak', 'google', 'microsoft'],
 		}
 	},
 	computed: {
@@ -608,6 +612,9 @@ export default {
 		},
 		opUserAppPassword() {
 			return this.state.app_password_set
+		},
+		targetedAudienceClienID() {
+			return this.state.authentication_settings.targeted_audience_client_id
 		},
 		isAdminAuditConfigurationSetUpCorrectly() {
 			return this.state.admin_audit_configuration_correct
@@ -791,8 +798,15 @@ export default {
 		isAuthenticationMethodAlreadySelected() {
 			return this.authenticationMethodSelected === this.authenticationMethod
 		},
-		getSelectedOIDCProvider() {
-			return this.oidcProvider
+		isAuthenticationSettingsAlreadySet() {
+			const { oidcProviderSet, currentOIDCProviderSelected } = this.authenticationSetting
+			return currentOIDCProviderSelected === null
+				|| this.targetedAudienceClienID === ''
+				|| (oidcProviderSet === currentOIDCProviderSelected && this.authenticationSetting.targetedAudienceClientIdSet === this.targetedAudienceClienID)
+				|| (this.authenticationSetting.targetedAudienceClientIdSet === this.targetedAudienceClienID && oidcProviderSet === currentOIDCProviderSelected)
+		},
+		getCurrentSelectedOIDCProvider() {
+			return this.authenticationSetting.currentOIDCProviderSelected
 		},
 	},
 	created() {
@@ -835,13 +849,21 @@ export default {
 				if (this.state.authentication_settings.oidc_provider !== '' && this.state.authentication_settings.targeted_audience_client_id !== '') {
 					this.formMode.authenticationSetting = F_MODES.VIEW
 					this.isFormCompleted.authenticationSetting = true
-					this.oidcProvider = this.state.authentication_settings.oidc_provider
+					this.authenticationSetting.oidcProviderSet = this.state.authentication_settings.oidc_provider
+					this.authenticationSetting.currentOIDCProviderSelected = this.state.authentication_settings.oidc_provider
+					this.authenticationSetting.targetedAudienceClientIdSet = this.state.authentication_settings.targeted_audience_client_id
+					this.authenticationSetting.currentTargetedAudienceClientIdSelected = this.state.authentication_settings.targeted_audience_client_id
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
 				if (this.state.openproject_instance_url) {
+					if (!this.state.authentication_method) {
+						this.formMode.authenticationMethod = F_MODES.EDIT
+					}
+				}
+				if ( this.state.openproject_instance_url && this.state.authentication_method) {
 					if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
@@ -895,9 +917,11 @@ export default {
 		},
 		setAuthenticationMethodToViewMode() {
 			this.formMode.authenticationMethod = F_MODES.VIEW
+			this.isFormCompleted.authenticationMethod = true
 		},
 		setAuthenticationSettingToViewMode() {
 			this.formMode.authenticationSetting = F_MODES.VIEW
+			this.isFormCompleted.authenticationSetting = true
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -907,9 +931,11 @@ export default {
 		},
 		setAuthenticationMethodInEditMode() {
 			this.formMode.authenticationMethod = F_MODES.EDIT
+			this.isFormCompleted.authenticationMethod = false
 		},
 		setAuthenticationSettingInEditMode() {
 			this.formMode.authenticationSetting = F_MODES.EDIT
+			this.isFormCompleted.authenticationSetting = false
 		},
 		setProjectFolderSetUpToEditMode() {
 			this.formMode.projectFolderSetUp = F_MODES.EDIT
@@ -1034,6 +1060,8 @@ export default {
 			this.isFormStep = FORM.AUTHENTICATION_SETTING
 			this.loadingAuthenticationMethodForm = true
 			console.log('OIDC Auth provider settings saved')
+			this.authenticationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
+			this.authenticationSetting.targetedAudienceClientIdSet = this.state.authentication_settings.targeted_audience_client_id
 			this.formMode.authenticationSetting = F_MODES.VIEW
 			this.isFormCompleted.authenticationSetting = true
 			// TODO
@@ -1397,7 +1425,7 @@ export default {
 			})
 		},
 		onSelectOIDCProvider(selectedOption) {
-			this.oidcProvider = selectedOption
+			this.authenticationSetting.currentOIDCProviderSelected = selectedOption
 		},
 	},
 }
