@@ -170,7 +170,7 @@ class FilesController extends OCSController {
 			// Note: in case of groupfolders the internal path is `__groupfolders/<group-folder-id>` so
 			// getInternalPath() functions returns empty string and the internal path fallbacks to the context of requester
 			if (!$internalPath) {
-				$this->logger->error(
+				$this->logger->info(
 					'could not get the file name in the context of the owner,' .
 					' falling back to the context of requester'
 				);
