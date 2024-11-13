@@ -72,18 +72,20 @@
 						<p class="description" v-html="getAuthenticationMethodHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 					<div class="authentication-method--options">
-						<NcCheckboxRadioSwitch :checked.sync="authenticationMethod"
+						<NcCheckboxRadioSwitch class="radio-check"
+							:checked.sync="authenticationMethod"
 							value="oauth2"
-							name="authentication_method_radio"
 							type="radio">
 							OAuth2 two-way authorization code flow
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch :checked.sync="authenticationMethod"
+						<NcCheckboxRadioSwitch class="radio-check"
+							:checked.sync="authenticationMethod"
 							value="oidc"
-							name="authentication_method_radio"
+							:disabled="!isOIDCAppInstalledAndEnabled"
 							type="radio">
 							OpenID identity provider
 						</NcCheckboxRadioSwitch>
+						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 				</div>
 				<div v-else>
@@ -132,28 +134,32 @@
 					class="pb-1"
 					title="OIDC Provider"
 					:value="authenticationSetting.oidcProviderSet" />
-				<div v-else>
+				<div v-else class="authentication-settings--content--provider">
 					<p class="authentication-settings--content--label">
 						OIDC provider *
 					</p>
-					<NcSelect
-						input-id="provider-search-input"
-						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
-						:options="oidcProviders"
-						:value="getCurrentSelectedOIDCProvider"
-						:filterable="true"
-						:close-on-select="true"
-						:clear-search-on-blur="() => false"
-						:append-to-body="false"
-						@option:selected="onSelectOIDCProvider" />
+					<div id="select">
+						<NcSelect
+							input-id="provider-search-input"
+							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
+							:options="oidcProviders"
+							:value="getCurrentSelectedOIDCProvider"
+							:filterable="true"
+							:close-on-select="true"
+							:clear-search-on-blur="() => false"
+							:append-to-body="false"
+							:label-outside="true"
+							input-label="OIDC Provider"
+							@option:selected="onSelectOIDCProvider" />
+					</div>
+					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 				</div>
 				<FieldValue v-if="isAuthenticationSettingsInViewMode"
 					is-required
 					class="pb-1"
 					title="OpenProject client ID"
 					:value="state.authentication_settings.targeted_audience_client_id" />
-				<div v-else>
-					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+				<div v-else class="authentication-settings--content--client">
 					<TextInput
 						id="authentication-method-target-client-id"
 						v-model="state.authentication_settings.targeted_audience_client_id"
@@ -749,6 +755,11 @@ export default {
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		getOIDCAppNotInstalledHintText() {
+			const linkText = t('integration_openproject', 'User OIDC')
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
+			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authentication with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
+		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'User OIDC app')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
@@ -808,6 +819,9 @@ export default {
 		getCurrentSelectedOIDCProvider() {
 			return this.authenticationSetting.currentOIDCProviderSelected
 		},
+		isOIDCAppInstalledAndEnabled() {
+			return true
+		},
 	},
 	created() {
 		this.init()
@@ -863,9 +877,12 @@ export default {
 						this.formMode.authenticationMethod = F_MODES.EDIT
 					}
 				}
-				if ( this.state.openproject_instance_url && this.state.authentication_method) {
+				if (this.state.openproject_instance_url && this.state.authentication_method) {
 					if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
+					}
+					if (!this.state.authentication_settings.oidc_provider || !this.state.authentication_settings.targeted_audience_client_id) {
+						this.formMode.authenticationSetting = F_MODES.EDIT
 					}
 				}
 				if (this.state.nc_oauth_client) {
@@ -1532,8 +1549,18 @@ export default {
 			}
 		}
 		&--options {
-			font-weight: 500;
 			margin-top: 1rem;
+			.radio-check {
+				font-weight: 500;
+			}
+			.oidc-app-check-description {
+				margin-left: 2.4rem;
+				font-size: 14px;
+				.link {
+					color: #1a67a3 !important;
+					font-style: normal;
+				}
+			}
 		}
 	}
 
@@ -1544,6 +1571,9 @@ export default {
 				font-weight: 700;
 				font-size: .875rem;
 			}
+			&--client {
+				margin-top: 0.7rem;
+			}
 		}
 		.description {
 			.link {
@@ -1552,9 +1582,6 @@ export default {
 			}
 			margin-top: 0.1rem;
 		}
-	}
-	label[for="provider-search-input"] {
-		margin-bottom: 2px;
 	}
 }
 </style>
