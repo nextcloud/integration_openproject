@@ -203,7 +203,7 @@
 				:is-complete="isOPOAuthFormComplete"
 				:is-disabled="isOPOAuthFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="isAuthenticationMethodFormComplete">
+			<div v-if="this.authenticationMethodSelected !== null">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.openproject_client_id"
@@ -1582,6 +1582,18 @@ export default {
 			}
 			margin-top: 0.1rem;
 		}
+	}
+	.v-select.select {
+		min-height: 33px;
+	}
+	.v-select.select .vs__dropdown-toggle {
+		border: 2px solid gray;
+	}
+	.v-select.select .vs__selected-options {
+		min-height: 33px;
+	}
+	.v-select.select .vs__search, .v-select.select .vs__search:focus {
+		margin: 0 0 0;
 	}
 }
 </style>
