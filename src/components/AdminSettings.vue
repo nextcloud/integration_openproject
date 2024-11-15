@@ -112,7 +112,7 @@
 						data-test-id="submit-oidc-auth-values-btn"
 						type="primary"
 						:disabled="isAuthenticationMethodAlreadySelected"
-						@click="saveOIDCAuthValues">
+						@click="chooseAuthenticationMethod">
 						<template #icon>
 							<NcLoadingIcon v-if="loadingAuthenticationMethodForm" class="loading-spinner" :size="20" />
 							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
@@ -935,10 +935,12 @@ export default {
 		setAuthenticationMethodToViewMode() {
 			this.formMode.authenticationMethod = F_MODES.VIEW
 			this.isFormCompleted.authenticationMethod = true
+			this.authenticationMethod = this.authenticationMethodSelected
 		},
 		setAuthenticationSettingToViewMode() {
 			this.formMode.authenticationSetting = F_MODES.VIEW
 			this.isFormCompleted.authenticationSetting = true
+			this.state.authentication_settings.targeted_audience_client_id = this.authenticationSetting.currentTargetedAudienceClientIdSelected
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -1110,6 +1112,28 @@ export default {
 				},
 				true,
 			)
+		},
+		async chooseAuthenticationMethod() {
+			if (this.isAuthenticationFormInEditMode && this.authenticationMethodSelected !== null) {
+				await OC.dialogs.confirmDestructive(
+					t('integration_openproject', `If you proceed this method, you will have an ${this.authenticationMethod.toUpperCase()} based authentication configuration but it won't delete or affect your current configuration for ${this.authenticationMethodSelected.toUpperCase()} based authentication. You can switch back to it anytime.`),
+					t('integration_openproject', 'Switch Authentication Method'),
+					{
+						type: OC.dialogs.YES_NO_BUTTONS,
+						confirm: t('integration_openproject', 'Yes, switch'),
+						confirmClasses: 'error',
+						cancel: t('integration_openproject', 'Cancel'),
+					},
+					async (result) => {
+						if (result) {
+							await this.saveOIDCAuthValues()
+						}
+					},
+					true,
+				)
+				return ''
+			}
+			await this.saveOIDCAuthValues()
 		},
 		async clearOPOAuthClientValues() {
 			this.isFormStep = FORM.OP_OAUTH
