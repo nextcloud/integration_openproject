@@ -203,7 +203,7 @@
 				:is-complete="isOPOAuthFormComplete"
 				:is-disabled="isOPOAuthFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="this.authenticationMethodSelected !== null">
+			<div v-if="authenticationMethodSelected !== null">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.openproject_client_id"
@@ -619,9 +619,6 @@ export default {
 		opUserAppPassword() {
 			return this.state.app_password_set
 		},
-		targetedAudienceClienID() {
-			return this.state.authentication_settings.targeted_audience_client_id
-		},
 		isAdminAuditConfigurationSetUpCorrectly() {
 			return this.state.admin_audit_configuration_correct
 		},
@@ -812,12 +809,15 @@ export default {
 		isAuthenticationSettingsAlreadySet() {
 			const { oidcProviderSet, currentOIDCProviderSelected } = this.authenticationSetting
 			return currentOIDCProviderSelected === null
-				|| this.targetedAudienceClienID === ''
-				|| (oidcProviderSet === currentOIDCProviderSelected && this.authenticationSetting.targetedAudienceClientIdSet === this.targetedAudienceClienID)
-				|| (this.authenticationSetting.targetedAudienceClientIdSet === this.targetedAudienceClienID && oidcProviderSet === currentOIDCProviderSelected)
+				|| this.getCurrentSelectedTargetedClientId === ''
+				|| (oidcProviderSet === currentOIDCProviderSelected && this.authenticationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId)
+				|| (this.authenticationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId && oidcProviderSet === currentOIDCProviderSelected)
 		},
 		getCurrentSelectedOIDCProvider() {
 			return this.authenticationSetting.currentOIDCProviderSelected
+		},
+		getCurrentSelectedTargetedClientId() {
+			return this.state.authentication_settings.targeted_audience_client_id
 		},
 		isOIDCAppInstalledAndEnabled() {
 			return true
@@ -1060,10 +1060,12 @@ export default {
 		async saveOIDCAuthValues() {
 			this.isFormStep = FORM.AUTHENTICATION_METHOD
 			this.loadingAuthenticationMethodForm = true
-			console.log('OIDC Auth values saved')
-			this.formMode.authenticationMethod = F_MODES.VIEW
+			const success = await this.saveOPOptions()
+			if (success) {
+				this.authenticationMethodSelected = this.authenticationMethod
+				this.formMode.authenticationMethod = F_MODES.VIEW
+			}
 			this.isFormCompleted.authenticationMethod = true
-			this.authenticationMethodSelected = this.authenticationMethod
 			if (this.authenticationMethodSelected === 'oidc' && !this.isFormCompleted.authenticationSetting) {
 				this.formMode.authenticationSetting = F_MODES.EDIT
 			} else {
@@ -1076,20 +1078,19 @@ export default {
 		async saveOIDCAuthSetting() {
 			this.isFormStep = FORM.AUTHENTICATION_SETTING
 			this.loadingAuthenticationMethodForm = true
-			console.log('OIDC Auth provider settings saved')
 			this.authenticationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
 			this.authenticationSetting.targetedAudienceClientIdSet = this.state.authentication_settings.targeted_audience_client_id
+			await this.saveOPOptions()
 			this.formMode.authenticationSetting = F_MODES.VIEW
 			this.isFormCompleted.authenticationSetting = true
 			// TODO
 			// refactor it since it is duplicated
-			if (!this.isIntegrationCompleteWithOauth && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
+			if (!this.isIntegrationCompleteWithOIDC && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
 				this.formMode.projectFolderSetUp = F_MODES.EDIT
 				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
 				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 			}
-
 			this.loadingAuthenticationMethodForm = false
 		},
 		resetOPOAuthClientValues() {
@@ -1152,6 +1153,9 @@ export default {
 			this.state.openproject_client_secret = null
 			this.state.default_enable_navigation = false
 			this.state.openproject_instance_url = null
+			this.authenticationMethod = null
+			this.authenticationSetting.currentOIDCProviderSelected = null
+			this.state.authentication_settings.targeted_audience_client_id = null
 			this.state.default_enable_unified_search = false
 			this.oPUserAppPassword = null
 			await this.saveOPOptions()
@@ -1251,6 +1255,9 @@ export default {
 		},
 		getPayloadForSavingOPOptions() {
 			let values = {
+				authentication_method: this.authenticationMethod,
+				oidc_provider: this.getCurrentSelectedOIDCProvider,
+				targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
 				openproject_instance_url: this.state.openproject_instance_url,
