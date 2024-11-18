@@ -605,7 +605,7 @@ export default {
 				currentOIDCProviderSelected: null,
 				currentTargetedAudienceClientIdSelected: null,
 			},
-			oidcProviders: ['keycloak', 'google', 'microsoft'],
+			oidcProviders: [],
 		}
 	},
 	computed: {
@@ -831,6 +831,7 @@ export default {
 	},
 	methods: {
 		init() {
+			console.log(this.state)
 			if (this.state) {
 				if (this.state.all_terms_of_services_signed === false) {
 					this.isAllTermsOfServiceSignedForUserOpenProject = false
@@ -913,6 +914,10 @@ export default {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
+
+				if(this.state.oidc_provider) {
+					this.oidcProviders = this.state.oidc_provider
+				}
 			}
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
