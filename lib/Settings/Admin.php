@@ -104,6 +104,7 @@ class Admin implements ISettings {
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
 		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
 
+
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
 	}
 

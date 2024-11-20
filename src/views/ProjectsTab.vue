@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
+		<SearchInput v-if="!!isAdminConfigOkOIDC && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
@@ -58,7 +58,8 @@
 			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
-			:is-admin-config-ok="isAdminConfigOk" />
+			:is-auth-method="authMethod"
+			:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
 	</div>
 </template>
 
@@ -97,6 +98,8 @@ export default {
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+		isAdminConfigOkOIDC: loadState('integration_openproject', 'admin-config-status-oidc'),
+		authMethod: loadState('integration_openproject', 'auth_method'),
 		color: null,
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 		searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -131,7 +134,7 @@ export default {
 			this.fileInfo = fileInfo
 			this.workpackages = []
 			this.state = STATE.LOADING
-			if (this.isAdminConfigOk) {
+			if (this.isAdminConfigOk || this.isAdminConfigOkOIDC) {
 				// only fetch if we have a request url
 				await this.fetchWorkpackages(this.fileInfo.id)
 			} else {
@@ -236,6 +239,7 @@ export default {
 			const req = {}
 			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
 			try {
+				console.log('helllllll')
 				const response = await axios.get(url, req)
 				if (!Array.isArray(response.data)) {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES

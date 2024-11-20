@@ -1,7 +1,7 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
-		<div v-if="connected" class="openproject-prefs--connected">
+		<div v-if="connected || connectedViaOidc" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
@@ -14,7 +14,7 @@
 			</NcButton>
 		</div>
 		<br>
-		<div v-if="connected" class="openproject-prefs--form">
+		<div v-if="connected || connectedViaOidc" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
 				input-id="openproject-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')">
@@ -35,7 +35,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
+		<OAuthConnectButton v-else :is-auth-method="state.auth_method" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
 	</div>
 </template>
 
@@ -76,6 +76,11 @@ export default {
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
 		},
+		connectedViaOidc() {
+			if (!this.state.admin_config_ok_for_oidc_auth) return false
+			return this.state.token && this.state.token !== ''
+          && this.state.user_name && this.state.user_name !== ''
+		},
 	},
 	watch: {
 		'state.search_enabled'(newVal) {
@@ -88,6 +93,9 @@ export default {
 				navigation_enabled: newVal ? '1' : '0',
 			})
 		},
+	},
+	created() {
+		console.log(this.state)
 	},
 
 	mounted() {

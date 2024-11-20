@@ -17,7 +17,7 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :is-admin-config-ok="isAdminConfigOk" :file-info="fileInfo" />
+				<OAuthConnectButton :is-auth-method="isAuthMethod" :is-admin-config-ok="isAdminConfigOk" :file-info="fileInfo" />
 			</div>
 		</div>
 	</div>
@@ -41,6 +41,10 @@ export default {
 			type: String,
 			required: true,
 			default: STATE.OK,
+		},
+		isAuthMethod: {
+			type: String,
+			required: true,
 		},
 		isAdminConfigOk: {
 			type: Boolean,

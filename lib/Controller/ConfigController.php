@@ -141,6 +141,21 @@ class ConfigController extends Controller {
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
 	}
 
+    /**
+     * @param string|null $userId
+     * @return void
+     */
+    public function clearUserInfoForOIDCBasedAuth(string $userId = null) {
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+        $this->config->setUserValue($userId, Application::APP_ID, 'token_active_for_user', '0');
+        $this->config->deleteUserValue($userId, Application::APP_ID, 'login');
+        $this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+        $this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
+        $this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
+    }
+
 	/**
 	 * set config values
 	 * @NoAdminRequired
@@ -149,26 +164,47 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setConfig(array $values): DataResponse {
-		foreach ($values as $key => $value) {
-			$this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
-		}
-		$result = [];
-
-		if (isset($values['token'])) {
-			if ($values['token']) {
-				$result = $this->storeUserInfo();
-			} else {
-				$this->clearUserInfo();
-				$result = [
-					'user_name' => '',
-				];
-			}
-		}
-		if (isset($result['error'])) {
-			return new DataResponse($result, Http::STATUS_UNAUTHORIZED);
-		} else {
-			return new DataResponse($result);
-		}
+        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        $result = [];
+        if($authenticationMethodActive === 'oidc') {
+            // do something to disconnect from the oidc flow
+            $value_active = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+            if ($value_active === '0') {
+                // fetch user status and activate status
+                $result = $this->storeUserInfo();
+                // for now lets suppose that there is no error
+                $this->config->setUserValue(
+                    $this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
+                );
+                $this->config->setUserValue($this->userId, Application::APP_ID, 'token_active_for_user', '1');
+            } else {
+                // deactivate status
+                $this->clearUserInfoForOIDCBasedAuth();
+                $result = [
+                    'user_name' => '',
+                ];
+                $this->config->setUserValue($this->userId, Application::APP_ID, 'token_active_for_user', '0');
+            }
+        } else {
+            foreach ($values as $key => $value) {
+                $this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
+            }
+            if (isset($values['token'])) {
+                if ($values['token']) {
+                    $result = $this->storeUserInfo();
+                } else {
+                    $this->clearUserInfo();
+                    $result = [
+                        'user_name' => '',
+                    ];
+                }
+            }
+        }
+        if (isset($result['error'])) {
+            return new DataResponse($result, Http::STATUS_UNAUTHORIZED);
+        } else {
+            return new DataResponse($result);
+        }
 	}
 
 	/**
@@ -542,7 +578,7 @@ class ConfigController extends Controller {
 	 * @throws PreConditionNotMetException
 	 */
 	private function storeUserInfo(): array {
-		$info = $this->openprojectAPIService->request($this->userId, 'users/me');
+        $info = $this->openprojectAPIService->request($this->userId, 'users/me');
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);

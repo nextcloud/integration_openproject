@@ -25,23 +25,41 @@ class Personal implements ISettings {
 	 */
 	private $userId;
 
+    /**
+     * @var OpenProjectAPIService
+     */
+    private $openProjectAPIService;
+
 
 	public function __construct(
 		IConfig $config,
 		IInitialState $initialStateService,
+        OpenProjectAPIService $openProjectAPIService,
 		?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
+        $this->openProjectAPIService = $openProjectAPIService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+        // TODO
+        // refactor this token selection
+        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        if($authenticationMethodActive === "oidc") {
+            $targetedAudienceClient = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+            if ($this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user') === '1') {
+                $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudienceClient);
+            } else {
+                $token = '';
+            }
+        } else {
+            $token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+        }
 		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
-
 
 		// take the fallback value from the defaults
 		$searchEnabled = $this->config->getUserValue(
@@ -65,6 +83,8 @@ class Personal implements ISettings {
 		];
 
 		$userConfig['admin_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+        $userConfig['admin_config_ok_for_oidc_auth'] = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+        $userConfig['auth_method'] = $authenticationMethodActive;
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
 		$oauthConnectionResult = $this->config->getUserValue(

@@ -109,6 +109,11 @@ class LoadSidebarScript implements IEventListener {
 		Util::addStyle(Application::APP_ID, 'tab');
 
 		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
+        // for oidc
+        $adminConfigStatusOIDC = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+        $this->initialStateService->provideInitialState('admin-config-status-oidc', $adminConfigStatusOIDC);
+        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        $this->initialStateService->provideInitialState('auth_method', $authenticationMethodActive);
 
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $this->oauthConnectionResult

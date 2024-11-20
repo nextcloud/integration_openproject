@@ -57,6 +57,8 @@ use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
+use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
+use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 
 define('CACHE_TTL', 3600);
 
@@ -438,10 +440,14 @@ class OpenProjectAPIService {
 	 */
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc') {
+            $accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+        } else {
+            $accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+            $refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+            $clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+            $clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+        }
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
@@ -928,6 +934,25 @@ class OpenProjectAPIService {
 			return self::validateURL($oauthInstanceUrl);
 		}
 	}
+
+    /**
+     * checks if every admin config for oidc based authorization variables are set
+     * checks if the oauth instance url is valid
+     *
+     * @param IConfig $config
+     * @return bool
+     */
+    public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
+        $authMethod = $config->getAppValue(Application::APP_ID, 'authentication_method');
+        $targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
+        $oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+        $checkIfConfigIsSet = !!($authMethod) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
+        if (!$checkIfConfigIsSet) {
+            return false;
+        } else {
+            return self::validateURL($oauthInstanceUrl);
+        }
+    }
 
 	/**
 	 * makes sure the URL has no extra slashes
@@ -1557,4 +1582,31 @@ class OpenProjectAPIService {
 		}
 		return $result;
 	}
+
+
+    /**
+     * @param string $targetedAudienceClientId
+     * @return string|null
+     */
+    public function getOIDCBasedTokenForTheTargetedAudienceClient(string $targetedAudienceClientId): ?string {
+        if (class_exists('OCA\UserOIDC\Event\ExchangedTokenRequestedEvent')) {
+            $event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
+            try {
+                $this->eventDispatcher->dispatchTyped($event);
+            } catch (TokenExchangeFailedException $e) {
+                $this->logger->debug('Failed to exchange token: ' . $e->getMessage());
+            }
+            $token = $event->getToken();
+            if ($token === null) {
+                $this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
+            } else {
+                $this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
+                // this is the oidc based exchanged token
+                return $token->getAccessToken();
+            }
+        } else {
+            $this->logger->debug('The user_oidc app is not installed/available');
+        }
+        return null;
+    }
 }

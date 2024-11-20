@@ -915,7 +915,7 @@ export default {
 				}
 				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
 
-				if(this.state.oidc_provider) {
+				if (this.state.oidc_provider) {
 					this.oidcProviders = this.state.oidc_provider
 				}
 			}

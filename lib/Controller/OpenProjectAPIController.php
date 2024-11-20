@@ -160,9 +160,14 @@ class OpenProjectAPIController extends Controller {
 		?int $fileId = null,
 		bool $isSmartPicker = false
 	): DataResponse {
-		if ($this->accessToken === '') {
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+		} else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
 		// when the search is done through smart picker we don't want to check if the work package is linkable
@@ -198,11 +203,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile(array $values): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
@@ -257,11 +267,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getWorkPackageFileLinks(int $id): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 
 		try {
 			$result = $this->openprojectAPIService->getWorkPackageFileLinks(
@@ -284,12 +299,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
-
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		try {
 			$result = $this->openprojectAPIService->deleteFileLink(
 				$id,
