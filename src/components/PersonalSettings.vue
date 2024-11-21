@@ -94,9 +94,6 @@ export default {
 			})
 		},
 	},
-	created() {
-		console.log(this.state)
-	},
 
 	mounted() {
 		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)

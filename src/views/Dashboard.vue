@@ -9,8 +9,9 @@
 			<EmptyContent v-if="emptyContentMessage"
 				id="openproject-empty-content"
 				:state="state"
+				:is-auth-method="authMethod"
 				:dashboard="true"
-				:is-admin-config-ok="isAdminConfigOk" />
+				:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
 		</template>
 	</NcDashboardWidget>
 </template>
@@ -47,6 +48,8 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			isAdminConfigOkOIDC: loadState('integration_openproject', 'admin-config-status-oidc'),
+			authMethod: loadState('integration_openproject', 'auth_method'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -128,7 +131,11 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (!this.isAdminConfigOk) {
+			if (this.authMethod === 'oidc' && !this.isAdminConfigOkOIDC) {
+				this.state = STATE.ERROR
+				return
+			}
+			if (this.authMethod === 'oauth2' && !this.isAdminConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}

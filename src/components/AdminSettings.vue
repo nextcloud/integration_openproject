@@ -831,7 +831,6 @@ export default {
 	},
 	methods: {
 		init() {
-			console.log(this.state)
 			if (this.state) {
 				if (this.state.all_terms_of_services_signed === false) {
 					this.isAllTermsOfServiceSignedForUserOpenProject = false

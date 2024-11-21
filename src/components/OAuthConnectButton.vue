@@ -76,7 +76,6 @@ export default {
 		},
 		async onOAuthClick() {
 			if (this.isAuthMethod === 'oidc') {
-				console.log('Handle connect button for the oidc authentication flow!')
 				const url = generateUrl('/apps/integration_openproject/config')
 				const req = {
 					values: {
@@ -85,7 +84,6 @@ export default {
 				}
 				const response = await axios.put(url, req)
 				if (response.status === 200) {
-					console.log('Yes its 200')
 					window.location.reload()
 				}
 

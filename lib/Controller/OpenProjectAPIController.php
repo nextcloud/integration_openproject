@@ -126,11 +126,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		$result = $this->openprojectAPIService->getNotifications($this->userId);
 		if (!isset($result['error'])) {
 			$response = new DataResponse($result);
@@ -237,11 +242,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function markNotificationAsRead(int $workpackageId) {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		try {
 			$result = $this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
 				$workpackageId,
@@ -334,11 +344,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
 			$this->userId, $id
@@ -361,11 +376,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
 			$this->userId, $id
@@ -384,11 +404,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		try {
 			$result = $this->openprojectAPIService->getAvailableOpenProjectProjects($this->userId, $searchQuery);
 		} catch (OpenprojectErrorException $e) {
@@ -436,11 +461,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		try {
 			$result = $this->openprojectAPIService->getOpenProjectWorkPackageForm($this->userId, $projectId, $body);
 		} catch (OpenprojectErrorException $e) {
@@ -458,11 +488,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		try {
 			$result = $this->openprojectAPIService->getAvailableAssigneesOfAProject($this->userId, $projectId);
 		} catch (OpenprojectErrorException $e) {
@@ -507,11 +542,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function createWorkPackage(array $body): DataResponse {
-		if ($this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
-		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
-		}
+        $user_value = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oauth2' && $this->accessToken === '') {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } else if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' &&
+            $user_value === '0'
+        ) {
+            return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+        } elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
+            return new DataResponse('', Http::STATUS_BAD_REQUEST);
+        }
 		// we don't want to check if all the data in the body is set or not because
 		// that calculation will be done by the openproject api itself
 		// we don't want to duplicate the logic

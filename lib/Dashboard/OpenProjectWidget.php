@@ -123,6 +123,10 @@ class OpenProjectWidget implements IWidget {
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
 		);
+        $adminConfigStatusOIDC = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+        $this->initialStateService->provideInitialState('admin-config-status-oidc', $adminConfigStatusOIDC);
+        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        $this->initialStateService->provideInitialState('auth_method', $authenticationMethodActive);
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $oauthConnectionResult
 		);

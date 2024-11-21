@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="!!isAdminConfigOkOIDC && !!isStateOk"
+		<SearchInput v-if="(!!isAdminConfigOk || !!isAdminConfigOkOIDC) && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
@@ -239,7 +239,6 @@ export default {
 			const req = {}
 			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
 			try {
-				console.log('helllllll')
 				const response = await axios.get(url, req)
 				if (!Array.isArray(response.data)) {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES

@@ -383,6 +383,7 @@ class ConfigController extends Controller {
 					}
 				}
 				$this->clearUserInfo($userUID);
+                $this->clearUserInfoForOIDCBasedAuth($userUID);
 			});
 		}
 
