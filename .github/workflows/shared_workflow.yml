@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.phpVersion }}
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.phpVersion }}
           tools: composer, phpunit
@@ -233,7 +233,7 @@ jobs:
 
     runs-on: ubuntu-20.04
     container:
-      image: public.ecr.aws/ubuntu/ubuntu:latest
+      image: public.ecr.aws/lts/ubuntu:20.04
 
     defaults:
       run:
@@ -305,7 +305,7 @@ jobs:
         uses: papodaca/install-docker-action@main
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer
