@@ -66,16 +66,30 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	protected $appManager;
 
-	public function __construct(
+    /**
+     * @var OpenProjectAPIService
+     */
+    private $openProjectAPIService;
+    private IUserSession $userSession;
+    /**
+     * @var string|null
+     */
+    private $userId;
+
+    public function __construct(
 		IInitialState $initialStateService,
 		IConfig $config,
 		IUserSession $userSession,
-		IAppManager $appManager
+		IAppManager $appManager,
+        OpenProjectAPIService $openProjectAPIService,
+        ?string $userId
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
 		$this->appManager = $appManager;
+        $this->userId = $userId;
 		$user = $userSession->getUser();
+        $this->openProjectAPIService = $openProjectAPIService;
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
 			$this->oauthConnectionResult = $this->config->getUserValue(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
@@ -109,6 +123,28 @@ class LoadSidebarScript implements IEventListener {
 		Util::addStyle(Application::APP_ID, 'tab');
 
 		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
+        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+        if($token !== null) {
+            $info = $this->openProjectAPIService->request($this->userId, 'users/me');
+            if (isset($info['lastName'], $info['firstName'], $info['id'])) {
+                $fullName = $info['firstName'] . ' ' . $info['lastName'];
+                $this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
+                $this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $fullName);
+                $this->config->setUserValue(
+                    $this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
+                );
+            } else {
+                $this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
+                $this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
+                $this->config->setUserValue(
+                    $this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
+                );
+                $this->config->setUserValue(
+                    $this->userId, Application::APP_ID, 'oauth_connection_error_message', 'token is not valid'
+                );
+            }
+
+        }
         // for oidc
         $adminConfigStatusOIDC = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
         $this->initialStateService->provideInitialState('admin-config-status-oidc', $adminConfigStatusOIDC);

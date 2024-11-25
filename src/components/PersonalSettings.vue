@@ -6,7 +6,7 @@
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<NcButton class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+			<NcButton v-if="state.auth_method === 'oauth2'" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
@@ -35,7 +35,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-else :is-auth-method="state.auth_method" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
+		<OAuthConnectButton v-else-if="state.auth_method === 'oauth2'" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
 	</div>
 </template>
 

@@ -50,12 +50,28 @@ class Personal implements ISettings {
         // refactor this token selection
         $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
         if($authenticationMethodActive === "oidc") {
-            $targetedAudienceClient = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-            if ($this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user') === '1') {
-                $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudienceClient);
-            } else {
-                $token = '';
-            }
+            // TODO Remove
+            // There is no button to connect and disconnect for oidc based authorization, so if we get a token and we can request it
+            // with openproject then we show that there is a oidc based connection in the personal section or else we do not even show the personal section
+           $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+           if($token !== null) {
+               $info = $this->openProjectAPIService->request($this->userId, 'users/me');
+               if (isset($info['lastName'], $info['firstName'], $info['id'])) {
+                   $fullName = $info['firstName'] . ' ' . $info['lastName'];
+                   $this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
+                   $this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $fullName);
+               } else {
+                   $this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
+                   $this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
+                   $this->config->setUserValue(
+                       $this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
+                   );
+                   $this->config->setUserValue(
+                       $this->userId, Application::APP_ID, 'oauth_connection_error_message', 'token is not valid'
+                   );
+               }
+
+           }
         } else {
             $token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
         }

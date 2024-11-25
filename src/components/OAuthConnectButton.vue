@@ -31,10 +31,6 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-		isAuthMethod: {
-			type: String,
-			required: true,
-		},
 		fileInfo: {
 			type: Object,
 			default() {
@@ -75,40 +71,26 @@ export default {
 			return { page: 'settings' }
 		},
 		async onOAuthClick() {
-			if (this.isAuthMethod === 'oidc') {
-				const url = generateUrl('/apps/integration_openproject/config')
-				const req = {
-					values: {
-						oauth_journey_starting_page: JSON.stringify(this.getOauthJourneyStartingPage()),
-					},
-				}
-				const response = await axios.put(url, req)
-				if (response.status === 200) {
-					window.location.reload()
-				}
-
-			} else {
-				const url = generateUrl('/apps/integration_openproject/op-oauth-url')
-				axios.get(url)
-					.then((result) => {
-						const req = {
-							values: {
-								oauth_journey_starting_page: JSON.stringify(this.getOauthJourneyStartingPage()),
-							},
-						}
-						const url = generateUrl('/apps/integration_openproject/config')
-						axios.put(url, req)
-							.then(() => {
-								window.location.replace(result.data)
-							})
-					})
-					.catch((error) => {
-						showError(
-							t('integration_openproject', 'Failed to redirect to OpenProject')
+			const url = generateUrl('/apps/integration_openproject/op-oauth-url')
+			axios.get(url)
+				.then((result) => {
+					const req = {
+						values: {
+							oauth_journey_starting_page: JSON.stringify(this.getOauthJourneyStartingPage()),
+						},
+					}
+					const url = generateUrl('/apps/integration_openproject/config')
+					axios.put(url, req)
+						.then(() => {
+							window.location.replace(result.data)
+						})
+				})
+				.catch((error) => {
+					showError(
+						t('integration_openproject', 'Failed to redirect to OpenProject')
                 + ': ' + error.message,
-						)
-					})
-			}
+					)
+				})
 		},
 	},
 }
