@@ -1,6 +1,9 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
+		<div v-if="state.auth_method === 'oidc' && !connectedViaOidc" class="demo-error-oidc">
+			The authorization is OIDC based and there is no valid token for OpenProject Integration :/
+		</div>
 		<div v-if="connected || connectedViaOidc" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
@@ -169,5 +172,9 @@ export default {
 		text-align: left;
 		padding: 0;
 	}
+  .demo-error-oidc {
+    color: red;
+    margin-top: 20px;
+  }
 }
 </style>

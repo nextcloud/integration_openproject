@@ -107,6 +107,11 @@ class LoadSidebarScript implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
+        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        if ($authenticationMethodActive === 'oidc' && $token === null) {
+            return;
+        }
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}

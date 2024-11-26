@@ -59,18 +59,26 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $user;
 
-	public function __construct(
+    /**
+     * @var OpenProjectAPIService
+     */
+    private OpenProjectAPIService $openProjectAPIService;
+
+
+    public function __construct(
 		IL10N $l10n,
 		IInitialState $initialStateService,
 		IURLGenerator $url,
 		IConfig $config,
-		IUserSession $userSession
+		IUserSession $userSession,
+        OpenProjectAPIService $openProjectAPIService
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
 		$this->user = $userSession->getUser();
+        $this->openProjectAPIService = $openProjectAPIService;
 	}
 
 	/**
@@ -115,7 +123,7 @@ class OpenProjectWidget implements IWidget {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
 
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
+		$this->initialStateService->provideInitialState('admin-config-status', $this->openProjectAPIService->isAdminConfigOk($this->config));
 
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
@@ -136,6 +144,13 @@ class OpenProjectWidget implements IWidget {
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
 		);
+        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+        $isOIDCBasedAuthOk = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+        $userConfig = [
+            'token' => $token,
+            'admin_config_ok_for_oidc_auth' => $isOIDCBasedAuthOk
+        ];
+        $this->initialStateService->provideInitialState('user-config', $userConfig);
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-error-message', $oauthConnectionErrorMessage
 		);

@@ -17,7 +17,10 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :is-auth-method="isAuthMethod" :is-admin-config-ok="isAdminConfigOk" :file-info="fileInfo" />
+				<OAuthConnectButton v-if="isAuthMethod === 'oauth2'"
+					:is-auth-method="isAuthMethod"
+					:is-admin-config-ok="isAdminConfigOk"
+					:file-info="fileInfo" />
 			</div>
 		</div>
 	</div>

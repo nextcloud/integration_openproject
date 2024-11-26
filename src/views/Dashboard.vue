@@ -6,12 +6,17 @@
 		:loading="isLoading"
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
-			<EmptyContent v-if="emptyContentMessage"
-				id="openproject-empty-content"
-				:state="state"
-				:is-auth-method="authMethod"
-				:dashboard="true"
-				:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
+			<div v-if="authMethod === 'oidc' && connectedViaOidc === false" class="demo-error-oidc">
+				The authorization is OIDC based and there is no valid token for OpenProject Integration :/
+			</div>
+			<div v-else>
+				<EmptyContent v-if="emptyContentMessage"
+					id="openproject-empty-content"
+					:state="state"
+					:is-auth-method="authMethod"
+					:dashboard="true"
+					:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
+			</div>
 		</template>
 	</NcDashboardWidget>
 </template>
@@ -49,6 +54,7 @@ export default {
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			isAdminConfigOkOIDC: loadState('integration_openproject', 'admin-config-status-oidc'),
+			userState: loadState('integration_openproject', 'user-config'),
 			authMethod: loadState('integration_openproject', 'auth_method'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
@@ -71,6 +77,15 @@ export default {
 		showMoreUrl() {
 			return this.openprojectUrl + '/notifications'
 		},
+		connectedViaOidc() {
+			if (!this.userState.admin_config_ok_for_oidc_auth) {
+				return false
+			}
+			if (!this.userState.token) {
+				return false
+			}
+			return true
+		},
 		items() {
 			const notifications = []
 			for (const key in this.notifications) {
@@ -88,6 +103,9 @@ export default {
 			return notifications
 		},
 		emptyContentMessage() {
+			if (this.authMethod === 'oidc' && this.connectedViaOidc === false) {
+				return
+			}
 			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
 			} else if (this.state === STATE.CONNECTION_ERROR) {
@@ -285,5 +303,9 @@ export default {
 <style scoped lang="scss">
 :deep(.connect-button) {
 	margin-top: 10px;
+}
+.demo-error-oidc {
+  color: red;
+  margin-top: 20px;
 }
 </style>
