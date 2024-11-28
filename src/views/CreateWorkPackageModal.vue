@@ -46,7 +46,6 @@
 				</div>
 				<NcTextField :value.sync="subject"
 					class="create-workpackage-form--subject"
-					input-class="workpackage-subject"
 					:placeholder="t('integration_openproject', 'Work package subject')"
 					:class="{'subject-error': error}"
 					:label-outside="true"
@@ -706,7 +705,7 @@ export default {
 	gap: 16px;
 
 	&--label {
-		margin: 15px 0;
+		margin: 15px 0px 5px 0px;
 		font-weight: 400;
 		letter-spacing: 0;
 		text-align: left;
@@ -756,10 +755,6 @@ export default {
 			border: 1px solid var(--color-border-dark) !important;
 		}
 	}
-}
-
-.workpackage-subject {
-	min-height: 44px !important;
 }
 
 .openProjectUrl {
