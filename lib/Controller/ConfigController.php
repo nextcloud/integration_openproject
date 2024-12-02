@@ -164,40 +164,19 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setConfig(array $values): DataResponse {
-        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+        foreach ($values as $key => $value) {
+            $this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
+        }
         $result = [];
-        if($authenticationMethodActive === 'oidc') {
-            // do something to disconnect from the oidc flow
-            $value_active = $this->config->getUserValue($this->userId, Application::APP_ID, 'token_active_for_user');
-            if ($value_active === '0') {
-                // fetch user status and activate status
+
+        if (isset($values['token'])) {
+            if ($values['token']) {
                 $result = $this->storeUserInfo();
-                // for now lets suppose that there is no error
-                $this->config->setUserValue(
-                    $this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
-                );
-                $this->config->setUserValue($this->userId, Application::APP_ID, 'token_active_for_user', '1');
             } else {
-                // deactivate status
-                $this->clearUserInfoForOIDCBasedAuth();
+                $this->clearUserInfo();
                 $result = [
                     'user_name' => '',
                 ];
-                $this->config->setUserValue($this->userId, Application::APP_ID, 'token_active_for_user', '0');
-            }
-        } else {
-            foreach ($values as $key => $value) {
-                $this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
-            }
-            if (isset($values['token'])) {
-                if ($values['token']) {
-                    $result = $this->storeUserInfo();
-                } else {
-                    $this->clearUserInfo();
-                    $result = [
-                        'user_name' => '',
-                    ];
-                }
             }
         }
         if (isset($result['error'])) {
