@@ -1283,7 +1283,7 @@ export default {
 		},
 		getPayloadForSavingOPOptions() {
 			let values = {
-				authentication_method: this.isAuthenticationMethodFormComplete ? this.authenticationMethod : null,
+				authentication_method: this.authenticationMethod,
 				oidc_provider: this.getCurrentSelectedOIDCProvider,
 				targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 				openproject_client_id: this.state.openproject_client_id,

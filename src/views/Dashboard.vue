@@ -7,7 +7,7 @@
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
 			<div v-if="authMethod === 'oidc' && connectedViaOidc === false" class="demo-error-oidc">
-				The authorization is OIDC based and there is no valid token for OpenProject Integration :/
+				This feature is not available for this user account :)
 			</div>
 			<div v-else>
 				<EmptyContent v-if="emptyContentMessage"
@@ -129,7 +129,9 @@ export default {
 		},
 	},
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === 'oauth2') {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 
 	beforeDestroy() {

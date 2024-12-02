@@ -2,7 +2,7 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div v-if="state.auth_method === 'oidc' && !connectedViaOidc" class="demo-error-oidc">
-			The authorization is OIDC based and there is no valid token for OpenProject Integration :/
+			This feature is not available for this user account :)
 		</div>
 		<div v-if="connected || connectedViaOidc" class="openproject-prefs--connected">
 			<label>
@@ -102,7 +102,9 @@ export default {
 	},
 
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.state.auth_method === 'oauth2') {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 
 	methods: {

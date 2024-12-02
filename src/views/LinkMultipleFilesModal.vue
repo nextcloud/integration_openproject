@@ -151,7 +151,9 @@ export default {
 	},
 
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === 'oauth2') {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 	methods: {
 		async relinkRemainingFilesToWorkPackage() {
