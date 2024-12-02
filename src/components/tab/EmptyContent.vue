@@ -17,8 +17,8 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton v-if="isAuthMethod === 'oauth2'"
-					:is-auth-method="isAuthMethod"
+				<OAuthConnectButton
+					v-if="showOAuthButton"
 					:is-admin-config-ok="isAdminConfigOk"
 					:file-info="fileInfo" />
 			</div>
@@ -84,6 +84,9 @@ export default {
 	computed: {
 		isStateOk() {
 			return this.state === STATE.OK
+		},
+		showOAuthButton() {
+			return !(this.isAdminConfigOk === true && this.isAuthMethod === 'oidc')
 		},
 		showConnectButton() {
 			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)

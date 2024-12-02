@@ -38,7 +38,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-else-if="state.auth_method === 'oauth2'" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
+		<OAuthConnectButton v-if="showOAuthButton" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
 	</div>
 </template>
 
@@ -83,6 +83,9 @@ export default {
 			if (!this.state.admin_config_ok_for_oidc_auth) return false
 			return this.state.token && this.state.token !== ''
           && this.state.user_name && this.state.user_name !== ''
+		},
+		showOAuthButton() {
+			return !(this.state.admin_config_ok_for_oidc_auth === true && this.state.auth_method === 'oidc')
 		},
 	},
 	watch: {
@@ -172,9 +175,9 @@ export default {
 		text-align: left;
 		padding: 0;
 	}
-  .demo-error-oidc {
-    color: red;
-    margin-top: 20px;
-  }
+	.demo-error-oidc {
+		color: red;
+		margin-top: 20px;
+	}
 }
 </style>

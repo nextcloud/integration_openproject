@@ -304,8 +304,9 @@ export default {
 :deep(.connect-button) {
 	margin-top: 10px;
 }
+
 .demo-error-oidc {
-  color: red;
-  margin-top: 20px;
+	color: red;
+	margin-top: 20px;
 }
 </style>
