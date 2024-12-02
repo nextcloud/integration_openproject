@@ -1364,7 +1364,7 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		if ($accessToken) {
+		if ($accessToken || $this->getOIDCBasedTokenForTheTargetedAudienceClient('openproject')) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 			if (isset($searchResult['error'])) {
 				return null;

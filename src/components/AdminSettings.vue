@@ -478,7 +478,7 @@
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
 		</NcButton>
-		<div v-if="isIntegrationCompleteWithOauth ||isIntegrationCompleteWithOIDC" class="default-prefs">
+		<div v-if="isIntegrationCompleteWithOauth || isIntegrationCompleteWithOIDC" class="default-prefs">
 			<h2>{{ t('integration_openproject', 'Default user settings') }}</h2>
 			<p>
 				{{ t('integration_openproject', 'A new user will receive these defaults and they will be applied to the integration app till the user changes them.') }}

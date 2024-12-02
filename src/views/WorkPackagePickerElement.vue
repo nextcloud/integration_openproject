@@ -28,7 +28,7 @@
 			ref="linkPicker"
 			:is-smart-picker="true"
 			:file-info="fileInfo"
-			:is-disabled="isLoading || !isAdminConfigOk || !isStateOk"
+			:is-disabled="isLoading || !isConConfigOk || !isStateOk"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
 		<div id="openproject-empty-content">
@@ -36,9 +36,10 @@
 			<EmptyContent
 				v-else
 				:state="state"
+				:is-auth-method="authMethod"
 				:file-info="fileInfo"
 				:is-smart-picker="true"
-				:is-admin-config-ok="isAdminConfigOk" />
+				:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
 		</div>
 	</div>
 </template>
@@ -77,6 +78,8 @@ export default {
 			linkedWorkPackages: [],
 			state: STATE.LOADING,
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			isAdminConfigOkOIDC: loadState('integration_openproject', 'admin-config-status-oidc'),
+			authMethod: loadState('integration_openproject', 'auth_method'),
 		}
 	},
 	computed: {
@@ -85,6 +88,15 @@ export default {
 		},
 		isLoading() {
 			return this.state === STATE.LOADING
+		},
+		isConConfigOk() {
+			if (this.authMethod === 'oauth2' && this.isAdminConfigOk) {
+				return true
+			}
+			if (this.authMethod === 'oidc' && this.isAdminConfigOkOIDC) {
+				return true
+			}
+			return false
 		},
 	},
 	mounted() {
@@ -95,7 +107,11 @@ export default {
 			this.$emit('submit', data)
 		},
 		async checkIfOpenProjectIsAvailable() {
-			if (!this.isAdminConfigOk) {
+			if (this.authMethod === 'oauth2' && !this.isAdminConfigOk) {
+				this.state = STATE.ERROR
+				return
+			}
+			if (this.authMethod === 'oidc' && !this.isAdminConfigOkOIDC) {
 				this.state = STATE.ERROR
 				return
 			}
