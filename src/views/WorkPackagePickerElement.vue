@@ -36,10 +36,10 @@
 			<EmptyContent
 				v-else
 				:state="state"
-				:is-auth-method="authMethod"
+				:is-auth-method="adminConfigState.isAuthMethod"
 				:file-info="fileInfo"
 				:is-smart-picker="true"
-				:is-admin-config-ok="isAdminConfigOk || isAdminConfigOkOIDC" />
+				:is-admin-config-ok="adminConfigState.isAdminConfigOk || adminConfigState.isAdminConfigOIDCOk" />
 		</div>
 	</div>
 </template>
@@ -77,9 +77,7 @@ export default {
 			fileInfo: {},
 			linkedWorkPackages: [],
 			state: STATE.LOADING,
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			isAdminConfigOkOIDC: loadState('integration_openproject', 'admin-config-status-oidc'),
-			authMethod: loadState('integration_openproject', 'auth_method'),
+			adminConfigState: loadState('integration_openproject', 'admin-config'),
 		}
 	},
 	computed: {
@@ -90,10 +88,10 @@ export default {
 			return this.state === STATE.LOADING
 		},
 		isConConfigOk() {
-			if (this.authMethod === 'oauth2' && this.isAdminConfigOk) {
+			if (this.adminConfigState.isAuthMethod === 'oauth2' && this.adminConfigState.isAdminConfigOk) {
 				return true
 			}
-			if (this.authMethod === 'oidc' && this.isAdminConfigOkOIDC) {
+			if (this.adminConfigState.isAuthMethod === 'oidc' && this.adminConfigState.isAdminConfigOIDCOk) {
 				return true
 			}
 			return false

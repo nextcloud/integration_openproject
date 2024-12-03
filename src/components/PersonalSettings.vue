@@ -85,6 +85,9 @@ export default {
           && this.state.user_name && this.state.user_name !== ''
 		},
 		showOAuthButton() {
+			if (this.connected || this.connectedViaOidc) {
+				return false
+			}
 			return !(this.state.admin_config_ok_for_oidc_auth === true && this.state.auth_method === 'oidc')
 		},
 	},
