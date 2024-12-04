@@ -266,7 +266,6 @@ export default {
 		&__workpackage {
 			color: #878787;
 			font-size: 0.8rem;
-			height: 20px;
 			line-height: 20px;
 			display: flex;
 			align-self: center;
@@ -299,7 +298,7 @@ export default {
 				font-size: 0.81rem;
 				color: #878787;
 				text-align: center;
-				padding-left: 5px;
+				padding: 2px 0px 0px 5px;
 			}
 		}
 	}
