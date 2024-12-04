@@ -141,21 +141,6 @@ class ConfigController extends Controller {
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
 	}
 
-    /**
-     * @param string|null $userId
-     * @return void
-     */
-    public function clearUserInfoForOIDCBasedAuth(string $userId = null) {
-        if ($userId === null) {
-            $userId = $this->userId;
-        }
-        $this->config->setUserValue($userId, Application::APP_ID, 'token_active_for_user', '0');
-        $this->config->deleteUserValue($userId, Application::APP_ID, 'login');
-        $this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-        $this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
-        $this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
-    }
-
 	/**
 	 * set config values
 	 * @NoAdminRequired
@@ -362,7 +347,6 @@ class ConfigController extends Controller {
 					}
 				}
 				$this->clearUserInfo($userUID);
-                $this->clearUserInfoForOIDCBasedAuth($userUID);
 			});
 		}
 

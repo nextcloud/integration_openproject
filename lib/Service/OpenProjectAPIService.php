@@ -63,6 +63,8 @@ use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 define('CACHE_TTL', 3600);
 
 class OpenProjectAPIService {
+    public const AUTH_METHOD_OAUTH = 'oauth2';
+    public const AUTH_METHOD_OIDC = 'oidc';
 	/**
 	 * @var string
 	 */
@@ -440,8 +442,9 @@ class OpenProjectAPIService {
 	 */
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
-        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc') {
-            $accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === self::AUTH_METHOD_OIDC) {
+            $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+            $accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
         } else {
             $accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
             $refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
@@ -1364,7 +1367,7 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		if ($accessToken || $this->getOIDCBasedTokenForTheTargetedAudienceClient('openproject')) {
+		if ($accessToken || $this->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''))) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 			if (isset($searchResult['error'])) {
 				return null;
@@ -1589,24 +1592,37 @@ class OpenProjectAPIService {
      * @return string|null
      */
     public function getOIDCBasedTokenForTheTargetedAudienceClient(string $targetedAudienceClientId): ?string {
-        if (class_exists('OCA\UserOIDC\Event\ExchangedTokenRequestedEvent')) {
-            $event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
-            try {
-                $this->eventDispatcher->dispatchTyped($event);
-            } catch (TokenExchangeFailedException $e) {
-                $this->logger->debug('Failed to exchange token: ' . $e->getMessage());
-            }
-            $token = $event->getToken();
-            if ($token === null) {
-                $this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
-            } else {
-                $this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
-                // this is the oidc based exchanged token
-                return $token->getAccessToken();
-            }
-        } else {
+        if (!class_exists('OCA\UserOIDC\Event\ExchangedTokenRequestedEvent')) {
             $this->logger->debug('The user_oidc app is not installed/available');
+            return null;
         }
-        return null;
+        $event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
+        try {
+            $this->eventDispatcher->dispatchTyped($event);
+        } catch (TokenExchangeFailedException $e) {
+            $this->logger->debug('Failed to exchange token: ' . $e->getMessage());
+            return null;
+        }
+        $token = $event->getToken();
+        if ($token === null) {
+            $this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
+            return null;
+        }
+        // token expiration info
+        $this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
+        return $token->getAccessToken();
+    }
+
+    public function setUserInfoForOidcBasedAuth(string $userId): void
+    {
+        $info = $this->request($userId, 'users/me');
+        if (isset($info['lastName'], $info['firstName'], $info['id'])) {
+            $fullName = $info['firstName'] . ' ' . $info['lastName'];
+            $this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
+            $this->config->setUserValue($userId, Application::APP_ID, 'user_name', $fullName);
+            $this->config->setUserValue(
+                $userId, Application::APP_ID, 'oauth_connection_result', 'success'
+            );
+        }
     }
 }

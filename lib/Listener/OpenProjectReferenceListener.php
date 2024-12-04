@@ -60,9 +60,9 @@ class OpenProjectReferenceListener implements IEventListener {
         $this->openProjectAPIService = $openProjectAPIService;
 	}
 	public function handle(Event $event): void {
-        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
-        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
-        if ($authenticationMethodActive === 'oidc' && $token === null) {
+        $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' && $token === null) {
             return;
         }
 		if (!$event instanceof RenderReferenceEvent) {

@@ -78,7 +78,7 @@ export default {
 			return this.openprojectUrl + '/notifications'
 		},
 		connectedViaOidc() {
-			if (!this.userState.admin_config_ok_for_oidc_auth) {
+			if (!this.isAdminConfigOkOIDC) {
 				return false
 			}
 			if (!this.userState.token) {

@@ -53,7 +53,7 @@ class Personal implements ISettings {
             // TODO Remove
             // There is no button to connect and disconnect for oidc based authorization, so if we get a token and we can request it
             // with openproject then we show that there is a oidc based connection in the personal section or else we do not even show the personal section
-           $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
+           $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''));
            if($token !== null) {
                $info = $this->openProjectAPIService->request($this->userId, 'users/me');
                if (isset($info['lastName'], $info['firstName'], $info['id'])) {

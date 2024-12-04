@@ -131,10 +131,8 @@ class OpenProjectWidget implements IWidget {
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
 		);
-        $adminConfigStatusOIDC = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
-        $this->initialStateService->provideInitialState('admin-config-status-oidc', $adminConfigStatusOIDC);
-        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
-        $this->initialStateService->provideInitialState('auth_method', $authenticationMethodActive);
+        $this->initialStateService->provideInitialState('admin-config-status-oidc', OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config));
+        $this->initialStateService->provideInitialState('auth_method', $this->config->getAppValue(Application::APP_ID, 'authentication_method', ''));
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $oauthConnectionResult
 		);
@@ -144,11 +142,10 @@ class OpenProjectWidget implements IWidget {
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_error_message'
 		);
-        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient('openproject');
-        $isOIDCBasedAuthOk = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+        $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
         $userConfig = [
             'token' => $token,
-            'admin_config_ok_for_oidc_auth' => $isOIDCBasedAuthOk
         ];
         $this->initialStateService->provideInitialState('user-config', $userConfig);
 		$this->initialStateService->provideInitialState(
