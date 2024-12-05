@@ -33,6 +33,7 @@
     "Copy value" : "Kopiatu balioa",
     "Copied to the clipboard" : "Arbelera kopiatuta",
     "Details" : "Xehetasunak",
+    "user guide" : "erabiltzaile-gida",
     "No connection with OpenProject" : "Ez dago konexiorik OpenProject-ekin",
     "Error connecting to OpenProject" : "Errore bat gertatu da OpenProject-era konektatzean",
     "Could not fetch work packages from OpenProject" : "Ezin izan dira lortu lan paketeak OpenProject-etik",
