@@ -45,40 +45,41 @@ class OpenProjectReferenceListener implements IEventListener {
 	 * @var IConfig
 	 */
 	private $config;
-    /**
-     * @var OpenProjectAPIService
-     */
-    private $openProjectAPIService;
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openProjectAPIService;
 
 	public function __construct(
 		IInitialState $initialStateService,
 		IConfig $config,
-        OpenProjectAPIService $openProjectAPIService,
+		OpenProjectAPIService $openProjectAPIService,
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
-        $this->openProjectAPIService = $openProjectAPIService;
+		$this->openProjectAPIService = $openProjectAPIService;
 	}
 	public function handle(Event $event): void {
-        $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
-        if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === 'oidc' && $token === null) {
-            return;
-        }
+		// When user is non oidc based then we need to hide the oidc based connection for the user
+		// so this check is required
+		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+			return;
+		}
 		if (!$event instanceof RenderReferenceEvent) {
 			return;
 		}
-
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
-        $adminConfig = [
-            'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
-            'isAdminConfigOIDCOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
-            'isAuthMethod' => $this->config->getAppValue(Application::APP_ID, 'authentication_method', '')
-        ];
-        $this->initialStateService->provideInitialState(
-            'admin-config',
-            $adminConfig
-        );
+		$adminConfig = [
+			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'isAdminConfigOIDCOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
+			'isAuthMethod' => $this->config->getAppValue(Application::APP_ID, 'authentication_method', '')
+		];
+		$this->initialStateService->provideInitialState(
+			'admin-config',
+			$adminConfig
+		);
 		$this->initialStateService->provideInitialState(
 			'openproject-url',
 			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')

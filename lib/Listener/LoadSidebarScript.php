@@ -66,30 +66,30 @@ class LoadSidebarScript implements IEventListener {
 	 */
 	protected $appManager;
 
-    /**
-     * @var OpenProjectAPIService
-     */
-    private $openProjectAPIService;
-    private IUserSession $userSession;
-    /**
-     * @var string|null
-     */
-    private $userId;
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openProjectAPIService;
+	private IUserSession $userSession;
+	/**
+	 * @var string|null
+	 */
+	private $userId;
 
-    public function __construct(
+	public function __construct(
 		IInitialState $initialStateService,
 		IConfig $config,
 		IUserSession $userSession,
 		IAppManager $appManager,
-        OpenProjectAPIService $openProjectAPIService,
-        ?string $userId
+		OpenProjectAPIService $openProjectAPIService,
+		?string $userId
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
 		$this->appManager = $appManager;
-        $this->userId = $userId;
+		$this->userId = $userId;
 		$user = $userSession->getUser();
-        $this->openProjectAPIService = $openProjectAPIService;
+		$this->openProjectAPIService = $openProjectAPIService;
 		if (strpos(\OC::$server->get(IRequest::class)->getRequestUri(), 'files') !== false) {
 			$this->oauthConnectionResult = $this->config->getUserValue(
 				$user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
@@ -107,12 +107,13 @@ class LoadSidebarScript implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-        $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
-        $authenticationMethodActive = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
-        if ($authenticationMethodActive === 'oidc' && $token === null) {
-            return;
-        }
+		// When user is non oidc based then we need to hide the oidc based connection for the user
+		// so this check is required
+		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+			return;
+		}
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}
@@ -128,25 +129,22 @@ class LoadSidebarScript implements IEventListener {
 		}
 		Util::addStyle(Application::APP_ID, 'tab');
 
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
-        $targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-        $token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
-        if($token !== null) {
-            $this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
-        }
-        // for oidc
-        $this->initialStateService->provideInitialState('admin-config-status-oidc', OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config));
-        $this->initialStateService->provideInitialState('auth_method', $this->config->getAppValue(Application::APP_ID, 'authentication_method', ''));
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$this->initialStateService->provideInitialState('auth_method', $authorizationMethod);
+		$this->initialStateService->provideInitialState('openproject-url', $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 
+		// authorization method can be either a 'oidc' or 'oauth2'
+		// for 'oidc' state to be loaded
+		$this->initialStateService->provideInitialState('admin-config-status-oidc', OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config));
+		$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
+
+		// for 'oauth2' state to be loaded
+		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $this->oauthConnectionResult
 		);
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-error-message', $this->oauthConnectionErrorMessage
-		);
-		$this->initialStateService->provideInitialState(
-			'openproject-url',
-			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
 		);
 	}
 }

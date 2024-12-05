@@ -7,8 +7,6 @@ use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
-use OCA\UserOIDC\Db\ProviderMapper;
-
 
 use OCP\IConfig;
 use OCP\Settings\ISettings;
@@ -33,22 +31,15 @@ class Admin implements ISettings {
 	 */
 	private $openProjectAPIService;
 
-	/**
-	 * @var ProviderMapper
-	 */
-	private $providerMapper;
-
 	public function __construct(IConfig $config,
 		OauthService $oauthService,
 		OpenProjectAPIService $openProjectAPIService,
-		IInitialState $initialStateService,
-		ProviderMapper $providerMapper
+		IInitialState $initialStateService
 	) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
 		$this->openProjectAPIService = $openProjectAPIService;
-		$this->providerMapper = $providerMapper;
 	}
 
 	/**
@@ -69,11 +60,6 @@ class Admin implements ISettings {
 		$projectFolderStatusInformation = $this->openProjectAPIService->getProjectFolderSetupInformation();
 		$isAllTermsOfServiceSignedForUserOpenProject = $this->openProjectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
 		$isAdminAuditConfigurationSetUpCorrectly = $this->openProjectAPIService->isAdminAuditConfigSetCorrectly();
-		// oidc providers
-		$oidcProviders = [];
-		foreach ($this->providerMapper->getProviders() as $provider) {
-			$oidcProviders[] = $provider->getIdentifier();
-		}
 
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
@@ -96,7 +82,7 @@ class Admin implements ISettings {
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
 			],
-			'oidc_provider' => $oidcProviders
+			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders()
 		];
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);

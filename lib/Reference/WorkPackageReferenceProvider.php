@@ -119,6 +119,11 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 		return $this->getWorkPackageIdFromUrl($referenceText) !== null;
 	}
 
+    /**
+     * This function return if the admin config is ok, either be oidc or oauth2 integration setup
+     *
+     * @return bool
+     */
 	public function getIsAdminConfigOk(): bool {
 		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
             return OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);

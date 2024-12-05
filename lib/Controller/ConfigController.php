@@ -149,26 +149,26 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setConfig(array $values): DataResponse {
-        foreach ($values as $key => $value) {
-            $this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
-        }
-        $result = [];
+		foreach ($values as $key => $value) {
+			$this->config->setUserValue($this->userId, Application::APP_ID, $key, trim($value));
+		}
+		$result = [];
 
-        if (isset($values['token'])) {
-            if ($values['token']) {
-                $result = $this->storeUserInfo();
-            } else {
-                $this->clearUserInfo();
-                $result = [
-                    'user_name' => '',
-                ];
-            }
-        }
-        if (isset($result['error'])) {
-            return new DataResponse($result, Http::STATUS_UNAUTHORIZED);
-        } else {
-            return new DataResponse($result);
-        }
+		if (isset($values['token'])) {
+			if ($values['token']) {
+				$result = $this->storeUserInfo();
+			} else {
+				$this->clearUserInfo();
+				$result = [
+					'user_name' => '',
+				];
+			}
+		}
+		if (isset($result['error'])) {
+			return new DataResponse($result, Http::STATUS_UNAUTHORIZED);
+		} else {
+			return new DataResponse($result);
+		}
 	}
 
 	/**
@@ -542,7 +542,7 @@ class ConfigController extends Controller {
 	 * @throws PreConditionNotMetException
 	 */
 	private function storeUserInfo(): array {
-        $info = $this->openprojectAPIService->request($this->userId, 'users/me');
+		$info = $this->openprojectAPIService->request($this->userId, 'users/me');
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
