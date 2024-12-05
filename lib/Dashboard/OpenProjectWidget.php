@@ -129,7 +129,7 @@ class OpenProjectWidget implements IWidget {
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
 		);
 
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		$this->initialStateService->provideInitialState('auth_method', $authorizationMethod);
 
 		// authorization method can be either a 'oidc' or 'oauth2'

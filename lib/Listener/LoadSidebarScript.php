@@ -111,7 +111,7 @@ class LoadSidebarScript implements IEventListener {
 		// so this check is required
 		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
-		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
 			return;
 		}
 		if (!($event instanceof LoadSidebar)) {
@@ -129,7 +129,7 @@ class LoadSidebarScript implements IEventListener {
 		}
 		Util::addStyle(Application::APP_ID, 'tab');
 
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		$this->initialStateService->provideInitialState('auth_method', $authorizationMethod);
 		$this->initialStateService->provideInitialState('openproject-url', $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 

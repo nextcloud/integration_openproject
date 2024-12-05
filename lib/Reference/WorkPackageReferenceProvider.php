@@ -125,7 +125,7 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
      * @return bool
      */
 	public function getIsAdminConfigOk(): bool {
-		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
             return OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
         } else {
             return OpenProjectAPIService::isAdminConfigOk($this->config);

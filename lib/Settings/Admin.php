@@ -65,8 +65,8 @@ class Admin implements ISettings {
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
 			'openproject_instance_url' => $oauthUrl,
-			'authentication_method' => $this->config->getAppValue(Application::APP_ID, 'authentication_method', ''),
-			'authentication_settings' => [
+			'authorization_method' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', ''),
+			'authorization_settings' => [
 				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
 				'targeted_audience_client_id' => $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''),
 			],

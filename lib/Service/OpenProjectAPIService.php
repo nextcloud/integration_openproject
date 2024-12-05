@@ -449,7 +449,7 @@ class OpenProjectAPIService {
 	 */
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
-		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === self::AUTH_METHOD_OIDC) {
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
 			$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
 		} else {
@@ -476,7 +476,7 @@ class OpenProjectAPIService {
 			// refresh token if it's invalid and we are using oauth
 			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
 			if ($response->getStatusCode() === 401 &&
-				$this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === self::AUTH_METHOD_OAUTH
+				$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OAUTH
 			) {
 				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
 				// try to refresh the token
@@ -955,7 +955,7 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authentication_method');
+		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$checkIfConfigIsSet = !!($authMethod) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);

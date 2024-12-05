@@ -46,7 +46,7 @@ class Personal implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		$token = '';
 		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
 			$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''));

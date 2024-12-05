@@ -64,7 +64,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		// so this check is required
 		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
-		if ($this->config->getAppValue(Application::APP_ID, 'authentication_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
 			return;
 		}
 		if (!$event instanceof RenderReferenceEvent) {
@@ -74,7 +74,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		$adminConfig = [
 			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
 			'isAdminConfigOIDCOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
-			'isAuthMethod' => $this->config->getAppValue(Application::APP_ID, 'authentication_method', '')
+			'isAuthMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
 		];
 		$this->initialStateService->provideInitialState(
 			'admin-config',

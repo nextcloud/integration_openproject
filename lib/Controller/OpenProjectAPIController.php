@@ -128,7 +128,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -167,7 +167,7 @@ class OpenProjectAPIController extends Controller {
 		?int $fileId = null,
 		bool $isSmartPicker = false
 	): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -210,7 +210,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile(array $values): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -244,7 +244,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function markNotificationAsRead(int $workpackageId) {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -279,7 +279,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getWorkPackageFileLinks(int $id): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -311,7 +311,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -346,7 +346,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -378,7 +378,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -406,7 +406,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -463,7 +463,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -490,7 +490,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -544,7 +544,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function createWorkPackage(array $body): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
@@ -578,7 +578,7 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectConfiguration(): DataResponse {
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authentication_method', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
