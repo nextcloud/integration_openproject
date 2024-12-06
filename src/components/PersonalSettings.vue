@@ -1,15 +1,15 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
-		<div v-if="state.auth_method === 'oidc' && !connectedViaOidc" class="demo-error-oidc">
-			This feature is not available for this user account :)
+		<div v-if="state.authorization_method === authMethods.OIDC && !connectedViaOidc" class="demo-error-oidc">
+			{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
 		</div>
-		<div v-if="connected || connectedViaOidc" class="openproject-prefs--connected">
+		<div v-if="connectedViaOauth2 || connectedViaOidc" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<NcButton v-if="state.auth_method === 'oauth2'" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+			<NcButton v-if="state.authorization_method === authMethods.OAUTH2" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
@@ -17,7 +17,7 @@
 			</NcButton>
 		</div>
 		<br>
-		<div v-if="connected || connectedViaOidc" class="openproject-prefs--form">
+		<div v-if="connectedViaOauth2 || connectedViaOidc" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
 				input-id="openproject-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')">
@@ -38,7 +38,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-if="showOAuthButton" :is-admin-config-ok="state.admin_config_ok || state.admin_config_ok_for_oidc_auth" />
+		<OAuthConnectButton v-if="showOAuthConnectButton" :is-admin-config-ok="state.admin_oauth2_config_ok || state.admin_oidc_config_ok" />
 	</div>
 </template>
 
@@ -54,7 +54,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import OAuthConnectButton from './OAuthConnectButton.vue'
 import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
-import { checkOauthConnectionResult, USER_SETTINGS } from '../utils.js'
+import { checkOauthConnectionResult, USER_SETTINGS, AUTH_METHOD } from '../utils.js'
 import { NcButton } from '@nextcloud/vue'
 
 export default {
@@ -71,24 +71,25 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			userSettingDescription: USER_SETTINGS,
+			authMethods: AUTH_METHOD,
 		}
 	},
 	computed: {
-		connected() {
-			if (!this.state.admin_config_ok) return false
+		connectedViaOauth2() {
+			if (!this.state.admin_oauth2_config_ok) return false
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
 		},
 		connectedViaOidc() {
-			if (!this.state.admin_config_ok_for_oidc_auth) return false
+			if (!this.state.admin_oidc_config_ok) return false
 			return this.state.token && this.state.token !== ''
           && this.state.user_name && this.state.user_name !== ''
 		},
-		showOAuthButton() {
-			if (this.connected || this.connectedViaOidc) {
+		showOAuthConnectButton() {
+			if (this.connectedViaOauth2 || this.connectedViaOidc) {
 				return false
 			}
-			return !(this.state.admin_config_ok_for_oidc_auth === true && this.state.auth_method === 'oidc')
+			return !(this.state.admin_oidc_config_ok === true && this.state.authorization_method === this.authMethods.OIDC)
 		},
 	},
 	watch: {
@@ -105,7 +106,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.state.auth_method === 'oauth2') {
+		if (this.state.authorization_method === this.authMethods.OAUTH2) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
 	},

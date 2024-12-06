@@ -79,9 +79,9 @@ class Personal implements ISettings {
 			'user_name' => $userName,
 		];
 
-		$userConfig['admin_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
-		$userConfig['admin_config_ok_for_oidc_auth'] = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
-		$userConfig['auth_method'] = $authorizationMethod;
+		$userConfig['admin_oauth2_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+		$userConfig['admin_oidc_config_ok'] = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+		$userConfig['authorization_method'] = $authorizationMethod;
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
 		$oauthConnectionResult = $this->config->getUserValue(
