@@ -184,6 +184,9 @@ class ConfigController extends Controller {
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
 			'openproject_instance_url',
+			'authorization_method',
+			'oidc_provider',
+			'targeted_audience_client_id',
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',

@@ -5,8 +5,10 @@ namespace OCA\OpenProject\Listener;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\ServerVersionHelper;
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
 use OCP\Util;
 
 /**
@@ -14,7 +16,31 @@ use OCP\Util;
  */
 class LoadAdditionalScriptsListener implements IEventListener {
 
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openProjectAPIService;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
+	public function __construct(
+		IConfig $config,
+		OpenProjectAPIService $openProjectAPIService,
+	) {
+		$this->config = $config;
+		$this->openProjectAPIService = $openProjectAPIService;
+	}
+
 	public function handle(Event $event): void {
+		// When user is non oidc based then we need to hide the oidc based connection for the user
+		// so this check is required
+		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
+		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+			return;
+		}
 		if (!$event instanceof LoadAdditionalScriptsEvent) {
 			return;
 		}

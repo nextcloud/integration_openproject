@@ -6,11 +6,17 @@
 		:loading="isLoading"
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
-			<EmptyContent v-if="emptyContentMessage"
-				id="openproject-empty-content"
-				:state="state"
-				:dashboard="true"
-				:is-admin-config-ok="isAdminConfigOk" />
+			<div v-if="authMethod === authMethods.OIDC && connectedViaOidc === false" class="demo-error-oidc">
+				{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
+			</div>
+			<div v-else>
+				<EmptyContent v-if="emptyContentMessage"
+					id="openproject-empty-content"
+					:state="state"
+					:auth-method="authMethod"
+					:dashboard="true"
+					:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
+			</div>
 		</template>
 	</NcDashboardWidget>
 </template>
@@ -21,7 +27,7 @@ import { generateUrl } from '@nextcloud/router'
 import { NcDashboardWidget } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
-import { checkOauthConnectionResult, STATE } from '../utils.js'
+import { AUTH_METHOD, checkOauthConnectionResult, STATE } from '../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 
@@ -46,7 +52,10 @@ export default {
 			state: STATE.LOADING,
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
+			isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+			userHasOidcToken: loadState('integration_openproject', 'user-has-oidc-token'),
+			authMethod: loadState('integration_openproject', 'authorization_method'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
 			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
@@ -56,6 +65,7 @@ export default {
 					icon: 'icon-checkmark',
 				},
 			},
+			authMethods: AUTH_METHOD,
 		}
 	},
 	computed: {
@@ -67,6 +77,15 @@ export default {
 		},
 		showMoreUrl() {
 			return this.openprojectUrl + '/notifications'
+		},
+		connectedViaOidc() {
+			if (!this.isAdminOIDCConfigOk) {
+				return false
+			}
+			if (!this.userHasOidcToken) {
+				return false
+			}
+			return true
 		},
 		items() {
 			const notifications = []
@@ -85,6 +104,10 @@ export default {
 			return notifications
 		},
 		emptyContentMessage() {
+			// for oidc connection currently we do not show any error to user
+			if (this.authMethod === this.authMethods.OIDC && this.connectedViaOidc === false) {
+				return
+			}
 			if (this.state === STATE.NO_TOKEN) {
 				return t('integration_openproject', 'No connection with OpenProject')
 			} else if (this.state === STATE.CONNECTION_ERROR) {
@@ -108,7 +131,9 @@ export default {
 		},
 	},
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === this.authMethods.OAUTH2) {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 
 	beforeDestroy() {
@@ -128,7 +153,11 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (!this.isAdminConfigOk) {
+			if (this.authMethod === this.authMethods.OIDC && !this.isAdminOIDCConfigOk) {
+				this.state = STATE.ERROR
+				return
+			}
+			if (this.authMethod === this.authMethods.OAUTH2 && !this.isAdminOauth2ConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
@@ -278,5 +307,10 @@ export default {
 <style scoped lang="scss">
 :deep(.connect-button) {
 	margin-top: 10px;
+}
+
+.demo-error-oidc {
+	color: red;
+	margin-top: 20px;
 }
 </style>

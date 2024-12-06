@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
+		<SearchInput v-if="(!!isAdminOauth2ConfigOk || !!isAdminOIDCConfigOk) && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
@@ -58,7 +58,8 @@
 			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
-			:is-admin-config-ok="isAdminConfigOk" />
+			:auth-method="authMethod"
+			:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
 	</div>
 </template>
 
@@ -76,7 +77,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
-import { STATE, WORKPACKAGES_SEARCH_ORIGIN, checkOauthConnectionResult } from '../utils.js'
+import { STATE, WORKPACKAGES_SEARCH_ORIGIN, AUTH_METHOD, checkOauthConnectionResult } from '../utils.js'
 
 export default {
 	name: 'ProjectsTab',
@@ -96,7 +97,9 @@ export default {
 		workpackages: [],
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
-		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+		isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
+		isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+		authMethod: loadState('integration_openproject', 'authorization_method'),
 		color: null,
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 		searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -119,7 +122,9 @@ export default {
 		},
 	},
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === AUTH_METHOD.OAUTH2) {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 	methods: {
 		/**
@@ -131,7 +136,7 @@ export default {
 			this.fileInfo = fileInfo
 			this.workpackages = []
 			this.state = STATE.LOADING
-			if (this.isAdminConfigOk) {
+			if (this.isAdminOauth2ConfigOk || this.isAdminOIDCConfigOk) {
 				// only fetch if we have a request url
 				await this.fetchWorkpackages(this.fileInfo.id)
 			} else {

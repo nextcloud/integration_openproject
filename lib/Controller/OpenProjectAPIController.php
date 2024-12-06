@@ -97,6 +97,8 @@ class OpenProjectAPIController extends Controller {
 		return new DataResponse($this->openprojectUrl);
 	}
 
+
+
 	/**
 	 * get openproject user avatar
 	 * @NoAdminRequired
@@ -127,7 +129,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -161,7 +168,12 @@ class OpenProjectAPIController extends Controller {
 		?int $fileId = null,
 		bool $isSmartPicker = false
 	): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -199,7 +211,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile(array $values): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -228,7 +245,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function markNotificationAsRead(int $workpackageId) {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -258,7 +280,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getWorkPackageFileLinks(int $id): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -285,12 +312,16 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
 		}
-
 		try {
 			$result = $this->openprojectAPIService->deleteFileLink(
 				$id,
@@ -316,7 +347,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -343,7 +379,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -366,7 +407,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -418,7 +464,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -440,7 +491,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -489,7 +545,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function createWorkPackage(array $body): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);
@@ -518,7 +579,12 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectConfiguration(): DataResponse {
-		if ($this->accessToken === '') {
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
+			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
 			return new DataResponse('', Http::STATUS_BAD_REQUEST);

@@ -25,24 +25,39 @@ class Personal implements ISettings {
 	 */
 	private $userId;
 
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openProjectAPIService;
+
 
 	public function __construct(
 		IConfig $config,
 		IInitialState $initialStateService,
+		OpenProjectAPIService $openProjectAPIService,
 		?string $userId) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
+		$this->openProjectAPIService = $openProjectAPIService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		$token = '';
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''));
+			if ($token !== null) {
+				$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
+			}
+		}
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		}
 		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
-
-
 		// take the fallback value from the defaults
 		$searchEnabled = $this->config->getUserValue(
 			$this->userId,
@@ -64,7 +79,9 @@ class Personal implements ISettings {
 			'user_name' => $userName,
 		];
 
-		$userConfig['admin_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+		$userConfig['admin_oauth2_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
+		$userConfig['admin_oidc_config_ok'] = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+		$userConfig['authorization_method'] = $authorizationMethod;
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
 		$oauthConnectionResult = $this->config->getUserValue(
