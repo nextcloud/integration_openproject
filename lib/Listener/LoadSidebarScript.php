@@ -130,16 +130,16 @@ class LoadSidebarScript implements IEventListener {
 		Util::addStyle(Application::APP_ID, 'tab');
 
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		$this->initialStateService->provideInitialState('auth_method', $authorizationMethod);
+		$this->initialStateService->provideInitialState('authorization_method', $authorizationMethod);
 		$this->initialStateService->provideInitialState('openproject-url', $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url'));
 
 		// authorization method can be either a 'oidc' or 'oauth2'
 		// for 'oidc' state to be loaded
-		$this->initialStateService->provideInitialState('admin-config-status-oidc', OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config));
+		$this->initialStateService->provideInitialState('admin_oidc_config_ok', OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config));
 		$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
 
 		// for 'oauth2' state to be loaded
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
+		$this->initialStateService->provideInitialState('admin_oauth2_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config));
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $this->oauthConnectionResult
 		);
