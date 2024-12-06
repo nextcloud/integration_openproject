@@ -65,3 +65,13 @@ export const NO_OPTION_TEXT_STATE = {
 	SEARCHING: 1,
 	RESULT: 2,
 }
+
+export const AUTH_METHOD = {
+	OAUTH2: 'oauth2',
+	OIDC: 'oidc',
+}
+
+export const AUTH_METHOD_LABEL = {
+	OAUTH2: t('integration_openproject', 'OAuth2 two-way authorization code flow'),
+	OIDC: t('integration_openproject', 'OpenID identity provider'),
+}
