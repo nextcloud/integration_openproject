@@ -72,9 +72,9 @@ class OpenProjectReferenceListener implements IEventListener {
 		}
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
 		$adminConfig = [
-			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
-			'isAdminConfigOIDCOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
-			'isAuthMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
+			'isAdminOauth2ConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'isAdminOIDCConfigOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
+			'authMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
 		];
 		$this->initialStateService->provideInitialState(
 			'admin-config',

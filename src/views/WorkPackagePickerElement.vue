@@ -28,7 +28,7 @@
 			ref="linkPicker"
 			:is-smart-picker="true"
 			:file-info="fileInfo"
-			:is-disabled="isLoading || !isConConfigOk || !isStateOk"
+			:is-disabled="isLoading || !isAdminConfigOk || !isStateOk"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
 		<div id="openproject-empty-content">
@@ -36,10 +36,10 @@
 			<EmptyContent
 				v-else
 				:state="state"
-				:is-auth-method="adminConfigState.isAuthMethod"
+				:is-auth-method="adminConfigState.authMethod"
 				:file-info="fileInfo"
 				:is-smart-picker="true"
-				:is-admin-config-ok="adminConfigState.isAdminConfigOk || adminConfigState.isAdminConfigOIDCOk" />
+				:is-admin-config-ok="adminConfigState.isAdminOauth2ConfigOk || adminConfigState.isAdminOIDCConfigOk" />
 		</div>
 	</div>
 </template>
@@ -47,7 +47,7 @@
 <script>
 import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
-import { STATE } from '../utils.js'
+import { AUTH_METHOD, STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
@@ -87,11 +87,11 @@ export default {
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
-		isConConfigOk() {
-			if (this.adminConfigState.isAuthMethod === 'oauth2' && this.adminConfigState.isAdminConfigOk) {
+		isAdminConfigOk() {
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OAUTH2 && this.adminConfigState.isAdminOauth2ConfigOk) {
 				return true
 			}
-			if (this.adminConfigState.isAuthMethod === 'oidc' && this.adminConfigState.isAdminConfigOIDCOk) {
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OIDC && this.adminConfigState.isAdminOIDCConfigOk) {
 				return true
 			}
 			return false
@@ -105,11 +105,11 @@ export default {
 			this.$emit('submit', data)
 		},
 		async checkIfOpenProjectIsAvailable() {
-			if (this.authMethod === 'oauth2' && !this.isAdminConfigOk) {
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OAUTH2 && !this.adminConfigState.isAdminOauth2ConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
-			if (this.authMethod === 'oidc' && !this.isAdminConfigOkOIDC) {
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OIDC && !this.adminConfigState.isAdminOIDCConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
