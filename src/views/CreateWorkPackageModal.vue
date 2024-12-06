@@ -706,7 +706,7 @@ export default {
 	gap: 16px;
 
 	&--label {
-		margin: 15px 0;
+		margin: 15px 0px 5px 0px;
 		font-weight: 400;
 		letter-spacing: 0;
 		text-align: left;
@@ -725,6 +725,10 @@ export default {
 	&--description {
 		width: 100%;
 		height: 178px;
+		border: 0.08rem solid var(--color-border-maxcontrast);
+	}
+	&--description:focus {
+		border: 0.15rem solid var(--color-main-text) !important;
 	}
 	&--type-status-container {
 		display: flex;
@@ -759,7 +763,11 @@ export default {
 }
 
 .workpackage-subject {
-	min-height: 44px !important;
+	border: 0.08rem solid var(--color-border-maxcontrast) !important;
+}
+
+.workpackage-subject:focus {
+	border: 0.15rem solid var(--color-main-text) !important;
 }
 
 .openProjectUrl {
