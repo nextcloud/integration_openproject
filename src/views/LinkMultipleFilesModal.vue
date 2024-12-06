@@ -57,7 +57,7 @@
 					<EmptyContent
 						id="openproject-empty-content"
 						:state="state"
-						:is-auth-method="authMethod"
+						:auth-method="authMethod"
 						:is-multiple-workpackage-linking="true"
 						:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
 				</div>

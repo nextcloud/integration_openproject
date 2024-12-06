@@ -13,7 +13,7 @@
 				<EmptyContent v-if="emptyContentMessage"
 					id="openproject-empty-content"
 					:state="state"
-					:is-auth-method="authMethod"
+					:auth-method="authMethod"
 					:dashboard="true"
 					:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
 			</div>

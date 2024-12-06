@@ -36,7 +36,7 @@
 			<EmptyContent
 				v-else
 				:state="state"
-				:is-auth-method="adminConfigState.authMethod"
+				:auth-method="adminConfigState.authMethod"
 				:file-info="fileInfo"
 				:is-smart-picker="true"
 				:is-admin-config-ok="adminConfigState.isAdminOauth2ConfigOk || adminConfigState.isAdminOIDCConfigOk" />

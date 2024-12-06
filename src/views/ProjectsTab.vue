@@ -58,7 +58,7 @@
 			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
-			:is-auth-method="authMethod"
+			:auth-method="authMethod"
 			:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
 	</div>
 </template>
