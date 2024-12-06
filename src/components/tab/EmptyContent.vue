@@ -89,7 +89,7 @@ export default {
 			if (!this.isAdminConfigOk) {
 				return true
 			}
-			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state) && this.isAdminConfigOk === true && this.authMethod === AUTH_METHOD.OIDC
+			return this.authMethod === AUTH_METHOD.OAUTH2 && [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
 		},
 		emptyContentTitleMessage() {
 			if (this.state === STATE.NO_TOKEN) {

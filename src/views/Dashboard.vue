@@ -131,7 +131,7 @@ export default {
 		},
 	},
 	mounted() {
-		if (this.authMethod === 'oauth2') {
+		if (this.authMethod === this.authMethods.OAUTH2) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
 	},
@@ -153,11 +153,11 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (this.authMethod === 'oidc' && !this.isAdminOIDCConfigOk) {
+			if (this.authMethod === this.authMethods.OIDC && !this.isAdminOIDCConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
-			if (this.authMethod === 'oauth2' && !this.isAdminOauth2ConfigOk) {
+			if (this.authMethod === this.authMethods.OAUTH2 && !this.isAdminOauth2ConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
