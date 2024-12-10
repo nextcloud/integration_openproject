@@ -91,7 +91,7 @@ class OpenProjectAPIController extends Controller {
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '') !== null)
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '')) !== null
 		) {
 			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {

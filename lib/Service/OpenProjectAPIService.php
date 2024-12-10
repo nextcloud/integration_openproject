@@ -123,10 +123,6 @@ class OpenProjectAPIService {
 	 * @var ISubAdmin
 	 */
 	private ISubAdmin $subAdminManager;
-	/**
-	 * @var ProviderMapper
-	 */
-	private $providerMapper;
 	private IDBConnection $db;
 	private ILogFactory $logFactory;
 	private IManager $encryptionManager;
@@ -1611,12 +1607,13 @@ class OpenProjectAPIService {
 	 * @return string|null
 	 */
 	public function getOIDCBasedTokenForTheTargetedAudienceClient(string $targetedAudienceClientId): ?string {
-		if (!class_exists('OCA\UserOIDC\Event\ExchangedTokenRequestedEvent')) {
+		if (!self::isUserOIDCAppInstalledAndEnabled()) {
 			$this->logger->debug('The user_oidc app is not installed/available');
 			return null;
 		}
 		$event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
 		try {
+			/** @psalm-suppress InvalidArgument for dispatchTyped($event) but new ExchangedTokenRequestedEvent($targetedAudienceClientId) returns event */
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (TokenExchangeFailedException $e) {
 			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());
@@ -1660,6 +1657,8 @@ class OpenProjectAPIService {
 	public function isUserOIDCAppInstalledAndEnabled(): bool {
 		return (
 			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
+			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
 			$this->appManager->isInstalled(
 				'user_oidc',
 			)

@@ -9,6 +9,7 @@
 
 namespace OCA\OpenProject\Settings;
 
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
@@ -31,11 +32,17 @@ class PersonalTest extends TestCase {
 	 */
 	private $initialState;
 
+	/**
+	 * @var MockObject | OpenProjectAPIService
+	 */
+	private $openProjectService;
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->initialState = $this->getMockBuilder(IInitialState::class)->getMock();
-		$this->setting = new Personal($this->config, $this->initialState, "testUser");
+		$this->openProjectService = $this->getMockBuilder(OpenProjectAPIService::class)->disableOriginalConstructor()->getMock();
+		$this->setting = new Personal($this->config, $this->initialState, $this->openProjectService, "testUser");
 	}
 
 	/**
