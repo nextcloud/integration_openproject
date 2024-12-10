@@ -48,7 +48,7 @@
 					<h2>
 						{{ t('integration-openproject', 'Link to work package') }}
 					</h2>
-					<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
+					<SearchInput v-if="(!!isAdminOauth2ConfigOk || !!isAdminOIDCConfigOk) && !!isStateOk"
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
 						:search-origin="searchOrigin"
@@ -57,8 +57,9 @@
 					<EmptyContent
 						id="openproject-empty-content"
 						:state="state"
+						:auth-method="authMethod"
 						:is-multiple-workpackage-linking="true"
-						:is-admin-config-ok="isAdminConfigOk" />
+						:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
 				</div>
 			</div>
 		</NcModal>
@@ -105,7 +106,9 @@ export default {
 			state: STATE.LOADING,
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
+			isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+			authMethod: loadState('integration_openproject', 'authorization_method'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
@@ -148,7 +151,9 @@ export default {
 	},
 
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === 'oauth2') {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 	methods: {
 		async relinkRemainingFilesToWorkPackage() {
@@ -170,7 +175,7 @@ export default {
 		},
 		async setFileInfos(fileInfos) {
 			this.fileInfos = fileInfos
-			if (this.isAdminConfigOk) {
+			if (this.isAdminOauth2ConfigOk || this.isAdminOIDCConfigOk) {
 				await this.fetchWorkpackagesForSingleFileSelected(this.fileInfos[0].id)
 			} else {
 				this.state = STATE.ERROR
