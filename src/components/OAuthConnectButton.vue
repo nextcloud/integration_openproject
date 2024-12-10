@@ -88,7 +88,7 @@ export default {
 				.catch((error) => {
 					showError(
 						t('integration_openproject', 'Failed to redirect to OpenProject')
-						+ ': ' + error.message,
+                + ': ' + error.message,
 					)
 				})
 		},

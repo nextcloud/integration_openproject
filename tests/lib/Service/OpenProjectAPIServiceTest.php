@@ -3090,7 +3090,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
-		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
+		$this->assertSame($expected, $this->service::isAdminConfigOkForOauth2($configMock));
 	}
 
 	/**

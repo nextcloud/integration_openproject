@@ -134,12 +134,33 @@ class ConfigController extends Controller {
 		if ($userId === null) {
 			$userId = $this->userId;
 		}
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'token');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'token');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
 	}
+
+	/**
+	 * @return void
+	 */
+	public function resetConfigValuesForOauth2Reset(): void {
+		// for oauth2 reset we reset openproject client credential as well as nextcloud client credential
+		$this->config->setAppValue(Application::APP_ID, 'openproject_client_id', "");
+		$this->config->setAppValue(Application::APP_ID, 'openproject_client_secret', "");
+		$this->deleteOauthClient();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function resetConfigValuesForOIDCReset(): void {
+		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
+		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', '');
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', '');
+	}
+
 
 	/**
 	 * set config values
@@ -183,6 +204,9 @@ class ConfigController extends Controller {
 	private function setIntegrationConfig(array $values): array {
 		$allowedKeys = [
 			'openproject_instance_url',
+			'authorization_method',
+			'oidc_provider',
+			'targeted_audience_client_id',
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',
@@ -243,6 +267,13 @@ class ConfigController extends Controller {
 			Application::APP_ID, 'openproject_client_secret', ''
 		);
 
+		$oldOidcProvider = $this->config->getAppValue(
+			Application::APP_ID, 'oidc_provider', ''
+		);
+		$oldTargetedAudienceClient = $this->config->getAppValue(
+			Application::APP_ID, 'targeted_audience_client_id', ''
+		);
+
 		foreach ($values as $key => $value) {
 			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
 				continue;
@@ -271,20 +302,26 @@ class ConfigController extends Controller {
 			}
 		}
 
+		$runningOauth2Reset = (
+			key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$oldOpenProjectOauthUrl &&
+			$oldClientId &&
+			$oldClientSecret
+		);
+
+		$runningOIDCReset = (
+			key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH &&
+			$oldOidcProvider &&
+			$oldTargetedAudienceClient
+		);
+
 		$runningFullReset = (
-
 			key_exists('openproject_instance_url', $values) &&
-
-			key_exists('openproject_client_id', $values) &&
-
-			key_exists('openproject_client_secret', $values) &&
-
+			key_exists('authorization_method', $values) &&
 			$values['openproject_instance_url'] === null &&
-
-			$values['openproject_client_id'] === null &&
-
-			$values['openproject_client_secret'] === null
-
+			$values['authorization_method'] === null
 		);
 
 		// resetting and keeping the project folder setup should delete the user app password
@@ -303,7 +340,8 @@ class ConfigController extends Controller {
 			((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
 				(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
 			// when the OP client information is for reset
-			$runningFullReset
+			$runningFullReset ||
+			$runningOauth2Reset
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
 				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
@@ -361,13 +399,23 @@ class ConfigController extends Controller {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
 		}
 
+		if ($runningOauth2Reset) {
+			$this->resetConfigValuesForOauth2Reset();
+		}
+
+		if ($runningOIDCReset) {
+			$this->resetConfigValuesForOIDCReset();
+		}
+
 		// if the revoke has failed at least once, the last status is stored in the database
 		// this is not a neat way to give proper information about the revoke status
 		// TODO: find way to report every user's revoke status
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		return [
-			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
+			"status" => $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '') === OpenProjectAPIService::AUTH_METHOD_OIDC ?
+				OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config) :
+				OpenProjectAPIService::isAdminConfigOkForOauth2($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 			"oPUserAppPassword" => $appPassword,
 		];
@@ -603,7 +651,11 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function checkAdminConfigOk(): DataResponse {
-		$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
+		} else {
+			$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOkForOauth2($this->config);
+		}
 		$appPasswordSetStatus = $this->openprojectAPIService->hasAppPassword();
 		// Admin config can be set in two parts
 		// 1. config without project folder set up (which is compulsory for integration)
