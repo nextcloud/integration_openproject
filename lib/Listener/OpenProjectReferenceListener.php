@@ -63,8 +63,10 @@ class OpenProjectReferenceListener implements IEventListener {
 		// When user is non oidc based or there is some error when getting token for the targeted client
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
-		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient();
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
+		if (
+			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient() === null
+		) {
 			return;
 		}
 		if (!$event instanceof RenderReferenceEvent) {
@@ -72,8 +74,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		}
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
 		$adminConfig = [
-			'isAdminOauth2ConfigOk' => OpenProjectAPIService::isAdminConfigOkForOauth2($this->config),
-			'isAdminOIDCConfigOk' => OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config),
+			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
 			'authMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
 		];
 		$this->initialStateService->provideInitialState(

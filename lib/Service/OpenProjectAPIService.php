@@ -708,7 +708,7 @@ class OpenProjectAPIService {
 	 * @throws Exception
 	 */
 	public static function getOpenProjectOauthURL(IConfig $config, IURLGenerator $urlGenerator): string {
-		if ($config->getAppValue(Application::APP_ID, 'openproject_client_id') === self::AUTH_METHOD_OIDC && !self::isAdminConfigOkForOauth2($config)) {
+		if (!self::isAdminConfigOk($config)) {
 			throw new \Exception('OpenProject admin config is not valid!');
 		}
 		$clientID = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
@@ -963,6 +963,12 @@ class OpenProjectAPIService {
 		}
 	}
 
+
+	/**
+	 * returns overall admin config status whether it be 'oidc' or 'oauth2'
+	 *
+	 * @return bool
+	 */
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 		if ($authMethod === self::AUTH_METHOD_OAUTH) {
@@ -1615,10 +1621,13 @@ class OpenProjectAPIService {
 			$this->logger->debug('The user_oidc app is not installed/available');
 			return null;
 		}
-		$targetedAudienceClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-		$event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
+		$event = new ExchangedTokenRequestedEvent(
+			$this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '')
+		);
 		try {
-			/** @psalm-suppress InvalidArgument for dispatchTyped($event) but new ExchangedTokenRequestedEvent($targetedAudienceClientId) returns event */
+			/** @psalm-suppress InvalidArgument for dispatchTyped($event)
+			 * but new ExchangedTokenRequestedEvent(targeted_audience_client_id) returns event
+			 */
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (TokenExchangeFailedException $e) {
 			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());

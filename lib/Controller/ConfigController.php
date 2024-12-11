@@ -267,20 +267,6 @@ class ConfigController extends Controller {
 			Application::APP_ID, 'openproject_client_secret', ''
 		);
 
-		$runningOIDCReset = false;
-		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
-			$oldOidcProvider = $this->config->getAppValue(
-				Application::APP_ID, 'oidc_provider', ''
-			);
-			$oldTargetedAudienceClient = $this->config->getAppValue(
-				Application::APP_ID, 'targeted_audience_client_id', ''
-			);
-
-			$runningOIDCReset = $oldOidcProvider && $oldTargetedAudienceClient;
-		}
-
-
 		foreach ($values as $key => $value) {
 			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
 				continue;
@@ -323,6 +309,18 @@ class ConfigController extends Controller {
 			$values['openproject_instance_url'] === null &&
 			$values['authorization_method'] === null
 		);
+
+		$runningOIDCReset = false;
+		if (key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			$oldOidcProvider = $this->config->getAppValue(
+				Application::APP_ID, 'oidc_provider', ''
+			);
+			$oldTargetedAudienceClient = $this->config->getAppValue(
+				Application::APP_ID, 'targeted_audience_client_id', ''
+			);
+			$runningOIDCReset = $oldOidcProvider && $oldTargetedAudienceClient;
+		}
 
 		// resetting and keeping the project folder setup should delete the user app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === false) {
@@ -399,6 +397,8 @@ class ConfigController extends Controller {
 			$this->config->setAppValue(Application::APP_ID, 'fresh_project_folder_setup', "0");
 		}
 
+		// admin can now switch between authorization method 'oidc' and 'oauth2'
+		// when switching between two method (back and forth) should delete configuration
 		if ($runningOauth2Reset) {
 			$this->resetConfigValuesForOauth2Reset();
 		}
@@ -649,17 +649,12 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function checkAdminConfigOk(): DataResponse {
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
-		} else {
-			$adminConfigStatusWithoutGroupFolderSetupStatus = OpenProjectAPIService::isAdminConfigOkForOauth2($this->config);
-		}
 		$appPasswordSetStatus = $this->openprojectAPIService->hasAppPassword();
 		// Admin config can be set in two parts
 		// 1. config without project folder set up (which is compulsory for integration)
 		// 2. config with project folder set up (which is optional for admin)
 		return new DataResponse([
-			'config_status_without_project_folder' => $adminConfigStatusWithoutGroupFolderSetupStatus,
+			'config_status_without_project_folder' => OpenProjectAPIService::isAdminConfigOk($this->config),
 			'project_folder_setup_status' => $appPasswordSetStatus
 		]);
 	}

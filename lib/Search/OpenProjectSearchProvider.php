@@ -115,6 +115,7 @@ class OpenProjectSearchProvider implements IProvider {
 			$user->getUID(),
 			Application::APP_ID, 'search_enabled',
 			$this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0')) === '1';
+
 		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
 			$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 			if ($accessToken === '' || !$searchEnabled) {

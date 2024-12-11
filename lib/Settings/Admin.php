@@ -86,14 +86,10 @@ class Admin implements ISettings {
 			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled()
 		];
 
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$adminConfigStatus = OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config);
-		} else {
-			$adminConfigStatus = OpenProjectAPIService::isAdminConfigOkForOauth2($this->config);
-		}
-
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
-		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
+		$this->initialStateService->provideInitialState(
+			'admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config)
+		);
 
 
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');

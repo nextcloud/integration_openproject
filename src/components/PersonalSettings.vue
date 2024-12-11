@@ -1,10 +1,10 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
-		<div v-if="state.authorization_method === authMethods.OIDC && !connectedViaOidc" class="demo-error-oidc">
+		<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
 			{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
 		</div>
-		<div v-if="connectedViaOauth2 || connectedViaOidc" class="openproject-prefs--connected">
+		<div v-if="connected" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
@@ -17,7 +17,7 @@
 			</NcButton>
 		</div>
 		<br>
-		<div v-if="connectedViaOauth2 || connectedViaOidc" class="openproject-prefs--form">
+		<div v-if="connected" class="openproject-prefs--form">
 			<CheckBox v-model="state.navigation_enabled"
 				input-id="openproject-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')">
@@ -38,7 +38,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-if="showOAuthConnectButton" :is-admin-config-ok="state.admin_oauth2_config_ok || state.admin_oidc_config_ok" />
+		<OAuthConnectButton v-if="showOAuthConnectButton" :is-admin-config-ok="state.admin_config_ok" />
 	</div>
 </template>
 
@@ -75,21 +75,19 @@ export default {
 		}
 	},
 	computed: {
-		connectedViaOauth2() {
-			if (!this.state.admin_oauth2_config_ok) return false
+		connected() {
+			if (!this.state.admin_config_ok) return false
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
 		},
-		connectedViaOidc() {
-			if (!this.state.admin_oidc_config_ok) return false
-			return this.state.token && this.state.token !== ''
-          && this.state.user_name && this.state.user_name !== ''
+		isNonOidcUserConnectedViaOidc() {
+			return !!(this.state.authorization_method === AUTH_METHOD.OIDC && this.state.admin_config_ok && !this.state.token)
 		},
 		showOAuthConnectButton() {
-			if (this.connectedViaOauth2 || this.connectedViaOidc) {
+			if (this.connected) {
 				return false
 			}
-			return !(this.state.admin_oidc_config_ok === true && this.state.authorization_method === this.authMethods.OIDC)
+			return !(this.state.admin_config_ok === true && this.state.authorization_method === this.authMethods.OIDC)
 		},
 	},
 	watch: {

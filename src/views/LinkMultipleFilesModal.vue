@@ -48,7 +48,7 @@
 					<h2>
 						{{ t('integration-openproject', 'Link to work package') }}
 					</h2>
-					<SearchInput v-if="(!!isAdminOauth2ConfigOk || !!isAdminOIDCConfigOk) && !!isStateOk"
+					<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 						:linked-work-packages="alreadyLinkedWorkPackage"
 						:file-info="fileInfos"
 						:search-origin="searchOrigin"
@@ -59,7 +59,7 @@
 						:state="state"
 						:auth-method="authMethod"
 						:is-multiple-workpackage-linking="true"
-						:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
+						:is-admin-config-ok="isAdminConfigOk" />
 				</div>
 			</div>
 		</NcModal>
@@ -106,8 +106,7 @@ export default {
 			state: STATE.LOADING,
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
-			isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
-			isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+			isAdminConfigOk: loadState('integration_openproject', 'admin_config_ok'),
 			authMethod: loadState('integration_openproject', 'authorization_method'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
@@ -175,7 +174,7 @@ export default {
 		},
 		async setFileInfos(fileInfos) {
 			this.fileInfos = fileInfos
-			if (this.isAdminOauth2ConfigOk || this.isAdminOIDCConfigOk) {
+			if (this.isAdminConfigOk) {
 				await this.fetchWorkpackagesForSingleFileSelected(this.fileInfos[0].id)
 			} else {
 				this.state = STATE.ERROR

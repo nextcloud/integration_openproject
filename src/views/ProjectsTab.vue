@@ -23,7 +23,7 @@
 <template>
 	<div class="projects"
 		:class="{'projects--empty': filterWorkpackagesByFileId.length === 0}">
-		<SearchInput v-if="(!!isAdminOauth2ConfigOk || !!isAdminOIDCConfigOk) && !!isStateOk"
+		<SearchInput v-if="!!isAdminConfigOk && !!isStateOk"
 			:file-info="fileInfo"
 			:linked-work-packages="filterWorkpackagesByFileId"
 			:search-origin="searchOrigin"
@@ -59,7 +59,7 @@
 			:state="state"
 			:file-info="fileInfo"
 			:auth-method="authMethod"
-			:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
+			:is-admin-config-ok="isAdminConfigOk" />
 	</div>
 </template>
 
@@ -97,8 +97,7 @@ export default {
 		workpackages: [],
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
-		isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
-		isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+		isAdminConfigOk: loadState('integration_openproject', 'admin_config_ok'),
 		authMethod: loadState('integration_openproject', 'authorization_method'),
 		color: null,
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
@@ -136,7 +135,7 @@ export default {
 			this.fileInfo = fileInfo
 			this.workpackages = []
 			this.state = STATE.LOADING
-			if (this.isAdminOauth2ConfigOk || this.isAdminOIDCConfigOk) {
+			if (this.isAdminConfigOk) {
 				// only fetch if we have a request url
 				await this.fetchWorkpackages(this.fileInfo.id)
 			} else {

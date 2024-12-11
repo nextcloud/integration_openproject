@@ -6,7 +6,7 @@
 		:loading="isLoading"
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
-			<div v-if="authMethod === authMethods.OIDC && connectedViaOidc === false" class="demo-error-oidc">
+			<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
 				{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
 			</div>
 			<div v-else>
@@ -15,7 +15,7 @@
 					:state="state"
 					:auth-method="authMethod"
 					:dashboard="true"
-					:is-admin-config-ok="isAdminOauth2ConfigOk || isAdminOIDCConfigOk" />
+					:is-admin-config-ok="isAdminConfigOk" />
 			</div>
 		</template>
 	</NcDashboardWidget>
@@ -52,8 +52,7 @@ export default {
 			state: STATE.LOADING,
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
-			isAdminOauth2ConfigOk: loadState('integration_openproject', 'admin_oauth2_config_ok'),
-			isAdminOIDCConfigOk: loadState('integration_openproject', 'admin_oidc_config_ok'),
+			isAdminConfigOk: loadState('integration_openproject', 'admin_config_ok'),
 			userHasOidcToken: loadState('integration_openproject', 'user-has-oidc-token'),
 			authMethod: loadState('integration_openproject', 'authorization_method'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
@@ -78,14 +77,8 @@ export default {
 		showMoreUrl() {
 			return this.openprojectUrl + '/notifications'
 		},
-		connectedViaOidc() {
-			if (!this.isAdminOIDCConfigOk) {
-				return false
-			}
-			if (!this.userHasOidcToken) {
-				return false
-			}
-			return true
+		isNonOidcUserConnectedViaOidc() {
+			return !!(this.authMethod === AUTH_METHOD.OIDC && this.isAdminConfigOk && !this.userHasOidcToken)
 		},
 		items() {
 			const notifications = []
@@ -105,7 +98,7 @@ export default {
 		},
 		emptyContentMessage() {
 			// for oidc connection currently we do not show any error to user
-			if (this.authMethod === this.authMethods.OIDC && this.connectedViaOidc === false) {
+			if (this.isNonOidcUserConnectedViaOidc === true) {
 				return
 			}
 			if (this.state === STATE.NO_TOKEN) {
@@ -153,11 +146,7 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (this.authMethod === this.authMethods.OIDC && !this.isAdminOIDCConfigOk) {
-				this.state = STATE.ERROR
-				return
-			}
-			if (this.authMethod === this.authMethods.OAUTH2 && !this.isAdminOauth2ConfigOk) {
+			if (!this.isAdminConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}
