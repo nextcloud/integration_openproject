@@ -86,18 +86,27 @@ class OpenProjectAPIController extends Controller {
 		$this->logger = $logger;
 	}
 
-	private function validatePreRequestConditions(): ?DataResponse {
+	private function validatePreRequestConditions(): array {
 		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+			return [
+				'status' => false,
+				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
+			];
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '')) !== null
+			$this->openprojectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient() === null
 		) {
-			return new DataResponse('', Http::STATUS_UNAUTHORIZED);
+			return [
+				'status' => false,
+				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
+			];
 		} elseif (!OpenProjectAPIService::validateURL($this->openprojectUrl)) {
-			return new DataResponse('', Http::STATUS_BAD_REQUEST);
+			return [
+				'status' => false,
+				'result' => new DataResponse('', Http::STATUS_BAD_REQUEST)
+			];
 		}
-		return null;
+		return ['status' => true, 'result' => null];
 	}
 
 	/**
@@ -139,9 +148,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getNotifications(): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		$result = $this->openprojectAPIService->getNotifications($this->userId);
 		if (!isset($result['error'])) {
@@ -172,9 +181,9 @@ class OpenProjectAPIController extends Controller {
 		?int $fileId = null,
 		bool $isSmartPicker = false
 	): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		// when the search is done through smart picker we don't want to check if the work package is linkable
 		$result = $this->openprojectAPIService->searchWorkPackage(
@@ -209,11 +218,10 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function linkWorkPackageToFile(array $values): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
-
 		try {
 			$result = $this->openprojectAPIService->linkWorkPackageToFile(
 				$values,
@@ -237,9 +245,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function markNotificationAsRead(int $workpackageId) {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->markAllNotificationsOfWorkPackageAsRead(
@@ -266,11 +274,10 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getWorkPackageFileLinks(int $id): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
-
 		try {
 			$result = $this->openprojectAPIService->getWorkPackageFileLinks(
 				$id,
@@ -292,9 +299,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteFileLink(int $id): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->deleteFileLink(
@@ -321,11 +328,10 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
-
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageStatus(
 			$this->userId, $id
 		);
@@ -347,11 +353,10 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
-
 		$result = $this->openprojectAPIService->getOpenProjectWorkPackageType(
 			$this->userId, $id
 		);
@@ -369,9 +374,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->getAvailableOpenProjectProjects($this->userId, $searchQuery);
@@ -420,9 +425,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->getOpenProjectWorkPackageForm($this->userId, $projectId, $body);
@@ -441,9 +446,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->getAvailableAssigneesOfAProject($this->userId, $projectId);
@@ -489,9 +494,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function createWorkPackage(array $body): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		// we don't want to check if all the data in the body is set or not because
 		// that calculation will be done by the openproject api itself
@@ -517,9 +522,9 @@ class OpenProjectAPIController extends Controller {
 	 * @return DataResponse
 	 */
 	public function getOpenProjectConfiguration(): DataResponse {
-		$validatePreRequestResponse = $this->validatePreRequestConditions();
-		if ($validatePreRequestResponse !== null) {
-			return $validatePreRequestResponse;
+		$validatePreRequestResult = $this->validatePreRequestConditions();
+		if (!$validatePreRequestResult['status']) {
+			return $validatePreRequestResult['result'];
 		}
 		try {
 			$result = $this->openprojectAPIService->getOpenProjectConfiguration($this->userId);

@@ -111,7 +111,7 @@
 					<NcButton v-if="isAuthorizationFormInEditMode"
 						data-test-id="submit-oidc-auth-values-btn"
 						type="primary"
-						:disabled="isAuthorizationMethodAlreadySelected"
+						:disabled="isAuthorizationMethodSelected"
 						@click="selectAuthorizationMethod">
 						<template #icon>
 							<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
@@ -132,11 +132,11 @@
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
-					title="OIDC Provider"
+					:title="t('integration_openproject', 'OIDC Provider')"
 					:value="authorizationSetting.oidcProviderSet" />
 				<div v-else class="authorization-settings--content--provider">
 					<p class="authorization-settings--content--label">
-						OIDC provider *
+						{{ t('integration_openproject', 'OIDC provider *') }}
 					</p>
 					<div id="select">
 						<NcSelect
@@ -149,7 +149,7 @@
 							:clear-search-on-blur="() => false"
 							:append-to-body="false"
 							:label-outside="true"
-							input-label="OIDC Provider"
+							:input-label="t('integration_openproject', 'OIDC provider')"
 							@option:selected="onSelectOIDCProvider" />
 					</div>
 					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
@@ -157,7 +157,7 @@
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
-					title="OpenProject client ID"
+					:title="t('integration_openproject', 'OpenProject client ID')"
 					:value="state.authorization_settings.targeted_audience_client_id" />
 				<div v-else class="authorization-settings--content--client">
 					<TextInput
@@ -187,7 +187,7 @@
 				<NcButton v-if="isAuthorizationSettingInEditMode"
 					data-test-id="submit-oidc-auth-values-btn"
 					type="primary"
-					:disabled="isAuthorizationSettingsAlreadySelected"
+					:disabled="isAuthorizationSettingsSelected"
 					@click="saveOIDCAuthSetting">
 					<template #icon>
 						<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
@@ -811,10 +811,10 @@ export default {
 				? this.authMethodsLabel.OIDC
 				: this.authMethodsLabel.OAUTH2
 		},
-		isAuthorizationMethodAlreadySelected() {
+		isAuthorizationMethodSelected() {
 			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
-		isAuthorizationSettingsAlreadySelected() {
+		isAuthorizationSettingsSelected() {
 			const { oidcProviderSet, currentOIDCProviderSelected } = this.authorizationSetting
 			return currentOIDCProviderSelected === null
 				|| !this.getCurrentSelectedTargetedClientId

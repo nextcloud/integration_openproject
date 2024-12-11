@@ -321,8 +321,7 @@ class OpenProjectAPIService {
 		string $nextcloudUserId
 	): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
 		} else {
 			$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
 		}
@@ -449,8 +448,7 @@ class OpenProjectAPIService {
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
 		} else {
 			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
@@ -1385,8 +1383,7 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
 		} else {
 			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		}
@@ -1611,14 +1608,14 @@ class OpenProjectAPIService {
 
 
 	/**
-	 * @param string $targetedAudienceClientId
 	 * @return string|null
 	 */
-	public function getOIDCBasedTokenForTheTargetedAudienceClient(string $targetedAudienceClientId): ?string {
+	public function getOIDCBasedTokenForTheTargetedAudienceClient(): ?string {
 		if (!self::isUserOIDCAppInstalledAndEnabled()) {
 			$this->logger->debug('The user_oidc app is not installed/available');
 			return null;
 		}
+		$targetedAudienceClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 		$event = new ExchangedTokenRequestedEvent($targetedAudienceClientId);
 		try {
 			/** @psalm-suppress InvalidArgument for dispatchTyped($event) but new ExchangedTokenRequestedEvent($targetedAudienceClientId) returns event */

@@ -37,8 +37,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 		// When user is non oidc based or there is some error when getting token for the targeted client
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
-		$targetedAudForOidcAuth = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
-		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient($targetedAudForOidcAuth);
+		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient();
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC && $token === null) {
 			return;
 		}
