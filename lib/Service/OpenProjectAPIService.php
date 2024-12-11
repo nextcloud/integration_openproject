@@ -938,8 +938,7 @@ class OpenProjectAPIService {
 		$clientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$clientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
-		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($authMethod) && !!($oauthInstanceUrl);
+		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($oauthInstanceUrl);
 		if (!$checkIfConfigIsSet) {
 			return false;
 		} else {
@@ -955,16 +954,25 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
-		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$checkIfConfigIsSet = !!($authMethod) && !!($oidcProvider) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
+		$checkIfConfigIsSet = !!($oidcProvider) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
 		if (!$checkIfConfigIsSet) {
 			return false;
 		} else {
 			return self::validateURL($oauthInstanceUrl);
 		}
+	}
+
+	public static function isAdminConfigOk(IConfig $config): bool {
+		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		if ($authMethod === self::AUTH_METHOD_OAUTH) {
+			return self::isAdminConfigOkForOauth2($config);
+		} elseif ($authMethod === self::AUTH_METHOD_OIDC) {
+			return self::isAdminConfigOkForOIDCAuth($config);
+		}
+		return false;
 	}
 
 	/**

@@ -267,12 +267,19 @@ class ConfigController extends Controller {
 			Application::APP_ID, 'openproject_client_secret', ''
 		);
 
-		$oldOidcProvider = $this->config->getAppValue(
-			Application::APP_ID, 'oidc_provider', ''
-		);
-		$oldTargetedAudienceClient = $this->config->getAppValue(
-			Application::APP_ID, 'targeted_audience_client_id', ''
-		);
+		$runningOIDCReset = false;
+		if (key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			$oldOidcProvider = $this->config->getAppValue(
+				Application::APP_ID, 'oidc_provider', ''
+			);
+			$oldTargetedAudienceClient = $this->config->getAppValue(
+				Application::APP_ID, 'targeted_audience_client_id', ''
+			);
+
+			$runningOIDCReset = $oldOidcProvider && $oldTargetedAudienceClient;
+		}
+
 
 		foreach ($values as $key => $value) {
 			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
@@ -308,13 +315,6 @@ class ConfigController extends Controller {
 			$oldOpenProjectOauthUrl &&
 			$oldClientId &&
 			$oldClientSecret
-		);
-
-		$runningOIDCReset = (
-			key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH &&
-			$oldOidcProvider &&
-			$oldTargetedAudienceClient
 		);
 
 		$runningFullReset = (
@@ -413,9 +413,7 @@ class ConfigController extends Controller {
 		$oPOAuthTokenRevokeStatus = $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '');
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		return [
-			"status" => $this->config->getAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus', '') === OpenProjectAPIService::AUTH_METHOD_OIDC ?
-				OpenProjectAPIService::isAdminConfigOkForOIDCAuth($this->config) :
-				OpenProjectAPIService::isAdminConfigOkForOauth2($this->config),
+			"status" => OpenProjectAPIService::isAdminConfigOk($this->config),
 			"oPOAuthTokenRevokeStatus" => $oPOAuthTokenRevokeStatus,
 			"oPUserAppPassword" => $appPassword,
 		];
