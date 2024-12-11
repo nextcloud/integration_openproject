@@ -119,10 +119,14 @@ class WorkPackageReferenceProvider extends ADiscoverableReferenceProvider {
 		return $this->getWorkPackageIdFromUrl($referenceText) !== null;
 	}
 
+	public function getIsAdminConfigOk(): bool {
+		return OpenProjectAPIService::isAdminConfigOk($this->config);
+	}
+
 	/**
 	 */
 	public function resolveReference(string $referenceText): ?IReference {
-		if ($this->matchReference($referenceText) && OpenProjectAPIService::isAdminConfigOk($this->config) ) {
+		if ($this->matchReference($referenceText) && $this->getIsAdminConfigOk() ) {
 			$wpId = $this->getWorkPackageIdFromUrl($referenceText);
 			if ($wpId !== null) {
 				$wpInfo = $this->openProjectAPIService->getWorkPackageInfo($this->userId, $wpId);
