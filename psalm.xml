@@ -31,6 +31,10 @@
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
 				<referencedClass name="OCA\TermsOfService\Db\Entities\Signatory" />
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\TermsMapper" />
+				<!-- these classes belong to the user_oidc app, which isn't compulsory, so might not exist while running psalm -->
+				<referencedClass name="OCA\UserOIDC\Db\ProviderMapper" />
+				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\Exception\TokenExchangeFailedException" />
 				<!-- these classes belong to the activity app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\Activity\UserSettings" />
 				<referencedClass name="OCA\Activity\GroupHelperDisabled" />

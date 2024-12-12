@@ -704,21 +704,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->defaultConfigMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
 
 				// for second request after invalid token reply
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				$this->pactMockServerConfig->getBaseUri()->__toString(),
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 
 				// for second request after invalid token reply
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				$this->pactMockServerConfig->getBaseUri()->__toString()
@@ -1589,12 +1595,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_instance_url'],
-			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, 'clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
 
 		$url = $this->createMock(IURLGenerator::class);
 		$url->expects($this->once())
@@ -1651,10 +1658,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url']
-			)->willReturnOnConsecutiveCalls($clientId, $clientSecret, $oauthInstanceUrl);
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, $clientId, $clientSecret, $oauthInstanceUrl);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('OpenProject admin config is not valid!');
@@ -2075,11 +2083,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				'http://openproject.org',
@@ -2146,11 +2156,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				'http://openproject.org',
@@ -3090,7 +3102,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
-		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
+		$this->assertSame($expected, $this->service::isAdminConfigOkForOauth2($configMock));
 	}
 
 	/**
