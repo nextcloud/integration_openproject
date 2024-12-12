@@ -75,7 +75,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
-			)->willReturnOnConsecutiveCalls('http://openproject.org');
+			)->willReturnOnConsecutiveCalls('https://openproject.org');
 	}
 
 	/**
@@ -123,6 +123,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetNotificationsNoAccessToken() {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -194,6 +203,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectAvatar() {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -309,6 +327,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetSearchedWorkPackagesNoAccessToken(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -412,6 +439,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageStatusErrorResponse(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -514,6 +550,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -533,6 +578,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeNoAccessToken(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -626,6 +680,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksErrorResponse(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -722,6 +785,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteFileLinkErrorResponse(): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
@@ -1043,6 +1115,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
@@ -1050,6 +1123,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls(
 				'http://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'myClientID',
 				'myClientSecret',
 				'http://openproject.org',
@@ -1187,6 +1261,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileErrorResponse() {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$this->configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH);
 		$this->getUserValueMock('');
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
