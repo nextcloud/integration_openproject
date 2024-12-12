@@ -134,10 +134,10 @@ class ConfigController extends Controller {
 		if ($userId === null) {
 			$userId = $this->userId;
 		}
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'token');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
 	}
 

@@ -588,76 +588,76 @@ class ConfigControllerTest extends TestCase {
 				true,
 				'change'
 			],
-			//			[ // only client id changes so delete user values but don't change the oAuth Client
-			//				[
-			//					'openproject_client_id' => 'old-openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://openproject.com',
-			//				],
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://openproject.com',
-			//				],
-			//				true,
-			//				false
-			//			],
-			//			[ // only client secret changes so delete user values but don't change the oAuth Client
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'old-openproject_client_secret',
-			//					'openproject_instance_url' => 'http://openproject.com',
-			//				],
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://openproject.com',
-			//				],
-			//				true,
-			//				false
-			//			],
-			//			[ //only the openproject_instance_url changes so don't delete the user values but change the oAuth Client
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://old-openproject.com',
-			//				],
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://openproject.com',
-			//				],
-			//				false,
-			//				'change'
-			//			],
-			//			[ //everything cleared
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://old-openproject.com',
-			//				],
-			//				[
-			//					'openproject_client_id' => null,
-			//					'openproject_client_secret' => null,
-			//					'openproject_instance_url' => null,
-			//				],
-			//				true,
-			//				'delete'
-			//			],
-			//			[ //everything cleared with empty strings
-			//				[
-			//					'openproject_client_id' => 'openproject_client_id',
-			//					'openproject_client_secret' => 'openproject_client_secret',
-			//					'openproject_instance_url' => 'http://old-openproject.com',
-			//				],
-			//				[
-			//					'openproject_client_id' => '',
-			//					'openproject_client_secret' => '',
-			//					'openproject_instance_url' => '',
-			//				],
-			//				true,
-			//				'delete'
-			//			],
+			[ // only client id changes so delete user values but don't change the oAuth Client
+				[
+					'openproject_client_id' => 'old-openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				true,
+				false
+			],
+			[ // only client secret changes so delete user values but don't change the oAuth Client
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'old-openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				true,
+				false
+			],
+			[ //only the openproject_instance_url changes so don't delete the user values but change the oAuth Client
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				false,
+				'change'
+			],
+			[ //everything cleared
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'openproject_client_id' => null,
+					'openproject_client_secret' => null,
+					'openproject_instance_url' => null,
+				],
+				true,
+				'delete'
+			],
+			[ //everything cleared with empty strings
+				[
+					'openproject_client_id' => 'openproject_client_id',
+					'openproject_client_secret' => 'openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'openproject_client_id' => '',
+					'openproject_client_secret' => '',
+					'openproject_instance_url' => '',
+				],
+				true,
+				'delete'
+			],
 		];
 	}
 
@@ -925,6 +925,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
@@ -937,6 +938,7 @@ class ConfigControllerTest extends TestCase {
 					'',
 					'',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$newConfig['openproject_client_id'],
 					$newConfig['openproject_client_secret'],
 					$newConfig['openproject_instance_url'],
@@ -951,6 +953,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
@@ -962,6 +965,7 @@ class ConfigControllerTest extends TestCase {
 					'',
 					'',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$newConfig['openproject_client_id'],
 					$newConfig['openproject_client_secret'],
 					$newConfig['openproject_instance_url'],
@@ -1101,6 +1105,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
@@ -1111,6 +1116,7 @@ class ConfigControllerTest extends TestCase {
 				$oldAdminConfig['openproject_client_secret'],
 				'',
 				$errorCode,
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$newAdminConfig['openproject_client_id'],
 				$newAdminConfig['openproject_client_secret'],
 				$newAdminConfig['openproject_instance_url'],
@@ -1290,6 +1296,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'openproject_client_id', ''],
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url']
@@ -1299,6 +1306,7 @@ class ConfigControllerTest extends TestCase {
 				'some_cilent_id',
 				'some_cilent_secret',
 				'',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'some_cilent_id',
 				'some_cilent_secret',
 				'http://localhost:3000'
