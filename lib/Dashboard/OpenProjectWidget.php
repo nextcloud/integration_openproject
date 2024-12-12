@@ -137,7 +137,7 @@ class OpenProjectWidget implements IWidget {
 
 		// authorization method can be either a 'oidc' or 'oauth2'
 		// for 'oidc' state to be loaded
-		$token = $this->openProjectAPIService->getOIDCBasedTokenForTheTargetedAudienceClient();
+		$token = $this->openProjectAPIService->getOIDCToken();
 		$this->initialStateService->provideInitialState('user-has-oidc-token', $token !== null);
 
 		// for 'oauth2' state to be loaded

@@ -68,7 +68,9 @@ class Admin implements ISettings {
 			'authorization_method' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', ''),
 			'authorization_settings' => [
 				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
-				'targeted_audience_client_id' => $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', ''),
+				'targeted_audience_client_id' => $this->config->getAppValue(
+					Application::APP_ID, 'targeted_audience_client_id', ''
+				),
 			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',

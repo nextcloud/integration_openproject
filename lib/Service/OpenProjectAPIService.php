@@ -321,7 +321,7 @@ class OpenProjectAPIService {
 		string $nextcloudUserId
 	): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
+			$accessToken = $this->getOIDCToken();
 		} else {
 			$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
 		}
@@ -448,7 +448,7 @@ class OpenProjectAPIService {
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
+			$accessToken = $this->getOIDCToken();
 		} else {
 			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
@@ -1389,7 +1389,7 @@ class OpenProjectAPIService {
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCBasedTokenForTheTargetedAudienceClient();
+			$accessToken = $this->getOIDCToken();
 		} else {
 			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		}
@@ -1616,8 +1616,8 @@ class OpenProjectAPIService {
 	/**
 	 * @return string|null
 	 */
-	public function getOIDCBasedTokenForTheTargetedAudienceClient(): ?string {
-		if (!self::isUserOIDCAppInstalledAndEnabled()) {
+	public function getOIDCToken(): ?string {
+		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
 			$this->logger->debug('The user_oidc app is not installed/available');
 			return null;
 		}
@@ -1659,7 +1659,7 @@ class OpenProjectAPIService {
 
 	public function getRegisteredOidcProviders(): array {
 		$oidcProviders = [];
-		if (self::isUserOIDCAppInstalledAndEnabled()) {
+		if ($this->isUserOIDCAppInstalledAndEnabled()) {
 			$providerMapper = new ProviderMapper($this->db);
 			foreach ($providerMapper->getProviders() as $provider) {
 				$oidcProviders[] = $provider->getIdentifier();
