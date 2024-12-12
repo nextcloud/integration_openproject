@@ -1,0 +1,59 @@
+services:
+  openproject:
+    environment:
+      OPENPROJECT_OPENID__CONNECT_KEYCLOAK_DISPLAY__NAME: Keycloak
+      # uncomment these to integrate keycloak with OpenProject
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_HOST: keycloak.local
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_IDENTIFIER: https://openproject.local
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_SECRET: <The client secret you copied from keycloak>
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://keycloak.local/realms/<REALM>
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_AUTHORIZATION__ENDPOINT: /realms/<REALM>/protocol/openid-connect/auth
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_TOKEN__ENDPOINT: /realms/<REALM>/protocol/openid-connect/token
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_USERINFO__ENDPOINT: /realms/<REALM>/protocol/openid-connect/userinfo
+      # OPENPROJECT_OPENID__CONNECT_KEYCLOAK_END__SESSION__ENDPOINT: https://keycloak.local/realms/<REALM>/protocol/openid-connect/logout
+
+  keycloak-db:
+    image: postgres:13
+    restart: always
+    networks:
+      - nc-op
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1
+    restart: always
+    command:
+      [
+        'start-dev',
+        '--proxy edge',
+        '--spi-connections-http-client-default-disable-trust-manager=true',
+      ]
+    environment:
+      KC_DB: postgres
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_DB_URL: jdbc:postgresql://db-keycloak:5432/keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB_SCHEMA: public
+      KC_HOSTNAME: keycloak.local
+      KC_FEATURES: preview
+      KC_TRANSACTION_XA_ENABLED: false
+    networks:
+      - nc-op
+    volumes:
+      - step:/step:ro
+      - keycloakdata:/opt/keycloak/data/
+    labels:
+      traefik.enable: true
+      traefik.http.routers.keycloak.rule: Host(`keycloak.local`)
+      traefik.http.routers.keycloak.entrypoints: websecure
+    depends_on:
+      - keycloak-db
+      - traefik
+
+volumes:
+  keycloakdata:
