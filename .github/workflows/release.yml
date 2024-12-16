@@ -83,7 +83,7 @@ jobs:
           name: ${{ steps.tag.outputs.currenttag }}
           files: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
           draft: false
-          prerelease: false
+          prerelease: ${{ endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
 
       - name: Publish to appstore
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
