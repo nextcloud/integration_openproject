@@ -3,7 +3,7 @@
 import axios from '@nextcloud/axios'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import { F_MODES } from '../../../src/utils.js'
+import { F_MODES, AUTH_METHOD } from '../../../src/utils.js'
 import * as dialogs from '@nextcloud/dialogs'
 
 jest.mock('@nextcloud/axios', () => {
@@ -97,6 +97,7 @@ const selectors = {
 
 const completeIntegrationState = {
 	openproject_instance_url: 'http://openproject.com',
+	authorization_method: AUTH_METHOD.OAUTH2,
 	openproject_client_id: 'some-client-id-for-op',
 	openproject_client_secret: 'some-client-secret-for-op',
 	nc_oauth_client: {
@@ -117,6 +118,7 @@ describe('AdminSettings.vue', () => {
 				'with empty state',
 				{
 					openproject_instance_url: null,
+					authorization_method: null,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: null,
@@ -140,6 +142,7 @@ describe('AdminSettings.vue', () => {
 				'with incomplete OpenProject OAuth values',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: null,
@@ -163,6 +166,7 @@ describe('AdminSettings.vue', () => {
 				'with complete OpenProject OAuth values',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'abcd',
 					openproject_client_secret: 'abcdefgh',
 					nc_oauth_client: null,
@@ -187,6 +191,7 @@ describe('AdminSettings.vue', () => {
 				'with everything but empty OpenProject OAuth values',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: {
@@ -213,6 +218,7 @@ describe('AdminSettings.vue', () => {
 				'with a complete admin settings',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'client-id-here',
 					openproject_client_secret: 'client-id-here',
 					nc_oauth_client: {
@@ -257,6 +263,7 @@ describe('AdminSettings.vue', () => {
 				'with all empty state',
 				{
 					openproject_instance_url: null,
+					authorization_method: null,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: null,
@@ -266,6 +273,7 @@ describe('AdminSettings.vue', () => {
 				'with incomplete OpenProject OAuth and NC OAuth values',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 					nc_oauth_client: null,
@@ -275,6 +283,7 @@ describe('AdminSettings.vue', () => {
 				'with incomplete NC OAuth values',
 				{
 					openproject_instance_url: 'https://openproject.example.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'client-id-here',
 					openproject_client_secret: 'client-secret-here',
 					nc_oauth_client: null,
@@ -468,6 +477,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: '',
+							authorization_method: null,
 							openproject_client_id: null,
 							openproject_client_secret: null,
 							nc_oauth_client: null,
@@ -476,7 +486,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
 					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
-					expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.DISABLE)
+					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.DISABLE)
 
 					serverHostForm = wrapper.find(selectors.serverHostForm)
 					await serverHostForm.find('input').setValue('http://openproject.com')
@@ -492,7 +502,7 @@ describe('AdminSettings.vue', () => {
 					expect(wrapper.vm.isFormCompleted.server).toBe(true)
 					expect(setAdminConfigAPISpy).toBeCalledTimes(1)
 					// should set the OpenProject OAuth Values form to edit mode
-					expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
+					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.EDIT)
 				})
 			})
 			describe('disabled state', () => {
@@ -556,6 +566,7 @@ describe('AdminSettings.vue', () => {
 				wrapper = getMountedWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'openproject-client-id',
 						openproject_client_secret: 'openproject-client-secret',
 						nc_oauth_client: null,
@@ -616,6 +627,7 @@ describe('AdminSettings.vue', () => {
 				wrapper = getMountedWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: '',
 						openproject_client_secret: '',
 						nc_oauth_client: null,
@@ -669,6 +681,7 @@ describe('AdminSettings.vue', () => {
 							const wrapper = getMountedWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
 									openproject_client_id: '',
 									openproject_client_secret: '',
 									nc_oauth_client: {
@@ -689,6 +702,7 @@ describe('AdminSettings.vue', () => {
 							const wrapper = getMountedWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
 									openproject_client_id: '',
 									openproject_client_secret: '',
 									nc_oauth_client: {
@@ -727,6 +741,7 @@ describe('AdminSettings.vue', () => {
 				const wrapper = getWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'some-client-id-here',
 						openproject_client_secret: 'some-client-secret-here',
 						nc_oauth_client: {
@@ -789,6 +804,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'op-client-id',
 							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
@@ -813,6 +829,7 @@ describe('AdminSettings.vue', () => {
 				const wrapper = getMountedWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'op-client-id',
 						openproject_client_secret: 'op-client-secret',
 						nc_oauth_client: null,
@@ -837,6 +854,7 @@ describe('AdminSettings.vue', () => {
 				const wrapper = getWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'op-client-id',
 						openproject_client_secret: 'op-client-secret',
 						nc_oauth_client: {
@@ -857,6 +875,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'some-client-id-for-op',
 							openproject_client_secret: 'some-client-secret-for-op',
 							nc_oauth_client: {
@@ -887,6 +906,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'some-client-id-here',
 							openproject_client_secret: 'some-client-secret-here',
 							nc_oauth_client: {
@@ -920,6 +940,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'some-client-id-here',
 							openproject_client_secret: 'some-client-secret-here',
 							nc_oauth_client: {
@@ -948,6 +969,7 @@ describe('AdminSettings.vue', () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'some-client-id-here',
 							openproject_client_secret: 'some-client-secret-here',
 							nc_oauth_client: {
@@ -990,6 +1012,7 @@ describe('AdminSettings.vue', () => {
 						wrapper = getMountedWrapper({
 							state: {
 								openproject_instance_url: 'http://openproject.com',
+								authorization_method: AUTH_METHOD.OAUTH2,
 								openproject_client_id: 'some-client-id-here',
 								openproject_client_secret: 'some-client-secret-here',
 								default_enable_unified_search: false,
@@ -1088,6 +1111,7 @@ describe('AdminSettings.vue', () => {
 							const wrapper = getMountedWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
 									openproject_client_id: 'some-client-id-here',
 									openproject_client_secret: 'some-client-secret-here',
 									default_enable_unified_search: false,
@@ -1160,6 +1184,7 @@ describe('AdminSettings.vue', () => {
 							wrapper = getMountedWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
 									openproject_client_id: 'some-client-id-here',
 									openproject_client_secret: 'some-client-secret-here',
 									nc_oauth_client: {
@@ -1239,6 +1264,7 @@ describe('AdminSettings.vue', () => {
 						wrapper = getMountedWrapper({
 							state: {
 								openproject_instance_url: 'http://openproject.com',
+								authorization_method: AUTH_METHOD.OAUTH2,
 								openproject_client_id: 'some-client-id-here',
 								openproject_client_secret: 'some-client-secret-here',
 								nc_oauth_client: {
@@ -1314,6 +1340,7 @@ describe('AdminSettings.vue', () => {
 					wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'some-client-id-here',
 							openproject_client_secret: 'some-client-secret-here',
 							nc_oauth_client: {
@@ -1371,6 +1398,7 @@ describe('AdminSettings.vue', () => {
 						wrapper = getMountedWrapper({
 							state: {
 								openproject_instance_url: 'http://openproject.com',
+								authorization_method: AUTH_METHOD.OAUTH2,
 								openproject_client_id: 'some-client-id-here',
 								openproject_client_secret: 'some-client-secret-here',
 								nc_oauth_client: {
@@ -1426,6 +1454,7 @@ describe('AdminSettings.vue', () => {
 						const wrapper = getMountedWrapper({
 							state: {
 								openproject_instance_url: null,
+								authorization_method: null,
 								openproject_client_id: null,
 								openproject_client_secret: null,
 								nc_oauth_client: null,
@@ -1452,6 +1481,7 @@ describe('AdminSettings.vue', () => {
 			wrapper = getMountedWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'some-client-id-here',
 					openproject_client_secret: 'some-client-secret-here',
 					nc_oauth_client: {
@@ -1538,6 +1568,7 @@ describe('AdminSettings.vue', () => {
 			const wrapper = getMountedWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'some-client-id-here',
 					openproject_client_secret: 'some-client-secret-here',
 					default_enable_unified_search: false,
@@ -1602,6 +1633,7 @@ describe('AdminSettings.vue', () => {
 			const wrapper = getMountedWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'some-client-id-here',
 					openproject_client_secret: 'some-client-secret-here',
 					default_enable_unified_search: false,
@@ -1634,6 +1666,7 @@ describe('AdminSettings.vue', () => {
 				wrapper = getMountedWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'some-client-id-for-op',
 						openproject_client_secret: 'some-client-secret-for-op',
 						nc_oauth_client: {
@@ -1683,10 +1716,11 @@ describe('AdminSettings.vue', () => {
 							openproject_client_id: null,
 							openproject_client_secret: null,
 							openproject_instance_url: null,
+							authorization_method: null,
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
-							setup_app_password: false,
 							setup_project_folder: false,
+							setup_app_password: false,
 						},
 					},
 				)
@@ -1697,6 +1731,7 @@ describe('AdminSettings.vue', () => {
 				wrapper = getMountedWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: 'some-client-id-for-op',
 						openproject_client_secret: 'some-client-secret-for-op',
 						nc_oauth_client: {
@@ -1719,6 +1754,7 @@ describe('AdminSettings.vue', () => {
 							openproject_client_id: null,
 							openproject_client_secret: null,
 							openproject_instance_url: null,
+							authorization_method: null,
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
 							setup_project_folder: false,
@@ -1743,31 +1779,37 @@ describe('AdminSettings.vue', () => {
 		it.each([
 			{
 				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
 				openproject_client_id: 'some-client-id-for-op',
 				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
 				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
 				openproject_client_id: null,
 				openproject_client_secret: null,
 			},
 			{
 				openproject_instance_url: null,
+				authorization_method: null,
 				openproject_client_id: 'some-client-id-for-op',
 				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
 				openproject_instance_url: null,
+				authorization_method: null,
 				openproject_client_id: null,
 				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
 				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
 				openproject_client_id: null,
 				openproject_client_secret: 'some-client-secret-for-op',
 			},
 			{
 				openproject_instance_url: null,
+				authorization_method: null,
 				openproject_client_id: 'some-client-id-for-op',
 				openproject_client_secret: null,
 			},
@@ -1783,6 +1825,7 @@ describe('AdminSettings.vue', () => {
 			const wrapper = getMountedWrapper({
 				state: {
 					openproject_instance_url: null,
+					authorization_method: null,
 					openproject_client_id: null,
 					openproject_client_secret: null,
 				},
@@ -1803,6 +1846,7 @@ describe('AdminSettings.vue', () => {
 			const wrapper = getMountedWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
+					authorization_method: AUTH_METHOD.OAUTH2,
 					openproject_client_id: 'some-client-id-for-op',
 					openproject_client_secret: 'some-client-secret-for-op',
 					nc_oauth_client: null,

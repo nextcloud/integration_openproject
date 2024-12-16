@@ -858,7 +858,7 @@ export default {
 				if (this.state.openproject_instance_url && this.state.openproject_client_id && this.state.openproject_client_secret && this.state.nc_oauth_client) {
 					this.showDefaultManagedProjectFolders = true
 				}
-				if (this.state.openproject_instance_url && this.state.authorization_settings.oidc_provider && this.state.authorization_settings.targeted_audience_client_id) {
+				if (this.state.authorization_method === AUTH_METHOD.OIDC && this.state.openproject_instance_url && this.state.authorization_settings.oidc_provider && this.state.authorization_settings.targeted_audience_client_id) {
 					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.state.fresh_project_folder_setup === false) {
@@ -873,7 +873,7 @@ export default {
 					this.isFormCompleted.authorizationMethod = true
 					this.authorizationMethod.authorizationMethodSet = this.authorizationMethod.currentAuthorizationMethodSelected = this.state.authorization_method
 				}
-				if (this.state.authorization_settings.oidc_provider !== '' && this.state.authorization_settings.targeted_audience_client_id !== '') {
+				if (this.state.authorization_method === AUTH_METHOD.OIDC && this.state.authorization_settings.oidc_provider !== '' && this.state.authorization_settings.targeted_audience_client_id !== '') {
 					this.formMode.authorizationSetting = F_MODES.VIEW
 					this.isFormCompleted.authorizationSetting = true
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
@@ -889,11 +889,20 @@ export default {
 					}
 				}
 				if (this.state.openproject_instance_url && this.state.authorization_method) {
-					if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
+					if (!this.state.openproject_client_id && !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
-					if (!this.state.authorization_settings.oidc_provider || !this.state.authorization_settings.targeted_audience_client_id) {
-						this.formMode.authorizationSetting = F_MODES.EDIT
+				}
+				if (this.state.openproject_instance_url && this.state.authorization_method) {
+					if (this.state.authorization_method === AUTH_METHOD.OAUTH2) {
+						if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
+							this.formMode.authorizationSetting = F_MODES.EDIT
+						}
+					}
+					if (this.state.authorization_method === AUTH_METHOD.OIDC) {
+						if (!this.state.authorization_settings.oidc_provider || !this.state.authorization_settings.targeted_audience_client_id) {
+							this.formMode.authorizationSetting = F_MODES.EDIT
+						}
 					}
 				}
 				if (this.state.nc_oauth_client) {
@@ -1175,13 +1184,14 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						await this.resetAllAppValues()
+						const authMethod = this.authorizationMethod.authorizationMethodSet
+						await this.resetAllAppValues(authMethod)
 					}
 				},
 				true,
 			)
 		},
-		async resetAllAppValues() {
+		async resetAllAppValues(authMethod) {
 			// to avoid general console errors, we need to set the form to
 			// editor mode so that we can update the form fields with null values
 			// also, form completeness should be set to false
@@ -1189,15 +1199,17 @@ export default {
 			this.isFormCompleted.opOauth = false
 			this.formMode.server = F_MODES.EDIT
 			this.isFormCompleted.server = false
-			this.state.openproject_client_id = null
-			this.state.openproject_client_secret = null
 			this.state.default_enable_navigation = false
-			this.state.openproject_instance_url = null
-			this.authorizationMethod.authorizationMethodSet = null
-			this.authorizationSetting.currentOIDCProviderSelected = null
-			this.state.authorization_settings.targeted_audience_client_id = null
 			this.state.default_enable_unified_search = false
 			this.oPUserAppPassword = null
+			this.authorizationMethod.authorizationMethodSet = null
+			this.state.openproject_client_id = null
+			this.state.openproject_client_secret = null
+			this.state.openproject_instance_url = null
+			if (authMethod === AUTH_METHOD.OIDC) {
+				this.state.authorization_settings.targeted_audience_client_id = null
+				this.authorizationSetting.currentOIDCProviderSelected = null
+			}
 			await this.saveOPOptions()
 			window.location.reload()
 		},
@@ -1301,15 +1313,23 @@ export default {
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
-			if (this.state.openproject_instance_url === null && this.state.openproject_client_secret === null && this.state.openproject_client_id === null) {
-				// doing whole reset
+			if (this.state.openproject_instance_url === null && this.authorizationMethod.authorizationMethodSet === null) {
+				// by default it will be an oauth2 reset
 				values = {
 					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
-					oidc_provider: this.getCurrentSelectedOIDCProvider,
-					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 					setup_project_folder: false,
 					setup_app_password: false,
+				}
+				if (this.authorizationMethod.authorizationMethodSet === AUTH_METHOD.OIDC
+					&& this.state.authorization_settings.oidc_provider === null
+					&& this.state.authorization_settings.targeted_audience_client_id === null) {
+					// when reset is oidc
+					values = {
+						...values,
+						oidc_provider: this.getCurrentSelectedOIDCProvider,
+						targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+					}
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
