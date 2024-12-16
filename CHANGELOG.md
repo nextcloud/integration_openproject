@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Add application's support for Nextcloud 31
 
+## 2.7.2 - 2024-12-16
+### Fixed
+- Fixed fatal error related to groupfolders [#736](https://github.com/nextcloud/integration_openproject/pull/736)
+- UI/UX improvement: consistent element sizes in Create Wrokpackage Modal [#743](https://github.com/nextcloud/integration_openproject/pull/743)
+- UI/UX improvement: accomodate long subject of a workpackage [#744](https://github.com/nextcloud/integration_openproject/pull/744)
+
 ## 2.7.1 - 2024-10-31
 ### Changed
 - Make error handling better in `integration_setup.sh` file for integration configuration setup.
