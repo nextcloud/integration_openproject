@@ -473,10 +473,11 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function setAdminConfigStatusDataProvider() {
+	public function setAdminConfigStatusDataProviderForOauth2() {
 		return [
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '$client_id',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -485,10 +486,12 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
-				], false
+				],
+				false
 			],
 		];
 	}
@@ -498,16 +501,17 @@ class ConfigControllerTest extends TestCase {
 	 * @param bool $adminConfigStatus
 	 *
 	 * @return void
-	 * @dataProvider setAdminConfigStatusDataProvider
+	 * @dataProvider setAdminConfigStatusDataProviderForOauth2
 	 */
-	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
+	public function testSetAdminConfigForDifferentAdminConfigStatusForOauth2($credsToUpdate, $adminConfigStatus) {
 		$userManager = \OC::$server->getUserManager();
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
-			->expects($this->exactly(3))
+			->expects($this->exactly(4))
 			->method('setAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method', $credsToUpdate['authorization_method']],
 				['integration_openproject', 'openproject_client_id', $credsToUpdate['openproject_client_id']],
 				['integration_openproject', 'openproject_client_secret', $credsToUpdate['openproject_client_secret']],
 				['integration_openproject', 'openproject_instance_url', $credsToUpdate['openproject_instance_url']]
@@ -535,6 +539,123 @@ class ConfigControllerTest extends TestCase {
 				$credsToUpdate['openproject_client_id'],
 				$credsToUpdate['openproject_client_secret'],
 				$credsToUpdate['openproject_instance_url']
+			);
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'test101'
+		);
+
+		$result = $configController->setAdminConfig($credsToUpdate);
+
+		$this->assertSame(
+			[
+				'status' => $adminConfigStatus,
+				'oPOAuthTokenRevokeStatus' => '',
+				"oPUserAppPassword" => null
+			],
+			$result->getData()
+		);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigStatusDataProviderForOIDC() {
+		return [
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'test-oidc-provider',
+					'targeted_audience_client_id' => 'test-client',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				true
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => 'test-client',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'test-oidc-provider',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+		];
+	}
+
+	/**
+	 * @param array<string> $credsToUpdate
+	 * @param bool $adminConfigStatus
+	 *
+	 * @return void
+	 * @dataProvider setAdminConfigStatusDataProviderForOIDC
+	 */
+	public function testSetAdminConfigForDifferentAdminConfigStatusForOIDC($credsToUpdate, $adminConfigStatus) {
+		$userManager = \OC::$server->getUserManager();
+
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->expects($this->exactly(4))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method', $credsToUpdate['authorization_method']],
+				['integration_openproject', 'oidc_provider', $credsToUpdate['oidc_provider']],
+				['integration_openproject', 'targeted_audience_client_id', $credsToUpdate['targeted_audience_client_id']],
+				['integration_openproject', 'openproject_instance_url', $credsToUpdate['openproject_instance_url']]
+			);
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url']
+			)
+			->willReturnOnConsecutiveCalls(
+				'http://localhost:3000',
+				'123',
+				'',
+				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				$credsToUpdate['oidc_provider'],
+				$credsToUpdate['targeted_audience_client_id'],
+				$credsToUpdate['openproject_instance_url']
+
 			);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -857,6 +978,7 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				[
+					'authorization_method' => null,
 					'openproject_client_id' => null,
 					'openproject_client_secret' => null,
 					'openproject_instance_url' => null,
@@ -868,6 +990,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'client_id_changed',
 					'openproject_client_secret' => 'client_secret_changed',
 					'openproject_instance_url' => 'http://localhost:3000',
@@ -974,6 +1097,7 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('setAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method', $newConfig['authorization_method']],
 				['integration_openproject', 'openproject_client_id', $newConfig['openproject_client_id']],
 				['integration_openproject', 'openproject_client_secret', $newConfig['openproject_client_secret']],
 				['integration_openproject', 'openproject_instance_url', $newConfig['openproject_instance_url']],
@@ -1074,12 +1198,13 @@ class ConfigControllerTest extends TestCase {
 	 * @throws OpenprojectErrorException
 	 */
 	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
-		$oldAdminConfig = [
+		$oldAdminConfig = ['authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
 		];
 		$newAdminConfig = [
+			'authorization_method' => '',
 			'openproject_client_id' => '',
 			'openproject_client_secret' => '',
 			'openproject_instance_url' => '',
@@ -1207,6 +1332,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeDoesNotOccurIfNoOPOAuthClientHasChanged() {
 		$oldAdminConfig = [
+			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -1361,6 +1487,7 @@ class ConfigControllerTest extends TestCase {
 		);
 
 		$result = $configControllerMock->setAdminConfig([
+			"authorization_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			"setup_project_folder" => true,
 			"setup_app_password" => true
 		]);

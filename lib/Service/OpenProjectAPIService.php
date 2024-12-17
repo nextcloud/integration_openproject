@@ -952,8 +952,8 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
-		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
+		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$checkIfConfigIsSet = !!($oidcProvider) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
 		if (!$checkIfConfigIsSet) {
