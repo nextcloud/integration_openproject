@@ -1433,8 +1433,6 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
-				['integration_openproject', 'openproject_client_id', ''],
-				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
@@ -1443,8 +1441,6 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
-				'some_cilent_id',
-				'some_cilent_secret',
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'some_cilent_id',

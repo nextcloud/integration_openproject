@@ -1355,11 +1355,13 @@ export default {
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
+						authorization_method: this.authorizationMethod.authorizationMethodSet,
 						setup_project_folder: false,
 						setup_app_password: false,
 					}
 				} else if (this.isProjectFolderSwitchEnabled === true) {
 					values = {
+						authorization_method: this.authorizationMethod.authorizationMethodSet,
 						setup_project_folder: !this.isProjectFolderAlreadySetup,
 						setup_app_password: this.opUserAppPassword !== true,
 					}
