@@ -1314,15 +1314,15 @@ export default {
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
 			if (this.state.openproject_instance_url === null && this.authorizationMethod.authorizationMethodSet === null) {
-				// by default it will be an oauth2 reset
+				// by default, it will be an oauth2 reset
 				values = {
 					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
 					setup_project_folder: false,
 					setup_app_password: false,
 				}
-				if (this.authorizationMethod.authorizationMethodSet === AUTH_METHOD.OIDC
-					&& this.state.authorization_settings.oidc_provider === null
+				if (this.authorizationMethod.currentAuthorizationMethodSelected === AUTH_METHOD.OIDC
+					&& this.authorizationSetting.currentOIDCProviderSelected === null
 					&& this.state.authorization_settings.targeted_audience_client_id === null) {
 					// when reset is oidc
 					values = {
