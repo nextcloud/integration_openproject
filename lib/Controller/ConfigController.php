@@ -268,10 +268,8 @@ class ConfigController extends Controller {
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'openproject_instance_url', ''
 		);
-		if (
-			(array_key_exists('authorization_method', $values) &&
-				$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) ||
-			$runningFullReset
+		if (array_key_exists('openproject_client_id', $values) &&
+                array_key_exists('openproject_client_secret', $values)
 		) {
 			$oldClientId = $this->config->getAppValue(
 				Application::APP_ID, 'openproject_client_id', ''

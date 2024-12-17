@@ -1150,6 +1150,15 @@ export default {
 					},
 					async (result) => {
 						if (result) {
+							// here we switch either to oidc or oauth2 configuration
+							const authMethod = this.authorizationMethod.authorizationMethodSet
+							if (authMethod === AUTH_METHOD.OAUTH2) {
+								this.state.authorization_settings.targeted_audience_client_id = null
+								this.authorizationSetting.currentOIDCProviderSelected = null
+							} else {
+								this.state.openproject_client_id = null
+								this.state.openproject_client_secret = null
+							}
 							await this.saveOIDCAuthValues()
 						}
 						window.location.reload()
@@ -1338,7 +1347,10 @@ export default {
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
 				values = {
+					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
+					oidc_provider: this.getCurrentSelectedOIDCProvider,
+					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
