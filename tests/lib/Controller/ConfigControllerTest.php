@@ -1000,18 +1000,18 @@ class ConfigControllerTest extends TestCase {
 				false,
 				'reset'
 			],
-//			[
-//				[
-//					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
-//					'openproject_client_id' => 'client_id_changed',
-//					'openproject_client_secret' => 'client_secret_changed',
-//					'openproject_instance_url' => 'http://localhost:3000',
-//					'default_enable_navigation' => true,
-//					'default_enable_unified_search' => true,
-//				],
-//				true,
-//				'change'
-//			]
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'openproject_client_id' => 'client_id_changed',
+					'openproject_client_secret' => 'client_secret_changed',
+					'openproject_instance_url' => 'http://localhost:3000',
+					'default_enable_navigation' => true,
+					'default_enable_unified_search' => true,
+				],
+				true,
+				'change'
+			]
 		];
 	}
 
@@ -1211,7 +1211,7 @@ class ConfigControllerTest extends TestCase {
 	 * @throws OpenprojectErrorException
 	 */
 	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
-		$oldAdminConfig = ['authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+		$oldAdminConfig = [
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',

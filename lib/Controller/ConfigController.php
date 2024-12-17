@@ -256,26 +256,59 @@ class ConfigController extends Controller {
 				);
 			}
 		}
+		// when openproject_instance_url && authorization_method does not have a value at the same time,
+		// it means a full reset is done
 		$runningFullReset = (
 			array_key_exists('openproject_instance_url', $values) &&
 			array_key_exists('authorization_method', $values) &&
 			!$values['openproject_instance_url'] &&
 			!$values['authorization_method']
 		);
-
+		$oldClientId = $oldClientSecret = '';
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'openproject_instance_url', ''
 		);
-
-		$oldClientId = $oldClientSecret = '';
-		if ((array_key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) || $runningFullReset) {
+		if (
+			(array_key_exists('authorization_method', $values) &&
+				$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) ||
+			$runningFullReset
+		) {
 			$oldClientId = $this->config->getAppValue(
 				Application::APP_ID, 'openproject_client_id', ''
 			);
 			$oldClientSecret = $this->config->getAppValue(
 				Application::APP_ID, 'openproject_client_secret', ''
 			);
+		}
+		// since we can now switch between both authorization method we need to know what we are resetting
+		$runningOauth2Reset = (
+			array_key_exists('openproject_client_id', $values) &&
+			!$values['openproject_client_id'] &&
+			array_key_exists('openproject_client_secret', $values) &&
+			!$values['openproject_client_secret'] &&
+			$oldOpenProjectOauthUrl &&
+			$oldClientId &&
+			$oldClientSecret
+		);
+
+		$runningOIDCReset = false;
+		if (array_key_exists('authorization_method', $values) &&
+			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH &&
+			!$runningFullReset &&
+			array_key_exists('oidc_provider', $values) &&
+			array_key_exists('targeted_audience_client_id', $values)
+		) {
+			$oldOidcProvider = $this->config->getAppValue(
+				Application::APP_ID, 'oidc_provider', ''
+			);
+			$oldTargetedAudienceClient = $this->config->getAppValue(
+				Application::APP_ID, 'targeted_audience_client_id', ''
+			);
+			$runningOIDCReset = (
+				$oldOidcProvider &&
+				$oldTargetedAudienceClient &&
+				!$values['oidc_provider'] &&
+				!$values['targeted_audience_client_id']);
 		}
 
 		foreach ($values as $key => $value) {
@@ -304,36 +337,6 @@ class ConfigController extends Controller {
 					(int)$oauthClientInternalId, (string)$values['openproject_instance_url']
 				);
 			}
-		}
-
-		$runningOauth2Reset = (
-			array_key_exists('openproject_client_id', $values) &&
-			$values['openproject_client_id'] === null &&
-			array_key_exists('openproject_client_secret', $values) &&
-			$values['openproject_client_secret'] === null &&
-			$oldOpenProjectOauthUrl &&
-			$oldClientId &&
-			$oldClientSecret
-		);
-
-		$runningOIDCReset = false;
-		if (array_key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH &&
-			!$runningFullReset &&
-			array_key_exists('oidc_provider', $values) &&
-			array_key_exists('targeted_audience_client_id', $values)
-		) {
-			$oldOidcProvider = $this->config->getAppValue(
-				Application::APP_ID, 'oidc_provider', ''
-			);
-			$oldTargetedAudienceClient = $this->config->getAppValue(
-				Application::APP_ID, 'targeted_audience_client_id', ''
-			);
-			$runningOIDCReset = (
-				$oldOidcProvider &&
-				$oldTargetedAudienceClient &&
-				$values['oidc_provider'] === null &&
-				$values['targeted_audience_client_id'] === null);
 		}
 
 		// resetting and keeping the project folder setup should delete the user app password
@@ -418,7 +421,7 @@ class ConfigController extends Controller {
 			$this->resetConfigValuesForOauth2Reset();
 		}
 
-		if ( array_key_exists('authorization_method', $values) &&
+		if (array_key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH && $runningOIDCReset) {
 			$this->resetConfigValuesForOIDCReset();
 		}
