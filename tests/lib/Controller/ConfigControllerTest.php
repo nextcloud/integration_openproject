@@ -520,6 +520,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
@@ -531,6 +532,7 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'',
 				'',
 				'123',
@@ -640,6 +642,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'authorization_method'],
@@ -649,6 +652,7 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'123',
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OIDC,
@@ -819,6 +823,7 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
@@ -829,6 +834,7 @@ class ConfigControllerTest extends TestCase {
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldCreds['openproject_instance_url'],
+					$oldCreds['authorization_method'],
 					$oldCreds['openproject_client_id'],
 					$oldCreds['openproject_client_secret'],
 					'123',
@@ -1055,6 +1061,7 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id', ''],
 					['integration_openproject', 'openproject_client_secret', ''],
 					['integration_openproject', 'nc_oauth_client_id', ''],
@@ -1068,6 +1075,7 @@ class ConfigControllerTest extends TestCase {
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldAdminConfig['openproject_instance_url'],
+					$oldAdminConfig['authorization_method'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
 					'',
@@ -1084,6 +1092,7 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id', ''],
 					['integration_openproject', 'openproject_client_secret', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
@@ -1096,6 +1105,7 @@ class ConfigControllerTest extends TestCase {
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldAdminConfig['openproject_instance_url'],
+					$oldAdminConfig['authorization_method'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
 					'',
@@ -1212,6 +1222,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
 		$oldAdminConfig = [
+			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -1239,6 +1250,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id', ''],
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'nc_oauth_client_id', ''],
@@ -1250,6 +1262,7 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				$oldAdminConfig['openproject_instance_url'],
+				$oldAdminConfig['authorization_method'],
 				$oldAdminConfig['openproject_client_id'],
 				$oldAdminConfig['openproject_client_secret'],
 				'',
@@ -1366,12 +1379,14 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id', ''],
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', '']
 			)
 			->willReturnOnConsecutiveCalls(
 				$oldAdminConfig['openproject_instance_url'],
+				$oldAdminConfig['authorization_method'],
 				$oldAdminConfig['openproject_client_id'],
 				$oldAdminConfig['openproject_client_secret'],
 				''
@@ -1433,6 +1448,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
@@ -1441,6 +1457,7 @@ class ConfigControllerTest extends TestCase {
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'some_cilent_id',

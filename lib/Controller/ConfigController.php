@@ -256,17 +256,28 @@ class ConfigController extends Controller {
 				);
 			}
 		}
-		// when openproject_instance_url && authorization_method does not have a value at the same time,
-		// it means a full reset is done
-		$runningFullReset = (
-			array_key_exists('openproject_instance_url', $values) &&
-			array_key_exists('authorization_method', $values) &&
-			!$values['openproject_instance_url'] &&
-			!$values['authorization_method']
-		);
 		$oldClientId = $oldClientSecret = '';
 		$oldOpenProjectOauthUrl = $this->config->getAppValue(
 			Application::APP_ID, 'openproject_instance_url', ''
+		);
+		$oldAuthMethod = $this->config->getAppValue(
+			Application::APP_ID, 'authorization_method', ''
+		);
+		// when openproject_instance_url && authorization_method does not have a value at the same time,
+		// it means a full reset is done
+		$runningFullReset = array_key_exists('openproject_instance_url', $values) &&
+			array_key_exists('authorization_method', $values) &&
+			!$values['openproject_instance_url'] &&
+			!$values['authorization_method'];
+
+		$runningFullResetWithOAuth2 = (
+			$runningFullReset &&
+			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH
+		);
+
+		$runningFullResetWithOIDC = (
+			$runningFullReset &&
+			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OIDC
 		);
 		if (
 			(array_key_exists('openproject_client_id', $values) && array_key_exists('openproject_client_secret', $values))
@@ -350,11 +361,10 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
-			((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-				(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
-			// when the OP client information is for reset
-			$runningFullReset ||
-			$runningOauth2Reset
+			($runningFullResetWithOAuth2 && ((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+					(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret))) ||
+				// when the OP client information is for reset
+				$runningOauth2Reset
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
 				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
@@ -396,6 +406,8 @@ class ConfigController extends Controller {
 				}
 				$this->clearUserInfo($userUID);
 			});
+		} elseif ($runningFullResetWithOIDC) {
+			$this->resetConfigValuesForOIDCReset();
 		}
 
 

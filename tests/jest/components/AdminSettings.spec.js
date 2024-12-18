@@ -1046,6 +1046,7 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
+									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
@@ -1161,6 +1162,7 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
+										authorization_method: AUTH_METHOD.OAUTH2,
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
@@ -1225,6 +1227,7 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
+										authorization_method: AUTH_METHOD.OAUTH2,
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
@@ -1307,6 +1310,7 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
+									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
@@ -1322,6 +1326,7 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
+									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
