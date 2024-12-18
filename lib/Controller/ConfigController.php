@@ -154,11 +154,14 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetConfigValuesForOIDCReset(): void {
+	public function resetConfigValuesForOIDCReset(string $userId = null): void {
+		if ($userId === null) {
+			$userId = $this->userId;
+		}
 		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
 		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', '');
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', '');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 	}
 
 
@@ -270,12 +273,12 @@ class ConfigController extends Controller {
 			!$values['openproject_instance_url'] &&
 			!$values['authorization_method'];
 
-		$runningFullResetWithOAuth2 = (
+		$runningFullResetWithOAuth2Auth = (
 			$runningFullReset &&
 			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH
 		);
 
-		$runningFullResetWithOIDC = (
+		$runningFullResetWithOIDCAuth = (
 			$runningFullReset &&
 			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OIDC
 		);
@@ -301,9 +304,7 @@ class ConfigController extends Controller {
 		);
 
 		$runningOIDCReset = false;
-		if (array_key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH &&
-			!$runningFullReset &&
+		if (
 			array_key_exists('oidc_provider', $values) &&
 			array_key_exists('targeted_audience_client_id', $values)
 		) {
@@ -329,7 +330,7 @@ class ConfigController extends Controller {
 
 		// if the OpenProject OAuth URL has changed
 		if (array_key_exists('openproject_instance_url', $values)
-			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url']
+			&& $oldOpenProjectOauthUrl !== $values['openproject_instance_url'] && (!$runningOIDCReset || !$runningFullResetWithOIDCAuth)
 		) {
 			// delete the existing OAuth client if new OAuth URL is passed empty
 			if (
@@ -361,10 +362,10 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
-			!$runningFullResetWithOIDC && ((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-					(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
-				// when the OP client information is for reset
-			$runningFullResetWithOAuth2 ||
+			(!$runningFullResetWithOIDCAuth && ((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+						(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret))) ||
+					// when the OP client information is for reset
+			$runningFullResetWithOAuth2Auth ||
 			$runningOauth2Reset
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
@@ -407,7 +408,7 @@ class ConfigController extends Controller {
 				}
 				$this->clearUserInfo($userUID);
 			});
-		} elseif ($runningFullResetWithOIDC) {
+		} elseif ($runningFullResetWithOIDCAuth) {
 			$this->resetConfigValuesForOIDCReset();
 		}
 
