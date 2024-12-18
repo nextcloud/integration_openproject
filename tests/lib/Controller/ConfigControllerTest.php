@@ -828,6 +828,7 @@ class ConfigControllerTest extends TestCase {
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
@@ -839,6 +840,7 @@ class ConfigControllerTest extends TestCase {
 					$oldCreds['openproject_client_secret'],
 					'123',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$credsToUpdate['openproject_client_id'],
 					$credsToUpdate['openproject_client_secret'],
 					$credsToUpdate['openproject_instance_url']
@@ -865,18 +867,22 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url']
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldCreds['openproject_instance_url'],
+					$oldCreds['authorization_method'],
 					$oldCreds['openproject_client_id'],
 					$oldCreds['openproject_client_secret'],
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$credsToUpdate['openproject_client_id'],
 					$credsToUpdate['openproject_client_secret'],
 					$credsToUpdate['openproject_instance_url']

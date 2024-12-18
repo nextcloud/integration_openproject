@@ -361,10 +361,11 @@ class ConfigController extends Controller {
 		$this->config->deleteAppValue(Application::APP_ID, 'oPOAuthTokenRevokeStatus');
 		if (
 			// when the OP client information has changed
-			($runningFullResetWithOAuth2 && ((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
-					(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret))) ||
+		((array_key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
+					(array_key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret)) ||
 				// when the OP client information is for reset
-				$runningOauth2Reset
+			$runningFullResetWithOAuth2 ||
+			$runningOauth2Reset
 		) {
 			$this->userManager->callForAllUsers(function (IUser $user) use (
 				$oldOpenProjectOauthUrl, $oldClientId, $oldClientSecret
