@@ -94,7 +94,7 @@ class OpenProjectAPIController extends Controller {
 				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
 			];
 		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			$this->openprojectAPIService->getOIDCToken() === null
+			!$this->openprojectAPIService->getOIDCToken()
 		) {
 			return [
 				'status' => false,
