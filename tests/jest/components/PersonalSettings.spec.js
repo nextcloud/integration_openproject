@@ -4,6 +4,7 @@ import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
 import PersonalSettings from '../../../src/components/PersonalSettings.vue'
 import * as dialogs from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
+import { AUTH_METHOD } from '../../../src/utils.js'
 
 const localVue = createLocalVue()
 
@@ -90,7 +91,7 @@ describe('PersonalSettings.vue', () => {
 			describe('when username and token are given', () => {
 				beforeEach(async () => {
 					await wrapper.setData({
-						state: { user_name: 'test', token: '123', admin_config_ok: true },
+						state: { user_name: 'test', token: '123', admin_config_ok: true, authorization_method: AUTH_METHOD.OAUTH2 },
 					})
 				})
 				it('oAuth connect button is not displayed', () => {

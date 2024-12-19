@@ -60,18 +60,26 @@ class OpenProjectWidget implements IWidget {
 	 */
 	private $user;
 
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private OpenProjectAPIService $openProjectAPIService;
+
+
 	public function __construct(
 		IL10N $l10n,
 		IInitialState $initialStateService,
 		IURLGenerator $url,
 		IConfig $config,
-		IUserSession $userSession
+		IUserSession $userSession,
+		OpenProjectAPIService $openProjectAPIService
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
 		$this->user = $userSession->getUser();
+		$this->openProjectAPIService = $openProjectAPIService;
 	}
 
 	/**
@@ -115,15 +123,25 @@ class OpenProjectWidget implements IWidget {
 	public function load(): void {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
-
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
-
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 		);
 		$this->config->deleteUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result'
 		);
+
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		$this->initialStateService->provideInitialState('authorization_method', $authorizationMethod);
+		$this->initialStateService->provideInitialState(
+			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config)
+		);
+
+		// authorization method can be either a 'oidc' or 'oauth2'
+		// for 'oidc' state to be loaded
+		$token = $this->openProjectAPIService->getOIDCToken();
+		$this->initialStateService->provideInitialState('user-has-oidc-token', $token !== null);
+
+		// for 'oauth2' state to be loaded
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $oauthConnectionResult
 		);
