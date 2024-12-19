@@ -687,18 +687,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock = $this->createMock(IRootFolder::class);
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$this->defaultConfigMock
-			->method('getUserValue')
-			->withConsecutive(
-				[$userId, 'integration_openproject', 'token'],
-				[$userId, 'integration_openproject', 'refresh_token'],
-				[$userId, 'integration_openproject', 'token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				$oAuthToken,
-				'oAuthRefreshToken',
-				'new-Token'
-			);
+		$authMethod = 'hello';
+		if ($authMethod === 'oauth2') {
+			$this->defaultConfigMock
+				->method('getUserValue')
+				->withConsecutive(
+					[$userId, 'integration_openproject', 'token'],
+					[$userId, 'integration_openproject', 'refresh_token'],
+					[$userId, 'integration_openproject', 'token'],
+				)
+				->willReturnOnConsecutiveCalls(
+					$oAuthToken,
+					'oAuthRefreshToken',
+					'new-Token'
+				);
 
 			$this->defaultConfigMock
 				->method('getAppValue')
@@ -709,25 +711,37 @@ class OpenProjectAPIServiceTest extends TestCase {
 					['integration_openproject', 'openproject_instance_url'],
 					['integration_openproject', 'authorization_method'],
 
-				// for second request after invalid token reply
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-			)
-			->willReturnOnConsecutiveCalls(
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				$this->clientId,
-				$this->clientSecret,
-				$this->pactMockServerConfig->getBaseUri()->__toString(),
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					// for second request after invalid token reply
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url'],
+				)
+				->willReturnOnConsecutiveCalls(
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					$this->clientId,
+					$this->clientSecret,
+					$this->pactMockServerConfig->getBaseUri()->__toString(),
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 
-				// for second request after invalid token reply
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				$this->clientId,
-				$this->clientSecret,
-				$this->pactMockServerConfig->getBaseUri()->__toString()
-			);
+					// for second request after invalid token reply
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					$this->clientId,
+					$this->clientSecret,
+					$this->pactMockServerConfig->getBaseUri()->__toString()
+				);
+		} else {
+			$this->defaultConfigMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_instance_url']
+				)
+				->willReturnOnConsecutiveCalls(
+					$authMethod,
+					$this->pactMockServerConfig->getBaseUri()->__toString()
+				);
+		}
 
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
 		$urlGeneratorMock
@@ -1303,6 +1317,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$serviceMock = $this->getServiceMock(['getOIDCToken']);
+		$serviceMock->method('getOIDCToken')->willReturn('123');
 		$result = $service->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
