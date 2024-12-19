@@ -687,7 +687,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock = $this->createMock(IRootFolder::class);
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
-
 		$this->defaultConfigMock
 			->method('getUserValue')
 			->withConsecutive(
@@ -701,14 +700,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'new-Token'
 			);
 
-		$this->defaultConfigMock
-			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'authorization_method'],
+			$this->defaultConfigMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url'],
+					['integration_openproject', 'authorization_method'],
 
 				// for second request after invalid token reply
 				['integration_openproject', 'authorization_method'],
@@ -1387,6 +1386,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function getAuthorizationMethodDataProvider() {
+		return [
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC]
+		];
+	}
+
+	/**
+	 *
 	 * @group ignoreWithPHP8.0
 	 * @return void
 	 */
@@ -1405,7 +1415,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that does not have one')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-
 		$result = $this->service->getOpenProjectAvatar(
 			'openProjectUser',
 			'Me',
@@ -3033,7 +3042,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function adminConfigStatusProvider(): array {
+	public function adminConfigStatusProviderForOauth(): array {
 		return [
 			[
 				'openproject_client_id' => '',
@@ -3087,10 +3096,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider adminConfigStatusProvider
+	 * @dataProvider adminConfigStatusProviderForOauth
 	 * @return void
 	 */
-	public function testIsAdminConfigOk(
+	public function testiSAdminConfigOkForOauth2(
 		string $client_id, string $client_secret, string $oauth_instance_url, bool $expected
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
@@ -3103,6 +3112,119 @@ class OpenProjectAPIServiceTest extends TestCase {
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
 		$this->assertSame($expected, $this->service::isAdminConfigOkForOauth2($configMock));
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function adminConfigStatusProviderForOIDC(): array {
+		return [
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'openproject_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => '',
+				'openproject_instance_url' => 'https://openproject',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'openproject.com',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject',
+				'expected' => true,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject.com/',
+				'expected' => true,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject.com',
+				'expected' => true,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider adminConfigStatusProviderForOIDC
+	 * @return void
+	 */
+	public function testIsAdminConfigOkForOIDCAuth(
+		string $oidc_procider, string $targetd_audience_client_id, string $oauth_instance_url, bool $expected
+	) {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls($oidc_procider, $targetd_audience_client_id, $oauth_instance_url);
+
+		$this->assertSame($expected, $this->service::isAdminConfigOkForOIDCAuth($configMock));
+	}
+
+	/**
+	 *
+	 * this is just to test that admin config is ok when auth method is 'oidc'
+	 * @return void
+	 */
+	public function testIsAdminConfigOkOIDC() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OIDC, 'some_oidc_provider', 'some_targeted_audience_client', 'https://openproject.com');
+		$result = $this->service::isAdminConfigOk($configMock);
+		$this->assertSame(true, $result);
+	}
+
+	/**
+	 *
+	 * this is just to test that admin config is ok when auth method is 'oauth2'
+	 * @return void
+	 */
+	public function testIsAdminConfigOkOauth2() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, 'some_secret', 'some_client_id', 'https://openproject.com');
+		$result = $this->service::isAdminConfigOk($configMock);
+		$this->assertSame(true, $result);
 	}
 
 	/**
