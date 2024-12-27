@@ -31,6 +31,7 @@ Please report issues and bugs here: https://community.openproject.org/projects/n
 
 ## 🔨 Development Setup Guide
 - [Set up via docker](docs/setup_via_docker.md)
+- [Start Nextcloud-OpenProject full setup](docs/setup_nc_op__full.md)
 - [APIs for integration setup for admin](docs/setting_up_as_admin.md)
 - [Setting up Integration via Shell Script](docs/setting_up_via_shell_script.md)
 - [APIs for Direct Upload](docs/direct_upload.md)

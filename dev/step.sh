@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -f /certs/acme.json
 touch /certs/acme.json
 chmod 600 /certs/acme.json
 

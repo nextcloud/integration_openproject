@@ -9,7 +9,7 @@ if [ -d "$STEP_CERTS_DIR" ]; then
     update-ca-certificates
 fi
 
-chown www-data custom_apps
+chown -R www-data custom_apps
 
 /entrypoint.sh apache2-foreground &
 

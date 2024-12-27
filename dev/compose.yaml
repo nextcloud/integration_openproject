@@ -98,7 +98,7 @@ services:
     volumes:
       - ./nextcloud.sh:/nextcloud.sh
       - ./apps:/var/www/html/custom_apps
-      - ${APP_DIR:-../}:/var/www/html/custom_apps/integration_openproject:ro
+      - ../:/var/www/html/custom_apps/integration_openproject:ro
       - ncdata:/var/www/html
       - apache_conf:/etc/apache2
       - step:/step:ro
