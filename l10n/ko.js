@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "취소",
     "Save" : "저장",
     "Copied!" : "복사 성공!",
+    "Copied to the clipboard" : "클립보드로 복사됨",
     "Details" : "세부사항",
     "No OpenProject account connected" : "연결된 OpenProject 계정 없음",
     "Start typing to search" : "검색어 입력",
