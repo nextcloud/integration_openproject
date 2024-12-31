@@ -57,6 +57,7 @@
 					<EmptyContent
 						id="openproject-empty-content"
 						:state="state"
+						:auth-method="authMethod"
 						:is-multiple-workpackage-linking="true"
 						:is-admin-config-ok="isAdminConfigOk" />
 				</div>
@@ -105,7 +106,8 @@ export default {
 			state: STATE.LOADING,
 			fileInfos: [],
 			alreadyLinkedWorkPackage: [],
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			isAdminConfigOk: loadState('integration_openproject', 'admin_config_ok'),
+			authMethod: loadState('integration_openproject', 'authorization_method'),
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
@@ -148,7 +150,9 @@ export default {
 	},
 
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === 'oauth2') {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 	methods: {
 		async relinkRemainingFilesToWorkPackage() {

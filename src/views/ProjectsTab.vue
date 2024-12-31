@@ -58,6 +58,7 @@
 			id="openproject-empty-content"
 			:state="state"
 			:file-info="fileInfo"
+			:auth-method="authMethod"
 			:is-admin-config-ok="isAdminConfigOk" />
 	</div>
 </template>
@@ -76,7 +77,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
-import { STATE, WORKPACKAGES_SEARCH_ORIGIN, checkOauthConnectionResult } from '../utils.js'
+import { STATE, WORKPACKAGES_SEARCH_ORIGIN, AUTH_METHOD, checkOauthConnectionResult } from '../utils.js'
 
 export default {
 	name: 'ProjectsTab',
@@ -96,7 +97,8 @@ export default {
 		workpackages: [],
 		oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 		oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
-		isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+		isAdminConfigOk: loadState('integration_openproject', 'admin_config_ok'),
+		authMethod: loadState('integration_openproject', 'authorization_method'),
 		color: null,
 		openprojectUrl: loadState('integration_openproject', 'openproject-url'),
 		searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -119,7 +121,9 @@ export default {
 		},
 	},
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.authMethod === AUTH_METHOD.OAUTH2) {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 	methods: {
 		/**

@@ -1,12 +1,15 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
+		<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
+			{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
+		</div>
 		<div v-if="connected" class="openproject-prefs--connected">
 			<label>
 				<CheckIcon :size="20" />
 				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 			</label>
-			<NcButton class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+			<NcButton v-if="state.authorization_method === authMethods.OAUTH2" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 				<template #icon>
 					<CloseIcon :size="23" />
 				</template>
@@ -35,7 +38,7 @@
 				</template>
 			</CheckBox>
 		</div>
-		<OAuthConnectButton v-else :is-admin-config-ok="state.admin_config_ok" />
+		<OAuthConnectButton v-if="showOAuthConnectButton" :is-admin-config-ok="state.admin_config_ok" />
 	</div>
 </template>
 
@@ -51,7 +54,7 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import OAuthConnectButton from './OAuthConnectButton.vue'
 import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
-import { checkOauthConnectionResult, USER_SETTINGS } from '../utils.js'
+import { checkOauthConnectionResult, USER_SETTINGS, AUTH_METHOD } from '../utils.js'
 import { NcButton } from '@nextcloud/vue'
 
 export default {
@@ -68,6 +71,7 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			userSettingDescription: USER_SETTINGS,
+			authMethods: AUTH_METHOD,
 		}
 	},
 	computed: {
@@ -75,6 +79,15 @@ export default {
 			if (!this.state.admin_config_ok) return false
 			return this.state.token && this.state.token !== ''
 				&& this.state.user_name && this.state.user_name !== ''
+		},
+		isNonOidcUserConnectedViaOidc() {
+			return !!(this.state.authorization_method === AUTH_METHOD.OIDC && this.state.admin_config_ok && !this.state.token)
+		},
+		showOAuthConnectButton() {
+			if (this.connected) {
+				return false
+			}
+			return !(this.state.admin_config_ok === true && this.state.authorization_method === this.authMethods.OIDC)
 		},
 	},
 	watch: {
@@ -91,7 +104,9 @@ export default {
 	},
 
 	mounted() {
-		checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		if (this.state.authorization_method === this.authMethods.OAUTH2) {
+			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
+		}
 	},
 
 	methods: {
@@ -163,6 +178,10 @@ export default {
 	.oauth-connect--message {
 		text-align: left;
 		padding: 0;
+	}
+	.demo-error-oidc {
+		color: red;
+		margin-top: 20px;
 	}
 }
 </style>

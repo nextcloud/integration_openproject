@@ -17,7 +17,9 @@
 				</div>
 			</div>
 			<div v-if="showConnectButton" class="empty-content--connect-button">
-				<OAuthConnectButton :is-admin-config-ok="isAdminConfigOk" :file-info="fileInfo" />
+				<OAuthConnectButton
+					:is-admin-config-ok="isAdminConfigOk"
+					:file-info="fileInfo" />
 			</div>
 		</div>
 	</div>
@@ -31,7 +33,7 @@ import OpenProjectIcon from '../icons/OpenProjectIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import OAuthConnectButton from '../OAuthConnectButton.vue'
-import { STATE } from '../../utils.js'
+import { AUTH_METHOD, STATE } from '../../utils.js'
 
 export default {
 	name: 'EmptyContent',
@@ -41,6 +43,10 @@ export default {
 			type: String,
 			required: true,
 			default: STATE.OK,
+		},
+		authMethod: {
+			type: String,
+			required: true,
 		},
 		isAdminConfigOk: {
 			type: Boolean,
@@ -79,7 +85,11 @@ export default {
 			return this.state === STATE.OK
 		},
 		showConnectButton() {
-			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
+			// show button when admin config is not configured (either oidc or be oauth2)
+			if (!this.isAdminConfigOk) {
+				return true
+			}
+			return this.authMethod === AUTH_METHOD.OAUTH2 && [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
 		},
 		emptyContentTitleMessage() {
 			if (this.state === STATE.NO_TOKEN) {

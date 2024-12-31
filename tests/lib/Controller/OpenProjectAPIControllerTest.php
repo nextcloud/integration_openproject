@@ -63,6 +63,16 @@ class OpenProjectAPIControllerTest extends TestCase {
 	];
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function getAuthorizationMethodDataProvider() {
+		return [
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC]
+		];
+	}
+
+	/**
 	 * @return void
 	 * @before
 	 */
@@ -75,32 +85,52 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
-			)->willReturnOnConsecutiveCalls('http://openproject.org');
+			)->willReturnOnConsecutiveCalls('https://openproject.org');
 	}
 
 	/**
-	 * @param string $token
+	 * @param string $authorizationMethod
+	 * @param string $authToken
 	 * @psalm-suppress UndefinedInterfaceMethod
 	 * @return void
 	 */
-	public function getUserValueMock(string $token = '123'): void {
+	public function getUserValueMock(string $authorizationMethod, $authToken = null): void {
+		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			$token = $authToken === null ?  '123' : $authToken;
+			$this->configMock
+				->method('getUserValue')
+				->withConsecutive(
+					['test','integration_openproject', 'token'],
+					['test','integration_openproject', 'refresh_token'],
+				)->willReturnOnConsecutiveCalls($token, 'refreshToken');
+		}
 		$this->configMock
-			->method('getUserValue')
+			->method('getAppValue')
 			->withConsecutive(
-				['test','integration_openproject', 'token'],
-				['test','integration_openproject', 'refresh_token'],
-			)->willReturnOnConsecutiveCalls($token, 'refreshToken');
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
+			)->willReturnOnConsecutiveCalls(
+				'https://openproject.org',
+				$authorizationMethod);
 	}
 
 	/**
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetNotifications(): void {
-		$this->getUserValueMock();
+	public function testGetNotifications(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getNotifications'])
+			->onlyMethods(['getNotifications', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')
+				->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getNotifications')
 			->willReturn(['some' => 'data']);
@@ -120,10 +150,22 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetNotificationsNoAccessToken() {
-		$this->getUserValueMock('');
+	public function testGetNotificationsNoAccessToken(string $authorizationMethod) {
+		$authToken = '';
+		$this->getUserValueMock($authorizationMethod, $authToken);
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getNotifications', 'getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn($authToken);
+		}
 		$service = $this->createMock(OpenProjectAPIService::class);
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
@@ -138,19 +180,28 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
 	}
 
-
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetNotificationsBadOPInstanceUrl() {
+	public function testGetNotificationsBadOPInstanceUrl(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('http:openproject.org');
-		$this->getUserValueMock();
-		$service = $this->createMock(OpenProjectAPIService::class);
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getNotifications', 'getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -165,13 +216,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetNotificationsErrorResponse() {
-		$this->getUserValueMock();
+	public function testGetNotificationsErrorResponse(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getNotifications', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getNotifications')
 			->willReturn(['error' => 'something went wrong']);
@@ -191,13 +250,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectAvatar() {
-		$this->getUserValueMock();
+	public function testGetOpenProjectAvatar(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectAvatar', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
@@ -226,13 +293,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectAvatarNoType() {
-		$this->getUserValueMock();
+	public function testGetOpenProjectAvatarNoType(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectAvatar', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getOpenProjectAvatar')
 			->with(
@@ -262,25 +337,32 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 */
 	public function searchWorkPackagesDataProvider() {
 		return [
-			['test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			['test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
 		];
 	}
 
 	/**
+	 * @param string $authorizationMethod
 	 * @param string|null $searchQuery
 	 * @param int|null $fileId
 	 * @param array<mixed> $expectedResponse
 	 * @return void
 	 * @dataProvider searchWorkPackagesDataProvider
 	 */
-	public function testGetSearchedWorkPackages(?string $searchQuery, ?int $fileId, array $expectedResponse):void {
-		$this->getUserValueMock();
+	public function testGetSearchedWorkPackages(string $authorizationMethod, ?string $searchQuery, ?int $fileId, array $expectedResponse):void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['searchWorkPackage'])
+			->onlyMethods(['searchWorkPackage', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('searchWorkPackage')
 			->with(
@@ -304,13 +386,22 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame($expectedResponse, $response->getData());
 	}
 
-
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetSearchedWorkPackagesNoAccessToken(): void {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testGetSearchedWorkPackagesNoAccessToken(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -325,17 +416,27 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetSearchedWorkPackagesBadOPInstanceUrl(): void {
+	public function testGetSearchedWorkPackagesBadOPInstanceUrl(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('http:openproject');
-		$this->getUserValueMock();
-		$service = $this->createMock(OpenProjectAPIService::class);
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -350,17 +451,22 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetSearchedWorkPackagesErrorResponse(): void {
-		$this->getUserValueMock();
+	public function testGetSearchedWorkPackagesErrorResponse(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['searchWorkPackage','getOIDCToken'])
 			->getMock();
-		$service
-			->method('searchWorkPackage')
-			->willReturn(['error' => 'something went wrong']);
-
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
+		$service->method('searchWorkPackage')->willReturn(['error' => 'something went wrong']);
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -376,14 +482,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageStatus(): void {
-		$this->getUserValueMock();
+	public function testGetOpenProjectWorkPackageStatus(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOpenProjectWorkPackageStatus'])
+			->onlyMethods(['getOpenProjectWorkPackageStatus','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getOpenProjectWorkPackageStatus')
 			->willReturn([
@@ -409,11 +522,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageStatusErrorResponse(): void {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testGetOpenProjectWorkPackageStatusNoToken(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -428,13 +551,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageStatusNoAccessToken(): void {
-		$this->getUserValueMock();
+	public function testGetOpenProjectWorkPackageStatusWithErrorResponse(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageStatus','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getOpenProjectWorkPackageStatus')
 			->willReturn(['error' => 'something went wrong']);
@@ -454,19 +585,27 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageStatusBadOPInstanceUrl(): void {
+	public function testGetOpenProjectWorkPackageStatusBadOPInstanceUrl(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('http:openproject');
-		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
@@ -482,14 +621,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageType(): void {
-		$this->getUserValueMock();
+	public function testGetOpenProjectWorkPackageType(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOpenProjectWorkPackageType'])
+			->onlyMethods(['getOpenProjectWorkPackageType', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getOpenProjectWorkPackageType')
 			->willReturn(["_type" => "Type", "id" => 3, "name" => "Phase",
@@ -511,11 +657,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testGetOpenProjectWorkPackageTypeNoAccessToken(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -530,13 +686,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageTypeNoAccessToken(): void {
-		$this->getUserValueMock();
+	public function testGetOpenProjectWorkPackageTypeErrorResponse(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageType','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getOpenProjectWorkPackageType')
 			->willReturn(['error' => 'something went wrong']);
@@ -556,19 +720,27 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageTypeBadOPInstanceUrl(): void {
+	public function testGetOpenProjectWorkPackageTypeBadOPInstanceUrl(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$this->configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->configMock
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls('http:openproject');
-		$this->getUserValueMock();
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
@@ -584,14 +756,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetWorkPackageFileLinks(): void {
-		$this->getUserValueMock();
+	public function testGetWorkPackageFileLinks(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getWorkPackageFileLinks'])
+			->onlyMethods(['getWorkPackageFileLinks', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getWorkPackageFileLinks')
 			->willReturn([[
@@ -623,11 +802,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetWorkPackageFileLinksErrorResponse(): void {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testGetWorkPackageFileLinksNoAccessToken(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -642,13 +831,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetWorkPackageFileLinksNotFound(): void {
-		$this->getUserValueMock();
+	public function testGetWorkPackageFileLinksNotFound(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getWorkPackageFileLinks','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getWorkPackageFileLinks')
 			->willThrowException(new NotFoundException('work package not found'));
@@ -667,13 +864,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetWorkPackageFileLinksInternalServerError(): void {
-		$this->getUserValueMock();
+	public function testGetWorkPackageFileLinksInternalServerError(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getWorkPackageFileLinks','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getWorkPackageFileLinks')
 			->willThrowException(new Exception('something went wrong'));
@@ -692,14 +897,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testDeleteFileLink(): void {
-		$this->getUserValueMock();
+	public function testDeleteFileLink(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['deleteFileLink'])
+			->onlyMethods(['deleteFileLink','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('deleteFileLink')
 			->willReturn(['success' => true]);
@@ -719,11 +931,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testDeleteFileLinkErrorResponse(): void {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testDeleteFileLinkNoAccessToken(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -738,13 +960,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testDeleteFileLinkFileNotFound(): void {
-		$this->getUserValueMock();
+	public function testDeleteFileLinkFileNotFound(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['deleteFileLink','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('deleteFileLink')
 			->willThrowException(new NotFoundException('file not found'));
@@ -763,13 +993,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testDeleteFileLinkInternalServerError(): void {
-		$this->getUserValueMock();
+	public function testDeleteFileLinkInternalServerError(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['deleteFileLink','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('deleteFileLink')
 			->willThrowException(new Exception('something went wrong'));
@@ -1043,6 +1281,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
@@ -1050,6 +1289,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls(
 				'http://openproject.org',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'myClientID',
 				'myClientSecret',
 				'http://openproject.org',
@@ -1097,14 +1337,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToSingleFile() {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToSingleFile(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['linkWorkPackageToFile'])
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('linkWorkPackageToFile')
 			->with($this->fileInformationToLinkToWorkPackage, 'test')
@@ -1125,14 +1372,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToMultipleFiles() {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToMultipleFiles(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['linkWorkPackageToFile'])
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('linkWorkPackageToFile')
 			->with([
@@ -1184,11 +1438,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileErrorResponse() {
-		$this->getUserValueMock('');
-		$service = $this->createMock(OpenProjectAPIService::class);
+	public function testLinkWorkPackageToFileNoAccessToken(string $authorizationMethod) {
+		$this->getUserValueMock($authorizationMethod, '');
+		$service = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
+			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -1203,13 +1467,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileNotEnoughPermissions(): void {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToFileNotEnoughPermissions(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('linkWorkPackageToFile')
 			->willThrowException(new NotPermittedException());
@@ -1227,13 +1499,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileOpenProjectErrorException(): void {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToFileOpenProjectErrorException(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('linkWorkPackageToFile')
 			->willThrowException(new OpenprojectErrorException('Error while linking file to a work package', 400));
@@ -1252,13 +1532,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileOpenprojectResponseException(): void {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToFileOpenprojectResponseException(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('linkWorkPackageToFile')
 			->willThrowException(new OpenprojectResponseException('Malformed response'));
@@ -1277,13 +1565,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileForInvalidKeyError(): void {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToFileForInvalidKeyError(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('linkWorkPackageToFile')
 			->willThrowException(new InvalidArgumentException('invalid key'));
@@ -1302,13 +1598,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testLinkWorkPackageToFileForInvalidDataError(): void {
-		$this->getUserValueMock();
+	public function testLinkWorkPackageToFileForInvalidDataError(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['linkWorkPackageToFile', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('linkWorkPackageToFile')
 			->willThrowException(new InvalidArgumentException('invalid data'));
@@ -1332,16 +1636,37 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function exceptionDataProvider(): array {
 		return [
 			[
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				new OpenprojectErrorException('Precondition failed', 412),
 				412,
 				'Precondition failed'
 			],
 			[
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				new OpenprojectResponseException('Malformed response'),
 				500,
 				'Malformed response'
 			],
 			[
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				new Exception("Internal server error"),
+				500,
+				'Internal server error'
+			],
+			[
+				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				new OpenprojectErrorException('Precondition failed', 412),
+				412,
+				'Precondition failed'
+			],
+			[
+				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				new OpenprojectResponseException('Malformed response'),
+				500,
+				'Malformed response'
+			],
+			[
+				OpenProjectAPIService::AUTH_METHOD_OIDC,
 				new Exception("Internal server error"),
 				500,
 				'Internal server error'
@@ -1349,12 +1674,22 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 	}
 
-	public function testGetAvailableOpenProjectProjects(): void {
-		$this->getUserValueMock();
+	/**
+	 *
+	 * @param string $authorizationMethod
+	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 */
+	public function testGetAvailableOpenProjectProjects(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getAvailableOpenProjectProjects'])
+			->onlyMethods(['getAvailableOpenProjectProjects','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getAvailableOpenProjectProjects')
 			->with('test')
@@ -1392,6 +1727,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param $authorizationMethod
 	 * @param \Exception $exception
 	 * @param int $expectedHttpStatusCode
 	 * @param string $expectedError
@@ -1400,14 +1736,19 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 *@return void
 	 */
 	public function testGetAvailableOpenProjectProjectsException(
+		string $authorizationMethod,
 		Exception $exception,
 		int $expectedHttpStatusCode,
 		string $expectedError
 	):void {
-		$this->getUserValueMock();
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getAvailableOpenProjectProjects', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getAvailableOpenProjectProjects')
 			->willThrowException($exception);
@@ -1425,8 +1766,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame($expectedError, $response->getData());
 	}
 
-	public function testGetOpenProjectWorkPackageForm(): void {
-		$this->getUserValueMock();
+	/**
+	 *
+	 * @param string $authorizationMethod
+	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 */
+	public function testGetOpenProjectWorkPackageForm(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$body = [
 			"_links" => [
 				"type" => [
@@ -1476,8 +1824,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOpenProjectWorkPackageForm'])
+			->onlyMethods(['getOpenProjectWorkPackageForm', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getOpenProjectWorkPackageForm')
 			->with('test', 6, $body)
@@ -1497,6 +1848,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param string $authorizationMethod
 	 * @param \Exception $exception
 	 * @param int $expectedHttpStatusCode
 	 * @param string $expectedError
@@ -1505,13 +1857,18 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 *@return void
 	 */
 	public function testGetOpenProjectWorkPackageFormException(
+		string $authorizationMethod,
 		Exception $exception,
 		int $expectedHttpStatusCode,
 		string $expectedError): void {
-		$this->getUserValueMock();
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageForm','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getOpenProjectWorkPackageForm')
 			->willThrowException($exception);
@@ -1534,13 +1891,24 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageFormEmptyBody(): void {
-		$this->getUserValueMock();
+	public function testGetOpenProjectWorkPackageFormEmptyBody(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOpenProjectWorkPackageForm', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
+		$service
+			->method('getOpenProjectWorkPackageForm')
+			->willReturn([]);
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
@@ -1552,13 +1920,18 @@ class OpenProjectAPIControllerTest extends TestCase {
 		);
 		$response = $controller->getOpenProjectWorkPackageForm('6', []);
 		$this->assertSame(HTTP::STATUS_OK, $response->getStatus());
+		$this->assertSame([], $response->getData());
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetAvailableAssigneesOfAProject() : void {
-		$this->getUserValueMock();
+	public function testGetAvailableAssigneesOfAProject(string $authorizationMethod) : void {
+		$this->getUserValueMock($authorizationMethod);
 		$result = [ 0 => [
 			"_type" => "User",
 			"id" => 10,
@@ -1584,8 +1957,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getAvailableAssigneesOfAProject'])
+			->onlyMethods(['getAvailableAssigneesOfAProject','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('getAvailableAssigneesOfAProject')
 			->with('test', 6)
@@ -1606,6 +1982,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string  $authorizationMethod
 	 * @param \Exception $exception
 	 * @param int $expectedHttpStatusCode
 	 * @param string $expectedError
@@ -1614,14 +1992,19 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 *@return void
 	 */
 	public function testGetAvailableAssigneesOfAProjectException(
+		string $authorizationMethod,
 		Exception $exception,
 		int $expectedHttpStatusCode,
 		string $expectedError
 	):void {
-		$this->getUserValueMock();
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getAvailableAssigneesOfAProject', 'getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('getAvailableAssigneesOfAProject')
 			->willThrowException($exception);
@@ -1639,8 +2022,15 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$this->assertSame($expectedError, $response->getData());
 	}
 
-	public function testCreateWorkpackages(): void {
-		$this->getUserValueMock();
+	/**
+	 *
+	 * @param string $authorizationMethod
+	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 */
+	public function testCreateWorkpackages(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$body = [
 			"_links" => [
 				"type" => [
@@ -1699,8 +2089,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['createWorkPackage'])
+			->onlyMethods(['createWorkPackage','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service->expects($this->once())
 			->method('createWorkPackage')
 			->with('test', $body)
@@ -1722,6 +2115,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param string $authorizationMethod
 	 * @param \Exception $exception
 	 * @param int $expectedHttpStatusCode
 	 * @param string $expectedError
@@ -1730,11 +2124,12 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 *@return void
 	 */
 	public function testCreateWorkpackagesException(
+		string $authorizationMethod,
 		Exception $exception,
 		int $expectedHttpStatusCode,
 		string $expectedError
 	):void {
-		$this->getUserValueMock();
+		$this->getUserValueMock($authorizationMethod);
 		$body = [
 			"_links" => [
 				"type" => [
@@ -1763,7 +2158,11 @@ class OpenProjectAPIControllerTest extends TestCase {
 		];
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['createWorkPackage','getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$service
 			->method('createWorkPackage')
 			->willThrowException($exception);
@@ -1782,13 +2181,21 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
+	 *
+	 * @param string $authorizationMethod
 	 * @return void
+	 *
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testCreateWorkpackagesEmptyBody(): void {
-		$this->getUserValueMock();
+	public function testCreateWorkpackagesEmptyBody(string $authorizationMethod): void {
+		$this->getUserValueMock($authorizationMethod);
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
+			->onlyMethods(['getOIDCToken'])
 			->getMock();
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$service->method('getOIDCToken')->willReturn('123');
+		}
 		$controller = new OpenProjectAPIController(
 			'integration_openproject',
 			$this->requestMock,
