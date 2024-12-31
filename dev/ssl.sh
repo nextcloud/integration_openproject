@@ -1,6 +1,10 @@
 #!/bin/bash
 
-tmp_cert="$HOME/tmp/root_ca.crt"
+tmp_cert_dir="$HOME/tmp"
+
+mkdir -p "$tmp_cert_dir"
+
+tmp_cert="$tmp_cert_dir/root_ca.crt"
 
 sudo rm -rf "$tmp_cert" /usr/local/share/ca-certificates/Step_Root_CA.crt /etc/ssl/certs/Step_Root_CA.pem
 

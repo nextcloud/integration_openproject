@@ -83,7 +83,7 @@ services:
       start_period: 10s
 
   nextcloud:
-    image: nextcloud:apache
+    image: nextcloud:${NEXTCLOUD_IMAGE_TAG:-apache}
     restart: always
     entrypoint: bash
     command: /nextcloud.sh

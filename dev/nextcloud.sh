@@ -9,7 +9,8 @@ if [ -d "$STEP_CERTS_DIR" ]; then
     update-ca-certificates
 fi
 
-chown -R www-data custom_apps
+chown www-data custom_apps
+find ./custom_apps -mindepth 1 -path ./custom_apps/integration_openproject -prune -o -exec chown www-data {} \;
 
 /entrypoint.sh apache2-foreground &
 
