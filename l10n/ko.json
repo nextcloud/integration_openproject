@@ -20,6 +20,7 @@
     "Reset" : "초기화",
     "Connected as {user}" : "{user}로 연결됨",
     "Incorrect access token" : "잘못된 액세스 토큰",
+    "Invalid token" : "잘못된 토큰",
     "Server replied with an error message, please check the Nextcloud logs" : "서버가 오류 메시지로 응답했습니다. Nextcloud 로그를 참조하십시오.",
     "Documentation" : "문서"
 },"pluralForm" :"nplurals=1; plural=0;"
