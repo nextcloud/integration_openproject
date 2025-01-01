@@ -19,3 +19,8 @@ docker-compose.override.yml
 # VSCode
 .vscode
 *.code-workspace
+
+# dev environment
+!dev/.env
+dev/apps
+dev/certs
