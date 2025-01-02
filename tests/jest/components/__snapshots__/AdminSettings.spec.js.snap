@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AdminSettings.vue Authorization Method view mode form complete should show field values and hide the form completed with oauth2 auth method 1`] = `
+Wrapper {
+  "selector": ".authorization-method",
+}
+`;
+
+exports[`AdminSettings.vue Authorization Method view mode form complete should show field values and hide the form completed with oidc auth method 1`] = `
+Wrapper {
+  "selector": ".authorization-method",
+}
+`;
+
+exports[`AdminSettings.vue Authorization settings view mode form complete should show field values and hide authorization settings form 1`] = `
+Wrapper {
+  "selector": ".authorization-settings",
+}
+`;
+
 exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
 Wrapper {
   "selector": ".nextcloud-oauth-values",
@@ -31,7 +49,7 @@ Wrapper {
 `;
 
 exports[`AdminSettings.vue default user configurations form should be visible when the integration is complete 1`] = `
-Wrapper {
+ErrorWrapper {
   "selector": ".default-prefs",
 }
 `;

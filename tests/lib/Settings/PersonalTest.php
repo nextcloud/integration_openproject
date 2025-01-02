@@ -10,6 +10,7 @@
 
 namespace OCA\OpenProject\Settings;
 
+use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
@@ -32,11 +33,17 @@ class PersonalTest extends TestCase {
 	 */
 	private $initialState;
 
+	/**
+	 * @var MockObject | OpenProjectAPIService
+	 */
+	private $openProjectService;
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
 		$this->initialState = $this->getMockBuilder(IInitialState::class)->getMock();
-		$this->setting = new Personal($this->config, $this->initialState, "testUser");
+		$this->openProjectService = $this->getMockBuilder(OpenProjectAPIService::class)->disableOriginalConstructor()->getMock();
+		$this->setting = new Personal($this->config, $this->initialState, $this->openProjectService, "testUser");
 	}
 
 	/**
@@ -96,8 +103,10 @@ class PersonalTest extends TestCase {
 		$this->config
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
@@ -105,7 +114,9 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'0', '0',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$clientId,
 				$clientSecret,
 				$oauthInstanceUrl,
@@ -125,6 +136,7 @@ class PersonalTest extends TestCase {
 						'search_enabled' => false,
 						'navigation_enabled' => false,
 						'admin_config_ok' => $adminConfigStatus,
+						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
 					]
 				],
 				['oauth-connection-result'],
@@ -156,8 +168,10 @@ class PersonalTest extends TestCase {
 		$this->config
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
@@ -165,7 +179,9 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'1', '1',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				"some-client-id",
 				"some-client-secret",
 				"http://localhost",
@@ -182,6 +198,7 @@ class PersonalTest extends TestCase {
 						'search_enabled' => true,
 						'navigation_enabled' => true,
 						'admin_config_ok' => true,
+						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
 					]
 				],
 				['oauth-connection-result'],

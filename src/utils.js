@@ -43,10 +43,12 @@ export const F_MODES = {
 
 export const FORM = {
 	SERVER: 0,
-	OP_OAUTH: 1,
-	NC_OAUTH: 2,
-	GROUP_FOLDER: 3,
-	APP_PASSWORD: 4,
+	AUTHORIZATION_METHOD: 1,
+	AUTHORIZATION_SETTING: 2,
+	OP_OAUTH: 3,
+	NC_OAUTH: 4,
+	GROUP_FOLDER: 5,
+	APP_PASSWORD: 6,
 }
 
 export const WORKPACKAGES_SEARCH_ORIGIN = {
@@ -62,4 +64,14 @@ export const NO_OPTION_TEXT_STATE = {
 	START_TYPING: 0,
 	SEARCHING: 1,
 	RESULT: 2,
+}
+
+export const AUTH_METHOD = {
+	OAUTH2: 'oauth2',
+	OIDC: 'oidc',
+}
+
+export const AUTH_METHOD_LABEL = {
+	OAUTH2: t('integration_openproject', 'OAuth2 two-way authorization code flow'),
+	OIDC: t('integration_openproject', 'OpenID identity provider'),
 }

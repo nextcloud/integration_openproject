@@ -24,7 +24,11 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
+use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
+use OCA\UserOIDC\Exception\TokenExchangeFailedException;
+use OCA\UserOIDC\Model\Token;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -633,7 +637,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return OpenProjectAPIService
 	 */
 	private function getOpenProjectAPIService(
-		$storageMock = null, $oAuthToken = '1234567890', $baseUrl = 'https://nc.my-server.org', $userId = 'testUser'
+		$authMethod = null,
+		$storageMock = null, $oAuth2OrOidcToken = '1234567890', $baseUrl = 'https://nc.my-server.org', $userId = 'testUser'
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
@@ -688,42 +693,70 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$storageMock = $this->createMock(IRootFolder::class);
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenMock = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangedTokenRequestedEventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			$this->defaultConfigMock
+				->method('getUserValue')
+				->withConsecutive(
+					[$userId, 'integration_openproject', 'token'],
+					[$userId, 'integration_openproject', 'refresh_token'],
+					[$userId, 'integration_openproject', 'token'],
+				)
+				->willReturnOnConsecutiveCalls(
+					$oAuth2OrOidcToken,
+					'oAuthRefreshToken',
+					'new-Token'
+				);
 
-		$this->defaultConfigMock
-			->method('getUserValue')
-			->withConsecutive(
-				[$userId, 'integration_openproject', 'token'],
-				[$userId, 'integration_openproject', 'refresh_token'],
-				[$userId, 'integration_openproject', 'token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				$oAuthToken,
-				'oAuthRefreshToken',
-				'new-Token'
-			);
+			$this->defaultConfigMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url'],
+					['integration_openproject', 'authorization_method'],
 
-		$this->defaultConfigMock
-			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
+					// for second request after invalid token reply
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_client_id'],
+					['integration_openproject', 'openproject_client_secret'],
+					['integration_openproject', 'openproject_instance_url'],
+				)
+				->willReturnOnConsecutiveCalls(
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					$this->clientId,
+					$this->clientSecret,
+					$this->pactMockServerConfig->getBaseUri()->__toString(),
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 
-				// for second request after invalid token reply
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-			)
-			->willReturnOnConsecutiveCalls(
-				$this->clientId,
-				$this->clientSecret,
-				$this->pactMockServerConfig->getBaseUri()->__toString(),
-
-				// for second request after invalid token reply
-				$this->clientId,
-				$this->clientSecret,
-				$this->pactMockServerConfig->getBaseUri()->__toString()
-			);
+					// for second request after invalid token reply
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					$this->clientId,
+					$this->clientSecret,
+					$this->pactMockServerConfig->getBaseUri()->__toString()
+				);
+		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$this->defaultConfigMock
+				->method('getAppValue')
+				->withConsecutive(
+					['integration_openproject', 'authorization_method'],
+					['integration_openproject', 'openproject_instance_url'],
+					['integration_openproject', 'authorization_method'],
+				)
+				->willReturnOnConsecutiveCalls(
+					OpenProjectAPIService::AUTH_METHOD_OIDC,
+					$this->pactMockServerConfig->getBaseUri()->__toString(),
+					OpenProjectAPIService::AUTH_METHOD_OIDC
+				);
+			$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
+			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
+			$exchangedTokenRequestedEventMock->method('getToken')->willReturn($tokenMock);
+			$tokenMock->method('getAccessToken')->willReturn($oAuth2OrOidcToken);
+			$appManagerMock->method('isInstalled')->willReturn(true);
+		}
 
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
 		$urlGeneratorMock
@@ -742,7 +775,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ICacheFactory::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
+			$appManagerMock,
 			$this->createMock(IProvider::class),
 			$this->createMock(ISecureRandom::class),
 			$this->createMock(IEventDispatcher::class),
@@ -750,10 +783,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ILogFactory::class),
 			$this->createMock(IManager::class),
+			$exchangeTokenMock
 		);
 	}
 
 	/**
+	 *  Since our app currently has two authorization methods, the test employing this mock service has no effect on the authorization method.
+	 *
+	 *
 	 * @param array<string> $onlyMethods
 	 * @param IRootFolder|null $rootMock
 	 * @param ICacheFactory|null $cacheFactoryMock
@@ -768,6 +805,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param IURLGenerator|null $iURLGenerator
 	 * @param ILogFactory|null $iLogFactory
 	 * @param IManager|null $iManager
+	 * @param ExchangedTokenRequestedEventHelper|null $exchangeTokenEvent
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getServiceMock(
@@ -784,6 +822,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$db = null,
 		$iLogFactory = null,
 		$iManager = null,
+		$exchangeTokenEvent = null,
 		$iURLGenerator = null
 	): OpenProjectAPIService|MockObject {
 		$onlyMethods[] = 'getBaseUrl';
@@ -823,6 +862,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($iLogFactory === null) {
 			$iLogFactory = $this->createMock(ILogFactory::class);
 		}
+		if ($exchangeTokenEvent === null) {
+			$exchangeTokenEvent = $this->createMock(ExchangedTokenRequestedEventHelper::class);
+		}
 		if ($iManager === null) {
 			$iManager = $this->createMock(IManager::class);
 		}
@@ -848,6 +890,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					$db,
 					$iLogFactory,
 					$iManager,
+					$exchangeTokenEvent,
 					$iURLGenerator
 				])
 			->onlyMethods($onlyMethods)
@@ -1022,11 +1065,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function getAuthorizationMethodDataProvider() {
+		return [
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
+			[OpenProjectAPIService::AUTH_METHOD_OIDC]
+		];
+	}
+
+	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
 	 * @throws \JsonException
 	 */
-	public function testGetNotificationsRequest() {
+	public function testGetNotificationsRequest(string $authorizationMethod) {
+		$this->service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1095,9 +1151,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodForOauth2DataProvider
+	 * @throws \JsonException
 	 */
-	public function testRequestUsingOAuthToken() {
+	public function testRequestUsingOAuthToken(string $authorizationMethod) {
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1115,7 +1175,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $this->service->request(
+		$result = $service->request(
 			'testUser',
 			'work_packages'
 		);
@@ -1123,10 +1183,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
-	 * @return void
+	 * @return array<mixed>
 	 */
-	public function testRequestRefreshOAuthToken() {
+	public function getAuthorizationMethodForOauth2DataProvider() {
+		return [
+			[OpenProjectAPIService::AUTH_METHOD_OAUTH]
+		];
+	}
+
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
+	 * @return void
+	 * @dataProvider getAuthorizationMethodForOauth2DataProvider
+	 * @throws \JsonException
+	 */
+	public function testRequestRefreshOAuthToken(string $authorizationMethod) {
 		$consumerRequestInvalidOAuthToken = new ConsumerRequest();
 		$consumerRequestInvalidOAuthToken
 			->setMethod('GET')
@@ -1188,7 +1261,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequestNewOAuthToken)
 			->willRespondWith($providerResponseNewOAuthToken);
 
-		$service = $this->getOpenProjectAPIService(null, 'invalid');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, 'invalid');
 		$this->defaultConfigMock
 			->expects($this->exactly(2))
 			->method('setUserValue')
@@ -1206,9 +1279,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testRequestToNotExistingPath() {
+	public function testRequestToNotExistingPath(string $authorizationMethod) {
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1223,7 +1300,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $this->service->request(
+		$result = $service->request(
 			'testUser',
 			'not_existing'
 		);
@@ -1237,9 +1314,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectAvatar() {
+	public function testGetOpenProjectAvatar(string $authorizationMethod) {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1262,7 +1342,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
 		$result = $service->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
@@ -1279,9 +1359,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectAvatarWithNoContentType() {
+	public function testGetOpenProjectAvatarWithNoContentType(string $authorizationMethod) {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1298,7 +1381,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
 		$result = $service->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
@@ -1312,9 +1395,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectAvatarWithMisMatchContentType() {
+	public function testGetOpenProjectAvatarWithMisMatchContentType(string $authorizationMethod) {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1337,7 +1423,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
 		$result = $service->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
@@ -1350,9 +1436,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectAvatarWithInvalidImageData() {
+	public function testGetOpenProjectAvatarWithInvalidImageData(string $authorizationMethod) {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1370,7 +1459,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService(null, '1234567890', 'https://nc.my-server.org', 'NCuser');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
 		$result = $service->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
@@ -1383,9 +1472,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectAvatarNoAvatar() {
+	public function testGetOpenProjectAvatarNoAvatar(string $authorizationMethod) {
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1400,8 +1493,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that does not have one')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-
-		$result = $this->service->getOpenProjectAvatar(
+		$result = $service->getOpenProjectAvatar(
 			'openProjectUser',
 			'Me',
 			'testUser'
@@ -1413,9 +1505,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectWorkPackageStatusRequest(): void {
+	public function testGetOpenProjectWorkPackageStatusRequest(string $authorizationMethod): void {
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1432,7 +1528,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $this->service->getOpenProjectWorkPackageStatus(
+		$result = $service->getOpenProjectWorkPackageStatus(
 			'testUser',
 			'7'
 		);
@@ -1492,9 +1588,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetOpenProjectWorkPackageTypeRequest(): void {
+	public function testGetOpenProjectWorkPackageTypeRequest(string $authorizationMethod): void {
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1511,7 +1611,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $this->service->getOpenProjectWorkPackageType(
+		$result = $service->getOpenProjectWorkPackageType(
 			'testUser',
 			'3'
 		);
@@ -1590,12 +1690,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_instance_url'],
-			)->willReturnOnConsecutiveCalls('clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, 'clientID', 'SECRET', $oauthInstanceUrl, 'clientID', $oauthInstanceUrl);
 
 		$url = $this->createMock(IURLGenerator::class);
 		$url->expects($this->once())
@@ -1652,10 +1753,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url']
-			)->willReturnOnConsecutiveCalls($clientId, $clientSecret, $oauthInstanceUrl);
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, $clientId, $clientSecret, $oauthInstanceUrl);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('OpenProject admin config is not valid!');
@@ -1740,7 +1842,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$folderMock->method('getById')->willReturn($expectedReturn);
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
-		$service = $this->getOpenProjectAPIService($storageMock);
+		// here authorization method is of no use, just putting 'oauth2' since its the default
+		$service = $this->getOpenProjectAPIService(OpenProjectAPIService::AUTH_METHOD_OAUTH, $storageMock);
 		$this->expectException(NotFoundException::class);
 		$service->getNode('me', 1234);
 	}
@@ -1762,7 +1865,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function testGetNode($nodeClassName) {
 		$storageMock = $this->getStorageMock($nodeClassName);
-		$service = $this->getOpenProjectAPIService($storageMock);
+		// here authorization method is of no use, just putting 'oauth2' since its the default
+		$service = $this->getOpenProjectAPIService(OpenProjectAPIService::AUTH_METHOD_OAUTH, $storageMock);
 		$result = $service->getNode('me', 1234);
 		$this->assertTrue($result instanceof \OCP\Files\Node);
 	}
@@ -2076,11 +2180,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				'http://openproject.org',
@@ -2116,6 +2222,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ILogFactory::class),
 			$this->createMock(IManager::class),
+			$this->createMock(ExchangedTokenRequestedEventHelper::class),
 		);
 
 		$response = $service->request('', '', []);
@@ -2147,11 +2254,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$this->clientId,
 				$this->clientSecret,
 				'http://openproject.org',
@@ -2186,7 +2295,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(ISubAdmin::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class)
+			$this->createMock(IManager::class),
+			$this->createMock(ExchangedTokenRequestedEventHelper::class)
 		);
 
 		$response = $service->request('', '', []);
@@ -2703,8 +2813,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
+	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToFilePact(): void {
+	public function testLinkWorkPackageToFilePact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2724,7 +2838,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$storageMock = $this->getStorageMock();
 
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$values = $this->singleFileInformation;
 		$result = $service->linkWorkPackageToFile(
 			$values,
@@ -2737,8 +2851,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
+	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToMultipleFileRequestPact(): void {
+	public function testLinkWorkPackageToMultipleFileRequestPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2758,7 +2876,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$storageMock = $this->getStorageMock();
 
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$values = $this->multipleFileInformation;
 		$result = $service->linkWorkPackageToFile(
 			$values,
@@ -2769,9 +2887,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToFileEmptyStorageUrlPact(): void {
+	public function testLinkWorkPackageToFileEmptyStorageUrlPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2809,6 +2930,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService(
+			$authorizationMethod,
 			$storageMock,
 			'1234567890',
 			''
@@ -2825,9 +2947,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToFileNotAvailableStorageUrlPact(): void {
+	public function testLinkWorkPackageToFileNotAvailableStorageUrlPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2865,6 +2990,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$storageMock = $this->getStorageMock();
 		$service = $this->getOpenProjectAPIService(
+			$authorizationMethod,
 			$storageMock,
 			'1234567890',
 			'http://not-existing'
@@ -2880,9 +3006,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToFileMissingPermissionPact(): void {
+	public function testLinkWorkPackageToFileMissingPermissionPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2905,7 +3034,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock, 'MissingPermission');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock, 'MissingPermission');
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = $this->singleFileInformation;
@@ -2917,9 +3046,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testLinkWorkPackageToFileNotFoundPact(): void {
+	public function testLinkWorkPackageToFileNotFoundPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2942,7 +3074,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = [
@@ -2962,8 +3094,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
+	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testMarkAllNotificationsOfWorkPackageAsReadPact(): void {
+	public function testMarkAllNotificationsOfWorkPackageAsReadPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -2981,7 +3117,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 
-		$service = $this->getOpenProjectAPIService();
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 
 		$result = $service->markAllNotificationsOfWorkPackageAsRead(
 			123,
@@ -2993,8 +3129,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
+	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testMarkAllNotificationsOfANotExistingWorkPackageAsReadPact(): void {
+	public function testMarkAllNotificationsOfANotExistingWorkPackageAsReadPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -3012,7 +3152,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$service = $this->getOpenProjectAPIService();
+		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$this->expectException(OpenprojectErrorException::class);
 		$service->markAllNotificationsOfWorkPackageAsRead(
 			789,
@@ -3022,7 +3162,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function adminConfigStatusProvider(): array {
+	public function adminConfigStatusProviderForOauth(): array {
 		return [
 			[
 				'openproject_client_id' => '',
@@ -3076,10 +3216,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider adminConfigStatusProvider
+	 * @dataProvider adminConfigStatusProviderForOauth
 	 * @return void
 	 */
-	public function testIsAdminConfigOk(
+	public function testiSAdminConfigOkForOauth2(
 		string $client_id, string $client_secret, string $oauth_instance_url, bool $expected
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
@@ -3091,7 +3231,120 @@ class OpenProjectAPIServiceTest extends TestCase {
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls($client_id, $client_secret, $oauth_instance_url);
 
-		$this->assertSame($expected, $this->service::isAdminConfigOk($configMock));
+		$this->assertSame($expected, $this->service::isAdminConfigOkForOauth2($configMock));
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function adminConfigStatusProviderForOIDC(): array {
+		return [
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'openproject_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => '',
+				'openproject_instance_url' => 'https://openproject',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => '',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'openproject.com',
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject',
+				'expected' => true,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject.com/',
+				'expected' => true,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'openproject_instance_url' => 'https://openproject.com',
+				'expected' => true,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider adminConfigStatusProviderForOIDC
+	 * @return void
+	 */
+	public function testIsAdminConfigOkForOIDCAuth(
+		string $oidc_procider, string $targetd_audience_client_id, string $oauth_instance_url, bool $expected
+	) {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls($oidc_procider, $targetd_audience_client_id, $oauth_instance_url);
+
+		$this->assertSame($expected, $this->service::isAdminConfigOkForOIDCAuth($configMock));
+	}
+
+	/**
+	 *
+	 * this is just to test that admin config is ok when auth method is 'oidc'
+	 * @return void
+	 */
+	public function testIsAdminConfigOkOIDC() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OIDC, 'some_oidc_provider', 'some_targeted_audience_client', 'https://openproject.com');
+		$result = $this->service::isAdminConfigOk($configMock);
+		$this->assertSame(true, $result);
+	}
+
+	/**
+	 *
+	 * this is just to test that admin config is ok when auth method is 'oauth2'
+	 * @return void
+	 */
+	public function testIsAdminConfigOkOauth2() {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+			)->willReturnOnConsecutiveCalls(OpenProjectAPIService::AUTH_METHOD_OAUTH, 'some_secret', 'some_client_id', 'https://openproject.com');
+		$result = $this->service::isAdminConfigOk($configMock);
+		$this->assertSame(true, $result);
 	}
 
 	/**
@@ -3152,9 +3405,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetWorkPackageFileLinksPact(): void {
+	public function testGetWorkPackageFileLinksPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -3185,7 +3441,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 
 		$result = $service->getWorkPackageFileLinks(7, 'testUser');
 
@@ -3202,9 +3458,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetWorkPackageFileLinkNotFoundPact(): void {
+	public function testGetWorkPackageFileLinkNotFoundPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -3226,7 +3485,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$this->expectException(OpenprojectErrorException::class);
 		$service->getWorkPackageFileLinks(100, 'testUser');
 	}
@@ -3262,9 +3521,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetWorkPackageFileDeleteLinksPact(): void {
+	public function testGetWorkPackageFileDeleteLinksPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('DELETE')
@@ -3281,7 +3543,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 
 		$result = $service->deleteFileLink(10, 'testUser');
 
@@ -3292,9 +3554,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetWorkPackageFileDeleteLinkNotFoundPact(): void {
+	public function testGetWorkPackageFileDeleteLinkNotFoundPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('DELETE')
@@ -3317,7 +3582,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$service->deleteFileLink(12345, 'testUser');
@@ -3325,9 +3590,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetAvailableOpenProjectProjectsPact(): void {
+	public function testGetAvailableOpenProjectProjectsPact(string $authorizationMethod): void {
 		$filters[] = [
 			'storageUrl' =>
 				['operator' => '=', 'values' => ['https://nc.my-server.org']],
@@ -3355,7 +3623,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$result = $service->getAvailableOpenProjectProjects('testUser');
 		$this->assertSame(sort($this->expectedValidOpenProjectResponse), sort($result));
 	}
@@ -3404,6 +3672,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			null,
 			null,
+			null,
 			$iUrlGeneratorMock
 		);
 		$service->method('request')
@@ -3429,9 +3698,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testWorkpackagesFormValidationPact(): void {
+	public function testWorkpackagesFormValidationPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -3450,7 +3722,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$result = $service->getOpenProjectWorkPackageForm('testUser', '6', $this->validWorkPackageFormValidationBody);
 		$this->assertSame(
 			sort($this->validWorkPackageFormValidationResponse['_embedded']),
@@ -3498,9 +3770,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testGetAvailableAssigneesOfAProjectPact(): void {
+	public function testGetAvailableAssigneesOfAProjectPact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -3518,7 +3793,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$result = $service->getAvailableAssigneesOfAProject('testUser', '6');
 		$this->assertSame(
 			sort($this->validGetProjectAssigneesResponse['_embedded']['elements']),
@@ -3564,9 +3839,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	/**
 	 * @group ignoreWithPHP8.0
+	 * @param string $authorizationMethod
 	 * @return void
+	 * @dataProvider getAuthorizationMethodDataProvider
+	 * @throws \JsonException
 	 */
-	public function testCreateWorkpackagePact(): void {
+	public function testCreateWorkpackagePact(string $authorizationMethod): void {
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('POST')
@@ -3585,7 +3863,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($storageMock);
+		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
 		$result = $service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
 		$this->assertSame(sort($this->createWorkpackageResponse), sort($result));
 	}
@@ -3779,6 +4057,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			null,
 			$configMock,
+			null,
 			null,
 			null,
 			null,
@@ -4033,5 +4312,138 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$actualResult = $service->isServerSideEncryptionEnabled();
 		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+
+
+	/**
+	 * @return void
+	 */
+
+	public function testGetOIDCTokenSuccess(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
+		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
+		$eventMock->method('getToken')->willReturn($tokenMock);
+		$tokenMock->method('getAccessToken')->willReturn('exchanged-access-token');
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			null,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			null,
+			$iManagerMock,
+			$exchangeTokenEvent
+		);
+		$result = $service->getOIDCToken();
+		$this->assertEquals('exchanged-access-token', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+
+	public function testGetOIDCTokenUserOIDCAppNotInstalled(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			null,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			null,
+			$iManagerMock,
+			null
+		);
+		$result = $service->getOIDCToken();
+		$this->assertEquals(null, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+
+	public function testGetOIDCTokenExchangeFailedException(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		/** @psalm-suppress InvalidArgument for getEvent
+		 * get event can throw TokenExchangeFailedException in case there is failure in token exchange from the user_oidc app
+		 */
+		$exchangeTokenEvent->method('getEvent')->willThrowException(new TokenExchangeFailedException('Token exchanged failed'));
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			null,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			null,
+			$iManagerMock,
+			$exchangeTokenEvent
+		);
+		$result = $service->getOIDCToken();
+		$this->assertEquals(null, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+
+	public function testGetOIDCTokenNoToken(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
+		$eventMock->method('getToken')->willReturn(null);
+		$service = $this->getServiceMock(
+			[],
+			null,
+			null,
+			null,
+			null,
+			$iAppManagerMock,
+			null,
+			null,
+			$configMock,
+			null,
+			null,
+			null,
+			$iManagerMock,
+			$exchangeTokenEvent
+		);
+		$result = $service->getOIDCToken();
+		$this->assertEquals(null, $result);
 	}
 }
