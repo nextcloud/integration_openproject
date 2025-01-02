@@ -1,0 +1,165 @@
+services:
+  step:
+    image: smallstep/step-ca:latest
+    restart: unless-stopped
+    user: root
+    entrypoint: bash
+    command: /step.sh
+    environment:
+      TZ: UTC
+      DOCKER_STEPCA_INIT_NAME: NC-OP Integration
+      DOCKER_STEPCA_INIT_DNS_NAMES: step,localhost
+      DOCKER_STEPCA_INIT_PROVISIONER_NAME: jankaritech
+      DOCKER_STEPCA_INIT_PASSWORD: jankaritech
+      DOCKER_STEPCA_INIT_ACME: true
+    volumes:
+      - ./step.sh:/step.sh:ro
+      - ./certs:/certs
+      - step:/home/step
+    networks:
+      - nc-op
+
+  traefik:
+    image: traefik:latest
+    restart: unless-stopped
+    command: >
+      --log.level=ERROR
+      --providers.docker
+      --providers.docker.exposedByDefault=false
+      --api.dashboard=true
+      --api.disabledashboardad=true
+      --entryPoints.web.address=:80
+      --entryPoints.web.http.redirections.entrypoint.to=websecure
+      --entryPoints.websecure.address=:443
+      --entryPoints.websecure.http.tls=true
+      --entryPoints.websecure.http.tls.certresolver=step
+      --certificatesresolvers.step.acme.caserver=https://step:9000/acme/acme/directory
+      --certificatesresolvers.step.acme.tlschallenge=true
+      --certificatesresolvers.step.acme.email=root@localhost
+      --certificatesresolvers.step.acme.keytype=RSA4096
+      --certificatesresolvers.step.acme.storage=/certs/acme.json
+    environment:
+      TZ: UTC
+      LEGO_CA_CERTIFICATES: /step/certs/root_ca.crt
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certs:/certs
+      - step:/step:ro
+    networks:
+      nc-op:
+        aliases:
+          - traefik.local
+          - openproject.local
+          - nextcloud.local
+          - keycloak.local
+    depends_on:
+      step:
+        condition: service_healthy
+    labels:
+      traefik.enable: true
+      traefik.http.routers.traefik.rule: Host(`traefik.local`)
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.entrypoints: websecure
+
+  nextcloud-db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+    volumes:
+      - ncdb:/var/lib/postgresql/data
+    networks:
+      - nc-op
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready', '-d', 'db_prod']
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+  nextcloud:
+    image: nextcloud:${NEXTCLOUD_IMAGE_TAG:-apache}
+    restart: always
+    entrypoint: bash
+    command: /nextcloud.sh
+    environment:
+      OVERWRITEPROTOCOL: 'https'
+      OVERWRITECLIURL: 'https://nextcloud.local'
+      PHP_UPLOAD_SIZE: '1024M'
+      POSTGRES_HOST: nextcloud-db
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+    volumes:
+      - ./nextcloud.sh:/nextcloud.sh
+      - ./apps:/var/www/html/custom_apps
+      - ../:/var/www/html/custom_apps/integration_openproject:ro
+      - ncdata:/var/www/html
+      - apache_conf:/etc/apache2
+      - step:/step:ro
+    networks:
+      - nc-op
+    depends_on:
+      traefik:
+        condition: service_started
+      nextcloud-db:
+        condition: service_healthy
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nextcloud.rule: Host(`nextcloud.local`)
+      traefik.http.routers.nextcloud.entrypoints: websecure
+
+  cron:
+    image: nextcloud:apache
+    restart: always
+    entrypoint: /cron.sh
+    volumes:
+      - ncdata:/var/www/html
+      - apache_conf:/etc/apache2
+    networks:
+      - nc-op
+    depends_on:
+      nextcloud-db:
+        condition: service_healthy
+
+  openproject:
+    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-15}
+    restart: unless-stopped
+    entrypoint: bash
+    command: /openproject.sh
+    environment:
+      OPENPROJECT_HOST__NAME: '${OPENPROJECT_DEV_HOST:-openproject.local}'
+      OPENPROJECT_HTTPS: true
+      OPENPROJECT_DEV_EXTRA_HOSTS: '${OPENPROJECT_DEV_HOST:-openproject.local}'
+      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
+      OPENPROJECT_EDITION: ${OPENPROJECT_EDITION:-standard}
+      OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET: false
+    volumes:
+      - ./openproject.sh:/openproject.sh
+      - opdata:/var/openproject/assets
+      - opdb:/var/postgresql/data
+      - step:/step:ro
+    networks:
+      - nc-op
+    depends_on:
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.openproject.rule: Host(`${OPENPROJECT_DEV_HOST:-openproject.local}`)
+      traefik.http.routers.openproject.entrypoints: websecure
+
+volumes:
+  ncdb:
+  ncdata:
+  apache_conf:
+  opdb:
+  opdata:
+  step:
+
+networks:
+  nc-op:
