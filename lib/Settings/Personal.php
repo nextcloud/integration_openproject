@@ -50,7 +50,7 @@ class Personal implements ISettings {
 		$token = '';
 		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
 			$token = $this->openProjectAPIService->getOIDCToken();
-			if ($token !== null) {
+			if ($token) {
 				// when connection is oidc based then user information needs to be saved
 				$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
 			}

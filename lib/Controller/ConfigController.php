@@ -145,7 +145,7 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetConfigValuesForOauth2Reset(): void {
+	public function resetOauth2Configs(): void {
 		// for oauth2 reset we reset openproject client credential as well as nextcloud client credential
 		$this->config->setAppValue(Application::APP_ID, 'openproject_client_id', "");
 		$this->config->setAppValue(Application::APP_ID, 'openproject_client_secret', "");
@@ -155,7 +155,7 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetConfigValuesForOIDCReset(string $userId = null): void {
+	public function resetOIDCConfigs(string $userId = null): void {
 		if ($userId === null) {
 			$userId = $this->userId;
 		}
@@ -369,7 +369,7 @@ class ConfigController extends Controller {
 			// when the OP client information has changed
 			(!$runningFullResetWithOIDCAuth && ((key_exists('openproject_client_id', $values) && $values['openproject_client_id'] !== $oldClientId) ||
 						(key_exists('openproject_client_secret', $values) && $values['openproject_client_secret'] !== $oldClientSecret))) ||
-					// when the OP client information is for reset
+			// when the OP client information is reset
 			$runningFullResetWithOAuth2Auth ||
 			$runningOauth2Reset
 		) {
@@ -414,7 +414,7 @@ class ConfigController extends Controller {
 				$this->clearUserInfo($userUID);
 			});
 		} elseif ($runningFullResetWithOIDCAuth) {
-			$this->resetConfigValuesForOIDCReset();
+			$this->resetOIDCConfigs();
 		}
 
 
@@ -434,13 +434,13 @@ class ConfigController extends Controller {
 		// when switching from "oauth2" to "oidc" authorization method
 		if (key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC && $runningOauth2Reset) {
-			$this->resetConfigValuesForOauth2Reset();
+			$this->resetOauth2Configs();
 		}
 
 		// when switching from "oidc" to "oauth2" authorization method
 		if (key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH && $runningOIDCReset) {
-			$this->resetConfigValuesForOIDCReset();
+			$this->resetOIDCConfigs();
 		}
 
 		// if the revoke has failed at least once, the last status is stored in the database

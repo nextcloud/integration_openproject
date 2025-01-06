@@ -476,6 +476,8 @@ class OpenProjectAPIService {
 			$body = (string) $response->getBody();
 			// refresh token if it's invalid and we are using oauth
 			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
+			// This condition applies exclusively to the OAuth2 authorization method and not to OIDC authorization,
+			// as token refreshing for OIDC is managed by the 'user_oidc' application.
 			if ($response->getStatusCode() === 401 &&
 				$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OAUTH
 			) {
@@ -1622,7 +1624,7 @@ class OpenProjectAPIService {
 	 */
 	public function getOIDCToken(): ?string {
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
-			$this->logger->debug('The user_oidc app is not installed/available');
+			$this->logger->debug('The user_oidc app is not installed or enabled');
 			return null;
 		}
 		try {

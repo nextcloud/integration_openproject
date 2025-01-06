@@ -66,7 +66,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		// so this check is required
 		if (
 			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			$this->openProjectAPIService->getOIDCToken() === null
+			!$this->openProjectAPIService->getOIDCToken()
 		) {
 			return;
 		}
