@@ -761,7 +761,7 @@ export default {
 		},
 		getOIDCAppNotInstalledHintText() {
 			const linkText = t('integration_openproject', 'User OIDC')
-			const url = generateUrl('')
+			const url = generateUrl('settings/apps/files/user_oidc')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
