@@ -28,7 +28,7 @@
 			ref="linkPicker"
 			:is-smart-picker="true"
 			:file-info="fileInfo"
-			:is-disabled="isLoading || !isAdminConfigOk || !isStateOk"
+			:is-disabled="isLoading || !enableSearchInput || !isStateOk"
 			:linked-work-packages="linkedWorkPackages"
 			@submit="onSubmit" />
 		<div id="openproject-empty-content">
@@ -36,9 +36,10 @@
 			<EmptyContent
 				v-else
 				:state="state"
+				:auth-method="adminConfigState.authMethod"
 				:file-info="fileInfo"
 				:is-smart-picker="true"
-				:is-admin-config-ok="isAdminConfigOk" />
+				:is-admin-config-ok="adminConfigState.isAdminConfigOk" />
 		</div>
 	</div>
 </template>
@@ -46,7 +47,7 @@
 <script>
 import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
-import { STATE } from '../utils.js'
+import { AUTH_METHOD, STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
@@ -76,7 +77,7 @@ export default {
 			fileInfo: {},
 			linkedWorkPackages: [],
 			state: STATE.LOADING,
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
+			adminConfigState: loadState('integration_openproject', 'admin-config'),
 		}
 	},
 	computed: {
@@ -85,6 +86,15 @@ export default {
 		},
 		isLoading() {
 			return this.state === STATE.LOADING
+		},
+		enableSearchInput() {
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OAUTH2 && this.adminConfigState.isAdminConfigOk) {
+				return true
+			}
+			if (this.adminConfigState.authMethod === AUTH_METHOD.OIDC && this.adminConfigState.isAdminConfigOk) {
+				return true
+			}
+			return false
 		},
 	},
 	mounted() {
@@ -95,7 +105,7 @@ export default {
 			this.$emit('submit', data)
 		},
 		async checkIfOpenProjectIsAvailable() {
-			if (!this.isAdminConfigOk) {
+			if (!this.adminConfigState.isAdminConfigOk) {
 				this.state = STATE.ERROR
 				return
 			}

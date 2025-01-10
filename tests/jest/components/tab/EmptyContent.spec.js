@@ -1,7 +1,7 @@
 /* jshint esversion: 8 */
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import EmptyContent from '../../../../src/components/tab/EmptyContent.vue'
-import { STATE } from '../../../../src/utils.js'
+import { AUTH_METHOD, STATE } from '../../../../src/utils.js'
 const localVue = createLocalVue()
 
 describe('EmptyContent.vue', () => {
@@ -55,6 +55,7 @@ function getWrapper(propsData = {}) {
 		propsData: {
 			state: 'ok',
 			isAdminConfigOk: true,
+			authMethod: AUTH_METHOD.OAUTH2,
 			...propsData,
 		},
 	})

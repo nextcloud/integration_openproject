@@ -34,7 +34,8 @@ class Admin implements ISettings {
 	public function __construct(IConfig $config,
 		OauthService $oauthService,
 		OpenProjectAPIService $openProjectAPIService,
-		IInitialState $initialStateService) {
+		IInitialState $initialStateService
+	) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
@@ -59,10 +60,18 @@ class Admin implements ISettings {
 		$projectFolderStatusInformation = $this->openProjectAPIService->getProjectFolderSetupInformation();
 		$isAllTermsOfServiceSignedForUserOpenProject = $this->openProjectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
 		$isAdminAuditConfigurationSetUpCorrectly = $this->openProjectAPIService->isAdminAuditConfigSetCorrectly();
+
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
 			'openproject_instance_url' => $oauthUrl,
+			'authorization_method' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', ''),
+			'authorization_settings' => [
+				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
+				'targeted_audience_client_id' => $this->config->getAppValue(
+					Application::APP_ID, 'targeted_audience_client_id', ''
+				),
+			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
@@ -74,13 +83,16 @@ class Admin implements ISettings {
 			'encryption_info' => [
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
-			]
+			],
+			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
+			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled()
 		];
 
-		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
-
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
-		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
+		$this->initialStateService->provideInitialState(
+			'admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config)
+		);
+
 
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
 	}

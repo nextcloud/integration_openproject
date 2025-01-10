@@ -29,9 +29,12 @@ use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
 use OCA\TermsOfService\Db\Entities\Signatory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
+use OCA\UserOIDC\Db\ProviderMapper;
+use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -62,6 +65,8 @@ use Psr\Log\LoggerInterface;
 define('CACHE_TTL', 3600);
 
 class OpenProjectAPIService {
+	public const AUTH_METHOD_OAUTH = 'oauth2';
+	public const AUTH_METHOD_OIDC = 'oidc';
 	/**
 	 * @var string
 	 */
@@ -133,6 +138,7 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	private AuditLogger $auditLogger;
+	private ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper;
 
 	public function __construct(
 		string $appName,
@@ -153,7 +159,8 @@ class OpenProjectAPIService {
 		ISubAdmin $subAdminManager,
 		IDBConnection $db,
 		ILogFactory $logFactory,
-		IManager $encryptionManager
+		IManager $encryptionManager,
+		ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -174,6 +181,7 @@ class OpenProjectAPIService {
 		$this->db = $db;
 		$this->logFactory = $logFactory;
 		$this->encryptionManager = $encryptionManager;
+		$this->exchangedTokenRequestedEventHelper = $exchangedTokenRequestedEventHelper;
 	}
 
 	/**
@@ -316,9 +324,13 @@ class OpenProjectAPIService {
 		string $openprojectUserName,
 		string $nextcloudUserId
 	): array {
-		$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
-		$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
+			$accessToken = $this->getOIDCToken();
+		} else {
+			$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
+			$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+			$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		}
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		try {
 			$response = $this->rawRequest(
@@ -439,10 +451,14 @@ class OpenProjectAPIService {
 	 */
 	public function request(string $userId,
 		string $endPoint, array $params = [], string $method = 'GET'): array {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
+			$accessToken = $this->getOIDCToken();
+		} else {
+			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		}
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
@@ -460,7 +476,11 @@ class OpenProjectAPIService {
 			$body = (string) $response->getBody();
 			// refresh token if it's invalid and we are using oauth
 			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
-			if ($response->getStatusCode() === 401) {
+			// This condition applies exclusively to the OAuth2 authorization method and not to OIDC authorization,
+			// as token refreshing for OIDC is managed by the 'user_oidc' application.
+			if ($response->getStatusCode() === 401 &&
+				$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OAUTH
+			) {
 				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
 				// try to refresh the token
 				$result = $this->requestOAuthAccessToken($openprojectUrl, [
@@ -912,13 +932,13 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * checks if every admin config variables are set
+	 * checks if every admin config for oauth2 based authorization variables are set
 	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
 	 */
-	public static function isAdminConfigOk(IConfig $config):bool {
+	public static function isAdminConfigOkForOauth2(IConfig $config):bool {
 		$clientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$clientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
@@ -928,6 +948,41 @@ class OpenProjectAPIService {
 		} else {
 			return self::validateURL($oauthInstanceUrl);
 		}
+	}
+
+	/**
+	 * checks if every admin config for oidc based authorization variables are set
+	 * checks if the oauth instance url is valid
+	 *
+	 * @param IConfig $config
+	 * @return bool
+	 */
+	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
+		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
+		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$checkIfConfigIsSet = !!($oidcProvider) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
+		if (!$checkIfConfigIsSet) {
+			return false;
+		} else {
+			return self::validateURL($oauthInstanceUrl);
+		}
+	}
+
+
+	/**
+	 * returns overall admin config status whether it be 'oidc' or 'oauth2'
+	 *
+	 * @return bool
+	 */
+	public static function isAdminConfigOk(IConfig $config): bool {
+		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		if ($authMethod === self::AUTH_METHOD_OAUTH) {
+			return self::isAdminConfigOkForOauth2($config);
+		} elseif ($authMethod === self::AUTH_METHOD_OIDC) {
+			return self::isAdminConfigOkForOIDCAuth($config);
+		}
+		return false;
 	}
 
 	/**
@@ -1339,7 +1394,11 @@ class OpenProjectAPIService {
 	 * @return array<mixed>|null
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
+			$accessToken = $this->getOIDCToken();
+		} else {
+			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		}
 		if ($accessToken) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 			if (isset($searchResult['error'])) {
@@ -1557,5 +1616,70 @@ class OpenProjectAPIService {
 			throw new OpenprojectResponseException('Malformed response');
 		}
 		return $result;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getOIDCToken(): ?string {
+		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
+			$this->logger->debug('The user_oidc app is not installed or enabled');
+			return null;
+		}
+		try {
+			$event = $this->exchangedTokenRequestedEventHelper->getEvent();
+			/** @psalm-suppress InvalidArgument for dispatchTyped($event)
+			 * but new ExchangedTokenRequestedEvent(targeted_audience_client_id) returns event
+			 */
+			$this->eventDispatcher->dispatchTyped($event);
+		} catch (TokenExchangeFailedException $e) {
+			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());
+			return null;
+		}
+		$token = $event->getToken();
+		if ($token === null) {
+			$this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
+			return null;
+		}
+		// token expiration info
+		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
+		return $token->getAccessToken();
+	}
+
+
+	/**
+	 * @param string $userId
+	 * @return void
+	 */
+	public function setUserInfoForOidcBasedAuth(string $userId): void {
+		$info = $this->request($userId, 'users/me');
+		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
+			$fullName = $info['firstName'] . ' ' . $info['lastName'];
+			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
+			$this->config->setUserValue($userId, Application::APP_ID, 'user_name', $fullName);
+		}
+	}
+
+	public function getRegisteredOidcProviders(): array {
+		$oidcProviders = [];
+		if ($this->isUserOIDCAppInstalledAndEnabled()) {
+			$providerMapper = new ProviderMapper($this->db);
+			foreach ($providerMapper->getProviders() as $provider) {
+				$oidcProviders[] = $provider->getIdentifier();
+			}
+		}
+		return $oidcProviders;
+	}
+
+	public function isUserOIDCAppInstalledAndEnabled(): bool {
+		return (
+			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
+			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
+			$this->appManager->isInstalled(
+				'user_oidc',
+			)
+		);
 	}
 }

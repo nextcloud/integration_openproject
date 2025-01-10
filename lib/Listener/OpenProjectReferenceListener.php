@@ -46,22 +46,42 @@ class OpenProjectReferenceListener implements IEventListener {
 	 * @var IConfig
 	 */
 	private $config;
+	/**
+	 * @var OpenProjectAPIService
+	 */
+	private $openProjectAPIService;
 
 	public function __construct(
 		IInitialState $initialStateService,
-		IConfig $config
+		IConfig $config,
+		OpenProjectAPIService $openProjectAPIService,
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
+		$this->openProjectAPIService = $openProjectAPIService;
 	}
 	public function handle(Event $event): void {
+		// When user is non oidc based or there is some error when getting token for the targeted client
+		// then we need to hide the oidc based connection for the user
+		// so this check is required
+		if (
+			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			!$this->openProjectAPIService->getOIDCToken()
+		) {
+			return;
+		}
 		if (!$event instanceof RenderReferenceEvent) {
 			return;
 		}
-
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-reference');
-		$this->initialStateService->provideInitialState('admin-config-status', OpenProjectAPIService::isAdminConfigOk($this->config));
-
+		$adminConfig = [
+			'isAdminConfigOk' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'authMethod' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', '')
+		];
+		$this->initialStateService->provideInitialState(
+			'admin-config',
+			$adminConfig
+		);
 		$this->initialStateService->provideInitialState(
 			'openproject-url',
 			$this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')

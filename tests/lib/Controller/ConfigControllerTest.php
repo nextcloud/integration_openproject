@@ -473,10 +473,11 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @return array<mixed>
 	 */
-	public function setAdminConfigStatusDataProvider() {
+	public function setAdminConfigStatusDataProviderForOauth2() {
 		return [
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '$client_id',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -485,10 +486,12 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
-				], false
+				],
+				false
 			],
 		];
 	}
@@ -498,16 +501,17 @@ class ConfigControllerTest extends TestCase {
 	 * @param bool $adminConfigStatus
 	 *
 	 * @return void
-	 * @dataProvider setAdminConfigStatusDataProvider
+	 * @dataProvider setAdminConfigStatusDataProviderForOauth2
 	 */
-	public function testSetAdminConfigForDifferentAdminConfigStatus($credsToUpdate, $adminConfigStatus) {
+	public function testSetAdminConfigForDifferentAdminConfigStatusForOauth2($credsToUpdate, $adminConfigStatus) {
 		$userManager = \OC::$server->getUserManager();
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
-			->expects($this->exactly(3))
+			->expects($this->exactly(4))
 			->method('setAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method', $credsToUpdate['authorization_method']],
 				['integration_openproject', 'openproject_client_id', $credsToUpdate['openproject_client_id']],
 				['integration_openproject', 'openproject_client_secret', $credsToUpdate['openproject_client_secret']],
 				['integration_openproject', 'openproject_instance_url', $credsToUpdate['openproject_instance_url']]
@@ -516,23 +520,150 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'',
 				'',
 				'123',
 				'',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$credsToUpdate['openproject_client_id'],
 				$credsToUpdate['openproject_client_secret'],
 				$credsToUpdate['openproject_instance_url']
+			);
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(OauthService::class),
+			$this->createMock(SettingsController::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'test101'
+		);
+
+		$result = $configController->setAdminConfig($credsToUpdate);
+
+		$this->assertSame(
+			[
+				'status' => $adminConfigStatus,
+				'oPOAuthTokenRevokeStatus' => '',
+				"oPUserAppPassword" => null
+			],
+			$result->getData()
+		);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigStatusDataProviderForOIDC() {
+		return [
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'test-oidc-provider',
+					'targeted_audience_client_id' => 'test-client',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				true
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => 'test-client',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+			[
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'test-oidc-provider',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://openproject.com'
+				],
+				false
+			],
+		];
+	}
+
+	/**
+	 * @param array<string> $credsToUpdate
+	 * @param bool $adminConfigStatus
+	 *
+	 * @return void
+	 * @dataProvider setAdminConfigStatusDataProviderForOIDC
+	 */
+	public function testSetAdminConfigForDifferentAdminConfigStatusForOIDC($credsToUpdate, $adminConfigStatus) {
+		$userManager = \OC::$server->getUserManager();
+
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->expects($this->exactly(4))
+			->method('setAppValue')
+			->withConsecutive(
+				['integration_openproject', 'authorization_method', $credsToUpdate['authorization_method']],
+				['integration_openproject', 'oidc_provider', $credsToUpdate['oidc_provider']],
+				['integration_openproject', 'targeted_audience_client_id', $credsToUpdate['targeted_audience_client_id']],
+				['integration_openproject', 'openproject_instance_url', $credsToUpdate['openproject_instance_url']]
+			);
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url']
+			)
+			->willReturnOnConsecutiveCalls(
+				'http://localhost:3000',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'',
+				'',
+				'123',
+				'',
+				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				$credsToUpdate['oidc_provider'],
+				$credsToUpdate['targeted_audience_client_id'],
+				$credsToUpdate['openproject_instance_url']
+
 			);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -574,11 +705,13 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // everything changes so delete user values and change the oAuth Client
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -588,11 +721,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // only client id changes so delete user values but don't change the oAuth Client
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -602,11 +737,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // only client secret changes so delete user values but don't change the oAuth Client
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -616,11 +753,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //only the openproject_instance_url changes so don't delete the user values but change the oAuth Client
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -630,11 +769,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //everything cleared
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
+					'authorization_method' => null,
 					'openproject_client_id' => null,
 					'openproject_client_secret' => null,
 					'openproject_instance_url' => null,
@@ -644,11 +785,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //everything cleared with empty strings
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
+					'authorization_method' => '',
 					'openproject_client_id' => '',
 					'openproject_client_secret' => '',
 					'openproject_instance_url' => '',
@@ -684,20 +827,24 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'nc_oauth_client_id', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
-					['integration_openproject', 'openproject_instance_url']
+					['integration_openproject', 'openproject_instance_url'],
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldCreds['openproject_instance_url'],
+					$oldCreds['authorization_method'],
 					$oldCreds['openproject_client_id'],
 					$oldCreds['openproject_client_secret'],
 					'123',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$credsToUpdate['openproject_client_id'],
 					$credsToUpdate['openproject_client_secret'],
 					$credsToUpdate['openproject_instance_url']
@@ -724,18 +871,22 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url']
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldCreds['openproject_instance_url'],
+					$oldCreds['authorization_method'],
 					$oldCreds['openproject_client_id'],
 					$oldCreds['openproject_client_secret'],
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$credsToUpdate['openproject_client_id'],
 					$credsToUpdate['openproject_client_secret'],
 					$credsToUpdate['openproject_instance_url']
@@ -855,6 +1006,7 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				[
+					'authorization_method' => null,
 					'openproject_client_id' => null,
 					'openproject_client_secret' => null,
 					'openproject_instance_url' => null,
@@ -866,6 +1018,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'client_id_changed',
 					'openproject_client_secret' => 'client_secret_changed',
 					'openproject_instance_url' => 'http://localhost:3000',
@@ -890,6 +1043,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testSetAdminConfigForOPOAuthTokenRevoke($newConfig, $adminConfigStatus, $mode) {
 		$oldAdminConfig = [
+			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -917,24 +1071,28 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id', ''],
 					['integration_openproject', 'openproject_client_secret', ''],
 					['integration_openproject', 'nc_oauth_client_id', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldAdminConfig['openproject_instance_url'],
+					$oldAdminConfig['authorization_method'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
 					'',
 					'',
 					'',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$newConfig['openproject_client_id'],
 					$newConfig['openproject_client_secret'],
 					$newConfig['openproject_instance_url'],
@@ -944,22 +1102,26 @@ class ConfigControllerTest extends TestCase {
 				->method('getAppValue')
 				->withConsecutive(
 					['integration_openproject', 'openproject_instance_url', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id', ''],
 					['integration_openproject', 'openproject_client_secret', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+					['integration_openproject', 'authorization_method', ''],
 					['integration_openproject', 'openproject_client_id'],
 					['integration_openproject', 'openproject_client_secret'],
 					['integration_openproject', 'openproject_instance_url'],
 				)
 				->willReturnOnConsecutiveCalls(
 					$oldAdminConfig['openproject_instance_url'],
+					$oldAdminConfig['authorization_method'],
 					$oldAdminConfig['openproject_client_id'],
 					$oldAdminConfig['openproject_client_secret'],
 					'',
 					'',
 					'',
+					OpenProjectAPIService::AUTH_METHOD_OAUTH,
 					$newConfig['openproject_client_id'],
 					$newConfig['openproject_client_secret'],
 					$newConfig['openproject_instance_url'],
@@ -968,6 +1130,7 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('setAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method', $newConfig['authorization_method']],
 				['integration_openproject', 'openproject_client_id', $newConfig['openproject_client_id']],
 				['integration_openproject', 'openproject_client_secret', $newConfig['openproject_client_secret']],
 				['integration_openproject', 'openproject_instance_url', $newConfig['openproject_instance_url']],
@@ -1069,11 +1232,13 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
 		$oldAdminConfig = [
+			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
 		];
 		$newAdminConfig = [
+			'authorization_method' => '',
 			'openproject_client_id' => '',
 			'openproject_client_secret' => '',
 			'openproject_instance_url' => '',
@@ -1095,20 +1260,24 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id', ''],
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				$oldAdminConfig['openproject_instance_url'],
+				$oldAdminConfig['authorization_method'],
 				$oldAdminConfig['openproject_client_id'],
 				$oldAdminConfig['openproject_client_secret'],
 				'',
 				$errorCode,
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				$newAdminConfig['openproject_client_id'],
 				$newAdminConfig['openproject_client_secret'],
 				$newAdminConfig['openproject_instance_url'],
@@ -1116,6 +1285,7 @@ class ConfigControllerTest extends TestCase {
 		$configMock
 			->method('setAppValue')
 			->withConsecutive(
+				['integration_openproject', 'authorization_method', $newAdminConfig['authorization_method']],
 				['integration_openproject', 'openproject_client_id', $newAdminConfig['openproject_client_id']],
 				['integration_openproject', 'openproject_client_secret', $newAdminConfig['openproject_client_secret']],
 				['integration_openproject', 'openproject_instance_url', $newAdminConfig['openproject_instance_url']],
@@ -1199,6 +1369,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeDoesNotOccurIfNoOPOAuthClientHasChanged() {
 		$oldAdminConfig = [
+			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -1218,12 +1389,14 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id', ''],
 				['integration_openproject', 'openproject_client_secret', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', '']
 			)
 			->willReturnOnConsecutiveCalls(
 				$oldAdminConfig['openproject_instance_url'],
+				$oldAdminConfig['authorization_method'],
 				$oldAdminConfig['openproject_client_id'],
 				$oldAdminConfig['openproject_client_secret'],
 				''
@@ -1285,18 +1458,18 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url', ''],
-				['integration_openproject', 'openproject_client_id', ''],
-				['integration_openproject', 'openproject_client_secret', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
-				'some_cilent_id',
-				'some_cilent_secret',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'some_cilent_id',
 				'some_cilent_secret',
 				'http://localhost:3000'
@@ -1351,6 +1524,7 @@ class ConfigControllerTest extends TestCase {
 		);
 
 		$result = $configControllerMock->setAdminConfig([
+			"authorization_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			"setup_project_folder" => true,
 			"setup_app_password" => true
 		]);
@@ -1431,5 +1605,385 @@ class ConfigControllerTest extends TestCase {
 		$this->assertEquals(Http::STATUS_INTERNAL_SERVER_ERROR, $result->getStatus());
 		$data = $result->getData();
 		$this->assertEquals("Database Error!", $data['error']);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigForOIDCAuthSettingProvider() {
+		return [
+			[ // set info if the authorization settings are changed
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'oidc_provider',
+					'targeted_audience_client_id' => 'targeted_audience_client_id',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				false,
+				'change'
+			],
+			[ // set info even if only 'targeted_audience_client_id' authorization settings are changed
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old_oidc_provider',
+					'targeted_audience_client_id' => 'new_targeted_audience_client_id',
+					'openproject_instance_url' => 'http://openproject.com',
+				],
+				false,
+				'change'
+			],
+			[ // setinfo even if only 'oidc_provider' authorization settings are changed
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'new_oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://openproject.com',
+				]
+			],
+			[ // set if authorization settings are empty string
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://openproject.com',
+				]
+			],
+			[ // set if authorization settings are null
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => null,
+					'targeted_audience_client_id' => null,
+					'openproject_instance_url' => 'http://openproject.com',
+				]
+			],
+		];
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @param array<string> $oldCreds
+	 * @param array<string> $credsToUpdate
+	 * @param bool $deleteUserValues
+	 * @param bool|string $updateNCOAuthClient false => don't touch the client, 'change' => update it, 'delete' => remove it
+	 * @return void
+	 * @dataProvider setAdminConfigForOIDCAuthSettingProvider
+	 */
+	public function testSetAdminConfigOIDCAuthSetting(
+		$oldCreds, $credsToUpdate
+	) {
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldCreds['openproject_instance_url'],
+				$oldCreds['authorization_method'],
+				$oldCreds['oidc_provider'],
+				$oldCreds['targeted_audience_client_id'],
+				'123',
+				'',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				$credsToUpdate['oidc_provider'],
+				$credsToUpdate['targeted_audience_client_id'],
+				$credsToUpdate['openproject_instance_url']
+			);
+
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'test101'
+		);
+		$configController->setAdminConfig($credsToUpdate);
+	}
+
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigForOAuth2AlreadyConfiguredDataProvider() {
+		return [
+			[ // when switching from oauth2 to oidc, userdata gets deleted along with the nc client information
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'openproject_client_id' => 'old-openproject_client_id',
+					'openproject_client_secret' => 'old-openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'openproject_client_id' => '',
+					'openproject_client_secret' => '',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				]
+			],
+			[ // when resetting with OAUTH2 already configured, userdata gets deleted along with the nc client information
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'openproject_client_id' => 'old-openproject_client_id',
+					'openproject_client_secret' => 'old-openproject_client_secret',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => '',
+					'openproject_client_id' => '',
+					'openproject_client_secret' => '',
+					'openproject_instance_url' => '',
+				]
+			]
+		];
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @param array<string> $oldCreds
+	 * @param array<string> $credsToUpdate
+	 * @return void
+	 * @dataProvider setAdminConfigForOAuth2AlreadyConfiguredDataProvider
+	 */
+	public function testSetAdminConfigForOAuth2AlreadyConfigured(
+		$oldCreds, $credsToUpdate
+	) {
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$this->user1 = $userManager->createUser('test101', 'test101');
+
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'nc_oauth_client_id', ''],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'openproject_client_id'],
+				['integration_openproject', 'openproject_client_secret'],
+				['integration_openproject', 'openproject_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldCreds['openproject_instance_url'],
+				$oldCreds['authorization_method'],
+				$oldCreds['openproject_client_id'],
+				$oldCreds['openproject_client_secret'],
+				'123',
+				'123',
+				'',
+				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				$credsToUpdate['openproject_client_id'],
+				$credsToUpdate['openproject_client_secret'],
+				$credsToUpdate['openproject_instance_url']
+			);
+		$oauthSettingsControllerMock
+			->expects($this->once())
+			->method('deleteClient')
+			->with(123);
+		$configMock
+			->expects($this->exactly(10)) // 5 times for each user
+			->method('deleteUserValue')
+			->withConsecutive(
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+				[$this->user1->getUID(), 'integration_openproject', 'token'],
+				[$this->user1->getUID(), 'integration_openproject', 'login'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_id'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_name'],
+				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
+			);
+
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'test101'
+		);
+		$configController->setAdminConfig($credsToUpdate);
+	}
+
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function setAdminConfigForOIDCAlreadyConfigured() {
+		return [
+			[ // when switching from oidc to oauth2, just the user information get deleted
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				]
+			],
+			[ // when switching from oidc to oauth2, just the user information get deleted
+				[
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'oidc_provider' => 'old-oidc_provider',
+					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
+					'openproject_instance_url' => 'http://old-openproject.com',
+				],
+				[
+					'authorization_method' => '',
+					'oidc_provider' => '',
+					'targeted_audience_client_id' => '',
+					'openproject_instance_url' => '',
+				]
+			],
+		];
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @param array<string> $oldCreds
+	 * @param array<string> $credsToUpdate
+	 * @return void
+	 * @dataProvider setAdminConfigForOIDCAlreadyConfigured
+	 */
+	public function testSetAdminConfigForOIDCAlreadyConfigured(
+		$oldCreds, $credsToUpdate
+	) {
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$oauthServiceMock = $this->createMock(OauthService::class);
+		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configMock
+			->method('getAppValue')
+			->withConsecutive(
+				['integration_openproject', 'openproject_instance_url', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
+				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'openproject_instance_url'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oldCreds['openproject_instance_url'],
+				$oldCreds['authorization_method'],
+				$oldCreds['oidc_provider'],
+				$oldCreds['targeted_audience_client_id'],
+				'',
+				$credsToUpdate['authorization_method'],
+				$credsToUpdate['oidc_provider'],
+				$credsToUpdate['targeted_audience_client_id'],
+				$credsToUpdate['openproject_instance_url']
+			);
+		$configMock
+			->expects($this->exactly(2))
+			->method('deleteUserValue')
+			->withConsecutive(
+				['test101', 'integration_openproject', 'user_id'],
+				['test101', 'integration_openproject', 'user_name']
+			);
+
+		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$configController = new ConfigController(
+			'integration_openproject',
+			$this->createMock(IRequest::class),
+			$configMock,
+			$this->createMock(IURLGenerator::class),
+			$userManager,
+			$this->l,
+			$apiService,
+			$this->createMock(LoggerInterface::class),
+			$oauthServiceMock,
+			$oauthSettingsControllerMock,
+			$this->createMock(IGroupManager::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+			'test101'
+		);
+		$configController->setAdminConfig($credsToUpdate);
 	}
 }
