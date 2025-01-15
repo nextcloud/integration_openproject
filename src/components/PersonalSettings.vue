@@ -2,7 +2,7 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
-			{{ t('integration_openproject', 'This feature is not available for this user account :)') }}
+			{{ errorMessages.featureNotAvailable }}
 		</div>
 		<div v-if="connected" class="openproject-prefs--connected">
 			<label>
@@ -56,6 +56,7 @@ import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult, USER_SETTINGS, AUTH_METHOD } from '../utils.js'
 import { NcButton } from '@nextcloud/vue'
+import { error as errorMessages } from '../constants/messages.js'
 
 export default {
 	name: 'PersonalSettings',
@@ -72,6 +73,7 @@ export default {
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			userSettingDescription: USER_SETTINGS,
 			authMethods: AUTH_METHOD,
+			errorMessages,
 		}
 	},
 	computed: {
