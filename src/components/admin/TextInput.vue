@@ -11,6 +11,7 @@
 		<div class="text-input-input-wrapper">
 			<input
 				ref="textInput"
+				:disabled="disabled"
 				:value="value"
 				:type="type"
 				:readonly="readOnly"
@@ -26,7 +27,7 @@
 				@blur="$emit('blur', $event)">
 			<NcButton v-if="showCopyButton"
 				class="text-input-copy-value"
-				:disabled="isInputFieldEmpty"
+				:disabled="disabled || isInputFieldEmpty"
 				:title="copyButtonTooltip"
 				@click="copyValue">
 				<template #icon>
@@ -106,6 +107,10 @@ export default {
 			type: Boolean,
 		},
 		readOnly: {
+			default: false,
+			type: Boolean,
+		},
+		disabled: {
 			default: false,
 			type: Boolean,
 		},
