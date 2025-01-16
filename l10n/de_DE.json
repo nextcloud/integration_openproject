@@ -91,7 +91,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Dieser Typ verfügt über Pflichtfelder, die hier nicht ausgefüllt werden können. Bitte erstellen Sie Arbeitspakete dieser Art direkt in {htmlLink}.",
     "Status is not set to one of the allowed values." : "Der Status ist nicht auf einen der zulässigen Werte gesetzt.",
     "Create" : "Erstellen",
-    "This feature is not available for this user account :)" : "Diese Funktion ist für dieses Benutzerkonto nicht verfügbar",
     "Mark as read" : "Als gelesen markieren",
     "Failed to get OpenProject notifications" : "Fehler beim Abrufen der OpenProject-Benachrichtigungen",
     "Date alert" : "Datums-Erinnerung",
