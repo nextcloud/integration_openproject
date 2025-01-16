@@ -91,7 +91,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}.",
     "Status is not set to one of the allowed values." : "Status is not set to one of the allowed values.",
     "Create" : "Create",
-    "This feature is not available for this user account :)" : "This feature is not available for this user account :)",
     "Mark as read" : "Mark as read",
     "Failed to get OpenProject notifications" : "Failed to get OpenProject notifications",
     "Date alert" : "Date alert",

@@ -91,7 +91,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Tá réimsí éigeantacha ag an gcineál seo nach féidir a líonadh anseo. Le do thoil, cruthaigh pacáistí oibre den chineál seo go díreach i {htmlLink}.",
     "Status is not set to one of the allowed values." : "Níl an stádas socraithe ag ceann de na luachanna ceadaithe.",
     "Create" : "Cruthaigh",
-    "This feature is not available for this user account :)" : "Níl an ghné seo ar fáil don chuntas úsáideora seo :)",
     "Mark as read" : "Marcáil mar léite",
     "Failed to get OpenProject notifications" : "Theip ar fhógraí OpenProject a fháil",
     "Date alert" : "Foláireamh dáta",
