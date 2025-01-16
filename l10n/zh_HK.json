@@ -91,7 +91,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "此類型具有此處無法填寫的必填欄位。 請直接在 {htmlLink} 中建立此類工作軟件包。",
     "Status is not set to one of the allowed values." : "狀態未設定為允許的數值之一。",
     "Create" : "創建",
-    "This feature is not available for this user account :)" : "此功能不適用於此用戶帳戶 :)",
     "Mark as read" : "標為已讀",
     "Failed to get OpenProject notifications" : "未能獲取 OpenProject 通告",
     "Date alert" : "日期提醒",
