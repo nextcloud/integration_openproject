@@ -91,7 +91,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "يحتوي هذا النوع على حقول إلزامية لا يمكن ملؤها هنا. من فضلك، قم بإنشاء حزم العمل من هذا النوع في {htmlLink} مباشرةً.",
     "Status is not set to one of the allowed values." : "الحالة المحددة ليست ضمن القيم المسموح بها",
     "Create" : "إنشاء",
-    "This feature is not available for this user account :)" : "هذه الميزة ليست متوفرة للمستخِدم صاحب هذا الحساب:)",
     "Mark as read" : "تمييز كمقروء",
     "Failed to get OpenProject notifications" : "فشل في الحصول على إشعارات OpenProject",
     "Date alert" : "تاريخ التنبيه",
