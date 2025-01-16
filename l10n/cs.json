@@ -90,7 +90,6 @@
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "Tento typ má povinné kolonky, které zde není možné vyplnit. Vytvořte balíček práce tohoto typu přímo v {htmlLink}.",
     "Status is not set to one of the allowed values." : "Stav není nastavený na jednu z povolených hodnot.",
     "Create" : "Vytvářet",
-    "This feature is not available for this user account :)" : "Tato funkce není pro tento uživatelský účet k dispozici :-)",
     "Mark as read" : "Označit jako přečtené",
     "Failed to get OpenProject notifications" : "Nepodařilo se získat upozornění z OpenProject",
     "Date alert" : "Výstraha ohledně data",
