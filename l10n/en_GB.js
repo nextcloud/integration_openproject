@@ -120,6 +120,7 @@ OC.L10N.register(
     "OpenProject work package picker" : "OpenProject work package picker",
     "OpenProject API error" : "OpenProject API error",
     "OpenProject settings" : "OpenProject settings",
+    "This feature is not available for this user account" : "This feature is not available for this user account",
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
