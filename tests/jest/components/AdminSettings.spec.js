@@ -881,7 +881,6 @@ describe('AdminSettings.vue', () => {
 					state: {
 						apps: {
 							user_oidc: {
-								installed: false,
 								enabled: false,
 							},
 						},
@@ -896,7 +895,6 @@ describe('AdminSettings.vue', () => {
 					state: {
 						apps: {
 							user_oidc: {
-								installed: true,
 								enabled: true,
 							},
 						},
@@ -926,7 +924,6 @@ describe('AdminSettings.vue', () => {
 					state: {
 						apps: {
 							user_oidc: {
-								installed: true,
 								enabled: true,
 							},
 						},
@@ -1000,7 +997,6 @@ describe('AdminSettings.vue', () => {
 						state: {
 							apps: {
 								user_oidc: {
-									installed: true,
 									enabled: true,
 								},
 							},
@@ -1018,7 +1014,6 @@ describe('AdminSettings.vue', () => {
 							state: {
 								apps: {
 									user_oidc: {
-										installed: true,
 										enabled: true,
 									},
 								},
@@ -1086,7 +1081,6 @@ describe('AdminSettings.vue', () => {
 						state: {
 							apps: {
 								user_oidc: {
-									installed: true,
 									enabled: true,
 								},
 							},
