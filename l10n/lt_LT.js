@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Error getting OAuth access token" : "Klaida gaunant „OAuth“ prieigos raktą",
     "Error during OAuth exchanges" : "Klaida „OAuth“ apsikeitimo metu",
+    "Direct download error" : "Tiesioginio atsisiuntimo klaida",
     "Bad HTTP method" : "Blogas HTTP metodas",
     "OAuth access token refused" : "„OAuth“ prieigos raktas atmestas",
     "Cancel" : "Atsisakyti",
