@@ -1,6 +1,13 @@
 # Nextcloud-OpenProject Full Setup
 
-**Pre-requisites:**
+## Table of Contents
+
+1. [Pre-requisites](#pre-requisites)
+2. [Run the Setup](#run-the-setup)
+3. [Installing Extra Apps](#installing-extra-apps)
+4. [Keycloak Realm Configuration](#keycloak-realm-configuration)
+
+### Pre-requisites
 
 - Docker
 - Docker Compose
@@ -81,3 +88,19 @@ If permission issues occur, you can run the following command:
 
 docker compose exec nextcloud chown www-data -R custom_apps/<app>
 ```
+
+### Keycloak Realm Configuration
+
+When the setup is run with Keycloak, new realm will be initialized with necessary clients, permissions, and some demo users. The following are the details:
+
+|         |                                                                    |
+| ------- | ------------------------------------------------------------------ |
+| Realm   | `opnc`                                                             |
+| Clients | `nextcloud` and `openproject` (token-exchange has been configured) |
+
+And the following are the demo users:
+
+| Displayname      | Username | Password |
+| ---------------- | -------- | -------- |
+| **Alice Hansen** | `alice`  | `1234`   |
+| **Brian Murphy** | `brian`  | `1234`   |
