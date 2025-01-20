@@ -23,6 +23,7 @@ OC.L10N.register(
     "Replace Nextcloud OAuth values" : "Nahradiť hodnoty Nextcloud OAuth",
     "Copied!" : "Skopírované!",
     "Copy value" : "Kopírovať hodnotu",
+    "Copied to the clipboard" : "Skopírované do schránky",
     "Details" : "Podrobnosti",
     "Error connecting to OpenProject" : "Chyba pri pripájaní k OpenProject",
     "Could not fetch work packages from OpenProject" : "Nepodarilo sa načítať pracovné balíky z OpenProject",
