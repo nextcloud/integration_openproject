@@ -17,6 +17,7 @@ services:
         'start-dev',
         '--proxy edge',
         '--spi-connections-http-client-default-disable-trust-manager=true',
+        '--import-realm'
       ]
     environment:
       KC_DB: postgres
@@ -32,6 +33,7 @@ services:
     networks:
       - nc-op
     volumes:
+      - ./opnc-realm.json:/opt/keycloak/data/import/opnc-realm.json
       - step:/step:ro
       - keycloakdata:/opt/keycloak/data/
     labels:
