@@ -176,7 +176,7 @@
 					<template #icon>
 						<PencilIcon :size="20" />
 					</template>
-					{{ t('integration_openproject', 'Edit athorization settings') }}
+					{{ t('integration_openproject', 'Edit authorization settings') }}
 				</NcButton>
 				<NcButton v-if="isAuthorizationSettingInEditMode && authorizationSetting.currentOIDCProviderSelected !== null && authorizationSetting.targetedAudienceClientIdSet !== null"
 					class="mr-2"
