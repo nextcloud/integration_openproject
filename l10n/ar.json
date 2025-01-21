@@ -27,7 +27,6 @@
     "Select an OIDC provider" : "حدِّد مُزوِّد OIDC",
     "OIDC provider" : "مُزوِّد OIDC",
     "OpenProject client ID" : "مُعرِّف ID لعميل OpenProject",
-    "Edit athorization settings" : "تعديل إعدادات التخويل بالصلاحيات",
     "OpenProject OAuth settings" : "إعدادات تطبيق المصادقة OpenProject OAuth",
     "Replace OpenProject OAuth values" : "استبدال قيم OpenProject OAuth",
     "Nextcloud OAuth client" : "عميل Nextcloud OAuth",
