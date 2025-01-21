@@ -29,7 +29,6 @@ OC.L10N.register(
     "Select an OIDC provider" : "Select an OIDC provider",
     "OIDC provider" : "OIDC provider",
     "OpenProject client ID" : "OpenProject client ID",
-    "Edit athorization settings" : "Edit athorization settings",
     "OpenProject OAuth settings" : "OpenProject OAuth settings",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
