@@ -35,6 +35,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCA\UserOIDC\Db\ProviderMapper;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
+use OCA\UserOIDC\User\Backend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -60,6 +61,8 @@ use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\IUserSession;
+use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 define('CACHE_TTL', 3600);
@@ -128,6 +131,11 @@ class OpenProjectAPIService {
 	private ILogFactory $logFactory;
 	private IManager $encryptionManager;
 
+	/**
+	 * @var IUserSession
+	 */
+	private $userSession;
+
 
 	/**
 	 * Service to make requests to OpenProject v3 (JSON) API
@@ -161,6 +169,7 @@ class OpenProjectAPIService {
 		ILogFactory $logFactory,
 		IManager $encryptionManager,
 		ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper,
+		IUserSession $userSession,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -182,6 +191,7 @@ class OpenProjectAPIService {
 		$this->logFactory = $logFactory;
 		$this->encryptionManager = $encryptionManager;
 		$this->exchangedTokenRequestedEventHelper = $exchangedTokenRequestedEventHelper;
+		$this->userSession = $userSession;
 	}
 
 	/**
@@ -1647,7 +1657,6 @@ class OpenProjectAPIService {
 		return $token->getAccessToken();
 	}
 
-
 	/**
 	 * @param string $userId
 	 * @return void
@@ -1681,5 +1690,17 @@ class OpenProjectAPIService {
 				'user_oidc',
 			)
 		);
+	}
+
+	public function isOIDCUser(): bool {
+		if (!class_exists(Backend::class)) {
+			return false;
+		}
+
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser && $user->getBackend() instanceof Backend) {
+			return true;
+		}
+		return false;
 	}
 }
