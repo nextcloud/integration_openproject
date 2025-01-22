@@ -49,6 +49,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;

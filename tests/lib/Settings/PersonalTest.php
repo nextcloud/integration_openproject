@@ -136,7 +136,8 @@ class PersonalTest extends TestCase {
 						'search_enabled' => false,
 						'navigation_enabled' => false,
 						'admin_config_ok' => $adminConfigStatus,
-						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
+						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+						'oidc_user' => false,
 					]
 				],
 				['oauth-connection-result'],
@@ -198,7 +199,8 @@ class PersonalTest extends TestCase {
 						'search_enabled' => true,
 						'navigation_enabled' => true,
 						'admin_config_ok' => true,
-						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
+						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+						'oidc_user' => false,
 					]
 				],
 				['oauth-connection-result'],

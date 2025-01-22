@@ -56,13 +56,13 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Log\ILogFactory;
 use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
-use OCP\IUserSession;
-use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 define('CACHE_TTL', 3600);
