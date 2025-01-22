@@ -63,16 +63,40 @@ npm-dev:
 
 .PHONY: psalm
 psalm:
-	vendor/bin/psalm
+	composer run psalm
+
+.PHONY: csfixer
+csfixer:
+	composer run cs:check
+
+.PHONY: csfixer-fix
+csfixer-fix:
+	composer run cs:fix
+
+.PHONY: lint-php
+lint-php: psalm csfixer
+
+.PHONY: lint-php
+lint-php-fix: psalm csfixer-fix
+
+.PHONY: lint-js
+lint-js:
+	npm run lint
+	npm run stylelint
+
+.PHONY: lint-js-fix
+lint-js-fix:
+	npm run lint:fix
+	npm run stylelint:fix
 
 .PHONY: phpunit
 phpunit:
-	vendor/phpunit/phpunit/phpunit
+	composer run test:unit
 
 # The following make block can be removed once Nextcloud no longer supports PHP 8.0
 .PHONY: phpunitforphp8.0
 phpunitforphp8.0:
-	vendor/phpunit/phpunit/phpunit --exclude-group ignoreWithPHP8.0
+	composer run test:unit -- --exclude-group ignoreWithPHP8.0
 
 .PHONY: jsunit
 jsunit:
@@ -80,10 +104,10 @@ jsunit:
 
 .PHONY: api-test
 api-test:
-	vendor/bin/behat -c tests/acceptance/config/behat.yml --tags '${FILTER_TAGS}' ${FEATURE_PATH}
+	composer run test:api -- --tags '${FILTER_TAGS}' ${FEATURE_PATH}
 
 .PHONY: test
-test: phpunit  jsunit api-test
+test: phpunit jsunit api-test
 
 clean:
 	sudo rm -rf $(build_dir)

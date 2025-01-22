@@ -12,7 +12,10 @@
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
-		"cs:check": "php-cs-fixer fix --dry-run --diff"
+		"cs:check": "php-cs-fixer fix --dry-run --diff",
+		"psalm": "psalm",
+		"test:unit": "phpunit",
+		"test:api": "behat -c tests/acceptance/config/behat.yml"
 	},
 	"config": {
 		"allow-plugins": {
