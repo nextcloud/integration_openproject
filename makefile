@@ -65,19 +65,19 @@ npm-dev:
 psalm:
 	composer run psalm
 
-.PHONY: csfixer
-csfixer:
+.PHONY: phpcs
+phpcs:
 	composer run cs:check
 
-.PHONY: csfixer-fix
-csfixer-fix:
+.PHONY: phpcs-fix
+phpcs-fix:
 	composer run cs:fix
 
 .PHONY: lint-php
-lint-php: psalm csfixer
+lint-php: psalm phpcs
 
-.PHONY: lint-php
-lint-php-fix: psalm csfixer-fix
+.PHONY: lint-php-fix
+lint-php-fix: psalm phpcs-fix
 
 .PHONY: lint-js
 lint-js:
@@ -88,6 +88,12 @@ lint-js:
 lint-js-fix:
 	npm run lint:fix
 	npm run stylelint:fix
+
+.PHONY: lint
+lint: lint-php lint-js
+
+.PHONY: lint-fix
+lint-fix: lint-php-fix lint-js-fix
 
 .PHONY: phpunit
 phpunit:

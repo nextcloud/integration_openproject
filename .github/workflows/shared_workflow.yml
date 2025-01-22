@@ -92,7 +92,7 @@ jobs:
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP code analysis
+      - name: PHP code analysis and linting
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersion}}" -eq 8 ]; then
@@ -100,18 +100,13 @@ jobs:
             sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
           fi
           make psalm
-
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Install NPM Dependencies
         run: npm install
 
       - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
+        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
       - name: PHP & Vue Unit Tests
         run: |
