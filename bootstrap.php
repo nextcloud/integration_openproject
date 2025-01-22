@@ -4,7 +4,9 @@ define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 
 include_once __DIR__.'/vendor/autoload.php';
-if (file_exists(__DIR__ . '/server')) {
+if (getenv('SERVER_PATH')) {
+	$serverPath = getenv('SERVER_PATH');
+} elseif (file_exists(__DIR__ . '/server')) {
 	$serverPath = __DIR__ . '/server';
 } else {
 	$serverPath = __DIR__ . '/../..';
