@@ -29,6 +29,7 @@ OC.L10N.register(
     "Select an OIDC provider" : "Roghnaigh soláthraí OIDC",
     "OIDC provider" : "Soláthraí OIDC",
     "OpenProject client ID" : "ID cliant OpenProject",
+    "Edit authorization settings" : "Cuir socruithe údaraithe in eagar",
     "OpenProject OAuth settings" : "Socruithe OpenProject OAuth",
     "Replace OpenProject OAuth values" : "Ionadaigh luachanna OpenProject OAuth",
     "Nextcloud OAuth client" : "Cliant Nextcloud OAuth",
