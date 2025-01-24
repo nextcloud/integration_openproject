@@ -11,7 +11,7 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable30, master ]
+        nextcloudVersion: [ stable31 ]
         phpVersion: [ 8.1, 8.2, 8.3 ]
         # This condition is temporary and can be removed once Nextcloud 31 support is added in the integration app for the release/2.7 branch
         isReleaseBranch:
@@ -23,15 +23,11 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable29
             phpVersion: 8.1
-        exclude:
-          - isReleaseBranch: true
-            nextcloudVersion: master
-          - isReleaseBranch: false
-            nextcloudVersion: master
-            phpVersion: 8.1
-          - isReleaseBranch: false
-            nextcloudVersion: master
+          - nextcloudVersion: stable30
             phpVersion: 8.2
+          - nextcloudVersion: master
+            phpVersion: 8.3
+            isReleaseBranch: false
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -189,7 +185,7 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable30, master ]
+        nextcloudVersion: [ stable31 ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 1, 2, 3 ]
         database: [ mysql ]
@@ -198,7 +194,7 @@ jobs:
           - ${{ inputs.branch == 'release/2.7'}}
         include:
           # Each database once on the newest Server with preinstalled PHP version
-          - nextcloudVersion: stable30
+          - nextcloudVersion: stable31
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: pgsql
@@ -214,19 +210,15 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
-        exclude:
-          - isReleaseBranch: true
-            nextcloudVersion: master
-          - isReleaseBranch: false
-            nextcloudVersion: master
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: mysql
-          - isReleaseBranch: false
-            nextcloudVersion: master
+          - nextcloudVersion: stable30
             phpVersionMajor: 8
             phpVersionMinor: 2
             database: mysql
+          - nextcloudVersion: master
+            phpVersionMajor: 8
+            phpVersionMinor: 3
+            database: mysql
+            isReleaseBranch: false
 
     runs-on: ubuntu-20.04
     container:
