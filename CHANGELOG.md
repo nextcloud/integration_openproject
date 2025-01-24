@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Add application's support for Nextcloud 31
+- Add support for OIDC-based connection between Nextcloud and OpenProject
+- Support Nextcloud 32 [#758](https://github.com/nextcloud/integration_openproject/pull/758)
 
 ## 2.7.2 - 2024-12-16
 ### Fixed
