@@ -29,6 +29,7 @@ OC.L10N.register(
     "Select an OIDC provider" : "選擇 OIDC 提供者",
     "OIDC provider" : "OIDC 提供者",
     "OpenProject client ID" : "OpenProject 客戶 ID",
+    "Edit authorization settings" : "編輯授權設定",
     "OpenProject OAuth settings" : "OpenProject OAuth 設定",
     "Replace OpenProject OAuth values" : "取代 OpenProject OAuth 值",
     "Nextcloud OAuth client" : "Nextcloud OAuth 客戶端",
