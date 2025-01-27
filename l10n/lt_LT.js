@@ -9,6 +9,7 @@ OC.L10N.register(
     "Cancel" : "Atsisakyti",
     "Save" : "Įrašyti",
     "Copied!" : "Nukopijuota!",
+    "Copy value" : "Kopijuoti reikšmę",
     "Copied to the clipboard" : "Nukopijuota į iškarpinę",
     "Details" : "Išsamiau",
     "Start typing to search" : "Rašykite norėdami atlikti paiešką",
@@ -19,6 +20,8 @@ OC.L10N.register(
     "Unlink" : "Atsieti",
     "Connected accounts" : "Prijungtos paskyros",
     "Reset" : "Atstatyti",
+    "Yes, replace" : "Taip, pakeisti",
+    "Yes, reset" : "Taip, atstatyti",
     "Connected as {user}" : "Prisijungta kaip {user}",
     "Invalid token" : "Neteisingas prieigos raktas",
     "Documentation" : "Dokumentacija"
