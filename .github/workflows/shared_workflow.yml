@@ -11,8 +11,18 @@ jobs:
     name: unit tests and linting
     strategy:
       matrix:
-        nextcloudVersion: [ stable30 ]
+        nextcloudVersion: [ stable31, master ]
         phpVersion: [ 8.1, 8.2, 8.3 ]
+        isReleaseBranch:
+          - ${{ startsWith(inputs.branch, 'release/') || startsWith(github.base_ref, 'release/') || startsWith(github.ref, 'refs/heads/release/') }}
+        # will be overridden by the include section
+        exclude:
+          - nextcloudVersion: master
+            isReleaseBranch: true
+          - nextcloudVersion: master
+            phpVersion: 8.1
+          - nextcloudVersion: master
+            phpVersion: 8.2
         include:
           - nextcloudVersion: stable27
             phpVersion: 8.0
@@ -20,6 +30,8 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable29
             phpVersion: 8.1
+          - nextcloudVersion: stable30
+            phpVersion: 8.2
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -80,7 +92,7 @@ jobs:
           cd server && git submodule update --init
           ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP code analysis
+      - name: PHP code analysis and linting
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersion}}" -eq 8 ]; then
@@ -88,18 +100,13 @@ jobs:
             sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
           fi
           make psalm
-
-      - name: PHP code style
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Install NPM Dependencies
         run: npm install
 
       - name: JS Lint
-        run: npm run lint
-
-      - name: Style Lint
-        run: npm run stylelint
+        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
       - name: PHP & Vue Unit Tests
         run: |
@@ -180,13 +187,25 @@ jobs:
     name: API tests
     strategy:
       matrix:
-        nextcloudVersion: [ stable30 ]
+        nextcloudVersion: [ stable31, master ]
         phpVersionMajor: [ 8 ]
         phpVersionMinor: [ 1, 2, 3 ]
         database: [ mysql ]
+        isReleaseBranch:
+          - ${{ startsWith(inputs.branch, 'release/') || startsWith(github.base_ref, 'release/') || startsWith(github.ref, 'refs/heads/release/') }}
+        # will be overridden by the include section
+        exclude:
+          - nextcloudVersion: master
+            isReleaseBranch: true
+          - nextcloudVersion: master
+            phpVersionMajor: 8
+            phpVersionMinor: 1
+          - nextcloudVersion: master
+            phpVersionMajor: 8
+            phpVersionMinor: 2
         include:
           # Each database once on the newest Server with preinstalled PHP version
-          - nextcloudVersion: stable30
+          - nextcloudVersion: stable31
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: pgsql
@@ -202,6 +221,11 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: mysql
+          - nextcloudVersion: stable30
+            phpVersionMajor: 8
+            phpVersionMinor: 2
+            database: mysql
+
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/lts/ubuntu:20.04

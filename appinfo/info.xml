@@ -3,7 +3,8 @@
 	<id>integration_openproject</id>
 	<name>OpenProject Integration</name>
 	<summary>Link Nextcloud files to OpenProject work packages</summary>
-	<description><![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject.
+	<description>
+		<![CDATA[This application enables seamless integration with open source project management and collaboration software OpenProject.
 
 On the Nextcloud end, it allows users to:
 
@@ -24,7 +25,8 @@ On the OpenProject end, users are able to:
 * Let OpenProject create shared folders per project
 
 For more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/).
-	]]></description>
+	]]>
+	</description>
 	<version>2.7.2</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
@@ -41,7 +43,7 @@ For more information on how to set up and use the OpenProject application, pleas
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png</screenshot>
 	<screenshot>https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot2.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="27" max-version="30" />
+		<nextcloud min-version="27" max-version="31" />
 	</dependencies>
 	<background-jobs>
 		<job>OCA\OpenProject\BackgroundJob\RemoveExpiredDirectUploadTokens</job>

@@ -7,11 +7,11 @@ use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\DavUtil;
 use OCP\Files\Node;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use function PHPUnit\Framework\assertSame;
 
 /**
@@ -864,7 +864,7 @@ class FilesControllerTest extends TestCase {
 			$mountProviderCollectionMock,
 			$this->createMock(IManager::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogger::class),
+			$this->createMock(LoggerInterface::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(DavUtil::class),
 		);
@@ -915,7 +915,7 @@ class FilesControllerTest extends TestCase {
 					$mountProviderCollectionMock,
 					$this->createMock(IManager::class),
 					$this->createMock(IDBConnection::class),
-					$this->createMock(ILogger::class),
+					$this->createMock(LoggerInterface::class),
 					$this->createMock(IUserManager::class),
 					$davUtilsMock
 				])
