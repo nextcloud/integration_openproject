@@ -630,6 +630,43 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @param array<string, object> $constructParams
+	 *
+	 * @return array
+	 */
+	private function getOpenProjectAPIServiceConstructArgs(array $constructParams = []): array {
+		$constructArgs = [
+			// order should be the same as in the constructor
+			'avatarManager' => $this->createMock(IAvatarManager::class),
+			'loggerInterface' => $this->createMock(LoggerInterface::class),
+			'l10n' => $this->createMock(IL10N::class),
+			'config' => $this->createMock(IConfig::class),
+			'clientService' => $this->createMock(IClientService::class),
+			'rootFolder' => $this->createMock(IRootFolder::class),
+			'urlGenerator' => $this->createMock(IURLGenerator::class),
+			'cacheFactory' => $this->createMock(ICacheFactory::class),
+			'userManager' => $this->createMock(IUserManager::class),
+			'groupManager' => $this->createMock(IGroupManager::class),
+			'appManager' => $this->createMock(IAppManager::class),
+			'provider' => $this->createMock(IProvider::class),
+			'secureRandom' => $this->createMock(ISecureRandom::class),
+			'eventDispatcher' => $this->createMock(IEventDispatcher::class),
+			'subAdmin' => $this->createMock(ISubAdmin::class),
+			'dbConnection' => $this->createMock(IDBConnection::class),
+			'logFactory' => $this->createMock(ILogFactory::class),
+			'manager' => $this->createMock(IManager::class),
+			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
+		];
+
+		// replace the mock
+		foreach ($constructParams as $key => $value) {
+			$constructArgs[$key] = $value;
+		}
+
+		return ['integration_openproject', ...array_values($constructArgs)];
+	}
+
+	/**
 	 * @param IRootFolder|null $storageMock
 	 * @param string $oAuthToken
 	 * @param string $baseUrl
@@ -638,7 +675,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	private function getOpenProjectAPIService(
 		$authMethod = null,
-		$storageMock = null, $oAuth2OrOidcToken = '1234567890', $baseUrl = 'https://nc.my-server.org', $userId = 'testUser'
+		$storageMock = null,
+		$oAuth2OrOidcToken = '1234567890',
+		$baseUrl = 'https://nc.my-server.org',
+		$userId = 'testUser',
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
@@ -763,28 +803,17 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getBaseUrl')
 			->willReturn($baseUrl);
 
-		return new OpenProjectAPIService(
-			'integration_openproject',
-			$avatarManagerMock,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$this->defaultConfigMock,
-			$clientService,
-			$storageMock,
-			$urlGeneratorMock,
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$appManagerMock,
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$exchangeTokenMock
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'avatarManager' => $avatarManagerMock,
+			'config' => $this->defaultConfigMock,
+			'clientService' => $clientService,
+			'rootFolder' => $storageMock,
+			'urlGenerator' => $urlGeneratorMock,
+			'appManager' => $appManagerMock,
+			'exchangedTokenRequestedEventHelper' => $exchangeTokenMock,
+		]);
+
+		return new OpenProjectAPIService(...$constructArgs);
 	}
 
 	/**
@@ -801,37 +830,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		array $constructParams = [],
 	): OpenProjectAPIService|MockObject {
 		$mockMethods[] = 'getBaseUrl';
-		$constructArgs = [
-			// order should be the same as in the constructor
-			'avatarManager' => $this->createMock(IAvatarManager::class),
-			'loggerInterface' => $this->createMock(LoggerInterface::class),
-			'l10n' => $this->createMock(IL10N::class),
-			'config' => $this->createMock(IConfig::class),
-			'clientService' => $this->createMock(IClientService::class),
-			'rootFolder' => $this->createMock(IRootFolder::class),
-			'urlGenerator' => $this->createMock(IURLGenerator::class),
-			'cacheFactory' => $this->createMock(ICacheFactory::class),
-			'userManager' => $this->createMock(IUserManager::class),
-			'groupManager' => $this->createMock(IGroupManager::class),
-			'appManager' => $this->createMock(IAppManager::class),
-			'provider' => $this->createMock(IProvider::class),
-			'secureRandom' => $this->createMock(ISecureRandom::class),
-			'eventDispatcher' => $this->createMock(IEventDispatcher::class),
-			'subAdmin' => $this->createMock(ISubAdmin::class),
-			'dbConnection' => $this->createMock(IDBConnection::class),
-			'logFactory' => $this->createMock(ILogFactory::class),
-			'manager' => $this->createMock(IManager::class),
-			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
-			'userSession' => $this->createMock(IUserSession::class),
-		];
-
-		// replace the mock
-		foreach ($constructParams as $key => $value) {
-			$constructArgs[$key] = $value;
-		}
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs($constructParams);
 
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->setConstructorArgs(['integration_openproject', ...array_values($constructArgs)])
+			->setConstructorArgs($constructArgs)
 			->onlyMethods($mockMethods)
 			->getMock();
 		$mock->method('getBaseUrl')->willReturn('https://nc.my-server.org');
@@ -2141,28 +2143,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$service = new OpenProjectAPIService(
-			'integration_openproject',
-			$this->createMock(IAvatarManager::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$configMock,
-			$clientService,
-			$this->createMock(IRootFolder::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$this->createMock(ExchangedTokenRequestedEventHelper::class),
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'config' => $configMock,
+			'clientService' => $clientService,
+		]);
+	
+		$service = new OpenProjectAPIService(...$constructArgs);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['error']);
@@ -2215,28 +2201,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$service = new OpenProjectAPIService(
-			'integration_openproject',
-			$this->createMock(IAvatarManager::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$configMock,
-			$clientService,
-			$this->createMock(IRootFolder::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$this->createMock(ExchangedTokenRequestedEventHelper::class)
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'config' => $configMock,
+			'clientService' => $clientService,
+		]);
+
+		$service = new OpenProjectAPIService(...$constructArgs);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['message']);
