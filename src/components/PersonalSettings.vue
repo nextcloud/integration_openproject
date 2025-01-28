@@ -4,7 +4,7 @@
 		<div class="openproject-prefs--content">
 			<tempalte v-if="!connected">
 				<tempalte v-if="isOIDCMethod">
-					<ErrorLabel v-if="state.oidc_user" error="Could not connect to OpenProject" />
+					<ErrorLabel v-if="state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
 					<ErrorLabel v-else :error="errorMessages.featureNotAvailable" />
 				</tempalte>
 			</tempalte>
