@@ -36,6 +36,7 @@
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
 				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />
 				<referencedClass name="OCA\UserOIDC\Exception\TokenExchangeFailedException" />
+				<referencedClass name="OCA\UserOIDC\User\Backend" />
 				<!-- these classes belong to the activity app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\Activity\UserSettings" />
 				<referencedClass name="OCA\Activity\GroupHelperDisabled" />
@@ -91,6 +92,7 @@
 				<!-- these classes belong to the user_oidc app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
 				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\User\Backend" />
 				<!-- these are classes form activity app, which isn't cloned while doing static code analysis -->
 				<referencedClass name="OCA\Activity\UserSettings" />
 				<referencedClass name="OCA\Activity\GroupHelperDisabled" />

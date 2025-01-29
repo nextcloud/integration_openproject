@@ -8,7 +8,8 @@
 		"helmich/phpunit-json-assert": "^3.4",
 		"vimeo/psalm": "5.23.1",
 		"guzzlehttp/guzzle": "^7.9",
-		"behat/gherkin": "v4.9.0"
+		"behat/gherkin": "v4.9.0",
+		"php-mock/php-mock-phpunit": "^2.10"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",

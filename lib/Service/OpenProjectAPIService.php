@@ -1692,6 +1692,9 @@ class OpenProjectAPIService {
 		);
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isOIDCUser(): bool {
 		if (!class_exists(Backend::class)) {
 			return false;

@@ -29,6 +29,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCA\UserOIDC\Model\Token;
+use OCA\UserOIDC\User\Backend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -53,6 +54,7 @@ use OCP\IUserSession;
 use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
+use phpmock\phpunit\PHPMock;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\Body\Binary;
 use PhpPact\Consumer\Model\ConsumerRequest;
@@ -62,19 +64,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-/**
- * overriding the class_exists method, so that the unit tests always pass,
- * no matter if the activity app is enabled or not
- */
-function class_exists(string $className): bool {
-	if ($className === '\OCA\GroupFolders\Folder\FolderManager') {
-		return true;
-	} else {
-		return \class_exists($className);
-	}
-}
-
 class OpenProjectAPIServiceTest extends TestCase {
+	use PHPMock;
+
 	/**
 	 * @var InteractionBuilder
 	 */
@@ -4280,5 +4272,50 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals(null, $result);
+	}
+
+	public function dataProviderForIsOIDCUser(): array {
+		$backendMock = $this->getMockBuilder(Backend::class)->disableOriginalConstructor()->getMock();
+		return [
+			'has Backend class and OIDC user' => [
+				'backend' => true,
+				'oidcUser' => $backendMock,
+				'expected' => true,
+			],
+			'has Backend class but not OIDC user' => [
+				'backend' => true,
+				'oidcUser' => new \stdClass(),
+				'expected' => false,
+			],
+			'missing Backend class' => [
+				'backend' => false,
+				'oidcUser' => $backendMock,
+				'expected' => false,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForIsOIDCUser
+	 *
+	 * @return void
+	 */
+	public function testIsOIDCUser($backend, $oidcUser, $expected): void {
+		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+		$mock->expects($this->once())->willReturn($backend);
+
+		$userSessionMock = $this->createMock(IUserSession::class);
+		$userMock = $this->createMock(IUser::class);
+
+		$userMock->method('getBackend')->willReturn($oidcUser);
+		$userSessionMock->method('getUser')->willReturn($userMock);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			['userSession' => $userSessionMock],
+		);
+
+		$result = $service->isOIDCUser();
+		$this->assertEquals($expected, $result);
 	}
 }
