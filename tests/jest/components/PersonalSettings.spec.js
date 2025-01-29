@@ -39,6 +39,10 @@ describe('PersonalSettings.vue', () => {
 		const personalEnableNavigationSelector = '#openproject-prefs--link'
 		const personalEnableSearchSelector = '#openproject-prefs--u-search'
 		const userGuideIntegrationDocumentationLinkSelector = '.settings--documentation-info'
+
+		// common state
+		const commonState = { authorization_method: AUTH_METHOD.OAUTH2 }
+
 		let wrapper
 
 		beforeEach(() => {
@@ -68,6 +72,7 @@ describe('PersonalSettings.vue', () => {
 				beforeEach(async () => {
 					await wrapper.setData({
 						state: {
+							...commonState,
 							admin_config_ok: true,
 							...cases,
 						},
@@ -91,7 +96,7 @@ describe('PersonalSettings.vue', () => {
 			describe('when username and token are given', () => {
 				beforeEach(async () => {
 					await wrapper.setData({
-						state: { user_name: 'test', token: '123', admin_config_ok: true, authorization_method: AUTH_METHOD.OAUTH2 },
+						state: { ...commonState, user_name: 'test', token: '123', admin_config_ok: true },
 					})
 				})
 				it('oAuth connect button is not displayed', () => {
@@ -117,7 +122,7 @@ describe('PersonalSettings.vue', () => {
 		describe('when the admin config is not okay', () => {
 			beforeEach(async () => {
 				await wrapper.setData({
-					state: { user_name: 'test', token: '123', admin_config_ok: false },
+					state: { ...commonState, user_name: 'test', token: '123', admin_config_ok: false },
 				})
 			})
 			it('should set proper props to the oauth connect component', () => {
@@ -131,7 +136,7 @@ describe('PersonalSettings.vue', () => {
 		describe('user settings', () => {
 			it('should be enabled if the admin has enabled the settings', async () => {
 				await wrapper.setData({
-					state: { user_name: 'test', token: '123', admin_config_ok: true, navigation_enabled: true, search_enabled: true, notification_enabled: true },
+					state: { ...commonState, user_name: 'test', token: '123', admin_config_ok: true, navigation_enabled: true, search_enabled: true, notification_enabled: true },
 				})
 				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
 			})
@@ -139,6 +144,7 @@ describe('PersonalSettings.vue', () => {
 			it('should be disabled if the admin has not enabled the settings', async () => {
 				await wrapper.setData({
 					state: {
+						...commonState,
 						user_name: 'test',
 						token: '123',
 						admin_config_ok: true,
@@ -156,6 +162,7 @@ describe('PersonalSettings.vue', () => {
 					.mockImplementationOnce(() => Promise.resolve({ data: [] }))
 				const wrapper = getMountedWrapper({
 					state: {
+						...commonState,
 						user_name: 'test',
 						token: '123',
 						admin_config_ok: true,
@@ -188,6 +195,7 @@ describe('PersonalSettings.vue', () => {
 					.mockImplementationOnce(() => Promise.resolve({ data: [] }))
 				const wrapper = getMountedWrapper({
 					state: {
+						...commonState,
 						user_name: 'test',
 						token: '123',
 						admin_config_ok: true,
@@ -214,6 +222,7 @@ describe('PersonalSettings.vue', () => {
 				expect(wrapper.find(personalSettingsFormSelector)).toMatchSnapshot()
 				await wrapper.setData({
 					state: {
+						...commonState,
 						navigation_enabled: false,
 						search_enabled: true,
 						notification_enabled: false,

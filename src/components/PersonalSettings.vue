@@ -2,13 +2,13 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div class="openproject-prefs--content">
-			<tempalte v-if="!connected">
-				<tempalte v-if="isOIDCMethod">
+			<div v-if="!connected">
+				<div v-if="isOIDCMethod">
 					<ErrorLabel v-if="state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
 					<ErrorLabel v-else :error="errorMessages.featureNotAvailable" />
-				</tempalte>
-			</tempalte>
-			<tempalte v-else>
+				</div>
+			</div>
+			<div v-else>
 				<div class="openproject-prefs--connected">
 					<label>
 						<CheckIcon :size="20" />
@@ -43,7 +43,7 @@
 						</template>
 					</CheckBox>
 				</div>
-			</tempalte>
+			</div>
 			<OAuthConnectButton v-if="isOauthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
 		</div>
 	</div>
