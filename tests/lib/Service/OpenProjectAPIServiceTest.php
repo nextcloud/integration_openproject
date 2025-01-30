@@ -630,7 +630,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @param array<string, object> $constructParams
+	 * generates a list mocks that can be given as arguments to the constructor of OpenProjectAPIService
+	 * by default only empty mocks are generated, but specific mocks can be passed in using the
+	 * $constructParams parameter.
+	 *
+	 * Format has to be [<string> => <object>] with the first being the constructor parameter name and the second one the mock.
+	 * Example: ['avatarManager' => $createMockObject]
+	 * @param array<string, object> $constructParams specific mocks for the constructor of OpenProjectAPIService
 	 *
 	 * @return array
 	 */
@@ -658,8 +664,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
 		];
 
-		// replace the mock
+		// replace default mocks with manually passed in mocks
 		foreach ($constructParams as $key => $value) {
+			if (!array_key_exists($key, $constructArgs)) {
+				throw new \InvalidArgumentException("Invalid construct parameter: $key");
+			}
+
 			$constructArgs[$key] = $value;
 		}
 
