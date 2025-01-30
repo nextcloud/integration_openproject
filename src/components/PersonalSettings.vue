@@ -2,15 +2,15 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div class="openproject-prefs--content">
-			<ErrorLabel v-if="!connected && isOIDCMethod && state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
-			<ErrorLabel v-if="isOIDCMethod && !state.oidc_user" :error="errorMessages.featureNotAvailable" />
+			<ErrorLabel v-if="!connected && isOIDCAuthMethod && state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
+			<ErrorLabel v-if="isOIDCAuthMethod && !state.oidc_user" :error="errorMessages.featureNotAvailable" />
 			<div v-if="showConnectionSettings">
 				<div class="openproject-prefs--connected">
 					<label>
 						<CheckIcon :size="20" />
 						{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 					</label>
-					<NcButton v-if="isOauthMethod" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+					<NcButton v-if="isOauthAuthMethod" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 						<template #icon>
 							<CloseIcon :size="23" />
 						</template>
@@ -40,7 +40,7 @@
 					</CheckBox>
 				</div>
 			</div>
-			<OAuthConnectButton v-if="isOauthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
+			<OAuthConnectButton v-if="isOauthAuthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
 		</div>
 	</div>
 </template>
@@ -91,14 +91,14 @@ export default {
 			if (!this.state.admin_config_ok) return false
 			return !!this.state.token && !!this.state.user_name
 		},
-		isOIDCMethod() {
+		isOIDCAuthMethod() {
 			return this.state.authorization_method === AUTH_METHOD.OIDC
 		},
-		isOauthMethod() {
+		isOauthAuthMethod() {
 			return this.state.authorization_method === AUTH_METHOD.OAUTH2
 		},
 		showConnectionSettings() {
-			if (this.isOIDCMethod) {
+			if (this.isOIDCAuthMethod) {
 				return this.connected && this.state.oidc_user
 			}
 			return this.connected
@@ -118,7 +118,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.isOauthMethod) {
+		if (this.isOauthAuthMethod) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
 	},

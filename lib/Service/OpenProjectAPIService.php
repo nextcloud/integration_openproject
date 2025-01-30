@@ -35,7 +35,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCA\UserOIDC\Db\ProviderMapper;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
-use OCA\UserOIDC\User\Backend;
+use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -1696,12 +1696,12 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isOIDCUser(): bool {
-		if (!class_exists(Backend::class)) {
+		if (!class_exists(OIDCBackend::class)) {
 			return false;
 		}
 
 		$user = $this->userSession->getUser();
-		if ($user instanceof IUser && $user->getBackend() instanceof Backend) {
+		if ($user instanceof IUser && $user->getBackend() instanceof OIDCBackend) {
 			return true;
 		}
 		return false;

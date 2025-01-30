@@ -29,7 +29,7 @@ use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCA\UserOIDC\Model\Token;
-use OCA\UserOIDC\User\Backend;
+use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\Encryption\IManager;
@@ -655,6 +655,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'logFactory' => $this->createMock(ILogFactory::class),
 			'manager' => $this->createMock(IManager::class),
 			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
+			'userSession' => $this->createMock(IUserSession::class),
 		];
 
 		// replace default mocks with manually passed in mocks
@@ -4275,7 +4276,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	public function dataProviderForIsOIDCUser(): array {
-		$backendMock = $this->getMockBuilder(Backend::class)->disableOriginalConstructor()->getMock();
+		$backendMock = $this->getMockBuilder(OIDCBackend::class)->disableOriginalConstructor()->getMock();
 		return [
 			'has Backend class and OIDC user' => [
 				'backend' => true,
