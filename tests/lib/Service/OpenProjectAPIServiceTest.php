@@ -630,6 +630,53 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * generates a list mocks that can be given as arguments to the constructor of OpenProjectAPIService
+	 * by default only empty mocks are generated, but specific mocks can be passed in using the
+	 * $constructParams parameter.
+	 *
+	 * Format has to be [<string> => <object>] with the first being the constructor parameter name and the second one the mock.
+	 * Example: ['avatarManager' => $createMockObject]
+	 * @param array<string, object> $constructParams specific mocks for the constructor of OpenProjectAPIService
+	 *
+	 * @return array
+	 */
+	private function getOpenProjectAPIServiceConstructArgs(array $constructParams = []): array {
+		$constructArgs = [
+			// order should be the same as in the constructor
+			'avatarManager' => $this->createMock(IAvatarManager::class),
+			'loggerInterface' => $this->createMock(LoggerInterface::class),
+			'l10n' => $this->createMock(IL10N::class),
+			'config' => $this->createMock(IConfig::class),
+			'clientService' => $this->createMock(IClientService::class),
+			'rootFolder' => $this->createMock(IRootFolder::class),
+			'urlGenerator' => $this->createMock(IURLGenerator::class),
+			'cacheFactory' => $this->createMock(ICacheFactory::class),
+			'userManager' => $this->createMock(IUserManager::class),
+			'groupManager' => $this->createMock(IGroupManager::class),
+			'appManager' => $this->createMock(IAppManager::class),
+			'provider' => $this->createMock(IProvider::class),
+			'secureRandom' => $this->createMock(ISecureRandom::class),
+			'eventDispatcher' => $this->createMock(IEventDispatcher::class),
+			'subAdmin' => $this->createMock(ISubAdmin::class),
+			'dbConnection' => $this->createMock(IDBConnection::class),
+			'logFactory' => $this->createMock(ILogFactory::class),
+			'manager' => $this->createMock(IManager::class),
+			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
+		];
+
+		// replace default mocks with manually passed in mocks
+		foreach ($constructParams as $key => $value) {
+			if (!array_key_exists($key, $constructArgs)) {
+				throw new \InvalidArgumentException("Invalid construct parameter: $key");
+			}
+
+			$constructArgs[$key] = $value;
+		}
+
+		return ['integration_openproject', ...array_values($constructArgs)];
+	}
+
+	/**
 	 * @param IRootFolder|null $storageMock
 	 * @param string $oAuthToken
 	 * @param string $baseUrl
@@ -638,7 +685,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	private function getOpenProjectAPIService(
 		$authMethod = null,
-		$storageMock = null, $oAuth2OrOidcToken = '1234567890', $baseUrl = 'https://nc.my-server.org', $userId = 'testUser'
+		$storageMock = null,
+		$oAuth2OrOidcToken = '1234567890',
+		$baseUrl = 'https://nc.my-server.org',
+		$userId = 'testUser',
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
@@ -763,137 +813,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getBaseUrl')
 			->willReturn($baseUrl);
 
-		return new OpenProjectAPIService(
-			'integration_openproject',
-			$avatarManagerMock,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$this->defaultConfigMock,
-			$clientService,
-			$storageMock,
-			$urlGeneratorMock,
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$appManagerMock,
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$exchangeTokenMock
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'avatarManager' => $avatarManagerMock,
+			'config' => $this->defaultConfigMock,
+			'clientService' => $clientService,
+			'rootFolder' => $storageMock,
+			'urlGenerator' => $urlGeneratorMock,
+			'appManager' => $appManagerMock,
+			'exchangedTokenRequestedEventHelper' => $exchangeTokenMock,
+		]);
+
+		return new OpenProjectAPIService(...$constructArgs);
 	}
 
 	/**
 	 *  Since our app currently has two authorization methods, the test employing this mock service has no effect on the authorization method.
 	 *
 	 *
-	 * @param array<string> $onlyMethods
-	 * @param IRootFolder|null $rootMock
-	 * @param ICacheFactory|null $cacheFactoryMock
-	 * @param IUserManager|null $userManagerMock
-	 * @param IGroupManager|null $groupManagerMock
-	 * @param IAppManager|null $appManagerMock
-	 * @param ISubAdmin|null $subAdminManagerMock
-	 * @param ISecureRandom|null $iSecureRandomMock
-	 * @param IConfig|null $configMock
-	 * @param IProvider|null $tokenProviderMock
-	 * @param IDBConnection|null $db
-	 * @param IURLGenerator|null $iURLGenerator
-	 * @param ILogFactory|null $iLogFactory
-	 * @param IManager|null $iManager
-	 * @param ExchangedTokenRequestedEventHelper|null $exchangeTokenEvent
+	 * @param array<string> $mockMethods
+	 * @param array<string, object> $constructParams
+	 *
 	 * @return OpenProjectAPIService|MockObject
 	 */
-	private function getServiceMock(
-		array $onlyMethods = ['request'],
-		$rootMock = null,
-		$cacheFactoryMock = null,
-		$userManagerMock = null,
-		$groupManagerMock = null,
-		$appManagerMock = null,
-		$subAdminManagerMock = null,
-		$iSecureRandomMock = null,
-		$configMock = null,
-		$tokenProviderMock = null,
-		$db = null,
-		$iLogFactory = null,
-		$iManager = null,
-		$exchangeTokenEvent = null,
-		$iURLGenerator = null
+	private function getOpenProjectAPIServiceMock(
+		array $mockMethods = ['request'],
+		array $constructParams = [],
 	): OpenProjectAPIService|MockObject {
-		$onlyMethods[] = 'getBaseUrl';
-		if ($rootMock === null) {
-			$rootMock = $this->createMock(IRootFolder::class);
-		}
-		if ($cacheFactoryMock === null) {
-			$cacheFactoryMock = $this->createMock(ICacheFactory::class);
-		}
-		if ($userManagerMock === null) {
-			$userManagerMock = $this->createMock(IUserManager::class);
-		}
-		if ($groupManagerMock === null) {
-			$groupManagerMock = $this->createMock(IGroupManager::class);
-		}
-		if ($appManagerMock === null) {
-			$appManagerMock = $this->createMock(IAppManager::class);
-		}
-		if ($subAdminManagerMock === null) {
-			$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
-		}
-		if ($iSecureRandomMock === null) {
-			$iSecureRandomMock = $this->createMock(ISecureRandom::class);
-		}
-		if ($configMock === null) {
-			$configMock = $this->createMock(IConfig::class);
-		}
-		if ($tokenProviderMock === null) {
-			$tokenProviderMock = $this->createMock(IProvider::class);
-		}
-		if ($db === null) {
-			$db = $this->createMock(IDBConnection::class);
-		}
-		if ($iURLGenerator === null) {
-			$iURLGenerator = $this->createMock(IURLGenerator::class);
-		}
-		if ($iLogFactory === null) {
-			$iLogFactory = $this->createMock(ILogFactory::class);
-		}
-		if ($exchangeTokenEvent === null) {
-			$exchangeTokenEvent = $this->createMock(ExchangedTokenRequestedEventHelper::class);
-		}
-		if ($iManager === null) {
-			$iManager = $this->createMock(IManager::class);
-		}
+		$mockMethods[] = 'getBaseUrl';
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs($constructParams);
+
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->setConstructorArgs(
-				[
-					'integration_openproject',
-					$this->createMock(IAvatarManager::class),
-					$this->createMock(LoggerInterface::class),
-					$this->createMock(IL10N::class),
-					$configMock,
-					$this->createMock(IClientService::class),
-					$rootMock,
-					$iURLGenerator,
-					$cacheFactoryMock,
-					$userManagerMock,
-					$groupManagerMock,
-					$appManagerMock,
-					$tokenProviderMock,
-					$iSecureRandomMock,
-					$this->createMock(IEventDispatcher::class),
-					$subAdminManagerMock,
-					$db,
-					$iLogFactory,
-					$iManager,
-					$exchangeTokenEvent,
-					$iURLGenerator
-				])
-			->onlyMethods($onlyMethods)
+			->setConstructorArgs($constructArgs)
+			->onlyMethods($mockMethods)
 			->getMock();
 		$mock->method('getBaseUrl')->willReturn('https://nc.my-server.org');
 		return $mock;
@@ -957,7 +908,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider searchWorkPackageDataProvider
 	 */
 	public function testSearchWorkPackageOnlyQuery(array $response, array $expectedResult) {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->with(
 				'user', 'work_packages',
@@ -984,7 +935,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider searchWorkPackageDataProvider
 	 */
 	public function testSearchWorkPackageNotLinkedToAStorage(array $response, array $expectedResult) {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->with(
 				'user', 'work_packages',
@@ -1005,7 +956,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSearchWorkPackageByFileIdOnlyFileId() {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->withConsecutive(
 				[
@@ -1031,7 +982,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSearchWorkPackageByQueryAndFileId() {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->with(
 				'user', 'work_packages',
@@ -1057,7 +1008,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSearchWorkPackageRequestProblem() {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'some issue', 'statusCode' => 404 ]);
 		$result = $service->searchWorkPackage('user', 'search query', 123);
@@ -1131,7 +1082,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetNotificationsMalformedResponse($response) {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$result = $service->getNotifications('');
@@ -1142,7 +1093,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetNotificationsErrorResponse() {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'my error']);
 		$result = $service->getNotifications('');
@@ -1547,7 +1498,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service = $this->getServiceMock(['request'], null, $cacheFactoryMock);
+		$service = $this->getOpenProjectAPIServiceMock(['request'], ['cacheFactory' => $cacheFactoryMock]);
 		$service->expects($this->never())->method('request');
 		$result = $service->getOpenProjectWorkPackageStatus('user', 'statusId');
 		$this->assertSame($this->validStatusResponseBody, $result);
@@ -1565,7 +1516,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service = $this->getServiceMock(['request'], null, $cacheFactoryMock);
+		$service = $this->getOpenProjectAPIServiceMock(['request'], ['cacheFactory' => $cacheFactoryMock]);
 		$service->expects($this->once())
 			->method('request')
 			->willReturn($this->validStatusResponseBody);
@@ -1577,7 +1528,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageStatusMalFormedResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'Malformed response']);
 		$result = $service->getOpenProjectWorkPackageStatus('', '');
@@ -1631,7 +1582,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service = $this->getServiceMock(['request'], null, $cacheFactoryMock);
+		$service = $this->getOpenProjectAPIServiceMock(['request'], ['cacheFactory' => $cacheFactoryMock]);
 		$service->expects($this->never())->method('request');
 		$result = $service->getOpenProjectWorkPackageType('user', 'typeId');
 		$this->assertSame($this->validTypeResponseBody, $result);
@@ -1650,7 +1601,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$cacheFactoryMock->method('createDistributed')->willReturn($cacheMock);
-		$service = $this->getServiceMock(['request'], null, $cacheFactoryMock);
+		$service = $this->getOpenProjectAPIServiceMock(['request'], ['cacheFactory' => $cacheFactoryMock]);
 		$service->expects($this->once())
 			->method('request')
 			->willReturn($this->validTypeResponseBody);
@@ -1663,7 +1614,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageTypeMalFormedResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'Malformed response']);
 		$result = $service->getOpenProjectWorkPackageType('', '');
@@ -1876,7 +1827,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testLinkWorkPackageToFileRequest(): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 
 		$service->method('getNode')
 			->willReturn($this->getNodeMock());
@@ -1900,7 +1851,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileNotReadable(): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$fileMock->method('isReadable')->willReturn(false);
@@ -1937,7 +1888,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileInvalidKey(string $keyWorkPackageId, string $keyFileInfo): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$service->method('getNode')
 			->willReturn($fileMock);
@@ -1994,7 +1945,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileInvalidDataWithValidKey($workpackageIdValue, $fileInfoValue): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$service->method('getNode')
 			->willReturn($fileMock);
@@ -2030,7 +1981,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileInvalidDataWithValidFileInfoKeys(string $invalidFileIdKey, string $invalidFileNameKey): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$service->method('getNode')
 			->willReturn($fileMock);
@@ -2084,7 +2035,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileInvalidDataWithValidFileInfoValues($invalidFileIdValue, $invalidFileNameValue): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$service->method('getNode')
 			->willReturn($fileMock);
@@ -2110,7 +2061,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkWorkPackageToFileFileNotFound(): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 
 		$fileMock = $this->getMockBuilder('\OCP\Files\File')->getMock();
 		$fileMock->method('isReadable')
@@ -2135,7 +2086,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testLinkWorkPackageToMultipleFileRequest(): void {
-		$service = $this->getServiceMock(['request', 'getNode']);
+		$service = $this->getOpenProjectAPIServiceMock(['request', 'getNode']);
 
 		$service->method('getNode')
 			->willReturn($this->getNodeMock());
@@ -2202,28 +2153,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$service = new OpenProjectAPIService(
-			'integration_openproject',
-			$this->createMock(IAvatarManager::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$configMock,
-			$clientService,
-			$this->createMock(IRootFolder::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$this->createMock(ExchangedTokenRequestedEventHelper::class),
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'config' => $configMock,
+			'clientService' => $clientService,
+		]);
+	
+		$service = new OpenProjectAPIService(...$constructArgs);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['error']);
@@ -2276,28 +2211,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$service = new OpenProjectAPIService(
-			'integration_openproject',
-			$this->createMock(IAvatarManager::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$configMock,
-			$clientService,
-			$this->createMock(IRootFolder::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-			$this->createMock(ExchangedTokenRequestedEventHelper::class)
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'config' => $configMock,
+			'clientService' => $clientService,
+		]);
+
+		$service = new OpenProjectAPIService(...$constructArgs);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['message']);
@@ -2388,14 +2307,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn(true);
 
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['getGroupFolderManager'],
-			null,
-			null,
-			$userManagerMock,
-			$groupManagerMock,
-			$appManagerMock,
-			$subAdminManagerMock
+			[
+				'userManager' => $userManagerMock,
+				'groupManager' => $groupManagerMock,
+				'appManager' => $appManagerMock,
+				'subAdmin' => $subAdminManagerMock,
+			],
 		);
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
@@ -2508,14 +2427,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn($groupFolderAppEnabled);
 
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['getGroupFolderManager'],
-			null,
-			null,
-			$userManagerMock,
-			$groupManagerMock,
-			$appManagerMock,
-			$subAdminManagerMock
+			[
+				'userManager' => $userManagerMock,
+				'groupManager' => $groupManagerMock,
+				'appManager' => $appManagerMock,
+				'subAdmin' => $subAdminManagerMock,
+			],
 		);
 		$folderManagerMock = $this->getFolderManagerMock(
 			$groupFolderPath, $canUserManageACL, $getFoldersForGroupResponse
@@ -2553,7 +2472,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$eventDispatcherMock
 			->method('dispatchTyped')
 			->with($this->createMock(AppPasswordCreatedEvent::class));
-		$service = $this->getServiceMock([], null, null, $userManagerMock, null, null, null, $iSecureRandomMock, null, $tokenProviderMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'userManager' => $userManagerMock,
+				'secureRandom' => $iSecureRandomMock,
+				'provider' => $tokenProviderMock,
+			],
+		);
 		$result = $service->generateAppPasswordTokenForUser();
 		$this->assertSame($token, $result);
 	}
@@ -2583,12 +2509,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('isEnabledForUser')
 			->with('groupfolders', $userMock)
 			->willReturn(true);
-		$service = $this->getServiceMock(['getGroupFolderManager'],
-			null,
-			null,
-			$userManagerMock,
-			$groupManagerMock,
-			$appManagerMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			['getGroupFolderManager'],
+			[
+				'userManager' => $userManagerMock,
+				'groupManager' => $groupManagerMock,
+				'appManager' => $appManagerMock,
+			],
+		);
 		$folderManagerMock = $this->getFolderManagerMock('', false, [ 0 => [
 			'folder_id' => 123,
 			'mount_point' => '',
@@ -2653,12 +2581,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('isEnabledForUser')
 			->with('groupfolders', $userMock)
 			->willReturn($appEnabled);
-		$service = $this->getServiceMock(['getGroupFolderManager'],
-			null,
-			null,
-			$userManagerMock,
-			$groupManagerMock,
-			$appManagerMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			['getGroupFolderManager'],
+			[
+				'userManager' => $userManagerMock,
+				'groupManager' => $groupManagerMock,
+				'appManager' => $appManagerMock,
+			],
+		);
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
@@ -2678,16 +2608,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getTokenByUser')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn([$tokenMock]);
-		$service = $this->getServiceMock([],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$tokenProviderMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'provider' => $tokenProviderMock,
+			]
+		);
 		$this->assertTrue($service->hasAppPassword());
 	}
 
@@ -2714,16 +2640,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getTokenByUser')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn([$tokenMock1,$tokenMock2,$tokenMock3,$tokenMock4]);
-		$service = $this->getServiceMock([],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$tokenProviderMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'provider' => $tokenProviderMock,
+			],
+		);
 		$this->assertTrue($service->hasAppPassword());
 	}
 
@@ -2738,16 +2660,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getTokenByUser')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn([$tokenMock]);
-		$service = $this->getServiceMock([],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$tokenProviderMock);
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'provider' => $tokenProviderMock,
+			],
+		);
 		$this->assertFalse($service->hasAppPassword());
 	}
 
@@ -2793,17 +2711,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getTokenByUser')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn([$tokenMock1,$tokenMock2,$tokenMock3,$tokenMock4,$tokenMock5]);
-		$service = $this->getServiceMock(['hasAppPassword'],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$tokenProviderMock)
-		;
+		$service = $this->getOpenProjectAPIServiceMock(
+			['hasAppPassword'],
+			[
+				'provider' => $tokenProviderMock,
+			],
+		);
 		$service->method('hasAppPassword')->willReturn(true);
 		$tokenProviderMock->expects($this->exactly(2))
 			->method('invalidateTokenById')
@@ -3351,7 +3264,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn([
 				'_type' => 'Collection',
@@ -3381,7 +3294,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn([
 				'error' => 'something went wrong',
@@ -3394,7 +3307,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetWorkPackageFileLinksMalFormedResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 				->willReturn([
 					'_type' => '',
@@ -3494,7 +3407,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteFileLinkResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn([
 				'success' => true
@@ -3510,7 +3423,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteFileLinkErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn([
 				'error' => 'something went wrong',
@@ -3634,7 +3547,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsMalformedResponse(array $response): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$this->expectException(OpenprojectResponseException::class);
@@ -3645,7 +3558,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
 		$this->expectException(OpenprojectErrorException::class);
@@ -3658,22 +3571,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function testGetAvailableOpenProjectProjectsQueryOnly() {
 		$iUrlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->disableOriginalConstructor()->getMock();
 		$iUrlGeneratorMock->method('getBaseUrl')->willReturn('https%3A%2F%2Fnc.my-server.org');
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['request'],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$iUrlGeneratorMock
+			[
+				'urlGenerator' => $iUrlGeneratorMock,
+			],
 		);
 		$service->method('request')
 			->with(
@@ -3750,7 +3652,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageFormMalformedResponse(array $response): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$this->expectException(OpenprojectResponseException::class);
@@ -3761,7 +3663,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetOpenProjectWorkPackageFormErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
 		$this->expectException(OpenprojectErrorException::class);
@@ -3819,7 +3721,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableAssigneesOfAProjectMalformedResponse(array $response) {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$this->expectException(OpenprojectResponseException::class);
@@ -3830,7 +3732,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableAssigneesOfAProjectErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
 		$this->expectException(OpenprojectErrorException::class);
@@ -3884,7 +3786,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCreateWorkpackagesMalformedResponse($response) {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn($response);
 		$this->expectException(OpenprojectResponseException::class);
@@ -3895,7 +3797,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCreateWorkpackagesErrorResponse(): void {
-		$service = $this->getServiceMock();
+		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
 			->willReturn(['error' => 'something went wrong', 'statusCode' => 500]);
 		$this->expectException(OpenprojectErrorException::class);
@@ -3925,16 +3827,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(
 				$passwordLength
 			);
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$configMock
+			[
+				'config' => $configMock,
+			],
 		);
 		$result = $service->getPasswordLength();
 		$this->assertEquals($expectedPasswordLength, $result);
@@ -3985,11 +3882,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
 			->willReturn($userMock);
 		$signatoryMapperMock = $this->getMockBuilder(SignatoryMapper::class)->disableOriginalConstructor()->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['isTermsOfServiceAppEnabled', 'getAllTermsOfServiceAvailable', 'getAllTermsOfServiceSignedByUserOpenProject'],
-			null,
-			null,
-			$userManagerMock
+			[
+				'userManager' => $userManagerMock,
+			],
 		);
 		$service->method('isTermsOfServiceAppEnabled')->willReturn(true);
 		$service->method('getAllTermsOfServiceAvailable')->willReturn($availableTermsOfServices);
@@ -4004,16 +3901,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn("access-token");
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['searchWorkPackage'],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			null,
-			null,
-			null,
-			$configMock
+			[
+				'userManager' => $userManagerMock,
+				'config' => $configMock,
+			],
 		);
 		$resultTitle = $service->getSubline($this->wpInformationResponse);
 		$this->assertSame("#123 [In specification] Scrum project", $resultTitle);
@@ -4025,16 +3918,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn("access-token");
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['searchWorkPackage'],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			null,
-			null,
-			null,
-			$configMock
+			[
+				'userManager' => $userManagerMock,
+				'config' => $configMock,
+			],
 		);
 		$resultMainText = $service->getMainText($this->wpInformationResponse);
 		$this->assertSame("USER STORY: New login screen", $resultMainText);
@@ -4047,22 +3936,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$iULGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['searchWorkPackage'],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			null,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			null,
-			null,
-			$iULGeneratorMock
+			[
+				'userManager' => $userManagerMock,
+				'config' => $configMock,
+				'urlGenerator' => $iULGeneratorMock,
+			],
 		);
 		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
 		$iULGeneratorMock->method('getAbsoluteURL')->willReturn($imageURL);
@@ -4085,16 +3965,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn("access-token");
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['searchWorkPackage'],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			null,
-			null,
-			null,
-			$configMock
+			[
+				'userManager' => $userManagerMock,
+				'config' => $configMock,
+			],
 		);
 		$wpInformationResponse = ["error" => []];
 		$service->method('searchWorkPackage')->with('testUser', null, null, false, 123)->willReturn($wpInformationResponse);
@@ -4108,16 +3984,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(null);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			['searchWorkPackage'],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			null,
-			null,
-			null,
-			$configMock
+			[
+				'userManager' => $userManagerMock,
+				'config' => $configMock,
+			],
 		);
 		$resultGetWorkPackageInfo = $service->getWorkPackageInfo('testUser', 123);
 		$this->assertNull($resultGetWorkPackageInfo);
@@ -4207,16 +4079,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->getMock();
 		$iAppManagerMock->method('isInstalled')->with('admin_audit')
 			->willReturn($isAdminAuditAppInstalled);
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock
+			[
+				'userManager' => $userManagerMock,
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+			],
 		);
 		$actualResult = $service->isAdminAuditConfigSetCorrectly();
 		$this->assertEquals($expectedResult, $actualResult);
@@ -4295,20 +4164,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iAppManagerMock->method('isInstalled')->with('encryption')
 			->willReturn($isEncryptionAppInstalled);
 		$iManagerMock->method('isEnabled')->willReturn($isEncryptionAppEnabled);
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			$userManagerMock,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			$iManagerMock
+			[
+				'userManager' => $userManagerMock,
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+			],
 		);
 		$actualResult = $service->isServerSideEncryptionEnabled();
 		$this->assertEquals($expectedResult, $actualResult);
@@ -4331,21 +4194,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
 		$eventMock->method('getToken')->willReturn($tokenMock);
 		$tokenMock->method('getAccessToken')->willReturn('exchanged-access-token');
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			null,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			$iManagerMock,
-			$exchangeTokenEvent
+			[
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+			],
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals('exchanged-access-token', $result);
@@ -4360,21 +4216,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			null,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			$iManagerMock,
-			null
+			[
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+			],
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals(null, $result);
@@ -4394,21 +4242,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		 * get event can throw TokenExchangeFailedException in case there is failure in token exchange from the user_oidc app
 		 */
 		$exchangeTokenEvent->method('getEvent')->willThrowException(new TokenExchangeFailedException('Token exchanged failed'));
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			null,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			$iManagerMock,
-			$exchangeTokenEvent
+			[
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+			],
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals(null, $result);
@@ -4427,21 +4268,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
 		$eventMock->method('getToken')->willReturn(null);
-		$service = $this->getServiceMock(
+		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			null,
-			null,
-			null,
-			null,
-			$iAppManagerMock,
-			null,
-			null,
-			$configMock,
-			null,
-			null,
-			null,
-			$iManagerMock,
-			$exchangeTokenEvent
+			[
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+			],
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals(null, $result);
