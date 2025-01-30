@@ -6,7 +6,6 @@ use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
-
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
@@ -35,7 +34,8 @@ class Personal implements ISettings {
 		IConfig $config,
 		IInitialState $initialStateService,
 		OpenProjectAPIService $openProjectAPIService,
-		?string $userId) {
+		?string $userId,
+	) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
@@ -78,10 +78,10 @@ class Personal implements ISettings {
 			'search_enabled' => ($searchEnabled === '1'),
 			'navigation_enabled' => ($navigationEnabled === '1'),
 			'user_name' => $userName,
+			'admin_config_ok' => OpenProjectAPIService::isAdminConfigOk($this->config),
+			'authorization_method' => $authorizationMethod,
+			'oidc_user' => $this->openProjectAPIService->isOIDCUser(),
 		];
-
-		$userConfig['admin_config_ok'] = OpenProjectAPIService::isAdminConfigOk($this->config);
-		$userConfig['authorization_method'] = $authorizationMethod;
 		$this->initialStateService->provideInitialState('user-config', $userConfig);
 
 		$oauthConnectionResult = $this->config->getUserValue(
@@ -102,7 +102,6 @@ class Personal implements ISettings {
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-error-message', $oauthConnectionErrorMessage
 		);
-
 
 		return new TemplateResponse(Application::APP_ID, 'personalSettings');
 	}

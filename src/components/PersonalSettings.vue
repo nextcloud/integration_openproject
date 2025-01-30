@@ -1,44 +1,47 @@
 <template>
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
-		<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
-			{{ errorMessages.featureNotAvailable }}
+		<div class="openproject-prefs--content">
+			<ErrorLabel v-if="!connected && isOIDCAuthMethod && state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
+			<ErrorLabel v-if="isOIDCAuthMethod && !state.oidc_user" :error="errorMessages.featureNotAvailable" />
+			<div v-if="showConnectionSettings">
+				<div class="openproject-prefs--connected">
+					<label>
+						<CheckIcon :size="20" />
+						{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
+					</label>
+					<NcButton v-if="isOauthAuthMethod" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+						<template #icon>
+							<CloseIcon :size="23" />
+						</template>
+						{{ t('integration_openproject', 'Disconnect from OpenProject') }}
+					</NcButton>
+				</div>
+				<br>
+				<div class="openproject-prefs--form">
+					<CheckBox v-model="state.navigation_enabled"
+						input-id="openproject-prefs--link"
+						:label="t('integration_openproject', 'Enable navigation link')">
+						<template #hint>
+							<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
+						</template>
+					</CheckBox>
+					<CheckBox v-model="state.search_enabled"
+						input-id="openproject-prefs--u-search"
+						:label="t('integration_openproject', 'Enable unified search for tickets')">
+						<template #hint>
+							<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
+							<p v-if="state.search_enabled" class="openproject-prefs--hint">
+								<InformationVariant />
+								{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
+							</p>
+							<br v-else>
+						</template>
+					</CheckBox>
+				</div>
+			</div>
+			<OAuthConnectButton v-if="isOauthAuthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
 		</div>
-		<div v-if="connected" class="openproject-prefs--connected">
-			<label>
-				<CheckIcon :size="20" />
-				{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
-			</label>
-			<NcButton v-if="state.authorization_method === authMethods.OAUTH2" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
-				<template #icon>
-					<CloseIcon :size="23" />
-				</template>
-				{{ t('integration_openproject', 'Disconnect from OpenProject') }}
-			</NcButton>
-		</div>
-		<br>
-		<div v-if="connected" class="openproject-prefs--form">
-			<CheckBox v-model="state.navigation_enabled"
-				input-id="openproject-prefs--link"
-				:label="t('integration_openproject', 'Enable navigation link')">
-				<template #hint>
-					<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
-				</template>
-			</CheckBox>
-			<CheckBox v-model="state.search_enabled"
-				input-id="openproject-prefs--u-search"
-				:label="t('integration_openproject', 'Enable unified search for tickets')">
-				<template #hint>
-					<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
-					<p v-if="state.search_enabled" class="openproject-prefs--hint">
-						<InformationVariant />
-						{{ t('integration_openproject', 'Warning, everything you type in the search bar will be sent to your OpenProject instance.') }}
-					</p>
-					<br v-else>
-				</template>
-			</CheckBox>
-		</div>
-		<OAuthConnectButton v-if="showOAuthConnectButton" :is-admin-config-ok="state.admin_config_ok" />
 	</div>
 </template>
 
@@ -57,12 +60,20 @@ import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult, USER_SETTINGS, AUTH_METHOD } from '../utils.js'
 import { NcButton } from '@nextcloud/vue'
 import { error as errorMessages } from '../constants/messages.js'
+import ErrorLabel from './ErrorLabel.vue'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
-		SettingsTitle, OAuthConnectButton, NcButton, CloseIcon, CheckIcon, InformationVariant, CheckBox,
+		SettingsTitle,
+		OAuthConnectButton,
+		NcButton,
+		CloseIcon,
+		CheckIcon,
+		InformationVariant,
+		CheckBox,
+		ErrorLabel,
 	},
 
 	data() {
@@ -72,24 +83,25 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			userSettingDescription: USER_SETTINGS,
-			authMethods: AUTH_METHOD,
 			errorMessages,
 		}
 	},
 	computed: {
 		connected() {
 			if (!this.state.admin_config_ok) return false
-			return this.state.token && this.state.token !== ''
-				&& this.state.user_name && this.state.user_name !== ''
+			return !!this.state.token && !!this.state.user_name
 		},
-		isNonOidcUserConnectedViaOidc() {
-			return !!(this.state.authorization_method === AUTH_METHOD.OIDC && this.state.admin_config_ok && !this.state.token)
+		isOIDCAuthMethod() {
+			return this.state.authorization_method === AUTH_METHOD.OIDC
 		},
-		showOAuthConnectButton() {
-			if (this.connected) {
-				return false
+		isOauthAuthMethod() {
+			return this.state.authorization_method === AUTH_METHOD.OAUTH2
+		},
+		showConnectionSettings() {
+			if (this.isOIDCAuthMethod) {
+				return this.connected && this.state.oidc_user
 			}
-			return !(this.state.admin_config_ok === true && this.state.authorization_method === this.authMethods.OIDC)
+			return this.connected
 		},
 	},
 	watch: {
@@ -106,7 +118,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.state.authorization_method === this.authMethods.OAUTH2) {
+		if (this.isOauthAuthMethod) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
 	},
@@ -153,6 +165,9 @@ export default {
 
 <style scoped lang="scss">
 .openproject-prefs {
+	&--content {
+		padding-top: 1rem;
+	}
 	&--connected {
 		padding-block: 1rem;
 		label {
@@ -180,10 +195,6 @@ export default {
 	.oauth-connect--message {
 		text-align: left;
 		padding: 0;
-	}
-	.demo-error-oidc {
-		color: red;
-		margin-top: 20px;
 	}
 }
 </style>

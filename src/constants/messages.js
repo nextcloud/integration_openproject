@@ -3,4 +3,5 @@ import APP_ID from './appID.js'
 
 export const error = {
 	featureNotAvailable: t(APP_ID, 'This feature is not available for this user account'),
+	opConnectionUnauthorized: t(APP_ID, 'Unauthorized to connect to OpenProject'),
 }
