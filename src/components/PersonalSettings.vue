@@ -2,13 +2,9 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div class="openproject-prefs--content">
-			<div v-if="!connected">
-				<div v-if="isOIDCMethod">
-					<ErrorLabel v-if="state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
-					<ErrorLabel v-else :error="errorMessages.featureNotAvailable" />
-				</div>
-			</div>
-			<div v-else>
+			<ErrorLabel v-if="!connected && isOIDCMethod && state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
+			<ErrorLabel v-if="isOIDCMethod && !state.oidc_user" :error="errorMessages.featureNotAvailable" />
+			<div v-if="showConnectionSettings">
 				<div class="openproject-prefs--connected">
 					<label>
 						<CheckIcon :size="20" />
@@ -100,6 +96,12 @@ export default {
 		},
 		isOauthMethod() {
 			return this.state.authorization_method === AUTH_METHOD.OAUTH2
+		},
+		showConnectionSettings() {
+			if (this.isOIDCMethod) {
+				return this.connected && this.state.oidc_user
+			}
+			return this.connected
 		},
 	},
 	watch: {
