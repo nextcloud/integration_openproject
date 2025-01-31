@@ -1183,7 +1183,6 @@ describe('AdminSettings.vue', () => {
 			})
 
 			it('should show authorization settings in view mode', () => {
-				// console.log(wrapper.html())
 				expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
 			})
 
