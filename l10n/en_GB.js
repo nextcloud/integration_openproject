@@ -121,6 +121,7 @@ OC.L10N.register(
     "OpenProject API error" : "OpenProject API error",
     "OpenProject settings" : "OpenProject settings",
     "This feature is not available for this user account" : "This feature is not available for this user account",
+    "Unauthorized to connect to OpenProject" : "Unauthorized to connect to OpenProject",
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
