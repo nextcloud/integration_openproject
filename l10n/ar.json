@@ -119,6 +119,7 @@
     "OpenProject API error" : "خطأ واجهة برمجة التطبيقات لـ OpenProject",
     "OpenProject settings" : "إعدادات OpenProject",
     "This feature is not available for this user account" : "هذه الميزة غير متاحة لحساب المستخدِم هذا",
+    "Unauthorized to connect to OpenProject" : "غير مُخوَّل بالوصول إلى \"أوبن بروجكت\" OpenProject",
     "Link to work package" : "رابط لحزمة العمل",
     "Failed to link file to work package" : "فشل في ربط الملف بحزمة العمل",
     "Successfully connected to OpenProject!" : "تم الاتصال بـنجاح ببرمجية OpenProject!",

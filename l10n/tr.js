@@ -121,6 +121,7 @@ OC.L10N.register(
     "OpenProject API error" : "OpenProject API sorunu",
     "OpenProject settings" : "OpenProject ayarları",
     "This feature is not available for this user account" : "Bu kullanıcı hesabı için bu özellik kullanılamıyor",
+    "Unauthorized to connect to OpenProject" : "OpenProject bağlantısı kurma yetkisi yok",
     "Link to work package" : "Çalışma paketi bağlantısı",
     "Failed to link file to work package" : "Çalışma paketinin bağlantısı kurulamadı",
     "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
