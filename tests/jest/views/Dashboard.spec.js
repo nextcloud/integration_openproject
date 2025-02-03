@@ -1,11 +1,12 @@
 /* jshint esversion: 8 */
 
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
-import Dashboard from '../../../src/views/Dashboard.vue'
-import axios from '@nextcloud/axios'
-import { STATE } from '../../../src/utils.js'
-import notificationsResponse from '../fixtures/notificationsResponse.json'
 import * as dialogs from '@nextcloud/dialogs'
+import axios from '@nextcloud/axios'
+import Dashboard from '../../../src/views/Dashboard.vue'
+import { STATE, AUTH_METHOD, checkOauthConnectionResult } from '../../../src/utils.js'
+import notificationsResponse from '../fixtures/notificationsResponse.json'
+import { error } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -17,16 +18,19 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
-
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
 		__esModule: true,
 		...originalModule,
 		default: jest.fn(),
-		loadState: jest.fn(() => true),
+		loadState: jest.fn(() => ''),
 	}
 })
+jest.mock('../../../src/utils.js', () => ({
+	...jest.requireActual('../../../src/utils.js'),
+	checkOauthConnectionResult: jest.fn(),
+}))
 
 global.OCA = {}
 global.OC = {}
@@ -35,44 +39,105 @@ const localVue = createLocalVue()
 describe('Dashboard.vue', () => {
 	const dashboardTriggerButtonSelector = '.action-item--default-popover .v-popper'
 	const markAsReadButtonSelector = '.action-item__popperr .v-popper__wrapper .v-popper__inner div.open'
-	let wrapper
-	beforeEach(() => {
-		// mock the beforeMount() method, so that the loop is not called automatically
-		// we first need to mount the component, and the tests will call the loop themselves
-		Dashboard.beforeMount = jest.fn()
-	})
-	it('should show the notification items in the Dashboard', async () => {
-		wrapper = shallowMount(
-			Dashboard,
-			{
-				localVue,
-				mocks: {
-					t: (app, msg) => msg,
-					generateUrl() {
-						return '/'
-					},
-				},
-				propsData: {
-					title: 'dashboard',
-				},
-			})
-		const axiosSpy = jest.spyOn(axios, 'get')
+	const errorLabelSelector = '.demo-error-oidc'
+	const emptyContentSelector = 'emptycontent-stub'
+
+	const defaultState = {
+		authMethods: AUTH_METHOD,
+	}
+
+	let axiosSpy, spyLaunchLoop
+
+	beforeEach(async () => {
+		axiosSpy = jest.spyOn(axios, 'get')
 			.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
 			.mockImplementationOnce(() => Promise.resolve({ data: notificationsResponse }))
-		await wrapper.vm.launchLoop()
-		expect(axiosSpy).toBeCalledWith(
-			'http://localhost/apps/integration_openproject/url',
-		)
-		expect(axiosSpy).toBeCalledWith(
-			'http://localhost/apps/integration_openproject/notifications',
-		)
-		expect(wrapper.vm.state).toBe(STATE.OK)
-		expect(wrapper.vm.items).toMatchSnapshot()
-		axiosSpy.mockRestore()
+		spyLaunchLoop = jest.spyOn(Dashboard.methods, 'launchLoop')
+	})
+	afterEach(() => {
+		jest.clearAllMocks()
+		jest.restoreAllMocks()
+	})
+
+	describe('auth method: OAUTH2', () => {
+		it('should show the notification items in the Dashboard', async () => {
+			const wrapper = getWrapper({
+				...defaultState,
+				oauthConnectionErrorMessage: '',
+				oauthConnectionResult: '',
+				isAdminConfigOk: true,
+				userHasOidcToken: false,
+				authMethod: 'oauth2',
+			})
+
+			await localVue.nextTick()
+
+			expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+			expect(axiosSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/url',
+			)
+			expect(axiosSpy).toBeCalledWith(
+				'http://localhost/apps/integration_openproject/notifications',
+			)
+			expect(wrapper.vm.state).toBe(STATE.OK)
+			expect(checkOauthConnectionResult).toHaveBeenCalledTimes(1)
+			expect(wrapper.vm.items).toMatchSnapshot()
+		})
+
+	})
+
+	describe('auth method: OIDC', () => {
+		const state = {
+			...defaultState,
+			oauthConnectionErrorMessage: '',
+			oauthConnectionResult: '',
+			isAdminConfigOk: true,
+			authMethod: 'oidc',
+		}
+
+		describe('OIDC user', () => {
+			it('should show error message if token is not available', async () => {
+				const wrapper = getWrapper({ ...state, userHasOidcToken: false })
+
+				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
+				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+			})
+			it('should show the notification items in the Dashboard', async () => {
+				const wrapper = getWrapper({ ...state, userHasOidcToken: true })
+
+				await localVue.nextTick()
+
+				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+				expect(axiosSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/url',
+				)
+				expect(axiosSpy).toBeCalledWith(
+					'http://localhost/apps/integration_openproject/notifications',
+				)
+				expect(wrapper.vm.state).toBe(STATE.OK)
+				expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+				expect(checkOauthConnectionResult).not.toBeCalled()
+				expect(wrapper.vm.items).toMatchSnapshot()
+			})
+		})
+
+		describe('non OIDC user', () => {
+			const localState = { ...state, userHasOidcToken: false }
+			it('should show error message', async () => {
+				const wrapper = getWrapper(localState)
+				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
+				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+			})
+			it('should not call "checkOauthConnectionResult" method', () => {
+				getWrapper(localState)
+				expect(checkOauthConnectionResult).not.toBeCalled()
+			})
+		})
 	})
 
 	describe.skip('mark as read', () => {
-		let axiosSpyGet
+		let axiosSpyGet, wrapper
 		beforeEach(() => {
 			wrapper = mount(
 				Dashboard,
@@ -140,3 +205,21 @@ describe('Dashboard.vue', () => {
 		})
 	})
 })
+
+function getWrapper(data = {}) {
+	return shallowMount(
+		Dashboard,
+		{
+			localVue,
+			mocks: {
+				t: (app, msg) => msg,
+				generateUrl() {
+					return '/'
+				},
+			},
+			propsData: {
+				title: 'dashboard',
+			},
+			data: () => data,
+		})
+}
