@@ -121,6 +121,7 @@ OC.L10N.register(
     "OpenProject API error" : "Earráid API OpenProject",
     "OpenProject settings" : "Socruithe OpenProject",
     "This feature is not available for this user account" : "Níl an ghné seo ar fáil don chuntas úsáideora seo",
+    "Unauthorized to connect to OpenProject" : "Neamhúdaraithe chun ceangal le OpenProject",
     "Link to work package" : "Nasc le pacáiste oibre",
     "Failed to link file to work package" : "Theip ar an gcomhad a nascadh le pacáiste oibre",
     "Successfully connected to OpenProject!" : "D'éirigh le ceangal le OpenProject!",
