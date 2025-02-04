@@ -119,6 +119,7 @@
     "OpenProject API error" : "Produciuse un erro da API de OpenProject",
     "OpenProject settings" : "Axustes de OpenProject",
     "This feature is not available for this user account" : "Esta característica non está dispoñíbel para esta conta de usuario",
+    "Unauthorized to connect to OpenProject" : "Non ten autorización para conectarse a OpenProject",
     "Link to work package" : "Ligazón ao paquete de traballo",
     "Failed to link file to work package" : "Produciuse un fallo ao vincular o ficheiro ao paquete de traballo",
     "Successfully connected to OpenProject!" : "Conectado correctamente a OpenProject!",
