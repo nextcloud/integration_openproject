@@ -121,6 +121,7 @@ OC.L10N.register(
     "OpenProject API error" : "OpenProject API грешка",
     "OpenProject settings" : "OpenProject подешавања",
     "This feature is not available for this user account" : "Ова функционалност није доступна за овај кориснички налог",
+    "Unauthorized to connect to OpenProject" : "Нема права за повезивање на OpenProject",
     "Link to work package" : "Линк на радни пакет",
     "Failed to link file to work package" : "Није успело повезивање фајла са радним пакетом",
     "Successfully connected to OpenProject!" : "Успешно је успостављена веза са OpenProject!",
