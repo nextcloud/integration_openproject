@@ -119,7 +119,7 @@
     "OpenProject API error" : "OpenProject API-Fehler",
     "OpenProject settings" : "OpenProject-Einstellungen",
     "This feature is not available for this user account" : "Diese Funktion ist für dieses Benutzerkonto nicht verfügbar",
-    "Unauthorized to connect to OpenProject" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Unauthorized to connect to OpenProject" : "Keine Berechtigung zur Verbindung mit OpenProject",
     "Link to work package" : "Link zum Arbeitspaket",
     "Failed to link file to work package" : "Fehler beim Verknüpfen der Datei mit dem Arbeitspaket",
     "Successfully connected to OpenProject!" : "Erfolgreich mit OpenProject verbunden!",
