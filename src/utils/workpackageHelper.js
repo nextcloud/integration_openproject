@@ -56,10 +56,8 @@ export const workpackageHelper = {
 		const projectId = this.replaceHrefToGetId(workPackage._links.project.href)
 		const userName = workPackage._links.assignee.title
 		const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
-			+ encodeURIComponent('userId')
-			+ '=' + userId
-			+ '&' + encodeURIComponent('userName')
-			+ '=' + userName
+			+ 'userId=' + encodeURIComponent(userId)
+			+ '&userName=' + encodeURIComponent(userName)
 		let statusColor
 		if (cachedStatusColors[statusId] === undefined) {
 			statusColor = await this.getColorAttributes('/apps/integration_openproject/statuses/', statusId)

@@ -240,8 +240,8 @@ export default {
 		getAuthorAvatarUrl(n) {
 			const url = generateUrl('/apps/integration_openproject/avatar?')
 			return n.mostRecentActor?.id
-				? url + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
-				: url + encodeURIComponent('userName') + '='
+				? url + 'userId=' + encodeURIComponent(n.mostRecentActor.id) + '&userName=' + encodeURIComponent(n.mostRecentActor.title)
+				: url + 'userName='
 		},
 		getSubline(n) {
 			let reasonsString = ''

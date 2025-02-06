@@ -3,7 +3,7 @@
 exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in the Dashboard 1`] = `
 [
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
     "avatarUsername": "Admin de DEV userz",
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
@@ -12,7 +12,7 @@ exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur Neumann",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur%20Neumann",
     "avatarUsername": "Artur Neumannz",
     "id": "18",
     "mainText": "(1) Contact form",
@@ -30,7 +30,7 @@ exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in
     "targetUrl": "http://openproject.org/notifications/details/24/activity/",
   },
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
     "avatarUsername": "Admin de DEV userz",
     "id": "36",
     "mainText": "(2) write a software",
@@ -44,7 +44,7 @@ exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in
 exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification items in the Dashboard 1`] = `
 [
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
     "avatarUsername": "Admin de DEV userz",
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
@@ -53,7 +53,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification 
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur Neumann",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=9&userName=Artur%20Neumann",
     "avatarUsername": "Artur Neumannz",
     "id": "18",
     "mainText": "(1) Contact form",
@@ -71,7 +71,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification 
     "targetUrl": "http://openproject.org/notifications/details/24/activity/",
   },
   {
-    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin de DEV user",
+    "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
     "avatarUsername": "Admin de DEV userz",
     "id": "36",
     "mainText": "(2) write a software",

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add support for OIDC-based connection between Nextcloud and OpenProject
 - Support Nextcloud 32 [#758](https://github.com/nextcloud/integration_openproject/pull/758)
 - Show error if connection cannot be made to OpenProject [#756](https://github.com/nextcloud/integration_openproject/pull/756)
+- Correct encoding of the avatar url [#767](https://github.com/nextcloud/integration_openproject/pull/767)
 
 ## 2.7.2 - 2024-12-16
 ### Fixed
