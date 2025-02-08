@@ -120,6 +120,7 @@ OC.L10N.register(
     "OpenProject API error" : "Chyba OpenProject API",
     "OpenProject settings" : "Nastavení pro OpenProject",
     "This feature is not available for this user account" : "Tato funkce není pro tento uživatelský účet k dispozici",
+    "Unauthorized to connect to OpenProject" : "Nemáte pověření pro připojení k OpenProject",
     "Link to work package" : "Odkaz na balíček práce",
     "Failed to link file to work package" : "Nepodařilo se propojit soubor s balíčkem práce",
     "Successfully connected to OpenProject!" : "Úspěšně připojeno k OpenProject!",
