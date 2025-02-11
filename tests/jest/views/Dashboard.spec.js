@@ -1,5 +1,11 @@
 /* jshint esversion: 8 */
 
+/**
+ * SPDX-FileCopyrightText: 2022-2025 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import * as dialogs from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2024 Jankari Tech Pvt. Ltd.
+# SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: retrieve file information of a single file, using the file ID
 
   Scenario: get information of an existing file

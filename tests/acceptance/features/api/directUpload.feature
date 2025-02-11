@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022-2024 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: API endpoint for direct upload
 
   As an OpenProject user

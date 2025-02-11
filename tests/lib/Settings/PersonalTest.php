@@ -1,11 +1,8 @@
 <?php
 
 /**
- * Nextcloud - OpenProject
- *
- *
- * @author Kiran Parajuli <kiran@jankaritech.com>
- * @copyright Kiran Parajuli 2022
+ * SPDX-FileCopyrightText: 2022-2025 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\OpenProject\Settings;

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: list work-packages in the side bar
   As a Nextcloud user
   I want see all work packages on OpenProject that are linked to a file

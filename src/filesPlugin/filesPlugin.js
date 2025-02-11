@@ -1,12 +1,8 @@
-/*
- * Copyright (c) 2023 Sagar Gurung <sagar@jankaritech.com>
- *
- * This file is licensed under the Affero General Public License version 3
- * or later.
- *
- * See the COPYING-README file.
- *
+/**
+ * SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import '../bootstrap.js'
 import { registerFileAction, FileAction, Permission } from '@nextcloud/files'
 import OpenProjectIcon from '../../img/app-dark.svg'

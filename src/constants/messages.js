@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import { translate as t } from '@nextcloud/l10n'
 import APP_ID from './appID.js'
 

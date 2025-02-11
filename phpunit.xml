@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  - SPDX-FileCopyrightText: 2021-2024 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 bootstrap="bootstrap.php"
 		 verbose="true" backupGlobals="false" timeoutForSmallTests="900"

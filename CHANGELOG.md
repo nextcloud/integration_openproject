@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Change Log
 All notable changes to this project will be documented in this file.
 

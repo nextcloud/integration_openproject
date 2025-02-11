@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2024-2025 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Release Process
 
 ## 1. Release Preparation

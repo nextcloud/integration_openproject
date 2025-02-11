@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
 	<NcModal v-if="showModal">
 		<div class="terms-of-service-modal-wrapper">

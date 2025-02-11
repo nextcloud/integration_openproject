@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2024 Jankari Tech Pvt. Ltd.
+# SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: retrieve information of multiple files using the file IDs
 
   Scenario: get information of four files, group folders, one own, one received as share, one trashed, one not accessible

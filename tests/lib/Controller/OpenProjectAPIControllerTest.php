@@ -1,11 +1,8 @@
 <?php
 
 /**
- * Nextcloud - OpenProject
- *
- *
- * @author Artur Neumann <artur@jankaritech.com>
- * @copyright Artur Neumann 2022
+ * SPDX-FileCopyrightText: 2022-2025 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\OpenProject\Controller;

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * Nextcloud - OpenProject
- *
- *
- * @author Julien Veyssier <eneiluj@posteo.net>
- * @copyright Julien Veyssier 2022
+ * SPDX-FileCopyrightText: 2022-2024 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\OpenProject\Service;

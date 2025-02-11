@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 ## Get file information
 We have two endpoints `fileinfo` and `filesinfo` from which we can get the information of a single or multiple files.
 

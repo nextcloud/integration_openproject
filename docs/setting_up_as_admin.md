@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 ## Setting up the integration as an administrator with API
 
 > Note: Setting up the integration can only be done by admin user but not a normal user

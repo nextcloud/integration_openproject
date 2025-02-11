@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2022-2025 Jankari Tech Pvt. Ltd.
+  - SPDX-FileCopyrightText: 2021-2023 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
 	<NcDashboardWidget :items="items"
 		:item-menu="itemMenu"
