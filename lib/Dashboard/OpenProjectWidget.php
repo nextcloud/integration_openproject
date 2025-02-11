@@ -17,6 +17,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 use OCP\Util;
 
@@ -43,6 +44,7 @@ class OpenProjectWidget implements IWidget {
 	 * @var IUser
 	 */
 	private $user;
+	private LoggerInterface $logger;
 
 	/**
 	 * @var OpenProjectAPIService
@@ -56,7 +58,8 @@ class OpenProjectWidget implements IWidget {
 		IURLGenerator $url,
 		IConfig $config,
 		IUserSession $userSession,
-		OpenProjectAPIService $openProjectAPIService
+		OpenProjectAPIService $openProjectAPIService,
+		LoggerInterface $logger
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
@@ -64,6 +67,7 @@ class OpenProjectWidget implements IWidget {
 		$this->config = $config;
 		$this->user = $userSession->getUser();
 		$this->openProjectAPIService = $openProjectAPIService;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -107,6 +111,7 @@ class OpenProjectWidget implements IWidget {
 	public function load(): void {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
+
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 		);
@@ -123,7 +128,8 @@ class OpenProjectWidget implements IWidget {
 		// authorization method can be either a 'oidc' or 'oauth2'
 		// for 'oidc' state to be loaded
 		$token = $this->openProjectAPIService->getOIDCToken();
-		$this->initialStateService->provideInitialState('user-has-oidc-token', $token !== null);
+		$this->initialStateService->provideInitialState('user-has-oidc-token', boolval($token));
+		$this->initialStateService->provideInitialState('oidc_user', $this->openProjectAPIService->isOIDCUser());
 
 		// for 'oauth2' state to be loaded
 		$this->initialStateService->provideInitialState(

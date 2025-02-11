@@ -15,7 +15,7 @@
 						<CheckIcon :size="20" />
 						{{ t('integration_openproject', 'Connected as {user}', { user: state.user_name }) }}
 					</label>
-					<NcButton v-if="isOauthAuthMethod" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
+					<NcButton v-if="isOAuthAuthMethod" class="openproject-prefs--disconnect" @click="disconnectFromOP()">
 						<template #icon>
 							<CloseIcon :size="23" />
 						</template>
@@ -45,7 +45,7 @@
 					</CheckBox>
 				</div>
 			</div>
-			<OAuthConnectButton v-if="isOauthAuthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
+			<OAuthConnectButton v-if="isOAuthAuthMethod && !connected" :is-admin-config-ok="state.admin_config_ok" />
 		</div>
 	</div>
 </template>
@@ -99,7 +99,7 @@ export default {
 		isOIDCAuthMethod() {
 			return this.state.authorization_method === AUTH_METHOD.OIDC
 		},
-		isOauthAuthMethod() {
+		isOAuthAuthMethod() {
 			return this.state.authorization_method === AUTH_METHOD.OAUTH2
 		},
 		showConnectionSettings() {
@@ -123,7 +123,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.isOauthAuthMethod) {
+		if (this.isOAuthAuthMethod) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
 	},
