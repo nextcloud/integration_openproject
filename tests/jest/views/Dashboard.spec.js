@@ -7,6 +7,7 @@
  */
 
 import { shallowMount, createLocalVue } from '@vue/test-utils'
+// eslint-disable-next-line n/no-unpublished-import
 import flushPromises from 'flush-promises'
 import util from 'util'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -43,13 +44,14 @@ global.OCA = {}
 global.OC = {}
 const localVue = createLocalVue()
 
+// url
+const opUrl = 'http://localhost/apps/integration_openproject/url'
+const notificationUrl = 'http://localhost/apps/integration_openproject/notifications'
+const wpNotificationsUrl = 'http://localhost/apps/integration_openproject/work-packages/%s/notifications'
+
 describe('Dashboard.vue', () => {
 	const errorLabelSelector = 'errorlabel-stub'
 	const emptyContentSelector = 'emptycontent-stub'
-	// url
-	const opUrl = 'http://localhost/apps/integration_openproject/url'
-	const notificationUrl = 'http://localhost/apps/integration_openproject/notifications'
-	const wpNotificationsUrl = 'http://localhost/apps/integration_openproject/work-packages/%s/notifications'
 
 	const defaultState = {
 		authMethods: AUTH_METHOD,
@@ -59,16 +61,7 @@ describe('Dashboard.vue', () => {
 
 	beforeEach(async () => {
 		spyAxiosGet = jest.spyOn(axios, 'get')
-			.mockImplementation((url) => {
-				switch (url) {
-				case opUrl:
-					return Promise.resolve({ data: 'http://openproject.org' })
-				case notificationUrl:
-					return Promise.resolve({ data: notificationsResponse })
-				default:
-					return Promise.reject(new Error('unexpected url'))
-				}
-			})
+			.mockImplementation(getAxiosGetMockFn())
 		spyLaunchLoop = jest.spyOn(Dashboard.methods, 'launchLoop')
 	})
 	afterEach(() => {
@@ -113,17 +106,8 @@ describe('Dashboard.vue', () => {
 				beforeEach(async () => {
 					spyAxiosGet.mockRestore()
 					spyAxiosGet = jest.spyOn(axios, 'get')
-						.mockImplementation((url) => {
-							switch (url) {
-							case opUrl:
-								return Promise.resolve({ data: 'http://openproject.org' })
-							case notificationUrl:
-								// eslint-disable-next-line prefer-promise-reject-errors
-								return Promise.reject({ response: { status: 401 } })
-							default:
-								return Promise.reject(new Error('unexpected url'))
-							}
-						})
+						// eslint-disable-next-line prefer-promise-reject-errors
+						.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 				})
 				it('should show empty content', async () => {
 					const wrapper = getWrapper({
@@ -213,9 +197,8 @@ describe('Dashboard.vue', () => {
 					beforeEach(async () => {
 						spyAxiosGet.mockRestore()
 						spyAxiosGet = jest.spyOn(axios, 'get')
-							.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
 							// eslint-disable-next-line prefer-promise-reject-errors
-							.mockImplementationOnce(() => Promise.reject({ response: { status: 401 } }))
+							.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 					})
 					it('should show unauthorized error', async () => {
 						const wrapper = getWrapper({
@@ -237,6 +220,32 @@ describe('Dashboard.vue', () => {
 				})
 
 				describe('connected to OP', () => {
+					describe('invalid token', () => {
+						beforeEach(async () => {
+							spyAxiosGet.mockRestore()
+							spyAxiosGet = jest.spyOn(axios, 'get')
+							// eslint-disable-next-line prefer-promise-reject-errors
+								.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
+						})
+						it('should show unauthorized error if token is not valid', async () => {
+							const wrapper = getWrapper({
+								...localState,
+								isAdminConfigOk: true,
+								userHasOidcToken: true,
+							})
+							await flushPromises()
+
+							expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
+							expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.opConnectionUnauthorized)
+
+							expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+							expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+							expect(spyAxiosGet).toBeCalledWith(opUrl)
+							expect(spyAxiosGet).toBeCalledWith(notificationUrl)
+							expect(checkOauthConnectionResult).not.toBeCalled()
+						})
+					})
+
 					it('should show the notification items', async () => {
 						const wrapper = getWrapper({
 							...localState,
@@ -364,6 +373,22 @@ describe('Dashboard.vue', () => {
 		})
 	})
 })
+
+function getAxiosGetMockFn(notificationResponse) {
+	if (!notificationResponse) {
+		notificationResponse = Promise.resolve({ data: notificationsResponse })
+	}
+	return (url) => {
+		switch (url) {
+		case opUrl:
+			return Promise.resolve({ data: 'http://openproject.org' })
+		case notificationUrl:
+			return notificationResponse
+		default:
+			return Promise.reject(new Error('unexpected url'))
+		}
+	}
+}
 
 function getWrapper(data = {}) {
 	return shallowMount(
