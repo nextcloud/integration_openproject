@@ -4,11 +4,11 @@
 
 ### a. Major/Minor Release
 
-1. Create a release branch from master with format `release/<major>.<minor>` (e.g. `release/2.1`).
+1. Create a release branch from the master with the format `release/<major>.<minor>` (e.g. `release/2.1`).
 
 On the release branch:
 
-2. In case any new feature were added, update the feature description in:
+2. In case any new feature was added, update the feature description in:
    - `README.md`
    - `appinfo/info.xml`
 3. Update the version in:
@@ -17,8 +17,8 @@ On the release branch:
 4. Add the new release branch in `.tx/backport` to allow transifex commits.
 5. Update `CHANGELOG.md` with the changes and the version to be released.
 6. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
-7. Perform confirmatory testing (Changelogs) - by OpenProject.
-8. Perform [smoke testing](testing/smoke_testing.md) - by OpenProject.
+7. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+8. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ### b. Patch Release
 
@@ -28,8 +28,8 @@ On the current release branch:
    - `appinfo/info.xml`
    - `package.json`
 2. Update `CHANGELOG.md` with the changes and the version to be released.
-3. Perform confirmatory testing (Changelogs) - by OpenProject.
-4. Perform [smoke testing](testing/smoke_testing.md) - by OpenProject.
+3. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+4. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ## 2. Publish Release
 
@@ -49,7 +49,7 @@ On the current release branch:
    # git tag v2.1.1-20220928-nightly -m "v2.1.1-20220928-nightly"
    ```
 
-   > **_NOTE:_** Every tag should be created with a unique commit or else the publish will fail.
+   > **_NOTE:_** Every tag should be created with a unique commit, or the publish will fail.
 
 2. Push the tag to the `auto-release` branch.
 
@@ -66,5 +66,5 @@ On the current release branch:
 ## 3. After Release
 
 1. Add the release notes to the newly created [GitHub release](https://github.com/nextcloud/integration_openproject/releases).
-2. Merge the necessary commits from release branch into the `master` branch.
+2. Merge the necessary commits from the release branch into the `master` branch.
 3. In the `master` branch, bump the app version to the next version (e.g.: `X.(Y+1).0-alpha.1`).
