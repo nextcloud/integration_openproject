@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Bad HTTP method" : "Dårlig HTTP-metode",
     "Cancel" : "Annuller",
     "Save" : "Gem",
     "Copied!" : "Kopieret!",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Connected accounts" : "Forbundne konti",
     "Reset" : "Nulstil",
     "Connected as {user}" : "Forbundet som {user}",
+    "Invalid token" : "Ugyldig token ",
     "Documentation" : "Dokumentation"
 },
 "nplurals=2; plural=(n != 1);");
