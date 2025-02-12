@@ -4,7 +4,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<NcDashboardWidget :items="items"
+	<NcDashboardWidget
+		:items="items"
 		:item-menu="itemMenu"
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
@@ -76,9 +77,6 @@ export default {
 		}
 	},
 	computed: {
-		isStateOk() {
-			return this.state === STATE.OK
-		},
 		isLoading() {
 			return this.state === STATE.LOADING
 		},
@@ -115,9 +113,6 @@ export default {
 				})
 			}
 			return notifications
-		},
-		showOauthConnect() {
-			return [STATE.NO_TOKEN, STATE.ERROR].includes(this.state)
 		},
 	},
 	watch: {
