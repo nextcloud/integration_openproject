@@ -6,6 +6,8 @@
 -->
 # 🔗 OpenProject Integration
 
+[![REUSE status](https://api.reuse.software/badge/github.com/nextcloud/integration_openproject)](https://api.reuse.software/info/github.com/nextcloud/integration_openproject)
+
 This application enables integration between Nextcloud and open-source project management software OpenProject. 
 
 ![](https://github.com/nextcloud/integration_openproject/raw/master/img/screenshot1.png)
