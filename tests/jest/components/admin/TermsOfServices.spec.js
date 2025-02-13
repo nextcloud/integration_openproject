@@ -1,5 +1,10 @@
 /* jshint esversion: 8 */
 
+/**
+ * SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import { mount, createLocalVue } from '@vue/test-utils'
 import TermsOfServiceUnsigned from '../../../../src/components/admin/TermsOfServiceUnsigned.vue'
 import axios from '@nextcloud/axios'

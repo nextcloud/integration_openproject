@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 ## Direct upload
 There's an end-point `direct-upload` available which can be used for direct-upload. There's two steps to direct upload. First we need to get the `token`. Then use the token in the direct upload request.
 

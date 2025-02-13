@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2021-2024 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 const path = require('path')
 const rootDir = path.resolve(__dirname, '../../../')
 

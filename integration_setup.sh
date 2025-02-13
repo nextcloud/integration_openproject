@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
 # SPDX-FileCopyrightText: 2023 Bundesministerium des Innern und für Heimat, PG ZenDiS "Projektgruppe für Aufbau ZenDiS"
 # SPDX-FileCopyrightText: 2023 Nextcloud GmbH
 # SPDX-License-Identifier: AGPL-3.0-only

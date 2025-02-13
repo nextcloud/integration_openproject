@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021-2025 Jankari Tech Pvt. Ltd.
+# SPDX-FileCopyrightText: 2021-2023 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
 app_name=integration_openproject
 app_version=$(version)
 project_dir=.

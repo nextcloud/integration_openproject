@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 This file consists of some smoke testing to be done before the release (major and minor) of `integration_application` application.
 The need for this smoke testing (manual) is that we do not have e2e test setup to automate that involves both `OpenProject` and `Nextcloud`.
 

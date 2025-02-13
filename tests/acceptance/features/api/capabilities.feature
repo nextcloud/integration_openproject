@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: get capabilities of the app
 
   Scenario: Get capabilities when group folder app is enabled

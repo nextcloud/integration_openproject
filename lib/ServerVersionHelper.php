@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2024 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\OpenProject;
 
 use OC_Util;

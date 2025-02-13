@@ -1,16 +1,8 @@
-/*
- * Copyright (c) 2023 Sagar Gurung <sagar@jankaritech.com>
- *
- * This file is licensed under the Affero General Public License version 3
- * or later.
- *
- * See the COPYING-README file.
- *
- * This script will no longer run when the support for the
- * integration app with nextcloud is greater ro equal to version 28
- * In that case this file can be removed.
- *
+/**
+ * SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import '../bootstrap.js'
 import Vue from 'vue'
 import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'

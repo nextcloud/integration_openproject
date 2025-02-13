@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
 	<span :aria-hidden="!title"
 		:aria-label="title"

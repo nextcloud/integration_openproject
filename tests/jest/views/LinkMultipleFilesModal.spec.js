@@ -1,5 +1,10 @@
 /* jshint esversion: 8 */
 
+/**
+ * SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
 import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
 import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../../../src/utils.js'

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2022-2024 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\OpenProject\Settings;
 
 use OCP\IL10N;

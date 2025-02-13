@@ -1,3 +1,9 @@
+/**
+ * SPDX-FileCopyrightText: 2022-2023 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import { createLocalVue, mount } from '@vue/test-utils'
 import FieldValue from '../../../../src/components/admin/FieldValue.vue'
 
