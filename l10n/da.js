@@ -13,6 +13,7 @@ OC.L10N.register(
     "Mark as read" : "Marker som læst",
     "Connected accounts" : "Forbundne konti",
     "Reset" : "Nulstil",
+    "Enable navigation link" : "Enable navigation link",
     "Connected as {user}" : "Forbundet som {user}",
     "Invalid token" : "Ugyldig token ",
     "Documentation" : "Dokumentation"
