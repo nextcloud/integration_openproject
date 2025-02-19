@@ -171,11 +171,6 @@ describe('Dashboard.vue', () => {
 					})
 					await flushPromises()
 
-<<<<<<< HEAD
-				expect(wrapper.find(errorLabelSelector).text()).toBe(messages.featureNotAvailable)
-				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
-=======
 					expect(wrapper.vm.state).toBe(STATE.ERROR)
 					const emptyContent = wrapper.find(emptyContentSelector)
 					expect(emptyContent.exists()).toBe(true)
@@ -189,7 +184,6 @@ describe('Dashboard.vue', () => {
 					expect(spyAxiosGet).not.toBeCalled()
 					expect(checkOauthConnectionResult).not.toBeCalled()
 				})
->>>>>>> 5cd568b1 (test: add unit tests)
 			})
 
 			describe('admin config is ok', () => {
@@ -209,7 +203,7 @@ describe('Dashboard.vue', () => {
 						await flushPromises()
 
 						expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
-						expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.opConnectionUnauthorized)
+						expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.opConnectionUnauthorized)
 
 						expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 						expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
@@ -236,7 +230,7 @@ describe('Dashboard.vue', () => {
 							await flushPromises()
 
 							expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
-							expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.opConnectionUnauthorized)
+							expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.opConnectionUnauthorized)
 
 							expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 							expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
@@ -265,13 +259,6 @@ describe('Dashboard.vue', () => {
 		})
 
 		describe('non OIDC user', () => {
-<<<<<<< HEAD
-			const localState = { ...state, userHasOidcToken: false }
-			it('should show error message', async () => {
-				const wrapper = getWrapper(localState)
-				expect(wrapper.find(errorLabelSelector).text()).toBe(messages.featureNotAvailable)
-				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
-=======
 			const localState = { ...commonState, userHasOidcToken: false, oidc_user: false }
 			describe('admin config is not ok', () => {
 				it('should show empty content', async () => {
@@ -294,7 +281,6 @@ describe('Dashboard.vue', () => {
 					expect(spyAxiosGet).not.toBeCalled()
 					expect(checkOauthConnectionResult).not.toBeCalled()
 				})
->>>>>>> 5cd568b1 (test: add unit tests)
 			})
 
 			describe('admin config is ok', () => {
@@ -305,7 +291,7 @@ describe('Dashboard.vue', () => {
 					})
 					await flushPromises()
 
-					expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.featureNotAvailable)
+					expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.featureNotAvailable)
 
 					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 					expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
