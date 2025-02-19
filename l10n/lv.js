@@ -4,6 +4,8 @@ OC.L10N.register(
     "Bad HTTP method" : "Nederīgs HTTP pieprasījuma veids",
     "Cancel" : "Atcelt",
     "Save" : "Saglabāt",
+    "Automatically managed folders" : "Automātiski pārvaldītas mapes",
+    "Automatically managed folders:" : "Automātiski pārvaldītās mapes:",
     "Copied!" : "Nokopēts!",
     "Details" : "Detaļas",
     "Start typing to search" : "Sākt rakstīt, lai meklētu",
