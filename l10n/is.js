@@ -14,6 +14,7 @@ OC.L10N.register(
     "Description" : "Lýsing",
     "Create" : "Búa til",
     "Mark as read" : "Merkja sem lesið",
+    "Unlink" : "Aftengja",
     "Connected accounts" : "Tengdir aðgangar",
     "Reset" : "Endurstilla",
     "Enable navigation link" : "Virkja flakktengil",
