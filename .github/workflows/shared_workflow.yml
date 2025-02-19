@@ -35,7 +35,7 @@ jobs:
             phpVersion: 8.1
           - nextcloudVersion: stable30
             phpVersion: 8.2
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
@@ -231,9 +231,9 @@ jobs:
             phpVersionMinor: 2
             database: mysql
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-222.04
     container:
-      image: public.ecr.aws/lts/ubuntu:20.04
+      image: public.ecr.aws/lts/ubuntu:22.04
 
     defaults:
       run:
