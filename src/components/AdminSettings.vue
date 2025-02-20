@@ -426,7 +426,7 @@ export default {
 			isOpenProjectInstanceValid: null,
 			openProjectNotReachableErrorMessage: null,
 			openProjectNotReachableErrorMessageDetails: null,
-			state: loadState('integration_openproject', 'admin-config'),
+			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			serverHostUrlForEdit: null,
 			isServerHostUrlReadOnly: true,

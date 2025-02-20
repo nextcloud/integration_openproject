@@ -2096,27 +2096,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$service = new OpenProjectAPIService(
-			'integration_openproject',
-			$this->createMock(IAvatarManager::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IL10N::class),
-			$configMock,
-			$clientService,
-			$this->createMock(IRootFolder::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ICacheFactory::class),
-			$this->createMock(IUserManager::class),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IProvider::class),
-			$this->createMock(ISecureRandom::class),
-			$this->createMock(IEventDispatcher::class),
-			$this->createMock(ISubAdmin::class),
-			$this->createMock(IDBConnection::class),
-			$this->createMock(ILogFactory::class),
-			$this->createMock(IManager::class),
-		);
+		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
+			'config' => $configMock,
+			'clientService' => $clientService,
+		]);
+
+		$service = new OpenProjectAPIService(...$constructArgs);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['error']);
@@ -3785,8 +3770,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			null,
 			$iULGeneratorMock
 		);
-		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
-		$iULGeneratorMock->method('getAbsoluteURL')->willReturn($imageURL);
+		$imageURL = 'http://nextcloud/server/ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=3&userName=OpenProject Admin';
+		$iULGeneratorMock->method('linkToOCSRouteAbsolute')->willReturn($imageURL);
 		$testUser = 'testUser';
 		$workPackageId = 123;
 		$service->method('searchWorkPackage')->with($testUser, null, null, false, $workPackageId)->willReturn([$this->wpInformationResponse]);

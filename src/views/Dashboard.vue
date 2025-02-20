@@ -17,7 +17,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 import { NcDashboardWidget } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
@@ -134,8 +134,8 @@ export default {
 			}
 			// get openproject URL first
 			try {
-				const response = await axios.get(generateUrl('/apps/integration_openproject/url'))
-				this.openprojectUrl = response.data.replace(/\/+$/, '')
+				const response = await axios.get(generateOcsUrl('/apps/integration_openproject/api/v1/url'))
+				this.openprojectUrl = response.data.ocs.data.replace(/\/+$/, '')
 			} catch (error) {
 				console.debug(error)
 			}
@@ -144,12 +144,13 @@ export default {
 			this.loop = setInterval(() => this.fetchNotifications(), 60000)
 		},
 		fetchNotifications() {
-			const notificationsUrl = generateUrl('/apps/integration_openproject/notifications')
+			const notificationsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/notifications')
 			axios.get(notificationsUrl).then((response) => {
 				const notifications = {}
-				if (Array.isArray(response.data)) {
-					for (let i = 0; i < response.data.length; i++) {
-						const n = response.data[i]
+				const responseData = response.data.ocs.data
+				if (Array.isArray(responseData)) {
+					for (let i = 0; i < responseData.length; i++) {
+						const n = responseData[i]
 						const wpId = n._links.resource.href.replace(/.*\//, '')
 						if (notifications[wpId] === undefined) {
 							notifications[wpId] = {
@@ -218,7 +219,7 @@ export default {
 				: undefined
 		},
 		getAuthorAvatarUrl(n) {
-			const url = generateUrl('/apps/integration_openproject/avatar?')
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/avatar?')
 			return n.mostRecentActor?.id
 				? url + encodeURIComponent('userId') + '=' + n.mostRecentActor.id + '&' + encodeURIComponent('userName') + '=' + n.mostRecentActor.title
 				: url + encodeURIComponent('userName') + '='
@@ -256,8 +257,8 @@ export default {
 			return '(' + n.count + ') ' + n.resourceTitle
 		},
 		onMarkAsRead(item) {
-			const url = generateUrl(
-				'/apps/integration_openproject/work-packages/' + item.id + '/notifications',
+			const url = generateOcsUrl(
+				'/apps/integration_openproject/api/v1/work-packages/' + item.id + '/notifications',
 			)
 			axios.delete(url).then((response) => {
 				showSuccess(
