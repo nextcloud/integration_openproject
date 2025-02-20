@@ -3936,7 +3936,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 		);
 		$imageURL = 'http://nextcloud/server/ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=3&userName=OpenProject Admin';
-		$iULGeneratorMock->method('getAbsoluteURL')->willReturn($imageURL);
+		$iULGeneratorMock->method('linkToOCSRouteAbsolute')->willReturn($imageURL);
 		$testUser = 'testUser';
 		$workPackageId = 123;
 		$service->method('searchWorkPackage')->with($testUser, null, null, false, $workPackageId)->willReturn([$this->wpInformationResponse]);
