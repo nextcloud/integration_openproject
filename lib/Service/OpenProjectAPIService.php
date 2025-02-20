@@ -1444,15 +1444,13 @@ class OpenProjectAPIService {
 			? $entry['_links']['assignee']['title']
 			: '';
 		$userId = preg_replace('/.*\//', "", $userIdURL);
-		return $this->urlGenerator->getAbsoluteURL(
-			'index.php/apps/integration_openproject/avatar?' .
-			"userId" .
-			'=' .
-			$userId .
-			'&' .
-			"userName" .
-			'=' .
-			$userName
+		return $this->urlGenerator->linkToOCSRouteAbsolute(
+			Application::APP_ID . '.openProjectAPI.getOpenProjectAvatar',
+			[
+				'apiVersion' => 'v1',
+				'userId' => $userId,
+				'userName' => $userName,
+			]
 		);
 	}
 

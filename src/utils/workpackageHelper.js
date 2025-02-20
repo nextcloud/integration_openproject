@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
@@ -16,15 +16,15 @@ export const workpackageHelper = {
 		cachedTypeColors = {}
 	},
 	async getColorAttributes(path, id) {
-		const url = generateUrl(path + id)
+		const url = generateOcsUrl(path + id)
 		let response
 		try {
 			response = await axios.get(url)
 		} catch (e) {
 			response = e.response
 		}
-		return (response.status === 200 && response.data?.color)
-			? response.data.color
+		return (response.status === 200 && response.data?.ocs?.data?.color)
+			? response.data.ocs.data.color
 			: ''
 	},
 	replaceHrefToGetId(href) {
@@ -60,12 +60,12 @@ export const workpackageHelper = {
 		const userId = this.replaceHrefToGetId(workPackage._links.assignee.href)
 		const projectId = this.replaceHrefToGetId(workPackage._links.project.href)
 		const userName = workPackage._links.assignee.title
-		const avatarUrl = generateUrl('/apps/integration_openproject/avatar?')
+		const avatarUrl = generateOcsUrl('/apps/integration_openproject/api/v1/avatar?')
 			+ 'userId=' + encodeURIComponent(userId)
 			+ '&userName=' + encodeURIComponent(userName)
 		let statusColor
 		if (cachedStatusColors[statusId] === undefined) {
-			statusColor = await this.getColorAttributes('/apps/integration_openproject/statuses/', statusId)
+			statusColor = await this.getColorAttributes('/apps/integration_openproject/api/v1/statuses/', statusId)
 			cachedStatusColors[statusId] = statusColor
 		} else {
 			statusColor = cachedStatusColors[statusId]
@@ -73,7 +73,7 @@ export const workpackageHelper = {
 
 		let typeColor
 		if (cachedTypeColors[typeId] === undefined) {
-			typeColor = await this.getColorAttributes('/apps/integration_openproject/types/', typeId)
+			typeColor = await this.getColorAttributes('/apps/integration_openproject/api/v1/types/', typeId)
 			cachedTypeColors[typeId] = typeColor
 		} else {
 			typeColor = cachedTypeColors[typeId]
@@ -168,7 +168,7 @@ export const workpackageHelper = {
 				'Content-Type': 'application/json',
 			},
 		}
-		const url = generateUrl('/apps/integration_openproject/work-packages')
+		const url = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages')
 		const body = {
 			values: {
 				workpackageId: selectedWorkpackage.id,

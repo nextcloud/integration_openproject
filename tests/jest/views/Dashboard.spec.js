@@ -11,6 +11,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import util from 'util'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import Dashboard from '../../../src/views/Dashboard.vue'
 import { STATE, AUTH_METHOD, checkOauthConnectionResult } from '../../../src/utils.js'
@@ -35,6 +36,11 @@ jest.mock('@nextcloud/initial-state', () => {
 		loadState: jest.fn(() => ''),
 	}
 })
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
 jest.mock('../../../src/utils.js', () => ({
 	...jest.requireActual('../../../src/utils.js'),
 	checkOauthConnectionResult: jest.fn(),
@@ -45,9 +51,9 @@ global.OC = {}
 const localVue = createLocalVue()
 
 // url
-const opUrl = 'http://localhost/apps/integration_openproject/url'
-const notificationUrl = 'http://localhost/apps/integration_openproject/notifications'
-const wpNotificationsUrl = 'http://localhost/apps/integration_openproject/work-packages/%s/notifications'
+const opUrl = generateOcsUrl('/apps/integration_openproject/api/v1/url')
+const notificationUrl = generateOcsUrl('/apps/integration_openproject/api/v1/notifications')
+const wpNotificationsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages/%s/notifications')
 
 describe('Dashboard.vue', () => {
 	const errorLabelSelector = 'errorlabel-stub'
@@ -362,12 +368,12 @@ describe('Dashboard.vue', () => {
 
 function getAxiosGetMockFn(notificationResponse) {
 	if (!notificationResponse) {
-		notificationResponse = Promise.resolve({ data: notificationsResponse })
+		notificationResponse = Promise.resolve({ data: { ocs: { data: notificationsResponse } } })
 	}
 	return (url) => {
 		switch (url) {
 		case opUrl:
-			return Promise.resolve({ data: 'http://openproject.org' })
+			return Promise.resolve({ data: { ocs: { data: 'http://openproject.org' } } })
 		case notificationUrl:
 			return notificationResponse
 		default:
@@ -383,9 +389,6 @@ function getWrapper(data = {}) {
 			localVue,
 			mocks: {
 				t: (app, msg) => msg,
-				generateUrl() {
-					return '/'
-				},
 			},
 			propsData: {
 				title: 'dashboard',

@@ -6,12 +6,14 @@
  */
 
 import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
-import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
-import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../../../src/utils.js'
-import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
+import util from 'util'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
 import * as dialogs from '@nextcloud/dialogs'
+import LinkMultipleFilesModal from '../../../src/views/LinkMultipleFilesModal.vue'
+import { WORKPACKAGES_SEARCH_ORIGIN, STATE } from '../../../src/utils.js'
+import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -25,7 +27,11 @@ jest.mock('@nextcloud/axios', () => {
 		},
 	}
 })
-
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
 jest.mock('@nextcloud/auth', () => {
 	const originalModule = jest.requireActual('@nextcloud/auth')
 
@@ -36,13 +42,11 @@ jest.mock('@nextcloud/auth', () => {
 		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-
 jest.mock('@nextcloud/dialogs', () => ({
 	getLanguage: jest.fn(() => ''),
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
-
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
@@ -73,6 +77,9 @@ const multipleFileInfo = [{
 	id: 789,
 	name: 'togo.ong',
 }]
+
+// url
+const wpFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
 
 describe('LinkMultipleFilesModal.vue', () => {
 	const searchInputStubSelector = 'searchinput-stub'
@@ -319,19 +326,16 @@ describe('LinkMultipleFilesModal.vue', () => {
 				}],
 			])('sets the "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
 				axios.get
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: testCase,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse(testCase))
 					// mock for color requests, it should not fail because of the missing mock
-					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(wrapper.vm.state).toBe(STATE.FAILED_FETCHING_WORKPACKAGES)
 			})
 
 			it('sets the "ok" state on empty response', async () => {
 				axios.get
-					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(wrapper.vm.state).toBe(STATE.OK)
 			})
@@ -340,7 +344,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				getCurrentUser.mockReturnValue(returnValue)
 				const wrapper = mountWrapper()
 				axios.get
-					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.setData({
 					isAdminConfigOk: false,
 				})
@@ -354,7 +358,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				getCurrentUser.mockReturnValue(returnValue)
 				const wrapper = mountWrapper()
 				axios.get
-					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.setData({
 					isAdminConfigOk: false,
 				})
@@ -366,54 +370,48 @@ describe('LinkMultipleFilesModal.vue', () => {
 			it('should set workpackages to alreadylinked', async () => {
 				wrapper = mountWrapper()
 				axiosGetSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [{
-							id: 123,
-							subject: 'my task',
-							_links: {
-								status: {
-									href: '/api/v3/statuses/12',
-									title: 'open',
-								},
-								type: {
-									href: '/api/v3/types/6',
-									title: 'Task',
-								},
-								assignee: {
-									href: '/api/v3/users/1',
-									title: 'Bal Bahadur Pun',
-								},
-								project: { title: 'a big project' },
+					.mockImplementationOnce(() => sendOCSResponse([{
+						id: 123,
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
 							},
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
 						},
-						{
-							id: 123,
-							subject: 'my task',
-							_links: {
-								status: {
-									href: '/api/v3/statuses/12',
-									title: 'open',
-								},
-								type: {
-									href: '/api/v3/types/6',
-									title: 'Task',
-								},
-								assignee: {
-									href: '/api/v3/users/1',
-									title: 'Bal Bahadur Pun',
-								},
-								project: { title: 'a big project' },
+					},
+					{
+						id: 123,
+						subject: 'my task',
+						_links: {
+							status: {
+								href: '/api/v3/statuses/12',
+								title: 'open',
 							},
-						}],
-					}))
-					.mockImplementation(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+							type: {
+								href: '/api/v3/types/6',
+								title: 'Task',
+							},
+							assignee: {
+								href: '/api/v3/users/1',
+								title: 'Bal Bahadur Pun',
+							},
+							project: { title: 'a big project' },
+						},
+					}]))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(axiosGetSpy).toBeCalledWith(
-					'http://localhost/apps/integration_openproject/work-packages?fileId=123',
+					util.format(wpFileIdUrl, 123),
 					{},
 				)
 				expect(wrapper.vm.state).toBe(STATE.OK)
@@ -427,7 +425,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				getCurrentUser.mockReturnValue(returnValue)
 				wrapper = mountWrapper()
 				axios.get
-					.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.setData({
 					isAdminConfigOk: false,
 				})
@@ -475,9 +473,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				let postSpy, wrapper
 				beforeEach(() => {
 					postSpy = jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({
-							status: 200,
-						}))
+						.mockImplementationOnce(() => sendOCSResponse({}))
 					wrapper = mountWrapper()
 				})
 				afterEach(() => {
@@ -588,15 +584,20 @@ describe('LinkMultipleFilesModal.vue', () => {
 		})
 	})
 })
+
+function sendOCSResponse(data, status = 200) {
+	return Promise.resolve({
+		status,
+		data: { ocs: { data } },
+	})
+}
+
 function mountWrapper() {
 	return mount(LinkMultipleFilesModal, {
 		localVue,
 		attachTo: document.body,
 		mocks: {
 			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
-			},
 		},
 		stubs: {
 			SearchInput: true,
