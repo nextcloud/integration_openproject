@@ -14,7 +14,6 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\AppFramework\Http;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
 use OCP\IConfig;
@@ -46,6 +45,9 @@ class OpenProjectControllerTest extends TestCase {
 			$constructArgs[$key] = $value;
 		}
 
+		/**
+		 * @psalm-suppress InvalidArgument
+		 */
 		return new OpenProjectController('integration_openproject', ...array_values($constructArgs));
 	}
 

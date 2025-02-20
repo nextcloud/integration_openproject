@@ -8,16 +8,13 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
-use GuzzleHttp\Exception\BadResponseException;
 use InvalidArgumentException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\OCSController;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\Http\Client\IResponse;
 use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
@@ -98,6 +95,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 			$constructArgs[$key] = $value;
 		}
 
+		/**
+		 * @psalm-suppress InvalidArgument
+		 */
 		return new OpenProjectAPIController('integration_openproject', ...array_values($constructArgs));
 	}
 
