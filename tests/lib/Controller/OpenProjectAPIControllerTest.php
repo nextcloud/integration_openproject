@@ -86,7 +86,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function getOpenProjectAPIControllerMock(array $constructParams = []): OpenProjectAPIController {
 		$constructArgs = [
 			'request' => $this->createMock(IRequest::class),
-			'config' => $this->getConfigMock(),
+			'config' => $this->createMock(IConfig::class),
 			'openProjectAPIService' => $this->createMock(OpenProjectAPIService::class),
 			'userId' => 'test',
 		];
