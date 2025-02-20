@@ -7,12 +7,14 @@
  */
 
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
-import ProjectsTab from '../../../src/views/ProjectsTab.vue'
+import util from 'util'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import { getCurrentUser } from '@nextcloud/auth'
+import ProjectsTab from '../../../src/views/ProjectsTab.vue'
 import { STATE } from '../../../src/utils.js'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
-import { getCurrentUser } from '@nextcloud/auth'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -27,7 +29,11 @@ jest.mock('@nextcloud/axios', () => {
 		},
 	}
 })
-
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
 jest.mock('@nextcloud/auth', () => {
 	const originalModule = jest.requireActual('@nextcloud/auth')
 
@@ -69,6 +75,13 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn()
 const scrollSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
 
 const localVue = createLocalVue()
+
+// url
+const workPackageFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
+const statusUrl = generateOcsUrl('/apps/integration_openproject/api/v1/statuses/%s')
+const typesUrl = generateOcsUrl('/apps/integration_openproject/api/v1/types/%s')
+const wpFileLinksUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages/%s/file-links')
+const fileLinksUrl = generateOcsUrl('/apps/integration_openproject/api/v1/file-links/%s')
 
 describe('ProjectsTab.vue', () => {
 	let wrapper
@@ -267,18 +280,15 @@ describe('ProjectsTab.vue', () => {
 			}],
 		])('sets the "failed-fetching-workpackages" state on invalid responses', async (testCase) => {
 			axios.get
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: testCase,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(testCase))
 				// mock for color requests, it should not fail because of the missing mock
-				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				.mockImplementation(() => sendOCSResponse([]))
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(STATE.FAILED_FETCHING_WORKPACKAGES)
 		})
 		it('sets the "ok" state on empty response', async () => {
 			axios.get
-				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				.mockImplementation(() => sendOCSResponse([]))
 			await wrapper.vm.update({ id: 123 })
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
@@ -287,7 +297,7 @@ describe('ProjectsTab.vue', () => {
 			getCurrentUser.mockReturnValue(returnValue)
 			const wrapper = mountWrapper()
 			axios.get
-				.mockImplementation(() => Promise.resolve({ status: 200, data: [] }))
+				.mockImplementation(() => sendOCSResponse([]))
 			await wrapper.setData({
 				isAdminConfigOk: false,
 			})
@@ -301,70 +311,59 @@ describe('ProjectsTab.vue', () => {
 		])('shows the linked workpackages', async (testCase) => {
 			wrapper = mountWrapper()
 			axiosGetSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [{
-						id: 123,
-						subject: 'my task',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/12',
-								title: 'open',
-							},
-							type: {
-								href: '/api/v3/types/6',
-								title: 'Task',
-							},
-							assignee: {
-								href: '/api/v3/users/1',
-								title: 'Bal Bahadur Pun',
-							},
-							project: { title: 'a big project' },
+				.mockImplementationOnce(() => sendOCSResponse([{
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
 						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
 					},
-					{
-						id: 589,
-						subject: 'नेपालमा IT उद्योग बनाउने',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/2',
-								title: 'प्रगति हुदैछ',
-							},
-							type: {
-								href: '/api/v3/types/16',
-								title: 'Epic',
-							},
-							assignee: {
-								href: '/api/v3/users/13',
-								title: 'कुमारी नेपाली',
-							},
-							project: { title: 'नेपालको विकास गर्ने' },
+				},
+				{
+					id: 589,
+					subject: 'नेपालमा IT उद्योग बनाउने',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/2',
+							title: 'प्रगति हुदैछ',
 						},
-					}],
-				}))
+						type: {
+							href: '/api/v3/types/16',
+							title: 'Epic',
+						},
+						assignee: {
+							href: '/api/v3/users/13',
+							title: 'कुमारी नेपाली',
+						},
+						project: { title: 'नेपालको विकास गर्ने' },
+					},
+				}]))
 				// mock for color requests
-				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.statusColor }),
-				)
-				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.typeColor }),
-				)
-				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.statusColor }),
-				)
-				.mockImplementationOnce(() => Promise.resolve(
-					{ status: 200, data: testCase.typeColor }),
-				)
+				.mockImplementationOnce(() => sendOCSResponse(testCase.statusColor))
+				.mockImplementationOnce(() => sendOCSResponse(testCase.typeColor))
+				.mockImplementationOnce(() => sendOCSResponse(testCase.statusColor))
+				.mockImplementationOnce(() => sendOCSResponse(testCase.typeColor))
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages?fileId=789',
+				util.format(workPackageFileIdUrl, 789),
 				{},
 			)
 			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/statuses/12',
+				util.format(statusUrl, 12),
 			)
 			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/types/6',
+				util.format(typesUrl, 6),
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
 			const workPackages = wrapper.find(workPackagesSelector)
@@ -377,54 +376,48 @@ describe('ProjectsTab.vue', () => {
 			// when the user switches between files while results still loading
 			wrapper = mountWrapper()
 			axiosGetSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [{
-						id: 123,
-						subject: 'my task',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/12',
-								title: 'open',
-							},
-							type: {
-								href: '/api/v3/types/6',
-								title: 'Task',
-							},
-							assignee: {
-								href: '/api/v3/users/1',
-								title: 'Bal Bahadur Pun',
-							},
-							project: { title: 'a big project' },
+				.mockImplementationOnce(() => sendOCSResponse([{
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
 						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
 					},
-					{
-						id: 123,
-						subject: 'my task',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/12',
-								title: 'open',
-							},
-							type: {
-								href: '/api/v3/types/6',
-								title: 'Task',
-							},
-							assignee: {
-								href: '/api/v3/users/1',
-								title: 'Bal Bahadur Pun',
-							},
-							project: { title: 'a big project' },
+				},
+				{
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
 						},
-					}],
-				}))
-				.mockImplementation(() => Promise.resolve({
-					status: 200,
-					data: [],
-				}))
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}]))
+				.mockImplementation(() => sendOCSResponse([]))
 			await wrapper.vm.update({ id: 2222 })
 			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages?fileId=2222',
+				util.format(workPackageFileIdUrl, 2222),
 				{},
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
@@ -434,51 +427,45 @@ describe('ProjectsTab.vue', () => {
 		it('caches the results for status and type color', async () => {
 			wrapper = mountWrapper()
 			axiosGetSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [{
-						id: 123,
-						subject: 'my task',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/12',
-								title: 'open',
-							},
-							type: {
-								href: '/api/v3/types/6',
-								title: 'Task',
-							},
-							assignee: {
-								href: '/api/v3/users/1',
-								title: 'Bal Bahadur Pun',
-							},
-							project: { title: 'a big project' },
+				.mockImplementationOnce(() => sendOCSResponse([{
+					id: 123,
+					subject: 'my task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
 						},
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
 					},
-					{
-						id: 456,
-						subject: 'your task',
-						_links: {
-							status: {
-								href: '/api/v3/statuses/12',
-								title: 'open',
-							},
-							type: {
-								href: '/api/v3/types/6',
-								title: 'Task',
-							},
-							assignee: {
-								href: '/api/v3/users/1',
-								title: 'Bal Bahadur Pun',
-							},
-							project: { title: 'a big project' },
+				},
+				{
+					id: 456,
+					subject: 'your task',
+					_links: {
+						status: {
+							href: '/api/v3/statuses/12',
+							title: 'open',
 						},
-					}],
-				}))
-				.mockImplementation(() => Promise.resolve({
-					status: 200,
-					data: { color: '#FFFFFF' },
-				}))
+						type: {
+							href: '/api/v3/types/6',
+							title: 'Task',
+						},
+						assignee: {
+							href: '/api/v3/users/1',
+							title: 'Bal Bahadur Pun',
+						},
+						project: { title: 'a big project' },
+					},
+				}]))
+				.mockImplementation(() => sendOCSResponse({ color: '#FFFFFF' }))
 			await wrapper.vm.update({ id: 2222 })
 
 			// there should be only 3 requests even there are 2 WP
@@ -486,11 +473,11 @@ describe('ProjectsTab.vue', () => {
 			expect(axiosGetSpy).toBeCalledTimes(3)
 			expect(axiosGetSpy).toHaveBeenNthCalledWith(
 				2,
-				'http://localhost/apps/integration_openproject/statuses/12',
+				util.format(statusUrl, 12),
 			)
 			expect(axiosGetSpy).toHaveBeenNthCalledWith(
 				3,
-				'http://localhost/apps/integration_openproject/types/6',
+				util.format(typesUrl, 6),
 			)
 		})
 	})
@@ -554,39 +541,34 @@ describe('ProjectsTab.vue', () => {
 	describe('unlinkWorkPackage', () => {
 		it('should unlink the work package', async () => {
 			const axiosGetSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [{
-						_type: 'FileLink',
-						id: 66,
-						createdAt: '2022-04-06T05:14:24Z',
-						updatedAt: '2022-04-06T05:14:24Z',
-						originData: {
-							id: '6',
-							name: 'welcome.txt',
-							mimeType: 'text/plain',
-							createdAt: '1970-01-01T00:00:00Z',
-							lastModifiedAt: '2022-03-30T07:39:56Z',
-							createdByName: '',
-							lastModifiedByName: '',
+				.mockImplementationOnce(() => sendOCSResponse([{
+					_type: 'FileLink',
+					id: 66,
+					createdAt: '2022-04-06T05:14:24Z',
+					updatedAt: '2022-04-06T05:14:24Z',
+					originData: {
+						id: '6',
+						name: 'welcome.txt',
+						mimeType: 'text/plain',
+						createdAt: '1970-01-01T00:00:00Z',
+						lastModifiedAt: '2022-03-30T07:39:56Z',
+						createdByName: '',
+						lastModifiedByName: '',
+					},
+					_links: {
+						delete: {
+							href: '/api/v3/file_links/66',
+							method: 'delete',
 						},
-						_links: {
-							delete: {
-								href: '/api/v3/file_links/66',
-								method: 'delete',
-							},
-						},
-					}],
-				}))
+					},
+				}]))
 			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => Promise.resolve(
 				{ status: 200 }),
 			)
 			wrapper = mountWrapper()
 			await wrapper.vm.unlinkWorkPackage(15, 6)
-			expect(axiosGetSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages/15/file-links',
-			)
-			expect(axiosDeleteSpy).toBeCalledWith('http://localhost/apps/integration_openproject/file-links/66')
+			expect(axiosGetSpy).toBeCalledWith(util.format(wpFileLinksUrl, 15))
+			expect(axiosDeleteSpy).toBeCalledWith(util.format(fileLinksUrl, 66))
 			axiosGetSpy.mockRestore()
 			axiosDeleteSpy.mockRestore()
 		})
@@ -612,15 +594,19 @@ describe('ProjectsTab.vue', () => {
 	})
 })
 
+function sendOCSResponse(data, status = 200) {
+	return Promise.resolve({
+		status,
+		data: { ocs: { data } },
+	})
+}
+
 function mountWrapper() {
 	return mount(ProjectsTab, {
 		localVue,
 		attachTo: document.body,
 		mocks: {
 			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
-			},
 		},
 		stubs: {
 			SearchInput: true,
