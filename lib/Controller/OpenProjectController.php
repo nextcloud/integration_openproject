@@ -1,13 +1,9 @@
 <?php
 
 /**
- * Nextcloud - openproject
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Julien Veyssier <eneiluj@posteo.net>
- * @copyright Julien Veyssier 2020
+ * SPDX-FileCopyrightText: 2021-2025 Jankari Tech Pvt. Ltd.
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\OpenProject\Controller;
