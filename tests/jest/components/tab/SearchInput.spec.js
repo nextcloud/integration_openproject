@@ -8,6 +8,7 @@
 
 import axios from '@nextcloud/axios'
 import { createLocalVue, mount } from '@vue/test-utils'
+import { generateOcsUrl } from '@nextcloud/router'
 import * as dialogs from '@nextcloud/dialogs'
 
 import SearchInput from '../../../../src/components/tab/SearchInput.vue'
@@ -45,7 +46,11 @@ jest.mock('lodash/debounce', () =>
 		return fn
 	}),
 )
-
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
@@ -86,6 +91,10 @@ const simpleWorkPackageSearchResponse = [{
 	},
 }]
 
+// url
+const avatarUrl = generateOcsUrl('/apps/integration_openproject/api/v1/avatar?userId=1&userName=System')
+const workPackageUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages')
+
 describe('SearchInput.vue', () => {
 	let wrapper
 
@@ -119,10 +128,7 @@ describe('SearchInput.vue', () => {
 		describe('search input', () => {
 			it('should reset the state if search value length becomes lesser than search char limit', async () => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput()
 				const inputField = wrapper.find(inputSelector)
 				await wrapper.setData({
@@ -158,10 +164,7 @@ describe('SearchInput.vue', () => {
 				expectedCallCount,
 			}) => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -173,10 +176,7 @@ describe('SearchInput.vue', () => {
 			})
 			it('should include the search text in the search payload', async () => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput()
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -198,12 +198,7 @@ describe('SearchInput.vue', () => {
 			})
 			it('should log an error on invalid payload', async () => {
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [{
-							id: 123,
-						}],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([{ id: 123 }]))
 				const consoleMock = jest.spyOn(console, 'error')
 					.mockImplementationOnce(() => {})
 				wrapper = mountSearchInput()
@@ -235,10 +230,7 @@ describe('SearchInput.vue', () => {
 			})
 			it('should display correct options list of search results', async () => {
 				jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -265,10 +257,7 @@ describe('SearchInput.vue', () => {
 			})
 			it('should only use the options from the latest search response', async () => {
 				jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -280,14 +269,8 @@ describe('SearchInput.vue', () => {
 				})
 				expect(wrapper.findAll(workPackageStubSelector).length).toBe(3)
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: simpleWorkPackageSearchResponse,
-					}))
-					.mockImplementation(() => Promise.resolve({
-						data: [],
-						status: 200,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse(simpleWorkPackageSearchResponse))
+					.mockImplementation(() => sendOCSResponse([]))
 				await inputField.setValue('orga')
 				for (let i = 0; i <= 10; i++) {
 					await wrapper.vm.$nextTick()
@@ -317,14 +300,9 @@ describe('SearchInput.vue', () => {
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 				})
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: workPackageObjectsInSearchResults,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse(workPackageObjectsInSearchResults))
 					// any other requests e.g. for types and statuses
-					.mockImplementation(() => Promise.resolve(
-						{ status: 200, data: [] }),
-					)
+					.mockImplementation(() => sendOCSResponse([]))
 
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue('anything longer than 3 char')
@@ -339,7 +317,7 @@ describe('SearchInput.vue', () => {
 						{
 							assignee: 'System',
 							id: 2,
-							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							picture: avatarUrl,
 							project: 'Demo project',
 							statusCol: '',
 							statusTitle: 'In progress',
@@ -350,7 +328,7 @@ describe('SearchInput.vue', () => {
 						{
 							assignee: 'System',
 							id: 5,
-							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							picture: avatarUrl,
 							project: 'Demo project',
 							statusCol: '',
 							statusTitle: 'In progress',
@@ -366,13 +344,8 @@ describe('SearchInput.vue', () => {
 			it('should not display work packages that are already in the search results', async () => {
 				// this case can happen if multiple search are running in parallel and returning its results
 				const axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: workPackageSearchReqResponse,
-					}))
-					.mockImplementation(() => Promise.resolve(
-						{ status: 200, data: [] }),
-					)
+					.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
+					.mockImplementation(() => sendOCSResponse([]))
 				await wrapper.setData({
 					fileInfo: { id: 111 },
 					searchResults: [{
@@ -399,7 +372,7 @@ describe('SearchInput.vue', () => {
 						{
 							assignee: 'System',
 							id: 13,
-							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							picture: avatarUrl,
 							project: 'Demo project',
 							statusCol: '',
 							statusTitle: 'In progress',
@@ -410,7 +383,7 @@ describe('SearchInput.vue', () => {
 						{
 							assignee: 'System',
 							id: 5,
-							picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+							picture: avatarUrl,
 							project: 'Demo project',
 							statusCol: '',
 							statusTitle: 'In progress',
@@ -429,14 +402,9 @@ describe('SearchInput.vue', () => {
 				async (state) => {
 					wrapper = mountSearchInput({})
 					const axiosSpy = jest.spyOn(axios, 'get')
-						.mockImplementationOnce(() => Promise.resolve({
-							status: 200,
-							data: workPackageSearchReqResponse,
-						}))
+						.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
 					// any other requests e.g. for types and statuses
-						.mockImplementation(() => Promise.resolve(
-							{ status: 200, data: [] }),
-						)
+						.mockImplementation(() => sendOCSResponse([]))
 
 					const inputField = wrapper.find(inputSelector)
 					await inputField.setValue('anything longer than 3 char')
@@ -467,10 +435,7 @@ describe('SearchInput.vue', () => {
 			let axiosGetSpy
 			beforeEach(async () => {
 				axiosGetSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse([]))
 				wrapper = mountSearchInput({ id: 111, name: 'file.txt' })
 				await wrapper.setProps({
 					searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -496,9 +461,7 @@ describe('SearchInput.vue', () => {
 			})
 			it('should send a request to link file to workpackage', async () => {
 				const postSpy = jest.spyOn(axios, 'post')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse({}))
 				const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 				await ncSelectItem.trigger('click')
 				const body = {
@@ -513,7 +476,7 @@ describe('SearchInput.vue', () => {
 					},
 				}
 				expect(postSpy).toBeCalledWith(
-					'http://localhost/apps/integration_openproject/work-packages',
+					workPackageUrl,
 					body,
 					{ headers: { 'Content-Type': 'application/json' } },
 				)
@@ -565,10 +528,7 @@ describe('SearchInput.vue', () => {
 		let axiosGetSpy
 		beforeEach(async () => {
 			axiosGetSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [],
-				}))
+				.mockImplementationOnce(() => sendOCSResponse([]))
 			wrapper = mountSearchInput()
 			const inputField = wrapper.find(inputSelector)
 			await inputField.setValue('orga')
@@ -598,9 +558,7 @@ describe('SearchInput.vue', () => {
 
 		it('should not send a request to link file to workpackage', async () => {
 			const postSpy = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse({}))
 			const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 			await ncSelectItem.trigger('click')
 			expect(postSpy).not.toBeCalled()
@@ -644,10 +602,7 @@ describe('SearchInput.vue', () => {
 				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
 			})
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [],
-				}))
+				.mockImplementationOnce(() => sendOCSResponse([]))
 			const inputField = wrapper.find(inputSelector)
 			await inputField.setValue(expectedDetails.searchQuery)
 			await localVue.nextTick()
@@ -661,10 +616,7 @@ describe('SearchInput.vue', () => {
 				let axiosGetSpy
 				beforeEach(async () => {
 					axiosGetSpy = jest.spyOn(axios, 'get')
-						.mockImplementationOnce(() => Promise.resolve({
-							status: 200,
-							data: [],
-						}))
+						.mockImplementationOnce(() => sendOCSResponse([]))
 					wrapper = mountSearchInput(singleFileInfo)
 					await wrapper.setProps({
 						searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
@@ -683,9 +635,7 @@ describe('SearchInput.vue', () => {
 				})
 				it('should send a request to link file to workpackage', async () => {
 					const postSpy = jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({
-							status: 200,
-						}))
+						.mockImplementationOnce(() => sendOCSResponse({}))
 					const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 					await ncSelectItem.trigger('click')
 					const body = {
@@ -695,7 +645,7 @@ describe('SearchInput.vue', () => {
 						},
 					}
 					expect(postSpy).toBeCalledWith(
-						'http://localhost/apps/integration_openproject/work-packages',
+						workPackageUrl,
 						body,
 						{ headers: { 'Content-Type': 'application/json' } },
 					)
@@ -716,13 +666,8 @@ describe('SearchInput.vue', () => {
 
 				it('should not display work packages that are already linked', async () => {
 					const axiosSpy = jest.spyOn(axios, 'get')
-						.mockImplementationOnce(() => Promise.resolve({
-							status: 200,
-							data: workPackageSearchReqResponse,
-						}))
-						.mockImplementation(() => Promise.resolve(
-							{ status: 200, data: [] }),
-						)
+						.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
+						.mockImplementation(() => sendOCSResponse([]))
 					await wrapper.setProps({
 						linkedWorkPackages: [{
 							fileId: 123,
@@ -741,7 +686,7 @@ describe('SearchInput.vue', () => {
 							{
 								assignee: 'System',
 								id: 13,
-								picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+								picture: avatarUrl,
 								project: 'Demo project',
 								statusCol: '',
 								statusTitle: 'In progress',
@@ -752,7 +697,7 @@ describe('SearchInput.vue', () => {
 							{
 								assignee: 'System',
 								id: 5,
-								picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+								picture: avatarUrl,
 								project: 'Demo project',
 								statusCol: '',
 								statusTitle: 'In progress',
@@ -773,10 +718,7 @@ describe('SearchInput.vue', () => {
 						let axiosGetSpy
 						beforeEach(async () => {
 							axiosGetSpy = jest.spyOn(axios, 'get')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-									data: [],
-								}))
+								.mockImplementationOnce(() => sendOCSResponse([]))
 							wrapper = mountSearchInput(multipleFileInfos)
 							await wrapper.setProps({
 								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
@@ -795,9 +737,7 @@ describe('SearchInput.vue', () => {
 						})
 						it('should send a request to link file to workpackage', async () => {
 							const postSpy = jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							const body = {
@@ -807,7 +747,7 @@ describe('SearchInput.vue', () => {
 								},
 							}
 							expect(postSpy).toBeCalledWith(
-								'http://localhost/apps/integration_openproject/work-packages',
+								workPackageUrl,
 								body,
 								{ headers: { 'Content-Type': 'application/json' } },
 							)
@@ -828,13 +768,8 @@ describe('SearchInput.vue', () => {
 
 						it('should display work packages that are already linked', async () => {
 							const axiosSpy = jest.spyOn(axios, 'get')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-									data: workPackageSearchReqResponse,
-								}))
-								.mockImplementation(() => Promise.resolve(
-									{ status: 200, data: [] }),
-								)
+								.mockImplementationOnce(() => sendOCSResponse(workPackageSearchReqResponse))
+								.mockImplementation(() => sendOCSResponse([]))
 							await wrapper.setProps({
 								// here already linked work package is empty when the selected files is more than 1
 								linkedWorkPackages: [],
@@ -850,7 +785,7 @@ describe('SearchInput.vue', () => {
 									{
 										assignee: 'System',
 										id: 2,
-										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										picture: avatarUrl,
 										project: 'Demo project',
 										statusCol: '',
 										statusTitle: 'In progress',
@@ -861,7 +796,7 @@ describe('SearchInput.vue', () => {
 									{
 										assignee: 'System',
 										id: 13,
-										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										picture: avatarUrl,
 										project: 'Demo project',
 										statusCol: '',
 										statusTitle: 'In progress',
@@ -872,7 +807,7 @@ describe('SearchInput.vue', () => {
 									{
 										assignee: 'System',
 										id: 5,
-										picture: 'http://localhost/apps/integration_openproject/avatar?userId=1&userName=System',
+										picture: avatarUrl,
 										project: 'Demo project',
 										statusCol: '',
 										statusTitle: 'In progress',
@@ -905,10 +840,7 @@ describe('SearchInput.vue', () => {
 						let axiosGetSpy
 						beforeEach(async () => {
 							axiosGetSpy = jest.spyOn(axios, 'get')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-									data: [],
-								}))
+								.mockImplementationOnce(() => sendOCSResponse([]))
 							wrapper = mountSearchInput(multipleFilesForChunking)
 							await wrapper.setProps({
 								searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.LINK_MULTIPLE_FILES_MODAL,
@@ -928,9 +860,7 @@ describe('SearchInput.vue', () => {
 						})
 						it('should send request 3 times to link chunked file to workpackage', async () => {
 							const postSpy = jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							for (let i = 0; i < 5; i++) {
@@ -941,9 +871,7 @@ describe('SearchInput.vue', () => {
 
 						it('should emit event "get-chunked-informations" for 3 times', async () => {
 							jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit')
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
@@ -956,9 +884,7 @@ describe('SearchInput.vue', () => {
 						it('should link all the files with chunks upon success', async () => {
 							let emittedData
 							jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 							const spyOnEmit = jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
 								emittedData = data
 							})
@@ -1009,12 +935,8 @@ describe('SearchInput.vue', () => {
 							let emittedData
 							// rejects the 3rd request
 							jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementation(() => Promise.reject(
 									new Error('Throw eror'),
 								))
@@ -1034,12 +956,8 @@ describe('SearchInput.vue', () => {
 							let emittedData
 							// rejects the 3rd request
 							jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
-								.mockImplementationOnce(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
+								.mockImplementationOnce(() => sendOCSResponse({}))
 								.mockImplementation(() => Promise.reject(new Error('Throw eror')))
 							jest.spyOn(wrapper.vm, '$emit').mockImplementation((event, data) => {
 								emittedData = data
@@ -1057,9 +975,7 @@ describe('SearchInput.vue', () => {
 								.mockImplementationOnce(() => {
 									throw new Error('Throw error to retry once')
 								})
-								.mockImplementation(() => Promise.resolve({
-									status: 200,
-								}))
+								.mockImplementation(() => sendOCSResponse({}))
 							const ncSelectItem = wrapper.find(firstWorkPackageSelector)
 							await ncSelectItem.trigger('click')
 							for (let i = 0; i < 5; i++) {
@@ -1104,10 +1020,7 @@ describe('SearchInput.vue', () => {
 		wrapper = mountSearchInput()
 		it('should open create work package modal when clicked', async () => {
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [],
-				}))
+				.mockImplementationOnce(() => sendOCSResponse([]))
 			wrapper = mountSearchInput({ id: 1234, name: 'file.txt' })
 			await wrapper.setProps({
 				searchOrigin: WORKPACKAGES_SEARCH_ORIGIN.PROJECT_TAB,
@@ -1148,18 +1061,13 @@ describe('SearchInput.vue', () => {
 
 		it('should show a success message and link work package to a file if work package creation process is successful', async () => {
 			jest.spyOn(axios, 'post')
-				.mockImplementation(() => Promise.resolve({
-					status: 200,
-				}))
+				.mockImplementation(() => sendOCSResponse({}))
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: [{
-						fileId: 1234,
-						id: 1,
-						subject: 'Organize open source conference',
-					}],
-				}))
+				.mockImplementationOnce(() => sendOCSResponse([{
+					fileId: 1234,
+					id: 1,
+					subject: 'Organize open source conference',
+				}]))
 			// mock this method because we don't really care about this for this test
 			jest.spyOn(workpackageHelper, 'getAdditionalMetaData')
 				.mockImplementationOnce(() => Promise.resolve(workPackagesSearchResponse))
@@ -1190,14 +1098,18 @@ describe('SearchInput.vue', () => {
 	})
 })
 
+function sendOCSResponse(data, status = 200) {
+	return Promise.resolve({
+		status,
+		data: { ocs: { data } },
+	})
+}
+
 function mountSearchInput(fileInfo = {}, linkedWorkPackages = [], data = {}) {
 	return mount(SearchInput, {
 		localVue,
 		mocks: {
 			t: (msg) => msg,
-			generateUrl() {
-				return '/'
-			},
 		},
 		data: () => ({
 			...data,
