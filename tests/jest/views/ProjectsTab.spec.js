@@ -562,9 +562,7 @@ describe('ProjectsTab.vue', () => {
 						},
 					},
 				}]))
-			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => Promise.resolve(
-				{ status: 200 }),
-			)
+			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => sendOCSResponse({}))
 			wrapper = mountWrapper()
 			await wrapper.vm.unlinkWorkPackage(15, 6)
 			expect(axiosGetSpy).toBeCalledWith(util.format(wpFileLinksUrl, 15))
