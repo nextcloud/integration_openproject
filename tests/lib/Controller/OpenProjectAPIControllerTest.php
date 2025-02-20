@@ -49,6 +49,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @param string $authorizationMethod
 	 * @param string $authToken
+	 * @param string $opUrl
 	 * @psalm-suppress UndefinedInterfaceMethod
 	 * @return IConfig
 	 */
