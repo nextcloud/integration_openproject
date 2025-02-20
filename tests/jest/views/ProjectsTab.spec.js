@@ -77,7 +77,7 @@ const scrollSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
 const localVue = createLocalVue()
 
 // url
-const workPackageFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
+const wpFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
 const statusUrl = generateOcsUrl('/apps/integration_openproject/api/v1/statuses/%s')
 const typesUrl = generateOcsUrl('/apps/integration_openproject/api/v1/types/%s')
 const wpFileLinksUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages/%s/file-links')
@@ -356,7 +356,7 @@ describe('ProjectsTab.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(testCase.typeColor))
 			await wrapper.vm.update({ id: 789 })
 			expect(axiosGetSpy).toBeCalledWith(
-				util.format(workPackageFileIdUrl, 789),
+				util.format(wpFileIdUrl, 789),
 				{},
 			)
 			expect(axiosGetSpy).toBeCalledWith(
@@ -417,7 +417,7 @@ describe('ProjectsTab.vue', () => {
 				.mockImplementation(() => sendOCSResponse([]))
 			await wrapper.vm.update({ id: 2222 })
 			expect(axiosGetSpy).toBeCalledWith(
-				util.format(workPackageFileIdUrl, 2222),
+				util.format(wpFileIdUrl, 2222),
 				{},
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
