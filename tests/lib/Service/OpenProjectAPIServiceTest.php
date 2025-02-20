@@ -3935,7 +3935,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'urlGenerator' => $iULGeneratorMock,
 			],
 		);
-		$imageURL = 'http://nextcloud/server/index.php/apps/integration_openproject/avatar?userId=3&userName=OpenProject Admin';
+		$imageURL = 'http://nextcloud/server/ocs/v1.php/apps/integration_openproject/api/v1/avatar?userId=3&userName=OpenProject Admin';
 		$iULGeneratorMock->method('getAbsoluteURL')->willReturn($imageURL);
 		$testUser = 'testUser';
 		$workPackageId = 123;

@@ -1445,7 +1445,7 @@ class OpenProjectAPIService {
 			: '';
 		$userId = preg_replace('/.*\//', "", $userIdURL);
 		return $this->urlGenerator->getAbsoluteURL(
-			'index.php/apps/integration_openproject/avatar?' .
+			'ocs/v1.php/apps/integration_openproject/api/v1/avatar?' .
 			"userId" .
 			'=' .
 			$userId .
