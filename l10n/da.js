@@ -13,9 +13,9 @@ OC.L10N.register(
     "Mark as read" : "Marker som læst",
     "Connected accounts" : "Forbundne konti",
     "Reset" : "Nulstil",
-    "Enable navigation link" : "Enable navigation link",
+    "Enable navigation link" : "Aktiver navigationslink",
     "Connected as {user}" : "Forbundet som {user}",
-    "Invalid token" : "Ugyldig token ",
+    "Invalid token" : "Ugyldigt token ",
     "Documentation" : "Dokumentation"
 },
 "nplurals=2; plural=(n != 1);");
