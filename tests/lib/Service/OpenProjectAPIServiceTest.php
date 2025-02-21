@@ -2096,12 +2096,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'',
 			);
 
-		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
-			'config' => $configMock,
-			'clientService' => $clientService,
-		]);
-
-		$service = new OpenProjectAPIService(...$constructArgs);
+		$service = new OpenProjectAPIService(
+			'integration_openproject',
+			$this->createMock(IAvatarManager::class),
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(IL10N::class),
+			$configMock,
+			$clientService,
+			$this->createMock(IRootFolder::class),
+			$this->createMock(IURLGenerator::class),
+			$this->createMock(ICacheFactory::class),
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(IAppManager::class),
+			$this->createMock(IProvider::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(IEventDispatcher::class),
+			$this->createMock(ISubAdmin::class),
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ILogFactory::class),
+			$this->createMock(IManager::class),
+		);
 
 		$response = $service->request('', '', []);
 		$this->assertSame($expectedError, $response['error']);

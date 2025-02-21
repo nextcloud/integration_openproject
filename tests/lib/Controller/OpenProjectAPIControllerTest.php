@@ -37,28 +37,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	];
 
 	/**
-	 * @return array<mixed>
-	 */
-	public function getAuthorizationMethodDataProvider() {
-		return [
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC]
-		];
-	}
-
-	/**
-	 * @param string $authorizationMethod
 	 * @param string $authToken
 	 * @param string $opUrl
 	 * @psalm-suppress UndefinedInterfaceMethod
 	 * @return IConfig
 	 */
-	public function getConfigMock(string $authorizationMethod = '', $authToken = null, $opUrl = null): IConfig {
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
-			$token = $authToken ?? '123';
-		} else {
-			$token = '';
-		}
+	public function getConfigMock($authToken = null, $opUrl = null): IConfig {
+		$token = $authToken ?? '123';
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -73,8 +58,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'authorization_method'],
-			)->willReturnOnConsecutiveCalls($opUrl, $authorizationMethod);
+			)->willReturnOnConsecutiveCalls($opUrl);
 		return $configMock;
 	}
 
@@ -128,18 +112,14 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetNotificationsNoAccessToken(string $authorizationMethod) {
+	public function testGetNotificationsNoAccessToken() {
 		$authToken = '';
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getNotifications', 'getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn($authToken);
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, $authToken),
+			'config' => $this->getConfigMock($authToken),
 		]);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -149,17 +129,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetNotificationsBadOPInstanceUrl(string $authorizationMethod) {
+	public function testGetNotificationsBadOPInstanceUrl() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getNotifications', 'getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('123');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, null, 'http:openproject.org'),
+			'config' => $this->getConfigMock(null, 'http:openproject.org'),
 		]);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -168,7 +144,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetNotificationsErrorResponse(string $authorizationMethod) {
+	public function testGetNotificationsErrorResponse() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -178,7 +154,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getNotifications();
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -188,7 +164,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectAvatar(string $authorizationMethod) {
+	public function testGetOpenProjectAvatar() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -200,7 +176,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['avatar' => 'some image data', 'type' => 'image/png']);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
 		$this->assertSame('some image data', $response->render());
@@ -217,7 +193,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectAvatarNoType(string $authorizationMethod) {
+	public function testGetOpenProjectAvatarNoType() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -229,7 +205,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn(['avatar' => 'some image data']);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
 		$this->assertSame('some image data', $response->render());
@@ -258,7 +234,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return void
 	 * @dataProvider searchWorkPackagesDataProvider
 	 */
-	public function testGetSearchedWorkPackages(string $authorizationMethod, ?string $searchQuery, ?int $fileId, array $expectedResponse):void {
+	public function testGetSearchedWorkPackages(?string $searchQuery, ?int $fileId, array $expectedResponse):void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['searchWorkPackage'])
@@ -274,7 +250,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getSearchedWorkPackages($searchQuery, $fileId);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -285,17 +261,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetSearchedWorkPackagesNoAccessToken(string $authorizationMethod): void {
+	public function testGetSearchedWorkPackagesNoAccessToken(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->getSearchedWorkPackages('test');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -304,17 +276,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetSearchedWorkPackagesBadOPInstanceUrl(string $authorizationMethod): void {
+	public function testGetSearchedWorkPackagesBadOPInstanceUrl(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('123');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, null, 'http:openproject'),
+			'config' => $this->getConfigMock(null, 'http:openproject'),
 		]);
 		$response = $controller->getSearchedWorkPackages('test');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -323,17 +291,14 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetSearchedWorkPackagesErrorResponse(string $authorizationMethod): void {
+	public function testGetSearchedWorkPackagesErrorResponse(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('123');
-		}
 		$service->method('searchWorkPackage')->willReturn(['error' => 'something went wrong']);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getSearchedWorkPackages('test');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -343,7 +308,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageStatus(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageStatus(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['getOpenProjectWorkPackageStatus'])
@@ -357,7 +322,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -370,17 +335,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageStatusNoToken(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageStatusNoToken(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -389,7 +350,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageStatusWithErrorResponse(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageStatusWithErrorResponse(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -399,7 +360,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -409,14 +370,14 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageStatusBadOPInstanceUrl(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageStatusBadOPInstanceUrl(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, null, 'http:openproject'),
+			'config' => $this->getConfigMock(null, 'http:openproject'),
 		]);
 		$response = $controller->getOpenProjectWorkPackageStatus('7');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -425,7 +386,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageType(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageType(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['getOpenProjectWorkPackageType'])
@@ -437,7 +398,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -448,17 +409,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageTypeNoAccessToken(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageTypeNoAccessToken(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -467,7 +424,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageTypeErrorResponse(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageTypeErrorResponse(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -477,7 +434,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -487,14 +444,14 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageTypeBadOPInstanceUrl(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageTypeBadOPInstanceUrl(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, null, 'http:openproject'),
+			'config' => $this->getConfigMock(null, 'http:openproject'),
 		]);
 		$response = $controller->getOpenProjectWorkPackageType('3');
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -503,7 +460,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWorkPackageFileLinks(string $authorizationMethod): void {
+	public function testGetWorkPackageFileLinks(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['getWorkPackageFileLinks'])
@@ -520,7 +477,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getWorkPackageFileLinks(7);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -536,17 +493,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWorkPackageFileLinksNoAccessToken(string $authorizationMethod): void {
+	public function testGetWorkPackageFileLinksNoAccessToken(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->getWorkPackageFileLinks(7);
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -555,7 +508,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWorkPackageFileLinksNotFound(string $authorizationMethod): void {
+	public function testGetWorkPackageFileLinksNotFound(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -564,7 +517,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new NotFoundException('work package not found'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getWorkPackageFileLinks(7);
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
@@ -574,7 +527,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWorkPackageFileLinksInternalServerError(string $authorizationMethod): void {
+	public function testGetWorkPackageFileLinksInternalServerError(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -583,7 +536,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new Exception('something went wrong'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getWorkPackageFileLinks(7);
 		$this->assertSame(Http::STATUS_INTERNAL_SERVER_ERROR, $response->getStatus());
@@ -593,7 +546,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testDeleteFileLink(string $authorizationMethod): void {
+	public function testDeleteFileLink(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['deleteFileLink'])
@@ -604,7 +557,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->deleteFileLink(7);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -614,17 +567,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testDeleteFileLinkNoAccessToken(string $authorizationMethod): void {
+	public function testDeleteFileLinkNoAccessToken(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->deleteFileLink(7);
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -633,7 +582,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testDeleteFileLinkFileNotFound(string $authorizationMethod): void {
+	public function testDeleteFileLinkFileNotFound(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -642,7 +591,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new NotFoundException('file not found'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->deleteFileLink(7);
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
@@ -652,7 +601,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testDeleteFileLinkInternalServerError(string $authorizationMethod): void {
+	public function testDeleteFileLinkInternalServerError(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -661,7 +610,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new Exception('something went wrong'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->deleteFileLink(7);
 		$this->assertSame(Http::STATUS_INTERNAL_SERVER_ERROR, $response->getStatus());
@@ -669,11 +618,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 *
-	 * @param string $authorizationMethod
 	 * @return void
 	 */
-	public function testLinkWorkPackageToSingleFile(string $authorizationMethod) {
+	public function testLinkWorkPackageToSingleFile() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['linkWorkPackageToFile'])
@@ -685,7 +632,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame([2], $response->getData());
@@ -695,7 +642,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToMultipleFiles(string $authorizationMethod) {
+	public function testLinkWorkPackageToMultipleFiles() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['linkWorkPackageToFile'])
@@ -723,7 +670,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile([
 			"workpackageId" => 123,
@@ -748,17 +695,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileNoAccessToken(string $authorizationMethod) {
+	public function testLinkWorkPackageToFileNoAccessToken() {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['getOIDCToken'])
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod, ''),
+			'config' => $this->getConfigMock(''),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_UNAUTHORIZED, $response->getStatus());
@@ -767,7 +710,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileNotEnoughPermissions(string $authorizationMethod): void {
+	public function testLinkWorkPackageToFileNotEnoughPermissions(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -776,7 +719,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new NotPermittedException());
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
@@ -785,7 +728,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileOpenProjectErrorException(string $authorizationMethod): void {
+	public function testLinkWorkPackageToFileOpenProjectErrorException(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -794,7 +737,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new OpenprojectErrorException('Error while linking file to a work package', 400));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -804,7 +747,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileOpenprojectResponseException(string $authorizationMethod): void {
+	public function testLinkWorkPackageToFileOpenprojectResponseException(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -813,7 +756,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new OpenprojectResponseException('Malformed response'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_INTERNAL_SERVER_ERROR, $response->getStatus());
@@ -823,7 +766,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileForInvalidKeyError(string $authorizationMethod): void {
+	public function testLinkWorkPackageToFileForInvalidKeyError(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -832,7 +775,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new InvalidArgumentException('invalid key'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -842,7 +785,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testLinkWorkPackageToFileForInvalidDataError(string $authorizationMethod): void {
+	public function testLinkWorkPackageToFileForInvalidDataError(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -851,7 +794,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException(new InvalidArgumentException('invalid data'));
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->linkWorkPackageToFile($this->fileInformationToLinkToWorkPackage);
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
@@ -882,13 +825,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 *
-	 * @param string $authorizationMethod
 	 * @return void
-	 *
-	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetAvailableOpenProjectProjects(string $authorizationMethod): void {
+	public function testGetAvailableOpenProjectProjects(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['getAvailableOpenProjectProjects'])
@@ -908,7 +847,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			]);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getAvailableOpenProjectProjects();
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -945,7 +884,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException($exception);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getAvailableOpenProjectProjects();
 		$this->assertSame($expectedHttpStatusCode, $response->getStatus());
@@ -953,13 +892,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 *
-	 * @param string $authorizationMethod
 	 * @return void
-	 *
-	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectWorkPackageForm(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageForm(): void {
 		$body = [
 			"_links" => [
 				"type" => [
@@ -1017,7 +952,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn($result);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageForm('6', $body);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -1044,7 +979,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException($exception);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageForm('6', ["_links" => [
 			"type" => [
@@ -1058,19 +993,16 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetOpenProjectWorkPackageFormEmptyBody(string $authorizationMethod): void {
+	public function testGetOpenProjectWorkPackageFormEmptyBody(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('123');
-		}
 		$service
 			->method('getOpenProjectWorkPackageForm')
 			->willReturn([]);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getOpenProjectWorkPackageForm('6', []);
 		$this->assertSame(HTTP::STATUS_OK, $response->getStatus());
@@ -1079,7 +1011,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetAvailableAssigneesOfAProject(string $authorizationMethod) : void {
+	public function testGetAvailableAssigneesOfAProject(): void {
 		$result = [ 0 => [
 			"_type" => "User",
 			"id" => 10,
@@ -1113,7 +1045,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willReturn($result);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getAvailableAssigneesOfAProject('6');
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
@@ -1142,7 +1074,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException($exception);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->getAvailableAssigneesOfAProject('6');
 		$this->assertSame($expectedHttpStatusCode, $response->getStatus());
@@ -1150,13 +1082,9 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 *
-	 * @param string $authorizationMethod
 	 * @return void
-	 *
-	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testCreateWorkpackages(string $authorizationMethod): void {
+	public function testCreateWorkpackages(): void {
 		$body = [
 			"_links" => [
 				"type" => [
@@ -1224,7 +1152,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$result = $controller->createWorkPackage($body);
 		$this->assertSame(Http::STATUS_CREATED, $result->getStatus());
@@ -1279,7 +1207,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->willThrowException($exception);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->createWorkPackage($body);
 		$this->assertSame($expectedHttpStatusCode, $response->getStatus());
@@ -1289,16 +1217,13 @@ class OpenProjectAPIControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testCreateWorkpackagesEmptyBody(string $authorizationMethod): void {
+	public function testCreateWorkpackagesEmptyBody(): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$service->method('getOIDCToken')->willReturn('123');
-		}
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
+			'config' => $this->getConfigMock(),
 		]);
 		$response = $controller->createWorkPackage([]);
 		$this->assertSame(HTTP::STATUS_BAD_REQUEST, $response->getStatus());

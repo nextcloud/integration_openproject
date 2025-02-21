@@ -282,14 +282,12 @@ class OpenProjectControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->withConsecutive(
-				['integration_openproject', 'authorization_method'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls(
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'myClientID',
 				'myClientSecret',
 				'http://openproject.org',
