@@ -17,7 +17,11 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
-
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
@@ -57,14 +61,14 @@ describe('Dashboard.vue', () => {
 				},
 			})
 		const axiosSpy = jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
-			.mockImplementationOnce(() => Promise.resolve({ data: notificationsResponse }))
+			.mockImplementationOnce(() => Promise.resolve({ data: { ocs: { data: 'http://openproject.org' } } }))
+			.mockImplementationOnce(() => Promise.resolve({ data: { ocs: { data: notificationsResponse } } }))
 		await wrapper.vm.launchLoop()
 		expect(axiosSpy).toBeCalledWith(
-			'http://localhost/apps/integration_openproject/url',
+			'http://nc.local/apps/integration_openproject/api/v1/url',
 		)
 		expect(axiosSpy).toBeCalledWith(
-			'http://localhost/apps/integration_openproject/notifications',
+			'http://nc.local/apps/integration_openproject/api/v1/notifications',
 		)
 		expect(wrapper.vm.state).toBe(STATE.OK)
 		expect(wrapper.vm.items).toMatchSnapshot()
