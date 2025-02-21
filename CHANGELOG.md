@@ -8,9 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## 2.7.3 - 2025-01-28
+## 2.8.0 - 2025-02-24
 
-### Changed
+### Added
 
 - Support Nextcloud 31
 - Correct encoding of the avatar url [#767](https://github.com/nextcloud/integration_openproject/pull/767)
