@@ -1,8 +1,9 @@
 /* jshint esversion: 8 */
 
 import { createLocalVue, mount } from '@vue/test-utils'
-import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
+import util from 'util'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 import availableProjectsResponse from '../fixtures/openprojectAvailableProjectResponse.json'
 import availableProjectsResponseAfterSearch from '../fixtures/openprojectAvailableProjectResponseAfterSearch.json'
 import availableProjectsOption from '../fixtures/availableProjectOptions.json'
@@ -11,6 +12,7 @@ import workpackageFormValidationTypeChanged from '../fixtures/workpackageFormVal
 import availableProjectAssignees from '../fixtures/availableProjectAssigneesResponse.json'
 import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreationResponse.json'
 import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
+import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
 
 const localVue = createLocalVue()
 
@@ -27,6 +29,17 @@ jest.mock('@nextcloud/initial-state', () => {
 		}),
 	}
 })
+jest.mock('@nextcloud/router', () => ({
+	generateUrl: (path) => `http://nc.local${path}`,
+	generateOcsUrl: (path) => `http://nc.local${path}`,
+	imagePath: (path) => `http://nc.local${path}`,
+}))
+
+// url
+const projectsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects')
+const workPackageFormUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects/%s/work-packages/form')
+const availableAssigneesUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects/%s/available-assignees')
+const createWorkPackageUrl = generateOcsUrl('/apps/integration_openproject/api/v1/create/work-packages')
 
 describe('CreateWorkPackageModal.vue', () => {
 	const createWorkPackageSelector = '.create-workpackage-modal'
@@ -61,13 +74,10 @@ describe('CreateWorkPackageModal.vue', () => {
 	describe('workpackage creation form', () => {
 		it('should display available projects in the project dropdown', async () => {
 			const axiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			wrapper = mountWrapper(true)
 			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects', {})
+			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
 			await wrapper.find(projectInputField).setValue(' ')
 			expect(wrapper.find(projectSelectSelector)).toMatchSnapshot()
 			axiosSpy.mockRestore()
@@ -78,13 +88,10 @@ describe('CreateWorkPackageModal.vue', () => {
 			let axiosSpy, inputField
 			beforeEach(async () => {
 				axiosSpy = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: availableProjectsResponse,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 				wrapper = mountWrapper(true)
 				expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
-				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects', {})
+				expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
 				inputField = wrapper.find(projectInputField)
 				await inputField.setValue('Sc')
 			})
@@ -92,7 +99,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				await inputField.setValue('Scw')
 				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
-				expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+				expect(axiosSpy).toHaveBeenCalledWith(projectsUrl,
 					{
 						params: {
 							searchQuery: 'Scw',
@@ -103,15 +110,12 @@ describe('CreateWorkPackageModal.vue', () => {
 
 			it('should show "No matching work projects found!" when the searched project is not found', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: [],
-					}))
+					.mockImplementationOnce(() => sendOCSResponse({}))
 				await inputField.setValue('Scw')
 				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
 				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
-				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
 					{
 						params: {
 							searchQuery: 'Scw',
@@ -124,15 +128,12 @@ describe('CreateWorkPackageModal.vue', () => {
 
 			it('should fetch projects when not found in initial available projects', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
-					.mockImplementationOnce(() => Promise.resolve({
-						status: 200,
-						data: availableProjectsResponseAfterSearch,
-					}))
+					.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponseAfterSearch))
 				const inputField = wrapper.find(projectInputField)
 				await inputField.setValue('se')
 				// for a search debounce request, minimum 500 ms wait is required
 				await new Promise(resolve => setTimeout(resolve, 500))
-				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects',
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
 					{
 						params: {
 							searchQuery: 'se',
@@ -177,20 +178,11 @@ describe('CreateWorkPackageModal.vue', () => {
 			}
 
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpy = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationProjectSelected,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectAssignees,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 			wrapper = mountWrapper(true, {
 				noDropAvailableProjectDropDown: false,
 			})
@@ -202,8 +194,8 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.find(projectOptionsSelector).trigger('click')
 			await wrapper.vm.$nextTick()
 			await wrapper.vm.$nextTick()
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects/2/work-packages/form', formValidationBody)
-			expect(assigneeAxiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects/2/available-assignees')
+			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
+			expect(assigneeAxiosSpy).toHaveBeenCalledWith(util.format(availableAssigneesUrl, 2))
 			await wrapper.vm.$nextTick()
 			await wrapper.find(typeInputFieldSelector).setValue(' ')
 			await wrapper.vm.$nextTick()
@@ -325,10 +317,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				},
 			]
 			const axiosSpy = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationTypeChanged,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationTypeChanged))
 			wrapper = mountWrapper(true, {
 				allowedStatues: availableStatusBefore,
 				allowedTypes,
@@ -348,7 +337,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.find(typeInputFieldSelector).setValue('Milest')
 			await wrapper.find(typeOptionsSelector).trigger('click')
 			await wrapper.vm.$nextTick()
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects/2/work-packages/form', formValidationBody)
+			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
 			// one thing to note is the statues in snapshot should not match the statuses defined in variable availableStatusBefore
 			await wrapper.find(statusInputFieldSelector).setValue(' ')
 			expect(wrapper.find(statusSelectSelector)).toMatchSnapshot()
@@ -412,15 +401,9 @@ describe('CreateWorkPackageModal.vue', () => {
 				},
 			}
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpy = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 422,
-					data: expectedErrorDetails.data,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(expectedErrorDetails.data, 422))
 			wrapper = mountWrapper(true, {
 				status: {
 					label: 'New',
@@ -431,7 +414,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			})
 			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
 			await wrapper.vm.$nextTick()
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/create/work-packages', createWorkpackageBody)
+			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
 			const error = wrapper.find(validationErrorSelector)
 			expect(error.isVisible()).toBe(true)
 			expect(error.text()).toBe(expectedErrorDetails.errorMessage)
@@ -467,15 +450,9 @@ describe('CreateWorkPackageModal.vue', () => {
 				},
 			}
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpy = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 422,
-					data: "{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}",
-				}))
+				.mockImplementationOnce(() => sendOCSResponse("{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}", 422))
 			wrapper = mountWrapper(true, {
 				status: {
 					label: 'New',
@@ -483,7 +460,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			})
 			await wrapper.find(createWorkpackageButtonSelector).trigger('click')
 			await wrapper.vm.$nextTick()
-			expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/create/work-packages', createWorkpackageBody)
+			expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkpackageBody)
 			const projectError = wrapper.find(validationErrorProjectSelector)
 			expect(projectError.isVisible()).toBe(true)
 			expect(projectError.text()).toBe("Project can't be blank.")
@@ -494,20 +471,11 @@ describe('CreateWorkPackageModal.vue', () => {
 
 		it('should not change description template once edited (changed)', async () => {
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationProjectSelected,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectAssignees,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -558,20 +526,11 @@ describe('CreateWorkPackageModal.vue', () => {
 
 		it('should change description when template is not edited or (changed)', async () => {
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationProjectSelected,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectAssignees,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -614,20 +573,11 @@ describe('CreateWorkPackageModal.vue', () => {
 
 		it('should empty the type if that type is not available for the selected project', async () => {
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationProjectSelected,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectAssignees,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -656,20 +606,11 @@ describe('CreateWorkPackageModal.vue', () => {
 
 		it('should empty the status if this status is not available for the selected type', async () => {
 			jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectsResponse,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpyWorkPackageValidationForm = jest.spyOn(axios, 'post')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: workpackageFormValidationProjectSelected,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
-				.mockImplementationOnce(() => Promise.resolve({
-					status: 200,
-					data: availableProjectAssignees,
-				}))
+				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -734,15 +675,9 @@ describe('CreateWorkPackageModal.vue', () => {
 			},
 		}
 		jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({
-				status: 200,
-				data: availableProjectsResponse,
-			}))
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
-			.mockImplementationOnce(() => Promise.resolve({
-				status: 201,
-				data: workpackageCreatedResponse,
-			}))
+			.mockImplementationOnce(() => sendOCSResponse(workpackageCreatedResponse, 201))
 		wrapper = mountWrapper(true, {
 			project: {
 				self: {
@@ -775,7 +710,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		const emitSpy = jest.spyOn(wrapper.vm, '$emit')
 		await wrapper.find(createWorkpackageButtonSelector).trigger('click')
 		await wrapper.vm.$nextTick()
-		expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/create/work-packages', createWorkPackageBody)
+		expect(axiosSpy).toHaveBeenCalledWith(createWorkPackageUrl, createWorkPackageBody)
 		expect(emitSpy).toHaveBeenCalledWith('create-work-package', {
 			openProjectEventName: 'work_package_creation_success',
 			openProjectEventPayload: workpackageCreatedResponse,
@@ -816,15 +751,9 @@ describe('CreateWorkPackageModal.vue', () => {
 			},
 		]
 		jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({
-				status: 200,
-				data: availableProjectsResponse,
-			}))
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
-			.mockImplementationOnce(() => Promise.resolve({
-				status: 200,
-				data: requiredTypeResponse,
-			}))
+			.mockImplementationOnce(() => sendOCSResponse(requiredTypeResponse))
 
 		wrapper = mountWrapper(true, {
 			project: {
@@ -850,7 +779,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		await wrapper.find(typeInputFieldSelector).setValue('Required')
 		await wrapper.find(typeOptionsSelector).trigger('click')
 		await wrapper.vm.$nextTick()
-		expect(axiosSpy).toHaveBeenCalledWith('http://localhost/apps/integration_openproject/projects/2/work-packages/form', bodyFormValidation)
+		expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), bodyFormValidation)
 		const typeError = wrapper.find(validationErrorTypeSelector)
 		expect(typeError.isVisible()).toBe(true)
 		expect(typeError.text()).toBe('This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}.')
@@ -872,10 +801,7 @@ describe('CreateWorkPackageModal.vue', () => {
 
 	it('should display an error when the project status is empty', async () => {
 		jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({
-				status: 200,
-				data: availableProjectsResponse,
-			}))
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 
 		wrapper = mountWrapper(true, {
 			project: {
@@ -912,14 +838,19 @@ describe('CreateWorkPackageModal.vue', () => {
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
 	})
 })
+
+function sendOCSResponse(data, status = 200) {
+	return Promise.resolve({
+		status,
+		data: { ocs: { data } },
+	})
+}
+
 function mountWrapper(showModal, data) {
 	return mount(CreateWorkPackageModal, {
 		localVue,
 		mocks: {
 			t: (app, msg) => msg,
-			generateUrl() {
-				return '/'
-			},
 		},
 		data: () => ({
 			...data,
