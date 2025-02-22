@@ -79,7 +79,7 @@ class Admin implements ISettings {
 
 		$adminConfigStatus = OpenProjectAPIService::isAdminConfigOk($this->config);
 
-		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
+		$this->initialStateService->provideInitialState('admin-settings-config', $adminConfig);
 		$this->initialStateService->provideInitialState('admin-config-status', $adminConfigStatus);
 
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');
