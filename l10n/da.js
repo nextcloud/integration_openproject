@@ -11,6 +11,7 @@ OC.L10N.register(
     "Description" : "Beskrivelse",
     "Create" : "Opret",
     "Mark as read" : "Marker som læst",
+    "Download and enable it" : "Download og aktiver det",
     "Connected accounts" : "Forbundne konti",
     "Reset" : "Nulstil",
     "Enable navigation link" : "Aktiver navigationslink",
