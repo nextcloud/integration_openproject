@@ -5,6 +5,7 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Errore durante il recupero del token di accesso OAuth",
     "Error getting OAuth refresh token" : "Errore durante il recupero del token di aggiornamento OAuth",
     "Error during OAuth exchanges" : "Errore nello scambio dati OAuth",
+    "Direct download error" : "Il file non è stato trovato",
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "OAuth access token refused" : "Token di accesso OAuth rifiutato",
     "Cancel" : "Annulla",
