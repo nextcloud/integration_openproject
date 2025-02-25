@@ -10,14 +10,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Changed
-- Add application's support for Nextcloud 31
+
+### Added
+
 - Add support for OIDC-based connection between Nextcloud and OpenProject
 - Support Nextcloud 32 [#758](https://github.com/nextcloud/integration_openproject/pull/758)
 - Show error if connection cannot be made to OpenProject [#756](https://github.com/nextcloud/integration_openproject/pull/756)
-- Correct encoding of the avatar url [#767](https://github.com/nextcloud/integration_openproject/pull/767)
 - Show errors when user_oidc app is not available [#753](https://github.com/nextcloud/integration_openproject/pull/753)
 - Show proper error message in the dashboard based on auth method [#770](https://github.com/nextcloud/integration_openproject/pull/770)
+
+## 2.8.0 - 2025-02-24
+
+### Added
+
+- Support Nextcloud 31
+- Correct encoding of the avatar url [#767](https://github.com/nextcloud/integration_openproject/pull/767)
 - Expose OpenProject API endpoints as OCS endpoints [#769](https://github.com/nextcloud/integration_openproject/pull/769)
 
 ## 2.7.2 - 2024-12-16
