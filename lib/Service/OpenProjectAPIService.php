@@ -67,6 +67,8 @@ class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
 	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '6.2.0';
+	public const NEXTCLOUD_HUB_PROVIDER = "Nextcloud Hub";
+
 	/**
 	 * @var string
 	 */
@@ -394,7 +396,9 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $options further options to be given to Guzzle see https://docs.guzzlephp.org/en/stable/request-options.html
 	 * @return array{error: string} | IResponse
 	 */
-	public function rawRequest(string $accessToken, string $openprojectUrl,
+	public function rawRequest(
+		string $accessToken,
+		string $openprojectUrl,
 		string $endPoint, array $params = [],
 		string $method = 'GET',
 		array $options = []
@@ -456,8 +460,12 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	public function request(string $userId,
-		string $endPoint, array $params = [], string $method = 'GET'): array {
+	public function request(
+		string $userId,
+		string $endPoint,
+		array $params = [],
+		string $method = 'GET'
+	): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
 			$accessToken = $this->getOIDCToken();
 		} else {
@@ -1666,7 +1674,7 @@ class OpenProjectAPIService {
 	}
 
 	public function getRegisteredOidcProviders(): array {
-		$oidcProviders = [];
+		$oidcProviders = [self::NEXTCLOUD_HUB_PROVIDER];
 		if ($this->isUserOIDCAppInstalledAndEnabled()) {
 			$providerMapper = new ProviderMapper($this->db);
 			foreach ($providerMapper->getProviders() as $provider) {
@@ -1696,6 +1704,11 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isOIDCUser(): bool {
+		$oidcProvider = $this->config->getAppValue(Application::APP_ID, 'oidc_provider');
+		if ($oidcProvider === self::NEXTCLOUD_HUB_PROVIDER) {
+			return true;
+		}
+
 		if (!class_exists(OIDCBackend::class)) {
 			return false;
 		}
