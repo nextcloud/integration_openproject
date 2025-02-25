@@ -86,11 +86,12 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported" :error="messagesFmt.appNotSupported('User_Oidc', state.user_oidc_minimum_version)" type="error" />
 					</div>
 				</div>
 				<div v-else>
@@ -140,6 +141,9 @@
 				:error-message="messages.appRequiredForOIDCMethod"
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.downloadAndEnableApp" />
+			<ErrorNote
+				v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
+				:error-title="messagesFmt.appNotSupported('user_oidc', state.user_oidc_minimum_version)" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
@@ -153,7 +157,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -178,7 +182,7 @@
 						v-model="state.authorization_settings.targeted_audience_client_id"
 						class="py-1"
 						is-required
-						:disabled="!isOIDCAppInstalledAndEnabled"
+						:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
 						:place-holder="messages.opClientId"
 						:label="messages.opClientId"
 						hint-text="You can get this value from Keycloak when you set-up define the client" />
@@ -548,10 +552,12 @@ import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
+import ErrorLabel from './ErrorLabel.vue'
 
 export default {
 	name: 'AdminSettings',
 	components: {
+		ErrorLabel,
 		NcSelect,
 		NcButton,
 		FieldValue,
