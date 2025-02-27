@@ -91,7 +91,10 @@
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported" :error="messagesFmt.appNotSupported('User_Oidc', state.user_oidc_minimum_version)" type="error" />
+						<ErrorLabel
+							v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
+							:error="`${messagesFmt.appNotSupported('User_Oidc')} ${messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)}`"
+							type="error" />
 					</div>
 				</div>
 				<div v-else>
@@ -143,7 +146,8 @@
 				:error-link-label="messages.downloadAndEnableApp" />
 			<ErrorNote
 				v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
-				:error-title="messagesFmt.appNotSupported('user_oidc', state.user_oidc_minimum_version)" />
+				:error-title="messagesFmt.appNotSupported('user_oidc')"
+				:error-message="messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
