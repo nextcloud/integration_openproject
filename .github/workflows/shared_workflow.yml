@@ -27,8 +27,6 @@ jobs:
           - nextcloudVersion: master
             phpVersion: 8.2
         include:
-          - nextcloudVersion: stable27
-            phpVersion: 8.0
           - nextcloudVersion: stable28
             phpVersion: 8.1
           - nextcloudVersion: stable29
@@ -214,10 +212,6 @@ jobs:
             phpVersionMajor: 8
             phpVersionMinor: 1
             database: pgsql
-          - nextcloudVersion: stable27
-            phpVersionMajor: 8
-            phpVersionMinor: 0
-            database: mysql
           - nextcloudVersion: stable28
             phpVersionMajor: 8
             phpVersionMinor: 1
