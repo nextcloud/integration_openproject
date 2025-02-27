@@ -32,7 +32,6 @@ jobs:
       - name: Create matrix
         id: create-matrix
         run: |
-          ls -al
           MATRIX=$(./.github/scripts/generate-matrix.sh "${{ inputs.nextcloud_versions }}" "${{ inputs.php_versions }}")
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
     outputs:
