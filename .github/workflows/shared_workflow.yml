@@ -2,36 +2,38 @@ on:
   workflow_call:
     inputs:
       branch:
+        required: true
         type: string
+      nextcloud_versions:
+        required: false
+        type: string
+        default: "28 29 30 31 master"
+      php_versions:
+        required: false
+        type: string
+        default: "8.1 8.2 8.3"
 
 name: CI
 
 jobs:
+  create-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create matrix
+        id: create-matrix
+        run: |
+          ls -al
+          MATRIX=$(./.github/scripts/generate-matrix.sh ${{ inputs.nextcloud_versions }} ${{ inputs.php_versions }})
+          echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
+
   unittest-linting:
     name: unit tests and linting
+    needs: create-matrix
+    if: ${{ success() }}
     strategy:
-      matrix:
-        nextcloudVersion: [ stable31, master ]
-        phpVersion: [ 8.1, 8.2, 8.3 ]
-        isReleaseBranch:
-          - ${{ startsWith(inputs.branch, 'release/') || startsWith(github.base_ref, 'release/') || startsWith(github.ref, 'refs/heads/release/') }}
-        # will be overridden by the include section
-        exclude:
-          - nextcloudVersion: master
-            isReleaseBranch: true
-          - nextcloudVersion: master
-            phpVersion: 8.1
-          - nextcloudVersion: master
-            phpVersion: 8.2
-        include:
-          - nextcloudVersion: stable27
-            phpVersion: 8.0
-          - nextcloudVersion: stable28
-            phpVersion: 8.1
-          - nextcloudVersion: stable29
-            phpVersion: 8.1
-          - nextcloudVersion: stable30
-            phpVersion: 8.2
+      matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -108,7 +110,7 @@ jobs:
       - name: JS Lint
         run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
-      - name: PHP & Vue Unit Tests
+      - name: install apps
         run: |
           git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
           mkdir -p server/apps/integration_openproject
@@ -116,6 +118,9 @@ jobs:
           cd server
           ./occ a:e groupfolders
           ./occ a:e integration_openproject
+
+      - name: PHP & Vue Unit Tests
+        run: |
           cd apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
