@@ -7,7 +7,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "28 29 30 31 master"
+        default: "27 28 29 30 31"
       php_versions:
         required: false
         type: string
@@ -19,11 +19,21 @@ jobs:
   create-matrix:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v3
+
       - name: Create matrix
         id: create-matrix
         run: |
           ls -al
-          MATRIX=$(./.github/scripts/generate-matrix.sh ${{ inputs.nextcloud_versions }} ${{ inputs.php_versions }})
+          MATRIX=$(./.github/scripts/generate-matrix.sh "${{ inputs.nextcloud_versions }}" "${{ inputs.php_versions }}")
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.create-matrix.outputs.matrix }}
