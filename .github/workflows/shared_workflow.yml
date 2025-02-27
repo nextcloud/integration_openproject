@@ -93,7 +93,7 @@ jobs:
       - name: Install PHP Dependencies
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+          if [ "${{matrix.phpVersion}}" == "8.0" ]; then
             # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
             sed -i 's/10.0.0-beta2/7.1/g' composer.json
             composer update
@@ -106,7 +106,7 @@ jobs:
       - name: PHP code analysis and linting
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+          if [ "${{matrix.phpVersion}}" == "8.0" ]; then
             # Ignoring the pact test for php 8.0
             sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
           fi
@@ -132,7 +132,7 @@ jobs:
         run: |
           cd apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
+          if [ "${{ matrix.phpVersion }}" == "8.0" ]; then
             make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
           else
             make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
@@ -320,7 +320,7 @@ jobs:
           NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
+          if [ "${{matrix.phpVersionMajor}}" == "8" ] && [ "${{matrix.phpVersionMinor}}" == "0" ]; then
             # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
             sed -i 's/10.0.0-beta2/7.1/g' composer.json
             composer update
