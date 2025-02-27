@@ -16,5 +16,6 @@ export const messages = {
 
 export const messagesFmt = {
 	appNotInstalled: (app) => t(APP_ID, 'The "{app}" app is not installed', { app }),
-	appNotSupported: (app, userOidcMinimumVersion) => t(APP_ID, '"{app}" app not supported. Minimum required version: "{userOidcMinimumVersion}"', { app, userOidcMinimumVersion }),
+	appNotSupported: (app) => t(APP_ID, '"{app}" app not supported.', { app }),
+	minimumVersionRequired: (minimumAppVersion) => t(APP_ID, 'This app requires a minimum version of "{minimumAppVersion}" for support', { minimumAppVersion }),
 }
