@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show error if connection cannot be made to OpenProject [#756](https://github.com/nextcloud/integration_openproject/pull/756)
 - Show errors when user_oidc app is not available [#753](https://github.com/nextcloud/integration_openproject/pull/753)
 - Show proper error message in the dashboard based on auth method [#770](https://github.com/nextcloud/integration_openproject/pull/770)
+- Drop application's support for Nextcloud 27 [#779](https://github.com/nextcloud/integration_openproject/pull/779)
 
 ## 2.8.0 - 2025-02-24
 
