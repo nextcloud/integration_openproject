@@ -15,6 +15,7 @@ if [ -z "$phpVersions" ]; then
     exit 1
 fi
 
+# latest stable version
 latestSupportedNCVersion=""
 for ncVersion in $nextcloudVersions; do
     if [ "$ncVersion" == "master" ]; then
@@ -84,6 +85,11 @@ for ncVersion in $nextcloudVersions; do
     elif [ "$ncVersion" != "$latestSupportedNCVersion" ]; then
         phpVersion="$defaultPhpVersion"
     fi
+
+    # add stable prefix
+    if [ "$ncVersion" != "master" ]; then
+        ncVersion="stable$ncVersion"
+    fi
     if [ -n "$phpVersion" ]; then
         phpVersionMajor=$(getphpMajorVersionVersion "$phpVersion")
         phpVersionMinor=$(getphpMinorVersionVersion "$phpVersion")
@@ -100,7 +106,7 @@ done
 
 # add extra db matrix
 if [ -n "$extraDb" ]; then
-    addMatrix "$latestSupportedNCVersion" "$defaultPhpVersion" "$defaultPhpMajorVersion" "$defaultPhpMinorVersion" "$extraDb"
+    addMatrix "stable$latestSupportedNCVersion" "$defaultPhpVersion" "$defaultPhpMajorVersion" "$defaultPhpMinorVersion" "$extraDb"
 fi
 
 # remove last comma
