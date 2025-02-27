@@ -91,42 +91,6 @@ class OauthServiceTest extends TestCase {
 				"encrypt"
 			],
 			[
-				"27.1.11.8",
-				"encrypt"
-			],
-			[
-				"27.1.12.0",
-				"calculateHMAC"
-			],
-			[
-				"27.1.1.0",
-				"encrypt"
-			],
-			[
-				"27.0.1.0",
-				"encrypt"
-			],
-			[
-				"27.0.1.1",
-				"encrypt"
-			],
-			[
-				"27.0.0.0",
-				null
-			],
-			[
-				"27.0.0.1",
-				null
-			],
-			[
-				"27.0.0.99",
-				null
-			],
-			[
-				"27.1.11.9",
-				"calculateHMAC"
-			],
-			[
 				"29.0.7.1",
 				"calculateHMAC"
 			]
