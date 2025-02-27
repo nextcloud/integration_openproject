@@ -130,7 +130,7 @@ jobs:
 
       - name: PHP & Vue Unit Tests
         run: |
-          cd apps/integration_openproject
+          cd server/apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{ matrix.phpVersion }}" == "8.0" ]; then
             make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
