@@ -45,8 +45,8 @@ defaultDb="mysql"
 MATRIX=""
 for ncVersion in $nextcloudVersions; do
     phpVersion=""
-    phpMajorVersion=""
-    phpMinorVersion=""
+    phpVersionMajor=""
+    phpVersionMinor=""
 
     # [INFO] Run only one job for older versions and master branch
     if [ "$ncVersion" == "27" ]; then
@@ -63,22 +63,22 @@ for ncVersion in $nextcloudVersions; do
         phpVersion="$defaultPhpVersion"
     fi
     if [ -n "$phpVersion" ]; then
-        phpMajorVersion=$(getphpMajorVersionVersion "$phpVersion")
-        phpMinorVersion=$(getphpMinorVersionVersion "$phpVersion")
-        MATRIX="$MATRIX{\"nextcloudVersion\": \"$ncVersion\", \"phpVersion\": \"$phpVersion\", \"phpMajorVersion\": \"$phpMajorVersion\", \"phpMinorVersion\": \"$phpMinorVersion\", \"database\": \"$defaultDb\"},"
+        phpVersionMajor=$(getphpMajorVersionVersion "$phpVersion")
+        phpVersionMinor=$(getphpMinorVersionVersion "$phpVersion")
+        MATRIX="$MATRIX{\"nextcloudVersion\": \"$ncVersion\", \"phpVersion\": \"$phpVersion\", \"phpVersionMajor\": \"$phpVersionMajor\", \"phpVersionMinor\": \"$phpVersionMinor\", \"database\": \"$defaultDb\"},"
         continue
     fi
 
     # [INFO] Run all combination for the latest NC version
     for phpVersion in $phpVersions; do
-        MATRIX="$MATRIX{\"nextcloudVersion\": \"$ncVersion\", \"phpVersion\": \"$phpVersion\", \"phpMajorVersion\": \"$phpMajorVersion\", \"phpMinorVersion\": \"$phpMinorVersion\", \"database\": \"$defaultDb\"},"
+        MATRIX="$MATRIX{\"nextcloudVersion\": \"$ncVersion\", \"phpVersion\": \"$phpVersion\", \"phpVersionMajor\": \"$phpVersionMajor\", \"phpVersionMinor\": \"$phpVersionMinor\", \"database\": \"$defaultDb\"},"
     done
 
 done
 
 # add extra db matrix
 if [ -n "$extraDb" ]; then
-    MATRIX="$MATRIX{\"nextcloudVersion\": \"$ncVersion\", \"phpVersion\": \"$defaultPhpVersion\", \"phpMajorVersion\": \"$defaultphpMajorVersion\", \"phpMinorVersion\": \"$defaultphpMinorVersion\", \"database\": \"$extraDb\"},"
+    MATRIX="$MATRIX{\"nextcloudVersion\": \"$latestSupportedNCVersion\", \"phpVersion\": \"$defaultPhpVersion\", \"phpVersionMajor\": \"$defaultphpMajorVersion\", \"phpVersionMinor\": \"$defaultphpMinorVersion\", \"database\": \"$extraDb\"},"
 fi
 
 # remove last comma
