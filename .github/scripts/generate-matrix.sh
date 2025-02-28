@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# [HELP]
 # Available envs:
 # - NEXTCLOUD_VERSIONS          space separated list of nextcloud versions (e.g. "30 31 master")
 # - PHP_VERSIONS                space separated list of php versions (e.g. "8.1 8.2")
@@ -22,10 +23,36 @@ if [ -z "$PHP_VERSIONS" ]; then
     exit 1
 fi
 
+function getPhpMajorVersion() {
+    echo "$1" | cut -d'.' -f1
+}
+
+function getPhpMinorVersion() {
+    echo "$1" | cut -d'.' -f2
+}
+
+function checkPHPVersionFormat() {
+    local phpVersion="$1"
+    if ! [[ "$phpVersion" =~ ^[0-9]+\.[0-9]+ ]]; then
+        echo "[ERR] Invalid PHP version: '$phpVersion'. Provide at least major and minor version: <major>.<minor>"
+        exit 1
+    fi
+}
+
+function parsePHPVersion() {
+    local phpVersion="$1"
+    local phpVersionMajor
+    local phpVersionMinor
+    phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
+    phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
+    echo "$phpVersionMajor.$phpVersionMinor"
+}
+
 # Default values
 defaultPhpVersion="8.2"
 if [ -n "$DEFAULT_PHP_VERSION" ]; then
-    defaultPhpVersion="$DEFAULT_PHP_VERSION"
+    checkPHPVersionFormat "$DEFAULT_PHP_VERSION"
+    defaultPhpVersion=$(parsePHPVersion "$DEFAULT_PHP_VERSION")
 fi
 defaultPhpMajorVersion=$(getPhpMajorVersion "$defaultPhpVersion")
 defaultPhpMinorVersion=$(getPhpMinorVersion "$defaultPhpVersion")
@@ -40,7 +67,7 @@ if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
 else
     # determine latest stable version from the list
     for ncVersion in $nextcloudVersions; do
-        if [ "$ncVersion" == "master" ]; then
+        if [ "$ncVersion" = "master" ]; then
             continue
         fi
         if [ -z "$latestStableNCVersion" ]; then
@@ -52,14 +79,6 @@ else
         fi
     done
 fi
-
-function getPhpMajorVersion() {
-    echo "$1" | cut -d'.' -f1
-}
-
-function getPhpMinorVersion() {
-    echo "$1" | cut -d'.' -f2
-}
 
 MATRIX=""
 function addMatrix() {
@@ -84,20 +103,33 @@ function addMatrix() {
 #    - 31 8.2 mysql
 #    - master 8.3 mysql
 for ncVersion in $nextcloudVersions; do
+    # [INFO] Run all combination for the latest stable NC version
+    if [ "$ncVersion" = "$latestStableNCVersion" ]; then
+        for phpVersion in $phpVersions; do
+            checkPHPVersionFormat "$phpVersion"
+            phpVersion=$(parsePHPVersion "$phpVersion")
+            echo "$phpVersion"
+            phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
+            phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
+            addMatrix "stable$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
+        done
+        continue
+    fi
+
     phpVersion=""
     phpVersionMajor=""
     phpVersionMinor=""
 
     # [INFO] Run only one job for older versions and master branch
-    if [ "$ncVersion" == "27" ]; then
+    if [ "$ncVersion" = "27" ]; then
         phpVersion="8.0"
-    elif [ "$ncVersion" == "28" ]; then
+    elif [ "$ncVersion" = "28" ]; then
         phpVersion="8.1"
-    elif [ "$ncVersion" == "29" ]; then
+    elif [ "$ncVersion" = "29" ]; then
         phpVersion="8.1"
-    elif [ "$ncVersion" == "30" ]; then
+    elif [ "$ncVersion" = "30" ]; then
         phpVersion="8.2"
-    elif [ "$ncVersion" == "master" ]; then
+    elif [ "$ncVersion" = "master" ]; then
         phpVersion="8.3"
     elif [ "$ncVersion" != "$latestStableNCVersion" ]; then
         phpVersion="$defaultPhpVersion"
@@ -111,16 +143,7 @@ for ncVersion in $nextcloudVersions; do
         phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
         phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
         addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
-        continue
     fi
-
-    # [INFO] Run all combination for the latest stable NC version
-    for phpVersion in $phpVersions; do
-        phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
-        phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
-        addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
-    done
-
 done
 
 # add extra db matrix
