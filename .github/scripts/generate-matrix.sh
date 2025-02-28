@@ -69,8 +69,14 @@ fi
 latestStableNCVersion=""
 if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
     latestStableNCVersion="$LATEST_STABLE_NC_VERSION"
+    # add stable branch prefix for stable versions
+    # e.g. 30 -> stable30
+    if [[ "$latestStableNCVersion" =~ ^[0-9]+$ ]]; then
+        latestStableNCVersion="stable$latestStableNCVersion"
+    fi
 else
     # determine latest stable version from the list
+    # determines from the list of provided major version numbers
     for ncVersion in $nextcloudVersions; do
         if ! [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
             continue
@@ -83,6 +89,7 @@ else
             latestStableNCVersion=$ncVersion
         fi
     done
+    latestStableNCVersion="stable$latestStableNCVersion"
 fi
 
 MATRIX=""
@@ -108,6 +115,12 @@ function addMatrix() {
 #    - 31 8.2 mysql
 #    - master 8.3 mysql
 for ncVersion in $nextcloudVersions; do
+    # add stable branch prefix for stable versions
+    # e.g. 30 -> stable30
+    if [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
+        ncVersion="stable$ncVersion"
+    fi
+
     # [INFO] Run all combination for the latest stable NC version
     if [ "$ncVersion" = "$latestStableNCVersion" ]; then
         for phpVersion in $phpVersions; do
@@ -115,7 +128,7 @@ for ncVersion in $nextcloudVersions; do
             phpVersion=$(parsePHPVersion "$phpVersion")
             phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
             phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
-            addMatrix "stable$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
+            addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
         done
         continue
     fi
@@ -125,24 +138,20 @@ for ncVersion in $nextcloudVersions; do
     phpVersionMinor=""
 
     # [INFO] Run only one job for older versions and master branch
-    if [ "$ncVersion" = "27" ]; then
+    if [ "$ncVersion" = "stable27" ]; then
         phpVersion="8.0"
-    elif [ "$ncVersion" = "28" ]; then
+    elif [ "$ncVersion" = "stable28" ]; then
         phpVersion="8.1"
-    elif [ "$ncVersion" = "29" ]; then
+    elif [ "$ncVersion" = "stable29" ]; then
         phpVersion="8.1"
-    elif [ "$ncVersion" = "30" ]; then
+    elif [ "$ncVersion" = "stable30" ]; then
         phpVersion="8.2"
     elif [ "$ncVersion" = "master" ]; then
         phpVersion="8.3"
-    elif [ "$ncVersion" != "$latestStableNCVersion" ]; then
+    else
         phpVersion="$defaultPhpVersion"
     fi
 
-    # add stable branch prefix for stable versions
-    if [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
-        ncVersion="stable$ncVersion"
-    fi
     if [ -n "$phpVersion" ]; then
         phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
         phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
