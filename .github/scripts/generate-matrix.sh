@@ -4,7 +4,12 @@ set -e
 # [HELP]
 # Available envs:
 # - NEXTCLOUD_VERSIONS          space separated list of nextcloud versions (e.g. "30 31 master")
+#                               NOTE:
+#                                   - Provide only the major version for stable releases (e.g. "31")
+#                                   - You can also provide any NC server branch (e.g. "master")
 # - PHP_VERSIONS                space separated list of php versions (e.g. "8.1 8.2")
+#                               NOTE:
+#                                   - Provide at least major and minor version in the format: <major>.<minor>
 # - DEFAULT_PHP_VERSION         default php version (e.g. "8.2")
 # - DEFAULT_DATABASE            default database (e.g. "mysql")
 # - EXTRA_DATABASES             space separated list of extra databases (e.g. "postgres")
@@ -67,7 +72,7 @@ if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
 else
     # determine latest stable version from the list
     for ncVersion in $nextcloudVersions; do
-        if [ "$ncVersion" = "master" ]; then
+        if ! [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
             continue
         fi
         if [ -z "$latestStableNCVersion" ]; then
@@ -108,7 +113,6 @@ for ncVersion in $nextcloudVersions; do
         for phpVersion in $phpVersions; do
             checkPHPVersionFormat "$phpVersion"
             phpVersion=$(parsePHPVersion "$phpVersion")
-            echo "$phpVersion"
             phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
             phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
             addMatrix "stable$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
@@ -135,8 +139,8 @@ for ncVersion in $nextcloudVersions; do
         phpVersion="$defaultPhpVersion"
     fi
 
-    # add stable prefix
-    if [ "$ncVersion" != "master" ]; then
+    # add stable branch prefix for stable versions
+    if [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
         ncVersion="stable$ncVersion"
     fi
     if [ -n "$phpVersion" ]; then
