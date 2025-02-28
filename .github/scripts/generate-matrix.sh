@@ -30,11 +30,11 @@ for ncVersion in $nextcloudVersions; do
     fi
 done
 
-function getphpMajorVersionVersion() {
+function getPhpMajorVersion() {
     echo "$1" | cut -d'.' -f1
 }
 
-function getphpMinorVersionVersion() {
+function getPhpMinorVersion() {
     echo "$1" | cut -d'.' -f2
 }
 
@@ -50,8 +50,8 @@ function addMatrix() {
 
 # Defaults
 defaultPhpVersion="8.2"
-defaultPhpMajorVersion=$(getphpMajorVersionVersion "$defaultPhpVersion")
-defaultPhpMinorVersion=$(getphpMinorVersionVersion "$defaultPhpVersion")
+defaultPhpMajorVersion=$(getPhpMajorVersion "$defaultPhpVersion")
+defaultPhpMinorVersion=$(getPhpMinorVersion "$defaultPhpVersion")
 defaultDb="mysql"
 
 # [NOTE]
@@ -91,16 +91,16 @@ for ncVersion in $nextcloudVersions; do
         ncVersion="stable$ncVersion"
     fi
     if [ -n "$phpVersion" ]; then
-        phpVersionMajor=$(getphpMajorVersionVersion "$phpVersion")
-        phpVersionMinor=$(getphpMinorVersionVersion "$phpVersion")
+        phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
+        phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
         addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDb"
         continue
     fi
 
     # [INFO] Run all combination for the latest NC version
     for phpVersion in $phpVersions; do
-        phpVersionMajor=$(getphpMajorVersionVersion "$phpVersion")
-        phpVersionMinor=$(getphpMinorVersionVersion "$phpVersion")
+        phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
+        phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
         addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDb"
     done
 
