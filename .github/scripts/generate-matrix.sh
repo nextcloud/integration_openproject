@@ -153,6 +153,9 @@ done
 # add extra db matrix
 # matrix for extra databases will use default php version and latest supported NC version
 for extraDatabase in $extraDatabases; do
+    if [ "$extraDatabase" = "$defaultDatabase" ]; then
+        continue
+    fi
     addMatrix "$latestStableNCVersion" "$defaultPhpVersion" "$defaultPhpMajorVersion" "$defaultPhpMinorVersion" "$extraDatabase"
 done
 
