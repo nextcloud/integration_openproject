@@ -99,6 +99,8 @@ for ncVersion in $nextcloudVersions; do
 
     # [INFO] Run all combination for the latest NC version
     for phpVersion in $phpVersions; do
+        phpVersionMajor=$(getphpMajorVersionVersion "$phpVersion")
+        phpVersionMinor=$(getphpMinorVersionVersion "$phpVersion")
         addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDb"
     done
 
