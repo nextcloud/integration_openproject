@@ -76,8 +76,14 @@ if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
     fi
 else
     # determine latest stable version from the list
-    # determines from the list of provided major version numbers
+    # this only takes into account the major version number and stable branches
+    # e.g. 30, stable30
     for ncVersion in $nextcloudVersions; do
+        # parse the major version number from stable branch
+        # e.g. stable30 -> 30
+        if [[ "$ncVersion" =~ ^stable[0-9]+$ ]]; then
+            ncVersion=${ncVersion//stable/}
+        fi
         if ! [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
             continue
         fi
