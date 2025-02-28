@@ -31,8 +31,12 @@ jobs:
 
       - name: Create matrix
         id: create-matrix
+        env:
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
+          DEFAULT_PHP_VERSION: "8.2"
         run: |
-          MATRIX=$(./.github/scripts/generate-matrix.sh "${{ inputs.nextcloud_versions }}" "${{ inputs.php_versions }}")
+          MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.create-matrix.outputs.matrix }}
@@ -212,8 +216,14 @@ jobs:
 
       - name: Create matrix
         id: create-matrix
+        env:
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
+          DEFAULT_PHP_VERSION: "8.2"
+          DEFAULT_DATABASE: "mysql"
+          EXTRA_DATABASES: "pgsql"
         run: |
-          MATRIX=$(./.github/scripts/generate-matrix.sh "${{ inputs.nextcloud_versions }}" "${{ inputs.php_versions }}" "pgsql")
+          MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.create-matrix.outputs.matrix }}

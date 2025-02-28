@@ -1,34 +1,57 @@
 #!/bin/bash
 set -e
 
-nextcloudVersions=$1
-phpVersions=$2
-# can be removed once the phpunit and api test jobs are merged
-extraDb=$3
+# Available envs:
+# - NEXTCLOUD_VERSIONS          space separated list of nextcloud versions (e.g. "30 31 master")
+# - PHP_VERSIONS                space separated list of php versions (e.g. "8.1 8.2")
+# - DEFAULT_PHP_VERSION         default php version (e.g. "8.2")
+# - DEFAULT_DATABASE            default database (e.g. "mysql")
+# - EXTRA_DATABASES             space separated list of extra databases (e.g. "postgres")
+# - LATEST_STABLE_NC_VERSION    latest stable nextcloud version (e.g. "31")
 
-if [ -z "$nextcloudVersions" ]; then
-    echo "Missing nextcloud versions argument. Must be a first argument"
+nextcloudVersions=$NEXTCLOUD_VERSIONS
+phpVersions=$PHP_VERSIONS
+extraDatabases=$EXTRA_DATABASES
+
+if [ -z "$NEXTCLOUD_VERSIONS" ]; then
+    echo "Missing nextcloud versions. Provide space separated list using 'NEXTCLOUD_VERSIONS' env."
     exit 1
 fi
-if [ -z "$phpVersions" ]; then
-    echo "Missing php versions argument. Must be a second argument"
+if [ -z "$PHP_VERSIONS" ]; then
+    echo "Missing php versions. Provide space separated list using 'PHP_VERSIONS' env."
     exit 1
 fi
 
-# latest stable version
-latestSupportedNCVersion=""
-for ncVersion in $nextcloudVersions; do
-    if [ "$ncVersion" == "master" ]; then
-        continue
-    fi
-    if [ -z "$latestSupportedNCVersion" ]; then
-        latestSupportedNCVersion=$ncVersion
-        continue
-    fi
-    if [ "$ncVersion" -gt "$latestSupportedNCVersion" ]; then
-        latestSupportedNCVersion=$ncVersion
-    fi
-done
+# Default values
+defaultPhpVersion="8.2"
+if [ -n "$DEFAULT_PHP_VERSION" ]; then
+    defaultPhpVersion="$DEFAULT_PHP_VERSION"
+fi
+defaultPhpMajorVersion=$(getPhpMajorVersion "$defaultPhpVersion")
+defaultPhpMinorVersion=$(getPhpMinorVersion "$defaultPhpVersion")
+defaultDatabase="mysql"
+if [ -n "$DEFAULT_DATABASE" ]; then
+    defaultDatabase="$DEFAULT_DATABASE"
+fi
+
+latestStableNCVersion=""
+if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
+    latestStableNCVersion="$LATEST_STABLE_NC_VERSION"
+else
+    # determine latest stable version from the list
+    for ncVersion in $nextcloudVersions; do
+        if [ "$ncVersion" == "master" ]; then
+            continue
+        fi
+        if [ -z "$latestStableNCVersion" ]; then
+            latestStableNCVersion=$ncVersion
+            continue
+        fi
+        if [ "$ncVersion" -gt "$latestStableNCVersion" ]; then
+            latestStableNCVersion=$ncVersion
+        fi
+    done
+fi
 
 function getPhpMajorVersion() {
     echo "$1" | cut -d'.' -f1
@@ -48,16 +71,10 @@ function addMatrix() {
     MATRIX="$MATRIX{\"nextcloudVersion\": \"$nextcloudVersion\", \"phpVersion\": \"$phpVersion\", \"phpVersionMajor\": \"$phpVersionMajor\", \"phpVersionMinor\": \"$phpVersionMinor\", \"database\": \"$database\"},"
 }
 
-# Defaults
-defaultPhpVersion="8.2"
-defaultPhpMajorVersion=$(getPhpMajorVersion "$defaultPhpVersion")
-defaultPhpMinorVersion=$(getPhpMinorVersion "$defaultPhpVersion")
-defaultDb="mysql"
-
 # [NOTE]
 # This generates single job for the older nextcloud version
 #   with corresponding php version and mysql database.
-# And generates all combination for the latest nextcloud version
+# And generates all combination for the latest stable nextcloud version
 #   with all php versions and mysql database
 # Example:
 #    nextcloudVersions="30 31 master" and phpVersions="8.1 8.2"
@@ -82,7 +99,7 @@ for ncVersion in $nextcloudVersions; do
         phpVersion="8.2"
     elif [ "$ncVersion" == "master" ]; then
         phpVersion="8.3"
-    elif [ "$ncVersion" != "$latestSupportedNCVersion" ]; then
+    elif [ "$ncVersion" != "$latestStableNCVersion" ]; then
         phpVersion="$defaultPhpVersion"
     fi
 
@@ -93,23 +110,24 @@ for ncVersion in $nextcloudVersions; do
     if [ -n "$phpVersion" ]; then
         phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
         phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
-        addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDb"
+        addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
         continue
     fi
 
-    # [INFO] Run all combination for the latest NC version
+    # [INFO] Run all combination for the latest stable NC version
     for phpVersion in $phpVersions; do
         phpVersionMajor=$(getPhpMajorVersion "$phpVersion")
         phpVersionMinor=$(getPhpMinorVersion "$phpVersion")
-        addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDb"
+        addMatrix "$ncVersion" "$phpVersion" "$phpVersionMajor" "$phpVersionMinor" "$defaultDatabase"
     done
 
 done
 
 # add extra db matrix
-if [ -n "$extraDb" ]; then
-    addMatrix "stable$latestSupportedNCVersion" "$defaultPhpVersion" "$defaultPhpMajorVersion" "$defaultPhpMinorVersion" "$extraDb"
-fi
+# matrix for extra databases will use default php version and latest supported NC version
+for extraDatabase in $extraDatabases; do
+    addMatrix "$latestStableNCVersion" "$defaultPhpVersion" "$defaultPhpMajorVersion" "$defaultPhpMinorVersion" "$extraDatabase"
+done
 
 # remove last comma
 MATRIX=${MATRIX%?}
