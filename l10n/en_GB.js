@@ -20,6 +20,13 @@ OC.L10N.register(
     "Administration > File storages" : "Administration > File storages",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copy the following values back into the OpenProject {htmlLink} as an Administrator.",
     "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.",
+    "Admin Audit" : "Admin Audit",
+    "documentation" : "documentation",
+    "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.",
+    "Please read our guide on {htmlLink}." : "Please read our guide on {htmlLink}.",
+    "User OIDC" : "User OIDC",
+    "You can configure OIDC providers in the {htmlLink}." : "You can configure OIDC providers in the {htmlLink}.",
+    "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname",
     "URL is invalid" : "URL is invalid",
     "The URL should have the form \"https://openproject.org\"" : "The URL should have the form \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs",
@@ -181,6 +188,7 @@ OC.L10N.register(
     "No OpenProject detected at the URL" : "No OpenProject detected at the URL",
     "Please introduce your OpenProject host name" : "Please introduce your OpenProject host name",
     "Reset" : "Reset",
+    "Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator." : "Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator.",
     "Enable notifications for activity in my work packages" : "Enable notifications for activity in my work packages",
     "OpenProject integration" : "OpenProject integration",
     "Work package linked successfully!" : "Work package linked successfully!",
@@ -193,6 +201,7 @@ OC.L10N.register(
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders.",
     "Reset OpenProject Integration" : "Reset OpenProject Integration",
-    "Please link a project to this Nextcloud storage" : "Please link a project to this Nextcloud storage"
+    "Please link a project to this Nextcloud storage" : "Please link a project to this Nextcloud storage",
+    "Download and enable it here" : "Download and enable it here"
 },
 "nplurals=2; plural=(n != 1);");
