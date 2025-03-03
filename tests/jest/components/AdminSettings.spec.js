@@ -890,10 +890,21 @@ describe('AdminSettings.vue', () => {
 				expect(openIDProviderDisabled.isVisible()).toBe(true)
 			})
 
-			it('should not disable "OpenID identity provider" radio button for user_oidc app installed', async () => {
+			it('should disable "OpenID identity provider" radio button for unsupported user_oidc app installed', async () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: true,
+						user_oidc_supported: false,
+					},
+				})
+				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(true)
+			})
+
+			it('should not disable "OpenID identity provider" radio button for supported user_oidc app installed', async () => {
+				await wrapper.setData({
+					state: {
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
 					},
 				})
 				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(false)
@@ -915,10 +926,11 @@ describe('AdminSettings.vue', () => {
 				expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
 			})
 
-			it('should show authorization settings form for "oidc" method selected', async () => {
+			it('should show authorization settings form for "oidc" method selected for the supported OIDC app', async () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: true,
+						user_oidc_supported: true,
 						authorization_settings: {
 							oidc_provider: null,
 							targeted_audience_client_id: null,
@@ -984,10 +996,11 @@ describe('AdminSettings.vue', () => {
 					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.VIEW)
 				})
 
-				it('should enable "save" button when OIDC auth is selected', async () => {
+				it('should enable "save" button when OIDC auth is selected and the supported OIDC app is installed ', async () => {
 					await wrapper.setData({
 						state: {
 							user_oidc_enabled: true,
+							user_oidc_supported: true,
 						},
 					})
 					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
@@ -1163,9 +1176,9 @@ describe('AdminSettings.vue', () => {
 				},
 			}
 
-			describe('user_oidc app enabled', () => {
+			describe('supported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true } })
+					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: true } })
 				})
 				it('should show configured OIDC authorization', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1183,9 +1196,34 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('user_oidc app disabled', () => {
+			describe('Unsupported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false } })
+					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false } })
+				})
+				it('should show field values and hide authorization settings form', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
+				})
+				it('should disable reset button', () => {
+					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
+					expect(resetButton.attributes().disabled).toBe(undefined)
+				})
+				it('should show app unsupported error messages', () => {
+					const formHeader = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(formHeader.exists()).toBe(true)
+					// expect(formHeader.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
+					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
+				})
+			})
+
+			describe('supported user_oidc app disabled', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false, user_oidc_supported: true } })
 				})
 				it('should show field values and hide authorization settings form', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1210,7 +1248,7 @@ describe('AdminSettings.vue', () => {
 			})
 		})
 
-		describe('edit mode form, complete admin configuration', () => {
+		describe('edit mode form, complete admin configuration with supported user_oidc app', () => {
 			let wrapper, authorizationSettingsForm, authSettingsResetButton
 			beforeEach(async () => {
 				axios.put.mockReset()
@@ -1224,6 +1262,7 @@ describe('AdminSettings.vue', () => {
 							targeted_audience_client_id: 'some-target-aud-client-id',
 						},
 						user_oidc_enabled: true,
+						user_oidc_supported: true,
 					},
 				})
 				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1279,9 +1318,9 @@ describe('AdminSettings.vue', () => {
 		describe('edit mode, incomplete admin configuration', () => {
 			let wrapper
 
-			describe('user_oidc app enabled', () => {
+			describe('Supported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true } })
+					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true, user_oidc_supported: true } })
 				})
 
 				it('should show authorization settings in edit mode without errors', () => {
@@ -1342,6 +1381,7 @@ describe('AdminSettings.vue', () => {
 							state: {
 								...state,
 								user_oidc_enabled: true,
+								user_oidc_supported: true,
 							},
 						 })
 						const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1394,6 +1434,33 @@ describe('AdminSettings.vue', () => {
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
 					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+				})
+				it('should disable form elements', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
+					const authProviderSelect = wrapper.find(authProviderSelector)
+					const authClientInput = wrapper.find(authClientSelector)
+
+					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+					expect(authProviderSelect.attributes().disabled).toBe('true')
+					expect(authClientInput.attributes().disabled).toBe('true')
+				})
+			})
+
+			describe('Unsupported user_oidc app is enable', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true, user_oidc_supported: false } })
+				})
+
+				it('should show app unsupported error messages', () => {
+					const formHeaderError = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(formHeaderError.exists()).toBe(true)
+					// expect(formHeaderError.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
+					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
 				})
 				it('should disable form elements', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
