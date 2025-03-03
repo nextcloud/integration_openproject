@@ -86,14 +86,14 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
+							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
-							v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
-							:error="`${messagesFmt.appNotSupported('User_Oidc')} ${messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)}`"
+							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
+							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`"
 							type="error" />
 					</div>
 				</div>
@@ -137,7 +137,7 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported" />
+				:has-error="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported" />
 			<ErrorNote
 				v-if="!isOIDCAppInstalledAndEnabled"
 				:error-title="messagesFmt.appNotInstalled('user_oidc')"
@@ -145,9 +145,9 @@
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.downloadAndEnableApp" />
 			<ErrorNote
-				v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
+				v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
 				:error-title="messagesFmt.appNotSupported('user_oidc')"
-				:error-message="messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)"
+				:error-message="messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)"
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.downloadAndEnableApp" />
 			<div class="authorization-settings--content">
@@ -163,7 +163,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
-							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
+							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -188,7 +188,7 @@
 						v-model="state.authorization_settings.targeted_audience_client_id"
 						class="py-1"
 						is-required
-						:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
+						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 						:place-holder="messages.opClientId"
 						:label="messages.opClientId"
 						hint-text="You can get this value from Keycloak when you set-up define the client" />
@@ -196,7 +196,7 @@
 			</div>
 			<div class="form-actions">
 				<NcButton v-if="isAuthorizationSettingsInViewMode"
-					:disabled="!isOIDCAppInstalledAndEnabled"
+					:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 					data-test-id="reset-auth-settings-btn"
 					@click="setAuthorizationSettingInEditMode">
 					<template #icon>
@@ -806,6 +806,9 @@ export default {
 			const htmlLink = `<a class="link" href="" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'You can configure OIDC providers in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		getUserOidcMinimumVersion() {
+			return this.state.user_oidc_minimum_version
+		},
 		isIntegrationCompleteWithOauth2() {
 			return (this.isServerHostFormComplete
 				&& this.isAuthorizationMethodFormComplete
@@ -865,6 +868,9 @@ export default {
 		},
 		isOIDCAppInstalledAndEnabled() {
 			return this.state.user_oidc_enabled
+		},
+		isOIDCAppSupported() {
+			return this.state.user_oidc_supported
 		},
 	},
 	created() {

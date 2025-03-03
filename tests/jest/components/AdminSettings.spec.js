@@ -880,7 +880,7 @@ describe('AdminSettings.vue', () => {
 				axios.put.mockReset()
 				jest.clearAllMocks()
 			})
-			it('should disable "OpenID identity provider" radio button for user_oidc app not installed', async () => {
+			it('should disable "OpenID identity provider" radio button when an user_oidc app is not installed', async () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: false,
@@ -890,7 +890,7 @@ describe('AdminSettings.vue', () => {
 				expect(openIDProviderDisabled.isVisible()).toBe(true)
 			})
 
-			it('should disable "OpenID identity provider" radio button for unsupported user_oidc app installed', async () => {
+			it('should disable "OpenID identity provider" radio button when an  unsupported user_oidc app is installed', async () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: true,
@@ -1196,7 +1196,7 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('Unsupported user_oidc app enabled', () => {
+			describe('unsupported user_oidc app enabled', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false } })
 				})
@@ -1207,7 +1207,7 @@ describe('AdminSettings.vue', () => {
 				})
 				it('should disable reset button', () => {
 					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
-					expect(resetButton.attributes().disabled).toBe(undefined)
+					expect(resetButton.attributes().disabled).toBe('true')
 				})
 				it('should show app not supported error messages', () => {
 					const formHeader = wrapper.find(formHeaderSelector)
@@ -1448,12 +1448,12 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('Unsupported user_oidc app is enable', () => {
+			describe('unsupported user_oidc app is enable', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true, user_oidc_supported: false } })
 				})
 
-				it('should show app unsupported error messages', () => {
+				it('should show app not supported error messages', () => {
 					const formHeaderError = wrapper.find(formHeaderSelector)
 					const errorNote = wrapper.find(errorNoteSelector)
 
