@@ -24,7 +24,65 @@ Wrapper {
 }
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete user_oidc app disabled should show field values and hide authorization settings form 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings view mode form complete Unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    index="3"
+    iscomplete="true"
+    title="Authorization settings"
+  />
+   
+  <!---->
+   
+  <errornote-stub
+    errorlink=""
+    errorlinklabel=""
+    errormessage="This app requires a minimum version of "{minimumAppVersion}" for support"
+    errortitle=""{app}" app not supported."
+  />
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider"
+      value="some-oidc-provider"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OpenProject client ID"
+      value="some-target-aud-client-id"
+    />
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authorization settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue OIDC authorization settings view mode form complete supported user_oidc app disabled should show field values and hide authorization settings form 1`] = `
 <div
   class="authorization-settings"
 >
@@ -41,6 +99,8 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete u
     errormessage="This app is required to use the OIDC authorization method"
     errortitle="The "{app}" app is not installed"
   />
+   
+  <!---->
    
   <div
     class="authorization-settings--content"
@@ -82,7 +142,7 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete u
 </div>
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete user_oidc app enabled should show configured OIDC authorization 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings view mode form complete supported user_oidc app enabled should show configured OIDC authorization 1`] = `
 <div
   class="authorization-settings"
 >
@@ -91,6 +151,8 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete u
     iscomplete="true"
     title="Authorization settings"
   />
+   
+  <!---->
    
   <!---->
    
