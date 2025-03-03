@@ -1209,15 +1209,16 @@ describe('AdminSettings.vue', () => {
 					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
 					expect(resetButton.attributes().disabled).toBe(undefined)
 				})
-				it('should show app unsupported error messages', () => {
+				it('should show app not supported error messages', () => {
 					const formHeader = wrapper.find(formHeaderSelector)
 					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(formHeader.exists()).toBe(true)
-					// expect(formHeader.attributes().haserror).toBe(undefined)
+					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
 					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
 
@@ -1457,10 +1458,11 @@ describe('AdminSettings.vue', () => {
 					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(formHeaderError.exists()).toBe(true)
-					// expect(formHeaderError.attributes().haserror).toBe(undefined)
+					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
 					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 				it('should disable form elements', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)

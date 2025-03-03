@@ -137,7 +137,7 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!isOIDCAppInstalledAndEnabled" />
+				:has-error="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported" />
 			<ErrorNote
 				v-if="!isOIDCAppInstalledAndEnabled"
 				:error-title="messagesFmt.appNotInstalled('user_oidc')"
@@ -147,7 +147,9 @@
 			<ErrorNote
 				v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported"
 				:error-title="messagesFmt.appNotSupported('user_oidc')"
-				:error-message="messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)" />
+				:error-message="messagesFmt.minimumVersionRequired(state.user_oidc_minimum_version)"
+				:error-link="appLinks.user_oidc.installLink"
+				:error-link-label="messages.downloadAndEnableApp" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
