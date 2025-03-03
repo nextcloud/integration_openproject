@@ -24,65 +24,6 @@ Wrapper {
 }
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete Unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
-<div
-  class="authorization-settings"
->
-  <formheading-stub
-    haserror="true"
-    index="3"
-    iscomplete="true"
-    title="Authorization settings"
-  />
-   
-  <!---->
-   
-  <errornote-stub
-    errorlink="http://localhost/settings/apps/files/user_oidc"
-    errorlinklabel="Download and enable it"
-    errormessage="This app requires a minimum version of "{minimumAppVersion}" for support"
-    errortitle="The "{app}" app is not supported."
-  />
-   
-  <div
-    class="authorization-settings--content"
-  >
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OIDC Provider"
-      value="some-oidc-provider"
-    />
-     
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
-  </div>
-   
-  <div
-    class="form-actions"
-  >
-    <ncbutton-stub
-      alignment="center"
-      data-test-id="reset-auth-settings-btn"
-      nativetype="button"
-      type="secondary"
-    >
-      
-				Edit authorization settings
-			
-    </ncbutton-stub>
-     
-    <!---->
-     
-    <!---->
-  </div>
-</div>
-`;
-
 exports[`AdminSettings.vue OIDC authorization settings view mode form complete supported user_oidc app disabled should show field values and hide authorization settings form 1`] = `
 <div
   class="authorization-settings"
@@ -181,6 +122,66 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete s
     <ncbutton-stub
       alignment="center"
       data-test-id="reset-auth-settings-btn"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authorization settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue OIDC authorization settings view mode form complete unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    haserror="true"
+    index="3"
+    iscomplete="true"
+    title="Authorization settings"
+  />
+   
+  <!---->
+   
+  <errornote-stub
+    errorlink="http://localhost/settings/apps/files/user_oidc"
+    errorlinklabel="Download and enable it"
+    errormessage="Requires app version "{minimumAppVersion}" or later"
+    errortitle="The "{app}" app is not supported"
+  />
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider"
+      value="some-oidc-provider"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OpenProject client ID"
+      value="some-target-aud-client-id"
+    />
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      disabled="true"
       nativetype="button"
       type="secondary"
     >

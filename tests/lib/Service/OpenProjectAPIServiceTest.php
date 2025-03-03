@@ -4326,28 +4326,40 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function dataProviderForIsUserOIDCAppSupported(): array {
 		return [
-			'has installed supported OIDC apps and all classes exist' => [
-				'isInstalledAndEnabled' => true,
-				'isClassesExist' => true,
+			'has installed supported user_oidc apps and all classes exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
 				'version' => '6.2.0',
 				'expected' => true,
 			],
-			'has installed OIDC apps but one of the class does not exist' => [
-				'isInstalledAndEnabled' => true,
-				'isClassesExist' => false,
+			'has installed user_oidc apps but one of the class does not exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => false,
 				'version' => '6.2.0',
 				'expected' => false,
 			],
-			'has OIDC apps not installed' => [
-				'isInstalledAndEnabled' => false,
-				'isClassesExist' => true,
+			'has user_oidc apps not installed' => [
+				'appInstalledAndEnabled' => false,
+				'classesExist' => true,
 				'version' => '6.2.0',
 				'expected' => false,
 			],
-			'has installed unsupported OIDC apps version' => [
-				'isInstalledAndEnabled' => false,
-				'isClassesExist' => true,
+			'has installed unsupported user_oidc apps version' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
 				'version' => '6.1.2',
+				'expected' => false,
+			],
+			'has installed user_oidc apps higher version and all classes exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '6.3.1',
+				'expected' => true,
+			],
+			'has no user_oidc apps' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '0',
 				'expected' => false,
 			],
 		];
@@ -4356,9 +4368,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	/**
 	 * @dataProvider dataProviderForIsUserOIDCAppSupported
 	 */
-	public function testIsUserOIDCAppSupported($isInstalledAndEnabled, $isClassesExist, $version, $expected): void {
+	public function testIsUserOIDCAppSupported($appInstalledAndEnabled, $classesExist, $version, $expected): void {
 		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-		$mock->expects($this->any())->willReturn($isClassesExist);
+		$mock->expects($this->any())->willReturn($classesExist);
 
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('getAppVersion')->with('user_oidc')->willReturn($version);
@@ -4369,7 +4381,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 			],
 		);
-		$service->method('isUserOIDCAppInstalledAndEnabled')->willReturn($isInstalledAndEnabled);
+		$service->method('isUserOIDCAppInstalledAndEnabled')->willReturn($appInstalledAndEnabled);
 		$actualResult = $service->isUserOIDCAppSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
