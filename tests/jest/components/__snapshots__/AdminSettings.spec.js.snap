@@ -29,6 +29,7 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete U
   class="authorization-settings"
 >
   <formheading-stub
+    haserror="true"
     index="3"
     iscomplete="true"
     title="Authorization settings"
@@ -37,10 +38,10 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete U
   <!---->
    
   <errornote-stub
-    errorlink=""
-    errorlinklabel=""
+    errorlink="http://localhost/settings/apps/files/user_oidc"
+    errorlinklabel="Download and enable it"
     errormessage="This app requires a minimum version of "{minimumAppVersion}" for support"
-    errortitle=""{app}" app not supported."
+    errortitle="The "{app}" app is not supported."
   />
    
   <div
