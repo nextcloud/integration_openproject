@@ -729,6 +729,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$urlGeneratorMock
 			->method('getBaseUrl')
 			->willReturn($baseUrl);
+		$this->defaultConfigMock
+			->method('getSystemValueString')
+			->with($this->equalTo('overwrite.cli.url'))
+			->willReturn($baseUrl);
 
 		return new OpenProjectAPIService(
 			'integration_openproject',
@@ -3415,7 +3419,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 						'{"operator":"**","values":["search query"]}'.
 						'},'.
 						'{"storageUrl":'.
-						'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]},'.
+						'{"operator":"=","values":["https:\/\/nc.my-server.org"]},'.
 						'"userAction":'.
 						'{"operator":"&=","values":["file_links\/manage","work_packages\/create"]}}'.
 						']',
