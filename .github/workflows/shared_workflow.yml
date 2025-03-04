@@ -128,13 +128,15 @@ jobs:
 
       - name: install apps
         run: |
-          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
-          git clone --depth 1 https://github.com/nextcloud/user_oidc.git server/apps/user_oidc
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
+          git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} apps/groupfolders
           ./occ a:e groupfolders
-          ./occ a:e user_oidc
+          if [ "${{matrix.nextcloudVersion}}" != "stable27" ]; then
+            git clone --depth 1 https://github.com/nextcloud/user_oidc.git apps/user_oidc
+            ./occ a:e user_oidc
+          fi
           ./occ a:e integration_openproject
 
       - name: PHP & Vue Unit Tests
