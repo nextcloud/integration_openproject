@@ -19,6 +19,13 @@ OC.L10N.register(
     "Administration > File storages" : "Správa → Úložiště souborů",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Zkopírujte (jako správce) následující hodnoty zpět do OpenProject {htmlLink}.",
     "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Vytvoření uživatele, skupiny a skupinové složky pro OpenProject nebylo možné. Podívejte se do {htmlLink} ohledně toho, jak tuto situaci řešit.",
+    "Admin Audit" : "Audit správce",
+    "documentation" : "dokumentace",
+    "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Pro aktivaci auditních záznamů událostí pro napojení na OpenProject, zapněte aplikaci {htmlLinkForAdminAudit} a následujte kroky nastavení nastíněné v {htmlLinkForDocumentaion}.",
+    "Please read our guide on {htmlLink}." : "Přečtěte si příručku na {htmlLink}.",
+    "User OIDC" : "OIDC uživatele",
+    "You can configure OIDC providers in the {htmlLink}." : "Poskytovatele OIDC je možné nastavit v {htmlLink}.",
+    "Please introduce a valid OpenProject hostname" : "Zadejte platný název stroje, na kterém je provozována instance OpenProject",
     "URL is invalid" : "URL není platná",
     "The URL should have the form \"https://openproject.org\"" : "URL by měla mít podobu „https://openproject.org",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Na této URL neočekává spojení žádná platná instance OpenProject – podívejte se do záznamů událostí (log) v Nextcloud",
@@ -180,6 +187,7 @@ OC.L10N.register(
     "No OpenProject detected at the URL" : "Na dané URL nezjištěn žádný OpenProject",
     "Please introduce your OpenProject host name" : "Zadejte název stroje, na kterém je provozována vámi využívaná instance OpenProject",
     "Reset" : "Vrátit na výchozí hodnoty",
+    "Some OpenProject integration application settings are not working. Please contact your Nextcloud administrator." : "Některá nastavení aplikace pro napojení na OpenProject nefungují. Obraťte se na správce vámi využívané instance Nextcloud.",
     "Enable notifications for activity in my work packages" : "Zapnout upozorňování na aktivitu v mých pracovních balíčcích",
     "OpenProject integration" : "Napojení na OpenProject",
     "Work package linked successfully!" : "Balíček práce úspěšně propojen!",
@@ -191,6 +199,7 @@ OC.L10N.register(
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Aby bylo možné používat automaticky spravované složky, nainstalujte aplikaci „Skupinové složky“. Jinak vypněte jejich automatickou správu.",
     "Reset OpenProject Integration" : "Vrátit napojení OpenProject do výchozího stavu",
-    "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm"
+    "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm",
+    "Download and enable it here" : "Stáhněte a zapněte zde"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
