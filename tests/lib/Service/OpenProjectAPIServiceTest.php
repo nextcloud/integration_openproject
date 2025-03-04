@@ -4247,20 +4247,29 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function dataProviderForIsOIDCUser(): array {
 		$backendMock = $this->getMockBuilder(OIDCBackend::class)->disableOriginalConstructor()->getMock();
 		return [
-			'has Backend class and OIDC user' => [
-				'backend' => true,
-				'oidcUser' => $backendMock,
+			'has OIDCBackend class and OIDC user' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => $backendMock,
+				'OIDCProvider' => 'keycloak',
 				'expected' => true,
 			],
-			'has Backend class but not OIDC user' => [
-				'backend' => true,
-				'oidcUser' => new \stdClass(),
+			'has OIDCBackend class but not OIDC user' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => new \stdClass(),
+				'OIDCProvider' => 'keycloak',
 				'expected' => false,
 			],
-			'missing Backend class' => [
-				'backend' => false,
-				'oidcUser' => $backendMock,
+			'missing OIDCBackend class' => [
+				'hasOIDCBackend' => false,
+				'userBackend' => $backendMock,
+				'OIDCProvider' => '',
 				'expected' => false,
+			],
+			'configure with Nextcloud Hub' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => new \stdClass(),
+				'OIDCProvider' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				'expected' => true,
 			],
 		];
 	}
@@ -4270,19 +4279,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testIsOIDCUser($backend, $oidcUser, $expected): void {
-		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-		$mock->expects($this->once())->willReturn($backend);
+	public function testIsOIDCUser($hasOIDCBackend, $userBackend, $OIDCProvider, $expected): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')->willReturn($OIDCProvider);
+
+		if ($OIDCProvider !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+			$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+			$mock->expects($this->once())->willReturn($OIDCProvider);
+		}
 
 		$userSessionMock = $this->createMock(IUserSession::class);
 		$userMock = $this->createMock(IUser::class);
 
-		$userMock->method('getBackend')->willReturn($oidcUser);
+		$userMock->method('getBackend')->willReturn($userBackend);
 		$userSessionMock->method('getUser')->willReturn($userMock);
 
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			['userSession' => $userSessionMock],
+			[
+				'userSession' => $userSessionMock,
+				'config' => $configMock,
+			],
 		);
 
 		$result = $service->isOIDCUser();
