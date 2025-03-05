@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## 2.8.1 - 2025-02-05
+
 ### Fixed
 - choose correct base URL for OCS requests [#780](https://github.com/nextcloud/integration_openproject/pull/780)
 
