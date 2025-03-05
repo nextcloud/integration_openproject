@@ -2274,7 +2274,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn(true);
 
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['getGroupFolderManager', 'isGroupfoldersSupported'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
@@ -2285,6 +2285,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
+		$service->method('isGroupfoldersSupported')
+			->willReturn(true);
 		$this->assertTrue($service->isProjectFoldersSetupComplete());
 	}
 
@@ -2476,7 +2478,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn(true);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['getGroupFolderManager', 'isGroupfoldersSupported'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
@@ -2491,6 +2493,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		]]);
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
+		$service->method('isGroupfoldersSupported')
+			->willReturn(true);
 		$result = $service->isSystemReadyForProjectFolderSetUp();
 		$this->assertTrue($result);
 	}
@@ -2500,11 +2504,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function isSystemReadyForGroupFolderSetUpUserOrGroupExistsExceptionDataProvider(): array {
 		return [
-			[true, true, false, false,'The "Group folders" app is not installed'],
-			[true, false, false, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
-			[false, true, false, false,'The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
-			[false, false, false, false,'The "Group folders" app is not installed'],
-			[false, false, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[true, true, false, true, false,'The "Group folders" app is not installed'],
+			[true, true, true, false, false,'The "Group folders" app is not supported'],
+			[true, false, false, true, false,'The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, true, false, true, false,'The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
+			[false, false, false, true,false,'The "Group folders" app is not installed'],
+			[false, false, true, true, true,'The group folder name "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists'],
 		];
 	}
 
@@ -2512,6 +2517,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param bool $userExists
 	 * @param bool $groupExists
 	 * @param bool $appEnabled
+	 * @param bool $appSupported
 	 * @param bool $groupFolderExists
 	 * @param string $exception
 	 * @return void
@@ -2521,6 +2527,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		bool $userExists,
 		bool $groupExists,
 		bool $appEnabled,
+		bool $appSupported,
 		bool $groupFolderExists,
 		string $exception
 	): void {
@@ -2548,7 +2555,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn($appEnabled);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['getGroupFolderManager', 'isGroupfoldersSupported'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
@@ -2558,6 +2565,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
+		$service->method('isGroupfoldersSupported')
+			->willReturn($appSupported);
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($exception);
 		$service->isSystemReadyForProjectFolderSetUp();
@@ -4419,6 +4428,65 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$service->method('isOIDCAppEnabled')->willReturn($appEnabled);
 		$actualResult = $service->isOIDCAppSupported();
+		$this->assertEquals($expected, $actualResult);
+	}
+
+	/**
+	 * Data provider for testIsGroupfoldersSupported
+	 */
+	public function dataProviderForIsGroupfoldersSupported(): array {
+		return [
+			'has installed supported groupfolders apps and class exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '1.0.0',
+				'expected' => true,
+			],
+			'has supported groupfolders apps installed but class does not exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => false,
+				'version' => '1.0.0',
+				'expected' => false,
+			],
+			'has groupfolders apps not installed' => [
+				'appInstalledAndEnabled' => false,
+				'classesExist' => true,
+				'version' => '1.0.0',
+				'expected' => false,
+			],
+			'has installed unsupported groupfolders apps version' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '0',
+				'expected' => false,
+			],
+			'has installed groupfolders apps higher version and all classes exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '4.0.0',
+				'expected' => true,
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForIsGroupfoldersSupported
+	 */
+	public function testIsGroupfoldersSupported($appInstalledAndEnabled, $classesExist, $version, $expected): void {
+		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+		$mock->expects($this->any())->willReturn($classesExist);
+
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('getAppVersion')->with('groupfolders')->willReturn($version);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isGroupfoldersAppEnabled'],
+			[
+				'appManager' => $iAppManagerMock,
+			],
+		);
+		$service->method('isGroupfoldersAppEnabled')->willReturn($appInstalledAndEnabled);
+		$actualResult = $service->isGroupfoldersSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
 }

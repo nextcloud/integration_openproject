@@ -1067,6 +1067,8 @@ export default {
 			const url = generateUrl('settings/apps/files/groupfolders')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
+			case 'The "Group folders" app is not supported' :
+				return t('integration_openproject', 'Please update the "Group folders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			case 'The "Group folders" app is not installed' :
 				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			default:
