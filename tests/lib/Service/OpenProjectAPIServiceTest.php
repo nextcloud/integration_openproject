@@ -4320,4 +4320,69 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$result = $service->isOIDCUser();
 		$this->assertEquals($expected, $result);
 	}
+
+	/**
+	 * Data provider for testIsUserOIDCAppSupported
+	 */
+	public function dataProviderForIsUserOIDCAppSupported(): array {
+		return [
+			'has installed supported user_oidc apps and all classes exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '6.2.0',
+				'expected' => true,
+			],
+			'has installed user_oidc apps but one of the class does not exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => false,
+				'version' => '6.2.0',
+				'expected' => false,
+			],
+			'has user_oidc apps not installed' => [
+				'appInstalledAndEnabled' => false,
+				'classesExist' => true,
+				'version' => '6.2.0',
+				'expected' => false,
+			],
+			'has installed unsupported user_oidc apps version' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '6.1.2',
+				'expected' => false,
+			],
+			'has installed user_oidc apps higher version and all classes exist' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '6.3.1',
+				'expected' => true,
+			],
+			'has no user_oidc apps' => [
+				'appInstalledAndEnabled' => true,
+				'classesExist' => true,
+				'version' => '0',
+				'expected' => false,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForIsUserOIDCAppSupported
+	 */
+	public function testIsUserOIDCAppSupported($appInstalledAndEnabled, $classesExist, $version, $expected): void {
+		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+		$mock->expects($this->any())->willReturn($classesExist);
+
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('getAppVersion')->with('user_oidc')->willReturn($version);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isUserOIDCAppInstalledAndEnabled'],
+			[
+				'appManager' => $iAppManagerMock,
+			],
+		);
+		$service->method('isUserOIDCAppInstalledAndEnabled')->willReturn($appInstalledAndEnabled);
+		$actualResult = $service->isUserOIDCAppSupported();
+		$this->assertEquals($expected, $actualResult);
+	}
 }
