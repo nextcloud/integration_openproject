@@ -88,7 +88,8 @@ services:
     command: /nextcloud.sh
     environment:
       SQL: pgsql
-      VIRTUAL_HOST: nextcloud
+      PROTOCOL: https
+      VIRTUAL_HOST: nextcloud.local
       SERVER_BRANCH: stable31
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
