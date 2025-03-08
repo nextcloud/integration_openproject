@@ -166,6 +166,8 @@ OC.L10N.register(
     "Unauthorized to connect to OpenProject" : "غير مُخوَّل بالوصول إلى \"أوبن بروجكت\" OpenProject",
     "OpenProject client ID" : "مُعرِّف ID لعميل OpenProject",
     "The \"{app}\" app is not installed" : "التطبيق \"{app}\" غير مُثبَّت",
+    "The \"{app}\" app is not supported" : "التطبيق \"{app}\" غير مدعوم",
+    "Requires app version \"{minimumAppVersion}\" or later" : "يلزم أن يكون التطبيق من الإصدار \"{minimumAppVersion}\" فما أعلى",
     "Link to work package" : "رابط لحزمة العمل",
     "Failed to link file to work package" : "فشل في ربط الملف بحزمة العمل",
     "Successfully connected to OpenProject!" : "تم الاتصال بـنجاح ببرمجية OpenProject!",
