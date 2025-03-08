@@ -166,6 +166,8 @@ OC.L10N.register(
     "Unauthorized to connect to OpenProject" : "Unauthorized to connect to OpenProject",
     "OpenProject client ID" : "OpenProject client ID",
     "The \"{app}\" app is not installed" : "The \"{app}\" app is not installed",
+    "The \"{app}\" app is not supported" : "The \"{app}\" app is not supported",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Requires app version \"{minimumAppVersion}\" or later",
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
