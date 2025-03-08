@@ -166,6 +166,8 @@ OC.L10N.register(
     "Unauthorized to connect to OpenProject" : "Neamhúdaraithe chun ceangal le OpenProject",
     "OpenProject client ID" : "ID cliant OpenProject",
     "The \"{app}\" app is not installed" : "Níl an aip \"{{app}\" suiteáilte",
+    "The \"{app}\" app is not supported" : "Ní thacaítear leis an aip \"{app}\"",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Tá leagan aipe \"{{minimumAppVersion}}\" nó níos déanaí ag teastáil",
     "Link to work package" : "Nasc le pacáiste oibre",
     "Failed to link file to work package" : "Theip ar an gcomhad a nascadh le pacáiste oibre",
     "Successfully connected to OpenProject!" : "D'éirigh le ceangal le OpenProject!",
