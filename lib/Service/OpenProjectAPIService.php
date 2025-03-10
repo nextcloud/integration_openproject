@@ -1680,7 +1680,7 @@ class OpenProjectAPIService {
 	}
 
 	public function getRegisteredOidcProviders(): array {
-		$oidcProviders = [self::NEXTCLOUD_HUB_PROVIDER];
+		$oidcProviders = [];
 		if ($this->isUserOIDCAppInstalledAndEnabled()) {
 			$providerMapper = new ProviderMapper($this->db);
 			foreach ($providerMapper->getProviders() as $provider) {

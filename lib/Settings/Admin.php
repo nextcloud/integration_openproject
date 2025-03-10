@@ -77,6 +77,7 @@ class Admin implements ISettings {
 				'targeted_audience_client_id' => $this->config->getAppValue(
 					Application::APP_ID, 'targeted_audience_client_id', ''
 				),
+				'sso_provider_type' => $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', ''),
 			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',

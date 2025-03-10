@@ -205,6 +205,7 @@ class ConfigController extends Controller {
 		$allowedKeys = [
 			'openproject_instance_url',
 			'authorization_method',
+			'sso_provider_type',
 			'oidc_provider',
 			'targeted_audience_client_id',
 			'openproject_client_id',
