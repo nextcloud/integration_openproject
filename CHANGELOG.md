@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Drop application's support for Nextcloud 27 [#779](https://github.com/nextcloud/integration_openproject/pull/779)
 - Show error when the user_oidc app not supported [#768](https://github.com/nextcloud/integration_openproject/pull/768)
 
+## 2.8.1 - 2025-02-05
+
 ### Fixed
 - choose correct base URL for OCS requests [#780](https://github.com/nextcloud/integration_openproject/pull/780)
 
