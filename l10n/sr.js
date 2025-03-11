@@ -166,6 +166,8 @@ OC.L10N.register(
     "Unauthorized to connect to OpenProject" : "Нема права за повезивање на OpenProject",
     "OpenProject client ID" : "OpenProject ID клијента",
     "The \"{app}\" app is not installed" : "Апликација „{app}” није инсталирана",
+    "The \"{app}\" app is not supported" : "Апликација „{app}” није подржана",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Захтева се апликација верзије „{minimumAppVersion}” или новија",
     "Link to work package" : "Линк на радни пакет",
     "Failed to link file to work package" : "Није успело повезивање фајла са радним пакетом",
     "Successfully connected to OpenProject!" : "Успешно је успостављена веза са OpenProject!",
