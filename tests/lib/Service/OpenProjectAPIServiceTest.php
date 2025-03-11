@@ -4250,25 +4250,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has OIDCBackend class and OIDC user' => [
 				'hasOIDCBackend' => true,
 				'userBackend' => $backendMock,
-				'OIDCProvider' => 'keycloak',
+				'SSOProviderType' => 'external',
 				'expected' => true,
 			],
 			'has OIDCBackend class but not OIDC user' => [
 				'hasOIDCBackend' => true,
 				'userBackend' => new \stdClass(),
-				'OIDCProvider' => 'keycloak',
+				'SSOProviderType' => 'external',
 				'expected' => false,
 			],
 			'missing OIDCBackend class' => [
 				'hasOIDCBackend' => false,
 				'userBackend' => $backendMock,
-				'OIDCProvider' => '',
+				'SSOProviderType' => '',
 				'expected' => false,
 			],
 			'configure with Nextcloud Hub' => [
 				'hasOIDCBackend' => true,
 				'userBackend' => new \stdClass(),
-				'OIDCProvider' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				'SSOProviderType' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
 				'expected' => true,
 			],
 		];
@@ -4279,14 +4279,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testIsOIDCUser($hasOIDCBackend, $userBackend, $OIDCProvider, $expected): void {
+	public function testIsOIDCUser($hasOIDCBackend, $userBackend, $SSOProviderType, $expected): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getAppValue')->willReturn($OIDCProvider);
+		$configMock->method('getAppValue')->willReturn($SSOProviderType);
 
-		if ($OIDCProvider !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
-			$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-			$mock->expects($this->once())->willReturn($OIDCProvider);
-		}
+		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+		$mock->expects($this->once())->willReturn($hasOIDCBackend);
 
 		$userSessionMock = $this->createMock(IUserSession::class);
 		$userMock = $this->createMock(IUser::class);

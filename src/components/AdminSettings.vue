@@ -179,7 +179,7 @@
 					is-required
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider')"
-					:value="authorizationSetting.currentOIDCProviderSelected" />
+					:value="getCurrentSelectedOIDCProvider" />
 				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--provider">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'Select a provider *') }}
@@ -189,7 +189,7 @@
 						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 						:options="registeredOidcProviders"
-						:value="authorizationSetting.currentOIDCProviderSelected"
+						:value="getCurrentSelectedOIDCProvider"
 						:filterable="true"
 						:close-on-select="true"
 						:clear-search-on-blur="() => false"
@@ -901,7 +901,7 @@ export default {
 				|| (this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId && oidcProviderSet === currentOIDCProviderSelected)
 		},
 		getCurrentSelectedOIDCProvider() {
-			return this.state.authorization_settings.oidc_provider
+			return this.authorizationSetting.currentOIDCProviderSelected
 		},
 		getCurrentSelectedTargetedClientId() {
 			return this.state.authorization_settings.targeted_audience_client_id
@@ -1224,7 +1224,7 @@ export default {
 				this.authorizationSetting.oidcProviderSet = this.SSO_PROVIDER_LABEL.nextcloudHub
 				this.authorizationSetting.currentOIDCProviderSelected = this.SSO_PROVIDER_LABEL.nextcloudHub
 			} else {
-				this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected
+				this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
 			}
 			this.authorizationSetting.targetedAudienceClientIdSet = this.state.authorization_settings.targeted_audience_client_id
 
@@ -1460,19 +1460,19 @@ export default {
 					setup_app_password: false,
 				}
 				if (this.authorizationMethod.currentAuthorizationMethodSelected === AUTH_METHOD.OIDC
-					&& this.authorizationSetting.currentOIDCProviderSelected === null
+					&& this.getCurrentSelectedOIDCProvider === null
 					&& this.state.authorization_settings.targeted_audience_client_id === null) {
 					// when reset is oidc
 					values = {
 						...values,
-						oidc_provider: this.authorizationSetting.currentOIDCProviderSelected,
+						oidc_provider: this.getCurrentSelectedOIDCProvider,
 						targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 						sso_provider_type: this.authorizationSetting.SSOProviderType,
 					}
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
-					oidc_provider: this.authorizationSetting.currentOIDCProviderSelected,
+					oidc_provider: this.getCurrentSelectedOIDCProvider,
 					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
 				}
@@ -1480,7 +1480,7 @@ export default {
 				values = {
 					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
-					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.authorizationSetting.currentOIDCProviderSelected : null,
+					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
 					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedTargetedClientId : null,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
 				}
