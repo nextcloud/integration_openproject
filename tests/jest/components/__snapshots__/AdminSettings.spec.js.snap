@@ -24,7 +24,7 @@ Wrapper {
 }
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete supported user_oidc app disabled should show field values and hide authorization settings form 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode supported user_oidc app disabled should show field values and hide authorization settings form 1`] = `
 <div
   class="authorization-settings"
 >
@@ -50,9 +50,10 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete s
     <fieldvalue-stub
       class="pb-1"
       isrequired="true"
-      title="OIDC Provider"
-      value="some-oidc-provider"
+      title="OIDC Provider Type"
     />
+     
+    <!---->
      
     <fieldvalue-stub
       class="pb-1"
@@ -84,7 +85,7 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete s
 </div>
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete supported user_oidc app enabled should show configured OIDC authorization 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode supported user_oidc app enabled should show configured OIDC authorization 1`] = `
 <div
   class="authorization-settings"
 >
@@ -104,9 +105,11 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete s
     <fieldvalue-stub
       class="pb-1"
       isrequired="true"
-      title="OIDC Provider"
-      value="some-oidc-provider"
+      title="OIDC Provider Type"
+      value="nextcloud_hub"
     />
+     
+    <!---->
      
     <fieldvalue-stub
       class="pb-1"
@@ -137,7 +140,7 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete s
 </div>
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings view mode form complete unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
 <div
   class="authorization-settings"
 >
@@ -163,6 +166,68 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete u
     <fieldvalue-stub
       class="pb-1"
       isrequired="true"
+      title="OIDC Provider Type"
+    />
+     
+    <!---->
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OpenProject client ID"
+      value="some-target-aud-client-id"
+    />
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      disabled="true"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authorization settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode with external SSO provider should show configured OIDC authorization 1`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    index="3"
+    iscomplete="true"
+    title="Authorization settings"
+  />
+   
+  <!---->
+   
+  <!---->
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider Type"
+      value="external"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
       title="OIDC Provider"
       value="some-oidc-provider"
     />
@@ -181,7 +246,6 @@ exports[`AdminSettings.vue OIDC authorization settings view mode form complete u
     <ncbutton-stub
       alignment="center"
       data-test-id="reset-auth-settings-btn"
-      disabled="true"
       nativetype="button"
       type="secondary"
     >
