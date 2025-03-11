@@ -617,6 +617,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+	 * @after
+	 */
+	public function tearDown(): void {
+		$this->service = null;
+	}
+
+	/**
 	 * @param string $nodeClassName \OCP\Files\Node|\OCP\Files\File|\OCP\Files\Folder
 	 * @return \OCP\Files\Node
 	 */
@@ -4283,8 +4291,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getAppValue')->willReturn($SSOProviderType);
 
-		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-		$mock->expects($this->once())->willReturn($hasOIDCBackend);
+		if ($SSOProviderType !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+			$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+			$mock->expects($this->once())->willReturn($hasOIDCBackend);
+		}
 
 		$userSessionMock = $this->createMock(IUserSession::class);
 		$userMock = $this->createMock(IUser::class);
