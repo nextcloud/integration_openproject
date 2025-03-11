@@ -16,8 +16,64 @@ on:
 name: CI
 
 jobs:
+  js-lint-unit:
+    name: js lint and unit tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v3
+
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@v2
+        id: versions
+        with:
+          fallbackNode: '^14'
+          fallbackNpm: '^7'
+
+      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          cache: 'npm'
+
+      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+
+      - name: Install NPM Dependencies
+        run: npm install
+
+      - name: JS Lint
+        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
+
+      - name: Vue Unit tests
+        run: |
+          make jsunit
+
+      - name: JS Code Coverage Summary Report
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/jest/lcov.info
+          delete-old-comments: true
+          title: "JS Code Coverage"
+
+      - name: JS coverage check
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        uses: VeryGoodOpenSource/very_good_coverage@v2
+        with:
+          min_coverage: '59'
+          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
+
   create-phpunit-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
@@ -41,13 +97,13 @@ jobs:
     outputs:
       matrix: ${{ steps.create-matrix.outputs.matrix }}
 
-  unittest-linting:
-    name: unit tests and linting
+  php-unittest-linting:
+    name: php unit tests and linting
     needs: create-phpunit-matrix
     if: ${{ success() }}
     strategy:
       matrix: ${{ fromJson(needs.create-phpunit-matrix.outputs.matrix) }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
@@ -78,22 +134,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v2
-        id: versions
-        with:
-          fallbackNode: '^14'
-          fallbackNpm: '^7'
-
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
-          cache: 'npm'
-
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-
       - name: Install PHP Dependencies
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
@@ -120,9 +160,6 @@ jobs:
       - name: Install NPM Dependencies
         run: npm install
 
-      - name: JS Lint
-        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
-
       - name: install apps
         run: |
           git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
@@ -132,7 +169,7 @@ jobs:
           ./occ a:e groupfolders
           ./occ a:e integration_openproject
 
-      - name: PHP & Vue Unit Tests
+      - name: PHP Unit Tests
         run: |
           cd server/apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
@@ -141,16 +178,6 @@ jobs:
           else
             make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
           fi
-          make jsunit
-
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./server/apps/integration_openproject/coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
@@ -187,13 +214,6 @@ jobs:
           delete-old-comments: true
           title: "PHP Code Coverage"
 
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
-        with:
-          min_coverage: '59'
-          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
-
       - name: PHP coverage check
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
@@ -202,7 +222,7 @@ jobs:
           path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
   create-api-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
@@ -234,7 +254,7 @@ jobs:
     if: ${{ success() }}
     strategy:
       matrix: ${{ fromJson(needs.create-api-matrix.outputs.matrix) }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     container:
       image: public.ecr.aws/lts/ubuntu:20.04
 
@@ -343,10 +363,11 @@ jobs:
 
   notify-nightly-report:
     needs:
-      - unittest-linting
+      - js-unittest-linting
+      - php-unittest-linting
       - api-tests
     if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: checkout
         uses: actions/checkout@v2
