@@ -370,7 +370,7 @@ jobs:
 
   notify-nightly-report:
     needs:
-      - js-unittest-linting
+      - js-lint-unit
       - php-unittest-linting
       - api-tests
     if: ${{ always() && github.event_name == 'schedule' }}
