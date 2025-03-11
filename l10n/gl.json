@@ -164,6 +164,8 @@
     "Unauthorized to connect to OpenProject" : "Non ten autorización para conectarse a OpenProject",
     "OpenProject client ID" : "ID de cliente de OpenProject",
     "The \"{app}\" app is not installed" : "A aplicación «{app}» non está instalada",
+    "The \"{app}\" app is not supported" : "A aplicación «{app}» non é compatíbel",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Require a versión «{minimumAppVersion}» ou posterior da aplicación",
     "Link to work package" : "Ligazón ao paquete de traballo",
     "Failed to link file to work package" : "Produciuse un fallo ao vincular o ficheiro ao paquete de traballo",
     "Successfully connected to OpenProject!" : "Conectado correctamente a OpenProject!",
