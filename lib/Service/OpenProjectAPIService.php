@@ -66,7 +66,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '6.2.0';
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
 	/**
@@ -1659,8 +1659,8 @@ class OpenProjectAPIService {
 		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
 
 		// with Nextcloud Hub setup, we need to use the id-token to authenticate OpenProject API
-		$oidcProvider = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		if ($oidcProvider === self::NEXTCLOUD_HUB_PROVIDER) {
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
 			return $token->getIdToken();
 		}
 		return $token->getAccessToken();
@@ -1710,8 +1710,8 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public function isOIDCUser(): bool {
-		$oidcProvider = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		if ($oidcProvider === self::NEXTCLOUD_HUB_PROVIDER) {
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
 			return true;
 		}
 

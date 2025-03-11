@@ -617,14 +617,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return void
-	 * @after
-	 */
-	public function tearDown(): void {
-		$this->service = null;
-	}
-
-	/**
 	 * @param string $nodeClassName \OCP\Files\Node|\OCP\Files\File|\OCP\Files\Folder
 	 * @return \OCP\Files\Node
 	 */
@@ -4322,19 +4314,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed supported user_oidc apps and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => true,
 			],
 			'has installed user_oidc apps but one of the class does not exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => false,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => false,
 			],
-			'has user_oidc apps not installed' => [
+			'has user_oidc apps not enabled' => [
 				'appInstalledAndEnabled' => false,
 				'classesExist' => true,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => false,
 			],
 			'has installed unsupported user_oidc apps version' => [
@@ -4346,10 +4338,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed user_oidc apps higher version and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '6.3.1',
+				'version' => '7.3.1',
 				'expected' => true,
 			],
-			'has no user_oidc apps' => [
+			'has no user_oidc app' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
 				'version' => '0',
