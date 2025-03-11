@@ -179,7 +179,7 @@
 					is-required
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider')"
-					:value="getCurrentSelectedOIDCProvider" />
+					:value="authorizationSetting.currentOIDCProviderSelected" />
 				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--provider">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'Select a provider *') }}
@@ -189,7 +189,7 @@
 						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 						:options="registeredOidcProviders"
-						:value="getCurrentSelectedOIDCProvider"
+						:value="authorizationSetting.currentOIDCProviderSelected"
 						:filterable="true"
 						:close-on-select="true"
 						:clear-search-on-blur="() => false"
@@ -235,7 +235,7 @@
 				<NcButton v-if="isAuthorizationSettingInEditMode"
 					data-test-id="submit-oidc-auth-settings-values-btn"
 					type="primary"
-					:disabled="isAuthorizationSettingsSelected"
+					:disabled="disableSaveSSOSettings"
 					@click="saveOIDCAuthSetting">
 					<template #icon>
 						<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
@@ -883,11 +883,16 @@ export default {
 		isAuthorizationMethodSelected() {
 			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
-		isAuthorizationSettingsSelected() {
+		disableSaveSSOSettings() {
 			const { oidcProviderSet, currentOIDCProviderSelected, SSOProviderType } = this.authorizationSetting
 			if (SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
+				const typeChanged = SSOProviderType !== this.state.authorization_settings.sso_provider_type
 				const hasClientId = !!this.authorizationSetting.currentTargetedAudienceClientIdSelected || !!this.getCurrentSelectedTargetedClientId
-				return !hasClientId || this.authorizationSetting.currentTargetedAudienceClientIdSelected === this.getCurrentSelectedTargetedClientId
+				const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
+				if (hasClientId) {
+					return !typeChanged && !clientIdChanged
+				}
+				return !hasClientId
 			}
 
 			return currentOIDCProviderSelected === null
@@ -902,7 +907,7 @@ export default {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
 		getSSOProviderType() {
-			return this.state.authorization_settings.sso_provider_type
+			return this.authorizationSetting.SSOProviderType
 		},
 		isOIDCAppInstalledAndEnabled() {
 			return this.state.user_oidc_enabled
@@ -911,8 +916,6 @@ export default {
 			return this.state.user_oidc_supported
 		},
 		isExternalSSOProvider() {
-			// eslint-disable-next-line no-console
-			console.log('here:', this.authorizationSetting.SSOProviderType)
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
 		},
 	},
