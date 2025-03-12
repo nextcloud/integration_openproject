@@ -45,6 +45,7 @@ export const F_MODES = {
 	VIEW: 0,
 	EDIT: 1,
 	DISABLE: 2,
+	NEW: 3,
 }
 
 export const FORM = {
@@ -80,4 +81,13 @@ export const AUTH_METHOD = {
 export const AUTH_METHOD_LABEL = {
 	OAUTH2: t('integration_openproject', 'OAuth2 two-way authorization code flow'),
 	OIDC: t('integration_openproject', 'OpenID identity provider'),
+}
+
+export const SSO_PROVIDER_TYPE = {
+	nextcloudHub: 'nextcloud_hub',
+	external: 'external',
+}
+
+export const SSO_PROVIDER_LABEL = {
+	nextcloudHub: 'Nextcloud Hub',
 }

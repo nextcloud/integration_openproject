@@ -139,6 +139,16 @@ const completeOIDCIntegrationState = {
 	},
 }
 
+const appState = {
+	apps: {
+		oidc: {
+			enabled: true,
+			supported: true,
+			minimum_version: '1.4.0',
+		},
+	},
+}
+
 describe('AdminSettings.vue', () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
@@ -1014,6 +1024,7 @@ describe('AdminSettings.vue', () => {
 						await wrapper.setData({
 							state: {
 								user_oidc_enabled: true,
+								user_oidc_supported: true,
 							},
 						})
 						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authorization configuration which will delete'
@@ -1156,8 +1167,11 @@ describe('AdminSettings.vue', () => {
 	describe('OIDC authorization settings', () => {
 		const formHeaderSelector = `${selectors.authorizationSettings} > formheading-stub`
 		const errorNoteSelector = `${selectors.authorizationSettings} > errornote-stub`
+		const errorLabelSelector = `${selectors.authorizationSettings} errorlabel-stub`
 		const authProviderSelector = `${selectors.authorizationSettingsProvider} ncselect-stub`
 		const authClientSelector = `${selectors.authorizationSettingsClient} > textinput-stub`
+		const NCProviderTypeSelector = `${selectors.authorizationSettings} nccheckboxradioswitch-stub[value="nextcloud_hub"]`
+		const externalProviderTypeSelector = `${selectors.authorizationSettings} nccheckboxradioswitch-stub[value="external"]`
 		const state = {
 			openproject_instance_url: 'http://openproject.com',
 			authorization_method: AUTH_METHOD.OIDC,
@@ -1167,7 +1181,7 @@ describe('AdminSettings.vue', () => {
 			},
 		}
 
-		describe('view mode form complete', () => {
+		describe('form complete: view mode', () => {
 			let wrapper
 			const authorizationSettingsState = {
 				authorization_settings: {
@@ -1178,7 +1192,13 @@ describe('AdminSettings.vue', () => {
 
 			describe('supported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: true } })
+					const authSettings = {
+						authorization_settings: {
+							...authorizationSettingsState.authorization_settings,
+							sso_provider_type: 'nextcloud_hub',
+						},
+					}
+					wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
 				})
 				it('should show configured OIDC authorization', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1247,6 +1267,40 @@ describe('AdminSettings.vue', () => {
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
+
+			describe('with external SSO provider', () => {
+				beforeEach(async () => {
+					const authSettings = {
+						authorization_settings: {
+							...authorizationSettingsState.authorization_settings,
+							sso_provider_type: 'external',
+						},
+					}
+					wrapper = getWrapper({
+						state: {
+							...state,
+							...authSettings,
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+						},
+					})
+				})
+				it('should show configured OIDC authorization', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const formHeader = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
+					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
+					expect(formHeader.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(false)
+				})
+				it('should not disable reset button', () => {
+					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
+					expect(resetButton.attributes().disabled).toBe(undefined)
+				})
+			})
+
 		})
 
 		describe('edit mode form, complete admin configuration with supported user_oidc app', () => {
@@ -1291,6 +1345,54 @@ describe('AdminSettings.vue', () => {
 				await wrapper.find(selectors.authSettingTargetAudClient).setValue('new-openproject-client-id')
 				expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
 			})
+
+			describe('external SSO provider', () => {
+				beforeEach(async () => {
+					wrapper = getMountedWrapper({
+						registeredOidcProviders: ['keycloak'],
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: 'some-oidc-provider',
+								targeted_audience_client_id: 'some-target-aud-client-id',
+								sso_provider_type: 'external',
+							},
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+						},
+					})
+					authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					authSettingsResetButton = authorizationSettingsForm.find(selectors.authorizationSettingsResetButton)
+					await authSettingsResetButton.trigger('click')
+				})
+
+				it('should show "cancel" button', async () => {
+					const authSettingsCancelButton = wrapper.find(selectors.authorizationSettingsCancelButton)
+					expect(authSettingsCancelButton.isVisible()).toBe(true)
+				})
+				it('should show "save" button as disabled', () => {
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					expect(authSettingsSaveButton.attributes().disabled).toBe('disabled')
+				})
+				it('should enable "save" button for new provider', async () => {
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					const providerInputField = wrapper.find(selectors.providerInput)
+					await providerInputField.setValue('key')
+					await localVue.nextTick()
+					const optionList = wrapper.find(selectors.oidcDropDownFirstElement)
+					await optionList.trigger('click')
+					expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+				})
+				it('should enable "save" button for new client id', async () => {
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					await wrapper.find(selectors.authSettingTargetAudClient).trigger('click')
+					await wrapper.find(selectors.authSettingTargetAudClient).setValue('new-openproject-client-id')
+					expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+				})
+
+			})
+
 			// editing new auth settings values
 			describe('on trigger save button', () => {
 				it('should set auth values with new values', async () => {
@@ -1336,7 +1438,7 @@ describe('AdminSettings.vue', () => {
 					const authProviderSelect = wrapper.find(authProviderSelector)
 					const authClientInput = wrapper.find(authClientSelector)
 
-					expect(authProviderSelect.attributes().disabled).toBe(undefined)
+					expect(authProviderSelect.exists()).toBe(false)
 					expect(authClientInput.attributes().disabled).toBe(undefined)
 				})
 				it('should show "save" button disabled', () => {
@@ -1344,19 +1446,10 @@ describe('AdminSettings.vue', () => {
 					const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
 				})
-				it('should disable "save" button for empty "oidc_provider"', () => {
-					const wrapper = getWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-							authorization_method: AUTH_METHOD.OIDC,
-							authorization_settings: {
-								oidc_provider: null,
-								targeted_audience_client_id: 'some-targeted-aud-client-id',
-							},
-						},
-					})
-					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+				it('should not show "cancel" button', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsCancelButton)
+					expect(authSettingsSaveButton.exists()).toBe(false)
 				})
 				it('should disable "save" button for empty "targeted_audience_client_id"', () => {
 					const wrapper = getWrapper({
@@ -1373,56 +1466,168 @@ describe('AdminSettings.vue', () => {
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
 				})
 
-				describe('save button', () => {
-					beforeEach(async () => {
-						axios.put.mockReset()
-						jest.clearAllMocks()
-						wrapper = getMountedWrapper({
-							registeredOidcProviders: ['keycloak'],
-							state: {
-								...state,
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
+				describe('external SSO provider', () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: '',
+								targeted_audience_client_id: '',
 							},
-						 })
-						const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
-						const providerInputField = wrapper.find(selectors.providerInput)
-						await providerInputField.setValue('key')
-						await localVue.nextTick()
-						const optionList = wrapper.find(selectors.oidcDropDownFirstElement)
-						await optionList.trigger('click')
-						await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).trigger('click')
-						await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).setValue('openproject')
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+						},
+						authorizationSetting: {
+							SSOProviderType: 'external',
+						},
 					})
-					it('should be enabled for authorization values set', async () => {
-						const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-						expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+
+					it('should not disable form elements', () => {
+						const authProviderSelect = wrapper.find(authProviderSelector)
+						const authClientInput = wrapper.find(authClientSelector)
+
+						expect(authProviderSelect.attributes().disabled).toBe(undefined)
+						expect(authClientInput.attributes().disabled).toBe(undefined)
 					})
-					it('"on trigger" should set auth settings values', async () => {
-						const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-							.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-						const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-						expect(authSettingsSaveButton.exists()).toBe(true)
-						await authSettingsSaveButton.trigger('click')
-						await wrapper.vm.$nextTick()
-						expect(saveOPOptionsSpy).toBeCalledTimes(1)
-						expect(saveOPOptionsSpy).toBeCalledWith(
-							'http://localhost/apps/integration_openproject/admin-config',
-							{
-								values: {
-									oidc_provider: 'keycloak',
-									targeted_audience_client_id: 'openproject',
+					it('should disable "save" button for empty "oidc_provider"', () => {
+						const wrapper = getWrapper({
+							state: {
+								openproject_instance_url: 'http://openproject.com',
+								authorization_method: AUTH_METHOD.OIDC,
+								authorization_settings: {
+									oidc_provider: null,
+									targeted_audience_client_id: 'some-targeted-aud-client-id',
 								},
 							},
-						)
-						expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+							authorizationSetting: {
+								SSOProviderType: 'external',
+							},
+						})
+						const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+						expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+					})
+					it('should show "save" button disabled', () => {
+						const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+						const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
+						expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+					})
+					it('should not show "cancel" button', () => {
+						const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+						const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsCancelButton)
+						expect(authSettingsSaveButton.exists()).toBe(false)
+					})
+				})
+
+				describe('save button', () => {
+					describe('Nextcloud Hub', () => {
+						beforeEach(async () => {
+							axios.put.mockReset()
+							jest.clearAllMocks()
+							wrapper = getMountedWrapper({
+								state: {
+									...state,
+									user_oidc_enabled: true,
+									user_oidc_supported: true,
+								},
+							 })
+							const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+							await localVue.nextTick()
+							await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).trigger('click')
+							await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).setValue('openproject')
+						})
+						it('should be enabled for authorization values set', async () => {
+							const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+							expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+						})
+						it('"on trigger" should set auth settings values', async () => {
+							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+								.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
+							const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+							expect(authSettingsSaveButton.exists()).toBe(true)
+							await authSettingsSaveButton.trigger('click')
+							await wrapper.vm.$nextTick()
+							expect(saveOPOptionsSpy).toBeCalledTimes(1)
+							expect(saveOPOptionsSpy).toBeCalledWith(
+								'http://localhost/apps/integration_openproject/admin-config',
+								{
+									values: {
+										oidc_provider: 'Nextcloud Hub',
+										sso_provider_type: 'nextcloud_hub',
+										targeted_audience_client_id: 'openproject',
+									},
+								},
+							)
+							expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+						})
+					})
+
+					describe('external SSO Provider', () => {
+						beforeEach(async () => {
+							axios.put.mockReset()
+							jest.clearAllMocks()
+							wrapper = getMountedWrapper({
+								registeredOidcProviders: ['keycloak'],
+								state: {
+									...state,
+									user_oidc_enabled: true,
+									user_oidc_supported: true,
+								},
+								authorizationSetting: {
+									SSOProviderType: 'external',
+								},
+							 })
+							const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+							const providerInputField = wrapper.find(selectors.providerInput)
+							await providerInputField.setValue('key')
+							await localVue.nextTick()
+							const optionList = wrapper.find(selectors.oidcDropDownFirstElement)
+							await optionList.trigger('click')
+							await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).trigger('click')
+							await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).setValue('openproject')
+						})
+						it('should be enabled for authorization values set', async () => {
+							const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+							expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+						})
+						it('"on trigger" should set auth settings values', async () => {
+							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+								.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
+							const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+							expect(authSettingsSaveButton.exists()).toBe(true)
+							await authSettingsSaveButton.trigger('click')
+							await wrapper.vm.$nextTick()
+							expect(saveOPOptionsSpy).toBeCalledTimes(1)
+							expect(saveOPOptionsSpy).toBeCalledWith(
+								'http://localhost/apps/integration_openproject/admin-config',
+								{
+									values: {
+										oidc_provider: 'keycloak',
+										sso_provider_type: 'external',
+										targeted_audience_client_id: 'openproject',
+									},
+								},
+							)
+							expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+						})
 					})
 				})
 			})
 
 			describe('user_oidc app disabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: false } })
+					wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: '',
+								targeted_audience_client_id: '',
+							},
+							user_oidc_enabled: false,
+							user_oidc_supported: true,
+						},
+					})
 				})
 
 				it('should show app disabled error messages', () => {
@@ -1443,14 +1648,25 @@ describe('AdminSettings.vue', () => {
 					const authClientInput = wrapper.find(authClientSelector)
 
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
-					expect(authProviderSelect.attributes().disabled).toBe('true')
+					expect(authProviderSelect.exists()).toBe(false)
 					expect(authClientInput.attributes().disabled).toBe('true')
 				})
 			})
 
 			describe('unsupported user_oidc app is enable', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true, user_oidc_supported: false } })
+					wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: '',
+								targeted_audience_client_id: '',
+							},
+							user_oidc_enabled: true,
+							user_oidc_supported: false,
+						},
+					})
 				})
 
 				it('should show app not supported error messages', () => {
@@ -1471,8 +1687,43 @@ describe('AdminSettings.vue', () => {
 					const authClientInput = wrapper.find(authClientSelector)
 
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
-					expect(authProviderSelect.attributes().disabled).toBe('true')
+					expect(authProviderSelect.exists()).toBe(false)
 					expect(authClientInput.attributes().disabled).toBe('true')
+				})
+			})
+
+			describe('unsupported oidc app', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: '',
+								targeted_audience_client_id: '',
+							},
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+							apps: {
+								oidc: {
+									enabled: false,
+									supported: false,
+									minimum_version: appState.apps.oidc.minimum_version,
+								},
+							},
+						},
+					})
+				})
+
+				it('should show app not supported error messages', () => {
+					const errorLabel = wrapper.find(errorLabelSelector)
+					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
+					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+
+					expect(ncProviderRadio.attributes().disabled).toBe('true')
+					expect(ncProviderRadio.attributes().checked).toBe('external')
+					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
+					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
 				})
 			})
 		})
@@ -2963,6 +3214,10 @@ function getWrapper(data = {}) {
 		data() {
 			return {
 				...data,
+				state: {
+					...appState,
+					...data.state,
+				},
 			}
 		},
 	})
@@ -2981,6 +3236,10 @@ function getMountedWrapper(data = {}) {
 		data() {
 			return {
 				...data,
+				state: {
+					...appState,
+					...data.state,
+				},
 			}
 		},
 	})

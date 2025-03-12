@@ -93,8 +93,7 @@
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
 							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
-							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`"
-							type="error" />
+							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`" />
 					</div>
 				</div>
 				<div v-else>
@@ -154,27 +153,52 @@
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
-					:title="t('integration_openproject', 'OIDC Provider')"
-					:value="authorizationSetting.oidcProviderSet" />
+					:title="t('integration_openproject', 'OIDC Provider Type')"
+					:value="getSSOProviderType" />
 				<div v-else class="authorization-settings--content--provider">
 					<p class="authorization-settings--content--label">
-						{{ t('integration_openproject', 'OIDC provider *') }}
+						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
-					<div id="select">
-						<NcSelect
-							input-id="provider-search-input"
-							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
-							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
-							:options="registeredOidcProviders"
-							:value="getCurrentSelectedOIDCProvider"
-							:filterable="true"
-							:close-on-select="true"
-							:clear-search-on-blur="() => false"
-							:append-to-body="false"
-							:label-outside="true"
-							:input-label="t('integration_openproject', 'OIDC provider')"
-							@option:selected="onSelectOIDCProvider" />
-					</div>
+					<NcCheckboxRadioSwitch
+						:checked.sync="authorizationSetting.SSOProviderType"
+						:disabled="!isOIDCAppSupported || !hasEnabledSupportedOIDCApp"
+						:value="SSO_PROVIDER_TYPE.nextcloudHub"
+						type="radio">
+						{{ messages.nextcloudHubProvider }}
+					</NcCheckboxRadioSwitch>
+					<ErrorLabel
+						v-if="!hasEnabledSupportedOIDCApp"
+						:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`" />
+					<NcCheckboxRadioSwitch
+						:checked.sync="authorizationSetting.SSOProviderType"
+						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+						:value="SSO_PROVIDER_TYPE.external"
+						type="radio">
+						{{ messages.externalOIDCProvider }}
+					</NcCheckboxRadioSwitch>
+				</div>
+				<FieldValue v-if="isAuthorizationSettingsInViewMode && isExternalSSOProvider"
+					is-required
+					class="pb-1"
+					:title="t('integration_openproject', 'OIDC Provider')"
+					:value="getCurrentSelectedOIDCProvider" />
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--provider">
+					<p class="authorization-settings--content--label">
+						{{ t('integration_openproject', 'Select a provider *') }}
+					</p>
+					<NcSelect
+						input-id="provider-search-input"
+						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
+						:options="registeredOidcProviders"
+						:value="getCurrentSelectedOIDCProvider"
+						:filterable="true"
+						:close-on-select="true"
+						:clear-search-on-blur="() => false"
+						:append-to-body="false"
+						:label-outside="true"
+						:input-label="t('integration_openproject', 'OIDC provider')"
+						@option:selected="onSelectOIDCProvider" />
 					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 				</div>
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
@@ -191,7 +215,7 @@
 						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 						:place-holder="messages.opClientId"
 						:label="messages.opClientId"
-						hint-text="You can get this value from Keycloak when you set-up define the client" />
+						:hint-text="messages.opClientIdHintText" />
 				</div>
 			</div>
 			<div class="form-actions">
@@ -204,7 +228,7 @@
 					</template>
 					{{ t('integration_openproject', 'Edit authorization settings') }}
 				</NcButton>
-				<NcButton v-if="isAuthorizationSettingInEditMode && authorizationSetting.currentOIDCProviderSelected !== null && authorizationSetting.targetedAudienceClientIdSet !== null"
+				<NcButton v-if="isSSOSettingsInEditMode"
 					class="mr-2"
 					data-test-id="cancel-edit-auth-setting-btn"
 					@click="setAuthorizationSettingToViewMode">
@@ -213,7 +237,7 @@
 				<NcButton v-if="isAuthorizationSettingInEditMode"
 					data-test-id="submit-oidc-auth-settings-values-btn"
 					type="primary"
-					:disabled="isAuthorizationSettingsSelected"
+					:disabled="disableSaveSSOSettings"
 					@click="saveOIDCAuthSetting">
 					<template #icon>
 						<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
@@ -553,7 +577,7 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
@@ -589,6 +613,7 @@ export default {
 				server: F_MODES.EDIT,
 				authorizationMethod: F_MODES.DISABLE,
 				authorizationSetting: F_MODES.DISABLE,
+				SSOSettings: F_MODES.DISABLE,
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
@@ -632,6 +657,8 @@ export default {
 			userSettingDescription: USER_SETTINGS,
 			authMethods: AUTH_METHOD,
 			authMethodsLabel: AUTH_METHOD_LABEL,
+			SSO_PROVIDER_TYPE,
+			SSO_PROVIDER_LABEL,
 			// here 'Set' defines that the method is selected and saved in database (e.g authorizationMethodSet)
 			// whereas 'Selected' defines that it is the current selection (e.g currentAuthorizationMethodSelected)
 			authorizationMethod: {
@@ -644,6 +671,7 @@ export default {
 				targetedAudienceClientIdSet: null,
 				currentOIDCProviderSelected: null,
 				currentTargetedAudienceClientIdSelected: null,
+				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
 			},
 			registeredOidcProviders: [],
 			messages,
@@ -733,6 +761,9 @@ export default {
 		isAuthorizationSettingInEditMode() {
 			return this.formMode.authorizationSetting === F_MODES.EDIT
 		},
+		isSSOSettingsInEditMode() {
+			return this.formMode.SSOSettings === F_MODES.EDIT
+		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
@@ -797,14 +828,15 @@ export default {
 		},
 		getOIDCAppNotInstalledHintText() {
 			const linkText = t('integration_openproject', 'User OIDC')
-			const url = generateUrl('settings/apps/files/user_oidc')
+			const url = this.appLinks.user_oidc.installLink
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getConfigureOIDCHintText() {
-			const linkText = t('integration_openproject', 'User OIDC app')
-			const htmlLink = `<a class="link" href="" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'You can configure OIDC providers in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+			const linkText = t('integration_openproject', 'OpenID Connect settings')
+			const settingsUrl = this.appLinks.user_oidc.settingsLink
+			const htmlLink = `<a class="link" href="${settingsUrl}" target="_blank" title="${linkText}">${linkText}</a>`
+			return this.messagesFmt.configureOIDCProviders(htmlLink)
 		},
 		getUserOidcMinimumVersion() {
 			return this.state.user_oidc_minimum_version
@@ -853,8 +885,18 @@ export default {
 		isAuthorizationMethodSelected() {
 			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
-		isAuthorizationSettingsSelected() {
-			const { oidcProviderSet, currentOIDCProviderSelected } = this.authorizationSetting
+		disableSaveSSOSettings() {
+			const { oidcProviderSet, currentOIDCProviderSelected, SSOProviderType } = this.authorizationSetting
+			if (SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
+				const typeChanged = SSOProviderType !== this.state.authorization_settings.sso_provider_type
+				const hasClientId = !!this.authorizationSetting.currentTargetedAudienceClientIdSelected || !!this.getCurrentSelectedTargetedClientId
+				const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
+				if (hasClientId) {
+					return !typeChanged && !clientIdChanged
+				}
+				return !hasClientId
+			}
+
 			return currentOIDCProviderSelected === null
 				|| !this.getCurrentSelectedTargetedClientId
 				|| (oidcProviderSet === currentOIDCProviderSelected && this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId)
@@ -866,15 +908,37 @@ export default {
 		getCurrentSelectedTargetedClientId() {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
+		getSSOProviderType() {
+			return this.authorizationSetting.SSOProviderType
+		},
 		isOIDCAppInstalledAndEnabled() {
 			return this.state.user_oidc_enabled
 		},
 		isOIDCAppSupported() {
 			return this.state.user_oidc_supported
 		},
+		hasEnabledSupportedOIDCApp() {
+			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
+		},
+		getMinSupportedOIDCVersion() {
+			return this.state.apps.oidc.minimum_version
+		},
+		isExternalSSOProvider() {
+			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
+		},
+	},
+	watch: {
+		'authorizationSetting.SSOProviderType'() {
+			if (this.isExternalSSOProvider && this.state.authorization_settings.sso_provider_type !== this.SSO_PROVIDER_TYPE.external) {
+				this.authorizationSetting.currentOIDCProviderSelected = null
+			}
+		},
 	},
 	created() {
 		this.init()
+		if (!this.hasEnabledSupportedOIDCApp && this.formMode.SSOSettings === F_MODES.NEW) {
+			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
+		}
 	},
 	mounted() {
 		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
@@ -934,6 +998,7 @@ export default {
 					if (this.state.authorization_method === AUTH_METHOD.OIDC) {
 						if (!this.state.authorization_settings.oidc_provider || !this.state.authorization_settings.targeted_audience_client_id) {
 							this.formMode.authorizationSetting = F_MODES.EDIT
+							this.formMode.SSOSettings = F_MODES.NEW
 						}
 					}
 				}
@@ -942,9 +1007,11 @@ export default {
 					&& this.state.authorization_settings.targeted_audience_client_id
 				) {
 					this.formMode.authorizationSetting = F_MODES.VIEW
+					this.formMode.SSOSettings = F_MODES.VIEW
 					this.isFormCompleted.authorizationSetting = true
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
 					this.authorizationSetting.targetedAudienceClientIdSet = this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
+					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
@@ -990,8 +1057,8 @@ export default {
 				}
 				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
 
-				if (this.state.oidc_provider) {
-					this.registeredOidcProviders = this.state.oidc_provider
+				if (this.state.oidc_providers) {
+					this.registeredOidcProviders = this.state.oidc_providers
 				}
 			}
 		},
@@ -1019,8 +1086,10 @@ export default {
 		},
 		setAuthorizationSettingToViewMode() {
 			this.formMode.authorizationSetting = F_MODES.VIEW
+			this.formMode.SSOSettings = F_MODES.VIEW
 			this.isFormCompleted.authorizationSetting = true
-			this.state.authorization_settings.targeted_audience_client_id = this.authorizationSetting.currentTargetedAudienceClientIdSelected
+			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
+			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -1034,6 +1103,7 @@ export default {
 		},
 		setAuthorizationSettingInEditMode() {
 			this.formMode.authorizationSetting = F_MODES.EDIT
+			this.formMode.SSOSettings = F_MODES.EDIT
 			this.isFormCompleted.authorizationSetting = false
 		},
 		setProjectFolderSetUpToEditMode() {
@@ -1160,11 +1230,19 @@ export default {
 		async saveOIDCAuthSetting() {
 			this.isFormStep = FORM.AUTHORIZATION_SETTING
 			this.loadingAuthorizationMethodForm = true
-			this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
+
+			if (this.authorizationSetting.SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
+				this.authorizationSetting.oidcProviderSet = this.SSO_PROVIDER_LABEL.nextcloudHub
+				this.authorizationSetting.currentOIDCProviderSelected = this.SSO_PROVIDER_LABEL.nextcloudHub
+			} else {
+				this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
+			}
 			this.authorizationSetting.targetedAudienceClientIdSet = this.state.authorization_settings.targeted_audience_client_id
+
 			const success = await this.saveOPOptions()
 			if (success) {
 				this.formMode.authorizationSetting = F_MODES.VIEW
+				this.formMode.SSOSettings = F_MODES.VIEW
 				this.isFormCompleted.authorizationSetting = true
 				if (!this.isIntegrationCompleteWithOIDC && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
 					this.formMode.projectFolderSetUp = F_MODES.EDIT
@@ -1261,10 +1339,14 @@ export default {
 			// to avoid general console errors, we need to set the form to
 			// editor mode so that we can update the form fields with null values
 			// also, form completeness should be set to false
-			this.formMode.opOauth = F_MODES.EDIT
+
+			// reset form states to default
 			this.isFormCompleted.opOauth = false
-			this.formMode.server = F_MODES.EDIT
 			this.isFormCompleted.server = false
+			this.formMode.opOauth = F_MODES.EDIT
+			this.formMode.server = F_MODES.EDIT
+			this.formMode.SSOSettings = F_MODES.NEW
+
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
 			this.oPUserAppPassword = null
@@ -1389,19 +1471,21 @@ export default {
 					setup_app_password: false,
 				}
 				if (this.authorizationMethod.currentAuthorizationMethodSelected === AUTH_METHOD.OIDC
-					&& this.authorizationSetting.currentOIDCProviderSelected === null
+					&& this.getCurrentSelectedOIDCProvider === null
 					&& this.state.authorization_settings.targeted_audience_client_id === null) {
 					// when reset is oidc
 					values = {
 						...values,
 						oidc_provider: this.getCurrentSelectedOIDCProvider,
 						targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+						sso_provider_type: this.authorizationSetting.SSOProviderType,
 					}
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
 					oidc_provider: this.getCurrentSelectedOIDCProvider,
 					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+					sso_provider_type: this.authorizationSetting.SSOProviderType,
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
 				values = {
@@ -1409,6 +1493,7 @@ export default {
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
 					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
 					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedTargetedClientId : null,
+					sso_provider_type: this.authorizationSetting.SSOProviderType,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {

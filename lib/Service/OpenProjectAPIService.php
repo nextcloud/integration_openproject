@@ -66,7 +66,10 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '6.2.0';
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
+	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
+
 	/**
 	 * @var string
 	 */
@@ -394,7 +397,9 @@ class OpenProjectAPIService {
 	 * @param array<mixed> $options further options to be given to Guzzle see https://docs.guzzlephp.org/en/stable/request-options.html
 	 * @return array{error: string} | IResponse
 	 */
-	public function rawRequest(string $accessToken, string $openprojectUrl,
+	public function rawRequest(
+		string $accessToken,
+		string $openprojectUrl,
 		string $endPoint, array $params = [],
 		string $method = 'GET',
 		array $options = []
@@ -456,8 +461,12 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	public function request(string $userId,
-		string $endPoint, array $params = [], string $method = 'GET'): array {
+	public function request(
+		string $userId,
+		string $endPoint,
+		array $params = [],
+		string $method = 'GET'
+	): array {
 		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
 			$accessToken = $this->getOIDCToken();
 		} else {
@@ -1649,6 +1658,12 @@ class OpenProjectAPIService {
 		}
 		// token expiration info
 		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
+
+		// with Nextcloud Hub setup, we need to use the id-token to authenticate OpenProject API
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+			return $token->getIdToken();
+		}
 		return $token->getAccessToken();
 	}
 
@@ -1692,10 +1707,27 @@ class OpenProjectAPIService {
 		);
 	}
 
+	public function isOIDCAppEnabled(): bool {
+		return $this->appManager->isInstalled('oidc');
+	}
+
+	public function isOIDCAppSupported(): bool {
+		$appVersion = $this->appManager->getAppVersion('oidc');
+		return (
+			$this->isOIDCAppEnabled() &&
+			version_compare($appVersion, self::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
+		);
+	}
+
 	/**
 	 * @return bool
 	 */
 	public function isOIDCUser(): bool {
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+			return true;
+		}
+
 		if (!class_exists(OIDCBackend::class)) {
 			return false;
 		}

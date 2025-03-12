@@ -77,6 +77,7 @@ class Admin implements ISettings {
 				'targeted_audience_client_id' => $this->config->getAppValue(
 					Application::APP_ID, 'targeted_audience_client_id', ''
 				),
+				'sso_provider_type' => $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', ''),
 			],
 			'nc_oauth_client' => $clientInfo,
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
@@ -90,10 +91,17 @@ class Admin implements ISettings {
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
 			],
-			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
+			'oidc_providers' => $this->openProjectAPIService->getRegisteredOidcProviders(),
 			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
 			'user_oidc_supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
 			'user_oidc_minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
+			'apps' => [
+				'oidc' => [
+					'enabled' => $this->openProjectAPIService->isOIDCAppEnabled(),
+					'supported' => $this->openProjectAPIService->isOIDCAppSupported(),
+					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION,
+				]
+			],
 		];
 
 		$this->initialStateService->provideInitialState('admin-settings-config', $adminConfig);

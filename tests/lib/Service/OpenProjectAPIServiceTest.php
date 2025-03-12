@@ -4247,20 +4247,29 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function dataProviderForIsOIDCUser(): array {
 		$backendMock = $this->getMockBuilder(OIDCBackend::class)->disableOriginalConstructor()->getMock();
 		return [
-			'has Backend class and OIDC user' => [
-				'backend' => true,
-				'oidcUser' => $backendMock,
+			'has OIDCBackend class and OIDC user' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => $backendMock,
+				'SSOProviderType' => 'external',
 				'expected' => true,
 			],
-			'has Backend class but not OIDC user' => [
-				'backend' => true,
-				'oidcUser' => new \stdClass(),
+			'has OIDCBackend class but not OIDC user' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => new \stdClass(),
+				'SSOProviderType' => 'external',
 				'expected' => false,
 			],
-			'missing Backend class' => [
-				'backend' => false,
-				'oidcUser' => $backendMock,
+			'missing OIDCBackend class' => [
+				'hasOIDCBackend' => false,
+				'userBackend' => $backendMock,
+				'SSOProviderType' => '',
 				'expected' => false,
+			],
+			'configure with Nextcloud Hub' => [
+				'hasOIDCBackend' => true,
+				'userBackend' => new \stdClass(),
+				'SSOProviderType' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				'expected' => true,
 			],
 		];
 	}
@@ -4270,19 +4279,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testIsOIDCUser($backend, $oidcUser, $expected): void {
-		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-		$mock->expects($this->once())->willReturn($backend);
+	public function testIsOIDCUser($hasOIDCBackend, $userBackend, $SSOProviderType, $expected): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')->willReturn($SSOProviderType);
+
+		if ($SSOProviderType !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+			$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+			$mock->expects($this->once())->willReturn($hasOIDCBackend);
+		}
 
 		$userSessionMock = $this->createMock(IUserSession::class);
 		$userMock = $this->createMock(IUser::class);
 
-		$userMock->method('getBackend')->willReturn($oidcUser);
+		$userMock->method('getBackend')->willReturn($userBackend);
 		$userSessionMock->method('getUser')->willReturn($userMock);
 
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
-			['userSession' => $userSessionMock],
+			[
+				'userSession' => $userSessionMock,
+				'config' => $configMock,
+			],
 		);
 
 		$result = $service->isOIDCUser();
@@ -4297,19 +4314,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed supported user_oidc apps and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => true,
 			],
 			'has installed user_oidc apps but one of the class does not exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => false,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => false,
 			],
-			'has user_oidc apps not installed' => [
+			'has user_oidc apps not enabled' => [
 				'appInstalledAndEnabled' => false,
 				'classesExist' => true,
-				'version' => '6.2.0',
+				'version' => '7.0.0',
 				'expected' => false,
 			],
 			'has installed unsupported user_oidc apps version' => [
@@ -4321,10 +4338,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed user_oidc apps higher version and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '6.3.1',
+				'version' => '7.3.1',
 				'expected' => true,
 			],
-			'has no user_oidc apps' => [
+			'has no user_oidc app' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
 				'version' => '0',
@@ -4351,6 +4368,57 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$service->method('isUserOIDCAppInstalledAndEnabled')->willReturn($appInstalledAndEnabled);
 		$actualResult = $service->isUserOIDCAppSupported();
+		$this->assertEquals($expected, $actualResult);
+	}
+
+	/**
+	 * Data provider for testIsOIDCAppSupported
+	 */
+	public function dataProviderForIsOIDCAppSupported(): array {
+		return [
+			'supported app enabled' => [
+				'appEnabled' => true,
+				'version' => '1.4.0',
+				'expected' => true,
+			],
+			'higher app version enabled' => [
+				'appEnabled' => true,
+				'version' => '1.5.0',
+				'expected' => true,
+			],
+			'supported app disabled' => [
+				'appEnabled' => false,
+				'version' => '1.4.0',
+				'expected' => false,
+			],
+			'unsupported app enabled' => [
+				'appEnabled' => true,
+				'version' => '1.3.0',
+				'expected' => false,
+			],
+			'app not installed' => [
+				'appEnabled' => true,
+				'version' => '0',
+				'expected' => false,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForIsOIDCAppSupported
+	 */
+	public function testIsOIDCAppSupported($appEnabled, $version, $expected): void {
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$appManagerMock->method('getAppVersion')->with('oidc')->willReturn($version);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isOIDCAppEnabled'],
+			[
+				'appManager' => $appManagerMock,
+			],
+		);
+		$service->method('isOIDCAppEnabled')->willReturn($appEnabled);
+		$actualResult = $service->isOIDCAppSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
 }
