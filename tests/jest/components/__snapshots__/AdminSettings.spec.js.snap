@@ -280,7 +280,7 @@ Wrapper {
 `;
 
 exports[`AdminSettings.vue default user configurations form should be visible when the integration is complete 1`] = `
-ErrorWrapper {
+Wrapper {
   "selector": ".default-prefs",
 }
 `;

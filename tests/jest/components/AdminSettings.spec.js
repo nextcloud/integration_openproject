@@ -139,6 +139,16 @@ const completeOIDCIntegrationState = {
 	},
 }
 
+const appState = {
+	apps: {
+		oidc: {
+			enabled: true,
+			supported: true,
+			minimum_version: '1.4.0',
+		},
+	},
+}
+
 describe('AdminSettings.vue', () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
@@ -1014,6 +1024,7 @@ describe('AdminSettings.vue', () => {
 						await wrapper.setData({
 							state: {
 								user_oidc_enabled: true,
+								user_oidc_supported: true,
 							},
 						})
 						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authorization configuration which will delete'
@@ -1332,7 +1343,7 @@ describe('AdminSettings.vue', () => {
 				expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
 			})
 
-			describe.only('external SSO provider', () => {
+			describe('external SSO provider', () => {
 				beforeEach(async () => {
 					wrapper = getMountedWrapper({
 						registeredOidcProviders: ['keycloak'],
@@ -3165,6 +3176,10 @@ function getWrapper(data = {}) {
 		data() {
 			return {
 				...data,
+				state: {
+					...data.state,
+					...appState,
+				},
 			}
 		},
 	})
@@ -3183,6 +3198,10 @@ function getMountedWrapper(data = {}) {
 		data() {
 			return {
 				...data,
+				state: {
+					...data.state,
+					...appState,
+				},
 			}
 		},
 	})
