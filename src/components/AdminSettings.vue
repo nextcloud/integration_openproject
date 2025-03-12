@@ -202,21 +202,38 @@
 						@option:selected="onSelectOIDCProvider" />
 					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 				</div>
-				<FieldValue v-if="isAuthorizationSettingsInViewMode"
-					is-required
+				<FieldValue v-if="isAuthorizationSettingsInViewMode && isExternalSSOProvider"
 					class="pb-1"
-					:title="messages.opClientId"
-					:value="state.authorization_settings.targeted_audience_client_id" />
-				<div v-else class="authorization-settings--content--client">
-					<TextInput
-						id="authorization-method-target-client-id"
-						v-model="state.authorization_settings.targeted_audience_client_id"
-						class="py-1"
+					:title="messages.enableTokenExchange"
+					:value="authorizationSetting.enableTokenExchange" />
+				<div v-else class="authorization-settings--content--tokenexchange">
+					<p class="authorization-settings--content--label">
+						{{ messages.tokenExchangeFormLabel }}
+					</p>
+					<NcCheckboxRadioSwitch
+						type="switch"
+						:checked.sync="authorizationSetting.enableTokenExchange"
+						@update:checked="toggleTokenExchange">
+						<b>{{ messages.enableTokenExchange }}</b>
+					</NcCheckboxRadioSwitch>
+				</div>
+				<div v-if="showClientIDField">
+					<FieldValue v-if="isAuthorizationSettingsInViewMode"
 						is-required
-						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
-						:place-holder="messages.opClientId"
-						:label="messages.opClientId"
-						:hint-text="messages.opClientIdHintText" />
+						class="pb-1"
+						:title="messages.opClientId"
+						:value="state.authorization_settings.targeted_audience_client_id" />
+					<div v-else class="authorization-settings--content--client">
+						<TextInput
+							id="authorization-method-target-client-id"
+							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
+							class="py-1"
+							is-required
+							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+							:place-holder="messages.opClientId"
+							:label="messages.opClientId"
+							:hint-text="messages.opClientIdHintText" />
+					</div>
 				</div>
 			</div>
 			<div class="form-actions">
@@ -673,6 +690,7 @@ export default {
 				currentOIDCProviderSelected: null,
 				currentTargetedAudienceClientIdSelected: null,
 				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
+				enableTokenExchange: false,
 			},
 			registeredOidcProviders: [],
 			messages,
@@ -887,7 +905,7 @@ export default {
 			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
 		disableSaveSSOSettings() {
-			const { oidcProviderSet, currentOIDCProviderSelected, SSOProviderType } = this.authorizationSetting
+			const { currentOIDCProviderSelected, SSOProviderType, enableTokenExchange } = this.authorizationSetting
 			if (SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
 				const typeChanged = SSOProviderType !== this.state.authorization_settings.sso_provider_type
 				const hasClientId = !!this.authorizationSetting.currentTargetedAudienceClientIdSelected || !!this.getCurrentSelectedTargetedClientId
@@ -898,10 +916,17 @@ export default {
 				return !hasClientId
 			}
 
-			return currentOIDCProviderSelected === null
-				|| !this.getCurrentSelectedTargetedClientId
-				|| (oidcProviderSet === currentOIDCProviderSelected && this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId)
-				|| (this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId && oidcProviderSet === currentOIDCProviderSelected)
+			const formValueChanged = currentOIDCProviderSelected !== this.state.authorization_settings.oidc_provider
+				|| enableTokenExchange !== this.state.authorization_settings.token_exchange
+
+			if (!enableTokenExchange) {
+				return currentOIDCProviderSelected === null || !formValueChanged
+			}
+
+			const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
+			return this.authorizationSetting.currentTargetedAudienceClientIdSelected === null
+				|| !this.authorizationSetting.currentTargetedAudienceClientIdSelected
+				|| (!formValueChanged && !clientIdChanged)
 		},
 		getCurrentSelectedOIDCProvider() {
 			return this.authorizationSetting.currentOIDCProviderSelected
@@ -936,6 +961,12 @@ export default {
 				}
 			}
 			return false
+		},
+		showClientIDField() {
+			if (this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub) {
+				return true
+			}
+			return this.authorizationSetting.enableTokenExchange
 		},
 	},
 	watch: {
@@ -1023,6 +1054,7 @@ export default {
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
 					this.authorizationSetting.targetedAudienceClientIdSet = this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
+					this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
@@ -1687,6 +1719,9 @@ export default {
 		},
 		onSelectOIDCProvider(selectedOption) {
 			this.authorizationSetting.currentOIDCProviderSelected = selectedOption
+		},
+		toggleTokenExchange() {
+			this.authorizationSetting.currentTargetedAudienceClientIdSelected = null
 		},
 	},
 }
