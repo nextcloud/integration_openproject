@@ -67,6 +67,7 @@ class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
 	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
 	/**
@@ -1703,6 +1704,18 @@ class OpenProjectAPIService {
 			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
 			class_exists('\OCA\UserOIDC\User\Backend') &&
 			version_compare($userOidcVersion, self::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
+		);
+	}
+
+	public function isOIDCAppEnabled(): bool {
+		return $this->appManager->isInstalled('oidc');
+	}
+
+	public function isOIDCAppSupported(): bool {
+		$appVersion = $this->appManager->getAppVersion('oidc');
+		return (
+			$this->isUserOIDCAppInstalledAndEnabled() &&
+			version_compare($appVersion, self::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
 		);
 	}
 

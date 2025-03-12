@@ -93,8 +93,7 @@
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
 							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
-							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`"
-							type="error" />
+							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`" />
 					</div>
 				</div>
 				<div v-else>
@@ -162,11 +161,14 @@
 					</p>
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
-						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+						:disabled="!isOIDCAppSupported || !hasEnabledSupportedOIDCApp"
 						:value="SSO_PROVIDER_TYPE.nextcloudHub"
 						type="radio">
 						{{ messages.nextcloudHubProvider }}
 					</NcCheckboxRadioSwitch>
+					<ErrorLabel
+						v-if="!hasEnabledSupportedOIDCApp"
+						:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`" />
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
 						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
@@ -915,6 +917,12 @@ export default {
 		isOIDCAppSupported() {
 			return this.state.user_oidc_supported
 		},
+		hasEnabledSupportedOIDCApp() {
+			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
+		},
+		getMinSupportedOIDCVersion() {
+			return this.state.apps.oidc.minimum_version
+		},
 		isExternalSSOProvider() {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
 		},
@@ -928,6 +936,9 @@ export default {
 	},
 	created() {
 		this.init()
+		if (!this.hasEnabledSupportedOIDCApp && this.formMode.SSOSettings === F_MODES.NEW) {
+			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
+		}
 	},
 	mounted() {
 		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
