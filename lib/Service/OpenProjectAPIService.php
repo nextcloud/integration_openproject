@@ -1641,6 +1641,12 @@ class OpenProjectAPIService {
 			$this->logger->debug('The user_oidc app is not installed or enabled');
 			return null;
 		}
+
+		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange');
+		if (!$tokenExchange) {
+			// TODO: get login token here
+		}
+
 		try {
 			$event = $this->exchangedTokenRequestedEventHelper->getEvent();
 			/** @psalm-suppress InvalidArgument for dispatchTyped($event)

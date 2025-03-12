@@ -12,6 +12,8 @@ export const messages = {
 	featureNotAvailable: t(APP_ID, 'This feature is not available for this user account'),
 	opConnectionUnauthorized: t(APP_ID, 'Unauthorized to connect to OpenProject'),
 	opClientId: t(APP_ID, 'OpenProject client ID'),
+	tokenExchangeFormLabel: t(APP_ID, 'Token Exchange'),
+	enableTokenExchange: t(APP_ID, 'Enable token exchange'),
 	opClientIdHintText: t(APP_ID, 'You can get this value from your identity provider when you configure the client'),
 	nextcloudHubProvider: t(APP_ID, 'Nextcloud Hub'),
 	externalOIDCProvider: t(APP_ID, 'External Provider'),
