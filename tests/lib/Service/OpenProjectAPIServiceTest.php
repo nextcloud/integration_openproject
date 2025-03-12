@@ -4370,4 +4370,55 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$actualResult = $service->isUserOIDCAppSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
+
+	/**
+	 * Data provider for testIsOIDCAppSupported
+	 */
+	public function dataProviderForIsOIDCAppSupported(): array {
+		return [
+			'supported app enabled' => [
+				'appEnabled' => true,
+				'version' => '1.4.0',
+				'expected' => true,
+			],
+			'higher app version enabled' => [
+				'appEnabled' => true,
+				'version' => '1.5.0',
+				'expected' => true,
+			],
+			'supported app disabled' => [
+				'appEnabled' => false,
+				'version' => '1.4.0',
+				'expected' => false,
+			],
+			'unsupported app enabled' => [
+				'appEnabled' => true,
+				'version' => '1.3.0',
+				'expected' => false,
+			],
+			'app not installed' => [
+				'appEnabled' => true,
+				'version' => '0',
+				'expected' => false,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForIsOIDCAppSupported
+	 */
+	public function testIsOIDCAppSupported($appEnabled, $version, $expected): void {
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$appManagerMock->method('getAppVersion')->with('oidc')->willReturn($version);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isOIDCAppEnabled'],
+			[
+				'appManager' => $appManagerMock,
+			],
+		);
+		$service->method('isOIDCAppEnabled')->willReturn($appEnabled);
+		$actualResult = $service->isOIDCAppSupported();
+		$this->assertEquals($expected, $actualResult);
+	}
 }

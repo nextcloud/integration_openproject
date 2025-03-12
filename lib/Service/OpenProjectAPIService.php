@@ -1714,7 +1714,7 @@ class OpenProjectAPIService {
 	public function isOIDCAppSupported(): bool {
 		$appVersion = $this->appManager->getAppVersion('oidc');
 		return (
-			$this->isUserOIDCAppInstalledAndEnabled() &&
+			$this->isOIDCAppEnabled() &&
 			version_compare($appVersion, self::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
 		);
 	}
