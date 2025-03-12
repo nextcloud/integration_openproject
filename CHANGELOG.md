@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show proper error message in the dashboard based on auth method [#770](https://github.com/nextcloud/integration_openproject/pull/770)
 - Drop application's support for Nextcloud 27 [#779](https://github.com/nextcloud/integration_openproject/pull/779)
 - Show error when the user_oidc app not supported [#768](https://github.com/nextcloud/integration_openproject/pull/768)
+- Support setup with Nextcloud Hub [#778](https://github.com/nextcloud/integration_openproject/pull/778)
 
 ## 2.8.1 - 2025-02-05
 
