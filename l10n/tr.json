@@ -164,6 +164,8 @@
     "Unauthorized to connect to OpenProject" : "OpenProject bağlantısı kurma yetkisi yok",
     "OpenProject client ID" : "OpenProject istemci kimliği",
     "The \"{app}\" app is not installed" : "\"{app}\" uygulaması kurulmamış",
+    "The \"{app}\" app is not supported" : "\"{app}\" uygulaması desteklenmiyor",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Uygulamanın \"{minimumAppVersion}\" ya da üzerindeki bir sürümü gerekli",
     "Link to work package" : "Çalışma paketi bağlantısı",
     "Failed to link file to work package" : "Çalışma paketinin bağlantısı kurulamadı",
     "Successfully connected to OpenProject!" : "OpenProject ile bağlantı kuruldu!",
