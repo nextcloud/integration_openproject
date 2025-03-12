@@ -1167,8 +1167,11 @@ describe('AdminSettings.vue', () => {
 	describe('OIDC authorization settings', () => {
 		const formHeaderSelector = `${selectors.authorizationSettings} > formheading-stub`
 		const errorNoteSelector = `${selectors.authorizationSettings} > errornote-stub`
+		const errorLabelSelector = `${selectors.authorizationSettings} errorlabel-stub`
 		const authProviderSelector = `${selectors.authorizationSettingsProvider} ncselect-stub`
 		const authClientSelector = `${selectors.authorizationSettingsClient} > textinput-stub`
+		const NCProviderTypeSelector = `${selectors.authorizationSettings} nccheckboxradioswitch-stub[value="nextcloud_hub"]`
+		const externalProviderTypeSelector = `${selectors.authorizationSettings} nccheckboxradioswitch-stub[value="external"]`
 		const state = {
 			openproject_instance_url: 'http://openproject.com',
 			authorization_method: AUTH_METHOD.OIDC,
@@ -1686,6 +1689,41 @@ describe('AdminSettings.vue', () => {
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
 					expect(authProviderSelect.exists()).toBe(false)
 					expect(authClientInput.attributes().disabled).toBe('true')
+				})
+			})
+
+			describe('unsupported oidc app', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: '',
+								targeted_audience_client_id: '',
+							},
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+							apps: {
+								oidc: {
+									enabled: false,
+									supported: false,
+									minimum_version: appState.apps.oidc.minimum_version,
+								},
+							},
+						},
+					})
+				})
+
+				it('should show app not supported error messages', () => {
+					const errorLabel = wrapper.find(errorLabelSelector)
+					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
+					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+
+					expect(ncProviderRadio.attributes().disabled).toBe('true')
+					expect(ncProviderRadio.attributes().checked).toBe('external')
+					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
+					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
 				})
 			})
 		})
@@ -3177,8 +3215,8 @@ function getWrapper(data = {}) {
 			return {
 				...data,
 				state: {
-					...data.state,
 					...appState,
+					...data.state,
 				},
 			}
 		},
@@ -3199,8 +3237,8 @@ function getMountedWrapper(data = {}) {
 			return {
 				...data,
 				state: {
-					...data.state,
 					...appState,
+					...data.state,
 				},
 			}
 		},
