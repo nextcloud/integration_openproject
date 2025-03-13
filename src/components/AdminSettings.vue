@@ -212,8 +212,7 @@
 					</p>
 					<NcCheckboxRadioSwitch
 						type="switch"
-						:checked.sync="authorizationSetting.enableTokenExchange"
-						@update:checked="toggleTokenExchange">
+						:checked.sync="authorizationSetting.enableTokenExchange">
 						<b>{{ messages.enableTokenExchange }}</b>
 					</NcCheckboxRadioSwitch>
 				</div>
@@ -686,7 +685,6 @@ export default {
 			},
 			authorizationSetting: {
 				oidcProviderSet: null,
-				targetedAudienceClientIdSet: null,
 				currentOIDCProviderSelected: null,
 				currentTargetedAudienceClientIdSelected: null,
 				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
@@ -1046,13 +1044,13 @@ export default {
 				}
 				if (this.state.authorization_method === AUTH_METHOD.OIDC
 					&& this.state.authorization_settings.oidc_provider
-					&& this.state.authorization_settings.targeted_audience_client_id
+					&& this.state.authorization_settings.sso_provider_type
 				) {
 					this.formMode.authorizationSetting = F_MODES.VIEW
 					this.formMode.SSOSettings = F_MODES.VIEW
 					this.isFormCompleted.authorizationSetting = true
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
-					this.authorizationSetting.targetedAudienceClientIdSet = this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
+					this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
 					this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
 				}
@@ -1280,7 +1278,6 @@ export default {
 			} else {
 				this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
 			}
-			this.authorizationSetting.targetedAudienceClientIdSet = this.state.authorization_settings.targeted_audience_client_id
 
 			const success = await this.saveOPOptions()
 			if (success) {
@@ -1520,23 +1517,26 @@ export default {
 					values = {
 						...values,
 						oidc_provider: this.getCurrentSelectedOIDCProvider,
-						targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+						targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
 						sso_provider_type: this.authorizationSetting.SSOProviderType,
+						token_exchange: this.authorizationSetting.enableTokenExchange,
 					}
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
 					oidc_provider: this.getCurrentSelectedOIDCProvider,
-					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+					targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
+					token_exchange: this.authorizationSetting.enableTokenExchange,
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
 				values = {
 					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
 					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
-					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedTargetedClientId : null,
+					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.authorizationSetting.currentTargetedAudienceClientIdSelected : null,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
+					token_exchange: this.authorizationSetting.enableTokenExchange,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
@@ -1719,9 +1719,6 @@ export default {
 		},
 		onSelectOIDCProvider(selectedOption) {
 			this.authorizationSetting.currentOIDCProviderSelected = selectedOption
-		},
-		toggleTokenExchange() {
-			this.authorizationSetting.currentTargetedAudienceClientIdSelected = null
 		},
 	},
 }

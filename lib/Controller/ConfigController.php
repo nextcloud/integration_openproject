@@ -208,6 +208,7 @@ class ConfigController extends Controller {
 			'sso_provider_type',
 			'oidc_provider',
 			'targeted_audience_client_id',
+			'token_exchange',
 			'openproject_client_id',
 			'openproject_client_secret',
 			'default_enable_navigation',
