@@ -44,7 +44,6 @@ OC.L10N.register(
     "Edit authorization method" : "Upraviť metódu autorizácie",
     "Authorization settings" : "Nastavenia autorizácie",
     "OIDC Provider" : "Poskytovateľ OIDC",
-    "OIDC provider *" : "Poskytovateľ OIDC *",
     "Select an OIDC provider" : "Vybrať poskytovateľa OIDC",
     "OIDC provider" : "Poskytovateľ OIDC",
     "Edit authorization settings" : "Upraviť nastavenia autorizácie",
