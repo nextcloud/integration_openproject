@@ -1047,6 +1047,7 @@ export default {
 				}
 				if (this.state.authorization_method === AUTH_METHOD.OIDC
 					&& this.state.authorization_settings.oidc_provider
+					&& this.state.authorization_settings.targeted_audience_client_id
 					&& this.state.authorization_settings.sso_provider_type
 				) {
 					this.formMode.authorizationSetting = F_MODES.VIEW
