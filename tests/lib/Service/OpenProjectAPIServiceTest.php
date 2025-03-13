@@ -21,7 +21,7 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
-use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
+use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
@@ -680,7 +680,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'dbConnection' => $this->createMock(IDBConnection::class),
 			'logFactory' => $this->createMock(ILogFactory::class),
 			'manager' => $this->createMock(IManager::class),
-			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
+			'tokenEventFactory' => $this->createMock(TokenEventFactory::class),
 			'userSession' => $this->createMock(IUserSession::class),
 		];
 
@@ -764,7 +764,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$appManagerMock = $this->getMockBuilder(IAppManager::class)->disableOriginalConstructor()->getMock();
-		$exchangeTokenMock = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenMock = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$exchangedTokenRequestedEventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 
 		$this->defaultConfigMock
@@ -810,7 +810,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'rootFolder' => $storageMock,
 			'urlGenerator' => $urlGeneratorMock,
 			'appManager' => $appManagerMock,
-			'exchangedTokenRequestedEventHelper' => $exchangeTokenMock,
+			'tokenEventFactory' => $exchangeTokenMock,
 		]);
 
 		return new OpenProjectAPIService(...$constructArgs);
@@ -4151,7 +4151,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
@@ -4163,7 +4163,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
@@ -4200,7 +4200,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		/** @psalm-suppress InvalidArgument for getEvent
 		 * get event can throw TokenExchangeFailedException in case there is failure in token exchange from the user_oidc app
 		 */
@@ -4211,7 +4211,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
@@ -4227,7 +4227,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
 		$eventMock->method('getToken')->willReturn(null);
@@ -4237,7 +4237,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
