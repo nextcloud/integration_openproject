@@ -25,7 +25,7 @@ use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
-use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
+use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Entities\Signatory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
@@ -146,7 +146,7 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	private AuditLogger $auditLogger;
-	private ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper;
+	private TokenEventFactory $tokenEventFactory;
 
 	public function __construct(
 		string $appName,
@@ -168,7 +168,7 @@ class OpenProjectAPIService {
 		IDBConnection $db,
 		ILogFactory $logFactory,
 		IManager $encryptionManager,
-		ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper,
+		TokenEventFactory $tokenEventFactory,
 		IUserSession $userSession,
 	) {
 		$this->appName = $appName;
@@ -190,7 +190,7 @@ class OpenProjectAPIService {
 		$this->db = $db;
 		$this->logFactory = $logFactory;
 		$this->encryptionManager = $encryptionManager;
-		$this->exchangedTokenRequestedEventHelper = $exchangedTokenRequestedEventHelper;
+		$this->tokenEventFactory = $tokenEventFactory;
 		$this->userSession = $userSession;
 	}
 
@@ -1642,16 +1642,8 @@ class OpenProjectAPIService {
 			return null;
 		}
 
-		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange');
-		if (!$tokenExchange) {
-			// TODO: get login token here
-		}
-
 		try {
-			$event = $this->exchangedTokenRequestedEventHelper->getEvent();
-			/** @psalm-suppress InvalidArgument for dispatchTyped($event)
-			 * but new ExchangedTokenRequestedEvent(targeted_audience_client_id) returns event
-			 */
+			$event = $this->tokenEventFactory->getEvent();
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (TokenExchangeFailedException $e) {
 			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());
@@ -1668,8 +1660,10 @@ class OpenProjectAPIService {
 		// with Nextcloud Hub setup, we need to use the id-token to authenticate OpenProject API
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+			// $this->logger->error(get_class($event).": ".$token->getIdToken());
 			return $token->getIdToken();
 		}
+		// $this->logger->error(get_class($event).": ".$token->getAccessToken());
 		return $token->getAccessToken();
 	}
 
