@@ -51,16 +51,21 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       class="pb-1"
       isrequired="true"
       title="OIDC Provider Type"
+      value="nextcloud_hub"
     />
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -111,12 +116,16 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -167,16 +176,21 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       class="pb-1"
       isrequired="true"
       title="OIDC Provider Type"
+      value="nextcloud_hub"
     />
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -234,10 +248,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
      
     <fieldvalue-stub
       class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
+      title="Enable token exchange"
     />
+     
+    <!---->
   </div>
    
   <div
