@@ -17,6 +17,7 @@ export const messages = {
 	opClientIdHintText: t(APP_ID, 'You can get this value from your identity provider when you configure the client'),
 	nextcloudHubProvider: t(APP_ID, 'Nextcloud Hub'),
 	externalOIDCProvider: t(APP_ID, 'External Provider'),
+	tokenExchangeHintText: t(APP_ID, 'When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.'),
 }
 
 export const messagesFmt = {
