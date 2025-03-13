@@ -206,7 +206,7 @@
 					class="pb-1"
 					:title="messages.enableTokenExchange"
 					:value="authorizationSetting.enableTokenExchange" />
-				<div v-else class="authorization-settings--content--tokenexchange">
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--tokenexchange">
 					<p class="authorization-settings--content--label">
 						{{ messages.tokenExchangeFormLabel }}
 					</p>
