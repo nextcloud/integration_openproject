@@ -210,6 +210,9 @@
 					<p class="authorization-settings--content--label">
 						{{ messages.tokenExchangeFormLabel }}
 					</p>
+					<p class="description">
+						{{ messages.tokenExchangeHintText }}
+					</p>
 					<NcCheckboxRadioSwitch
 						type="switch"
 						:checked.sync="authorizationSetting.enableTokenExchange">
