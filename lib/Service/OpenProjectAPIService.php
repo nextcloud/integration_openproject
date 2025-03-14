@@ -1644,6 +1644,9 @@ class OpenProjectAPIService {
 
 		try {
 			$event = $this->tokenEventFactory->getEvent();
+			/**
+			 * @psalm-suppress InvalidArgument
+			 */
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (TokenExchangeFailedException $e) {
 			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());

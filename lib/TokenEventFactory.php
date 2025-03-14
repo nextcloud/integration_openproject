@@ -9,10 +9,9 @@ namespace OCA\OpenProject;
 
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
-use OCA\UserOIDC\Event\ExternalTokenRequestedEvent;
-use OCA\UserOIDC\Event\InternalTokenRequestedEvent;
-use OCP\EventDispatcher\Event;
+use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent as ExchangedTokenEvent;
+use OCA\UserOIDC\Event\ExternalTokenRequestedEvent as ExternalTokenEvent;
+use OCA\UserOIDC\Event\InternalTokenRequestedEvent as InternalTokenEvent;
 use OCP\IConfig;
 
 class TokenEventFactory {
@@ -25,27 +24,27 @@ class TokenEventFactory {
 	}
 
 	/**
-	 * @return Event
+	 * @return InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent
 	 */
-	public function getEvent(): Event {
+	public function getEvent(): InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent {
 		$SSOProvider = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER);
-		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange', false);
+		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange', '');
 		$targetAudience = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)
 		if ($SSOProvider === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
-			return new InternalTokenRequestedEvent($targetAudience);
+			return new InternalTokenEvent($targetAudience);
 		}
 
 		// If the SSO provider is external and token exchange is disabled,
 		// get the login token
 		if (!$tokenExchange) {
-			return new ExternalTokenRequestedEvent();
+			return new ExternalTokenEvent();
 		}
 
 		// If the SSO provider is external and token exchange is enabled,
 		// exchange the token for targeted audience client
-		return new ExchangedTokenRequestedEvent($targetAudience);
+		return new ExchangedTokenEvent($targetAudience);
 	}
 }
