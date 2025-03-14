@@ -4178,7 +4178,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isInstalled')->willReturn(false);
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
 			[
