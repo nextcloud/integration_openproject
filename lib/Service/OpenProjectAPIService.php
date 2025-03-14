@@ -30,7 +30,6 @@ use OCA\TermsOfService\Db\Entities\Signatory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCA\UserOIDC\Db\ProviderMapper;
-use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -1648,8 +1647,8 @@ class OpenProjectAPIService {
 			 * @psalm-suppress InvalidArgument
 			 */
 			$this->eventDispatcher->dispatchTyped($event);
-		} catch (TokenExchangeFailedException $e) {
-			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());
+		} catch (Exception $e) {
+			$this->logger->debug('Failed to get token: ' . $e->getMessage());
 			return null;
 		}
 		$token = $event->getToken();
@@ -1704,7 +1703,8 @@ class OpenProjectAPIService {
 			$this->isUserOIDCAppInstalledAndEnabled() &&
 			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
 			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
-			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
+			class_exists('\OCA\UserOIDC\Exception\ExternalTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Exception\InternalTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\User\Backend') &&
 			version_compare($userOidcVersion, self::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
 		);
