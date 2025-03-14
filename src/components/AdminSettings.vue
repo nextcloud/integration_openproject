@@ -155,7 +155,7 @@
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider Type')"
 					:value="getSSOProviderType" />
-				<div v-else class="authorization-settings--content--section">
+				<div v-else class="authorization-settings--content--section sso-provider-type">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
@@ -182,7 +182,7 @@
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider')"
 					:value="getCurrentSelectedOIDCProvider" />
-				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section">
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-provider">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'Select a provider *') }}
 					</p>
@@ -205,7 +205,7 @@
 					class="pb-1"
 					:title="messages.enableTokenExchange"
 					:value="authorizationSetting.enableTokenExchange" />
-				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section">
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-token-exchange">
 					<p class="authorization-settings--content--label">
 						{{ messages.tokenExchangeFormLabel }}
 					</p>
@@ -224,7 +224,7 @@
 						class="pb-1"
 						:title="messages.opClientId"
 						:value="state.authorization_settings.targeted_audience_client_id" />
-					<div v-else class="authorization-settings--content--section">
+					<div v-else class="authorization-settings--content--section sso-client-id">
 						<TextInput
 							id="authorization-method-target-client-id"
 							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
