@@ -168,7 +168,8 @@
 					</NcCheckboxRadioSwitch>
 					<ErrorLabel
 						v-if="!hasEnabledSupportedOIDCApp"
-						:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`" />
+						:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`"
+						:disabled="disableNCHubUnsupportedHint" />
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
 						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
@@ -926,6 +927,12 @@ export default {
 		isExternalSSOProvider() {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
 		},
+		disableNCHubUnsupportedHint() {
+			if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
+				return true
+			}
+			return false
+		},
 	},
 	watch: {
 		'authorizationSetting.SSOProviderType'() {
@@ -936,7 +943,7 @@ export default {
 	},
 	created() {
 		this.init()
-		if (!this.hasEnabledSupportedOIDCApp && this.formMode.SSOSettings === F_MODES.NEW) {
+		if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
 			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
 		}
 	},
