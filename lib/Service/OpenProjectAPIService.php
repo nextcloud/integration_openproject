@@ -1662,10 +1662,8 @@ class OpenProjectAPIService {
 		// with Nextcloud Hub setup, we need to use the id-token to authenticate OpenProject API
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
-			// $this->logger->error(get_class($event).": ".$token->getIdToken());
 			return $token->getIdToken();
 		}
-		// $this->logger->error(get_class($event).": ".$token->getAccessToken());
 		return $token->getAccessToken();
 	}
 
