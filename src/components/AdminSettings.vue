@@ -155,7 +155,7 @@
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider Type')"
 					:value="getSSOProviderType" />
-				<div v-else class="authorization-settings--content--provider">
+				<div v-else class="authorization-settings--content--section sso-provider-type">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
@@ -182,7 +182,7 @@
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider')"
 					:value="getCurrentSelectedOIDCProvider" />
-				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--provider">
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-provider">
 					<p class="authorization-settings--content--label">
 						{{ t('integration_openproject', 'Select a provider *') }}
 					</p>
@@ -201,21 +201,40 @@
 						@option:selected="onSelectOIDCProvider" />
 					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 				</div>
-				<FieldValue v-if="isAuthorizationSettingsInViewMode"
-					is-required
+				<FieldValue v-if="isAuthorizationSettingsInViewMode && isExternalSSOProvider"
 					class="pb-1"
-					:title="messages.opClientId"
-					:value="state.authorization_settings.targeted_audience_client_id" />
-				<div v-else class="authorization-settings--content--client">
-					<TextInput
-						id="authorization-method-target-client-id"
-						v-model="state.authorization_settings.targeted_audience_client_id"
-						class="py-1"
+					:title="messages.enableTokenExchange"
+					:value="authorizationSetting.enableTokenExchange" />
+				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-token-exchange">
+					<p class="authorization-settings--content--label">
+						{{ messages.tokenExchangeFormLabel }}
+					</p>
+					<p class="description">
+						{{ messages.tokenExchangeHintText }}
+					</p>
+					<NcCheckboxRadioSwitch
+						type="switch"
+						:checked.sync="authorizationSetting.enableTokenExchange">
+						<b>{{ messages.enableTokenExchange }}</b>
+					</NcCheckboxRadioSwitch>
+				</div>
+				<div v-if="showClientIDField">
+					<FieldValue v-if="isAuthorizationSettingsInViewMode"
 						is-required
-						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
-						:place-holder="messages.opClientId"
-						:label="messages.opClientId"
-						:hint-text="messages.opClientIdHintText" />
+						class="pb-1"
+						:title="messages.opClientId"
+						:value="state.authorization_settings.targeted_audience_client_id" />
+					<div v-else class="authorization-settings--content--section sso-client-id">
+						<TextInput
+							id="authorization-method-target-client-id"
+							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
+							class="py-1"
+							is-required
+							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+							:place-holder="messages.opClientId"
+							:label="messages.opClientId"
+							:hint-text="messages.opClientIdHintText" />
+					</div>
 				</div>
 			</div>
 			<div class="form-actions">
@@ -668,10 +687,10 @@ export default {
 			},
 			authorizationSetting: {
 				oidcProviderSet: null,
-				targetedAudienceClientIdSet: null,
 				currentOIDCProviderSelected: null,
 				currentTargetedAudienceClientIdSelected: null,
 				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
+				enableTokenExchange: false,
 			},
 			registeredOidcProviders: [],
 			messages,
@@ -886,7 +905,7 @@ export default {
 			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
 		disableSaveSSOSettings() {
-			const { oidcProviderSet, currentOIDCProviderSelected, SSOProviderType } = this.authorizationSetting
+			const { currentOIDCProviderSelected, SSOProviderType, enableTokenExchange } = this.authorizationSetting
 			if (SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
 				const typeChanged = SSOProviderType !== this.state.authorization_settings.sso_provider_type
 				const hasClientId = !!this.authorizationSetting.currentTargetedAudienceClientIdSelected || !!this.getCurrentSelectedTargetedClientId
@@ -897,10 +916,17 @@ export default {
 				return !hasClientId
 			}
 
-			return currentOIDCProviderSelected === null
-				|| !this.getCurrentSelectedTargetedClientId
-				|| (oidcProviderSet === currentOIDCProviderSelected && this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId)
-				|| (this.authorizationSetting.targetedAudienceClientIdSet === this.getCurrentSelectedTargetedClientId && oidcProviderSet === currentOIDCProviderSelected)
+			const formValueChanged = currentOIDCProviderSelected !== this.state.authorization_settings.oidc_provider
+				|| enableTokenExchange !== this.state.authorization_settings.token_exchange
+
+			if (!enableTokenExchange) {
+				return currentOIDCProviderSelected === null || !formValueChanged
+			}
+
+			const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
+			return this.authorizationSetting.currentTargetedAudienceClientIdSelected === null
+				|| !this.authorizationSetting.currentTargetedAudienceClientIdSelected
+				|| (!formValueChanged && !clientIdChanged)
 		},
 		getCurrentSelectedOIDCProvider() {
 			return this.authorizationSetting.currentOIDCProviderSelected
@@ -925,6 +951,12 @@ export default {
 		},
 		isExternalSSOProvider() {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
+		},
+		showClientIDField() {
+			if (this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub) {
+				return true
+			}
+			return this.authorizationSetting.enableTokenExchange
 		},
 	},
 	watch: {
@@ -1005,13 +1037,15 @@ export default {
 				if (this.state.authorization_method === AUTH_METHOD.OIDC
 					&& this.state.authorization_settings.oidc_provider
 					&& this.state.authorization_settings.targeted_audience_client_id
+					&& this.state.authorization_settings.sso_provider_type
 				) {
 					this.formMode.authorizationSetting = F_MODES.VIEW
 					this.formMode.SSOSettings = F_MODES.VIEW
 					this.isFormCompleted.authorizationSetting = true
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
-					this.authorizationSetting.targetedAudienceClientIdSet = this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
+					this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
+					this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
@@ -1237,7 +1271,6 @@ export default {
 			} else {
 				this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
 			}
-			this.authorizationSetting.targetedAudienceClientIdSet = this.state.authorization_settings.targeted_audience_client_id
 
 			const success = await this.saveOPOptions()
 			if (success) {
@@ -1477,23 +1510,26 @@ export default {
 					values = {
 						...values,
 						oidc_provider: this.getCurrentSelectedOIDCProvider,
-						targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+						targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
 						sso_provider_type: this.authorizationSetting.SSOProviderType,
+						token_exchange: this.authorizationSetting.enableTokenExchange,
 					}
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
 					oidc_provider: this.getCurrentSelectedOIDCProvider,
-					targeted_audience_client_id: this.getCurrentSelectedTargetedClientId,
+					targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
+					token_exchange: this.authorizationSetting.enableTokenExchange,
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
 				values = {
 					...values,
 					authorization_method: this.authorizationMethod.authorizationMethodSet,
 					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
-					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedTargetedClientId : null,
+					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.authorizationSetting.currentTargetedAudienceClientIdSelected : null,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
+					token_exchange: this.authorizationSetting.enableTokenExchange,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
@@ -1791,13 +1827,26 @@ export default {
 			&--label {
 				font-weight: 700;
 				font-size: .875rem;
+				color: var(--color-primary-text)
 			}
-			&--client {
+			&--section {
 				margin-top: 0.7rem;
 			}
 		}
 		.description {
 			margin-top: 0.1rem;
+		}
+	}
+}
+
+[data-theme-light] {
+	#openproject_prefs {
+		.authorization-settings {
+			&--content {
+				&--label {
+					color: var(--color-main-text)
+				}
+			}
 		}
 	}
 }

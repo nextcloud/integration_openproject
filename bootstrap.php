@@ -20,6 +20,7 @@ include_once $serverPath.'/3rdparty/autoload.php';
 require_once $serverPath. '/lib/base.php';
 
 $classLoader = new ClassLoader();
+$classLoader->addPsr4("OCA\\OpenProject\\", __DIR__ . '/lib', true);
 $classLoader->addPsr4("OCA\\OpenProject\\Service\\", __DIR__ . '/lib/Service', true);
 $classLoader->addPsr4("OCA\\OpenProject\\Settings\\", __DIR__ . '/lib/Settings', true);
 $classLoader->addPsr4("OCP\\", $serverPath . '/lib/public', true);
