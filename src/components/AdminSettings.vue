@@ -928,8 +928,12 @@ export default {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
 		},
 		disableNCHubUnsupportedHint() {
-			if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
-				return true
+			if (!this.hasEnabledSupportedOIDCApp) {
+				if (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW) {
+					return true
+				} else if (this.isExternalSSOProvider) {
+					return true
+				}
 			}
 			return false
 		},
