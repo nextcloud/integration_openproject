@@ -1416,6 +1416,50 @@ describe('AdminSettings.vue', () => {
 					)
 				})
 			})
+
+			describe('unsupported oidc app', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: 'Nextcloud Hub',
+								targeted_audience_client_id: 'some-target-aud-client-id',
+								sso_provider_type: 'nextcloud_hub',
+							},
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+							apps: {
+								oidc: {
+									enabled: false,
+									supported: false,
+									minimum_version: appState.apps.oidc.minimum_version,
+								},
+							},
+						},
+					})
+					await wrapper.setData({
+						formMode: {
+							authorizationSetting: F_MODES.EDIT,
+							SSOSettings: F_MODES.EDIT,
+						},
+						isFormCompleted: { authorizationSetting: false },
+					})
+				})
+
+				it('should show app not supported error messages', () => {
+					const errorLabel = wrapper.find(errorLabelSelector)
+					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
+					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+
+					expect(ncProviderRadio.attributes().disabled).toBe('true')
+					expect(ncProviderRadio.attributes().checked).toBe('nextcloud_hub')
+					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
+					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
+					expect(errorLabel.attributes().disabled).toBe(undefined)
+				})
+			})
 		})
 
 		describe('edit mode, incomplete admin configuration', () => {
@@ -1724,6 +1768,7 @@ describe('AdminSettings.vue', () => {
 					expect(ncProviderRadio.attributes().checked).toBe('external')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
 					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
+					expect(errorLabel.attributes().disabled).toBe('true')
 				})
 			})
 		})
