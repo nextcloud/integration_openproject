@@ -1027,10 +1027,10 @@ describe('AdminSettings.vue', () => {
 								user_oidc_supported: true,
 							},
 						})
-						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authorization configuration which will delete'
-							+ ' all the configuration setting for current OAUTH2 based authorization.'
+						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authentication configuration which will delete'
+							+ ' all the configuration setting for current OAUTH2 based authentication.'
 							+ ' You can switch back to it anytime.'
-						const expectedDialogTitle = 'Switch Authorization Method'
+						const expectedDialogTitle = 'Switch Authentication Method'
 						const expectedDialogOpts = {
 							cancel: 'Cancel',
 							confirm: 'Yes, switch',
@@ -1110,10 +1110,10 @@ describe('AdminSettings.vue', () => {
 
 				describe('on trigger save button', () => {
 					it('should open auth method switch dialog confirm "Yes, Switch"', async () => {
-						const expectedDialogMessage = 'If you proceed this method, you will have an OAUTH2 based authorization configuration which will delete'
-							+ ' all the configuration setting for current OIDC based authorization.'
+						const expectedDialogMessage = 'If you proceed this method, you will have an OAUTH2 based authentication configuration which will delete'
+							+ ' all the configuration setting for current OIDC based authentication.'
 							+ ' You can switch back to it anytime.'
-						const expectedDialogTitle = 'Switch Authorization Method'
+						const expectedDialogTitle = 'Switch Authentication Method'
 						const expectedDialogOpts = {
 							cancel: 'Cancel',
 							confirm: 'Yes, switch',
