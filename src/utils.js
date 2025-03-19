@@ -79,8 +79,8 @@ export const AUTH_METHOD = {
 }
 
 export const AUTH_METHOD_LABEL = {
-	OAUTH2: t('integration_openproject', 'OAuth2 two-way authorization code flow'),
-	OIDC: t('integration_openproject', 'OpenID identity provider'),
+	OAUTH2: t('integration_openproject', 'Two-way OAuth 2.0 authorization code flow'),
+	OIDC: t('integration_openproject', 'Single-Sign-On through OpenID Connect Identity Provider'),
 }
 
 export const SSO_PROVIDER_TYPE = {
