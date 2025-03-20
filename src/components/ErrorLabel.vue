@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<p class="error">
+	<p class="error" :disabled="disabled">
 		{{ error }}
 	</p>
 </template>
@@ -16,6 +16,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 }
 </script>
@@ -23,5 +27,9 @@ export default {
 <style scoped lang="scss">
 .error {
 	color: var(--color-error);
+}
+
+.error[disabled] {
+	color: var(--color-text-maxcontrast);
 }
 </style>
