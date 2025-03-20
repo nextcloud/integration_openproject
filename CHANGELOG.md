@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show error when the user_oidc app not supported [#768](https://github.com/nextcloud/integration_openproject/pull/768)
 - Support setup with Nextcloud Hub [#778](https://github.com/nextcloud/integration_openproject/pull/778)
 
+### Changed
+
+- Rename admin settings labels: `Authorization` -> `Authentication` [#758](https://github.com/nextcloud/integration_openproject/pull/758)
+
 ## 2.8.1 - 2025-02-05
 
 ### Fixed

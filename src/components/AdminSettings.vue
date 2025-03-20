@@ -64,7 +64,7 @@
 		</div>
 		<div class="authorization-method">
 			<FormHeading index="2"
-				:title="t('integration_openproject', 'Authorization method')"
+				:title="t('integration_openproject', 'Authentication method')"
 				:is-complete="isAuthorizationMethodFormComplete"
 				:is-disabled="isAuthorizationFormInDisabledMode"
 				:is-dark-theme="isDarkTheme" />
@@ -108,7 +108,7 @@
 						<template #icon>
 							<PencilIcon :size="20" />
 						</template>
-						{{ t('integration_openproject', 'Edit authorization method') }}
+						{{ t('integration_openproject', 'Edit authentication method') }}
 					</NcButton>
 					<NcButton v-if="isAuthorizationFormInEditMode && authorizationMethod.currentAuthorizationMethodSelected !== null"
 						class="mr-2"
@@ -132,7 +132,7 @@
 		</div>
 		<div v-if="authorizationMethod.currentAuthorizationMethodSelected === authMethods.OIDC" class="authorization-settings">
 			<FormHeading index="3"
-				:title="t('integration_openproject', 'Authorization settings')"
+				:title="t('integration_openproject', 'Authentication settings')"
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
@@ -226,7 +226,7 @@
 					<template #icon>
 						<PencilIcon :size="20" />
 					</template>
-					{{ t('integration_openproject', 'Edit authorization settings') }}
+					{{ t('integration_openproject', 'Edit authentication settings') }}
 				</NcButton>
 				<NcButton v-if="isSSOSettingsInEditMode"
 					class="mr-2"
@@ -822,7 +822,7 @@ export default {
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getAuthorizationMethodHintText() {
-			const linkText = t('integration_openproject', 'authorization methods you can use with OpenProject')
+			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
@@ -830,7 +830,7 @@ export default {
 			const linkText = t('integration_openproject', 'User OIDC')
 			const url = this.appLinks.user_oidc.installLink
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authentication with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'OpenID Connect settings')
@@ -1275,8 +1275,8 @@ export default {
 			// open the confirmation dialog when only swithing back and forth between two authorization method
 			if (this.isAuthorizationFormInEditMode && this.authorizationMethod.currentAuthorizationMethodSelected !== null) {
 				await OC.dialogs.confirmDestructive(
-					t('integration_openproject', `If you proceed this method, you will have an ${this.authorizationMethod.authorizationMethodSet.toUpperCase()} based authorization configuration which will delete all the configuration setting for current ${this.authorizationMethod.currentAuthorizationMethodSelected.toUpperCase()} based authorization. You can switch back to it anytime.`),
-					t('integration_openproject', 'Switch Authorization Method'),
+					t('integration_openproject', `If you proceed this method, you will have an ${this.authorizationMethod.authorizationMethodSet.toUpperCase()} based authentication configuration which will delete all the configuration setting for current ${this.authorizationMethod.currentAuthorizationMethodSelected.toUpperCase()} based authentication. You can switch back to it anytime.`),
+					t('integration_openproject', 'Switch Authentication Method'),
 					{
 						type: OC.dialogs.YES_NO_BUTTONS,
 						confirm: t('integration_openproject', 'Yes, switch'),

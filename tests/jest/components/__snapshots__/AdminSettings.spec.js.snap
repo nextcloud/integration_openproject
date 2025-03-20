@@ -32,13 +32,13 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     haserror="true"
     index="3"
     iscomplete="true"
-    title="Authorization settings"
+    title="Authentication settings"
   />
    
   <errornote-stub
     errorlink="http://localhost/settings/apps/files/user_oidc"
     errorlinklabel="Download and enable it"
-    errormessage="This app is required to use the OIDC authorization method"
+    errormessage="This app is required to use the OIDC authentication method"
     errortitle="The "{app}" app is not installed"
   />
    
@@ -74,7 +74,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       type="secondary"
     >
       
-				Edit authorization settings
+				Edit authentication settings
 			
     </ncbutton-stub>
      
@@ -92,7 +92,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
   <formheading-stub
     index="3"
     iscomplete="true"
-    title="Authorization settings"
+    title="Authentication settings"
   />
    
   <!---->
@@ -129,7 +129,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       type="secondary"
     >
       
-				Edit authorization settings
+				Edit authentication settings
 			
     </ncbutton-stub>
      
@@ -148,7 +148,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     haserror="true"
     index="3"
     iscomplete="true"
-    title="Authorization settings"
+    title="Authentication settings"
   />
    
   <!---->
@@ -190,7 +190,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       type="secondary"
     >
       
-				Edit authorization settings
+				Edit authentication settings
 			
     </ncbutton-stub>
      
@@ -208,7 +208,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
   <formheading-stub
     index="3"
     iscomplete="true"
-    title="Authorization settings"
+    title="Authentication settings"
   />
    
   <!---->
@@ -250,7 +250,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       type="secondary"
     >
       
-				Edit authorization settings
+				Edit authentication settings
 			
     </ncbutton-stub>
      
