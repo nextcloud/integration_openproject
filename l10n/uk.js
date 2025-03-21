@@ -18,6 +18,7 @@ OC.L10N.register(
     "OpenProject host" : "Хост OpenProject",
     "Edit server information" : "Редагувати інформацію про сервер",
     "Save" : "Зберегти",
+    "Authentication method" : "Спосіб авторизації",
     "OpenProject OAuth settings" : "Параметри OpenProject OAuth",
     "Replace OpenProject OAuth values" : "Замінити значення OpenProject OAuth",
     "Nextcloud OAuth client" : "Клієнт Nextcloud OAuth",
