@@ -14,6 +14,7 @@ OC.L10N.register(
     "Failed to save OpenProject admin options" : "Salvataggio delle opzioni amministrative di OpenProject non riuscito",
     "Cancel" : "Annulla",
     "Save" : "Salva",
+    "Authentication method" : "Metodo di autenticazione",
     "Connect to OpenProject" : "Collegati a OpenProject",
     "OpenProject options saved" : "Opzioni di OpenProject salvate",
     "Incorrect access token" : "Token di accesso non corretto",

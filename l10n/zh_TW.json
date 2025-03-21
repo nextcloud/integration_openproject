@@ -6,6 +6,7 @@
     "Documentation" : "文件",
     "Cancel" : "取消",
     "Save" : "儲存",
+    "Authentication method" : "認證方式",
     "Incorrect access token" : "不正確的存取權杖",
     "Invalid token" : "無效的權杖",
     "Connected as {user}" : "以 {user} 身份連線",

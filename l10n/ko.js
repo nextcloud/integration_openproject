@@ -9,6 +9,7 @@ OC.L10N.register(
     "Documentation" : "문서",
     "Cancel" : "취소",
     "Save" : "저장",
+    "Authentication method" : "인증 방법",
     "Incorrect access token" : "잘못된 액세스 토큰",
     "Invalid token" : "잘못된 토큰",
     "Connected as {user}" : "{user}로 연결됨",
