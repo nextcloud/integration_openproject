@@ -6,6 +6,7 @@ OC.L10N.register(
     "Documentation" : "Documentação",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Authentication method" : "Método de Autenticação",
     "Invalid token" : "token inválido",
     "Copied!" : "Copiado!",
     "Details" : "Detalhes",

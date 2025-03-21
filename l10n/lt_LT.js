@@ -10,6 +10,7 @@ OC.L10N.register(
     "Yes, replace" : "Taip, pakeisti",
     "Cancel" : "Atsisakyti",
     "Save" : "Įrašyti",
+    "Authentication method" : "Tapatybės nustatymo metodas",
     "Invalid token" : "Neteisingas prieigos raktas",
     "Connected as {user}" : "Prisijungta kaip {user}",
     "Copied!" : "Nukopijuota!",
