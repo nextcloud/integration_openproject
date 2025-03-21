@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentacija",
     "Cancel" : "Prekliči",
     "Save" : "Shrani",
+    "Authentication method" : "Način overitve",
     "Incorrect access token" : "Neveljaven žeton za dostop",
     "Connected as {user}" : "Povezan je uporabniški račun {user}",
     "Enable navigation link" : "Omogoči povezave za krmarjenje",

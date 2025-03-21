@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "תיעוד",
     "Cancel" : "ביטול",
     "Save" : "שמירה",
+    "Authentication method" : "שיטת אימות",
     "Incorrect access token" : "אסימון הגישה שגוי",
     "Enable navigation link" : "הפעלת קישור ניווט",
     "Copied!" : "הועתק!",

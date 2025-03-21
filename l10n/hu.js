@@ -42,6 +42,7 @@ OC.L10N.register(
     "OpenProject host" : "OpenProject-gazdagép",
     "Edit server information" : "Kiszolgálóinformációk szerkesztése",
     "Save" : "Mentés",
+    "Authentication method" : "Hitelesítési mód",
     "OpenProject OAuth settings" : "OpenProject OAuth beállítások",
     "Replace OpenProject OAuth values" : "OpenProject OAuth értékek lecserélése",
     "Nextcloud OAuth client" : "Nextcloud OAuth kliens",

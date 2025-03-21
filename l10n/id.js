@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentasi",
     "Cancel" : "Membatalkan",
     "Save" : "Simpan",
+    "Authentication method" : "Metode otentikasi",
     "Incorrect access token" : "Token akses tidak benar",
     "Connected as {user}" : "Terhubung sebagai {user}",
     "Enable navigation link" : "Aktifkan tautan navigasi",

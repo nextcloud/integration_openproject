@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentaatio",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Authentication method" : "Tunnistautumistapa",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
     "Enable navigation link" : "Näytä navigointipalkissa",

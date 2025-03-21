@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Documentație",
     "Cancel" : "Anulare",
     "Save" : "Salvează",
+    "Authentication method" : "Modul de autentificare",
     "Enable navigation link" : "Pornește link-ul de navifare",
     "Copied!" : "S-a copiat!",
     "Details" : "Detalii",
