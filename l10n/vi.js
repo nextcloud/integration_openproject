@@ -5,6 +5,7 @@ OC.L10N.register(
     "Documentation" : "Tài liệu",
     "Cancel" : "Hủy",
     "Save" : "Lưu",
+    "Authentication method" : "Phương thức xác thực",
     "Connected as {user}" : "Kết nối bởi {user}",
     "Copied!" : "Đã sao chép!",
     "Details" : "Chi tiết",
