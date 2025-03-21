@@ -66,6 +66,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
+	public const MIN_SUPPORTED_GROUP_FOLDERS_APP_VERSION = '1.0.0';
 	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
 	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
@@ -1072,6 +1073,9 @@ class OpenProjectAPIService {
 			if (!$this->isGroupfoldersAppEnabled()) {
 				throw new \Exception('The "Group folders" app is not installed');
 			}
+			if (!$this->isGroupfoldersSupported()) {
+				throw new \Exception('The "Group folders" app is not supported');
+			}
 		}
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			throw new OpenprojectGroupfolderSetupConflictException('The user "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
@@ -1100,7 +1104,8 @@ class OpenProjectAPIService {
 			$this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME) &&
 			$this->isUserPartOfAndAdminOfGroup() &&
 			$this->isGroupfoldersAppEnabled() &&
-			$this->isGroupfolderAppCorrectlySetup()
+			$this->isGroupfolderAppCorrectlySetup() &&
+			$this->isGroupfoldersSupported()
 		);
 	}
 
@@ -1174,11 +1179,19 @@ class OpenProjectAPIService {
 	public function isGroupfoldersAppEnabled(): bool {
 		$user = $this->userManager->get(Application::OPEN_PROJECT_ENTITIES_NAME);
 		return (
-			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
 			$this->appManager->isEnabledForUser(
 				'groupfolders',
 				$user
 			)
+		);
+	}
+
+	public function isGroupfoldersSupported(): bool {
+		$groupfoldersVersion = $this->appManager->getAppVersion('groupfolders');
+		return (
+			$this->isGroupfoldersAppEnabled() &&
+			class_exists('\OCA\GroupFolders\Folder\FolderManager') &&
+			version_compare($groupfoldersVersion, self::MIN_SUPPORTED_GROUP_FOLDERS_APP_VERSION) >= 0
 		);
 	}
 
