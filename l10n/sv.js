@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentation",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
+    "Authentication method" : "Autentiseringsmetod",
     "Incorrect access token" : "Ogiltig åtkomst-token",
     "Invalid token" : "Ogiltig token",
     "Connected as {user}" : "Ansluten som {user}",

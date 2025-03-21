@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "ドキュメント",
     "Cancel" : "キャンセル",
     "Save" : "保存",
+    "Authentication method" : "認証方法",
     "Incorrect access token" : "正しくないアクセストークン",
     "Connected as {user}" : "{user} に接続済み",
     "Enable navigation link" : "ナビゲーションリンクを有効化",

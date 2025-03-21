@@ -17,6 +17,7 @@ OC.L10N.register(
     "OpenProject host" : "OpenProject host",
     "Edit server information" : "server informatie aanpassen",
     "Save" : "Opslaan",
+    "Authentication method" : "Authenticatiemethode",
     "OpenProject OAuth settings" : "OpenProject OAuth instellingen",
     "Replace OpenProject OAuth values" : "Vervang de OpenProject OAuth waarden",
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
