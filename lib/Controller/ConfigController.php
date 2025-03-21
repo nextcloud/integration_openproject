@@ -782,16 +782,8 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function resetIntegration(): DataResponse {
-		$values = [
-			'openproject_instance_url' => null,
-			'openproject_client_id' => null,
-			'openproject_client_secret' => null,
-			'default_enable_navigation' => null,
-			'default_enable_unified_search' => null,
-			'setup_app_password' => false
-		];
 		try {
-			$status = $this->setIntegrationConfig($values);
+			$status = $this->setIntegrationConfig($this->settingsService->getDefaultSettings());
 			$result = ["status" => true];
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];

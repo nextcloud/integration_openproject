@@ -35,6 +35,17 @@ class SettingsService {
         'targeted_audience_client_id' => 'string',
     ];
 
+    /**
+     * @return array<string, string>
+     */
+    private function getDefaultSettings(): array {
+        $settings = $this->getAllSettings();
+        return \array_reduce($settings, function ($acc, $setting) {
+            $acc[$setting] = null;
+            return $acc;
+        }, []);
+    }
+
 	/**
 	 * @return array<string, string|array>
      */
@@ -60,7 +71,7 @@ class SettingsService {
 	 * @return array<string>
 	 */
     public function getAllSettings(): array {
-        return \array_keys(\array_merge(self::GENERAL_ADMIN_SETTINGS, self::OAUTH_ADMIN_SETTINGS, self::OIDC_ADMIN_SETTINGS));
+        return \array_keys($this->getAllSettingsType());
     }
 
     public function __construct() {}
