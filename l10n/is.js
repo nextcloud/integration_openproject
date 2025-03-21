@@ -7,6 +7,7 @@ OC.L10N.register(
     "Documentation" : "Hjálparskjöl",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
+    "Authentication method" : "Auðkenningarmáti",
     "Incorrect access token" : "Rangt aðgangsteikn",
     "Connected as {user}" : "Tengt sem {user}",
     "Enable navigation link" : "Virkja flakktengil",

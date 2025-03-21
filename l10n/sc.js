@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Documentatzione",
     "Cancel" : "Annulla",
     "Save" : "Sarva",
+    "Authentication method" : "Mètodu de autenticatzione",
     "Incorrect access token" : "Token de intrada non bàlidu",
     "Connected as {user}" : "Connètidu comente {user}",
     "Enable navigation link" : "Ativa su ligòngiu de navigatzione",

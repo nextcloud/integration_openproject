@@ -7,6 +7,7 @@ OC.L10N.register(
     "Documentation" : "Документација",
     "Cancel" : "Откажи",
     "Save" : "Зачувај",
+    "Authentication method" : "Начин на автентификација",
     "Incorrect access token" : "Неточен токен за пристап",
     "Connected as {user}" : "Поврзан како {user}",
     "Enable navigation link" : "Овозможи линк за навигација",
