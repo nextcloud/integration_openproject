@@ -8,6 +8,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentacija",
     "Cancel" : "Odustani",
     "Save" : "Spremi",
+    "Authentication method" : "Način autentifikacije",
     "Incorrect access token" : "Pogrešan token za pristup",
     "Connected as {user}" : "Povezan kao {user}",
     "Enable navigation link" : "Omogući navigacijsku poveznicu",

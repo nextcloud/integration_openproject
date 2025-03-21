@@ -39,6 +39,7 @@ OC.L10N.register(
     "Please introduce your OpenProject hostname" : "Veuillez indiquer nom d'hôte OpenProject",
     "Edit server information" : "Modifier les informations serveur",
     "Save" : "Enregistrer",
+    "Authentication method" : "Méthode d'authentification",
     "OpenProject OAuth settings" : "OpenProject OAuth paramètres",
     "Replace OpenProject OAuth values" : "Remplacez les valeurs OAuth d'OpenProject",
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
