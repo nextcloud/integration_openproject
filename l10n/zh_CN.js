@@ -9,6 +9,7 @@ OC.L10N.register(
     "Documentation" : "文档",
     "Cancel" : "取消",
     "Save" : "保存",
+    "Authentication method" : "认证方法",
     "Incorrect access token" : "访问令牌不正确",
     "Invalid token" : "令牌无效",
     "Connected as {user}" : "以 {user} 身份连接",

@@ -37,6 +37,7 @@
     "Please introduce your OpenProject hostname" : "OpenProject باش نامىڭىزنى تونۇشتۇرۇڭ",
     "Edit server information" : "مۇلازىمېتىر ئۇچۇرلىرىنى تەھرىرلەڭ",
     "Save" : "ساقلا",
+    "Authentication method" : "دەلىللەش ئۇسۇلى",
     "OpenProject OAuth settings" : "OpenProject OAuth تەڭشىكى",
     "Replace OpenProject OAuth values" : "OpenProject OAuth قىممىتىنى ئالماشتۇرۇڭ",
     "Nextcloud OAuth client" : "Nextcloud OAuth خېرىدارى",
