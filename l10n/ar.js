@@ -51,6 +51,7 @@ OC.L10N.register(
     "Please introduce your OpenProject hostname" : "قُم رجاءً بالتعريف باسم مضيف نظامك \"أوبن بروجكت\" OpenProject",
     "Edit server information" : "إدخال معلومات الخادم",
     "Save" : "حفظ",
+    "Authentication method" : "أسلوب التحقُّق من الهويّة",
     "Need help setting this up?" : "هل تحتاج إلى مساعدة في تجهيز هذا التطبيق؟",
     "OIDC Provider Type" : "نوع مُزوِّد المُصادَقة OIDC",
     "OIDC Provider" : "مُزوِّد OIDC",
