@@ -5,6 +5,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentation",
     "Cancel" : "Annuller",
     "Save" : "Gem",
+    "Authentication method" : "Godkendelsesmetode",
     "Invalid token" : "Ugyldigt token ",
     "Connected as {user}" : "Forbundet som {user}",
     "Enable navigation link" : "Aktiver navigationslink",

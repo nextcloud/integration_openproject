@@ -10,6 +10,7 @@ OC.L10N.register(
     "Documentation" : "Τεκμηρίωση",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
+    "Authentication method" : "Μέθοδος πιστοποίησης",
     "Connect to OpenProject" : "Σύνδεση στο OpenProject",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
