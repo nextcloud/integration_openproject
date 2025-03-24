@@ -847,10 +847,9 @@ export default {
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getOIDCAppNotInstalledHintText() {
-			const linkText = t('integration_openproject', 'User OIDC')
 			const url = this.appLinks.user_oidc.installLink
-			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authentication with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
+			const htmlLink = `<a class="link" href="${url}" target="_blank" title="user_oidc">user_oidc</a>`
+			return t('integration_openproject', 'Please install the {htmlLink} app to use OIDC authentication method.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'OpenID Connect settings')

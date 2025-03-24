@@ -222,7 +222,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
   <formheading-stub
     index="3"
     iscomplete="true"
-    title="Authorization settings"
+    title="Authentication settings"
   />
    
   <!---->
@@ -272,7 +272,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       type="secondary"
     >
       
-				Edit authorization settings
+				Edit authentication settings
 			
     </ncbutton-stub>
      
