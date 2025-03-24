@@ -1701,8 +1701,8 @@ class OpenProjectAPIService {
 			$this->isUserOIDCAppInstalledAndEnabled() &&
 			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
 			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
-			class_exists('\OCA\UserOIDC\Exception\ExternalTokenRequestedEvent') &&
-			class_exists('\OCA\UserOIDC\Exception\InternalTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Event\ExternalTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Event\InternalTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\User\Backend') &&
 			version_compare($userOidcVersion, self::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
 		);
