@@ -98,7 +98,7 @@ services:
       SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
-      NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders
+      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders
       NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
@@ -140,6 +140,8 @@ services:
       OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
       OPENPROJECT_EDITION: ${OPENPROJECT_EDITION:-standard}
       OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET: false
+      OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: true
+      OPENPROJECT_AUTHENTICATION: '{"global_basic_auth":{"user": "admin", "password": "admin"}}'
     volumes:
       - ./openproject.sh:/openproject.sh
       - opdata:/var/openproject/assets
