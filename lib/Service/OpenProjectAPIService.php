@@ -65,7 +65,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.1.0';
 	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
