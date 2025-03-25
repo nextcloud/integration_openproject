@@ -92,12 +92,13 @@ class ConfigControllerTest extends TestCase {
 			->willReturnCallback(function ($string, $args) {
 				return vsprintf($string, $args);
 			});
+		return $l10nMock;
 	}
 
 	/**
-	 * Format has to be [<string> => <object>] with the first being the constructor parameter name and the second one the mock.
+	 * Format has to be [<string> => <object|string>] with the first being the constructor parameter name and the second one the mock.
 	 * Example: ['config' => $createdMockObject]
-	 * @param array<string, object> $constructParams specific mocks for the constructor of OpenProjectAPIService
+	 * @param array<string, object|string> $constructParams specific mocks for the constructor of OpenProjectAPIService
 	 *
 	 * @return array
 	 */
@@ -168,7 +169,7 @@ class ConfigControllerTest extends TestCase {
 			->willReturn(['access_token' => 'oAuthAccessToken', 'refresh_token' => 'oAuthRefreshToken']);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'urlGenerator' => $urlGeneratorMock,
 			'openprojectAPIService' => $apiServiceMock,
 		]);
@@ -228,7 +229,7 @@ class ConfigControllerTest extends TestCase {
 			->willReturn($redirectUrl);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'urlGenerator' => $urlGeneratorMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -256,7 +257,7 @@ class ConfigControllerTest extends TestCase {
 			);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
@@ -316,7 +317,7 @@ class ConfigControllerTest extends TestCase {
 		}
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'loggerInterface' => $loggerMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -377,7 +378,7 @@ class ConfigControllerTest extends TestCase {
 		}
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'loggerInterface' => $loggerMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -442,7 +443,7 @@ class ConfigControllerTest extends TestCase {
 			);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'openprojectAPIService' => $apiServiceMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -527,7 +528,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 		]);
@@ -641,7 +642,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 		]);
@@ -883,7 +884,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
@@ -906,7 +907,7 @@ class ConfigControllerTest extends TestCase {
 		$oauthServiceMock = $this->createMock(OauthService::class);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
@@ -1130,7 +1131,7 @@ class ConfigControllerTest extends TestCase {
 
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
@@ -1281,7 +1282,7 @@ class ConfigControllerTest extends TestCase {
 			);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'loggerInterface' => $loggerInterfaceMock,
@@ -1350,7 +1351,7 @@ class ConfigControllerTest extends TestCase {
 			->method('revokeUserOAuthToken');
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'loggerInterface' => $loggerInterfaceMock,
@@ -1437,7 +1438,7 @@ class ConfigControllerTest extends TestCase {
 			->with($userMock, $groupMock);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
 			'groupManager' => $groupManagerMock,
@@ -1447,7 +1448,7 @@ class ConfigControllerTest extends TestCase {
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
-		$result = $configControllerMock->setAdminConfig([
+		$result = $configController->setAdminConfig([
 			"authorization_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			"setup_project_folder" => true,
 			"setup_app_password" => true
@@ -1473,7 +1474,7 @@ class ConfigControllerTest extends TestCase {
 		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
 			'groupManager' => $groupManagerMock,
@@ -1483,7 +1484,7 @@ class ConfigControllerTest extends TestCase {
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
-		$result = $configControllerMock->signTermsOfServiceForUserOpenProject();
+		$result = $configController->signTermsOfServiceForUserOpenProject();
 		$this->assertEquals(Http::STATUS_OK, $result->getStatus());
 		$data = $result->getData();
 		$this->assertTrue($data['result']);
@@ -1504,7 +1505,7 @@ class ConfigControllerTest extends TestCase {
 		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
 			'groupManager' => $groupManagerMock,
@@ -1514,7 +1515,7 @@ class ConfigControllerTest extends TestCase {
 		]);
 		$configController = new ConfigController(...$constructArgs);
 
-		$result = $configControllerMock->signTermsOfServiceForUserOpenProject();
+		$result = $configController->signTermsOfServiceForUserOpenProject();
 		$this->assertEquals(Http::STATUS_INTERNAL_SERVER_ERROR, $result->getStatus());
 		$data = $result->getData();
 		$this->assertEquals("Database Error!", $data['error']);
@@ -1652,7 +1653,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
@@ -1771,7 +1772,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
@@ -1873,7 +1874,7 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
-			'config' => $this->configMock,
+			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,

@@ -7,9 +7,8 @@
 
 namespace OCA\OpenProject\Service;
 
-use OCA\OpenProject\Service\SettingsService;
-use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 class SettingsServiceTest extends TestCase {
 	public function incompleteSettingsProvider(): array {
