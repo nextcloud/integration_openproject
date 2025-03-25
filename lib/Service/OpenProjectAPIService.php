@@ -25,12 +25,11 @@ use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
-use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
+use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Entities\Signatory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\TermsOfService\Db\Mapper\TermsMapper;
 use OCA\UserOIDC\Db\ProviderMapper;
-use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -66,7 +65,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.0.0';
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.1.0';
 	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
@@ -146,7 +145,7 @@ class OpenProjectAPIService {
 	private ISecureRandom $random;
 	private IEventDispatcher $eventDispatcher;
 	private AuditLogger $auditLogger;
-	private ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper;
+	private TokenEventFactory $tokenEventFactory;
 
 	public function __construct(
 		string $appName,
@@ -168,7 +167,7 @@ class OpenProjectAPIService {
 		IDBConnection $db,
 		ILogFactory $logFactory,
 		IManager $encryptionManager,
-		ExchangedTokenRequestedEventHelper $exchangedTokenRequestedEventHelper,
+		TokenEventFactory $tokenEventFactory,
 		IUserSession $userSession,
 	) {
 		$this->appName = $appName;
@@ -190,7 +189,7 @@ class OpenProjectAPIService {
 		$this->db = $db;
 		$this->logFactory = $logFactory;
 		$this->encryptionManager = $encryptionManager;
-		$this->exchangedTokenRequestedEventHelper = $exchangedTokenRequestedEventHelper;
+		$this->tokenEventFactory = $tokenEventFactory;
 		$this->userSession = $userSession;
 	}
 
@@ -1638,22 +1637,23 @@ class OpenProjectAPIService {
 	 */
 	public function getOIDCToken(): ?string {
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
-			$this->logger->debug('The user_oidc app is not installed or enabled');
+			$this->logger->error("The 'user_oidc' app is not enabled or supported");
 			return null;
 		}
+
 		try {
-			$event = $this->exchangedTokenRequestedEventHelper->getEvent();
-			/** @psalm-suppress InvalidArgument for dispatchTyped($event)
-			 * but new ExchangedTokenRequestedEvent(targeted_audience_client_id) returns event
+			$event = $this->tokenEventFactory->getEvent();
+			/**
+			 * @psalm-suppress InvalidArgument
 			 */
 			$this->eventDispatcher->dispatchTyped($event);
-		} catch (TokenExchangeFailedException $e) {
-			$this->logger->debug('Failed to exchange token: ' . $e->getMessage());
+		} catch (Exception $e) {
+			$this->logger->error('Failed to get token: ' . $e->getMessage());
 			return null;
 		}
 		$token = $event->getToken();
 		if ($token === null) {
-			$this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
+			$this->logger->error("Token event has not been caught by 'user_oidc'");
 			return null;
 		}
 		// token expiration info
@@ -1701,7 +1701,8 @@ class OpenProjectAPIService {
 			$this->isUserOIDCAppInstalledAndEnabled() &&
 			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
 			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
-			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
+			class_exists('\OCA\UserOIDC\Event\ExternalTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Event\InternalTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\User\Backend') &&
 			version_compare($userOidcVersion, self::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
 		);

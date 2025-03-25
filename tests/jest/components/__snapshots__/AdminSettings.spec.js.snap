@@ -51,16 +51,21 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       class="pb-1"
       isrequired="true"
       title="OIDC Provider Type"
+      value="nextcloud_hub"
     />
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -111,12 +116,16 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -167,16 +176,21 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       class="pb-1"
       isrequired="true"
       title="OIDC Provider Type"
+      value="nextcloud_hub"
     />
      
     <!---->
      
-    <fieldvalue-stub
-      class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
-    />
+    <!---->
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
   </div>
    
   <div
@@ -201,7 +215,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
 </div>
 `;
 
-exports[`AdminSettings.vue OIDC authorization settings form complete: view mode with external SSO provider should show configured OIDC authorization 1`] = `
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode with external SSO provider with token exchnage should show configured OIDC authorization 1`] = `
 <div
   class="authorization-settings"
 >
@@ -234,10 +248,78 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
      
     <fieldvalue-stub
       class="pb-1"
-      isrequired="true"
-      title="OpenProject client ID"
-      value="some-target-aud-client-id"
+      title="Enable token exchange"
+      value="true"
     />
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authentication settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode with external SSO provider without token exchnage should show configured OIDC authorization 1`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    index="3"
+    iscomplete="true"
+    title="Authentication settings"
+  />
+   
+  <!---->
+   
+  <!---->
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider Type"
+      value="external"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider"
+      value="some-oidc-provider"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      title="Enable token exchange"
+    />
+     
+    <!---->
   </div>
    
   <div

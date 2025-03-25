@@ -21,7 +21,7 @@ use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
-use OCA\OpenProject\ExchangedTokenRequestedEventHelper;
+use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
@@ -680,7 +680,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'dbConnection' => $this->createMock(IDBConnection::class),
 			'logFactory' => $this->createMock(ILogFactory::class),
 			'manager' => $this->createMock(IManager::class),
-			'exchangedTokenRequestedEventHelper' => $this->createMock(ExchangedTokenRequestedEventHelper::class),
+			'tokenEventFactory' => $this->createMock(TokenEventFactory::class),
 			'userSession' => $this->createMock(IUserSession::class),
 		];
 
@@ -764,7 +764,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		}
 		$this->defaultConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$appManagerMock = $this->getMockBuilder(IAppManager::class)->disableOriginalConstructor()->getMock();
-		$exchangeTokenMock = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenMock = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$exchangedTokenRequestedEventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 
 		$this->defaultConfigMock
@@ -810,7 +810,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'rootFolder' => $storageMock,
 			'urlGenerator' => $urlGeneratorMock,
 			'appManager' => $appManagerMock,
-			'exchangedTokenRequestedEventHelper' => $exchangeTokenMock,
+			'tokenEventFactory' => $exchangeTokenMock,
 		]);
 
 		return new OpenProjectAPIService(...$constructArgs);
@@ -4151,7 +4151,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
@@ -4163,7 +4163,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
@@ -4178,7 +4178,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
-		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$iAppManagerMock->method('isInstalled')->willReturn(false);
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
 			[
@@ -4200,7 +4200,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		/** @psalm-suppress InvalidArgument for getEvent
 		 * get event can throw TokenExchangeFailedException in case there is failure in token exchange from the user_oidc app
 		 */
@@ -4211,7 +4211,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
@@ -4227,7 +4227,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
-		$exchangeTokenEvent = $this->getMockBuilder(ExchangedTokenRequestedEventHelper::class)->disableOriginalConstructor()->getMock();
+		$exchangeTokenEvent = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
 		$eventMock = $this->getMockBuilder(ExchangedTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
 		$exchangeTokenEvent->method('getEvent')->willReturn($eventMock);
 		$eventMock->method('getToken')->willReturn(null);
@@ -4237,7 +4237,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
 				'manager' => $iManagerMock,
-				'exchangedTokenRequestedEventHelper' => $exchangeTokenEvent,
+				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
 		$result = $service->getOIDCToken();
@@ -4307,26 +4307,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @param string $version
+	 *
+	 * @return string
+	 */
+	public function getHigherVersionThanSupported(string $version): string {
+		$versionArray = explode('.', $version);
+		$versionArray[1] = (int)$versionArray[1] + 1;
+		return implode('.', $versionArray);
+	}
+
+	/**
 	 * Data provider for testIsUserOIDCAppSupported
 	 */
 	public function dataProviderForIsUserOIDCAppSupported(): array {
+		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION;
 		return [
 			'has installed supported user_oidc apps and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => true,
 			],
 			'has installed user_oidc apps but one of the class does not exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => false,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'has user_oidc apps not enabled' => [
 				'appInstalledAndEnabled' => false,
 				'classesExist' => true,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'has installed unsupported user_oidc apps version' => [
@@ -4338,7 +4350,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed user_oidc apps higher version and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '7.3.1',
+				'version' => $this->getHigherVersionThanSupported($supportedVersion),
 				'expected' => true,
 			],
 			'has no user_oidc app' => [
@@ -4375,20 +4387,21 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * Data provider for testIsOIDCAppSupported
 	 */
 	public function dataProviderForIsOIDCAppSupported(): array {
+		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION;
 		return [
 			'supported app enabled' => [
 				'appEnabled' => true,
-				'version' => '1.4.0',
+				'version' => $supportedVersion,
 				'expected' => true,
 			],
 			'higher app version enabled' => [
 				'appEnabled' => true,
-				'version' => '1.5.0',
+				'version' => $this->getHigherVersionThanSupported($supportedVersion),
 				'expected' => true,
 			],
 			'supported app disabled' => [
 				'appEnabled' => false,
-				'version' => '1.4.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'unsupported app enabled' => [

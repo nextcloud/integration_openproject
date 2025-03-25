@@ -22,6 +22,9 @@
 			<directory name="vendor" />
 		</ignoreFiles>
 	</projectFiles>
+	<extraFiles>
+		<directory name="vendor" />
+	</extraFiles>
 	<stubs>
 		<file name="tests/stub/doctrine_cacheItem.phpstub" preloadClasses="true"/>
 		<file name="tests/stub/timejob_joblist.phpstub" preloadClasses="true"/>
@@ -40,6 +43,8 @@
 				<referencedClass name="OCA\UserOIDC\Db\ProviderMapper" />
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
 				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\Event\ExternalTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\Event\InternalTokenRequestedEvent" />
 				<referencedClass name="OCA\UserOIDC\Exception\TokenExchangeFailedException" />
 				<referencedClass name="OCA\UserOIDC\User\Backend" />
 				<!-- these classes belong to the activity app, which isn't compulsory, so might not exist while running psalm -->
@@ -97,6 +102,8 @@
 				<!-- these classes belong to the user_oidc app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
 				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\Event\ExternalTokenRequestedEvent" />
+				<referencedClass name="OCA\UserOIDC\Event\InternalTokenRequestedEvent" />
 				<referencedClass name="OCA\UserOIDC\User\Backend" />
 				<!-- these are classes form activity app, which isn't cloned while doing static code analysis -->
 				<referencedClass name="OCA\Activity\UserSettings" />
