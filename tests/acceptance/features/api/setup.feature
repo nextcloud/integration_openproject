@@ -66,7 +66,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid data$"}
+          "error": {"type": "string", "pattern": "<error-message>"}
       },
       "not": {
       "required": [
@@ -76,24 +76,24 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password |
-      | null                  | null                  | null                      | null              | null                  | null               | null               |
-      | null                  | "id"                  | "secret"                  | false             | false                 | false              | false              |
-      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                 | ""                 |
-      | ""                    | ""                    | ""                        | ""                | ""                    | false              | false              |
-      | ""                    | "id"                  | "secret"                  | false             | false                 | false              | false              |
-      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false              | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false              | false              |
-      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"         | "a string"         |
-      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false              | false              |
-      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false              | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false              | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false              | false              |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password | error-message                                    |
+      | null                  | null                  | null                      | null              | null                  | null               | null                 | Invalid data type: openproject_instance_url      |
+      | null                  | "id"                  | "secret"                  | false             | false                 | false              | false                | Invalid data type: openproject_instance_url      |
+      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false              | false                | Invalid data type: openproject_client_id         |
+      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false              | false                | Invalid data type: openproject_client_secret     |
+      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false              | false                | Invalid data type: default_enable_navigation     |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                 | ""                   | Invalid data type: default_enable_unified_search |
+      | ""                    | ""                    | ""                        | ""                | ""                    | false              | false                | Invalid setting value: openproject_instance_url  |
+      | ""                    | "id"                  | "secret"                  | false             | false                 | false              | false                | Invalid setting value: openproject_instance_url  |
+      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false              | false                | Invalid setting value: openproject_client_id     |
+      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false              | false                | Invalid setting value: openproject_client_secret |
+      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false              | false                | Invalid data type: default_enable_navigation     |
+      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false              | false                | Invalid data type: default_enable_unified_search |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"         | "a string"           | Invalid URL                                      |
+      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false              | false                | Invalid data type: openproject_client_id         |
+      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false              | false                | Invalid data type: openproject_client_secret     |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false              | false                | Invalid data type: default_enable_navigation     |
+      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false              | false                | Invalid data type: default_enable_unified_search |
 
 
   Scenario: setup with invalid keys
@@ -115,7 +115,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid key"}
+          "error": {"type": "string", "pattern": "Incomplete settings"}
       },
       "not": {
       "required": [
@@ -142,7 +142,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid key"}
+          "error": {"type": "string", "pattern": "Incomplete settings"}
       },
       "not": {
       "required": [
@@ -309,7 +309,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^<error-message>$"}
+          "error": {"type": "string", "pattern": "Invalid (data type|setting value): <key>"}
       },
       "not": {
       "required": [
@@ -319,23 +319,51 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | key                           | value          | error-message |
-      | openproject_instance_url      | null           | invalid data  |
-      | openproject_instance_url      | ""             | invalid data  |
-      | openproject_instance_url      | false          | invalid data  |
-      | openproject_client_id         | null           | invalid data  |
-      | openproject_client_id         | ""             | invalid data  |
-      | openproject_client_id         | false          | invalid data  |
-      | openproject_client_secret     | null           | invalid data  |
-      | openproject_client_secret     | ""             | invalid data  |
-      | openproject_client_secret     | false          | invalid data  |
-      | default_enable_navigation     | null           | invalid data  |
-      | default_enable_navigation     | ""             | invalid data  |
-      | default_enable_navigation     | "string"       | invalid data  |
-      | default_enable_unified_search | null           | invalid data  |
-      | default_enable_unified_search | ""             | invalid data  |
-      | default_enable_unified_search | "string"       | invalid data  |
-      | instance_url                  | "http://op.de" | invalid key   |
+      | key                           | value    |
+      | openproject_instance_url      | null     |
+      | openproject_instance_url      | ""       |
+      | openproject_instance_url      | false    |
+      | openproject_client_id         | null     |
+      | openproject_client_id         | ""       |
+      | openproject_client_id         | false    |
+      | openproject_client_secret     | null     |
+      | openproject_client_secret     | ""       |
+      | openproject_client_secret     | false    |
+      | default_enable_navigation     | null     |
+      | default_enable_navigation     | ""       |
+      | default_enable_navigation     | "string" |
+      | default_enable_unified_search | null     |
+      | default_enable_unified_search | ""       |
+      | default_enable_unified_search | "string" |
+
+
+  Scenario: try to update settings with unknown setting
+    When the administrator sends a PATCH request to the "setup" endpoint with this data:
+      """
+      {
+        "values": {
+          "instance_url": "http://op.de"
+        }
+      }
+      """
+    Then the HTTP status code should be "400"
+    And the data of the response should match
+    """"
+    {
+    "type": "object",
+    "required": [
+        "error"
+      ],
+      "properties": {
+          "error": {"type": "string", "pattern": "Unknown setting: instance_url"}
+      },
+      "not": {
+      "required": [
+          "openproject_revocation_status"
+        ]
+      }
+    }
+   """
 
 
   Scenario Outline: update of multiple values where at least one has invalid data
@@ -357,7 +385,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid data$"}
+          "error": {"type": "string", "pattern": "<error-message>"}
       },
       "not": {
       "required": [
@@ -367,13 +395,13 @@ Feature: setup the integration through an API
     }
    """
     Examples:
-      | key1                      | value1                | key2                          | value2         |
-      | openproject_instance_url  | "http://some-host.de" | openproject_client_id         | null           |
-      | openproject_instance_url  | "ftp://some-host.de"  | openproject_client_id         | "some id"      |
-      | openproject_client_secret | ""                    | openproject_client_id         | "client-value" |
-      | openproject_client_secret | "secret"              | openproject_client_id         | false          |
-      | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       |
-      | default_enable_navigation | null                  | default_enable_unified_search | false          |
+      | key1                      | value1                | key2                          | value2         | error-message                                    |
+      | openproject_instance_url  | "http://some-host.de" | openproject_client_id         | null           | Invalid data type: openproject_client_id         |
+      | openproject_instance_url  | "ftp://some-host.de"  | openproject_client_id         | "some id"      | Invalid URL                                      |
+      | openproject_client_secret | ""                    | openproject_client_id         | "client-value" | Invalid setting value: openproject_client_secret |
+      | openproject_client_secret | "secret"              | openproject_client_id         | false          | Invalid data type: openproject_client_id         |
+      | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       | Invalid data type: default_enable_navigation     |
+      | default_enable_navigation | null                  | default_enable_unified_search | false          | Invalid data type: default_enable_navigation     |
 
 
   Scenario Outline: with data that is not even valid JSON
@@ -474,7 +502,7 @@ Feature: setup the integration through an API
         "error"
       ],
       "properties": {
-          "error": {"type": "string", "pattern": "^invalid data$"}
+          "error": {"type": "string", "pattern": "Invalid project folder settings"}
       },
       "not": {
       "required": [
