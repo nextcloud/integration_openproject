@@ -117,7 +117,7 @@ class ConfigControllerTest extends TestCase {
 			'groupManager' => $this->createMock(IGroupManager::class),
 			'secureRandom' => $this->createMock(ISecureRandom::class),
 			'subAdmin' => $this->createMock(ISubAdmin::class),
-			'settingsService' => $this->createMock(SettingsService::class),
+			'settingsService' => new SettingsService(),
 			'userId' => 'testUser'
 		];
 
@@ -905,16 +905,12 @@ class ConfigControllerTest extends TestCase {
 		$userManager = \OC::$server->getUserManager();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
-		$settingsServiceMock = $this->createMock(SettingsService::class);
-		$settingsServiceMock->method('validateAdminSettingsForm')
-			->willThrowException(new \InvalidArgumentException("Invalid key"));
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
-			'settingsService' => $settingsServiceMock,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
