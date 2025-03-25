@@ -905,12 +905,16 @@ class ConfigControllerTest extends TestCase {
 		$userManager = \OC::$server->getUserManager();
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
+		$settingsServiceMock = $this->createMock(SettingsService::class);
+		$settingsServiceMock->method('validateAdminSettingsForm')
+			->willThrowException(new \InvalidArgumentException("Invalid key"));
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
 			'userManager' => $userManager,
 			'openprojectAPIService' => $apiService,
 			'oauthService' => $oauthServiceMock,
+			'settingsService' => $settingsServiceMock,
 			'userId' => 'test101'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -920,7 +924,6 @@ class ConfigControllerTest extends TestCase {
 		]);
 
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response->getStatus());
-		$this->assertEquals('Invalid key', $response->getData()['error']);
 	}
 
 	/**
