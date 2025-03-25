@@ -691,7 +691,7 @@ class ConfigController extends Controller {
 		try {
 			// NOTE: this is for compatibility with older versions of the app
 			// when the authorization_method is not provided, set default to "oauth2"
-			if (!\array_key_exists('authorization_method', $values)) {
+			if (\is_array($values) && !\array_key_exists('authorization_method', $values)) {
 				$values['authorization_method'] = OpenProjectAPIService::AUTH_METHOD_OAUTH;
 			}
 			// for POST all the keys must be mandatory
@@ -736,7 +736,7 @@ class ConfigController extends Controller {
 	 */
 	public function updateIntegration(?array $values): DataResponse {
 		try {
-			// for PUT key information can be optional (not mandatory)
+			// individual settings can be updated
 			$this->settingsService->validateAdminSettingsForm($values);
 			$status = $this->setIntegrationConfig($values);
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');

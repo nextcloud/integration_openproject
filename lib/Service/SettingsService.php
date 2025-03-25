@@ -82,7 +82,11 @@ class SettingsService {
 	 * @return void
 	 * @throws InvalidArgumentException
 	 */
-	public function validateAdminSettingsForm(array $values, bool $completeSetup = false): void {
+	public function validateAdminSettingsForm(?array $values, bool $completeSetup = false): void {
+		if (!$values) {
+			throw new InvalidArgumentException('Invalid data');
+		}
+
 		$settingsToCheck = \array_keys($values);
 		if ($completeSetup) {
 			if (!\in_array('authorization_method', $settingsToCheck)) {

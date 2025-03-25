@@ -404,7 +404,7 @@ Feature: setup the integration through an API
       | default_enable_navigation | null                  | default_enable_unified_search | false          | Invalid data type: default_enable_navigation     |
 
 
-  Scenario Outline: with data that is not even valid JSON
+  Scenario Outline: update with data that is not even valid JSON
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       <data>
