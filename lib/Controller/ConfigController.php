@@ -448,6 +448,14 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
+			$allowedKeys = $this->settingsService->getAllSettings();
+			// if values contains a key that is not in the allowedKeys array,
+			// return a response with status code 400 and an error message
+			foreach (array_keys($values) as $key) {
+				if (!in_array($key, $allowedKeys)) {
+					throw new InvalidArgumentException("Unknown setting: $key");
+				}
+			}
 			$result = $this->setIntegrationConfig($values);
 			$isOPOAuthCrdentialSet = key_exists('openproject_client_id', $values) &&
 				key_exists('openproject_client_secret', $values) &&

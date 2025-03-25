@@ -136,7 +136,7 @@ class SettingsService {
 			if (!$this->hasValidType($value, $settingsType[$key])) {
 				throw new InvalidArgumentException("Invalid data type: $key");
 			}
-			if ($value === '') {
+			if ($completeSetup && $value === '') {
 				throw new InvalidArgumentException("Invalid setting value: $key");
 			}
 			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
