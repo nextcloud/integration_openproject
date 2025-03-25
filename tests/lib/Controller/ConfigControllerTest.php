@@ -34,11 +34,6 @@ use Psr\Log\LoggerInterface;
 class ConfigControllerTest extends TestCase {
 
 	/**
-	 * @var IL10N
-	 */
-	private $l;
-
-	/**
 	 * @var IUser|bool
 	 */
 	private $user1 = false;

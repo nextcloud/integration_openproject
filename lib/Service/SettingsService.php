@@ -74,8 +74,6 @@ class SettingsService {
         return \array_keys($this->getAllSettingsType());
     }
 
-    public function __construct() {}
-
 	/**
 	 * @param array<string, string|null|bool> $values
 	 * @param bool $completeSetup
@@ -105,6 +103,12 @@ class SettingsService {
 					throw new InvalidArgumentException('Incomplete settings');
 				}
 			}
+            // check if there are no unknown settings
+			foreach ($settingsToCheck as $key) {
+				if (!in_array($key, $settings)) {
+					throw new InvalidArgumentException("Unknown setting: $key");
+				}
+			}
 
 			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
 				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
@@ -129,7 +133,7 @@ class SettingsService {
 			if ($value === '') {
                 throw new InvalidArgumentException("Invalid setting value: $key");
             }
-            if ($key === 'openproject_instance_url' && !$this->isValidURL($value)) {
+            if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
                 throw new InvalidArgumentException('Invalid URL');
             }
 		}
