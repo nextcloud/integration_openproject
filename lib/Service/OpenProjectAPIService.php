@@ -1637,7 +1637,7 @@ class OpenProjectAPIService {
 	 */
 	public function getOIDCToken(): ?string {
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
-			$this->logger->debug('The user_oidc app is not installed or enabled');
+			$this->logger->error("The 'user_oidc' app is not enabled or supported");
 			return null;
 		}
 
@@ -1648,12 +1648,12 @@ class OpenProjectAPIService {
 			 */
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (Exception $e) {
-			$this->logger->debug('Failed to get token: ' . $e->getMessage());
+			$this->logger->error('Failed to get token: ' . $e->getMessage());
 			return null;
 		}
 		$token = $event->getToken();
 		if ($token === null) {
-			$this->logger->debug('ExchangedTokenRequestedEvent event has not been caught by user_oidc');
+			$this->logger->error("Token event has not been caught by 'user_oidc'");
 			return null;
 		}
 		// token expiration info
