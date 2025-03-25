@@ -33,6 +33,7 @@ class SettingsService {
 		'sso_provider_type' => [self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE, self::EXTERNAL_OIDC_PROVIDER_TYPE],
 		'oidc_provider' => 'string',
 		'targeted_audience_client_id' => 'string',
+		'token_exchange' => 'boolean',
 	];
 
 	/**

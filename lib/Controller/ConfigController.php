@@ -448,7 +448,6 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
-			$this->settingsService->validateAdminSettingsForm($values);
 			$result = $this->setIntegrationConfig($values);
 			$isOPOAuthCrdentialSet = key_exists('openproject_client_id', $values) &&
 				key_exists('openproject_client_secret', $values) &&

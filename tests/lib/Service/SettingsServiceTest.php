@@ -56,6 +56,7 @@ class SettingsServiceTest extends TestCase {
 					"default_enable_unified_search" => false,
 					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
+					"token_exchange" => false,
 					"setup_project_folder" => false,
 					"setup_app_password" => false,
 				],
@@ -70,6 +71,7 @@ class SettingsServiceTest extends TestCase {
 					"default_enable_unified_search" => false,
 					'sso_provider_type' => 'test', // invalid provider type
 					"oidc_provider" => "Nextcloud Hub",
+					"token_exchange" => false,
 					"targeted_audience_client_id" => "test",
 					"setup_project_folder" => false,
 					"setup_app_password" => false,
@@ -189,6 +191,7 @@ class SettingsServiceTest extends TestCase {
 					"default_enable_unified_search" => false,
 					"sso_provider_type" => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
+					"token_exchange" => false,
 					"targeted_audience_client_id" => "test",
 					"setup_project_folder" => true,
 					"setup_app_password" => true,
