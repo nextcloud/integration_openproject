@@ -51,9 +51,9 @@ class TokenEventFactoryTest extends TestCase {
 	public function testGetEvent($providerType, $tokenExchange, $class): void {
 		$configMock = $this->createMock(IConfig::class);
 		$configMock->method("getAppValue")->willReturnMap([
-			[Application::APP_ID, "sso_provider_type", $providerType],
-			[Application::APP_ID, "token_exchange", $tokenExchange],
-			[Application::APP_ID, "targeted_audience_client_id", "test-client"],
+			[Application::APP_ID, "sso_provider_type", "", $providerType],
+			[Application::APP_ID, "token_exchange", "", $tokenExchange],
+			[Application::APP_ID, "targeted_audience_client_id", "", "test-client"],
 		]);
 
 		$factory = new TokenEventFactory($configMock);

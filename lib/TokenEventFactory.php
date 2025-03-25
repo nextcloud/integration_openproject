@@ -27,13 +27,13 @@ class TokenEventFactory {
 	 * @return InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent
 	 */
 	public function getEvent(): InternalTokenEvent|ExternalTokenEvent|ExchangedTokenEvent {
-		$SSOProvider = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER);
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', '');
 		$tokenExchange = $this->config->getAppValue(Application::APP_ID, 'token_exchange', '');
 		$targetAudience = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id', '');
 
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)
-		if ($SSOProvider === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
 			return new InternalTokenEvent($targetAudience);
 		}
 

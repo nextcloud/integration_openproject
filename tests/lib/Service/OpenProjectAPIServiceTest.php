@@ -4307,26 +4307,38 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
+	 * @param string $version
+	 *
+	 * @return string
+	 */
+	public function getHigherVersionThanSupported(string $version): string {
+		$versionArray = explode('.', $version);
+		$versionArray[1] = (int)$versionArray[1] + 1;
+		return implode('.', $versionArray);
+	}
+
+	/**
 	 * Data provider for testIsUserOIDCAppSupported
 	 */
 	public function dataProviderForIsUserOIDCAppSupported(): array {
+		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION;
 		return [
 			'has installed supported user_oidc apps and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => true,
 			],
 			'has installed user_oidc apps but one of the class does not exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => false,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'has user_oidc apps not enabled' => [
 				'appInstalledAndEnabled' => false,
 				'classesExist' => true,
-				'version' => '7.0.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'has installed unsupported user_oidc apps version' => [
@@ -4338,7 +4350,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has installed user_oidc apps higher version and all classes exist' => [
 				'appInstalledAndEnabled' => true,
 				'classesExist' => true,
-				'version' => '7.3.1',
+				'version' => $this->getHigherVersionThanSupported($supportedVersion),
 				'expected' => true,
 			],
 			'has no user_oidc app' => [
@@ -4375,20 +4387,21 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * Data provider for testIsOIDCAppSupported
 	 */
 	public function dataProviderForIsOIDCAppSupported(): array {
+		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION;
 		return [
 			'supported app enabled' => [
 				'appEnabled' => true,
-				'version' => '1.4.0',
+				'version' => $supportedVersion,
 				'expected' => true,
 			],
 			'higher app version enabled' => [
 				'appEnabled' => true,
-				'version' => '1.5.0',
+				'version' => $this->getHigherVersionThanSupported($supportedVersion),
 				'expected' => true,
 			],
 			'supported app disabled' => [
 				'appEnabled' => false,
-				'version' => '1.4.0',
+				'version' => $supportedVersion,
 				'expected' => false,
 			],
 			'unsupported app enabled' => [
