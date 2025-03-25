@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class SettingsServiceTest extends TestCase {
-	public function incompleteSettingsProvider(): array {
+	public function invalidSettingsProvider(): array {
 		return [
 			"Random missing settings" => [
 				"configs" => [
@@ -166,14 +166,62 @@ class SettingsServiceTest extends TestCase {
 		];
 	}
 
+	public function validSettingsProvider(): array {
+		return [
+			"complete settings: oauth2" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"default_enable_navigation" => false,
+					"default_enable_unified_search" => false,
+					"openproject_client_id" => "test",
+					"openproject_client_secret" => "test",
+					"setup_project_folder" => false,
+					"setup_app_password" => false,
+				],
+				"completeSetup" => true,
+			],
+			"complete settings: oidc" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"default_enable_navigation" => false,
+					"default_enable_unified_search" => false,
+					"sso_provider_type" => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					"oidc_provider" => "Nextcloud Hub",
+					"targeted_audience_client_id" => "test",
+					"setup_project_folder" => true,
+					"setup_app_password" => true,
+				],
+				"completeSetup" => true,
+			],
+			"update settings" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op",
+					"default_enable_navigation" => true,
+				],
+				"completeSetup" => false,
+			],
+		];
+	}
+
 	/**
-	 * @dataProvider incompleteSettingsProvider
+	 * @dataProvider invalidSettingsProvider
 	 */
-	public function testValidateAdminSettingsForm(array $configs, bool $completeSetup, string $message): void {
+	public function testValidateAdminSettingsFormInvalid(array $configs, bool $completeSetup, string $message): void {
 		$service = new SettingsService();
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);
 		$service->validateAdminSettingsForm($configs, $completeSetup);
+	}
+
+	/**
+	 * @dataProvider validSettingsProvider
+	 */
+	public function testValidateAdminSettingsFormValid(array $configs, bool $completeSetup): void {
+		$service = new SettingsService();
+
+		$this->assertNull($service->validateAdminSettingsForm($configs, $completeSetup));
 	}
 }
