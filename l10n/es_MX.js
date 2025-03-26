@@ -4,6 +4,7 @@ OC.L10N.register(
     "Documentation" : "Documentación",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Authentication method" : "Método de autenticación",
     "Copied!" : "¡Copiado!",
     "Copied to the clipboard" : "Copiado al portapapeles",
     "Details" : "Detalles",

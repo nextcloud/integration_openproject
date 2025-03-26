@@ -24,7 +24,6 @@ OC.L10N.register(
     "documentation" : "說明書",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "要啟用 OpenProject 整合的審計記錄，請啟用 {htmlLinkForAdminAudit} 應用並按照 {htmlLinkForDocumentaion} 中概述的配置步驟進行操作。",
     "Please read our guide on {htmlLink}." : "請閱讀我們關於 {htmlLink} 的指南。",
-    "User OIDC" : "用戶 OIDC",
     "Please introduce a valid OpenProject hostname" : "請輸入一個有效的 OpenProject 主機名",
     "URL is invalid" : "URL 無效",
     "The URL should have the form \"https://openproject.org\"" : "URL 的格式應為 “https://openproject.org”",

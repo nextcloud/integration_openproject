@@ -41,6 +41,7 @@
     "OpenProject host" : "OpenProject ostalaria",
     "Edit server information" : "Editatu zerbitzariaren informazioa",
     "Save" : "Gorde",
+    "Authentication method" : "Autentifikazio metodoa",
     "OpenProject OAuth settings" : "OpenProject OAuth ezarpenak",
     "Replace OpenProject OAuth values" : "Ordeztu OpenProject OAuth balioak",
     "Nextcloud OAuth client" : "Nextcloud OAuth bezeroa",
