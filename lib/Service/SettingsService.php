@@ -85,7 +85,7 @@ class SettingsService {
 	 */
 	public function validateAdminSettingsForm(?array $values, bool $completeSetup = false): void {
 		if (!$values) {
-			throw new InvalidArgumentException('Invalid data');
+			throw new InvalidArgumentException('The data is not a valid JSON.');
 		}
 
 		$settingsToCheck = \array_keys($values);
@@ -106,26 +106,34 @@ class SettingsService {
 			// check if all required settings are present
 			foreach ($settings as $key) {
 				if (!\in_array($key, $settingsToCheck)) {
-					throw new InvalidArgumentException('Incomplete settings');
+					// throw new InvalidArgumentException('Incomplete settings');
+					// for error message compatibility
+					throw new InvalidArgumentException('invalid key');
 				}
 			}
 			// check if there are no unknown settings
 			foreach ($settingsToCheck as $key) {
 				if (!in_array($key, $settings)) {
-					throw new InvalidArgumentException("Unknown setting: $key");
+					// throw new InvalidArgumentException("Unknown setting: $key");
+					// for error message compatibility
+					throw new InvalidArgumentException('invalid key');
 				}
 			}
 
 			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
 				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
 			) {
-				throw new InvalidArgumentException('Invalid project folder settings');
+				// throw new InvalidArgumentException('Invalid project folder settings');
+				// for error message compatibility
+				throw new InvalidArgumentException('invalid data');
 			}
 		} else {
 			$settings = $this->getAllSettings();
 			foreach ($settingsToCheck as $key) {
 				if (!in_array($key, $settings)) {
-					throw new InvalidArgumentException("Unknown setting: $key");
+					// throw new InvalidArgumentException("Unknown setting: $key");
+					// for error message compatibility
+					throw new InvalidArgumentException('invalid key');
 				}
 			}
 		}
@@ -134,13 +142,19 @@ class SettingsService {
 		$settingsType = $this->getAllSettingsType();
 		foreach ($values as $key => $value) {
 			if (!$this->hasValidType($value, $settingsType[$key])) {
-				throw new InvalidArgumentException("Invalid data type: $key");
+				// throw new InvalidArgumentException("Invalid data type: $key");
+				// for error message compatibility
+				throw new InvalidArgumentException('invalid data');
 			}
 			if ($value === '') {
-				throw new InvalidArgumentException("Invalid setting value: $key");
+				// throw new InvalidArgumentException("Invalid setting value: $key");
+				// for error message compatibility
+				throw new InvalidArgumentException('invalid data');
 			}
 			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
-				throw new InvalidArgumentException('Invalid URL');
+				// throw new InvalidArgumentException('Invalid URL');
+				// for error message compatibility
+				throw new InvalidArgumentException('invalid data');
 			}
 		}
 	}
@@ -151,7 +165,7 @@ class SettingsService {
 	 *
 	 * @return bool
 	 */
-	public function hasValidType(mixed $value, string|array $type): bool {
+	private function hasValidType(mixed $value, string|array $type): bool {
 		if (\is_array($type)) {
 			return \in_array($value, $type);
 		}
@@ -163,7 +177,7 @@ class SettingsService {
 	 *
 	 * @return bool
 	 */
-	public function isValidURL(string $url): bool {
+	private function isValidURL(string $url): bool {
 		return filter_var($url, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $url);
 	}

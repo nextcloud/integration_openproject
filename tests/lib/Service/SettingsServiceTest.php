@@ -18,7 +18,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
 				],
 				"completeSetup" => true,
-				"message" => "Incomplete settings",
+				"message" => "invalid key",
 			],
 			"missing 'authorization_method' setting" => [
 				"configs" => [
@@ -46,7 +46,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Incomplete settings",
+				"message" => "invalid key",
 			],
 			"incomplete settings: oidc" => [
 				"configs" => [
@@ -61,7 +61,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Incomplete settings",
+				"message" => "invalid key",
 			],
 			"invalid oidc provider type" => [
 				"configs" => [
@@ -77,7 +77,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid data type: sso_provider_type",
+				"message" => "invalid data",
 			],
 			"invalid groupfolder settings: true & false" => [
 				"configs" => [
@@ -91,7 +91,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid project folder settings",
+				"message" => "invalid data",
 			],
 			"invalid groupfolder settings: false & true" => [
 				"configs" => [
@@ -105,7 +105,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => true,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid project folder settings",
+				"message" => "invalid data",
 			],
 			"invalid settings value: incorrect data type" => [
 				"configs" => [
@@ -119,7 +119,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid data type: default_enable_navigation",
+				"message" => "invalid data",
 			],
 			"invalid settings value: empty string" => [
 				"configs" => [
@@ -133,7 +133,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid setting value: openproject_instance_url",
+				"message" => "invalid data",
 			],
 			"unknown settings" => [
 				"configs" => [
@@ -148,7 +148,7 @@ class SettingsServiceTest extends TestCase {
 					"test_setting" => 'test', // unknown setting
 				],
 				"completeSetup" => true,
-				"message" => "Unknown setting: test_setting",
+				"message" => "invalid key",
 			],
 			"update action - unknown settings" => [
 				"configs" => [
@@ -156,14 +156,14 @@ class SettingsServiceTest extends TestCase {
 					"test_setting" => 'test', // unknown setting
 				],
 				"completeSetup" => false,
-				"message" => "Unknown setting: test_setting",
+				"message" => "invalid key",
 			],
 			"update action - invalid url" => [
 				"configs" => [
 					"openproject_instance_url" => "test", // invalid URL
 				],
 				"completeSetup" => false,
-				"message" => "Invalid URL",
+				"message" => "invalid data",
 			],
 		];
 	}
