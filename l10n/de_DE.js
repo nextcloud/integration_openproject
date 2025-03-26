@@ -24,7 +24,6 @@ OC.L10N.register(
     "documentation" : "Dokumentation",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Um Audit-Protokolle für die OpenProject-Integration zu aktivieren, bitte die App {htmlLinkForAdminAudit} aktivieren und den Konfigurationsschritten folgen, die in der {htmlLinkForDocumentaion} beschrieben sind.",
     "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen.",
-    "User OIDC" : "Benutzer-OIDC",
     "Please introduce a valid OpenProject hostname" : "Bitte einen gültigen OpenProject-Hostnamen eingeben",
     "URL is invalid" : "URL ist ungültig",
     "The URL should have the form \"https://openproject.org\"" : "Die URL sollte folgende Form haben \"https://openproject.org\"",

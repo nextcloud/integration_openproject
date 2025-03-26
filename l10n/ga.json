@@ -22,7 +22,6 @@
     "documentation" : "doiciméadú",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Chun logaí iniúchta do chomhtháthú OpenProject a ghníomhachtú, cumasaigh an aip {htmlLinkForAdminAudit}agus lean na céimeanna cumraíochta atá leagtha amach sa {htmlLinkForDocumentaion}.",
     "Please read our guide on {htmlLink}." : "Léigh ár dtreoir ar{htmlLink}le do thoil.",
-    "User OIDC" : "Úsáideoir OIDC",
     "Please introduce a valid OpenProject hostname" : "Tabhair isteach óstainm OpenProject bailí",
     "URL is invalid" : "Tá an URL neamhbhailí",
     "The URL should have the form \"https://openproject.org\"" : "Ba cheart go mbeadh an fhoirm \"https://openproject.org\" san URL",
