@@ -89,6 +89,8 @@ class SettingsService {
 		}
 
 		$settingsToCheck = \array_keys($values);
+		$settingsToSkip = [];
+
 		if ($completeSetup) {
 			if (!\in_array('authorization_method', $settingsToCheck)) {
 				throw new InvalidArgumentException("'authorization_method' setting is missing");
@@ -101,10 +103,37 @@ class SettingsService {
 				$settings = $this->getCompleteOAuthSettings();
 			} else {
 				$settings = $this->getCompleteOIDCSettings();
+				if (!\array_key_exists('sso_provider_type', $values)) {
+					throw new InvalidArgumentException(
+						"Incomplete settings: 'sso_provider_type' is required with '"
+						. self::AUTH_METHOD_OIDC
+						. "' method"
+					);
+				}
+				if ($values['sso_provider_type'] === self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+					// for 'nextcloud_hub' type
+					// 'oidc_provider' and 'token_exchange' settings are not required
+					$settingsToSkip[] = 'oidc_provider';
+					$settingsToSkip[] = 'token_exchange';
+				} elseif ($values['sso_provider_type'] === self::EXTERNAL_OIDC_PROVIDER_TYPE) {
+					if (!\array_key_exists('token_exchange', $values)) {
+						throw new InvalidArgumentException(
+							"Incomplete settings: 'token_exchange' is required with external provider"
+						);
+					}
+					// for 'external' type and disabled 'token_exchange'
+					// 'targeted_audience_client_id' setting is not required
+					if ($values['token_exchange'] === false) {
+						$settingsToSkip[] = 'targeted_audience_client_id';
+					}
+				}
 			}
 
 			// check if all required settings are present
 			foreach ($settings as $key) {
+				if (\in_array($key, $settingsToSkip)) {
+					continue;
+				}
 				if (!\in_array($key, $settingsToCheck)) {
 					// throw new InvalidArgumentException('Incomplete settings');
 					// for error message compatibility
