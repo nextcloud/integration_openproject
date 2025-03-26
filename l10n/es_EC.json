@@ -40,6 +40,7 @@
     "OpenProject host" : "Nombre de host de OpenProject",
     "Edit server information" : "Editar información del servidor",
     "Save" : "Guardar",
+    "Authentication method" : "Método de autenticación",
     "OpenProject OAuth settings" : "Configuración de OAuth de OpenProject",
     "Replace OpenProject OAuth values" : "Reemplazar los valores de OAuth de OpenProject",
     "Nextcloud OAuth client" : "Cliente OAuth de Nextcloud",

@@ -43,6 +43,7 @@ OC.L10N.register(
     "OpenProject host" : "OpenProject host",
     "Edit server information" : "Edit server information",
     "Save" : "ذخیره",
+    "Authentication method" : "روش احراز هویت",
     "OpenProject OAuth settings" : "OpenProject OAuth settings",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
