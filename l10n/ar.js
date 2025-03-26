@@ -24,7 +24,6 @@ OC.L10N.register(
     "documentation" : "توثيق",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "لتفعيل سجلات الحركات في OpenProject، يُرجى تمكين التطبيق {htmlLinkForAdminAudit} وتنفيذ خطوات التهيئة المنصوص عليها في {htmlLinkForDocumentaion}.",
     "Please read our guide on {htmlLink}." : "رجاءً، قُم بقراءة الإرشادات في{htmlLink}.",
-    "User OIDC" : "بروتوكول OIDC للتصديق على هُوِيَّة المستخدِم ",
     "Please introduce a valid OpenProject hostname" : "يُرجَى إدخال اسم مُضِيف صحيح لـ OpenProject",
     "URL is invalid" : "عنوان URL غير صحيح",
     "The URL should have the form \"https://openproject.org\"" : "عنوان URL يجب أن يكون على النسق \"https://openproject.org\"",
