@@ -703,6 +703,15 @@ class ConfigController extends Controller {
 			}
 			// for POST all the keys must be mandatory
 			$this->settingsService->validateAdminSettingsForm($values, true);
+			// For nextcloud_hub setup, set OIDC provider to Nextcloud Hub if not provided
+			if (
+				$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC
+				&& $values['sso_provider_type'] === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE
+				&& (!\array_key_exists('oidc_provider', $values) || !$values['oidc_provider'])
+			) {
+				$values['oidc_provider'] = SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL;
+			}
+
 			$status = $this->setIntegrationConfig($values);
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
@@ -711,6 +720,7 @@ class ConfigController extends Controller {
 			if ($status['oPUserAppPassword'] !== null) {
 				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
 			}
+			$result['status'] = $status['status'] ? 'ok' : 'error';
 			return new DataResponse($result);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([

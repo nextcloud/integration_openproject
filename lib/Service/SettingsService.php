@@ -14,6 +14,7 @@ class SettingsService {
 	public const AUTH_METHOD_OIDC = 'oidc';
 	public const NEXTCLOUDHUB_OIDC_PROVIDER_TYPE = "nextcloud_hub";
 	public const EXTERNAL_OIDC_PROVIDER_TYPE = "external";
+	public const NEXTCLOUDHUB_OIDC_PROVIDER_LABEL = "Nextcloud Hub";
 	// <setting_name> => <data_type>
 	private const GENERAL_ADMIN_SETTINGS = [
 		// general settings
