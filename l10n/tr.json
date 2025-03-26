@@ -22,7 +22,6 @@
     "documentation" : "belgeler",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "OpenProject bütünleştirmesi için denetim günlüklerini açmak amacıyla lütfen {htmlLinkForAdminAudit} uygulamasını kullanıma alın ve {htmlLinkForDocumentaion} bölümündeki yapılandırma adımlarını izleyin.",
     "Please read our guide on {htmlLink}." : "Lütfen {htmlLink} bölümündeki rehberimizi okuyun.",
-    "User OIDC" : "Kullanıcı OIDC",
     "Please introduce a valid OpenProject hostname" : "Lütfen geçerli bir OpenProject sunucu adı yazın",
     "URL is invalid" : "Adres geçersiz",
     "The URL should have the form \"https://openproject.org\"" : "Adres \"https://openproject.org\" biçiminde olmalıdır",
