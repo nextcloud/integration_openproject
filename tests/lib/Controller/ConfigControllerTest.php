@@ -133,6 +133,24 @@ class ConfigControllerTest extends TestCase {
 		return ['integration_openproject', ...array_values($constructArgs)];
 	}
 
+	/**
+	 * @param array<string> $mockMethods
+	 * @param array<string, object> $constructParams
+	 *
+	 * @return MockObject
+	 */
+	private function getConfigControllerMock(
+		array $mockMethods = [],
+		array $constructParams = [],
+	): MockObject {
+		$constructArgs = $this->getConfigControllerConstructArgs($constructParams);
+		$mock = $this->getMockBuilder(ConfigController::class)
+			->setConstructorArgs($constructArgs)
+			->onlyMethods($mockMethods)
+			->getMock();
+		return $mock;
+	}
+
 	public function testOauthRedirectSuccess():void {
 		$configMock = $this->getConfigMock(
 			str_repeat("A", 128), str_repeat("S", 50));
@@ -1883,5 +1901,107 @@ class ConfigControllerTest extends TestCase {
 		$configController = new ConfigController(...$constructArgs);
 
 		$configController->setAdminConfig($credsToUpdate);
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function integrationDefaultSettingsProvider() {
+		$defaultSettings = [
+			'openproject_instance_url' => 'https://test.example.com',
+			'default_enable_navigation' => false,
+			'default_enable_unified_search' => false,
+			'setup_project_folder' => false,
+			'setup_app_password' => false,
+		];
+		return [
+			"complete oauth2: without 'authorization_method'" => [
+				'settings' => [
+					...$defaultSettings,
+					'openproject_client_id' => 'test',
+					'openproject_client_secret' => 'test',
+				],
+				'expectedSettings' => [
+					...$defaultSettings,
+					'openproject_client_id' => 'test',
+					'openproject_client_secret' => 'test',
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				],
+			],
+			"complete oidc: NC Hub without 'oidc_provider'" => [
+				'settings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+				],
+				'expectedSettings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+					'oidc_provider' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL,
+				],
+			],
+			"complete oidc: NC Hub with empty 'oidc_provider'" => [
+				'settings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+					'oidc_provider' => '',
+				],
+				'expectedSettings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+					'oidc_provider' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL,
+				],
+			],
+			"complete oidc: NC Hub with 'oidc_provider'" => [
+				'settings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+					'oidc_provider' => 'test',
+				],
+				'expectedSettings' => [
+					...$defaultSettings,
+					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'targeted_audience_client_id' => 'test',
+					'oidc_provider' => 'test',
+				],
+			],
+		];
+	}
+
+	/**
+	 * @group ignoreWithPHP8.0
+	 * @param array<string> $oldCreds
+	 * @param array<string> $credsToUpdate
+	 * @return void
+	 * @dataProvider integrationDefaultSettingsProvider
+	 */
+	public function testSetUpIntegrationDefaultSettings(array $settings, array $expectedSettings): void {
+		$userManager = $this->checkForUsersCountBeforeTest();
+		$oauthMock = $this->createMock(OauthService::class);
+		$oauthMock->method('createNcOauthClient')->willReturn(['id' => '1234']);
+		$settingsService = $this->createMock(SettingsService::class);
+
+		// check that correct settings are passed
+		$settingsService->expects($this->once())
+			->method('validateAdminSettingsForm')
+			->with($expectedSettings);
+
+		$constructArgs = $this->getConfigControllerConstructArgs([
+			'oauthService' => $oauthMock,
+			'userManager' => $userManager,
+			'settingsService' => $settingsService,
+		]);
+		$configController = new ConfigController(...$constructArgs);
+		$configController->setUpIntegration($settings);
 	}
 }
