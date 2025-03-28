@@ -66,7 +66,7 @@ class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
 	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.1.0';
-	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.4.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.5.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
 	/**
@@ -604,69 +604,6 @@ class OpenProjectAPIService {
 	public static function validateURL(string $url): bool {
 		return filter_var($url, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $url);
-	}
-
-	/**
-	 * validates the provided data for integration setup
-	 *
-	 * @param array<string, string|null|bool> $values
-	 * @param bool $allKeysMandatory
-	 *
-	 * @return bool
-	 * @throws InvalidArgumentException
-	 *
-	 */
-	public static function validateIntegrationSetupInformation(?array $values, bool $allKeysMandatory = true): bool {
-		if (!$values) {
-			throw new InvalidArgumentException("The data is not a valid JSON.");
-		}
-		$opKeys = [
-			'openproject_instance_url',
-			'openproject_client_id',
-			'openproject_client_secret',
-			'default_enable_navigation',
-			'default_enable_unified_search',
-			'setup_project_folder',
-			'setup_app_password'
-		];
-
-		if ($allKeysMandatory) {
-			foreach ($opKeys as $key) {
-				if (!array_key_exists($key, $values)) {
-					throw new InvalidArgumentException('invalid key');
-				}
-			}
-			// for complete setup these both have to be true
-			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
-				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
-			) {
-				throw new InvalidArgumentException('invalid data');
-			}
-		} else {
-			foreach (array_keys($values) as $key) {
-				if (!in_array($key, $opKeys)) {
-					throw new InvalidArgumentException('invalid key');
-				}
-			}
-		}
-
-		foreach ($values as $key => $value) {
-			if ($key === 'openproject_instance_url' && !OpenProjectAPIService::validateURL((string)$value)) {
-				throw new InvalidArgumentException('invalid data');
-			}
-
-			if ($key === 'default_enable_navigation' || $key === 'default_enable_unified_search' || $key === 'setup_project_folder' || $key === 'setup_app_password') {
-				if (!is_bool($value)) {
-					throw new InvalidArgumentException('invalid data');
-				}
-				continue;
-			}
-			// validate other key
-			if ($value === '' || !is_string($value)) {
-				throw new InvalidArgumentException('invalid data');
-			}
-		}
-		return true;
 	}
 
 	/**

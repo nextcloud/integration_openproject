@@ -19,6 +19,7 @@ use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCA\OpenProject\Service\SettingsService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -93,8 +94,10 @@ class ConfigController extends Controller {
 	 * @var ISubAdmin
 	 */
 	private ISubAdmin $subAdminManager;
+	private SettingsService $settingsService;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		IConfig $config,
 		IURLGenerator $urlGenerator,
@@ -107,7 +110,9 @@ class ConfigController extends Controller {
 		IGroupManager $groupManager,
 		ISecureRandom $secureRandom,
 		ISubAdmin $subAdminManager,
-		?string $userId) {
+		SettingsService $settingsService,
+		?string $userId
+	) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
@@ -121,6 +126,7 @@ class ConfigController extends Controller {
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
 		$this->subAdminManager = $subAdminManager;
+		$this->settingsService = $settingsService;
 	}
 
 	/**
@@ -202,27 +208,6 @@ class ConfigController extends Controller {
 	 * @throws NoUserException | InvalidArgumentException | OpenprojectGroupfolderSetupConflictException
 	 */
 	private function setIntegrationConfig(array $values): array {
-		$allowedKeys = [
-			'openproject_instance_url',
-			'authorization_method',
-			'sso_provider_type',
-			'oidc_provider',
-			'targeted_audience_client_id',
-			'token_exchange',
-			'openproject_client_id',
-			'openproject_client_secret',
-			'default_enable_navigation',
-			'default_enable_unified_search',
-			'setup_project_folder',
-			'setup_app_password'
-		];
-		// if values contains a key that is not in the allowedKeys array,
-		// return a response with status code 400 and an error message
-		foreach (array_keys($values) as $key) {
-			if (!in_array($key, $allowedKeys)) {
-				throw new InvalidArgumentException('Invalid key');
-			}
-		}
 		$appPassword = null;
 
 		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
@@ -463,6 +448,14 @@ class ConfigController extends Controller {
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		try {
+			$allowedKeys = $this->settingsService->getAllSettings();
+			// if values contains a key that is not in the allowedKeys array,
+			// return a response with status code 400 and an error message
+			foreach (array_keys($values) as $key) {
+				if (!in_array($key, $allowedKeys)) {
+					throw new InvalidArgumentException("Unknown setting: $key");
+				}
+			}
 			$result = $this->setIntegrationConfig($values);
 			$isOPOAuthCrdentialSet = key_exists('openproject_client_id', $values) &&
 				key_exists('openproject_client_secret', $values) &&
@@ -703,8 +696,23 @@ class ConfigController extends Controller {
 	 */
 	public function setUpIntegration(?array $values): DataResponse {
 		try {
-			// for POST all the keys must be mandatory
-			OpenProjectAPIService::validateIntegrationSetupInformation($values);
+			// NOTE: this is for compatibility with older versions of the app
+			// when the authorization_method is not provided, set default to "oauth2"
+			if (\is_array($values) && !\array_key_exists('authorization_method', $values)) {
+				$values['authorization_method'] = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+			}
+			// For nextcloud_hub setup, set OIDC provider to Nextcloud Hub if not provided
+			if (
+				$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC
+				&& $values['sso_provider_type'] === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE
+				&& (!\array_key_exists('oidc_provider', $values) || !$values['oidc_provider'])
+			) {
+				$values['oidc_provider'] = SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL;
+			}
+
+			// check all required settings
+			$this->settingsService->validateAdminSettingsForm($values, true);
+
 			$status = $this->setIntegrationConfig($values);
 			$result = $this->recreateOauthClientInformation();
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
@@ -745,8 +753,8 @@ class ConfigController extends Controller {
 	 */
 	public function updateIntegration(?array $values): DataResponse {
 		try {
-			// for PUT key information can be optional (not mandatory)
-			OpenProjectAPIService::validateIntegrationSetupInformation($values, false);
+			// individual settings can be updated
+			$this->settingsService->validateAdminSettingsForm($values);
 			$status = $this->setIntegrationConfig($values);
 			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
 			$result = [];
@@ -792,16 +800,8 @@ class ConfigController extends Controller {
 	 * @return DataResponse
 	 */
 	public function resetIntegration(): DataResponse {
-		$values = [
-			'openproject_instance_url' => null,
-			'openproject_client_id' => null,
-			'openproject_client_secret' => null,
-			'default_enable_navigation' => null,
-			'default_enable_unified_search' => null,
-			'setup_app_password' => false
-		];
 		try {
-			$status = $this->setIntegrationConfig($values);
+			$status = $this->setIntegrationConfig($this->settingsService->getDefaultSettings());
 			$result = ["status" => true];
 			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
 				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
