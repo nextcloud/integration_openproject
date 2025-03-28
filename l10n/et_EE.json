@@ -9,6 +9,7 @@
     "Select a user or group" : "Vali kasutaja või grupp",
     "Description" : "Kirjeldus",
     "Create" : "Lisa",
+    "Mark as read" : "Märgi loetuks",
     "Reset" : "Lähtesta"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
