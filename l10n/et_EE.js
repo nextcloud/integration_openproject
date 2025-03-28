@@ -11,6 +11,7 @@ OC.L10N.register(
     "Select a user or group" : "Vali kasutaja või grupp",
     "Description" : "Kirjeldus",
     "Create" : "Lisa",
+    "Mark as read" : "Märgi loetuks",
     "Reset" : "Lähtesta"
 },
 "nplurals=2; plural=(n != 1);");
