@@ -12,8 +12,12 @@
     "OpenProject Integration" : "OpenProject integrácia",
     "Link Nextcloud files to OpenProject work packages" : "Prepojte súbory Nextcloud s pracovnými balíkmi OpenProject",
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* Create work packages directly in Nextcloud\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n* Link multiple files and folder to a work package at once\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Táto aplikácia umožňuje bezproblémovú integráciu s open source softvérom na riadenie projektov a spoluprácu OpenProject.\n\nNextcloud ďalej umožňuje užívateľom:\n\n* Prepojenie súborov a adresárov s pracovnými balíkmi v OpenProject\n* Nájisť všetky pracovné balíky prepojené so súborom alebo adresárom\n* Vytvárať pracovné balíčky priamo v Nextcloud\n* Prezerať si upozornenia OpenProject cez dashboard\n* Vyhľadaýť pracovné balíky pomocou vyhľadávacieho panela Nextcloud\n* Prepojiť pracovné balíky v poliach s formátovaným textom pomocou funkcie Smart Picker\n* Ukážku odkazov na pracovné balíky v textových poliach\n* Prepojiť viacero súborov a adresárov s pracovným balíkom naraz\n\nĎalej môžu užívatelia OpenProject:\n\n* Prepojiť pracovné balíky so súbormi a adresármi v Nextcloud\n* Nahrávať a sťahovať súbory priamo do Nextcloud z pracovného balíka\n* Otvoriť prepojené súbory v Nextcloud a upraviť ich\n* OpenProject môže vytvárať zdieľané adresáre projektu\n\nĎalšie informácie o tom, ako nastaviť a používať aplikáciu OpenProject, nájdete v [sprievodcovi nastavením integrácie](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) pre administrátorov a v [užívateľskej príručke](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
+    "Keep current setup" : "Ponechať súčasné nastavenie",
+    "Complete without project folders" : "Dokončiť bez projektových adresárov",
+    "Setup OpenProject user, group and folder" : "Nastaviť uživateľa, skupinu a adresár OpenProjectu",
     "Administration > File storages" : "Administrácia > Úložiská súborov",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Skopírujte nasledujúce hodnoty späť do OpenProject {htmlLink} ako administrátor.",
+    "documentation" : "dokumentácia",
     "URL is invalid" : "URL je neplatné",
     "The URL should have the form \"https://openproject.org\"" : "URL musí byť vo formáte \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Na tejto adrese URL nepočúva žiadna platná inštancia OpenProject, skontrolujte logy Nextcloud",
@@ -39,7 +43,11 @@
     "Save" : "Uložiť",
     "Authentication method" : "Autentifikačná metóda",
     "Need help setting this up?" : "Potrebujete pomôcť s týmto nastavením?",
+    "Edit authentication method" : "Upraviť metódu autentifikácie",
+    "Authentication settings" : "Nastavenia autentifikácie",
+    "OIDC Provider Type" : "Typ poskytovateľa OIDC",
     "OIDC Provider" : "Poskytovateľ OIDC",
+    "Select a provider *" : "Vybrať poskytovateľa *",
     "Select an OIDC provider" : "Vybrať poskytovateľa OIDC",
     "OIDC provider" : "Poskytovateľ OIDC",
     "OpenProject OAuth settings" : "Nastavenia OpenProject OAuth",
@@ -144,6 +152,8 @@
     "This feature is not available for this user account" : "Táto funkcia nie je dostupná pre tento uživateľský účet",
     "Unauthorized to connect to OpenProject" : "Nemáte práva pre pripojenie k OpenProject",
     "OpenProject client ID" : "ID klienta OpecProject",
+    "Nextcloud Hub" : "Nextcloud Hub",
+    "External Provider" : "Externý poskytovateľ",
     "The \"{app}\" app is not installed" : "Aplikácia \"{app}\" nie je nainštalovaná",
     "Link to work package" : "Odkaz na pracovný balík",
     "Failed to link file to work package" : "Nepodarilo sa pripojiť pracovný balík",
@@ -175,6 +185,7 @@
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodarilo sa odvolať OAuth prístupové tokeny niektorých užívateľov OpenProject",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "OAuth Prístupový(é) token(y) užívateľov OpenProject boli úspešne odvolané",
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Táto aplikácia umožňuje bezproblémovú integráciu s open source softvérom na riadenie projektov a spoluprácu OpenProject.\n\nĎalej Nextcloud umožňuje užívateľom:\n\n* Prepojiť súbory a adresáre s pracovnými balíkmi v OpenProject\n* Nájisť všetky pracovné balíky prepojené so súborom alebo adresárom\n* Zobraziť upozornení OpenProject cez dashboard\n* Vyhľadať pracovné balíky pomocou vyhľadávacieho panela Nextcloud\n* Prepojiť pracovné balíky v poliach s formátovaným textom pomocou funkcie Smart Picker\n* Ukázať odkazov na pracovné balíky v textových poliach\n\nĎalej v OpenProject môžu užívatelia:\n\n* Prepojiť pracovné balíky so súbormi a adresármi v Nextcloud\n* Nahrávať a sťahovať súbory priamo do Nextcloud z pracovného balíka\n* Otvoriť prepojené súbory v Nextcloud a upraviť ich\n* OpenProject môže vytvárať zdieľané aresáre pre projekt\n\nĎalšie informácie o tom, ako nastaviť a používať aplikáciu OpenProject, nájdete v [sprievodcovi nastavením integrácie](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) pre správcov a v [užívateľskej príručke](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
-    "Please link a project to this Nextcloud storage" : "Prepojte projekt s týmto úložiskom Nextcloud"
+    "Please link a project to this Nextcloud storage" : "Prepojte projekt s týmto úložiskom Nextcloud",
+    "Download and enable it here" : "Stiahnite si a aktivujte to tu"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
