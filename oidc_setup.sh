@@ -88,6 +88,7 @@ NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed"
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
 NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
+OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
 openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
 # These two data are set to "false" when the integration is done without project folder setup
 setup_project_folder=false
@@ -132,10 +133,51 @@ checkNextcloudIntegrationConfiguration() {
   log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
 }
 
+# delete oidc client [oidc apps]
+deleteOidcClient() {
+    delete_clients_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+                      ${OIDC_BASE_URL}/clients/$1 \
+                      -H 'Content-Type: application/json' \
+                      -H 'OCS-APIRequest: true')
+    if [[ ${delete_clients_response} == 200 ]]; then
+      log_info "Oidc client name \"${openproject_client_name}\" has been deleted from oidc app!"
+    else
+      log_info "Failed to delete oidc client name \"${openproject_client_name}\" from oidc app!"
+    fi
+}
+
 
 logCompleteIntegrationConfiguration() {
   log_success "Setup of OpenProject and Nextcloud is complete."
   exit 0
+}
+
+checkOpenProjectIntegrationConfiguration() {
+  # At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
+  log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
+  status_op=$(isOpenProjectFileStorageConfigOk)
+  if [[ "$status_op" -ne 0 ]]; then
+    log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
+    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+      log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
+    fi
+    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+    exit 1
+  fi
+  log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is configured."
+}
+
+checkNextcloudIntegrationConfiguration() {
+  status_nc=$(isNextcloudAdminConfigOk)
+  if [[ "$status_nc" -ne 0 ]]; then
+    log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
+    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+      log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
+    fi
+    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+    exit 1
+  fi
+  log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
 }
 
 # check if openproject and nextcloud instances are started or not
@@ -197,15 +239,16 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <
 EOF
 
 # API call to set the openproject_client_id to Nextcloud [oidc App]
-oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NEXTCLOUD_HOST}/index.php/apps/oidc/clients" \
+oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
   -H 'Content-Type: application/json' \
   -H 'OCS-APIRequest: true' \
   -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
 )
 
 if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$openproject_client_name" ]]; then
+  log_info "The response is missing openproject_client_name"
   log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
-  exit1 1
+  exit 1
 fi
 
 log_success "[OIDC app] '$openproject_client_name' oidc client has been created successfully"
@@ -214,7 +257,7 @@ if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_
 
 # required information from the above response
 openproject_client_id=$(echo $oidc_information_response | jq -e '.clientId')
-echo $openproject_client_id
+openproject_id=$(echo $oidc_information_response | jq -e '.id')
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json <<EOF
 {
@@ -232,12 +275,16 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json <<EOF
 EOF
 
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
-echo $setup_method
-oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
+nextcloud_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
   -H 'Content-Type: application/json' \
   -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json
 )
 
-echo $oidc_information_response
+if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] || [[ "$nextcloud_information_response" != *"openproject_redirect_uri"* ]]; then
+    log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
+    log_error "Failed to set up in Nextcloud when the idp is Nextcloud Hub."
+    deleteOidcClient "$openproject_id"
+    exit 1
+  fi
 
-log_success "[Integration_openproject app]: oidc where idpis nextcloud has been setup successfully"
+log_success "Setting up OpenProject oidc configuration where idp is nextcloud in Nextcloud was successful."
