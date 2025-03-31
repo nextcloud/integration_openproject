@@ -1,10 +1,12 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Bad HTTP method" : "Vigane HTTP-meetod",
     "Documentation" : "Dokumentatsioon",
     "Cancel" : "Loobu",
     "Save" : "Salvesta",
     "Authentication method" : "Autentimise meetod",
+    "Connected as {user}" : "Ühendatud kui {user}",
     "Copied!" : "Kopeeritud!",
     "Details" : "Üksikasjad",
     "Start typing to search" : "Otsimiseks alusta kirjutamist",
@@ -12,6 +14,7 @@ OC.L10N.register(
     "Description" : "Kirjeldus",
     "Create" : "Lisa",
     "Mark as read" : "Märgi loetuks",
+    "Connected accounts" : "Ühendatud kasutajakontod",
     "Reset" : "Lähtesta"
 },
 "nplurals=2; plural=(n != 1);");
