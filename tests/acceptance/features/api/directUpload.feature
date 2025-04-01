@@ -723,8 +723,8 @@ Feature: API endpoint for direct upload
 
 
   Scenario: Upload a file into a folder, exceeding the users quota
-    Given the quota of user "Carol" has been set to "9 B"
-    And user "Carol" has created folder "/forOP"
+    Given user "Carol" has created folder "/forOP"
+    And the quota of user "Carol" has been set to "9 B"
     And user "Carol" got a direct-upload token for "/forOP"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
       | file_name | file.txt   |
@@ -746,9 +746,9 @@ Feature: API endpoint for direct upload
 
   Scenario: Upload a file into a shared folder exceeding the quota of the user sharing the folder
     Given user "Brian" has been created
+    And user "Brian" has created folder "/toShare"
     And the quota of user "Carol" has been set to "10 B"
     And the quota of user "Brian" has been set to "9 B"
-    And user "Brian" has created folder "/toShare"
     And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
     And user "Carol" got a direct-upload token for "/toShare"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
@@ -771,9 +771,9 @@ Feature: API endpoint for direct upload
 
   Scenario: Upload a file into a shared folder exceeding the quota of sharee but not that of sharer
     Given user "Brian" has been created
+    And user "Brian" has created folder "/toShare"
     And the quota of user "Carol" has been set to "10 B"
     And the quota of user "Brian" has been set to "20 B"
-    And user "Brian" has created folder "/toShare"
     And user "Brian" has shared folder "/toShare" with user "Carol" with "all" permissions
     And user "Carol" got a direct-upload token for "/toShare"
     When an anonymous user sends a multipart form data POST request to the "direct-upload/%last-created-direct-upload-token%" endpoint with:
