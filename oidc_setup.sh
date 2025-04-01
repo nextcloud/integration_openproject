@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #!/usr/bin/env bash
 
-# This bash script is to set up the whole OAUTH configuration between OpenProject and Nextcloud.
+# This bash script is to set up the whole OIDC configuration between OpenProject and Nextcloud.
 # To run this script the Nextcloud and OpenProject instances must be up and running
 
 # variables from environment
@@ -14,6 +14,8 @@
 # OP_ADMIN_PASSWORD=<openproject_admin_password>
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
+# OIDC_PROVIDER=<nextcloud|keycloak> This variable is the name of the idp provider which makes the oidc configuration in OpenProject required for Nextcloud integration.
+# TOKEN_EXCHANGE=<true|false> If true then the token exchange is done
 # OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth configuration in OpenProject required for Nextcloud integration.
 # SETUP_PROJECT_FOLDER=<true|false> If true then the integration is done with a project folder setup in Nextcloud
 # INTEGRATION_SETUP_DEBUG=<true|false> If true then the script will output more details (set -x/-v) and keep the payload files
@@ -68,7 +70,6 @@ fi
 # if something goes wrong or an error occurs during the setup of the whole integration
 # we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
 deleteOPStorageAndPrintErrorResponse() {
-  echo "$1" | jq
   log_error "Setup of OpenProject and Nextcloud integration failed."
   delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                       ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
@@ -180,6 +181,68 @@ checkNextcloudIntegrationConfiguration() {
   log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
 }
 
+createOidcClient() {
+  # make an api request to create the oidc client in oidc App
+  cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <<EOF
+{
+  "name": "$openproject_client_name",
+  "redirectUri": "$OPENPROJECT_HOST/auth/oidc-nextcloud/callback",
+  "signingAlg": "RS256",
+  "type": "confidential"
+}
+EOF
+
+  oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
+    -H 'Content-Type: application/json' \
+    -H 'OCS-APIRequest: true' \
+    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
+  )
+
+  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
+
+  if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$openproject_client_name" ]]; then
+  log_info "The response is missing openproject_client_name"
+  log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
+  exit 1
+  fi
+
+  # required information from the above response
+  openproject_client_id=$(echo $oidc_information_response | jq -r '.clientId')
+  openproject_id=$(echo $oidc_information_response | jq -r '.id')
+
+  log_success "[OIDC app] '$openproject_client_name' oidc client has been created successfully"
+}
+
+registerProviders() {
+  # make an api request to register provider in user_oidc App
+  cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json <<EOF
+{
+  "identifier": "Keycloak",                                
+  "clientId": "nextcloud",    
+  "clientSecret": "ssssssssssss",                                                                     
+  "discoveryEndpoint": "$KEYCLOAK_BASE_URL/realms/$KEYCLOAK_REALM_NAME/.well-known/openid-configuration",
+  "endSessionEndpoint": "",                       
+  "scope": "openid email profile" 
+}
+EOF
+
+  user_oidc_information_response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
+                    ${NEXTCLOUD_HOST}/index.php/apps/user_oidc/provider \
+                    -H 'Content-Type: application/json' \
+                    -H 'OCS-APIRequest: true' \
+                    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json" )
+  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json; fi
+
+  if [[ $user_oidc_information_response == 200 ]]; then
+    log_success "${OIDC_PROVIDER} Provider was successfully registered"
+  elif [[ $user_oidc_information_response == 409 ]]; then
+    log_info "[user_oidc apps] Provider with the given identifier already exists"
+  else
+    log_error "[user_oidc apps] Failed to register provider"
+    exit 1
+  fi
+}
+
 # check if openproject and nextcloud instances are started or not
 # openproject
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
@@ -228,44 +291,20 @@ else
   setup_method=POST
 fi
 
-# API call to get openproject_client_id [oidc App]
-cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <<EOF
-{
-  "name": "$openproject_client_name",
-  "redirectUri": "$OPENPROJECT_HOST/auth/oidc-nextcloud/callback",
-  "signingAlg": "RS256",
-  "type": "confidential"
-}
-EOF
-
-# API call to set the openproject_client_id to Nextcloud [oidc App]
-oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
-  -H 'Content-Type: application/json' \
-  -H 'OCS-APIRequest: true' \
-  -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
-)
-
-if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$openproject_client_name" ]]; then
-  log_info "The response is missing openproject_client_name"
-  log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
-  exit 1
+if [[ $OIDC_PROVIDER == "nextcloud" ]]; then
+  createOidcClient
+else
+  openproject_client_id=$OIDC_PROVIDER
+  registerProviders
 fi
 
-log_success "[OIDC app] '$openproject_client_name' oidc client has been created successfully"
-
-if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
-
-# required information from the above response
-openproject_client_id=$(echo $oidc_information_response | jq -e '.clientId')
-openproject_id=$(echo $oidc_information_response | jq -e '.id')
-
-cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json <<EOF
+cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
 {
   "values":{
     "openproject_instance_url": "$OPENPROJECT_HOST", 
     "sso_provider_type": "nextcloud_hub", 
     "authorization_method": "oidc", 
-    "targeted_audience_client_id" : $openproject_client_id,
+    "targeted_audience_client_id" : "$openproject_client_id",
     "default_enable_navigation": false,
     "default_enable_unified_search": false,
     "setup_project_folder": $SETUP_PROJECT_FOLDER,
@@ -274,17 +313,25 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json <<EOF
 }
 EOF
 
+if [[ $OIDC_PROVIDER = "keycloak" ]]; then
+  jq --argjson token_exchange "$TOKEN_EXCHANGE" \
+     '.values += {"oidc_provider": "Keycloak", "token_exchange": $token_exchange} | .values.sso_provider_type = "external"' \
+     ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json > tempEdit.json
+  mv tempEdit.json ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json
+fi
+
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
 nextcloud_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
   -H 'Content-Type: application/json' \
-  -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_nc_oidc_setup.json
+  -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json
 )
+# if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json; fi
 
 if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] || [[ "$nextcloud_information_response" != *"openproject_redirect_uri"* ]]; then
     log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
     log_error "Failed to set up in Nextcloud when the idp is Nextcloud Hub."
     deleteOidcClient "$openproject_id"
     exit 1
-  fi
+fi
 
-log_success "Setting up OpenProject oidc configuration where idp is nextcloud in Nextcloud was successful."
+log_success "Setting up OpenProject oidc configuration where idp is $OIDC_PROVIDER in Nextcloud was successful."
