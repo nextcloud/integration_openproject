@@ -17,6 +17,7 @@
 set -e
 
 INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
+CURL="curl -s -w %{http_code}"
 
 help() {
   echo -e "Available environment variables:"
@@ -60,65 +61,49 @@ log_file() {
   echo -e "[$time] $1" >>"${INTEGRATION_SETUP_LOG_FILE}"
 }
 
-do_curl() {
-  local url=$1
-  local method=$2
-  local auth=$3
-  local headers=$4
-  local data=$5
-  local options
-  local response
-  local status_code
-  local body
-
-  if [[ -z "$url" ]]; then
-    log_error "Invalid URL: $url"
-    exit 1
-  fi
-  # default to GET if no method is provided
-  if [[ -z "$method" ]]; then
-    method="GET"
-  fi
-  if [[ -n "$headers" ]]; then
-    options="$options $headers"
-  fi
-  if [[ -n "$auth" ]]; then
-    options="$options $auth"
-  fi
-  if [[ -n "$data" ]]; then
-    options="$options -d '$data'"
-  fi
-
-  response=$(curl -s -X "$method" "$url" -w "%{http_code}"$options)
-  # substring last 3 characters from the response to get the status code
-  status_code="${response: -3}"
-  # remove status_code suffix from the response
-  body="${response%"${status_code}"}"
+log_req() {
+  local req
+  local data
+  req="$1"
+  data="$2"
   log_file "[REQUEST]"
-  log_file "  $method $url"
-  if [[ -n "$data" ]]; then
-    # compact format
-    data=$(echo "$data" | jq -c .)
+  log_file "  $req"
+  if [[ -n $data ]]; then
     log_file "  $data"
   fi
+}
+
+log_res() {
+  local res
+  local status_code
+  local body
+  res="$1"
+  status_code=$(get_statuscode "$res")
+  body=$(get_body "$res")
   log_file "[RESPONSE]"
   log_file "  Code: $status_code"
   log_file "  $body"
-  echo "$body---$status_code"
 }
 
 get_body() {
   local response
+  local status_code
+  local body
   response="$1"
-  echo "$response" | awk -F'---' '{print $1}'
+  status_code="${response: -3}"
+  body="${response%"${status_code}"}"
+  echo "$body"
 }
 
 get_statuscode() {
   local response
+  local status_code
   response="$1"
-  echo "$response" | awk -F'---' '{print $2}'
+  status_code="${response: -3}"
+  echo "$status_code"
 }
 
+set -x
 # Support for "Debug mode"
 if [[ $INTEGRATION_SETUP_DEBUG == "true" ]]; then
   log_info "Debug mode is enabled"
@@ -176,6 +161,12 @@ NC_INTEGRATION_SETUP_DATA="${NC_INTEGRATION_SETUP_DATA}, \"default_enable_naviga
   \"setup_project_folder\": ${NC_INTEGRATION_ENABLE_PROJECT_FOLDER},
   \"sso_provider_type\": \"${NC_INTEGRATION_PROVIDER_TYPE}\""
 
+if [[ "$NC_INTEGRATION_ENABLE_PROJECT_FOLDER" == "true" ]]; then
+  NC_INTEGRATION_SETUP_DATA="${NC_INTEGRATION_SETUP_DATA}, \"setup_app_password\": true"
+else
+  NC_INTEGRATION_SETUP_DATA="${NC_INTEGRATION_SETUP_DATA}, \"setup_app_password\": false"
+fi
+
 # ignore provided NC_INTEGRATION_OP_CLIENT_ID, NC_INTEGRATION_PROVIDER_NAME if using nextcloud_hub
 if [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "nextcloud_hub" ]]; then
   NC_INTEGRATION_PROVIDER_NAME=""
@@ -216,14 +207,22 @@ if [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "external" ]]; then
 fi
 
 # Request configurations
-NC_BASIC_AUTH="-u\"${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD}\""
-NC_HEADERS="-H\"OCS-APIRequest: true\""
+NC_BASIC_AUTH="${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD}"
+NC_API_HEADER="OCS-APIRequest: true"
+NC_CONTENT_TYPE_HEADER="Content-Type: application/json"
 
 nc_check_install_status() {
   log_file "[INFO] Checking Nextcloud installation status..."
   local nc_status
-  response=$(do_curl "${NEXTCLOUD_HOST}/status.php")
+  local request
+  local response
+  request="GET ${NEXTCLOUD_HOST}/status.php"
+  log_req "$request"
+
+  response=$($CURL -X$request)
   nc_status=$(get_body "${response}" | jq -r ".installed")
+  log_res "$response"
+
   if [[ "$nc_status" != "true" ]]; then
     local message
     message="Nextcloud is not installed or not reachable at ${NEXTCLOUD_HOST}"
@@ -241,28 +240,31 @@ NC_OP_OIDC_CLIENT_REDIRECT_URI=
 NC_CURRENT_OIDC_CLIENT_DB_ID=
 nc_add_op_oidc_client() {
   if [[ "$NC_INTEGRATION_PROVIDER_TYPE" != "nextcloud_hub" ]]; then
-    exit 0
+    return
   fi
 
   log_file "[INFO] Creating OpenProject OIDC client in Nextcloud..."
+  local request
   local response
   local data
-  local headers
   local body
   local status
-  headers="${NC_HEADERS} -H\"Content-Type: application/json\""
   data="{
     \"name\": \"openproject\",
     \"redirectUri\": \"${OPENPROJECT_HOST}/auth/oidc-nextcloud/callback\",
     \"signingAlg\": \"RS256\",
     \"type\": \"confidential\"
   }"
+  data="$(echo "$data" | jq -c .)"
 
-  response=$(do_curl "${NC_OIDC_APP_ENDPOINT}/clients" "POST" "${NC_BASIC_AUTH}" "${headers}" "$data")
+  request="POST ${NC_OIDC_APP_ENDPOINT}/clients"
+  log_req "$request" "$data"
+
+  response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
+  log_res "$response"
+
   body=$(get_body "${response}")
   status=$(get_statuscode "${response}")
-  log_file "[ERROR] $body"
-  log_file "[ERROR] $status"
 
   if [[ "$status" != "200" ]]; then
     local message="Failed to create OpenProject OIDC client in Nextcloud."
@@ -283,8 +285,16 @@ nc_add_op_oidc_client() {
 
 nc_delete_op_oidc_client() {
   log_file "[INFO] Deleting OpenProject OIDC client in Nextcloud..."
+  local request
   local response
-  response=$(do_curl "${NC_OIDC_APP_ENDPOINT}/clients/${NC_CURRENT_OIDC_CLIENT_DB_ID}" "DELETE" "${NC_BASIC_AUTH}" "${NC_HEADERS}")
+  local status
+
+  request="DELETE ${NC_OIDC_APP_ENDPOINT}/clients/${NC_CURRENT_OIDC_CLIENT_DB_ID}"
+  log_req "$request"
+
+  response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER")
+  log_res "$response"
+
   status=$(get_statuscode "${response}")
   if [[ "$status" != "200" ]]; then
     local message="Failed to delete OpenProject OIDC client in Nextcloud."
@@ -299,15 +309,14 @@ NC_USER_OIDC_APP_ENDPOINT="${NEXTCLOUD_HOST}/index.php/apps/user_oidc"
 NC_CURRENT_PROVIDER_DB_ID=
 nc_add_oidc_provider() {
   if [[ "$NC_INTEGRATION_PROVIDER_TYPE" != "external" ]]; then
-    exit 0
+    return
   fi
 
   log_file "[INFO] Adding OIDC provider in Nextcloud..."
+  local request
   local response
   local data
-  local headers
   local body
-  headers="${NC_HEADERS} -H\"Content-Type: application/json\""
   data="{
     \"identifier\": \"keycloak\",
     \"clientId\": \"nextcloud\",
@@ -315,7 +324,14 @@ nc_add_oidc_provider() {
     \"discoveryEndpoint\": \"<discovery_url>\",
     \"scope\": \"openid email profile\"
   }"
-  response=$(do_curl "${NC_USER_OIDC_APP_ENDPOINT}/provider" "POST" "${NC_BASIC_AUTH}" "${headers}" "$data" | get_body)
+  data=$(echo "$data" | jq -c .)
+
+  request="POST ${NC_USER_OIDC_APP_ENDPOINT}/provider"
+  log_req "$request" "$data"
+
+  response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
+  log_res "$response"
+
   body=$(get_body "${response}")
   NC_CURRENT_PROVIDER_DB_ID=$(echo "$body" | jq -r '.id')
   if [[ -z $NC_CURRENT_PROVIDER_DB_ID ]]; then
@@ -329,8 +345,16 @@ nc_add_oidc_provider() {
 
 nc_delete_oidc_provider() {
   log_file "[INFO] Deleting OIDC provider in Nextcloud..."
+  local request
   local response
-  response=$(do_curl "${NC_USER_OIDC_APP_ENDPOINT}/provider/${NC_CURRENT_PROVIDER_DB_ID}" "DELETE" "${NC_BASIC_AUTH}" "${NC_HEADERS}")
+  local status
+
+  request="DELETE ${NC_USER_OIDC_APP_ENDPOINT}/provider/${NC_CURRENT_PROVIDER_DB_ID}"
+  log_req "$request"
+
+  response=$($CURL -X$request -u"${NC_BASIC_AUTH}" -H"$NC_API_HEADER")
+  log_res "$response"
+
   status=$(get_statuscode "${response}")
   if [[ "$status" != "200" ]]; then
     local message="Failed to delete OIDC provider in Nextcloud."
@@ -344,12 +368,18 @@ nc_delete_oidc_provider() {
 NC_INTEGRATION_ENDPOINT="${NEXTCLOUD_HOST}/index.php/apps/integration_openproject"
 nc_setup_integration() {
   log_file "[INFO] Setting up integration in Nextcloud..."
+  local request
   local response
-  local headers
   local body
-  headers="${NC_HEADERS} -H\"Content-Type: application/json\""
+  local data
 
-  response=$(do_curl "${NC_INTEGRATION_ENDPOINT}/setup" "${NC_BASIC_AUTH}" "${headers}" "{$NC_INTEGRATION_SETUP_DATA}")
+  data=$(echo "{\"values\":{$NC_INTEGRATION_SETUP_DATA}}" | jq -c .)
+  request="POST ${NC_INTEGRATION_ENDPOINT}/setup"
+  log_req "$request" "$data"
+
+  response=$($CURL -X$request -u"${NC_BASIC_AUTH}" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
+  log_res "$response"
+
   body=$(get_body "${response}")
 }
 
