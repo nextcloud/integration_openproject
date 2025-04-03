@@ -240,6 +240,31 @@ EOF
   log_success "[OIDC app] '$openproject_client_name' oidc client has been created successfully"
 }
 
+enableStoreLoginTokens() {
+  # make an api request to enable the store login tokens
+  # This is needed if you are using other apps that want to use user_oidc's token exchange or simply get the login token
+  cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json <<EOF
+{
+  "values":{
+    "store_login_token": true
+  }
+}
+EOF
+
+  user_oidc_token_storage_status=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
+                    ${NEXTCLOUD_HOST}/index.php/apps/user_oidc/admin-config \
+                    -H 'Content-Type: application/json' \
+                    -H 'OCS-APIRequest: true' \
+                    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json" )
+
+  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json; fi
+
+  if [[ $user_oidc_token_storage_status != 200 ]]; then
+    log_error "[user_oidc apps] Failed to enable store login tokens"
+    exit 1
+  fi
+}
+
 registerProviders() {
   # make an api request to register provider in user_oidc App
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json <<EOF
@@ -323,6 +348,7 @@ if [[ $OIDC_PROVIDER == "nextcloud" ]]; then
 else
   openproject_client_id=$OIDC_PROVIDER
   registerProviders
+  enableStoreLoginTokens
 fi
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
