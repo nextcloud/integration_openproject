@@ -15,7 +15,7 @@
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
 # OIDC_PROVIDER=<nextcloud|keycloak> This variable is the name of the idp provider which makes the oidc configuration in OpenProject required for Nextcloud integration.
-# TOKEN_EXCHANGE=<true|false> If true then the token exchange is done
+# NC_TOKEN_EXCHANGE=<true|false> If true then the token exchange is done
 # OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth configuration in OpenProject required for Nextcloud integration.
 # SETUP_PROJECT_FOLDER=<true|false> If true then the integration is done with a project folder setup in Nextcloud
 # INTEGRATION_SETUP_DEBUG=<true|false> If true then the script will output more details (set -x/-v) and keep the payload files
@@ -341,8 +341,8 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
 EOF
 
 if [[ $OIDC_PROVIDER = "keycloak" ]]; then
-  jq --argjson token_exchange "$TOKEN_EXCHANGE" \
-     '.values += {"oidc_provider": "Keycloak", "token_exchange": $token_exchange} | .values.sso_provider_type = "external"' \
+  jq --argjson nc_token_exchange "$NC_TOKEN_EXCHANGE" \
+     '.values += {"oidc_provider": "Keycloak", "token_exchange": $nc_token_exchange} | .values.sso_provider_type = "external"' \
      ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json > tempEdit.json
   mv tempEdit.json ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json
 fi
