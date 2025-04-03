@@ -121,6 +121,28 @@ isNextcloudAdminConfigOk() {
   fi
 }
 
+isOpenProjectFileStorageConfigOk() {
+  all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+      ${OPENPROJECT_BASEURL_FOR_STORAGE} \
+      -H 'accept: application/hal+json' \
+      -H 'Content-Type: application/json' \
+      -H 'X-Requested-With: XMLHttpRequest'
+    )
+    oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
+    has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
+  if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+    if [[ ${oauth_configured_status} == 'true' && ${has_nc_application_password_status} == 'true' ]]; then
+      echo 0
+    else
+      echo 1
+    fi
+  elif [[ ${oauth_configured_status} == 'true' ]]; then
+    echo 0
+  else
+    echo 1
+  fi
+}
+
 checkNextcloudIntegrationConfiguration() {
   status_nc=$(isNextcloudAdminConfigOk)
   if [[ "$status_nc" -ne 0 ]]; then
@@ -147,6 +169,11 @@ deleteOidcClient() {
     fi
 }
 
+logUnhandledError() {
+  log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
+  log_error "OpenProject returned the following error: '${error_message}'"
+  log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+}
 
 logCompleteIntegrationConfiguration() {
   log_success "Setup of OpenProject and Nextcloud is complete."
@@ -325,7 +352,7 @@ nextcloud_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME
   -H 'Content-Type: application/json' \
   -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json
 )
-# if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json; fi
+if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json; fi
 
 if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] || [[ "$nextcloud_information_response" != *"openproject_redirect_uri"* ]]; then
     log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
@@ -335,3 +362,83 @@ if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] ||
 fi
 
 log_success "Setting up OpenProject oidc configuration where idp is $OIDC_PROVIDER in Nextcloud was successful."
+
+# API call to get openproject_client_id and openproject_client_secret
+cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
+{
+  "name": "nextcloud",
+  "storageAudience": "test",
+  "applicationPassword": "",
+  "_links": {
+    "origin": {
+      "href": "$NEXTCLOUD_HOST"
+    },
+    "type": {
+      "href": "urn:openproject-org:api:v3:storages:Nextcloud"
+    },
+    "authenticationMethod": {
+      "href": "urn:openproject-org:api:v3:storages:authenticationMethod:OAuth2SSO"
+    }
+  }
+}
+EOF
+
+create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+  ${OPENPROJECT_BASEURL_FOR_STORAGE} \
+  -H 'accept: application/hal+json' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
+)
+if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
+# check for errors
+response_type=$(echo $create_storage_response | jq -r "._type")
+if [[ ${response_type} == "Error" ]]; then
+  error_message=$(echo $create_storage_response | jq -r ".message")
+  error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
+  if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
+    # If the files storage is already created with the provided Nextcloud host and storage name.
+    # We assume that the integration setup is already done in both applications.
+    # To check that, we parse the error messages.
+    # If there are only two error messages and those are about the Nextcloud host and name being taken.
+    # We assume the setup was already completed.
+    error_messages_grep=$(echo $create_storage_response | jq -r '.["_embedded"]["errors"] | .[].message')
+    readarray -t error_messages <<<"$error_messages_grep"
+    error_count=0
+    host_already_taken=false
+    name_already_taken=false
+    for element in "${error_messages[@]}"; do
+      if [[ "$element" == "Host has already been taken." ]]; then
+        host_already_taken=true
+      elif [[ "$element" == "Name has already been taken." ]]; then
+        name_already_taken=true
+      fi
+      (( error_count +=1 ))
+    done
+    if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2  ]]; then
+      logUnhandledError
+      exit 1
+    fi
+    checkOpenProjectIntegrationConfiguration
+    checkNextcloudIntegrationConfiguration
+    logCompleteIntegrationConfiguration
+  elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
+    # A PropertyConstraintViolation is always a single error
+    error_messages_grep=$(echo $create_storage_response | jq -r '.message')
+    if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
+      checkOpenProjectIntegrationConfiguration
+      checkNextcloudIntegrationConfiguration
+      logCompleteIntegrationConfiguration
+    else
+      logUnhandledError
+      exit 1
+    fi
+  elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
+    log_error "Authorization failed. Ensure you have created a valid BASIC AUTH API account, e.g. utilising the following env variables:"
+    log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER=<basic_auth_api_username>"
+    log_info "OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD=<basic_auth_api_password>"
+  else
+    logUnhandledError
+  fi
+  exit 1
+fi
