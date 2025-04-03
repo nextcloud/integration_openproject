@@ -2,18 +2,6 @@
 
 # SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
 
-# variables from environment
-# NEXTCLOUD_HOST=<nextcloud_host_url>
-# OPENPROJECT_HOST=<openproject_host_url>
-# OP_ADMIN_USERNAME=<openproject_admin_username>
-# OP_ADMIN_PASSWORD=<openproject_admin_password>
-# NC_ADMIN_USERNAME=<nextcloud_admin_username>
-# NC_ADMIN_PASSWORD=<nextcloud_admin_password>
-# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth configuration in OpenProject required for Nextcloud integration.
-# SETUP_PROJECT_FOLDER=<true|false> If true then the integration is done with a project folder setup in Nextcloud
-# INTEGRATION_SETUP_DEBUG=<true|false> If true then the script will output more details (set -x/-v) and keep the payload files
-# INTEGRATION_SETUP_TEMP_DIR=<pre-existing_directory> The payloads sent to the APIs are written into temporary files, by default ./temp, you can specify a custom directory that is expected to pre-exist e.g. when bootstrapping in a K8s job with ephemeral storage.
-
 set -e
 
 INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
@@ -103,7 +91,6 @@ get_statuscode() {
   echo "$status_code"
 }
 
-set -x
 # Support for "Debug mode"
 if [[ $INTEGRATION_SETUP_DEBUG == "true" ]]; then
   log_info "Debug mode is enabled"
@@ -219,6 +206,8 @@ nc_check_install_status() {
   request="GET ${NEXTCLOUD_HOST}/status.php"
   log_req "$request"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request)
   nc_status=$(get_body "${response}" | jq -r ".installed")
   log_res "$response"
@@ -260,6 +249,8 @@ nc_add_op_oidc_client() {
   request="POST ${NC_OIDC_APP_ENDPOINT}/clients"
   log_req "$request" "$data"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
   log_res "$response"
 
@@ -292,6 +283,8 @@ nc_delete_op_oidc_client() {
   request="DELETE ${NC_OIDC_APP_ENDPOINT}/clients/${NC_CURRENT_OIDC_CLIENT_DB_ID}"
   log_req "$request"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER")
   log_res "$response"
 
@@ -329,6 +322,8 @@ nc_add_oidc_provider() {
   request="POST ${NC_USER_OIDC_APP_ENDPOINT}/provider"
   log_req "$request" "$data"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request -u"$NC_BASIC_AUTH" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
   log_res "$response"
 
@@ -352,6 +347,8 @@ nc_delete_oidc_provider() {
   request="DELETE ${NC_USER_OIDC_APP_ENDPOINT}/provider/${NC_CURRENT_PROVIDER_DB_ID}"
   log_req "$request"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request -u"${NC_BASIC_AUTH}" -H"$NC_API_HEADER")
   log_res "$response"
 
@@ -377,13 +374,14 @@ nc_setup_integration() {
   request="POST ${NC_INTEGRATION_ENDPOINT}/setup"
   log_req "$request" "$data"
 
+  # DO NOT enclose 'request' in double quotes, as it will break the command
+  # shellcheck disable=SC2086
   response=$($CURL -X$request -u"${NC_BASIC_AUTH}" -H"$NC_API_HEADER" -H"$NC_CONTENT_TYPE_HEADER" -d"$data")
   log_res "$response"
 
   body=$(get_body "${response}")
 }
 
-set -e
 nc_check_install_status
 nc_add_op_oidc_client
 nc_add_oidc_provider
