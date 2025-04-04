@@ -88,8 +88,6 @@ NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
 NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
-NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
-OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
 openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
 # These two data are set to "false" when the integration is done without project folder setup
 setup_project_folder=false
@@ -98,7 +96,50 @@ setup_app_password=false
 MINIMUM_OP_VERSION="14.2.0"
 # Openproject and Nextcloud Client name
 openproject_client_name="openproject"
+# These url are of the nextcloud apps
+OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
+NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
 
+checkNCAppVersion() {
+  # checks the version of a specified Nextcloud app.
+  # If the app version is below the required version, an error is logged and the script exists.
+  app_name=$1
+  
+  # assign app_miniimum version 
+  if [ $app_name = 'user_oidc' ]; then
+    app_min_version=$MIN_SUPPORTED_USER_OIDC_APP_VERSION
+  elif [ $app_name = 'oidc' ]; then
+    app_min_version=$MIN_SUPPORTED_OIDC_APP_VERSION
+  elif [ $app_name = 'integration_openproject' ]; then
+    app_min_version=$MIN_SUPPORTED_INTEGRATION_OPENRPOJECT_APP_VERSION
+  else
+    log_error "Minimum required version for the '$app_name' app is not set."
+    exit 1
+  fi
+
+  NC_apps_information_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NEXTCLOUD_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
+    -H 'OCS-APIRequest: true' \
+  )
+
+  NC_apps_version=$(echo $NC_apps_information_response | jq -r ".ocs.data.version")
+
+  if [ -z "$NC_apps_version" ]; then
+    log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
+    exit 1
+  elif [[ "$NC_apps_version" < "$app_min_version" ]]; then
+   log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$NC_apps_version'"
+   exit 1
+  fi
+}
+
+
+# This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
+MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
+MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
+MIN_SUPPORTED_INTEGRATION_OPENRPOJECT_APP_VERSION="2.9.0"
+checkNCAppVersion "oidc"
+checkNCAppVersion "user_oidc"
+checkNCAppVersion "integration_openproject"
 
 isNextcloudAdminConfigOk() {
   admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
@@ -182,7 +223,7 @@ logCompleteIntegrationConfiguration() {
 
 checkOpenProjectIntegrationConfiguration() {
   # At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
-  log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
+  log_info "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
   status_op=$(isOpenProjectFileStorageConfigOk)
   if [[ "$status_op" -ne 0 ]]; then
     log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
@@ -265,8 +306,8 @@ EOF
   fi
 }
 
+# make an api request to register provider in user_oidc App
 registerProviders() {
-  # make an api request to register provider in user_oidc App
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json <<EOF
 {
   "identifier": "Keycloak",                                
@@ -296,7 +337,7 @@ EOF
 }
 
 # check if openproject and nextcloud instances are started or not
-# openproject
+# openproject instances
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "OpenProject authentication failed!"
@@ -307,7 +348,7 @@ if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuratio
     exit 1
   fi
 fi
-# nextcloud
+# nextcloud instances
 if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]; then
   log_error "Nextcloud host cannot be reached or is in maintenance mode!"
   exit 1
