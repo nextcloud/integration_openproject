@@ -206,7 +206,7 @@ deleteOidcClient() {
     if [[ ${delete_clients_response} == 200 ]]; then
       log_info "Oidc client name \"${openproject_client_name}\" has been deleted from oidc app!"
     else
-      log_info "Failed to delete oidc client name \"${openproject_client_name}\" from oidc app!"
+      log_error "Failed to delete oidc client name \"${openproject_client_name}\" from oidc app!"
     fi
 }
 
@@ -423,8 +423,8 @@ if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_
 
 if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] || [[ "$nextcloud_information_response" != *"openproject_redirect_uri"* ]]; then
     log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
-    log_error "Failed to set up in Nextcloud when the idp is Nextcloud Hub."
-    deleteOidcClient "$openproject_id"
+    log_error "Failed to set up in Nextcloud when the idp is $OIDC_PROVIDER."
+    if [[ $OIDC_PROVIDER = "nextcloud" ]]; then deleteOidcClient "$openproject_id"; fi
     exit 1
 fi
 
