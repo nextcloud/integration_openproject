@@ -1595,12 +1595,6 @@ class OpenProjectAPIService {
 		}
 		// token expiration info
 		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
-
-		// with Nextcloud Hub setup, we need to use the id-token to authenticate OpenProject API
-		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
-			return $token->getIdToken();
-		}
 		return $token->getAccessToken();
 	}
 
