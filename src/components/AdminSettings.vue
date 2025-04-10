@@ -90,6 +90,9 @@
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
+						<p class="oidc-app-check-description">
+							{{ messages.opRequiredVersionAndPlanHint }}
+						</p>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
 							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
