@@ -203,9 +203,7 @@ deleteOidcClient() {
                       ${OIDC_BASE_URL}/clients/$1 \
                       -H 'Content-Type: application/json' \
                       -H 'OCS-APIRequest: true')
-    if [[ ${delete_clients_response} == 200 ]]; then
-      log_info "Oidc client name \"${openproject_client_name}\" has been deleted from oidc app!"
-    else
+    if [[ ${delete_clients_response} != 200 ]]; then
       log_error "Failed to delete oidc client name \"${openproject_client_name}\" from oidc app!"
     fi
 }
@@ -260,7 +258,7 @@ createOidcClient() {
 }
 EOF
 
-  oidc_information_response=$(curl -s -X${setup_method} -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
+  oidc_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
     -H 'Content-Type: application/json' \
     -H 'OCS-APIRequest: true' \
     -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
@@ -269,16 +267,14 @@ EOF
   if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
 
   if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$openproject_client_name" ]]; then
-  log_info "The response is missing openproject_client_name"
-  log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
-  exit 1
+    log_info "The response is missing openproject_client_name"
+    log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
+    exit 1
   fi
 
   # required information from the above response
   openproject_client_id=$(echo $oidc_information_response | jq -r '.clientId')
   openproject_id=$(echo $oidc_information_response | jq -r '.id')
-
-  log_success "[OIDC app] '$openproject_client_name' oidc client has been created successfully"
 }
 
 enableStoreLoginTokens() {
@@ -312,7 +308,7 @@ registerProviders() {
 {
   "identifier": "Keycloak",                                
   "clientId": "nextcloud",    
-  "clientSecret": "ssssssssssss",                                                                     
+  "clientSecret": "<nextcloud-client>",                                                                     
   "discoveryEndpoint": "$KEYCLOAK_BASE_URL/realms/$KEYCLOAK_REALM_NAME/.well-known/openid-configuration",
   "endSessionEndpoint": "",                       
   "scope": "openid email profile" 
@@ -384,12 +380,17 @@ else
   setup_method=POST
 fi
 
-if [[ $OIDC_PROVIDER == "nextcloud" ]]; then
-  createOidcClient
+# Set up OIDC configuration based on the chosen provider.
+# If the provider is Nextcloud, create a new OIDC client.
+# Otherwise, register the external OIDC provider on user_oidc apps.
+if [[ $OIDC_PROVIDER == "keycloak" ]]; then
+  openproject_client_id=$OP_CLIENT_ID
+  if [[ $REGISTER_PROVIDER == "true" ]]; then
+    registerProviders
+    enableStoreLoginTokens
+  fi
 else
-  openproject_client_id=$OIDC_PROVIDER
-  registerProviders
-  enableStoreLoginTokens
+  createOidcClient
 fi
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
@@ -407,6 +408,8 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
 }
 EOF
 
+# If the OIDC provider is Keycloak, update the Nextcloud OIDC setup request body.
+# Adds Keycloak-specific configuration including token exchange and sets the SSO provider type to "external".
 if [[ $OIDC_PROVIDER = "keycloak" ]]; then
   jq --argjson nc_token_exchange "$NC_TOKEN_EXCHANGE" \
      '.values += {"oidc_provider": "Keycloak", "token_exchange": $nc_token_exchange} | .values.sso_provider_type = "external"' \
@@ -426,28 +429,16 @@ if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] &&
     [[ "$nextcloud_information_response" != *"openproject_redirect_uri"* ]]; then
 
     log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
-    # deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
 
-    if [[ "$SETUP_PROJECT_FOLDER" == "true" ]]; then
-      message=$(echo $nextcloud_information_response | jq -r '.error')
-      if [[ "$message" == 'The user "OpenProject" already exists' ]]; then
-        log_info "$message"
-        log_info "You could try deleting the user, group, groupFolder "OpenProject" in Nextcloud and run the script again."
-        exit 1
-      fi
+    if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nextcloud_information_response" != *"openproject_user_app_password"* ]]; then
+      log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
+      log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
+    elif [[ $OIDC_PROVIDER = "nextcloud" ]]; then deleteOidcClient "$openproject_id"; 
     fi
-    if [[ $OIDC_PROVIDER = "nextcloud" ]]; then deleteOidcClient "$openproject_id"; fi
     exit 1
 fi
 
 if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
-  if [[ "$nextcloud_information_response" != *"openproject_user_app_password"* ]]; then
-    log_info "The response is missing nextcloud_client_id, nextcloud_client_secret, or openproject_user_app_password"
-    deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
-    log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
-    log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
-    exit 1
-  fi
   openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
 fi
 
@@ -543,9 +534,10 @@ if [[ ${storage_id} == null ]]; then
   exit 1
 fi
 
+log_success "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject was successful."
 
+# Save the application password to OpenProject
 if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
-  # Save the application password to OpenProject
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json <<EOF
   {
     "applicationPassword": ${openproject_user_app_password}
