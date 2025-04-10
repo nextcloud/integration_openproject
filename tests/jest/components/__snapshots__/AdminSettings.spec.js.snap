@@ -1,5 +1,206 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AdminSettings.vue Authorization Method edit mode form, incomplete admin configuration should show proper elements when supported user_oidc app is enabled 1`] = `
+<div
+  class="authorization-method"
+>
+  <formheading-stub
+    index="2"
+    title="Authentication method"
+  />
+   
+  <div>
+    <div
+      class="authorization-method"
+    >
+      <div
+        class="authorization-method--description"
+      >
+        <p
+          class="title"
+        >
+          
+						Need help setting this up?
+					
+        </p>
+         
+        <p
+          class="description"
+        >
+          Please read our guide on {htmlLink}.
+        </p>
+      </div>
+       
+      <div
+        class="authorization-method--options"
+      >
+        <nccheckboxradioswitch-stub
+          arialabel=""
+          buttonvariantgrouped="no"
+          checked="oauth2"
+          class="radio-check"
+          id="checkbox-radio-switch-vuoko"
+          type="radio"
+          value="oauth2"
+        >
+          
+						Two-way OAuth 2.0 authorization code flow
+					
+        </nccheckboxradioswitch-stub>
+         
+        <nccheckboxradioswitch-stub
+          arialabel=""
+          buttonvariantgrouped="no"
+          checked="oauth2"
+          class="radio-check"
+          id="checkbox-radio-switch-hupnm"
+          type="radio"
+          value="oidc"
+        >
+          
+						Single-Sign-On through OpenID Connect Identity Provider
+					
+        </nccheckboxradioswitch-stub>
+         
+        <p
+          class="oidc-app-check-description"
+        >
+          
+						Requires OpenProject version 15.5 (or higher) and an active Corporate plan.
+					
+        </p>
+         
+        <!---->
+         
+        <!---->
+      </div>
+    </div>
+     
+    <div
+      class="form-actions"
+    >
+      <!---->
+       
+      <!---->
+       
+      <ncbutton-stub
+        alignment="center"
+        data-test-id="submit-auth-method-values-btn"
+        nativetype="button"
+        type="primary"
+      >
+        
+					Save
+				
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue Authorization Method edit mode form, incomplete admin configuration should show proper elements when user_oidc app is not installed 1`] = `
+<div
+  class="authorization-method"
+>
+  <formheading-stub
+    index="2"
+    title="Authentication method"
+  />
+   
+  <div>
+    <div
+      class="authorization-method"
+    >
+      <div
+        class="authorization-method--description"
+      >
+        <p
+          class="title"
+        >
+          
+						Need help setting this up?
+					
+        </p>
+         
+        <p
+          class="description"
+        >
+          Please read our guide on {htmlLink}.
+        </p>
+      </div>
+       
+      <div
+        class="authorization-method--options"
+      >
+        <nccheckboxradioswitch-stub
+          arialabel=""
+          buttonvariantgrouped="no"
+          checked="oauth2"
+          class="radio-check"
+          id="checkbox-radio-switch-fziva"
+          type="radio"
+          value="oauth2"
+        >
+          
+						Two-way OAuth 2.0 authorization code flow
+					
+        </nccheckboxradioswitch-stub>
+         
+        <nccheckboxradioswitch-stub
+          arialabel=""
+          buttonvariantgrouped="no"
+          checked="oauth2"
+          class="radio-check"
+          disabled="true"
+          id="checkbox-radio-switch-rbxjr"
+          type="radio"
+          value="oidc"
+        >
+          
+						Single-Sign-On through OpenID Connect Identity Provider
+					
+        </nccheckboxradioswitch-stub>
+         
+        <p
+          class="oidc-app-check-description"
+        >
+          
+						Requires OpenProject version 15.5 (or higher) and an active Corporate plan.
+					
+        </p>
+         
+        <p
+          class="oidc-app-check-description"
+        >
+          Please install the {htmlLink} app to use OIDC authentication method.
+        </p>
+         
+        <!---->
+      </div>
+    </div>
+     
+    <div
+      class="form-actions"
+    >
+      <!---->
+       
+      <!---->
+       
+      <ncbutton-stub
+        alignment="center"
+        data-test-id="submit-auth-method-values-btn"
+        nativetype="button"
+        type="primary"
+      >
+        
+					Save
+				
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`AdminSettings.vue Authorization Method view mode form complete should show field values and hide the form completed with oauth2 auth method 1`] = `
 Wrapper {
   "selector": ".authorization-method",
