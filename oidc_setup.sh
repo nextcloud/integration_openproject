@@ -6,6 +6,13 @@
 
 # This bash script is to set up the whole OIDC configuration between OpenProject and Nextcloud.
 # To run this script the Nextcloud and OpenProject instances must be up and running
+# If you're using Nextcloud as the Identity Provider (OIDC), make sure the following apps are installed and enabled in Nextcloud:
+#   - oidc
+#   - integration_openproject
+#
+# If you are using a custom Identity Provider, ensure that:
+#   - user_oidc app is installed and enabled in Nextcloud.
+#   - The custom IdP is properly configured and accessible.
 
 # variables from environment
 # NEXTCLOUD_HOST=<nextcloud_host_url>
@@ -14,8 +21,10 @@
 # OP_ADMIN_PASSWORD=<openproject_admin_password>
 # NC_ADMIN_USERNAME=<nextcloud_admin_username>
 # NC_ADMIN_PASSWORD=<nextcloud_admin_password>
-# OIDC_PROVIDER=<nextcloud|keycloak> This variable is the name of the idp provider which makes the oidc configuration in OpenProject required for Nextcloud integration.
-# NC_INTEGRATION_TOKEN_EXCHANGE=<true|false> If true then the token exchange is done
+# NC_INTEGRATION_PROVIDER_NAME=<nextcloud|keycloak> This variable is the name of the idp provider which makes the oidc configuration in OpenProject required for Nextcloud integration.
+# NC_INTEGRATION_TOKEN_EXCHANGE=<true|false> If true then the token exchange is done (Not required when using 'nextcloud_hub' type)
+# NC_INTEGRATION_OP_CLIENT_ID=OpenProject client ID (Not required when using 'nextcloud_hub' type)
+# NC_INTEGRATION_PROVIDER_TYPE=<nextcloud_hub|external> Type of Single Sign-On provider used for integration ('nextcloud_hub' for nextcloud idp, 'external' for custom IdP)
 # OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth configuration in OpenProject required for Nextcloud integration.
 # SETUP_PROJECT_FOLDER=<true|false> If true then the integration is done with a project folder setup in Nextcloud
 # INTEGRATION_SETUP_DEBUG=<true|false> If true then the script will output more details (set -x/-v) and keep the payload files
@@ -33,6 +42,7 @@ help() {
   echo -e "\t NC_ADMIN_USERNAME \t\t\t Nextcloud admin username"
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
   echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
+  echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
   echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
   echo -e "\t SETUP_PROJECT_FOLDER \t Enable project folder (true/false)"
@@ -69,9 +79,11 @@ if [[ -z "$NC_ADMIN_USERNAME" || -z "$NC_ADMIN_PASSWORD" ]]; then
 fi
 
 # Validate required configs for integration setup
-if [[ -z $SETUP_PROJECT_FOLDER ]]; then
+if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
+  [[ -z $SETUP_PROJECT_FOLDER ]] ; then
   log_error "Following configs are required for integration setup:"
   log_error "\tSETUP_PROJECT_FOLDER"
+  log_error "\tNC_INTEGRATION_PROVIDER_TYPE"
   help
   exit 1
 fi
@@ -98,7 +110,7 @@ fi
 # if something goes wrong or an error occurs during the setup of the whole integration
 # we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
 deleteOPStorageAndPrintErrorResponse() {
-  log_error "Setup of OpenProject and Nextcloud integration failed when the idp is '$NC_INTEGRATION_PROVIDER_NAME'."
+  log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
   delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
                       ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
                       -H 'accept: application/hal+json' \
@@ -381,6 +393,7 @@ create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASS
   -H 'X-Requested-With: XMLHttpRequest' \
   -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
 )
+
 if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
 # check for errors
 response_type=$(echo $create_storage_response | jq -r "._type")
@@ -448,14 +461,15 @@ log_success "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenP
 
 # If the OIDC provider is nextcloud_hub, create a new OIDC client.
 # Otherwise, use the OpenProject client ID provided via environment variable.
-if [[ $NC_INTEGRATION_PROVIDER_NAME == "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
   createOidcClient
-elif [[ -z $NC_INTEGRATION_PROVIDER_NAME || -z $NC_INTEGRATION_TOKEN_EXCHANGE ]]; then
-  log_error "Following configs are required to setup integration with external provider:"
-  log_error "\tNC_INTEGRATION_PROVIDER_NAME"
-  log_error "\tNC_INTEGRATION_TOKEN_EXCHANGE"
-  help
-  exit 1
+elif [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "external" ]] && 
+    [[ -z $NC_INTEGRATION_PROVIDER_NAME || -z $NC_INTEGRATION_TOKEN_EXCHANGE ]]; then
+    log_error "Following configs are required to setup integration with external provider:"
+    log_error "\tNC_INTEGRATION_PROVIDER_NAME"
+    log_error "\tNC_INTEGRATION_TOKEN_EXCHANGE"
+    help
+    exit 1
 elif [[ "$NC_INTEGRATION_TOKEN_EXCHANGE" == "true" ]] && [[ -z $NC_INTEGRATION_OP_CLIENT_ID ]]; then
     log_error "'NC_INTEGRATION_OP_CLIENT_ID' is required with token exchange enabled."
     help
@@ -468,7 +482,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
 {
   "values":{
     "openproject_instance_url": "$OPENPROJECT_HOST", 
-    "sso_provider_type": "nextcloud_hub", 
+    "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE", 
     "authorization_method": "oidc", 
     "targeted_audience_client_id" : "$openproject_client_id",
     "default_enable_navigation": false,
@@ -482,13 +496,13 @@ EOF
 # If the OIDC provider is Keycloak, update the Nextcloud OIDC setup request body.
 # Adds Keycloak-specific configuration including token exchange and sets the SSO provider type to "external".
 # If OIDC provider is keycloak, add provider-specific values to the JSON
-if [[ $NC_INTEGRATION_PROVIDER_NAME != "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE != "nextcloud_hub" ]]; then
   jq --arg nc_integration_provider_name "$NC_INTEGRATION_PROVIDER_NAME" \
      --argjson nc_integration_token_exchange "$NC_INTEGRATION_TOKEN_EXCHANGE" \
      '.values += {
         "oidc_provider": $nc_integration_provider_name,
         "token_exchange": $nc_integration_token_exchange
-      } | .values.sso_provider_type = "external"' \
+      }' \
      "${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json" > tempEdit.json
 
   mv tempEdit.json "${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json"
@@ -512,7 +526,7 @@ if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] &&
     if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nextcloud_information_response" != *"openproject_user_app_password"* ]]; then
       log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
       log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
-    elif [[ $NC_INTEGRATION_PROVIDER_NAME = "nextcloud_hub" ]]; then deleteOidcClient "$openproject_id"; 
+    elif [[ $NC_INTEGRATION_PROVIDER_TYPE = "nextcloud_hub" ]]; then deleteOidcClient "$openproject_id"; 
     fi
     exit 1
 fi
@@ -521,7 +535,7 @@ if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
   openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
 fi
 
-log_success "Setting up OpenProject oidc configuration where idp is $NC_INTEGRATION_PROVIDER_NAME in Nextcloud was successful."
+log_success "Setting up OpenProject oidc configuration where OIDC Provider Type is $NC_INTEGRATION_PROVIDER_TYPE in Nextcloud was successful."
 
 # Save the application password to OpenProject
 if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
