@@ -278,61 +278,6 @@ EOF
   openproject_id=$(echo $oidc_information_response | jq -r '.id')
 }
 
-enableStoreLoginTokens() {
-  # make an api request to enable the store login tokens
-  # This is needed if you are using other apps that want to use user_oidc's token exchange or simply get the login token
-  cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json <<EOF
-{
-  "values":{
-    "store_login_token": true
-  }
-}
-EOF
-
-  user_oidc_token_storage_status=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-                    ${NEXTCLOUD_HOST}/index.php/apps/user_oidc/admin-config \
-                    -H 'Content-Type: application/json' \
-                    -H 'OCS-APIRequest: true' \
-                    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json" )
-
-  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_5_enable_store_login_token.json; fi
-
-  if [[ $user_oidc_token_storage_status != 200 ]]; then
-    log_error "[user_oidc apps] Failed to enable store login tokens"
-    exit 1
-  fi
-}
-
-# make an api request to register provider in user_oidc App
-registerProviders() {
-  cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json <<EOF
-{
-  "identifier": "Keycloak",                                
-  "clientId": "nextcloud",    
-  "clientSecret": "<nextcloud-client>",                                                                     
-  "discoveryEndpoint": "$KEYCLOAK_BASE_URL/realms/$KEYCLOAK_REALM_NAME/.well-known/openid-configuration",
-  "endSessionEndpoint": "",                       
-  "scope": "openid email profile" 
-}
-EOF
-
-  user_oidc_information_response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-                    ${NEXTCLOUD_HOST}/index.php/apps/user_oidc/provider \
-                    -H 'Content-Type: application/json' \
-                    -H 'OCS-APIRequest: true' \
-                    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json" )
-  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_2_register_provider.json; fi
-
-  if [[ $user_oidc_information_response == 200 ]]; then
-    log_success "${OIDC_PROVIDER} Provider was successfully registered"
-  elif [[ $user_oidc_information_response == 409 ]]; then
-    log_info "[user_oidc apps] Provider with the given identifier already exists"
-  else
-    log_error "[user_oidc apps] Failed to register provider"
-    exit 1
-  fi
-}
-
 # check if openproject and nextcloud instances are started or not
 # openproject instances
 if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
@@ -473,17 +418,12 @@ fi
 
 log_success "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject was successful."
 
-# Set up OIDC configuration based on the chosen provider.
-# If the provider is Nextcloud, create a new OIDC client.
-# Otherwise, register the external OIDC provider on user_oidc apps.
-if [[ $OIDC_PROVIDER == "keycloak" ]]; then
-  openproject_client_id=$OP_CLIENT_ID
-  if [[ $REGISTER_PROVIDER == "true" ]]; then
-    registerProviders
-    enableStoreLoginTokens
-  fi
-elif [[ $OIDC_PROVIDER == "nextcloud" ]]; then
+# If the OIDC provider is Nextcloud, create a new OIDC client.
+# Otherwise, use the OpenProject client ID provided via environment variable.
+if [[ $OIDC_PROVIDER == "nextcloud" ]]; then
   createOidcClient
+else
+  openproject_client_id=$OP_CLIENT_ID
 fi
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
@@ -503,11 +443,17 @@ EOF
 
 # If the OIDC provider is Keycloak, update the Nextcloud OIDC setup request body.
 # Adds Keycloak-specific configuration including token exchange and sets the SSO provider type to "external".
-if [[ $OIDC_PROVIDER = "keycloak" ]]; then
-  jq --argjson nc_token_exchange "$NC_TOKEN_EXCHANGE" \
-     '.values += {"oidc_provider": "Keycloak", "token_exchange": $nc_token_exchange} | .values.sso_provider_type = "external"' \
-     ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json > tempEdit.json
-  mv tempEdit.json ${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json
+# If OIDC provider is keycloak, add provider-specific values to the JSON
+if [[ $OIDC_PROVIDER != "nextcloud" ]]; then
+  jq --arg oidc_provider "$OIDC_PROVIDER" \
+     --argjson nc_token_exchange "$NC_TOKEN_EXCHANGE" \
+     '.values += {
+        "oidc_provider": $oidc_provider,
+        "token_exchange": $nc_token_exchange
+      } | .values.sso_provider_type = "external"' \
+     "${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json" > tempEdit.json
+
+  mv tempEdit.json "${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json"
 fi
 
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
