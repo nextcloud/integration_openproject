@@ -890,6 +890,25 @@ describe('AdminSettings.vue', () => {
 				axios.put.mockReset()
 				jest.clearAllMocks()
 			})
+			it('should show proper elements when user_oidc app is not installed', async () => {
+				wrapper = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						user_oidc_enabled: false,
+					},
+				})
+				expect(wrapper.find(selectors.authorizationMethod).element).toMatchSnapshot()
+			})
+			it('should show proper elements when supported user_oidc app is enabled', async () => {
+				wrapper = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+				})
+				expect(wrapper.find(selectors.authorizationMethod).element).toMatchSnapshot()
+			})
 			it('should disable "OpenID identity provider" radio button when an user_oidc app is not installed', async () => {
 				await wrapper.setData({
 					state: {
@@ -899,7 +918,6 @@ describe('AdminSettings.vue', () => {
 				const openIDProviderDisabled = wrapper.find(selectors.openIdIdentityDisabled)
 				expect(openIDProviderDisabled.isVisible()).toBe(true)
 			})
-
 			it('should disable "OpenID identity provider" radio button when an  unsupported user_oidc app is installed', async () => {
 				await wrapper.setData({
 					state: {
@@ -909,7 +927,6 @@ describe('AdminSettings.vue', () => {
 				})
 				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(true)
 			})
-
 			it('should not disable "OpenID identity provider" radio button for supported user_oidc app installed', async () => {
 				await wrapper.setData({
 					state: {

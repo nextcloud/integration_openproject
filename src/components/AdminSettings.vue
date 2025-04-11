@@ -77,19 +77,26 @@
 						<p class="description" v-html="getAuthorizationMethodHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 					<div class="authorization-method--options">
-						<NcCheckboxRadioSwitch class="radio-check"
+						<NcCheckboxRadioSwitch
+							id="oauth2-auth-method"
+							class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OAUTH2"
 							type="radio">
 							{{ authMethodsLabel.OAUTH2 }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch class="radio-check"
+						<NcCheckboxRadioSwitch
+							id="oidc-auth-method"
+							class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
 							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
+						<p class="oidc-app-check-description">
+							{{ messages.opRequiredVersionAndPlanHint }}
+						</p>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
 							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"

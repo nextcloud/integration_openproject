@@ -18,6 +18,7 @@ export const messages = {
 	nextcloudHubProvider: t(APP_ID, 'Nextcloud Hub'),
 	externalOIDCProvider: t(APP_ID, 'External Provider'),
 	tokenExchangeHintText: t(APP_ID, 'When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.'),
+	opRequiredVersionAndPlanHint: t(APP_ID, 'Requires OpenProject version 16.0 (or higher) and an active Corporate plan.'),
 }
 
 export const messagesFmt = {
