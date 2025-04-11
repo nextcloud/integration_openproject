@@ -10,7 +10,8 @@
 		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="note-card" type="info">
 			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
-		<div class="openproject-server-host">
+		<FormOpenProjectHost :is-dark-theme="isDarkTheme" :openproject-url="state.openproject_instance_url" />
+		<!-- <div class="openproject-server-host">
 			<FormHeading index="1"
 				:title="t('integration_openproject', 'OpenProject server')"
 				:is-complete="isServerHostFormComplete"
@@ -61,7 +62,7 @@
 					{{ t('integration_openproject', 'Save') }}
 				</NcButton>
 			</div>
-		</div>
+		</div> -->
 		<div class="authorization-method">
 			<FormHeading index="2"
 				:title="t('integration_openproject', 'Authentication method')"
@@ -610,6 +611,7 @@ import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
 import ErrorLabel from './ErrorLabel.vue'
+import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -631,6 +633,7 @@ export default {
 		TermsOfServiceUnsigned,
 		NcNoteCard,
 		ErrorNote,
+		FormOpenProjectHost,
 	},
 	data() {
 		return {
