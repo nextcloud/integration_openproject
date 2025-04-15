@@ -170,6 +170,7 @@ OC.L10N.register(
     "Nextcloud Hub" : "Nextcloud Hub",
     "External Provider" : "Спољни пружалац услуге",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Када је укључено, апликација ће покушати да од пружаоца услуге идентитета преузме жетон за наведену публику. Ако је искључено, користиће се приступни жетон добијен приликом процеса пријаве.",
+    "Requires OpenProject version 16.0 (or higher) and an active Corporate plan." : "Потребан је OpenProject верзије 16.0 (или новије) и активни Corporate план.",
     "The \"{app}\" app is not installed" : "Апликација „{app}” није инсталирана",
     "The \"{app}\" app is not supported" : "Апликација „{app}” није подржана",
     "The \"{app}\" app is not enabled or supported" : "Апликација „{app}” није укључена или није подржана",
