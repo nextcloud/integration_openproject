@@ -232,6 +232,8 @@ jobs:
           # user_oidc app
           composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
           cd server && ./occ maintenance:install --admin-pass=admin
+          # Disable share rate limit protection
+          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
 
       - name: PHP code analysis and linting
         run: |
