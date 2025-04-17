@@ -5,7 +5,7 @@ OC.L10N.register(
     "Documentation" : "Dokumentācija",
     "Cancel" : "Atcelt",
     "Save" : "Saglabāt",
-    "Authentication method" : "Autentifikācijas metode",
+    "Authentication method" : "Autentificēšanās veids",
     "Automatically managed folders" : "Automātiski pārvaldītas mapes",
     "Automatically managed folders:" : "Automātiski pārvaldītās mapes:",
     "Copied!" : "Nokopēts!",
