@@ -1,6 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
-# SPDX-FileCopyrightText: 2023 Bundesministerium des Innern und für Heimat, PG ZenDiS "Projektgruppe für Aufbau ZenDiS"
-# SPDX-FileCopyrightText: 2023 Nextcloud GmbH
+# SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-only
 #!/usr/bin/env bash
 
@@ -14,22 +12,6 @@
 #   - user_oidc app is installed and enabled in Nextcloud.
 #   - The custom IdP is properly configured and accessible.
 
-# variables from environment
-# NEXTCLOUD_HOST=<nextcloud_host_url>
-# OPENPROJECT_HOST=<openproject_host_url>
-# OP_ADMIN_USERNAME=<openproject_admin_username>
-# OP_ADMIN_PASSWORD=<openproject_admin_password>
-# NC_ADMIN_USERNAME=<nextcloud_admin_username>
-# NC_ADMIN_PASSWORD=<nextcloud_admin_password>
-# NC_INTEGRATION_PROVIDER_NAME=<nextcloud|keycloak> This variable is the name of the idp provider which makes the oidc configuration in OpenProject required for Nextcloud integration.
-# NC_INTEGRATION_TOKEN_EXCHANGE=<true|false> If true then the token exchange is done (Not required when using 'nextcloud_hub' type)
-# NC_INTEGRATION_OP_CLIENT_ID=OpenProject client ID (Not required when using 'nextcloud_hub' type)
-# NC_INTEGRATION_PROVIDER_TYPE=<nextcloud_hub|external> Type of Single Sign-On provider used for integration ('nextcloud_hub' for nextcloud idp, 'external' for custom IdP)
-# OPENPROJECT_STORAGE_NAME=<openproject_filestorage_name> This variable is the name of the storage which keeps the oauth configuration in OpenProject required for Nextcloud integration.
-# SETUP_PROJECT_FOLDER=<true|false> If true then the integration is done with a project folder setup in Nextcloud
-# INTEGRATION_SETUP_DEBUG=<true|false> If true then the script will output more details (set -x/-v) and keep the payload files
-# INTEGRATION_SETUP_TEMP_DIR=<pre-existing_directory> The payloads sent to the APIs are written into temporary files, by default ./temp, you can specify a custom directory that is expected to pre-exist e.g. when bootstrapping in a K8s job with ephemeral storage.
-
 set -e
 
 INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
@@ -41,11 +23,13 @@ help() {
   echo -e "\t NEXTCLOUD_HOST \t\t\t Nextcloud host URL"
   echo -e "\t NC_ADMIN_USERNAME \t\t\t Nextcloud admin username"
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
-  echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
+  echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
-  echo -e "\t SETUP_PROJECT_FOLDER \t Enable project folder (true/false)"
+  echo -e "\t NC_INTEGRATION_ENABLE_NAVIGATION \t Enable navigate to OpenProject header (true/false)"
+  echo -e "\t NC_INTEGRATION_ENABLE_SEARCH \t\t Enable unified search (true/false)"
+  echo -e "\t SETUP_PROJECT_FOLDER \t Enable project folder setup (true/false). Default: false"
   echo -e ""
   echo -e "OpenProject:"
   echo -e "\t OPENPROJECT_HOST \t OpenProject host URL"
@@ -80,9 +64,11 @@ fi
 
 # Validate required configs for integration setup
 if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
-  [[ -z $SETUP_PROJECT_FOLDER ]] ; then
+  [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
+  [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]] ; then
   log_error "Following configs are required for integration setup:"
-  log_error "\tSETUP_PROJECT_FOLDER"
+  log_error "\tNC_INTEGRATION_ENABLE_NAVIGATION"
+  log_error "\tNC_INTEGRATION_ENABLE_SEARCH"
   log_error "\tNC_INTEGRATION_PROVIDER_TYPE"
   help
   exit 1
@@ -107,12 +93,16 @@ else
   fi
 fi
 
+if [[ -z $SETUP_PROJECT_FOLDER ]] || [[ "$SETUP_PROJECT_FOLDER" == "false" ]]; then
+  log_info "'SETUP_PROJECT_FOLDER' config not provider. Using default: false"
+fi
+
 # if something goes wrong or an error occurs during the setup of the whole integration
 # we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
-deleteOPStorageAndPrintErrorResponse() {
+opDeleteStorage() {
   log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
   delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
+                      ${OPENPROJECT_STORAGE_ENDPOINT}/${storage_id} \
                       -H 'accept: application/hal+json' \
                       -H 'Content-Type: application/json' \
                       -H 'X-Requested-With: XMLHttpRequest')
@@ -123,24 +113,29 @@ deleteOPStorageAndPrintErrorResponse() {
   fi
 }
 
-# These URLs are just to check if the Nextcloud and OpenProject instances have been started or not before running the script
+# Nextcloud Variables
+# These URLs are just to check if the Nextcloud instances have been started or not before running the script
 NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
 NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
-OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
-openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
-# These two data are set to "false" when the integration is done without project folder setup
+# Nextcloud app endpoints
+NC_OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
+NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
+# OIDC client name used in Nextcloud for OpenProject
+NC_OIDC_OP_CLIENT_NAME="openproject"
+
+# OpenProject Variables
+# These URLs are just to check if the Openproject instances have been started or not before running the script
+OPENPROJECT_STORAGE_ENDPOINT=${OPENPROJECT_HOST}/api/v3/storages
+OPENPROJECT_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
+# Minimum OpenProject version required to run this script
+MINIMUM_OP_VERSION="15.0.0"
+
+# Integration Defaults settings
 setup_project_folder=false
 setup_app_password=false
-# Minimum OpenProject version required in order to run this script.
-MINIMUM_OP_VERSION="14.2.0"
-# Openproject and Nextcloud Client name
-openproject_client_name="openproject"
-# These url are of the nextcloud apps
-OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
-NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
 
-checkNCAppVersion() {
+ncCheckAppVersion() {
   # checks the version of a specified Nextcloud app.
   # If the app version is below the required version, an error is logged and the script exists.
   app_name=$1
@@ -151,7 +146,7 @@ checkNCAppVersion() {
   elif [ $app_name = 'oidc' ]; then
     app_min_version=$MIN_SUPPORTED_OIDC_APP_VERSION
   elif [ $app_name = 'integration_openproject' ]; then
-    app_min_version=$MIN_SUPPORTED_INTEGRATION_OPENRPOJECT_APP_VERSION
+    app_min_version=$MIN_SUPPORTED_INTEGRATION_APP_VERSION
   else
     log_error "Minimum required version for the '$app_name' app is not set."
     exit 1
@@ -176,10 +171,10 @@ checkNCAppVersion() {
 # This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
 MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
 MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
-MIN_SUPPORTED_INTEGRATION_OPENRPOJECT_APP_VERSION="2.9.0"
-checkNCAppVersion "oidc"
-checkNCAppVersion "user_oidc"
-checkNCAppVersion "integration_openproject"
+MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
+ncCheckAppVersion "oidc"
+ncCheckAppVersion "user_oidc"
+ncCheckAppVersion "integration_openproject"
 
 isNextcloudAdminConfigOk() {
   admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
@@ -204,7 +199,7 @@ isNextcloudAdminConfigOk() {
 
 isOpenProjectFileStorageConfigOk() {
   all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-      ${OPENPROJECT_BASEURL_FOR_STORAGE} \
+      ${OPENPROJECT_STORAGE_ENDPOINT} \
       -H 'accept: application/hal+json' \
       -H 'Content-Type: application/json' \
       -H 'X-Requested-With: XMLHttpRequest'
@@ -240,11 +235,11 @@ checkNextcloudIntegrationConfiguration() {
 # delete oidc client [oidc apps]
 deleteOidcClient() {
     delete_clients_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${OIDC_BASE_URL}/clients/$1 \
+                      ${NC_OIDC_BASE_URL}/clients/$1 \
                       -H 'Content-Type: application/json' \
                       -H 'OCS-APIRequest: true')
     if [[ ${delete_clients_response} != 200 ]]; then
-      log_error "Failed to delete oidc client name \"${openproject_client_name}\" from oidc app!"
+      log_error "Failed to delete oidc client name \"${NC_OIDC_OP_CLIENT_NAME}\" from oidc app!"
     fi
 }
 
@@ -292,14 +287,14 @@ createOidcClient() {
   # make an api request to create the oidc client in oidc App
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <<EOF
 {
-  "name": "$openproject_client_name",
+  "name": "$NC_OIDC_OP_CLIENT_NAME",
   "redirectUri": "$OPENPROJECT_HOST/auth/oidc-nextcloud/callback",
   "signingAlg": "RS256",
   "type": "confidential"
 }
 EOF
 
-  oidc_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${OIDC_BASE_URL}/clients" \
+  oidc_information_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_OIDC_BASE_URL}/clients" \
     -H 'Content-Type: application/json' \
     -H 'OCS-APIRequest: true' \
     -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
@@ -307,9 +302,9 @@ EOF
 
   if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
 
-  if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$openproject_client_name" ]]; then
+  if ! [[ $(echo "$oidc_information_response" | jq -r '.name') = "$NC_OIDC_OP_CLIENT_NAME" ]]; then
     log_info "The response is missing openproject_client_name"
-    log_error "[OIDC app]:Failed when creating '$openproject_client_name' oidc client";
+    log_error "[OIDC app]:Failed when creating '$NC_OIDC_OP_CLIENT_NAME' oidc client";
     exit 1
   fi
 
@@ -320,13 +315,13 @@ EOF
 
 # check if openproject and nextcloud instances are started or not
 # openproject instances
-if [[ $(echo $openproject_host_state_response | jq -r "._type") != "Configuration" ]]; then
-  if [[ $(echo $openproject_host_state_response | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
+if [[ $(echo $OPENPROJECT_HOST_CONFIG | jq -r "._type") != "Configuration" ]]; then
+  if [[ $(echo $OPENPROJECT_HOST_CONFIG | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "OpenProject authentication failed!"
     exit 1
   else
     log_error "Unhandled error checking for OpenProject's availability, please checkout the request's response:"
-    log_error "${$openproject_host_state_response}"
+    log_error "$OPENPROJECT_HOST_CONFIG"
     exit 1
   fi
 fi
@@ -387,7 +382,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 EOF
 
 create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-  ${OPENPROJECT_BASEURL_FOR_STORAGE} \
+  ${OPENPROJECT_STORAGE_ENDPOINT} \
   -H 'accept: application/hal+json' \
   -H 'Content-Type: application/json' \
   -H 'X-Requested-With: XMLHttpRequest' \
@@ -485,8 +480,8 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
     "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE", 
     "authorization_method": "oidc", 
     "targeted_audience_client_id" : "$openproject_client_id",
-    "default_enable_navigation": false,
-    "default_enable_unified_search": false,
+    "default_enable_navigation": $NC_INTEGRATION_ENABLE_SEARCH,
+    "default_enable_unified_search": $NC_INTEGRATION_ENABLE_SEARCH,
     "setup_project_folder": $setup_project_folder,
     "setup_app_password": $setup_app_password
   }
@@ -521,7 +516,7 @@ if [[ "$nextcloud_information_response" != *"nextcloud_oauth_client_name"* ]] &&
 
     log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
     log_error "Failed to setup OIDC from Nextcloud."
-    deleteOPStorageAndPrintErrorResponse "$nextcloud_information_response"
+    opDeleteStorage "$nextcloud_information_response"
 
     if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nextcloud_information_response" != *"openproject_user_app_password"* ]]; then
       log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
@@ -533,6 +528,7 @@ fi
 
 if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
   openproject_user_app_password=$(echo $nextcloud_information_response | jq -e ".openproject_user_app_password")
+  log_info "Setting up with project folder was successful"
 fi
 
 log_success "Setting up OpenProject oidc configuration where OIDC Provider Type is $NC_INTEGRATION_PROVIDER_TYPE in Nextcloud was successful."
@@ -545,7 +541,7 @@ if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
   }
 EOF
   save_app_password_response=$(curl -s -X PATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                                    ${OPENPROJECT_BASEURL_FOR_STORAGE}/${storage_id} \
+                                    ${OPENPROJECT_STORAGE_ENDPOINT}/${storage_id} \
                                     -H 'accept: application/hal+json' \
                                     -H 'Content-Type: application/json' \
                                     -H 'X-Requested-With: XMLHttpRequest' \
@@ -556,12 +552,12 @@ EOF
   if [[ "$save_app_password_response" == *"_type"* ]]; then
     app_password_response_type=$(echo $save_app_password_response | jq -r "._type")
     if [[ ${app_password_response_type} == "Error" ]]; then
-      deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
+      opDeleteStorage "$save_app_password_response"
       exit 1
     fi
     has_application_password=$(echo $save_app_password_response | jq -r ".hasApplicationPassword")
     if [[ ${has_application_password} == false ]]; then
-      deleteOPStorageAndPrintErrorResponse "$save_app_password_response"
+      opDeleteStorage "$save_app_password_response"
       exit 1
     fi
     log_success "Saving 'OpenProject' user application password to OpenProject was successful."
