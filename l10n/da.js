@@ -10,6 +10,7 @@ OC.L10N.register(
     "Connected as {user}" : "Forbundet som {user}",
     "Enable navigation link" : "Aktiver navigationslink",
     "Copied!" : "Kopieret!",
+    "Copied to the clipboard" : "Kopieret til udklipsholderen",
     "Details" : "Detaljer",
     "Start typing to search" : "Start med at skrive for at søge",
     "Select a user or group" : "Vælg en bruger eller gruppe",
