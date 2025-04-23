@@ -10,14 +10,18 @@
 		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="note-card" type="info">
 			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
-		<FormOpenProjectHost :is-dark-theme="isDarkTheme" :openproject-url="state.openproject_instance_url" />
+		<FormOpenProjectHost
+			:form-id="form.serverHost.id"
+			:is-dark-theme="isDarkTheme"
+			:openproject-url="state.openproject_instance_url"
+			@formcomplete="markFormComplete" />
 		<div class="authorization-method">
 			<FormHeading index="2"
 				:title="t('integration_openproject', 'Authentication method')"
 				:is-complete="isAuthorizationMethodFormComplete"
 				:is-disabled="isAuthorizationFormInDisabledMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="isServerHostFormComplete">
+			<div v-if="showAuthMethodSettings">
 				<div v-if="isAuthorizationFormInEditMode" class="authorization-method">
 					<div class="authorization-method--description">
 						<p class="title">
@@ -497,7 +501,7 @@
 		</div>
 		<NcButton id="reset-all-app-settings-btn"
 			type="error"
-			:disabled="isResetButtonDisabled"
+			:disabled="!resettableForm"
 			@click="resetAllAppValuesConfirmation">
 			<template #icon>
 				<RestoreIcon :size="20" />
@@ -553,7 +557,7 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM, settingsFlowGenerator } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
@@ -585,6 +589,9 @@ export default {
 	},
 	data() {
 		return {
+			form: ADMIN_SETTINGS_FORM,
+			currentSetting: null,
+			settingsStepper: settingsFlowGenerator(),
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
@@ -651,6 +658,12 @@ export default {
 		}
 	},
 	computed: {
+		resettableForm() {
+			return !!Object.values(this.form).find(({ complete }) => complete === true)
+		},
+		showAuthMethodSettings() {
+			return this.currentSetting === 'authentication-method'
+		},
 		ncClientId() {
 			return this.state.nc_oauth_client?.nextcloud_client_id
 		},
@@ -665,7 +678,7 @@ export default {
 			return this.state.admin_audit_configuration_correct
 		},
 		isServerHostFormComplete() {
-			return this.isFormCompleted.server
+			return this.form.serverHost.complete
 		},
 		isAuthorizationMethodFormComplete() {
 			return this.isFormCompleted.authorizationMethod
@@ -823,9 +836,6 @@ export default {
 			}
 			return !this.opUserAppPassword
 		},
-		isResetButtonDisabled() {
-			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
-		},
 		showEncryptionWarningForGroupFolders() {
 			if (!this.isProjectFolderAlreadySetup || !this.state.app_password_set || this.isProjectFolderSetupFormInEdit) {
 				return false
@@ -914,6 +924,8 @@ export default {
 		},
 	},
 	created() {
+		this.currentSetting = this.settingsStepper.next().value
+
 		this.init()
 		if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
 			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
@@ -941,8 +953,7 @@ export default {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				// for oauth2 authorization
-				if (this.state.openproject_instance_url
-					&& this.state.openproject_client_id
+				if (this.state.openproject_client_id
 					&& this.state.openproject_client_secret
 					&& this.state.nc_oauth_client
 				) {
@@ -950,7 +961,6 @@ export default {
 				}
 				// for oidc authorization
 				if (this.state.authorization_method === AUTH_METHOD.OIDC
-					&& this.state.openproject_instance_url
 					&& this.state.authorization_settings.oidc_provider
 					&& this.state.authorization_settings.targeted_audience_client_id
 				) {
@@ -959,15 +969,12 @@ export default {
 				if (this.state.fresh_project_folder_setup === false) {
 					this.showDefaultManagedProjectFolders = true
 				}
-				if (this.state.openproject_instance_url) {
-					this.isFormCompleted.server = true
-				}
 				if (this.state.authorization_method) {
 					this.formMode.authorizationMethod = F_MODES.VIEW
 					this.isFormCompleted.authorizationMethod = true
 					this.authorizationMethod.authorizationMethodSet = this.authorizationMethod.currentAuthorizationMethodSelected = this.state.authorization_method
 				}
-				if (this.state.openproject_instance_url && this.state.authorization_method) {
+				if (this.state.authorization_method) {
 					if (this.state.authorization_method === AUTH_METHOD.OAUTH2) {
 						if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
 							this.formMode.authorizationSetting = F_MODES.EDIT
@@ -997,12 +1004,10 @@ export default {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
-				if (this.state.openproject_instance_url) {
-					if (!this.state.authorization_method) {
-						this.formMode.authorizationMethod = F_MODES.EDIT
-					}
+				if (!this.state.authorization_method) {
+					this.formMode.authorizationMethod = F_MODES.EDIT
 				}
-				if (this.state.openproject_instance_url && this.state.authorization_method) {
+				if (this.state.authorization_method) {
 					if (!this.state.openproject_client_id && !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
@@ -1013,7 +1018,6 @@ export default {
 					this.isFormCompleted.ncOauth = true
 				}
 				if (!this.state.nc_oauth_client
-					&& this.state.openproject_instance_url
 					&& this.state.openproject_client_id
 					&& this.state.openproject_client_secret
 				    && this.textLabelProjectFolderSetupButton === 'Keep current setup') {
@@ -1041,6 +1045,14 @@ export default {
 					this.registeredOidcProviders = this.state.oidc_providers
 				}
 			}
+		},
+		markFormComplete(formId) {
+			const form = Object.values(this.form).find(({ id }) => id === formId)
+			form.complete = true
+			this.nextSettings()
+		},
+		nextSettings() {
+			this.currentSetting = this.settingsStepper.next().value
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
 			const linkText = this.messages.downloadAndEnableApp
@@ -1305,7 +1317,6 @@ export default {
 			this.authorizationMethod.authorizationMethodSet = null
 			this.state.openproject_client_id = null
 			this.state.openproject_client_secret = null
-			this.state.openproject_instance_url = null
 			// if the authorization method is "oidc"
 			if (authMethod === AUTH_METHOD.OIDC) {
 				this.state.authorization_settings.targeted_audience_client_id = null
@@ -1318,11 +1329,10 @@ export default {
 			let values = {
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
-				openproject_instance_url: this.state.openproject_instance_url,
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
-			if (this.state.openproject_instance_url === null && this.authorizationMethod.authorizationMethodSet === null) {
+			if (this.authorizationMethod.authorizationMethodSet === null) {
 				// by default, it will be an oauth2 reset
 				values = {
 					...values,

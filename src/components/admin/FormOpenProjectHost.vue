@@ -5,7 +5,7 @@
 -->
 
 <template>
-	<div class="openproject-server-host">
+	<div :id="formId">
 		<FormHeading
 			index="1"
 			:title="t('integration_openproject', 'OpenProject server')"
@@ -26,7 +26,8 @@
 			place-holder="https://www.my-openproject.com"
 			:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
 			:error-message="errorMessage"
-			:error-message-details="errorDetails" />
+			:error-message-details="errorDetails"
+			@input="onFormChanged" />
 		<div class="form-actions">
 			<NcButton v-if="isViewMode"
 				data-test-id="edit-server-host"
@@ -39,7 +40,7 @@
 			<NcButton v-if="isFormComplete && isEditMode"
 				class="mr-2"
 				data-test-id="cancel-server-host-edit"
-				@click="setFromToViewMode">
+				@click="cancelEdit">
 				{{ t('integration_openproject', 'Cancel') }}
 			</NcButton>
 			<NcButton v-if="isEditMode"
@@ -79,6 +80,10 @@ export default {
 		PencilIcon,
 	},
 	props: {
+		formId: {
+			type: String,
+			default: 'server-host',
+		},
 		isDarkTheme: {
 			type: Boolean,
 			default: false,
@@ -95,11 +100,13 @@ export default {
 			loading: false,
 			errorMessage: '',
 			errorDetails: '',
+			formDirty: false,
+			previousUrl: '',
 		}
 	},
 	computed: {
 		isFormComplete() {
-			return !!this.openprojectUrl
+			return !!this.previousUrl
 		},
 		isViewMode() {
 			return this.formMode === F_MODES.VIEW
@@ -108,35 +115,73 @@ export default {
 			return this.formMode === F_MODES.EDIT
 		},
 		disableSave() {
-			return !this.serverUrl || this.serverUrl === this.openprojectUrl
+			return !this.formDirty
 		},
 	},
 	created() {
 		if (this.openprojectUrl) {
 			this.setFromToViewMode()
 			this.serverUrl = this.openprojectUrl
+			this.previousUrl = this.openprojectUrl
+			this.$emit('formcomplete', this.formId)
 		}
 	},
 	methods: {
+		onFormChanged(value) {
+			if (this.isFormComplete) {
+				if (this.serverUrl === this.previousUrl || !this.serverUrl) {
+					this.formDirty = false
+					return
+				}
+			} else {
+				if (!value) {
+					this.formDirty = false
+					return
+				}
+			}
+
+			if (!this.formDirty) {
+				this.formDirty = true
+			}
+		},
 		setFormMode(mode) {
 			this.formMode = mode
 		},
-		setFromToViewMode(saveEdit = false) {
+		setFromToViewMode() {
 			this.setFormMode(F_MODES.VIEW)
-			if (!saveEdit) {
-				this.serverUrl = this.openprojectUrl
-			}
 		},
 		setFormToEditMode() {
 			this.setFormMode(F_MODES.EDIT)
+		},
+		cancelEdit() {
+			this.setFormMode(F_MODES.VIEW)
+			if (this.openprojectUrl) {
+				this.serverUrl = this.openprojectUrl
+			} else {
+				this.serverUrl = this.previousUrl
+			}
+			this.formDirty = false
+			this.resetErrors()
+		},
+		resetErrors() {
+			this.errorMessage = ''
+			this.errorDetails = ''
 		},
 		async saveUrl() {
 			this.loading = true
 			if (await this.validateUrl()) {
 				try {
 					await saveAdminConfig({ openproject_instance_url: this.serverUrl })
-					this.setFromToViewMode(true)
+
+					this.setFromToViewMode()
 					showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
+
+					if (!this.isFormComplete) {
+						this.$emit('formcomplete', this.formId)
+					}
+
+					this.formDirty = false
+					this.previousUrl = this.serverUrl
 				} catch (error) {
 					showError(
 						t('integration_openproject', 'Failed to save OpenProject admin options'),
@@ -148,8 +193,7 @@ export default {
 		},
 		async validateUrl() {
 			const response = await validateOPInstance(this.serverUrl)
-			this.errorMessage = ''
-			this.errorDetails = ''
+			this.resetErrors()
 			if (response.data.result === true) {
 				return true
 			} else {
@@ -236,3 +280,17 @@ export default {
 	},
 }
 </script>
+
+<style scoped lang="scss">
+.form-actions {
+	display: flex;
+	align-items: center;
+	padding: 15px 0;
+}
+.pb-1 {
+	padding-bottom: .5rem;
+}
+.mr-2 {
+	margin-right: .5rem;
+}
+</style>

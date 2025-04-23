@@ -91,3 +91,28 @@ export const SSO_PROVIDER_TYPE = {
 export const SSO_PROVIDER_LABEL = {
 	nextcloudHub: 'Nextcloud Hub',
 }
+
+// NOTE: maintain the order of the settings
+export const ADMIN_SETTINGS_FORM = {
+	// order: 1
+	serverHost: {
+		id: 'server-host',
+		complete: false,
+	},
+	// order: 2
+	authenticationMethod: {
+		id: 'authentication-method',
+		complete: false,
+	},
+	projectFolder: {
+		id: 'project-folder',
+		complete: false,
+	},
+}
+
+export function * settingsFlowGenerator() {
+	const settings = Object.values(ADMIN_SETTINGS_FORM).map(({ id }) => id)
+	for (const setting of settings) {
+		yield setting
+	}
+}
