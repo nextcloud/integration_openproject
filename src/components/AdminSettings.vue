@@ -11,58 +11,6 @@
 			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
 		<FormOpenProjectHost :is-dark-theme="isDarkTheme" :openproject-url="state.openproject_instance_url" />
-		<!-- <div class="openproject-server-host">
-			<FormHeading index="1"
-				:title="t('integration_openproject', 'OpenProject server')"
-				:is-complete="isServerHostFormComplete"
-				:is-dark-theme="isDarkTheme" />
-			<FieldValue v-if="isServerHostFormInView"
-				is-required
-				class="pb-1"
-				:title="t('integration_openproject', 'OpenProject host')"
-				:value="state.openproject_instance_url" />
-			<TextInput v-else
-				id="openproject-oauth-instance"
-				ref="openproject-oauth-instance-input"
-				v-model="serverHostUrlForEdit"
-				is-required
-				:read-only="isServerHostUrlReadOnly"
-				class="pb-1"
-				:label="t('integration_openproject', 'OpenProject host')"
-				place-holder="https://www.my-openproject.com"
-				:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
-				:error-message="serverHostErrorMessage"
-				:error-message-details="openProjectNotReachableErrorMessageDetails"
-				@click="isServerHostUrlReadOnly = false"
-				@input="isOpenProjectInstanceValid = null" />
-			<div class="form-actions">
-				<NcButton v-if="isServerHostFormInView"
-					data-test-id="reset-server-host-btn"
-					@click="setServerHostFormToEditMode">
-					<template #icon>
-						<PencilIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Edit server information') }}
-				</NcButton>
-				<NcButton v-if="isServerHostFormComplete && isServerHostFormInEdit"
-					class="mr-2"
-					data-test-id="cancel-edit-server-host-btn"
-					@click="setServerHostFormToViewMode">
-					{{ t('integration_openproject', 'Cancel') }}
-				</NcButton>
-				<NcButton v-if="isServerHostFormInEdit"
-					type="primary"
-					data-test-id="submit-server-host-form-btn"
-					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.openproject_instance_url"
-					@click="saveOpenProjectHostUrl">
-					<template #icon>
-						<NcLoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Save') }}
-				</NcButton>
-			</div>
-		</div> -->
 		<div class="authorization-method">
 			<FormHeading index="2"
 				:title="t('integration_openproject', 'Authentication method')"
