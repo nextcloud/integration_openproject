@@ -588,7 +588,6 @@ export default {
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
-				server: F_MODES.EDIT,
 				authorizationMethod: F_MODES.DISABLE,
 				authorizationSetting: F_MODES.DISABLE,
 				SSOSettings: F_MODES.DISABLE,
@@ -605,18 +604,12 @@ export default {
 				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
 				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
 			},
-			loadingServerHostForm: false,
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
 			loadingAuthorizationMethodForm: false,
 			loadingAuthorizationSettingForm: false,
-			isOpenProjectInstanceValid: null,
-			openProjectNotReachableErrorMessage: null,
-			openProjectNotReachableErrorMessageDetails: null,
 			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			serverHostUrlForEdit: null,
-			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
 			oPUserAppPassword: null,
 			isProjectFolderSwitchEnabled: null,
@@ -671,14 +664,6 @@ export default {
 		isAdminAuditConfigurationSetUpCorrectly() {
 			return this.state.admin_audit_configuration_correct
 		},
-		serverHostErrorMessage() {
-			if (
-				this.serverHostUrlForEdit === ''
-				|| this.isOpenProjectInstanceValid === null
-				|| this.isOpenProjectInstanceValid
-			) return null
-			return this.openProjectNotReachableErrorMessage
-		},
 		isServerHostFormComplete() {
 			return this.isFormCompleted.server
 		},
@@ -700,9 +685,6 @@ export default {
 		isNcOAuthFormComplete() {
 			return this.isFormCompleted.ncOauth
 		},
-		isServerHostFormInView() {
-			return this.formMode.server === F_MODES.VIEW
-		},
 		isAuthorizationMethodFormInViewMode() {
 			return this.formMode.authorizationMethod === F_MODES.VIEW
 		},
@@ -711,9 +693,6 @@ export default {
 		},
 		isOPOAuthFormInView() {
 			return this.formMode.opOauth === F_MODES.VIEW
-		},
-		isServerHostFormInEdit() {
-			return this.formMode.server === F_MODES.EDIT
 		},
 		isNcOAuthFormInEdit() {
 			return this.formMode.ncOauth === F_MODES.EDIT
@@ -981,7 +960,6 @@ export default {
 					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.state.openproject_instance_url) {
-					this.formMode.server = F_MODES.VIEW
 					this.isFormCompleted.server = true
 				}
 				if (this.state.authorization_method) {
@@ -1078,9 +1056,6 @@ export default {
 		closeRequestModal() {
 			this.show = false
 		},
-		setServerHostFormToViewMode() {
-			this.formMode.server = F_MODES.VIEW
-		},
 		setAuthorizationMethodToViewMode() {
 			this.formMode.authorizationMethod = F_MODES.VIEW
 			this.isFormCompleted.authorizationMethod = true
@@ -1092,12 +1067,6 @@ export default {
 			this.isFormCompleted.authorizationSetting = true
 			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
-		},
-		setServerHostFormToEditMode() {
-			this.formMode.server = F_MODES.EDIT
-			// set the edit variable to the current saved value
-			this.serverHostUrlForEdit = this.state.openproject_instance_url
-			this.isOpenProjectInstanceValid = null
 		},
 		setAuthorizationMethodInEditMode() {
 			this.formMode.authorizationMethod = F_MODES.EDIT
@@ -1180,23 +1149,6 @@ export default {
 			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
 				this.projectFolderSetupError = null
 			}
-		},
-		async saveOpenProjectHostUrl() {
-			this.isFormStep = FORM.SERVER
-			this.loadingServerHostForm = true
-			await this.validateOpenProjectInstance()
-			if (this.isOpenProjectInstanceValid) {
-				const saved = await this.saveOPOptions()
-				if (saved) {
-					this.state.openproject_instance_url = this.serverHostUrlForEdit
-					this.formMode.server = F_MODES.VIEW
-					this.isFormCompleted.server = true
-					if (!this.isFormCompleted.authorizationMethod) {
-						this.formMode.authorizationMethod = F_MODES.EDIT
-					}
-				}
-			}
-			this.loadingServerHostForm = false
 		},
 		async saveOPOAuthClientValues() {
 			this.isFormStep = FORM.OP_OAUTH
@@ -1345,7 +1297,6 @@ export default {
 			this.isFormCompleted.opOauth = false
 			this.isFormCompleted.server = false
 			this.formMode.opOauth = F_MODES.EDIT
-			this.formMode.server = F_MODES.EDIT
 			this.formMode.SSOSettings = F_MODES.NEW
 
 			this.state.default_enable_navigation = false
@@ -1362,98 +1313,6 @@ export default {
 			}
 			await this.saveOPOptions()
 			window.location.reload()
-		},
-		async validateOpenProjectInstance() {
-			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
-			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
-			this.openProjectNotReachableErrorMessageDetails = null
-			this.openProjectNotReachableErrorMessage = t(
-				'integration_openproject',
-				'Please introduce a valid OpenProject hostname',
-			)
-			if (response.data.result === true) {
-				this.isOpenProjectInstanceValid = true
-				this.state.openproject_instance_url = this.serverHostUrlForEdit
-			} else {
-				switch (response.data.result) {
-				case 'invalid':
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'URL is invalid',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'The URL should have the form "https://openproject.org"',
-					)
-					break
-				case 'not_valid_body':
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
-					)
-					break
-				case 'client_exception': {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'Response:',
-					) + ' "' + response.data.details + '"'
-					break
-				}
-				case 'server_exception': {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Server replied with an error message, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.details
-					break
-				}
-				case 'local_remote_servers_not_allowed': {
-					const linkText = t('integration_openproject', 'Documentation')
-					const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
-
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Accessing OpenProject servers with local addresses is not allowed.',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
-						{ htmlLink },
-						null,
-						{ escape: false, sanitize: false },
-					)
-					break
-				}
-				case 'redirected':
-				{
-					const location = response.data.details
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'The given URL redirects to \'{location}\'. Please do not use a URL that leads to a redirect.',
-						{ location },
-					)
-					break
-				}
-				case 'unexpected_error':
-				case 'network_error':
-				case 'request_exception':
-				default: {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Could not connect to the given URL, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.details
-					break
-				}
-				}
-				this.isOpenProjectInstanceValid = false
-				await this.$nextTick()
-				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
-			}
 		},
 		getPayloadForSavingOPOptions() {
 			let values = {
