@@ -1317,6 +1317,7 @@ export default {
 			this.authorizationMethod.authorizationMethodSet = null
 			this.state.openproject_client_id = null
 			this.state.openproject_client_secret = null
+			this.state.openproject_instance_url = null
 			// if the authorization method is "oidc"
 			if (authMethod === AUTH_METHOD.OIDC) {
 				this.state.authorization_settings.targeted_audience_client_id = null
@@ -1329,6 +1330,7 @@ export default {
 			let values = {
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
+				openproject_instance_url: this.state.openproject_instance_url,
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
