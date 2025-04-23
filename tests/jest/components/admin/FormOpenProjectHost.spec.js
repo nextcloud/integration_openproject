@@ -59,11 +59,9 @@ describe('Component: FormOpenProjectHost', () => {
 			expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(false)
 			expect(wrapper.html()).toMatchSnapshot()
 		})
-
 		it('should disable save button', async () => {
 			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
 		})
-
 		it('should enable save button when url is provided', async () => {
 			const validUrl = 'http://example.openproject.test'
 			const serverHostInput = wrapper.find(selectors.serverHostInput)
@@ -74,6 +72,20 @@ describe('Component: FormOpenProjectHost', () => {
 			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
 			expect(wrapper.vm.formDirty).toBe(true)
 			expect(wrapper.vm.previousUrl).toBe('')
+		})
+		it('should disable save if url is empty', async () => {
+			// set new url
+			const serverHostInput = wrapper.find(selectors.serverHostInput)
+			serverHostInput.vm.$emit('input', 'http://new.invalid.test')
+			await flushPromises()
+			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+			expect(wrapper.vm.formDirty).toBe(true)
+
+			// set empty url
+			serverHostInput.vm.$emit('input', '')
+			await flushPromises()
+			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
+			expect(wrapper.vm.formDirty).toBe(false)
 		})
 
 		describe('valid url', () => {
@@ -352,6 +364,20 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.previousUrl).toBe(validUrl)
 				expect(wrapper.vm.errorMessage).toBe('')
 				expect(wrapper.vm.errorDetails).toBe('')
+			})
+			it('should disable save if url is empty', async () => {
+				// set new url
+				const serverHostInput = wrapper.find(selectors.serverHostInput)
+				serverHostInput.vm.$emit('input', 'http://new.invalid.test')
+				await flushPromises()
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.vm.formDirty).toBe(true)
+
+				// set empty url
+				serverHostInput.vm.$emit('input', '')
+				await flushPromises()
+				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
+				expect(wrapper.vm.formDirty).toBe(false)
 			})
 			it('should show form in view mode on save', async () => {
 				validateOPInstance.mockImplementation(() => ({
