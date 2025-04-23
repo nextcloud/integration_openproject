@@ -94,24 +94,11 @@ else
 fi
 
 if [[ -z $SETUP_PROJECT_FOLDER ]] || [[ "$SETUP_PROJECT_FOLDER" == "false" ]]; then
+  # Integration Defaults settings
+  SETUP_PROJECT_FOLDER=false
+  setup_app_password=false
   log_info "'SETUP_PROJECT_FOLDER' config not provider. Using default: false"
 fi
-
-# if something goes wrong or an error occurs during the setup of the whole integration
-# we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
-opDeleteStorage() {
-  log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
-  delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${OP_STORAGE_ENDPOINT}/${storage_id} \
-                      -H 'accept: application/hal+json' \
-                      -H 'Content-Type: application/json' \
-                      -H 'X-Requested-With: XMLHttpRequest')
-  if [[ ${delete_storage_response} == 204 ]]; then
-      log_info "File storage name \"${OP_STORAGE_NAME}\" has been deleted from OpenProject!"
-  else
-      log_info "Failed to delete file storage \"${OP_STORAGE_NAME}\" from OpenProject!"
-  fi
-}
 
 # Nextcloud Variables
 # These URLs are just to check if the Nextcloud instances have been started or not before running the script
@@ -129,87 +116,9 @@ NC_OIDC_OP_CLIENT_NAME="openproject"
 OP_STORAGE_ENDPOINT=${OP_HOST}/api/v3/storages
 OP_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP_HOST}/api/v3/configuration)
 # Minimum OpenProject version required to run this script
-MINIMUM_OP_VERSION="15.0.0"
+MINIMUM_OP_VERSION="15.5.0"
 
-# Integration Defaults settings
-setup_project_folder=false
-setup_app_password=false
-
-ncCheckAppVersion() {
-  # checks the version of a specified Nextcloud app.
-  # If the app version is below the required version, an error is logged and the script exists.
-  app_name=$1
-  
-  # assign app_miniimum version 
-  if [ $app_name = 'user_oidc' ]; then
-    app_min_version=$MIN_SUPPORTED_USER_OIDC_APP_VERSION
-  elif [ $app_name = 'oidc' ]; then
-    app_min_version=$MIN_SUPPORTED_OIDC_APP_VERSION
-  elif [ $app_name = 'integration_openproject' ]; then
-    app_min_version=$MIN_SUPPORTED_INTEGRATION_APP_VERSION
-  else
-    log_error "Minimum required version for the '$app_name' app is not set."
-    exit 1
-  fi
-
-  NC_apps_information_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
-    -H 'OCS-APIRequest: true' \
-  )
-
-  NC_apps_version=$(echo $NC_apps_information_response | jq -r ".ocs.data.version")
-
-  if [ -z "$NC_apps_version" ]; then
-    log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
-    exit 1
-  elif [[ "$NC_apps_version" < "$app_min_version" ]]; then
-   log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$NC_apps_version'"
-   exit 1
-  fi
-}
-
-
-# This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
-MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
-MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
-MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
-ncCheckAppVersion "oidc"
-ncCheckAppVersion "user_oidc"
-ncCheckAppVersion "integration_openproject"
-
-ncIsAdminConfigOk() {
-  admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-          ${NC_INTEGRATION_BASE_URL}/check-admin-config \
-          -H 'accept: application/hal+json' \
-          -H 'Content-Type: application/json' \
-          -H 'X-Requested-With: XMLHttpRequest')
-  config_status_without_project_folder=$(echo $admin_config_response | jq -r ".config_status_without_project_folder")
-  project_folder_setup_status=$(echo $admin_config_response | jq -r ".project_folder_setup_status")
-  if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-    if [[ ${project_folder_setup_status} == 'true' && ${config_status_without_project_folder} == 'true' ]]; then
-      echo 0
-    else
-      echo 1
-    fi
-  elif [[ ${config_status_without_project_folder} == 'true' ]]; then
-    echo 0
-  else
-    echo 1
-  fi
-}
-
-ncCheckIntegrationConfiguration() {
-  status_nc=$(ncIsAdminConfigOk)
-  if [[ "$status_nc" -ne 0 ]]; then
-    log_error "Some admin configuration is incomplete in Nextcloud '${NC_HOST}' for integration with OpenProject."
-    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-      log_error "Or project folder setup might be missing in Nextcloud '${NC_HOST}'."
-    fi
-    log_info "You could try deleting the file storage '${OP_STORAGE_NAME}' in OpenProject and run the script again."
-    exit 1
-  fi
-  log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
-}
-
+# Helper function for openproject
 opIsFileStorageConfigOk() {
   all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
       ${OP_STORAGE_ENDPOINT} \
@@ -245,6 +154,88 @@ opCheckIntegrationConfiguration() {
     exit 1
   fi
   log_success "File storage name '$OP_STORAGE_NAME' in OpenProject for integration with Nextcloud is already configured."
+}
+
+# if something goes wrong or an error occurs during the setup of the whole integration
+# we can delete the storage created in OpenProject, otherwise it would need to be deleted manually when the script is run the next time
+opDeleteStorage() {
+  log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
+  delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+                      ${OP_STORAGE_ENDPOINT}/${storage_id} \
+                      -H 'accept: application/hal+json' \
+                      -H 'Content-Type: application/json' \
+                      -H 'X-Requested-With: XMLHttpRequest')
+  if [[ ${delete_storage_response} == 204 ]]; then
+      log_info "File storage name \"${OP_STORAGE_NAME}\" has been deleted from OpenProject!"
+  else
+      log_info "Failed to delete file storage \"${OP_STORAGE_NAME}\" from OpenProject!"
+  fi
+}
+
+# Helper function for nextcloud
+ncIsAdminConfigOk() {
+  admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
+          ${NC_INTEGRATION_BASE_URL}/check-admin-config \
+          -H 'accept: application/hal+json' \
+          -H 'Content-Type: application/json' \
+          -H 'X-Requested-With: XMLHttpRequest')
+  config_status_without_project_folder=$(echo $admin_config_response | jq -r ".config_status_without_project_folder")
+  project_folder_setup_status=$(echo $admin_config_response | jq -r ".project_folder_setup_status")
+  if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+    if [[ ${project_folder_setup_status} == 'true' && ${config_status_without_project_folder} == 'true' ]]; then
+      echo 0
+    else
+      echo 1
+    fi
+  elif [[ ${config_status_without_project_folder} == 'true' ]]; then
+    echo 0
+  else
+    echo 1
+  fi
+}
+
+ncCheckIntegrationConfiguration() {
+  status_nc=$(ncIsAdminConfigOk)
+  if [[ "$status_nc" -ne 0 ]]; then
+    log_error "Some admin configuration is incomplete in Nextcloud '${NC_HOST}' for integration with OpenProject."
+    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+      log_error "Or project folder setup might be missing in Nextcloud '${NC_HOST}'."
+    fi
+    log_info "You could try deleting the file storage '${OP_STORAGE_NAME}' in OpenProject and run the script again."
+    exit 1
+  fi
+  log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
+}
+
+ncCheckAppVersion() {
+  # checks the version of a specified Nextcloud app.
+  app_name=$1
+  
+  # assign app_miniimum version 
+  if [ $app_name = 'user_oidc' ]; then
+    app_min_version=$MIN_SUPPORTED_USER_OIDC_APP_VERSION
+  elif [ $app_name = 'oidc' ]; then
+    app_min_version=$MIN_SUPPORTED_OIDC_APP_VERSION
+  elif [ $app_name = 'integration_openproject' ]; then
+    app_min_version=$MIN_SUPPORTED_INTEGRATION_APP_VERSION
+  else
+    log_error "Minimum required version for the '$app_name' app is not set."
+    exit 1
+  fi
+
+  NC_apps_information_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
+    -H 'OCS-APIRequest: true' \
+  )
+
+  NC_apps_version=$(echo $NC_apps_information_response | jq -r ".ocs.data.version")
+
+  if [ -z "$NC_apps_version" ]; then
+    log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
+    exit 1
+  elif [[ "$NC_apps_version" < "$app_min_version" ]]; then
+   log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$NC_apps_version'"
+   exit 1
+  fi
 }
 
 # delete oidc client [oidc apps]
@@ -300,6 +291,14 @@ logCompleteIntegrationConfiguration() {
   exit 0
 }
 
+# This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
+MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
+MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
+MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
+ncCheckAppVersion "oidc"
+ncCheckAppVersion "user_oidc"
+ncCheckAppVersion "integration_openproject"
+
 # check if openproject and nextcloud instances are started or not
 # openproject instances
 if [[ $(echo $OP_HOST_CONFIG | jq -r "._type") != "Configuration" ]]; then
@@ -336,11 +335,11 @@ if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
                 -H 'X-Requested-With: XMLHttpRequest')
   isProjectFolderAlreadySetup=$(echo $project_folder_setup_response | jq -r ".result")
   if [[ "$isProjectFolderAlreadySetup" == "true" ]]; then
-    setup_project_folder=false
+    SETUP_PROJECT_FOLDER=false
     setup_app_password=true
     setup_method=PATCH
   else
-    setup_project_folder=true
+    SETUP_PROJECT_FOLDER=true
     setup_app_password=true
     setup_method=POST
   fi
@@ -469,7 +468,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
     "targeted_audience_client_id" : "$openproject_client_id",
     "default_enable_navigation": $NC_INTEGRATION_ENABLE_SEARCH,
     "default_enable_unified_search": $NC_INTEGRATION_ENABLE_SEARCH,
-    "setup_project_folder": $setup_project_folder,
+    "setup_project_folder": $SETUP_PROJECT_FOLDER,
     "setup_app_password": $setup_app_password
   }
 }
