@@ -36,13 +36,13 @@ SPDX-FileCopyrightText = "2021-2025 Nextcloud GmbH and Nextcloud contributors, 2
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = ["tests/jest/components/__snapshots__/AdminSettings.spec.js.snap", "tests/jest/components/__snapshots__/OAuthConnectButton.spec.js.snap", "tests/jest/components/__snapshots__/PersonalSettings.spec.js.snap", "tests/jest/components/tab/__snapshots__/EmptyContent.spec.js.snap", "tests/jest/components/tab/__snapshots__/SearchInput.spec.js.snap", "tests/jest/components/tab/__snapshots__/WorkPackage.spec.js.snap", "tests/jest/components/admin/__snapshots__/FieldValue.spec.js.snap", "tests/jest/components/admin/__snapshots__/FormHeading.spec.js.snap", "tests/jest/components/admin/__snapshots__/TextInput.spec.js.snap", "tests/jest/views/__snapshots__/CreateWorkpackageModal.spec.js.snap", "tests/jest/views/__snapshots__/Dashboard.spec.js.snap", "tests/jest/views/__snapshots__/LinkMultipleFilesModal.spec.js.snap", "tests/jest/views/__snapshots__/ProjectsTab.spec.js.snap"]
+path = "tests/jest/**/__snapshots__/*.snap"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022-2025 Jankari Tech Pvt. Ltd., 2022-2023 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = ["tests/jest/fixtures/availableProjectAssigneesResponse.json", "tests/jest/fixtures/availableProjectOptions.json", "tests/jest/fixtures/formValidationResponseRequiredType.json", "tests/jest/fixtures/notificationsResponse.json", "tests/jest/fixtures/openprojectAvailableProjectResponse.json", "tests/jest/fixtures/openprojectAvailableProjectResponseAfterSearch.json", "tests/jest/fixtures/workpackageFormValidationProjectSelectedResponse.json", "tests/jest/fixtures/workpackageFormValidationTypeChanged.json", "tests/jest/fixtures/workPackageObjectsInSearchResults.json", "tests/jest/fixtures/workPackageSearchReqResponse.json", "tests/jest/fixtures/workPackagesSearchResponse.json", "tests/jest/fixtures/workPackagesSearchResponseNoAssignee.json", "tests/jest/fixtures/workPackageSuccessfulCreationResponse.json"]
+path = "tests/jest/fixtures/*.json"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022-2024 Jankari Tech Pvt. Ltd."
 SPDX-License-Identifier = "AGPL-3.0-or-later"
