@@ -20,7 +20,7 @@ INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
 help() {
   echo -e "Available environment variables:"
   echo -e "Nextcloud:"
-  echo -e "\t NEXTCLOUD_HOST \t\t\t Nextcloud host URL"
+  echo -e "\t NC_HOST \t\t\t Nextcloud host URL"
   echo -e "\t NC_ADMIN_USERNAME \t\t\t Nextcloud admin username"
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
   echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
@@ -32,10 +32,10 @@ help() {
   echo -e "\t SETUP_PROJECT_FOLDER \t Enable project folder setup (true/false). Default: false"
   echo -e ""
   echo -e "OpenProject:"
-  echo -e "\t OPENPROJECT_HOST \t OpenProject host URL"
+  echo -e "\t OP_HOST \t OpenProject host URL"
   echo -e "\t OP_ADMIN_USERNAME \t OpenProject admin username"
   echo -e "\t OP_ADMIN_PASSWORD \t OpenProject admin password"
-  echo -e "\t OPENPROJECT_STORAGE_NAME \t OpenProject file storage name (eg: nextcloud)"
+  echo -e "\t OP_STORAGE_NAME \t OpenProject file storage name (eg: nextcloud)"
 }
 
 log_error() {
@@ -50,7 +50,7 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-if [[ -z "$NEXTCLOUD_HOST" || -z "$OPENPROJECT_HOST" ]]; then
+if [[ -z "$NC_HOST" || -z "$OP_HOST" ]]; then
   log_error "Nextcloud and OpenProject host URLs are required."
   help
   exit 1
@@ -102,32 +102,32 @@ fi
 opDeleteStorage() {
   log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
   delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${OPENPROJECT_STORAGE_ENDPOINT}/${storage_id} \
+                      ${OP_STORAGE_ENDPOINT}/${storage_id} \
                       -H 'accept: application/hal+json' \
                       -H 'Content-Type: application/json' \
                       -H 'X-Requested-With: XMLHttpRequest')
   if [[ ${delete_storage_response} == 204 ]]; then
-      log_info "File storage name \"${OPENPROJECT_STORAGE_NAME}\" has been deleted from OpenProject!"
+      log_info "File storage name \"${OP_STORAGE_NAME}\" has been deleted from OpenProject!"
   else
-      log_info "Failed to delete file storage \"${OPENPROJECT_STORAGE_NAME}\" from OpenProject!"
+      log_info "Failed to delete file storage \"${OP_STORAGE_NAME}\" from OpenProject!"
   fi
 }
 
 # Nextcloud Variables
 # These URLs are just to check if the Nextcloud instances have been started or not before running the script
-NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
-NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
-NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
+NC_HOST_STATE=$(curl -s -X GET ${NC_HOST}/status.php)
+NC_HOST_INSTALLED_STATE=$(echo $NC_HOST_STATE | jq -r ".installed")
+NC_HOST_MAINTENANCE_STATE=$(echo $NC_HOST_STATE | jq -r ".maintenance")
 # Nextcloud app endpoints
-NC_OIDC_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/oidc
-NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
+NC_OIDC_BASE_URL=${NC_HOST}/index.php/apps/oidc
+NC_INTEGRATION_BASE_URL=${NC_HOST}/index.php/apps/integration_openproject
 # OIDC client name used in Nextcloud for OpenProject
 NC_OIDC_OP_CLIENT_NAME="openproject"
 
 # OpenProject Variables
 # These URLs are just to check if the Openproject instances have been started or not before running the script
-OPENPROJECT_STORAGE_ENDPOINT=${OPENPROJECT_HOST}/api/v3/storages
-OPENPROJECT_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
+OP_STORAGE_ENDPOINT=${OP_HOST}/api/v3/storages
+OP_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP_HOST}/api/v3/configuration)
 # Minimum OpenProject version required to run this script
 MINIMUM_OP_VERSION="15.0.0"
 
@@ -152,7 +152,7 @@ ncCheckAppVersion() {
     exit 1
   fi
 
-  NC_apps_information_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NEXTCLOUD_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
+  NC_apps_information_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
     -H 'OCS-APIRequest: true' \
   )
 
@@ -176,7 +176,7 @@ ncCheckAppVersion "oidc"
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
 
-isNextcloudAdminConfigOk() {
+ncIsAdminConfigOk() {
   admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
           ${NC_INTEGRATION_BASE_URL}/check-admin-config \
           -H 'accept: application/hal+json' \
@@ -197,15 +197,28 @@ isNextcloudAdminConfigOk() {
   fi
 }
 
-isOpenProjectFileStorageConfigOk() {
+ncCheckIntegrationConfiguration() {
+  status_nc=$(ncIsAdminConfigOk)
+  if [[ "$status_nc" -ne 0 ]]; then
+    log_error "Some admin configuration is incomplete in Nextcloud '${NC_HOST}' for integration with OpenProject."
+    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
+      log_error "Or project folder setup might be missing in Nextcloud '${NC_HOST}'."
+    fi
+    log_info "You could try deleting the file storage '${OP_STORAGE_NAME}' in OpenProject and run the script again."
+    exit 1
+  fi
+  log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
+}
+
+opIsFileStorageConfigOk() {
   all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-      ${OPENPROJECT_STORAGE_ENDPOINT} \
+      ${OP_STORAGE_ENDPOINT} \
       -H 'accept: application/hal+json' \
       -H 'Content-Type: application/json' \
       -H 'X-Requested-With: XMLHttpRequest'
     )
-    oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
-    has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
+    oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
+    has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
     if [[ ${oauth_configured_status} == 'true' && ${has_nc_application_password_status} == 'true' ]]; then
       echo 0
@@ -219,17 +232,19 @@ isOpenProjectFileStorageConfigOk() {
   fi
 }
 
-checkNextcloudIntegrationConfiguration() {
-  status_nc=$(isNextcloudAdminConfigOk)
-  if [[ "$status_nc" -ne 0 ]]; then
-    log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
+opCheckIntegrationConfiguration() {
+  # At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
+  status_op=$(opIsFileStorageConfigOk)
+  if [[ "$status_op" -ne 0 ]]; then
+    log_info "File storage name '$OP_STORAGE_NAME' in OpenProject already exists."
+    log_error "File storage '$OP_STORAGE_NAME' configuration is incomplete in OpenProject '${OP_HOST}' for integration with Nextcloud."
     if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-      log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
+      log_error "Or the application password has not been set in 'OpenProject' '${OP_HOST}'."
     fi
-    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
+    log_info "You could try deleting the file storage '${OP_STORAGE_NAME}' in OpenProject and run the script again."
     exit 1
   fi
-  log_success "Admin configuration in Nextcloud for integration with OpenProject is configured."
+  log_success "File storage name '$OP_STORAGE_NAME' in OpenProject for integration with Nextcloud is already configured."
 }
 
 # delete oidc client [oidc apps]
@@ -243,52 +258,12 @@ deleteOidcClient() {
     fi
 }
 
-logUnhandledError() {
-  log_error "Unhandled error while creating the file storage '${OPENPROJECT_STORAGE_NAME}'"
-  log_error "OpenProject returned the following error: '${error_message}'"
-  log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-}
-
-logCompleteIntegrationConfiguration() {
-  log_success "Setup of OpenProject and Nextcloud is complete."
-  log_info "Note: To add the Nextcloud storage, you could try deleting the '${OPENPROJECT_STORAGE_NAME}' file storage from OpenProject, reset the Nextcloud config, and run the script again."
-  exit 0
-}
-
-checkOpenProjectIntegrationConfiguration() {
-  # At this point we know that the file storage already exists, so we only check if it is configured completely in OpenProject
-  status_op=$(isOpenProjectFileStorageConfigOk)
-  if [[ "$status_op" -ne 0 ]]; then
-    log_info "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject already exists."
-    log_error "File storage '$OPENPROJECT_STORAGE_NAME' configuration is incomplete in OpenProject '${OPENPROJECT_HOST}' for integration with Nextcloud."
-    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-      log_error "Or the application password has not been set in 'OpenProject' '${OPENPROJECT_HOST}'."
-    fi
-    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-    exit 1
-  fi
-  log_success "File storage name '$OPENPROJECT_STORAGE_NAME' in OpenProject for integration with Nextcloud is already configured."
-}
-
-checkNextcloudIntegrationConfiguration() {
-  status_nc=$(isNextcloudAdminConfigOk)
-  if [[ "$status_nc" -ne 0 ]]; then
-    log_error "Some admin configuration is incomplete in Nextcloud '${NEXTCLOUD_HOST}' for integration with OpenProject."
-    if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
-      log_error "Or project folder setup might be missing in Nextcloud '${NEXTCLOUD_HOST}'."
-    fi
-    log_info "You could try deleting the file storage '${OPENPROJECT_STORAGE_NAME}' in OpenProject and run the script again."
-    exit 1
-  fi
-  log_success "Admin configuration in Nextcloud for integration with OpenProject is already configured."
-}
-
 createOidcClient() {
   # make an api request to create the oidc client in oidc App
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <<EOF
 {
   "name": "$NC_OIDC_OP_CLIENT_NAME",
-  "redirectUri": "$OPENPROJECT_HOST/auth/oidc-nextcloud/callback",
+  "redirectUri": "$OP_HOST/auth/oidc-nextcloud/callback",
   "signingAlg": "RS256",
   "type": "confidential"
 }
@@ -313,26 +288,38 @@ EOF
   openproject_id=$(echo $oidc_information_response | jq -r '.id')
 }
 
+logUnhandledError() {
+  log_error "Unhandled error while creating the file storage '${OP_STORAGE_NAME}'"
+  log_error "OpenProject returned the following error: '${error_message}'"
+  log_info "You could try deleting the file storage '${OP_STORAGE_NAME}' in OpenProject and run the script again."
+}
+
+logCompleteIntegrationConfiguration() {
+  log_success "Setup of OpenProject and Nextcloud is complete."
+  log_info "Note: To add the Nextcloud storage, you could try deleting the '${OP_STORAGE_NAME}' file storage from OpenProject, reset the Nextcloud config, and run the script again."
+  exit 0
+}
+
 # check if openproject and nextcloud instances are started or not
 # openproject instances
-if [[ $(echo $OPENPROJECT_HOST_CONFIG | jq -r "._type") != "Configuration" ]]; then
-  if [[ $(echo $OPENPROJECT_HOST_CONFIG | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
+if [[ $(echo $OP_HOST_CONFIG | jq -r "._type") != "Configuration" ]]; then
+  if [[ $(echo $OP_HOST_CONFIG | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "OpenProject authentication failed!"
     exit 1
   else
     log_error "Unhandled error checking for OpenProject's availability, please checkout the request's response:"
-    log_error "$OPENPROJECT_HOST_CONFIG"
+    log_error "$OP_HOST_CONFIG"
     exit 1
   fi
 fi
 # nextcloud instances
-if [[ ${NEXTCLOUD_HOST_INSTALLED_STATE} != "true" || ${NEXTCLOUD_HOST_MAINTENANCE_STATE} != "false" ]]; then
+if [[ ${NC_HOST_INSTALLED_STATE} != "true" || ${NC_HOST_MAINTENANCE_STATE} != "false" ]]; then
   log_error "Nextcloud host cannot be reached or is in maintenance mode!"
   exit 1
 fi
 
 # This script requires OpenProject Version >= MINIMUM_OP_VERSION
-openproject_info_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3)
+openproject_info_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP_HOST}/api/v3)
 openproject_version=$(echo $openproject_info_response | jq -r ".coreVersion")
 if [[ "$openproject_version" < "$MINIMUM_OP_VERSION" ]]; then
   log_error "This script requires OpenProject Version greater than or equal to '$MINIMUM_OP_VERSION' but found version '$openproject_version'"
@@ -364,12 +351,12 @@ fi
 # API call to get openproject_client_id and openproject_client_secret
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 {
-  "name": "${OPENPROJECT_STORAGE_NAME}",
+  "name": "${OP_STORAGE_NAME}",
   "storageAudience": "test",
   "applicationPassword": "",
   "_links": {
     "origin": {
-      "href": "${NEXTCLOUD_HOST}"
+      "href": "${NC_HOST}"
     },
     "type": {
       "href": "urn:openproject-org:api:v3:storages:Nextcloud"
@@ -382,7 +369,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 EOF
 
 create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-  ${OPENPROJECT_STORAGE_ENDPOINT} \
+  ${OP_STORAGE_ENDPOINT} \
   -H 'accept: application/hal+json' \
   -H 'Content-Type: application/json' \
   -H 'X-Requested-With: XMLHttpRequest' \
@@ -418,15 +405,15 @@ if [[ ${response_type} == "Error" ]]; then
       logUnhandledError
       exit 1
     fi
-    checkOpenProjectIntegrationConfiguration
-    checkNextcloudIntegrationConfiguration
+    opCheckIntegrationConfiguration
+    ncCheckIntegrationConfiguration
     logCompleteIntegrationConfiguration
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
     # A PropertyConstraintViolation is always a single error
     error_messages_grep=$(echo $create_storage_response | jq -r '.message')
     if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
-      checkOpenProjectIntegrationConfiguration
-      checkNextcloudIntegrationConfiguration
+      opCheckIntegrationConfiguration
+      ncCheckIntegrationConfiguration
       logCompleteIntegrationConfiguration
     else
       logUnhandledError
@@ -452,7 +439,7 @@ if [[ ${storage_id} == null ]]; then
   exit 1
 fi
 
-log_success "Creating file storage name \"${OPENPROJECT_STORAGE_NAME}\" in OpenProject was successful."
+log_success "Creating file storage name \"${OP_STORAGE_NAME}\" in OpenProject was successful."
 
 # If the OIDC provider is nextcloud_hub, create a new OIDC client.
 # Otherwise, use the OpenProject client ID provided via environment variable.
@@ -476,7 +463,7 @@ fi
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_3_nc_oidc_setup.json <<EOF
 {
   "values":{
-    "openproject_instance_url": "$OPENPROJECT_HOST", 
+    "openproject_instance_url": "$OP_HOST", 
     "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE", 
     "authorization_method": "oidc", 
     "targeted_audience_client_id" : "$openproject_client_id",
@@ -541,7 +528,7 @@ if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
   }
 EOF
   save_app_password_response=$(curl -s -X PATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                                    ${OPENPROJECT_STORAGE_ENDPOINT}/${storage_id} \
+                                    ${OP_STORAGE_ENDPOINT}/${storage_id} \
                                     -H 'accept: application/hal+json' \
                                     -H 'Content-Type: application/json' \
                                     -H 'X-Requested-With: XMLHttpRequest' \
