@@ -43,8 +43,6 @@ const selectors = {
 describe('Component: FormOpenProjectHost', () => {
 	afterEach(() => {
 		jest.clearAllMocks()
-		jest.resetAllMocks()
-		jest.restoreAllMocks()
 	})
 
 	describe('initial incomplete form', () => {
@@ -78,6 +76,12 @@ describe('Component: FormOpenProjectHost', () => {
 
 			beforeEach(async () => {
 				wrapper = getWrapper({ serverUrl: validUrl })
+				validateOPInstance.mockImplementation(() => ({
+					data: {
+						result: true,
+					},
+				}))
+				saveAdminConfig.mockImplementation(() => Promise.resolve())
 			})
 
 			it('should save the url on submit', async () => {
@@ -265,6 +269,13 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.serverUrl).toBe(validUrl)
 			})
 			it('should show form in view mode on save', async () => {
+				validateOPInstance.mockImplementation(() => ({
+					data: {
+						result: true,
+					},
+				}))
+				saveAdminConfig.mockImplementation(() => Promise.resolve())
+
 				const saveButton = wrapper.find(selectors.saveFormButton)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 
