@@ -36,6 +36,7 @@ help() {
   echo -e "\t OP_ADMIN_USERNAME \t OpenProject admin username"
   echo -e "\t OP_ADMIN_PASSWORD \t OpenProject admin password"
   echo -e "\t OP_STORAGE_NAME \t OpenProject file storage name (eg: nextcloud)"
+  echo -e "\t OP_STORAGE_AUDIENCE \t OpenProject OAuth config (use 'idp' to config with first token from idp or custom value to define audience manually)"
 }
 
 log_error() {
@@ -62,6 +63,12 @@ if [[ -z "$NC_ADMIN_USERNAME" || -z "$NC_ADMIN_PASSWORD" ]]; then
   exit 1
 fi
 
+if [[ -z "$OP_ADMIN_USERNAME" || -z "$OP_ADMIN_PASSWORD" ]]; then
+  log_error "Openproject admin username and password are required."
+  help
+  exit 1
+fi
+
 # Validate required configs for integration setup
 if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
@@ -70,6 +77,16 @@ if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   log_error "\tNC_INTEGRATION_ENABLE_NAVIGATION"
   log_error "\tNC_INTEGRATION_ENABLE_SEARCH"
   log_error "\tNC_INTEGRATION_PROVIDER_TYPE"
+  help
+  exit 1
+fi
+
+# Validate required configs for openproject setup
+if [[ -z $OP_STORAGE_NAME ]] ||
+  [[ -z $OP_STORAGE_AUDIENCE ]] ; then
+  log_error "Following configs are required for openproject setup:"
+  log_error "\tOP_STORAGE_NAME"
+  log_error "\tOP_STORAGE_AUDIENCE"
   help
   exit 1
 fi
@@ -347,11 +364,16 @@ else
   setup_method=POST
 fi
 
+# OpenProject OAuth config: use first access token obtained by identity provider
+if [[ ${OP_STORAGE_AUDIENCE} == "idp" ]]; then
+  OP_STORAGE_AUDIENCE="__op-idp__"
+fi
+
 # API call to get openproject_client_id and openproject_client_secret
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 {
   "name": "${OP_STORAGE_NAME}",
-  "storageAudience": "test",
+  "storageAudience": "${OP_STORAGE_AUDIENCE}",
   "applicationPassword": "",
   "_links": {
     "origin": {
