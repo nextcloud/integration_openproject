@@ -161,7 +161,7 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: null,
 				},
 				{
-					authorizationMethod: F_MODES.DISABLE,
+					authorizationMethod: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
 					projectFolderSetUp: F_MODES.DISABLE,
@@ -332,7 +332,7 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					authorizationMethod: F_MODES.DISABLE,
+					authorizationMethod: F_MODES.EDIT,
 					authorizationSetting: F_MODES.DISABLE,
 					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,

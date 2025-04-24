@@ -1012,7 +1012,7 @@ export default {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
-				if (this.state.openproject_instance_url && !this.state.authorization_method) {
+				if (!this.state.authorization_method) {
 					this.formMode.authorizationMethod = F_MODES.EDIT
 				}
 				if (this.state.authorization_method) {
