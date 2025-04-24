@@ -36,7 +36,8 @@ help() {
   echo -e "\t OP_ADMIN_USERNAME \t OpenProject admin username"
   echo -e "\t OP_ADMIN_PASSWORD \t OpenProject admin password"
   echo -e "\t OP_STORAGE_NAME \t OpenProject file storage name (eg: nextcloud)"
-  echo -e "\t OP_STORAGE_AUDIENCE \t OpenProject OAuth config (use 'idp' to config with first token from idp or custom value to define audience manually)"
+  echo -e "\t OP_USE_LOGIN_TOKEN \t Use first access token obtained by IDP (true/false). Default: false"
+  echo -e "\t OP_STORAGE_AUDIENCE \t Name of the storage audience (Not required when using 'OP_USE_LOGIN_TOKEN=true')"
 }
 
 log_error() {
@@ -69,6 +70,18 @@ if [[ -z "$OP_ADMIN_USERNAME" || -z "$OP_ADMIN_PASSWORD" ]]; then
   exit 1
 fi
 
+if [[ $INTEGRATION_SETUP_TEMP_DIR == ""  ]]; then
+  log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
+  INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
+  mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
+else
+  log_info "Using ${INTEGRATION_SETUP_TEMP_DIR} as non-default temporary directory"
+  if [ ! -d "${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}" ]; then
+    log_error "Temporary directory does not exist"
+    exit 1
+  fi
+fi
+
 # Validate required configs for integration setup
 if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
@@ -81,14 +94,21 @@ if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   exit 1
 fi
 
-# Validate required configs for openproject setup
-if [[ -z $OP_STORAGE_NAME ]] ||
-  [[ -z $OP_STORAGE_AUDIENCE ]] ; then
-  log_error "Following configs are required for openproject setup:"
+# Validate required configs for OpenProject setup
+if [[ -z $OP_STORAGE_NAME ]]; then
+  log_error "Following configs are required for OpenProject setup:"
   log_error "\tOP_STORAGE_NAME"
-  log_error "\tOP_STORAGE_AUDIENCE"
   help
   exit 1
+fi
+
+if [[ -z $OP_USE_LOGIN_TOKEN ]] || [[ "$OP_USE_LOGIN_TOKEN" == "false" ]]; then
+  if [[ -z $OP_STORAGE_AUDIENCE ]]; then
+    log_error "'OP_STORAGE_AUDIENCE' is required for OpenProject setup."
+  fi
+elif [[ "$OP_USE_LOGIN_TOKEN" == "true" ]]; then
+  OP_STORAGE_AUDIENCE="__op-idp__"
+  log_info "Setting OpenProject storage to use first access token"
 fi
 
 # Support for "Debug mode"
@@ -96,18 +116,6 @@ if [[ $INTEGRATION_SETUP_DEBUG == "true"  ]]; then
   log_info "Debug mode is enabled"
   set -x
   set -v
-fi
-
-if [[ $INTEGRATION_SETUP_TEMP_DIR == ""  ]]; then
-  log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
-  INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
-  mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
-else
-  log_info "Using ${INTEGRATION_SETUP_TEMP_DIR} as non-default temporary directory"
-  if [ ! -d "${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}" ]; then
-    log_error "Temporary directory does not exist"
-    exit 1
-  fi
 fi
 
 if [[ -z "$SETUP_PROJECT_FOLDER" || "$SETUP_PROJECT_FOLDER" == "false" ]]; then
@@ -137,7 +145,7 @@ OP_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP
 # Minimum OpenProject version required to run this script
 OP_MINIMUM_VERSION="15.5.0"
 
-# Helper function for openproject
+# Helper function for OpenProject
 opCheckIntegrationConfiguration() {
   op_status=
   op_storages_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
@@ -311,8 +319,8 @@ ncCheckAppVersion "oidc"
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
 
-# check if openproject and nextcloud instances are started or not
-# openproject instances
+# check if OpenProject and nextcloud instances are started or not
+# OpenProject instances
 if [[ $(echo $OP_HOST_CONFIG | jq -r "._type") != "Configuration" ]]; then
   if [[ $(echo $OP_HOST_CONFIG | jq -r ".errorIdentifier") == "urn:openproject-org:api:v3:errors:Unauthenticated" ]]; then
     log_error "OpenProject authentication failed!"
@@ -335,11 +343,6 @@ openproject_version=$(echo $openproject_info_response | jq -r ".coreVersion")
 if [[ "$openproject_version" < "$OP_MINIMUM_VERSION" ]]; then
   log_error "This script requires OpenProject Version greater than or equal to '$OP_MINIMUM_VERSION' but found version '$openproject_version'"
   exit 1
-fi
-
-# OpenProject OAuth config: use first access token obtained by identity provider
-if [[ ${OP_STORAGE_AUDIENCE} == "idp" ]]; then
-  OP_STORAGE_AUDIENCE="__op-idp__"
 fi
 
 # API call to add storage
