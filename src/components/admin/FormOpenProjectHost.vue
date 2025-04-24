@@ -287,9 +287,11 @@ export default {
 	align-items: center;
 	padding: 15px 0;
 }
+
 .pb-1 {
 	padding-bottom: .5rem;
 }
+
 .mr-2 {
 	margin-right: .5rem;
 }
