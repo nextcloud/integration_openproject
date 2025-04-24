@@ -40,7 +40,8 @@ class TokenEventFactory {
 		// If the SSO provider is external and token exchange is disabled,
 		// get the login token
 		if (!$tokenExchange) {
-			return new ExternalTokenEvent(Application::OPEN_PROJECT_API_SCOPE);
+			// NOTE: cannot request new scopes with ExternalTokenEvent
+			return new ExternalTokenEvent();
 		}
 
 		// If the SSO provider is external and token exchange is enabled,
