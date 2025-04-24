@@ -589,7 +589,7 @@ export default {
 	},
 	data() {
 		return {
-			form: ADMIN_SETTINGS_FORM,
+			form: JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM)),
 			currentSetting: null,
 			settingsStepper: settingsFlowGenerator(),
 			formMode: {
@@ -659,10 +659,16 @@ export default {
 	},
 	computed: {
 		resettableForm() {
-			return !!Object.values(this.form).find(({ complete }) => complete === true)
+			const formAdded = !!Object.values(this.form).find(({ complete }) => complete === true)
+			const hasPreSEtup = this.state.openproject_instance_url
+				|| this.state.authorization_method
+				|| this.state.sso_provider_type
+				|| this.state.openproject_client_id
+				|| this.state.openproject_client_secret
+			return formAdded || hasPreSEtup
 		},
 		showAuthMethodSettings() {
-			return this.currentSetting === 'authentication-method'
+			return this.currentSetting === ADMIN_SETTINGS_FORM.authenticationMethod.id
 		},
 		ncClientId() {
 			return this.state.nc_oauth_client?.nextcloud_client_id
@@ -953,7 +959,8 @@ export default {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				// for oauth2 authorization
-				if (this.state.openproject_client_id
+				if (this.state.openproject_instance_url
+					&& this.state.openproject_client_id
 					&& this.state.openproject_client_secret
 					&& this.state.nc_oauth_client
 				) {
@@ -961,6 +968,7 @@ export default {
 				}
 				// for oidc authorization
 				if (this.state.authorization_method === AUTH_METHOD.OIDC
+					&& this.state.openproject_instance_url
 					&& this.state.authorization_settings.oidc_provider
 					&& this.state.authorization_settings.targeted_audience_client_id
 				) {
@@ -974,7 +982,7 @@ export default {
 					this.isFormCompleted.authorizationMethod = true
 					this.authorizationMethod.authorizationMethodSet = this.authorizationMethod.currentAuthorizationMethodSelected = this.state.authorization_method
 				}
-				if (this.state.authorization_method) {
+				if (this.state.openproject_instance_url && this.state.authorization_method) {
 					if (this.state.authorization_method === AUTH_METHOD.OAUTH2) {
 						if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
 							this.formMode.authorizationSetting = F_MODES.EDIT
@@ -1004,7 +1012,7 @@ export default {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
-				if (!this.state.authorization_method) {
+				if (this.state.openproject_instance_url && !this.state.authorization_method) {
 					this.formMode.authorizationMethod = F_MODES.EDIT
 				}
 				if (this.state.authorization_method) {
@@ -1018,6 +1026,7 @@ export default {
 					this.isFormCompleted.ncOauth = true
 				}
 				if (!this.state.nc_oauth_client
+					&& this.state.openproject_instance_url
 					&& this.state.openproject_client_id
 					&& this.state.openproject_client_secret
 				    && this.textLabelProjectFolderSetupButton === 'Keep current setup') {
