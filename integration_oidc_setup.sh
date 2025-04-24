@@ -307,6 +307,11 @@ logUnhandledError() {
 
 logCompleteIntegrationConfiguration() {
   log_success "Setup of OpenProject and Nextcloud is complete."
+  exit 0
+}
+
+logAlreadyCompletedIntegrationConfiguration() {
+  log_success "Setup of OpenProject and Nextcloud is already completed."
   log_info "Note: To add the Nextcloud storage, you could try deleting the '${OP_STORAGE_NAME}' file storage from OpenProject, reset the Nextcloud config, and run the script again."
   exit 0
 }
@@ -404,14 +409,14 @@ if [[ ${response_type} == "Error" ]]; then
     fi
     opCheckIntegrationConfiguration
     ncCheckIntegrationConfiguration
-    logCompleteIntegrationConfiguration
+    logAlreadyCompletedIntegrationConfiguration
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
     # A PropertyConstraintViolation is always a single error
     error_messages_grep=$(echo $create_storage_response | jq -r '.message')
     if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
       opCheckIntegrationConfiguration
       ncCheckIntegrationConfiguration
-      logCompleteIntegrationConfiguration
+      logAlreadyCompletedIntegrationConfiguration
     else
       logUnhandledError
       exit 1
