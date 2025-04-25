@@ -20,6 +20,8 @@ use OC\Authentication\Token\IProvider;
 use OC\User\NoUserException;
 use OCA\AdminAudit\AuditLogger;
 use OCA\GroupFolders\Folder\FolderManager;
+use OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException;
+use OCA\OIDCIdentityProvider\Db\ClientMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
@@ -65,7 +67,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.1.0';
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.2.0';
 	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.6.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
@@ -169,6 +171,7 @@ class OpenProjectAPIService {
 		IManager $encryptionManager,
 		TokenEventFactory $tokenEventFactory,
 		IUserSession $userSession,
+		private ClientMapper $clientMapper,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -1595,6 +1598,26 @@ class OpenProjectAPIService {
 		}
 		// token expiration info
 		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
+
+		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
+		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+			$oidcClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
+			$clientTokenType = '';
+			try {
+				$oidcClient = $this->clientMapper->getByIdentifier($oidcClientId);
+				$clientTokenType = $oidcClient->getTokenType();
+			} catch (ClientNotFoundException) {
+				$this->logger->error("Client '$oidcClientId' not found");
+			}
+			// OpenProject does not support opaque tokens.
+			// oidc client MUST be configured to return JWT token
+			if ($clientTokenType !== 'jwt') {
+				$this->logger->error(
+					"JWT access token is not enabled for oidc client '$oidcClientId' in OIDC provider app."
+					. " The opaque token is not supported by OpenProject."
+				);
+			}
+		}
 		return $token->getAccessToken();
 	}
 

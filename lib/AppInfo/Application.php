@@ -52,7 +52,7 @@ use OCP\User\Events\UserChangedEvent;
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const  OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
-	public const  OPEN_PROJECT_API_SCOPE = 'api_v3';
+	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
 
 	/**
 	 * @var mixed

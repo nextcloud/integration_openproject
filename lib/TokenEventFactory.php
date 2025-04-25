@@ -34,7 +34,7 @@ class TokenEventFactory {
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)
 		if ($SSOProviderType === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
-			return new InternalTokenEvent($targetAudience, Application::OPEN_PROJECT_API_SCOPE, $targetAudience);
+			return new InternalTokenEvent($targetAudience, Application::OPENPROJECT_API_SCOPES, $targetAudience);
 		}
 
 		// If the SSO provider is external and token exchange is disabled,
@@ -46,6 +46,6 @@ class TokenEventFactory {
 
 		// If the SSO provider is external and token exchange is enabled,
 		// exchange the token for targeted audience client
-		return new ExchangedTokenEvent($targetAudience, Application::OPEN_PROJECT_API_SCOPE);
+		return new ExchangedTokenEvent($targetAudience, Application::OPENPROJECT_API_SCOPES);
 	}
 }
