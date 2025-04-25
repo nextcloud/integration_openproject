@@ -39,6 +39,10 @@
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
 				<referencedClass name="OCA\TermsOfService\Db\Entities\Signatory" />
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\TermsMapper" />
+				<!-- these classes belong to the oidc app -->
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\ClientMapper" />
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\RedirectUriMapper" />
+				<referencedClass name="OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException" />
 				<!-- these classes belong to the user_oidc app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\UserOIDC\Db\ProviderMapper" />
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
@@ -99,6 +103,10 @@
 				<referencedClass name="OC\Http\Client\LocalAddressChecker"/>
 				<!-- these are classes form terms_of_service app, which isn't cloned while doing static code analysis -->
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
+				<!-- these classes belong to the oidc app -->
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\ClientMapper" />
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\RedirectUriMapper" />
+				<referencedClass name="OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException" />
 				<!-- these classes belong to the user_oidc app, which isn't compulsory, so might not exist while running psalm -->
 				<referencedClass name="OCA\UserOIDC\Model\Token" />
 				<referencedClass name="OCA\UserOIDC\Event\ExchangedTokenRequestedEvent" />

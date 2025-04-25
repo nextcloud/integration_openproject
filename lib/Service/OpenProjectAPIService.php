@@ -20,8 +20,9 @@ use OC\Authentication\Token\IProvider;
 use OC\User\NoUserException;
 use OCA\AdminAudit\AuditLogger;
 use OCA\GroupFolders\Folder\FolderManager;
+use OCA\OIDCIdentityProvider\Db\ClientMapper as OIDCClientMapper;
+use OCA\OIDCIdentityProvider\Db\RedirectUriMapper;
 use OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException;
-use OCA\OIDCIdentityProvider\Db\ClientMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectAvatarErrorException;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
@@ -35,6 +36,8 @@ use OCA\UserOIDC\Db\ProviderMapper;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
@@ -171,7 +174,8 @@ class OpenProjectAPIService {
 		IManager $encryptionManager,
 		TokenEventFactory $tokenEventFactory,
 		IUserSession $userSession,
-		private ClientMapper $clientMapper,
+		private ITimeFactory $timeFactory,
+		private IAppConfig $appConfig,
 	) {
 		$this->appName = $appName;
 		$this->avatarManager = $avatarManager;
@@ -1604,7 +1608,15 @@ class OpenProjectAPIService {
 			$oidcClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 			$clientTokenType = '';
 			try {
-				$oidcClient = $this->clientMapper->getByIdentifier($oidcClientId);
+				$clientMapper = new OIDCClientMapper(
+					$this->db,
+					$this->timeFactory,
+					$this->appConfig,
+					new RedirectUriMapper($this->db, $this->timeFactory, $this->appConfig),
+					$this->random,
+					$this->logger,
+				);
+				$oidcClient = $clientMapper->getByIdentifier($oidcClientId);
 				$clientTokenType = $oidcClient->getTokenType();
 			} catch (ClientNotFoundException) {
 				$this->logger->error("Client '$oidcClientId' not found");
@@ -1616,6 +1628,7 @@ class OpenProjectAPIService {
 					"JWT access token is not enabled for oidc client '$oidcClientId' in OIDC provider app."
 					. " The opaque token is not supported by OpenProject."
 				);
+				return null;
 			}
 		}
 		return $token->getAccessToken();

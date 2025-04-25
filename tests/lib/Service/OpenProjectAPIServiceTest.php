@@ -19,6 +19,7 @@ use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OIDCIdentityProvider\Db\ClientMapper;
+use OCA\OIDCIdentityProvider\Db\RedirectUriMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
@@ -30,6 +31,8 @@ use OCA\UserOIDC\Model\Token;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
@@ -683,7 +686,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'manager' => $this->createMock(IManager::class),
 			'tokenEventFactory' => $this->createMock(TokenEventFactory::class),
 			'userSession' => $this->createMock(IUserSession::class),
-			'clientMapper' => $this->createMock(ClientMapper::class)
+			'timeFactory' => $this->createMock(ITimeFactory::class),
+			'appConfig' => $this->createMock(IAppConfig::class),
 		];
 
 		// replace default mocks with manually passed in mocks
