@@ -585,7 +585,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'openproject_instance_url' => $this->pactMockServerConfig->getBaseUri()->__toString(),
 			'oidc_provider' => '',
 			'targeted_audience_client_id' => '',
-			'sso_provider_type' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+			'sso_provider_type' => 'external',
 		];
 		$appValues = [];
 		foreach ($withValues as $key => $value) {
@@ -4260,6 +4260,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock->method('getAppValue')
 			->willReturnMap($this->getAppValues([
 				'targeted_audience_client_id' => 'testclient',
+				'sso_provider_type' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
 			]));
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
