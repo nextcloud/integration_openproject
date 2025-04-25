@@ -40,6 +40,7 @@
 				<referencedClass name="OCA\TermsOfService\Db\Entities\Signatory" />
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\TermsMapper" />
 				<!-- these classes belong to the oidc app -->
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\Client" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\ClientMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\RedirectUriMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException" />
@@ -104,6 +105,7 @@
 				<!-- these are classes form terms_of_service app, which isn't cloned while doing static code analysis -->
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\SignatoryMapper" />
 				<!-- these classes belong to the oidc app -->
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\Client" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\ClientMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\RedirectUriMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException" />
