@@ -10,7 +10,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "28 29 30 31"
+        default: "28 29 30 31 master"
       php_versions:
         required: false
         type: string
@@ -123,7 +123,7 @@ jobs:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "Yes"
-          NEXTCLOUD_AUTOINSTALL_APPS: "integration_openproject"
+          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
@@ -261,7 +261,8 @@ jobs:
           if [ "${{matrix.nextcloudVersion}}" != "stable27" ]; then
             cp -r ../../user_oidc ../../oidc apps
             ./occ a:e user_oidc
-            ./occ a:e oidc
+            # enable app even if it is not compatible with the current server version
+            ./occ a:e -f oidc
           fi
 
       - name: PHP Unit Tests
