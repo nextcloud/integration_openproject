@@ -273,9 +273,11 @@ createOidcClient() {
   # make an api request to create the oidc client in oidc App
   cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json <<EOF
 {
+  "flowType": "code",
   "name": "$NC_OIDC_OP_CLIENT_NAME",
   "redirectUri": "$OP_HOST/auth/oidc-nextcloud/callback",
   "signingAlg": "RS256",
+  "tokenType": "jwt",
   "type": "confidential"
 }
 EOF
