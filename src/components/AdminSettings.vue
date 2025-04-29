@@ -1339,9 +1339,11 @@ export default {
 			let values = {
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
-				openproject_instance_url: this.state.openproject_instance_url,
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
+			}
+			if (this.state.openproject_instance_url === null) {
+				values.openproject_instance_url = this.state.openproject_instance_url
 			}
 			if (this.authorizationMethod.authorizationMethodSet === null) {
 				// by default, it will be an oauth2 reset
