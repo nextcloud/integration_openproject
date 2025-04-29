@@ -189,6 +189,12 @@ jobs:
           repository: nextcloud/user_oidc
           path: user_oidc
 
+      - name: Checkout oidc app
+        uses: actions/checkout@v3
+        with:
+          repository: h2CK/oidc
+          path: oidc
+  
       - name: Checkout server (for phpunit and psalm)
         uses: actions/checkout@v3
         with:
@@ -253,8 +259,10 @@ jobs:
           cd server
           ./occ a:e groupfolders integration_openproject activity
           if [ "${{matrix.nextcloudVersion}}" != "stable27" ]; then
-            cp -r ../../user_oidc apps
+            cp -r ../../user_oidc ../../oidc apps
             ./occ a:e user_oidc
+            # enable app even if it is not compatible with the current server version
+            ./occ a:e -f oidc
           fi
 
       - name: PHP Unit Tests

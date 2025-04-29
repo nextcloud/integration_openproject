@@ -18,12 +18,15 @@ use OC\Authentication\Token\IToken;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
 use OCA\GroupFolders\Folder\FolderManager;
+use OCA\OIDCIdentityProvider\Db\Client as OIDCClient;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
+use OCA\OpenProject\OIDCClientMapper;
 use OCA\OpenProject\TokenEventFactory;
 use OCA\TermsOfService\Db\Mapper\SignatoryMapper;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
+use OCA\UserOIDC\Event\InternalTokenRequestedEvent;
 use OCA\UserOIDC\Exception\TokenExchangeFailedException;
 use OCA\UserOIDC\Model\Token;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
@@ -580,6 +583,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'openproject_instance_url' => $this->pactMockServerConfig->getBaseUri()->__toString(),
 			'oidc_provider' => '',
 			'targeted_audience_client_id' => '',
+			'sso_provider_type' => 'external',
 		];
 		$appValues = [];
 		foreach ($withValues as $key => $value) {
@@ -682,6 +686,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'manager' => $this->createMock(IManager::class),
 			'tokenEventFactory' => $this->createMock(TokenEventFactory::class),
 			'userSession' => $this->createMock(IUserSession::class),
+			'oidcClientMapper' => $this->createMock(OIDCClientMapper::class),
 		];
 
 		// replace default mocks with manually passed in mocks
@@ -4238,6 +4243,48 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'config' => $configMock,
 				'manager' => $iManagerMock,
 				'tokenEventFactory' => $exchangeTokenEvent,
+			],
+		);
+		$result = $service->getOIDCToken();
+		$this->assertEquals(null, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetOIDCTokenClientTokenType(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'targeted_audience_client_id' => 'testclient',
+				'sso_provider_type' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+			]));
+		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
+		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$iAppManagerMock->method('isInstalled')->willReturn(true);
+		$tokenEventMock = $this->getMockBuilder(TokenEventFactory::class)->disableOriginalConstructor()->getMock();
+		$eventMock = $this->getMockBuilder(InternalTokenRequestedEvent::class)->disableOriginalConstructor()->getMock();
+		$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
+		$tokenEventMock->method('getEvent')->willReturn($eventMock);
+		$eventMock->method('getToken')->willReturn($tokenMock);
+		$tokenMock->method('getAccessToken')->willReturn('opaque-access-token');
+
+		$clientMock = $this->getMockBuilder(OIDCClient::class)
+			->disableOriginalConstructor()
+			->addMethods(["getTokenType"])
+			->getMock();
+		$clientMock->method('getTokenType')->willReturn('opaque');
+		$clientMapperMock = $this->createMock(OIDCClientMapper::class);
+		$clientMapperMock->method('getClient')->willReturn($clientMock);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'appManager' => $iAppManagerMock,
+				'config' => $configMock,
+				'manager' => $iManagerMock,
+				'tokenEventFactory' => $tokenEventMock,
+				'oidcClientMapper' => $clientMapperMock,
 			],
 		);
 		$result = $service->getOIDCToken();
