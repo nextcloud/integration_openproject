@@ -10,7 +10,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "28 29 30 31 master"
+        default: "28 29 30 31"
       php_versions:
         required: false
         type: string
