@@ -798,7 +798,6 @@ describe('AdminSettings.vue', () => {
 						expect(saveOPOptionsSpy).toBeCalledTimes(1)
 						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
 							values: expect.objectContaining({
-								openproject_instance_url: 'http://openproject.com',
 								openproject_client_id: '',
 								openproject_client_secret: '',
 							}),
@@ -885,7 +884,6 @@ describe('AdminSettings.vue', () => {
 						expect(saveOPOptionsSpy).toBeCalledTimes(1)
 						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
 							values: expect.objectContaining({
-								openproject_instance_url: 'http://openproject.com',
 								oidc_provider: null,
 								targeted_audience_client_id: null,
 							}),
@@ -1844,7 +1842,6 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
-										openproject_instance_url: 'http://openproject.com',
 										openproject_client_id: 'qwerty',
 										openproject_client_secret: 'qwerty',
 									},
