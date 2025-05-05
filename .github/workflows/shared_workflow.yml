@@ -193,8 +193,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: h2CK/oidc
+          ref: 1.6.0
+          fetch-tags: true
           path: oidc
-  
+
       - name: Checkout server (for phpunit and psalm)
         uses: actions/checkout@v3
         with:
