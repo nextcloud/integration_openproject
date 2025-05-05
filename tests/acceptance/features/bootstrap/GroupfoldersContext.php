@@ -23,7 +23,7 @@ class GroupfoldersContext implements Context {
 
 
 	/**
-	 * @Given group folder :folderName has been created
+	 * @Given team folder :folderName has been created
 	 */
 	public function groupFolderHasBeenCreated(string $folderName): void {
 		$fullUrl = $this->featureContext->getBaseUrl() .
@@ -54,7 +54,7 @@ class GroupfoldersContext implements Context {
 	}
 
 	/**
-	 * @Given group :group has been added to group folder :groupfolder
+	 * @Given group :group has been added to team folder :groupfolder
 	 */
 	public function groupHasBeenAddedToGroupFolder(string $group, string $groupfolder):void {
 		$groupfolderId = $this->createdGroupFolders[$groupfolder];

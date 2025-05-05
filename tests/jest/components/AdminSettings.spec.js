@@ -2347,7 +2347,7 @@ describe('AdminSettings.vue', () => {
 					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 
-				it('should show button text label "Complete without group folder setup" when the switch is "off"', async () => {
+				it('should show button text label "Complete without team folder setup" when the switch is "off"', async () => {
 					const wrapper = getMountedWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
@@ -2359,7 +2359,7 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
 							fresh_project_folder_setup: true,
-							// group folder is already not set up
+							// team folder is already not set up
 							project_folder_info: {
 								status: false,
 							},
@@ -2379,7 +2379,7 @@ describe('AdminSettings.vue', () => {
 					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
 				})
 
-				describe('on trigger "Complete without group folder setup"', () => {
+				describe('on trigger "Complete without team folder setup"', () => {
 					let wrapper = {}
 					let saveOPOptionsSpy
 					beforeEach(async () => {
@@ -2452,7 +2452,7 @@ describe('AdminSettings.vue', () => {
 					})
 				})
 
-				// test for error while setting up the group folder
+				// test for error while setting up the team folder
 				describe('trigger on "Setup OpenProject user, group and folder" button', () => {
 					beforeEach(async () => {
 						axios.put.mockReset()
@@ -2462,31 +2462,31 @@ describe('AdminSettings.vue', () => {
 					describe('upon failure', () => {
 						it.each([
 							[
-								'should set the project folder error message and error details when group folders app is not enabled',
+								'should set the project folder error message and error details when team folders app is not enabled',
 								{
-									error: 'The "Group folders" app is not installed',
-									expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}',
+									error: 'The "groupfolders" app is not installed',
+									expectedErrorDetailsMessage: 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}',
 								},
 							],
 							[
 								'should set the user already exists error message and error details when user already exists',
 								{
 									error: 'The user "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 							[
-								'should set the group folder name already exists error message and error details when group folder already exists',
+								'should set the team folder name already exists error message and error details when team folder already exists',
 								{
-									error: 'The group folder name "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									error: 'The team folder name "OpenProject" already exists',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the group already exists error message and error details when group already exists',
 								{
 									error: 'The group "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								},
 							],
 
@@ -2531,9 +2531,9 @@ describe('AdminSettings.vue', () => {
 
 							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 								.mockImplementationOnce(() => Promise.reject(err))
-							if (expectedErrorDetails.error !== 'The "Group folders" app is not installed') {
+							if (expectedErrorDetails.error !== 'The "groupfolders" app is not installed') {
 								jest.spyOn(wrapper.vm, 'projectFolderSetUpErrorMessageDescription').mockReturnValue(
-									'Setting up the OpenProject user, group and group folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
 								)
 							}
 							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
@@ -2735,7 +2735,7 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
 							fresh_project_folder_setup: false,
-							// group folder is already not set up
+							// team folder is already not set up
 							project_folder_info: {
 								status: false,
 							},
@@ -2830,7 +2830,7 @@ describe('AdminSettings.vue', () => {
 						expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
 					})
 
-					it('should show button label as "Complete without group folder setup" when switch is "off" ', async () => {
+					it('should show button label as "Complete without team folder setup" when switch is "off" ', async () => {
 						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
 						await projectFolderSetupSwitchButton.trigger('click')
 						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
@@ -2938,17 +2938,17 @@ describe('AdminSettings.vue', () => {
 		})
 		it.each([
 			[
-				'should set the project folder error message and error details when group folders app is not enabled',
+				'should set the project folder error message and error details when team folders app is not enabled',
 				{
-					error: 'The "Group folders" app is not installed',
-					expectedErrorDetailsMessage: 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}',
+					error: 'The "groupfolders" app is not installed',
+					expectedErrorDetailsMessage: 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}',
 				},
 			],
 			[
 				'should set the user already exists error message and error details when user already exists',
 				{
 					error: 'The user "OpenProject" already exists',
-					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and group folder was not possible.',
+					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible.',
 				},
 			],
 		])('%s', async (name, expectedErrorDetails) => {
@@ -2977,7 +2977,7 @@ describe('AdminSettings.vue', () => {
 			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
 			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			if (expectedErrorDetails.error !== 'The "Group folders" app is not installed') {
+			if (expectedErrorDetails.error !== 'The "groupfolders" app is not installed') {
 				expect(projectFolderErrorMessageDetails.text()).toContain(expectedErrorDetails.expectedErrorDetailsMessage)
 			} else {
 				expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)

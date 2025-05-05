@@ -1308,12 +1308,12 @@ Feature: retrieve file information of a single file, using the file ID
       | read+create+update+share  | SRGNVCK                   | RGDNVCK               |
 
 
-  Scenario: get information of a group folder
+  Scenario: get information of a team folder
     Given user "Carol" has been created
     And group "grp1" has been created
     And user "Carol" has been added to the group "grp1"
-    And group folder "groupFolder" has been created
-    And  group "grp1" has been added to group folder "groupFolder"
+    And team folder "groupFolder" has been created
+    And  group "grp1" has been added to team folder "groupFolder"
     When user "Carol" gets the information of the folder "/groupFolder"
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
