@@ -7,6 +7,14 @@ on:
     branches:
       - 'master'
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '**.sh'
+      - 'dev/**'
+      - 'l10n/**'
+      - 'img/**'
+      - 'docker-compose*'
   schedule:
     - cron: '0 22 * * *' # run at 10 PM UTC
 
