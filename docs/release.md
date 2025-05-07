@@ -19,6 +19,7 @@ On the release branch:
    - `appinfo/info.xml`
    - `package.json`
 4. Add the new release branch in `.tx/backport` to allow transifex commits.
+tests will the ci skip or not when PR have chahges only on non-source code 
 5. Update `CHANGELOG.md` with the changes and the version to be released.
 6. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
 7. Perform confirmatory testing (Changelogs) - by the OpenProject team.

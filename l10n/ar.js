@@ -1,4 +1,5 @@
 OC.L10N.register(
+	// chaanges
     "integration_openproject",
     {
     "OpenProject" : "\"أوبن بروجكت\" OpenProject",
