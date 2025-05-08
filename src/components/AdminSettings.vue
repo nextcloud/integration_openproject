@@ -437,7 +437,7 @@
 						<b>{{ t('integration_openproject', 'OpenProject user, group and folder') }}</b>
 						<p class="project-folder-description">
 							{{
-								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called "OpenProject".')
+								t('integration_openproject', 'For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject".')
 							}} <br>
 							{{
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
@@ -485,7 +485,7 @@
 					</NcNoteCard>
 					<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
 						<p class="note-card--title">
-							<b>{{ t('integration_openproject', 'Encryption for the Group Folders App is not enabled.') }}</b>
+							<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
 						</p>
 						<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
 					</NcNoteCard>
@@ -832,7 +832,7 @@ export default {
 		errorHintForProjectFolderConfigAlreadyExists() {
 			const linkText = t('integration_openproject', 'troubleshooting guide')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getAdminAuditConfigurationHint() {
 			const linkTextForAdminAudit = t('integration_openproject', 'Admin Audit')
@@ -846,7 +846,7 @@ export default {
 		getGroupFoldersEncryptionWarningHint() {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
+			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getAuthorizationMethodHintText() {
 			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
@@ -1118,8 +1118,8 @@ export default {
 			const url = generateUrl('settings/apps/files/groupfolders')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
-			case 'The "Group folders" app is not installed' :
-				return t('integration_openproject', 'Please install the "Group folders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
+			case 'The "groupfolders" app is not installed' :
+				return t('integration_openproject', 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
 			default:
 				return this.errorHintForProjectFolderConfigAlreadyExists
 			}

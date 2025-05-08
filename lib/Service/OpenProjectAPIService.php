@@ -1009,7 +1009,7 @@ class OpenProjectAPIService {
 	public function isSystemReadyForProjectFolderSetUp(): bool {
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME) && $this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			if (!$this->isGroupfoldersAppEnabled()) {
-				throw new \Exception('The "Group folders" app is not installed');
+				throw new \Exception('The "groupfolders" app is not installed');
 			}
 		}
 		if ($this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
@@ -1017,10 +1017,10 @@ class OpenProjectAPIService {
 		} elseif ($this->groupManager->groupExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			throw new OpenprojectGroupfolderSetupConflictException('The group "'. Application::OPEN_PROJECT_ENTITIES_NAME .'" already exists');
 		} elseif (!$this->isGroupfoldersAppEnabled()) {
-			throw new \Exception('The "Group folders" app is not installed');
+			throw new \Exception('The "groupfolders" app is not installed');
 		} elseif ($this->isOpenProjectGroupfolderCreated()) {
 			throw new OpenprojectGroupfolderSetupConflictException(
-				'The group folder name "' .
+				'The team folder name "' .
 				Application::OPEN_PROJECT_ENTITIES_NAME .
 				'" already exists'
 			);

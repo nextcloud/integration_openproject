@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: setup the integration through an API
 
-  Scenario: valid setup without group folder
+  Scenario: valid setup without team folder
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
       {
@@ -679,7 +679,7 @@ Feature: setup the integration through an API
     Then the HTTP status code should be "401"
 
 
-  Scenario: check version of uploaded file inside a group folder
+  Scenario: check version of uploaded file inside a team folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
     And user "Carol" has created folder "/OpenProject/OpenProject/project-demo"
@@ -692,7 +692,7 @@ Feature: setup the integration through an API
     Then the HTTP status code should be 204
 
 
-  Scenario: check version of uploaded file after an update inside a group folder
+  Scenario: check version of uploaded file after an update inside a team folder
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
     And user "OpenProject" has created folder "/OpenProject/OpenProject/project-test"

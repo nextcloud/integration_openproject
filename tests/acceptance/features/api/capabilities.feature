@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: get capabilities of the app
 
-  Scenario: Get capabilities when group folder app is enabled
+  Scenario: Get capabilities when team folder app is enabled
     Given user "Carol" has been created
     When the administrator requests the nextcloud capabilities
     Then the HTTP status code should be "200"

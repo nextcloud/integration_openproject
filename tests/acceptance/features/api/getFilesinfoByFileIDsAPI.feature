@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: retrieve information of multiple files using the file IDs
 
-  Scenario: get information of four files, group folders, one own, one received as share, one trashed, one not accessible
+  Scenario: get information of four files, team folders, one own, one received as share, one trashed, one not accessible
     Given user "Carol" has been created
     And group "grp1" has been created
     And user "Carol" has been added to the group "grp1"
-    And group folder "groupFolder" has been created
-    And  group "grp1" has been added to group folder "groupFolder"
+    And team folder "groupFolder" has been created
+    And  group "grp1" has been added to team folder "groupFolder"
     And user "Brian" has been created with display-name "Brian Adams"
     And user "Carol" has uploaded file with content "some data" to "file.txt"
     And user "Brian" has uploaded file with content "some data" to "fromBrian.txt"
@@ -20,7 +20,7 @@ Feature: retrieve information of multiple files using the file IDs
     And user "Carol" has emptied the trash-bin
     And user "Carol" has deleted file "trashed.txt"
     And user "Carol" has renamed file "/fromBrian.txt" to "/renamedByCarol.txt"
-    When user "Carol" gets the information of all files and group folder "groupFolder" created in this scenario
+    When user "Carol" gets the information of all files and team folder "groupFolder" created in this scenario
     Then the HTTP status code should be "200"
     And the ocs data of the response should match
     """"

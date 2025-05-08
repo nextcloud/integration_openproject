@@ -477,7 +477,7 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @When user :user gets the information of all files and group folder :groupFolder created in this scenario
+	 * @When user :user gets the information of all files and team folder :groupFolder created in this scenario
 	 */
 	public function userGetsTheInformationOfAllCreatedFiles(string $user, string $groupFolder): void {
 		$this->createdFiles[] = $this->getIdOfFileOrFolder($user, $groupFolder);
