@@ -10,65 +10,18 @@
 		<NcNoteCard v-if="!isAdminAuditConfigurationSetUpCorrectly" class="note-card" type="info">
 			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
-		<div class="openproject-server-host">
-			<FormHeading index="1"
-				:title="t('integration_openproject', 'OpenProject server')"
-				:is-complete="isServerHostFormComplete"
-				:is-dark-theme="isDarkTheme" />
-			<FieldValue v-if="isServerHostFormInView"
-				is-required
-				class="pb-1"
-				:title="t('integration_openproject', 'OpenProject host')"
-				:value="state.openproject_instance_url" />
-			<TextInput v-else
-				id="openproject-oauth-instance"
-				ref="openproject-oauth-instance-input"
-				v-model="serverHostUrlForEdit"
-				is-required
-				:read-only="isServerHostUrlReadOnly"
-				class="pb-1"
-				:label="t('integration_openproject', 'OpenProject host')"
-				place-holder="https://www.my-openproject.com"
-				:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
-				:error-message="serverHostErrorMessage"
-				:error-message-details="openProjectNotReachableErrorMessageDetails"
-				@click="isServerHostUrlReadOnly = false"
-				@input="isOpenProjectInstanceValid = null" />
-			<div class="form-actions">
-				<NcButton v-if="isServerHostFormInView"
-					data-test-id="reset-server-host-btn"
-					@click="setServerHostFormToEditMode">
-					<template #icon>
-						<PencilIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Edit server information') }}
-				</NcButton>
-				<NcButton v-if="isServerHostFormComplete && isServerHostFormInEdit"
-					class="mr-2"
-					data-test-id="cancel-edit-server-host-btn"
-					@click="setServerHostFormToViewMode">
-					{{ t('integration_openproject', 'Cancel') }}
-				</NcButton>
-				<NcButton v-if="isServerHostFormInEdit"
-					type="primary"
-					data-test-id="submit-server-host-form-btn"
-					:disabled="!serverHostUrlForEdit || serverHostUrlForEdit === state.openproject_instance_url"
-					@click="saveOpenProjectHostUrl">
-					<template #icon>
-						<NcLoadingIcon v-if="loadingServerHostForm" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Save') }}
-				</NcButton>
-			</div>
-		</div>
+		<FormOpenProjectHost
+			:form-id="form.serverHost.id"
+			:is-dark-theme="isDarkTheme"
+			:openproject-url="state.openproject_instance_url"
+			@formcomplete="markFormComplete" />
 		<div class="authorization-method">
 			<FormHeading index="2"
 				:title="t('integration_openproject', 'Authentication method')"
 				:is-complete="isAuthorizationMethodFormComplete"
 				:is-disabled="isAuthorizationFormInDisabledMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="isServerHostFormComplete">
+			<div v-if="showAuthMethodSettings">
 				<div v-if="isAuthorizationFormInEditMode" class="authorization-method">
 					<div class="authorization-method--description">
 						<p class="title">
@@ -548,7 +501,7 @@
 		</div>
 		<NcButton id="reset-all-app-settings-btn"
 			type="error"
-			:disabled="isResetButtonDisabled"
+			:disabled="!resettableForm"
 			@click="resetAllAppValuesConfirmation">
 			<template #icon>
 				<RestoreIcon :size="20" />
@@ -604,12 +557,13 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM, settingsFlowGenerator } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
 import ErrorLabel from './ErrorLabel.vue'
+import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -631,13 +585,16 @@ export default {
 		TermsOfServiceUnsigned,
 		NcNoteCard,
 		ErrorNote,
+		FormOpenProjectHost,
 	},
 	data() {
 		return {
+			form: JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM)),
+			currentSetting: null,
+			settingsStepper: settingsFlowGenerator(),
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
-				server: F_MODES.EDIT,
 				authorizationMethod: F_MODES.DISABLE,
 				authorizationSetting: F_MODES.DISABLE,
 				SSOSettings: F_MODES.DISABLE,
@@ -654,18 +611,12 @@ export default {
 				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
 				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
 			},
-			loadingServerHostForm: false,
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
 			loadingAuthorizationMethodForm: false,
 			loadingAuthorizationSettingForm: false,
-			isOpenProjectInstanceValid: null,
-			openProjectNotReachableErrorMessage: null,
-			openProjectNotReachableErrorMessageDetails: null,
 			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			serverHostUrlForEdit: null,
-			isServerHostUrlReadOnly: true,
 			oPOAuthTokenRevokeStatus: null,
 			oPUserAppPassword: null,
 			isProjectFolderSwitchEnabled: null,
@@ -707,6 +658,18 @@ export default {
 		}
 	},
 	computed: {
+		resettableForm() {
+			const formAdded = !!Object.values(this.form).find(({ complete }) => complete === true)
+			const hasPreSEtup = this.state.openproject_instance_url
+				|| this.state.authorization_method
+				|| this.state.sso_provider_type
+				|| this.state.openproject_client_id
+				|| this.state.openproject_client_secret
+			return formAdded || hasPreSEtup
+		},
+		showAuthMethodSettings() {
+			return this.currentSetting === ADMIN_SETTINGS_FORM.authenticationMethod.id
+		},
 		ncClientId() {
 			return this.state.nc_oauth_client?.nextcloud_client_id
 		},
@@ -720,16 +683,8 @@ export default {
 		isAdminAuditConfigurationSetUpCorrectly() {
 			return this.state.admin_audit_configuration_correct
 		},
-		serverHostErrorMessage() {
-			if (
-				this.serverHostUrlForEdit === ''
-				|| this.isOpenProjectInstanceValid === null
-				|| this.isOpenProjectInstanceValid
-			) return null
-			return this.openProjectNotReachableErrorMessage
-		},
 		isServerHostFormComplete() {
-			return this.isFormCompleted.server
+			return this.form.serverHost.complete
 		},
 		isAuthorizationMethodFormComplete() {
 			return this.isFormCompleted.authorizationMethod
@@ -749,9 +704,6 @@ export default {
 		isNcOAuthFormComplete() {
 			return this.isFormCompleted.ncOauth
 		},
-		isServerHostFormInView() {
-			return this.formMode.server === F_MODES.VIEW
-		},
 		isAuthorizationMethodFormInViewMode() {
 			return this.formMode.authorizationMethod === F_MODES.VIEW
 		},
@@ -760,9 +712,6 @@ export default {
 		},
 		isOPOAuthFormInView() {
 			return this.formMode.opOauth === F_MODES.VIEW
-		},
-		isServerHostFormInEdit() {
-			return this.formMode.server === F_MODES.EDIT
 		},
 		isNcOAuthFormInEdit() {
 			return this.formMode.ncOauth === F_MODES.EDIT
@@ -807,12 +756,9 @@ export default {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
 		adminFileStorageHref() {
-			let hostPart = ''
-			const urlPart = '%sadmin/settings/storages'
-			if (this.state?.openproject_instance_url.endsWith('/')) {
-				hostPart = this.state.openproject_instance_url
-			} else hostPart = this.state.openproject_instance_url + '/'
-			return util.format(urlPart, hostPart)
+			const path = '%s/admin/settings/storages'
+			const host = this.form.serverHost.value
+			return util.format(path, host)
 		},
 		openProjectClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
@@ -892,9 +838,6 @@ export default {
 				return false
 			}
 			return !this.opUserAppPassword
-		},
-		isResetButtonDisabled() {
-			return !(this.state.openproject_client_id || this.state.openproject_client_secret || this.state.openproject_instance_url)
 		},
 		showEncryptionWarningForGroupFolders() {
 			if (!this.isProjectFolderAlreadySetup || !this.state.app_password_set || this.isProjectFolderSetupFormInEdit) {
@@ -984,6 +927,8 @@ export default {
 		},
 	},
 	created() {
+		this.currentSetting = this.settingsStepper.next().value
+
 		this.init()
 		if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
 			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
@@ -1029,10 +974,6 @@ export default {
 				if (this.state.fresh_project_folder_setup === false) {
 					this.showDefaultManagedProjectFolders = true
 				}
-				if (this.state.openproject_instance_url) {
-					this.formMode.server = F_MODES.VIEW
-					this.isFormCompleted.server = true
-				}
 				if (this.state.authorization_method) {
 					this.formMode.authorizationMethod = F_MODES.VIEW
 					this.isFormCompleted.authorizationMethod = true
@@ -1068,12 +1009,10 @@ export default {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
 				}
-				if (this.state.openproject_instance_url) {
-					if (!this.state.authorization_method) {
-						this.formMode.authorizationMethod = F_MODES.EDIT
-					}
+				if (!this.state.authorization_method) {
+					this.formMode.authorizationMethod = F_MODES.EDIT
 				}
-				if (this.state.openproject_instance_url && this.state.authorization_method) {
+				if (this.state.authorization_method) {
 					if (!this.state.openproject_client_id && !this.state.openproject_client_secret) {
 						this.formMode.opOauth = F_MODES.EDIT
 					}
@@ -1113,6 +1052,13 @@ export default {
 				}
 			}
 		},
+		markFormComplete(formFn) {
+			formFn(this.form)
+			this.nextSettings()
+		},
+		nextSettings() {
+			this.currentSetting = this.settingsStepper.next().value
+		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
 			const linkText = this.messages.downloadAndEnableApp
 			const url = generateUrl('settings/apps/files/groupfolders')
@@ -1127,9 +1073,6 @@ export default {
 		closeRequestModal() {
 			this.show = false
 		},
-		setServerHostFormToViewMode() {
-			this.formMode.server = F_MODES.VIEW
-		},
 		setAuthorizationMethodToViewMode() {
 			this.formMode.authorizationMethod = F_MODES.VIEW
 			this.isFormCompleted.authorizationMethod = true
@@ -1141,12 +1084,6 @@ export default {
 			this.isFormCompleted.authorizationSetting = true
 			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
-		},
-		setServerHostFormToEditMode() {
-			this.formMode.server = F_MODES.EDIT
-			// set the edit variable to the current saved value
-			this.serverHostUrlForEdit = this.state.openproject_instance_url
-			this.isOpenProjectInstanceValid = null
 		},
 		setAuthorizationMethodInEditMode() {
 			this.formMode.authorizationMethod = F_MODES.EDIT
@@ -1229,23 +1166,6 @@ export default {
 			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
 				this.projectFolderSetupError = null
 			}
-		},
-		async saveOpenProjectHostUrl() {
-			this.isFormStep = FORM.SERVER
-			this.loadingServerHostForm = true
-			await this.validateOpenProjectInstance()
-			if (this.isOpenProjectInstanceValid) {
-				const saved = await this.saveOPOptions()
-				if (saved) {
-					this.state.openproject_instance_url = this.serverHostUrlForEdit
-					this.formMode.server = F_MODES.VIEW
-					this.isFormCompleted.server = true
-					if (!this.isFormCompleted.authorizationMethod) {
-						this.formMode.authorizationMethod = F_MODES.EDIT
-					}
-				}
-			}
-			this.loadingServerHostForm = false
 		},
 		async saveOPOAuthClientValues() {
 			this.isFormStep = FORM.OP_OAUTH
@@ -1394,7 +1314,6 @@ export default {
 			this.isFormCompleted.opOauth = false
 			this.isFormCompleted.server = false
 			this.formMode.opOauth = F_MODES.EDIT
-			this.formMode.server = F_MODES.EDIT
 			this.formMode.SSOSettings = F_MODES.NEW
 
 			this.state.default_enable_navigation = false
@@ -1412,107 +1331,17 @@ export default {
 			await this.saveOPOptions()
 			window.location.reload()
 		},
-		async validateOpenProjectInstance() {
-			const url = generateUrl('/apps/integration_openproject/is-valid-op-instance')
-			const response = await axios.post(url, { url: this.serverHostUrlForEdit })
-			this.openProjectNotReachableErrorMessageDetails = null
-			this.openProjectNotReachableErrorMessage = t(
-				'integration_openproject',
-				'Please introduce a valid OpenProject hostname',
-			)
-			if (response.data.result === true) {
-				this.isOpenProjectInstanceValid = true
-				this.state.openproject_instance_url = this.serverHostUrlForEdit
-			} else {
-				switch (response.data.result) {
-				case 'invalid':
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'URL is invalid',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'The URL should have the form "https://openproject.org"',
-					)
-					break
-				case 'not_valid_body':
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
-					)
-					break
-				case 'client_exception': {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'Response:',
-					) + ' "' + response.data.details + '"'
-					break
-				}
-				case 'server_exception': {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Server replied with an error message, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.details
-					break
-				}
-				case 'local_remote_servers_not_allowed': {
-					const linkText = t('integration_openproject', 'Documentation')
-					const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/" target="_blank" title="${linkText}">${linkText}</a>`
-
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Accessing OpenProject servers with local addresses is not allowed.',
-					)
-					this.openProjectNotReachableErrorMessageDetails = t(
-						'integration_openproject',
-						'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
-						{ htmlLink },
-						null,
-						{ escape: false, sanitize: false },
-					)
-					break
-				}
-				case 'redirected':
-				{
-					const location = response.data.details
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'The given URL redirects to \'{location}\'. Please do not use a URL that leads to a redirect.',
-						{ location },
-					)
-					break
-				}
-				case 'unexpected_error':
-				case 'network_error':
-				case 'request_exception':
-				default: {
-					this.openProjectNotReachableErrorMessage = t(
-						'integration_openproject',
-						'Could not connect to the given URL, please check the Nextcloud logs',
-					)
-					this.openProjectNotReachableErrorMessageDetails = response.data.details
-					break
-				}
-				}
-				this.isOpenProjectInstanceValid = false
-				await this.$nextTick()
-				await this.$refs['openproject-oauth-instance-input']?.$refs?.textInput?.focus()
-			}
-		},
 		getPayloadForSavingOPOptions() {
 			let values = {
 				openproject_client_id: this.state.openproject_client_id,
 				openproject_client_secret: this.state.openproject_client_secret,
-				openproject_instance_url: this.state.openproject_instance_url,
 				default_enable_navigation: this.state.default_enable_navigation,
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
-			if (this.state.openproject_instance_url === null && this.authorizationMethod.authorizationMethodSet === null) {
+			if (this.state.openproject_instance_url === null) {
+				values.openproject_instance_url = this.state.openproject_instance_url
+			}
+			if (this.authorizationMethod.authorizationMethodSet === null) {
 				// by default, it will be an oauth2 reset
 				values = {
 					...values,
