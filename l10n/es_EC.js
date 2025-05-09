@@ -17,7 +17,6 @@ OC.L10N.register(
     "Setup OpenProject user, group and folder" : "Configurar usuario, grupo y carpeta de OpenProject",
     "Administration > File storages" : "Configuración > Almacenamiento de archivos",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copia los siguientes valores de vuelta a tu OpenProject {htmlLink} como administrador.",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "No fue posible configurar el usuario, grupo y carpeta de OpenProject. Consulta {htmlLink} para resolver esta situación.",
     "URL is invalid" : "La URL no es válida",
     "The URL should have the form \"https://openproject.org\"" : "La URL debe tener la forma \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "No se detectó ninguna instancia válida de OpenProject en esa URL, por favor, verifica los registros de Nextcloud",
@@ -50,7 +49,6 @@ OC.L10N.register(
     "Automatically managed folders" : "Carpetas administradas automáticamente",
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Permite que OpenProject cree carpetas por proyecto automáticamente. Asegurará que cada miembro del equipo siempre tenga los permisos de acceso correctos.",
     "OpenProject user, group and folder" : "Usuario, grupo y carpeta de OpenProject",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para administrar automáticamente las carpetas de proyectos, esta aplicación necesita configurar una carpeta de grupo especial, asignada a un grupo y gestionada por un usuario, cada una llamada \"OpenProject\".",
     "The app will never delete files or folders, even if you deactivate this later." : "La aplicación nunca eliminará archivos o carpetas, incluso si desactivas esto más tarde.",
     "Retry setup OpenProject user, group and folder" : "Reintentar configurar usuario, grupo y carpeta de OpenProject",
     "Administration Settings > OpenProject" : "Configuración > OpenProject",
@@ -127,7 +125,9 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Un nuevo usuario recibirá estos valores predeterminados y se aplicarán a la aplicación de integración hasta que el usuario los cambie.",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Error al revocar algunos tokens de acceso de OAuth del usuario de OpenProject",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Tokens de acceso de OAuth del usuario de OpenProject revocados con éxito",
+    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "No fue posible configurar el usuario, grupo y carpeta de OpenProject. Consulta {htmlLink} para resolver esta situación.",
     "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Por favor, instala la aplicación \"Group folders\" para poder utilizar carpetas administradas automáticamente o desactiva las carpetas administradas automáticamente.",
-    "Reset OpenProject Integration" : "Restablecer integración de OpenProject"
+    "Reset OpenProject Integration" : "Restablecer integración de OpenProject",
+    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para administrar automáticamente las carpetas de proyectos, esta aplicación necesita configurar una carpeta de grupo especial, asignada a un grupo y gestionada por un usuario, cada una llamada \"OpenProject\"."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
