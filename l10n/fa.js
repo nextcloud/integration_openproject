@@ -18,7 +18,6 @@ OC.L10N.register(
     "Setup OpenProject user, group and folder" : "Setup OpenProject user, group and folder",
     "Administration > File storages" : "Administration > File storages",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copy the following values back into the OpenProject {htmlLink} as an Administrator.",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.",
     "URL is invalid" : "URL is invalid",
     "The URL should have the form \"https://openproject.org\"" : "The URL should have the form \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs",
@@ -53,7 +52,6 @@ OC.L10N.register(
     "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders." : "We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.",
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.",
     "OpenProject user, group and folder" : "OpenProject user, group and folder",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\".",
     "The app will never delete files or folders, even if you deactivate this later." : "The app will never delete files or folders, even if you deactivate this later.",
     "Retry setup OpenProject user, group and folder" : "Retry setup OpenProject user, group and folder",
     "Administration Settings > OpenProject" : "Administration Settings > OpenProject",
@@ -132,7 +130,9 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "A new user will receive these defaults and they will be applied to the integration app till the user changes them.",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Failed to revoke some user(s) OpenProject OAuth access token(s)",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Successfully revoked user(s) OpenProject OAuth access token(s)",
+    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation.",
     "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders.",
-    "Reset OpenProject Integration" : "Reset OpenProject Integration"
+    "Reset OpenProject Integration" : "Reset OpenProject Integration",
+    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"."
 },
 "nplurals=2; plural=(n > 1);");
