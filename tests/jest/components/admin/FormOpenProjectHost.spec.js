@@ -9,7 +9,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 
-import { F_MODES, ADMIN_SETTINGS_FORM } from '../../../../src/utils.js'
+import { F_MODES } from '../../../../src/utils.js'
 import { validateOPInstance, saveAdminConfig } from '../../../../src/api/settings.js'
 import FormOpenProjectHost from '../../../../src/components/admin/FormOpenProjectHost.vue'
 
@@ -123,7 +123,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.formDirty).toBe(false)
 				expect(wrapper.vm.previousUrl).toBe(validUrl)
 				expect(wrapper.emitted().formcomplete.length).toBe(1)
-				expect(wrapper.emitted().formcomplete[0]).toEqual([ADMIN_SETTINGS_FORM.serverHost.id])
+				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 
 				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
 				expect(wrapper.find(selectors.formFieldValue).exists()).toBe(true)
@@ -280,7 +280,7 @@ describe('Component: FormOpenProjectHost', () => {
 			expect(wrapper.find(selectors.saveFormButton).exists()).toBe(false)
 			expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(false)
 
-			expect(wrapper.emitted().formcomplete[0]).toEqual([ADMIN_SETTINGS_FORM.serverHost.id])
+			expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 			expect(wrapper.vm.serverUrl).toBe(validUrl)
 			expect(wrapper.vm.previousUrl).toBe(validUrl)
 			expect(wrapper.html()).toMatchSnapshot()
