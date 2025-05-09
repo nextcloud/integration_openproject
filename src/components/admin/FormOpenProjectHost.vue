@@ -123,7 +123,7 @@ export default {
 			this.setFromToViewMode()
 			this.serverUrl = this.openprojectUrl
 			this.previousUrl = this.openprojectUrl
-			this.$emit('formcomplete', this.formId)
+			this.$emit('formcomplete', this.markFormComplete)
 		}
 	},
 	methods: {
@@ -153,6 +153,11 @@ export default {
 		setFormToEditMode() {
 			this.setFormMode(F_MODES.EDIT)
 		},
+		markFormComplete(form) {
+			form.serverHost.value = this.serverUrl
+			form.serverHost.complete = true
+			return form
+		},
 		cancelEdit() {
 			this.setFormMode(F_MODES.VIEW)
 			if (this.openprojectUrl) {
@@ -177,7 +182,7 @@ export default {
 					showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 
 					if (!this.isFormComplete) {
-						this.$emit('formcomplete', this.formId)
+						this.$emit('formcomplete', this.markFormComplete)
 					}
 
 					this.formDirty = false

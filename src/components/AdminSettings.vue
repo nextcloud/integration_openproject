@@ -756,12 +756,9 @@ export default {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
 		adminFileStorageHref() {
-			let hostPart = ''
-			const urlPart = '%sadmin/settings/storages'
-			if (this.state?.openproject_instance_url.endsWith('/')) {
-				hostPart = this.state.openproject_instance_url
-			} else hostPart = this.state.openproject_instance_url + '/'
-			return util.format(urlPart, hostPart)
+			const path = '%s/admin/settings/storages'
+			const host = this.form.serverHost.value
+			return util.format(path, host)
 		},
 		openProjectClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
@@ -1055,9 +1052,8 @@ export default {
 				}
 			}
 		},
-		markFormComplete(formId) {
-			const form = Object.values(this.form).find(({ id }) => id === formId)
-			form.complete = true
+		markFormComplete(formFn) {
+			formFn(this.form)
 			this.nextSettings()
 		},
 		nextSettings() {

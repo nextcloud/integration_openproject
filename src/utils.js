@@ -98,11 +98,13 @@ export const ADMIN_SETTINGS_FORM = {
 	serverHost: {
 		id: 'server-host',
 		complete: false,
+		value: '',
 	},
 	// order: 2
 	authenticationMethod: {
 		id: 'authentication-method',
 		complete: false,
+		value: '',
 	},
 	projectFolder: {
 		id: 'project-folder',
