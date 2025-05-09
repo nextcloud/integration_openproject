@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Support OIDC authentication method between Nextcloud and OpenProject
+  - Required apps and versions:
+    - [user_oidc](https://github.com/nextcloud/user_oidc): `>=7.2.0`
+    - [oidc](https://github.com/h2CK/oidc): `>=1.6.0`
   - Show error if connection cannot be made to OpenProject [#756](https://github.com/nextcloud/integration_openproject/pull/756)
   - Show proper error message in the dashboard based on auth method [#770](https://github.com/nextcloud/integration_openproject/pull/770)
   - Show error if user_oidc app is not available [#753](https://github.com/nextcloud/integration_openproject/pull/753)
