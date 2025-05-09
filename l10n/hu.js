@@ -17,7 +17,6 @@ OC.L10N.register(
     "Setup OpenProject user, group and folder" : "Az OpenProject felhasználó, csoport és mappa beállítása",
     "Administration > File storages" : "Adminisztráció > Fájltárolók",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Másolja vissza a következő értékeket az OpenProjectbe {htmlLink} adminisztrátorként.",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Az OpenProject felhasználó, csoport és csoportmappa beállítása nem volt lehetséges. A probléma megoldásához nézze meg ezt: {htmlLink}.",
     "URL is invalid" : "A webcím érvénytelen",
     "The URL should have the form \"https://openproject.org\"" : "A webcímnek ilyen formátumúnak kell lennie: „https://openproject.org”",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Nem figyel érvényes OpenProject-példány ezen a webcímen, ellenőrizze a Nextcloud naplóit",
@@ -52,7 +51,6 @@ OC.L10N.register(
     "Automatically managed folders" : "Automatikusan kezelt mappák",
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Hagyja, hogy az OpenProject automatikusan hozzon létre mappákat projektenként. Biztosítani fogja, hogy minden csapattag mindig a megfelelő hozzáférési jogosultságokkal fog rendelkezni.",
     "OpenProject user, group and folder" : "OpenProject felhasználó, csoport és mappa",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "A projektmappák automatikus kezeléséhez az alkalmazásnak egy speciális csoportmappa beállítására van szüksége, amely egy csoporthoz van rendelve, és egy felhasználó kezeli, mindkettő neve „OpenProject”.",
     "The app will never delete files or folders, even if you deactivate this later." : "Az alkalmazás sosem fog fájlokat vagy mappákat törölni, még akkor sem, ha később kikapcsolja.",
     "Retry setup OpenProject user, group and folder" : "Az OpenProject felhasználó, csoport és mappa újbóli beállítása",
     "Automatically managed folders:" : "Automatikusan kezelt mappák:",
@@ -134,6 +132,8 @@ OC.L10N.register(
     "A new user will receive these defaults and they will be applied to the integration app till the user changes them." : "Egy új felhasználó ezeket az alapértelmezéseket fogja kapni, és addig ez lesz alkalmazva az integrációs alkalmazásra, míg a felhasználó meg nem változtatja őket.",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Egyes felhasználók OpenProject OAuth hozzáférési tokenjeinek visszavonása sikertelen",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "A felhasználók OpenProject OAuth hozzáférési tokenjének visszavonása sikertelen",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Telepítse a „Csoportmappák” alkalmazást, hogy használhassa vagy deaktiválhassa az automatikusan kezelt mappákat."
+    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Az OpenProject felhasználó, csoport és csoportmappa beállítása nem volt lehetséges. A probléma megoldásához nézze meg ezt: {htmlLink}.",
+    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Telepítse a „Csoportmappák” alkalmazást, hogy használhassa vagy deaktiválhassa az automatikusan kezelt mappákat.",
+    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "A projektmappák automatikus kezeléséhez az alkalmazásnak egy speciális csoportmappa beállítására van szüksége, amely egy csoporthoz van rendelve, és egy felhasználó kezeli, mindkettő neve „OpenProject”."
 },
 "nplurals=2; plural=(n != 1);");
