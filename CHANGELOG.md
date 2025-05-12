@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show error when the user_oidc app not supported [#768](https://github.com/nextcloud/integration_openproject/pull/768)
 - Support setup with Nextcloud Hub [#778](https://github.com/nextcloud/integration_openproject/pull/778)
 - Add option to enable/disable token exchange with external OIDC provider [#797](https://github.com/nextcloud/integration_openproject/pull/797)
+- Renamed "Group folder" to "Team folder" [#815](https://github.com/nextcloud/integration_openproject/pull/815)
 
 ### Changed
 
