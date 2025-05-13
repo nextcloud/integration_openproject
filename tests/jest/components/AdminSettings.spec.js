@@ -10,7 +10,7 @@ import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import { F_MODES, AUTH_METHOD } from '../../../src/utils.js'
+import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
 import { messages, messagesFmt } from '../../../src/constants/messages.js'
 
@@ -72,8 +72,6 @@ Object.assign(global.navigator, {
 })
 
 const selectors = {
-	oauthInstanceInput: '#openproject-oauth-instance > .text-input-input-wrapper > input',
-	serverHostForm: '.openproject-server-host',
 	opOauthForm: '.openproject-oauth-values',
 	authorizationMethod: '.authorization-method',
 	authorizationSettings: '.authorization-settings',
@@ -93,13 +91,11 @@ const selectors = {
 	projectFolderSetupForm: '.project-folder-setup',
 	resetServerHostButton: '[data-test-id="reset-server-host-btn"]',
 	textInputWrapper: '.text-input',
-	cancelEditServerHostForm: '[data-test-id="cancel-edit-server-host-btn"]',
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
 	opOauthClientIdInput: '#openproject-oauth-client-id > .text-input-input-wrapper > input',
 	opOauthClientSecretInput: '#openproject-oauth-client-secret > .text-input-input-wrapper > input',
-	submitServerHostFormButton: '[data-test-id="submit-server-host-form-btn"]',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
@@ -165,15 +161,13 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: null,
 				},
 				{
-					server: F_MODES.EDIT,
-					authorizationMethod: F_MODES.DISABLE,
+					authorizationMethod: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
 					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: false,
 					authorizationMethod: false,
 					opOauth: false,
 					ncOauth: false,
@@ -191,7 +185,6 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: null,
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.EDIT,
 					opOauth: F_MODES.DISABLE,
 					ncOauth: F_MODES.DISABLE,
@@ -199,7 +192,6 @@ describe('AdminSettings.vue', () => {
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: false,
 					opOauth: false,
 					ncOauth: false,
@@ -217,7 +209,6 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: null,
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.DISABLE,
@@ -225,7 +216,6 @@ describe('AdminSettings.vue', () => {
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					opOauth: false,
 					ncOauth: false,
@@ -244,7 +234,6 @@ describe('AdminSettings.vue', () => {
 					fresh_project_folder_setup: true,
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.DISABLE,
@@ -252,7 +241,6 @@ describe('AdminSettings.vue', () => {
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					opOauth: true,
 					ncOauth: false,
@@ -273,7 +261,6 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					opOauth: F_MODES.EDIT,
 					ncOauth: F_MODES.VIEW,
@@ -281,7 +268,6 @@ describe('AdminSettings.vue', () => {
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					opOauth: false,
 					ncOauth: true,
@@ -302,7 +288,6 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					opOauth: F_MODES.VIEW,
 					ncOauth: F_MODES.VIEW,
@@ -310,7 +295,6 @@ describe('AdminSettings.vue', () => {
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					opOauth: true,
 					ncOauth: true,
@@ -320,14 +304,13 @@ describe('AdminSettings.vue', () => {
 			],
 		])('when the form is loaded %s', (name, state, expectedFormMode, expectedFormState) => {
 			const wrapper = getWrapper({ state })
-			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
+			expect(wrapper.vm.currentSetting).toBe(ADMIN_SETTINGS_FORM.serverHost.id)
 			expect(wrapper.vm.formMode.authorizationMethod).toBe(expectedFormMode.authorizationMethod)
 			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
 			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
 			expect(wrapper.vm.formMode.projectFolderSetUp).toBe(expectedFormMode.projectFolderSetUp)
 			expect(wrapper.vm.formMode.opUserAppPassword).toBe(expectedFormMode.opUserAppPassword)
 
-			expect(wrapper.vm.isFormCompleted.server).toBe(expectedFormState.server)
 			expect(wrapper.vm.isFormCompleted.authorizationMethod).toBe(expectedFormState.authorizationMethod)
 			expect(wrapper.vm.isFormCompleted.opOauth).toBe(expectedFormState.opOauth)
 			expect(wrapper.vm.isFormCompleted.ncOauth).toBe(expectedFormState.ncOauth)
@@ -349,14 +332,12 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.EDIT,
-					authorizationMethod: F_MODES.DISABLE,
+					authorizationMethod: F_MODES.EDIT,
 					authorizationSetting: F_MODES.DISABLE,
 					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: false,
 					authorizationMethod: false,
 					authorizationSetting: false,
 					projectFolderSetUp: false,
@@ -374,14 +355,12 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.EDIT,
 					authorizationSetting: F_MODES.DISABLE,
 					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: false,
 					authorizationSetting: false,
 					projectFolderSetUp: false,
@@ -399,14 +378,12 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					authorizationSetting: F_MODES.EDIT,
 					projectFolderSetUp: F_MODES.DISABLE,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					authorizationSetting: false,
 					projectFolderSetUp: false,
@@ -425,14 +402,12 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					authorizationSetting: F_MODES.VIEW,
 					projectFolderSetUp: F_MODES.VIEW,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					authorizationSetting: true,
 					projectFolderSetUp: true,
@@ -452,14 +427,12 @@ describe('AdminSettings.vue', () => {
 					fresh_project_folder_setup: false,
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					authorizationSetting: F_MODES.EDIT,
 					projectFolderSetUp: F_MODES.VIEW,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					authorizationSetting: false,
 					projectFolderSetUp: true,
@@ -478,14 +451,12 @@ describe('AdminSettings.vue', () => {
 					},
 				},
 				{
-					server: F_MODES.VIEW,
 					authorizationMethod: F_MODES.VIEW,
 					authorizationSetting: F_MODES.VIEW,
 					projectFolderSetUp: F_MODES.VIEW,
 					opUserAppPassword: F_MODES.DISABLE,
 				},
 				{
-					server: true,
 					authorizationMethod: true,
 					authorizationSetting: true,
 					projectFolderSetUp: true,
@@ -494,13 +465,12 @@ describe('AdminSettings.vue', () => {
 			],
 		])('when the form is loaded %s', (name, state, expectedFormMode, expectedFormState) => {
 			const wrapper = getWrapper({ state })
-			expect(wrapper.vm.formMode.server).toBe(expectedFormMode.server)
+			expect(wrapper.vm.currentSetting).toBe(ADMIN_SETTINGS_FORM.serverHost.id)
 			expect(wrapper.vm.formMode.authorizationMethod).toBe(expectedFormMode.authorizationMethod)
 			expect(wrapper.vm.formMode.authorizationSetting).toBe(expectedFormMode.authorizationSetting)
 			expect(wrapper.vm.formMode.projectFolderSetUp).toBe(expectedFormMode.projectFolderSetUp)
 			expect(wrapper.vm.formMode.opUserAppPassword).toBe(expectedFormMode.opUserAppPassword)
 
-			expect(wrapper.vm.isFormCompleted.server).toBe(expectedFormState.server)
 			expect(wrapper.vm.isFormCompleted.authorizationMethod).toBe(expectedFormState.authorizationMethod)
 			expect(wrapper.vm.isFormCompleted.authorizationSetting).toBe(expectedFormState.authorizationSetting)
 			expect(wrapper.vm.isFormCompleted.projectFolderSetUp).toBe(expectedFormState.projectFolderSetUp)
@@ -587,261 +557,6 @@ describe('AdminSettings.vue', () => {
 			const wrapper = getMountedWrapper({ state: completeOIDCIntegrationState })
 			const setupIntegrationDocumentationLink = wrapper.find(selectors.setupIntegrationDocumentationLinkSelector)
 			expect(setupIntegrationDocumentationLink.text()).toBe('Visit our documentation for in-depth information on {htmlLink} integration.')
-		})
-	})
-
-	describe('server host url form', () => {
-		describe('view mode and completed state', () => {
-			let wrapper, resetButton
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-					},
-				})
-				resetButton = wrapper.find(selectors.resetServerHostButton)
-			})
-			it('should show field value and hide the input field', () => {
-				expect(wrapper.find(selectors.serverHostForm)).toMatchSnapshot()
-			})
-			describe('reset button', () => {
-				it('should be visible when the form is in completed state', async () => {
-					expect(resetButton).toMatchSnapshot()
-				})
-				it("should set the form to 'edit' mode on click", async () => {
-					await resetButton.trigger('click')
-
-					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
-				})
-				it('should set the saved url to the edit parameter on click', async () => {
-					const wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-						},
-					})
-					resetButton = wrapper.find(selectors.resetServerHostButton)
-
-					expect(wrapper.vm.serverHostUrlForEdit).toBe(null)
-
-					await resetButton.trigger('click')
-
-					expect(wrapper.vm.serverHostUrlForEdit).toBe('http://openproject.com')
-					expect(wrapper.vm.state.openproject_instance_url).toBe('http://openproject.com')
-				})
-			})
-		})
-		describe('edit mode', () => {
-			it('should reset open project server host validity check on input', async () => {
-				const wrapper = getMountedWrapper()
-				await wrapper.setData({
-					isOpenProjectInstanceValid: true,
-				})
-
-				const oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
-				await oauthInstanceInput.trigger('input')
-				await wrapper.vm.$nextTick()
-
-				expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
-			})
-
-			describe('readonly state', () => {
-				let wrapper, oauthInstanceInput
-				beforeEach(() => {
-					wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: '',
-						},
-					})
-					oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
-				})
-				it('should set the input field to readonly at first', () => {
-					expect(oauthInstanceInput).toMatchSnapshot()
-				})
-				it('should clear the readonly state when clicked on the input', async () => {
-					await oauthInstanceInput.trigger('click')
-					oauthInstanceInput = wrapper.find(selectors.oauthInstanceInput)
-					expect(oauthInstanceInput).toMatchSnapshot()
-				})
-			})
-			describe('submit button', () => {
-				it.each([
-					{
-						data: {
-							result: 'client_exception',
-							details: '404 Not Found',
-						},
-						expectedDetailsMessage: 'Response: "404 Not Found"',
-					},
-					{
-						data: {
-							result: 'invalid',
-						},
-						expectedDetailsMessage: 'The URL should have the form "https://openproject.org"',
-					},
-					{
-						data: {
-							result: 'server_exception',
-							details: '503 Service Unavailable',
-						},
-						expectedDetailsMessage: '503 Service Unavailable',
-					},
-					{
-						data: {
-							result: 'request_exception',
-							details: 'a long message from the exception',
-						},
-						expectedDetailsMessage: 'a long message from the exception',
-					},
-					{
-						data: {
-							result: 'local_remote_servers_not_allowed',
-						},
-						expectedDetailsMessage: 'To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}.',
-					},
-					{
-						data: {
-							result: 'network_error',
-							details: 'a long message from the exception',
-						},
-						expectedDetailsMessage: 'a long message from the exception',
-					},
-					{
-						data: {
-							result: 'unexpected_error',
-							details: 'a long message from the exception',
-						},
-						expectedDetailsMessage: 'a long message from the exception',
-					},
-					{
-						data: {
-							result: 'not_valid_body',
-							details: '<body>the complete body of the return</body>',
-						},
-						expectedDetailsMessage: null,
-					},
-					{
-						data: {
-							result: 'redirected',
-							details: 'https://openproject.org/',
-						},
-						expectedDetailsMessage: null,
-					},
-				])('should set the input to error state and display correct message when the url is invalid', async (testCase) => {
-					dialogs.showError.mockImplementationOnce()
-					jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({ data: testCase.data }))
-					const saveOPOptionsSpy = jest.spyOn(AdminSettings.methods, 'saveOPOptions')
-						.mockImplementationOnce(() => jest.fn())
-
-					const wrapper = getMountedWrapper()
-					await wrapper.setData({
-						serverHostUrlForEdit: 'does-not-matter-for-the-test',
-					})
-
-					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
-
-					const submitServerFormButton = wrapper.find(selectors.submitServerHostFormButton)
-					await submitServerFormButton.trigger('click')
-
-					for (let i = 0; i <= 100; i++) {
-						await wrapper.vm.$nextTick()
-					}
-
-					const serverHostForm = wrapper.find(selectors.serverHostForm)
-					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(false)
-					expect(serverHostForm.find(selectors.textInputWrapper)).toMatchSnapshot()
-					expect(saveOPOptionsSpy).toBeCalledTimes(0)
-					expect(wrapper.vm.openProjectNotReachableErrorMessageDetails)
-						.toBe(testCase.expectedDetailsMessage)
-					jest.clearAllMocks()
-				})
-				it('should save the form when the url is valid', async () => {
-					let serverHostForm
-					jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({ data: { result: true } }))
-					const setAdminConfigAPISpy = jest.spyOn(axios, 'put')
-						.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }))
-
-					const wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: '',
-							authorization_method: null,
-							openproject_client_id: null,
-							openproject_client_secret: null,
-							nc_oauth_client: null,
-						},
-					})
-
-					expect(wrapper.vm.formMode.server).toBe(F_MODES.EDIT)
-					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(null)
-					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.DISABLE)
-
-					serverHostForm = wrapper.find(selectors.serverHostForm)
-					await serverHostForm.find('input').setValue('http://openproject.com')
-					serverHostForm = wrapper.find(selectors.serverHostForm)
-					await serverHostForm.find(selectors.submitServerHostFormButton).trigger('click')
-
-					for (let i = 0; i <= 100; i++) {
-						await wrapper.vm.$nextTick()
-					}
-
-					expect(wrapper.vm.isOpenProjectInstanceValid).toBe(true)
-					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
-					expect(wrapper.vm.isFormCompleted.server).toBe(true)
-					expect(setAdminConfigAPISpy).toBeCalledTimes(1)
-					// should set the OpenProject OAuth Values form to edit mode
-					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.EDIT)
-				})
-			})
-			describe('disabled state', () => {
-				it.each(['', null])('should set the submit button as disabled when url is empty', (value) => {
-					const wrapper = getWrapper({
-						state: { openproject_instance_url: value },
-					})
-					const serverHostForm = wrapper.find(selectors.serverHostForm)
-					const submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
-					expect(submitButton.attributes().disabled).toBe('true')
-				})
-				it('should unset the disabled state on input', async () => {
-					const wrapper = getMountedWrapper({
-						state: { openproject_instance_url: '' },
-					})
-					let submitButton
-					const serverHostForm = wrapper.find(selectors.serverHostForm)
-					submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
-					expect(submitButton.attributes().disabled).toBe('disabled')
-
-					// first click to enable the input field
-					await serverHostForm.find('input').trigger('click')
-					await serverHostForm.find('input').setValue('a')
-
-					submitButton = serverHostForm.find(selectors.submitServerHostFormButton)
-					expect(submitButton.attributes().disabled).toBe(undefined)
-				})
-			})
-			describe('cancel button', () => {
-				let wrapper, editButton
-				beforeEach(async () => {
-					wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-						},
-					})
-					await wrapper.setData({
-						formMode: {
-							server: F_MODES.EDIT,
-						},
-					})
-					editButton = wrapper.find(selectors.cancelEditServerHostForm)
-				})
-				it('should be visible when the form is in completed state with edit mode', async () => {
-					expect(editButton).toMatchSnapshot()
-				})
-				it('should set the form to view mode on click', async () => {
-					await editButton.trigger('click')
-					expect(wrapper.vm.formMode.server).toBe(F_MODES.VIEW)
-				})
-			})
 		})
 	})
 
@@ -993,6 +708,8 @@ describe('AdminSettings.vue', () => {
 					wrapper = getMountedWrapper({
 						state: completeOAUTH2IntegrationState,
 					})
+					await wrapper.setData({ currentSetting: ADMIN_SETTINGS_FORM.authenticationMethod.id })
+
 					authorizationMethodForm = wrapper.find(selectors.authorizationMethod)
 					resetButton = authorizationMethodForm.find(selectors.authorizationMethodResetButton)
 					expect(resetButton.exists()).toBe(true)
@@ -1081,7 +798,6 @@ describe('AdminSettings.vue', () => {
 						expect(saveOPOptionsSpy).toBeCalledTimes(1)
 						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
 							values: expect.objectContaining({
-								openproject_instance_url: 'http://openproject.com',
 								openproject_client_id: '',
 								openproject_client_secret: '',
 							}),
@@ -1168,7 +884,6 @@ describe('AdminSettings.vue', () => {
 						expect(saveOPOptionsSpy).toBeCalledTimes(1)
 						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
 							values: expect.objectContaining({
-								openproject_instance_url: 'http://openproject.com',
 								oidc_provider: null,
 								targeted_audience_client_id: null,
 							}),
@@ -1219,7 +934,12 @@ describe('AdminSettings.vue', () => {
 							sso_provider_type: 'nextcloud_hub',
 						},
 					}
-					wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
+					wrapper = getWrapper({
+						state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true },
+						form: {
+							serverHost: { complete: true },
+						},
+					})
 				})
 				it('should show configured OIDC authorization', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1239,7 +959,12 @@ describe('AdminSettings.vue', () => {
 
 			describe('unsupported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false } })
+					wrapper = getWrapper({
+						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false },
+						form: {
+							serverHost: { complete: true },
+						},
+					})
 				})
 				it('should show field values and hide authorization settings form', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1265,7 +990,12 @@ describe('AdminSettings.vue', () => {
 
 			describe('supported user_oidc app disabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false, user_oidc_supported: true } })
+					wrapper = getWrapper({
+						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false, user_oidc_supported: true },
+						form: {
+							serverHost: { complete: true },
+						},
+					 })
 				})
 				it('should show field values and hide authorization settings form', () => {
 					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1305,6 +1035,9 @@ describe('AdminSettings.vue', () => {
 								user_oidc_enabled: true,
 								user_oidc_supported: true,
 							},
+							form: {
+								serverHost: { complete: true },
+							},
 						})
 					})
 					it('should show configured OIDC authorization', () => {
@@ -1330,6 +1063,9 @@ describe('AdminSettings.vue', () => {
 								sso_provider_type: 'external',
 								token_exchange: true,
 							},
+							form: {
+								serverHost: { complete: true },
+							},
 						}
 						wrapper = getWrapper({
 							state: {
@@ -1337,6 +1073,9 @@ describe('AdminSettings.vue', () => {
 								...authSettings,
 								user_oidc_enabled: true,
 								user_oidc_supported: true,
+							},
+							form: {
+								serverHost: { complete: true },
 							},
 						})
 					})
@@ -2103,7 +1842,6 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
-										openproject_instance_url: 'http://openproject.com',
 										openproject_client_id: 'qwerty',
 										openproject_client_secret: 'qwerty',
 									},
@@ -3042,6 +2780,77 @@ describe('AdminSettings.vue', () => {
 	})
 
 	describe('reset button', () => {
+		it.each([
+			{
+				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: 'some-client-secret-for-op',
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
+				openproject_client_id: null,
+				openproject_client_secret: null,
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: null,
+				authorization_method: null,
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: 'some-client-secret-for-op',
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: null,
+				authorization_method: null,
+				openproject_client_id: null,
+				openproject_client_secret: 'some-client-secret-for-op',
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: 'http://openproject.com',
+				authorization_method: AUTH_METHOD.OAUTH2,
+				openproject_client_id: null,
+				openproject_client_secret: 'some-client-secret-for-op',
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: null,
+				authorization_method: null,
+				openproject_client_id: 'some-client-id-for-op',
+				openproject_client_secret: null,
+				sso_provider_type: null,
+			},
+			{
+				openproject_instance_url: null,
+				authorization_method: null,
+				openproject_client_id: '',
+				openproject_client_secret: null,
+				sso_provider_type: 'nextcloud_hub',
+			},
+		])('should not be disabled when any of the Open Project setting is set', (value) => {
+			const wrapper = getWrapper({
+				state: value,
+			})
+			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
+			expect(resetButton.attributes('disabled')).toBe(undefined)
+		})
+		it('should be disabled when no Open Project setting is set', async () => {
+			const wrapper = getWrapper({
+				state: {
+					openproject_instance_url: null,
+					authorization_method: null,
+					openproject_client_id: null,
+					openproject_client_secret: null,
+					sso_provider_type: null,
+				},
+			})
+			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
+			expect(resetButton.attributes('disabled')).toBe('true')
+		})
+
 		describe('reset all app settings', () => {
 			let wrapper
 			let confirmSpy
@@ -3067,7 +2876,6 @@ describe('AdminSettings.vue', () => {
 			afterEach(() => {
 				jest.clearAllMocks()
 			})
-
 			it('should trigger confirm dialog on click', async () => {
 				const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
 				await resetButton.trigger('click')
@@ -3090,7 +2898,6 @@ describe('AdminSettings.vue', () => {
 					true,
 				)
 			})
-
 			it('should reset all settings on confirm when project folder is not setup', async () => {
 				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 					.mockImplementationOnce(() => Promise.resolve({ data: true }))
@@ -3113,7 +2920,6 @@ describe('AdminSettings.vue', () => {
 				)
 				axios.put.mockReset()
 			})
-
 			it('should reset all settings on confirm along with app password when app password is set', async () => {
 				wrapper = getMountedWrapper({
 					state: {
@@ -3154,71 +2960,12 @@ describe('AdminSettings.vue', () => {
 				expect(wrapper.vm.oPUserAppPassword).not.toBe('oPUserAppPassword')
 				axios.put.mockReset()
 			})
-
 			it('should reload the window at the end', async () => {
 				await wrapper.vm.resetAllAppValues()
 				await wrapper.vm.$nextTick()
 				expect(window.location.reload).toBeCalledTimes(1)
 				window.location = location
 			})
-		})
-
-		it.each([
-			{
-				openproject_instance_url: 'http://openproject.com',
-				authorization_method: AUTH_METHOD.OAUTH2,
-				openproject_client_id: 'some-client-id-for-op',
-				openproject_client_secret: 'some-client-secret-for-op',
-			},
-			{
-				openproject_instance_url: 'http://openproject.com',
-				authorization_method: AUTH_METHOD.OAUTH2,
-				openproject_client_id: null,
-				openproject_client_secret: null,
-			},
-			{
-				openproject_instance_url: null,
-				authorization_method: null,
-				openproject_client_id: 'some-client-id-for-op',
-				openproject_client_secret: 'some-client-secret-for-op',
-			},
-			{
-				openproject_instance_url: null,
-				authorization_method: null,
-				openproject_client_id: null,
-				openproject_client_secret: 'some-client-secret-for-op',
-			},
-			{
-				openproject_instance_url: 'http://openproject.com',
-				authorization_method: AUTH_METHOD.OAUTH2,
-				openproject_client_id: null,
-				openproject_client_secret: 'some-client-secret-for-op',
-			},
-			{
-				openproject_instance_url: null,
-				authorization_method: null,
-				openproject_client_id: 'some-client-id-for-op',
-				openproject_client_secret: null,
-			},
-		])('should not be disabled when any of the Open Project setting is set', (value) => {
-			const wrapper = getMountedWrapper({
-				state: value,
-			})
-			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
-			expect(resetButton.attributes('disabled')).toBe(undefined)
-		})
-
-		it('should be disabled when no Open Project setting is set', async () => {
-			const wrapper = getMountedWrapper({
-				state: {
-					openproject_instance_url: null,
-					authorization_method: null,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-				},
-			})
-			const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
-			expect(resetButton.attributes('disabled')).toBe('disabled')
 		})
 	})
 
@@ -3241,7 +2988,6 @@ describe('AdminSettings.vue', () => {
 			})
 			expect(wrapper.find(selectors.defaultUserConfigurationsForm).exists()).toBeFalsy()
 		})
-
 		it('should show success message and update the default config on success', async () => {
 			dialogs.showSuccess.mockImplementationOnce()
 			const saveDefaultsSpy = jest.spyOn(axios, 'put')
@@ -3257,6 +3003,9 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
 					},
+				},
+				form: {
+					serverHost: { complete: true },
 				},
 			})
 
@@ -3275,7 +3024,6 @@ describe('AdminSettings.vue', () => {
 			expect(dialogs.showSuccess).toBeCalledTimes(1)
 			expect(dialogs.showSuccess).toBeCalledWith('Default user configuration saved')
 		})
-
 		it('should show error message on fail response', async () => {
 			// mock the dialogs showError method
 			dialogs.showError.mockImplementationOnce()
@@ -3299,6 +3047,9 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
 					},
+				},
+				form: {
+					serverHost: { complete: true },
 				},
 			})
 			const $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
