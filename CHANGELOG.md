@@ -37,6 +37,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename admin settings labels: `Authorization` -> `Authentication` [#758](https://github.com/nextcloud/integration_openproject/pull/758)
 - Drop support for Nextcloud 27 [#779](https://github.com/nextcloud/integration_openproject/pull/779)
 
+### Fixed
+
+- Fix authentication method documentation link [#820](https://github.com/nextcloud/integration_openproject/pull/820)
+
 ## 2.8.1 - 2025-02-05
 
 ### Fixed
