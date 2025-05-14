@@ -9,7 +9,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 
-import { F_MODES } from '../../../../src/utils.js'
+import { ADMIN_SETTINGS_FORM, F_MODES } from '../../../../src/utils.js'
 import { validateOPInstance, saveAdminConfig } from '../../../../src/api/settings.js'
 import FormOpenProjectHost from '../../../../src/components/admin/FormOpenProjectHost.vue'
 
@@ -71,7 +71,7 @@ describe('Component: FormOpenProjectHost', () => {
 
 			expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
 			expect(wrapper.vm.formDirty).toBe(true)
-			expect(wrapper.vm.previousUrl).toBe('')
+			expect(wrapper.vm.savedOpenprojectUrl).toBe(null)
 		})
 		it('should disable save if url is empty', async () => {
 			// set new url
@@ -109,7 +109,7 @@ describe('Component: FormOpenProjectHost', () => {
 				const saveFormButton = wrapper.find(selectors.saveFormButton)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe('')
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(null)
 
 				saveFormButton.vm.$emit('click')
 				await flushPromises()
@@ -121,7 +121,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.loading).toBe(false)
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
 				expect(wrapper.vm.formDirty).toBe(false)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 				expect(wrapper.emitted().formcomplete.length).toBe(1)
 				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 
@@ -147,7 +147,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.loading).toBe(false)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe('')
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(null)
 				expect(wrapper.emitted()).not.toHaveProperty('formcomplete')
 
 				expect(wrapper.find(selectors.serverHostInput).exists()).toBe(true)
@@ -237,7 +237,7 @@ describe('Component: FormOpenProjectHost', () => {
 				const serverHostInput = wrapper.find(selectors.serverHostInput)
 				serverHostInput.vm.$emit('input', url)
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe('')
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(null)
 
 				const saveFormButton = wrapper.find(selectors.saveFormButton)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
@@ -251,7 +251,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.errorDetails).toBe(expectedDetails)
 				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe('')
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(null)
 				expect(wrapper.emitted()).not.toHaveProperty('formcomplete')
 
 				expect(wrapper.find(selectors.serverHostInput).exists()).toBe(true)
@@ -282,7 +282,7 @@ describe('Component: FormOpenProjectHost', () => {
 
 			expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 			expect(wrapper.vm.serverUrl).toBe(validUrl)
-			expect(wrapper.vm.previousUrl).toBe(validUrl)
+			expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 			expect(wrapper.html()).toMatchSnapshot()
 		})
 
@@ -317,7 +317,7 @@ describe('Component: FormOpenProjectHost', () => {
 				serverHostInput.vm.$emit('input', newUrl)
 				await flushPromises()
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 
 				// save button should be enabled
 				expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe(undefined)
@@ -329,7 +329,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
 				expect(wrapper.vm.serverUrl).toBe(validUrl)
 				expect(wrapper.vm.formDirty).toBe(false)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 			})
 			it('should reset error messages on cancel', async () => {
 				validateOPInstance.mockImplementation(() => ({
@@ -346,7 +346,7 @@ describe('Component: FormOpenProjectHost', () => {
 				serverHostInput.vm.$emit('input', newUrl)
 				await flushPromises()
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 
 				const saveButton = wrapper.find(selectors.saveFormButton)
 				await saveButton.vm.$emit('click')
@@ -361,7 +361,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
 				expect(wrapper.vm.serverUrl).toBe(validUrl)
 				expect(wrapper.vm.formDirty).toBe(false)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 				expect(wrapper.vm.errorMessage).toBe('')
 				expect(wrapper.vm.errorDetails).toBe('')
 			})
@@ -394,7 +394,7 @@ describe('Component: FormOpenProjectHost', () => {
 				serverHostInput.vm.$emit('input', newUrl)
 				await flushPromises()
 				expect(wrapper.vm.formDirty).toBe(true)
-				expect(wrapper.vm.previousUrl).toBe(validUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(validUrl)
 
 				const saveButton = wrapper.find(selectors.saveFormButton)
 				await saveButton.vm.$emit('click')
@@ -407,14 +407,14 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
 				expect(wrapper.vm.formDirty).toBe(false)
 				expect(wrapper.vm.serverUrl).toBe(newUrl)
-				expect(wrapper.vm.previousUrl).toBe(newUrl)
+				expect(wrapper.vm.savedOpenprojectUrl).toBe(newUrl)
 				expect(wrapper.emitted().formcomplete.length).toBe(1)
 			})
 		})
 	})
 })
 
-function getWrapper(data = {}, props = {}) {
+function getWrapper(data = {}, props = { currentSetting: ADMIN_SETTINGS_FORM.serverHost.id }) {
 	return shallowMount(FormOpenProjectHost, {
 		localVue,
 		mocks: {

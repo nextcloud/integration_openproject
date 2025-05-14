@@ -7,53 +7,56 @@
 <template>
 	<div :id="formId">
 		<FormHeading
-			index="1"
+			:index="formOrder"
 			:title="t('integration_openproject', 'OpenProject server')"
 			:is-complete="isFormComplete"
+			:is-disabled="!showSettings"
 			:is-dark-theme="isDarkTheme" />
-		<FieldValue v-if="isViewMode"
-			is-required
-			class="pb-1"
-			:title="t('integration_openproject', 'OpenProject host')"
-			:value="serverUrl" />
-		<TextInput v-else
-			ref="urlInput"
-			v-model="serverUrl"
-			data-test-id="openproject-server-host"
-			is-required
-			class="pb-1"
-			:label="t('integration_openproject', 'OpenProject host')"
-			place-holder="https://www.my-openproject.com"
-			:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
-			:error-message="errorMessage"
-			:error-message-details="errorDetails"
-			@input="onFormChanged" />
-		<div class="form-actions">
-			<NcButton v-if="isViewMode"
-				data-test-id="edit-server-host"
-				@click="setFormToEditMode">
-				<template #icon>
-					<PencilIcon :size="20" />
-				</template>
-				{{ t('integration_openproject', 'Edit server information') }}
-			</NcButton>
-			<NcButton v-if="isFormComplete && isEditMode"
-				class="mr-2"
-				data-test-id="cancel-server-host-edit"
-				@click="cancelEdit">
-				{{ t('integration_openproject', 'Cancel') }}
-			</NcButton>
-			<NcButton v-if="isEditMode"
-				type="primary"
-				data-test-id="save-server-host"
-				:disabled="disableSave"
-				@click="saveUrl">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-					<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-				</template>
-				{{ t('integration_openproject', 'Save') }}
-			</NcButton>
+		<div v-if="showSettings" class="openproject-host">
+			<FieldValue v-if="isViewMode"
+				is-required
+				class="pb-1"
+				:title="t('integration_openproject', 'OpenProject host')"
+				:value="serverUrl" />
+			<TextInput v-else
+				ref="urlInput"
+				v-model="serverUrl"
+				data-test-id="openproject-server-host"
+				is-required
+				class="pb-1"
+				:label="t('integration_openproject', 'OpenProject host')"
+				place-holder="https://www.my-openproject.com"
+				:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
+				:error-message="errorMessage"
+				:error-message-details="errorDetails"
+				@input="onFormChanged" />
+			<div class="form-actions">
+				<NcButton v-if="isViewMode"
+					data-test-id="edit-server-host"
+					@click="setFormToEditMode">
+					<template #icon>
+						<PencilIcon :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Edit server information') }}
+				</NcButton>
+				<NcButton v-if="isFormComplete && isEditMode"
+					class="mr-2"
+					data-test-id="cancel-server-host-edit"
+					@click="cancelEdit">
+					{{ t('integration_openproject', 'Cancel') }}
+				</NcButton>
+				<NcButton v-if="isEditMode"
+					type="primary"
+					data-test-id="save-server-host"
+					:disabled="disableSave"
+					@click="saveUrl">
+					<template #icon>
+						<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
+						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+					</template>
+					{{ t('integration_openproject', 'Save') }}
+				</NcButton>
+			</div>
 		</div>
 	</div>
 </template>
@@ -65,7 +68,7 @@ import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import FormHeading from './FormHeading.vue'
 import FieldValue from './FieldValue.vue'
 import TextInput from './TextInput.vue'
-import { F_MODES } from '../../utils.js'
+import { F_MODES, ADMIN_SETTINGS_FORM } from '../../utils.js'
 import { validateOPInstance, saveAdminConfig } from '../../api/settings.js'
 
 export default {
@@ -80,9 +83,9 @@ export default {
 		PencilIcon,
 	},
 	props: {
-		formId: {
+		currentSetting: {
 			type: String,
-			default: 'server-host',
+			required: true,
 		},
 		isDarkTheme: {
 			type: Boolean,
@@ -90,23 +93,30 @@ export default {
 		},
 		openprojectUrl: {
 			type: String,
-			default: '',
+			default: null,
 		},
 	},
 	data() {
 		return {
 			formMode: F_MODES.EDIT,
-			serverUrl: '',
+			formId: ADMIN_SETTINGS_FORM.serverHost.id,
+			formOrder: ADMIN_SETTINGS_FORM.serverHost.order.toString(),
 			loading: false,
 			errorMessage: '',
 			errorDetails: '',
 			formDirty: false,
-			previousUrl: '',
+			// state that holds the current changed server URL
+			serverUrl: '',
+			// state that holds the saved (to server) server URL
+			savedOpenprojectUrl: null,
 		}
 	},
 	computed: {
+		showSettings() {
+			return this.currentSetting === this.formId || !!this.isFormComplete
+		},
 		isFormComplete() {
-			return !!this.previousUrl
+			return !!this.savedOpenprojectUrl
 		},
 		isViewMode() {
 			return this.formMode === F_MODES.VIEW
@@ -122,14 +132,14 @@ export default {
 		if (this.openprojectUrl) {
 			this.setFromToViewMode()
 			this.serverUrl = this.openprojectUrl
-			this.previousUrl = this.openprojectUrl
+			this.savedOpenprojectUrl = this.openprojectUrl
 			this.$emit('formcomplete', this.markFormComplete)
 		}
 	},
 	methods: {
 		onFormChanged(value) {
 			if (this.isFormComplete) {
-				if (this.serverUrl === this.previousUrl || !this.serverUrl) {
+				if (this.serverUrl === this.savedOpenprojectUrl || !this.serverUrl) {
 					this.formDirty = false
 					return
 				}
@@ -163,7 +173,7 @@ export default {
 			if (this.openprojectUrl) {
 				this.serverUrl = this.openprojectUrl
 			} else {
-				this.serverUrl = this.previousUrl
+				this.serverUrl = this.savedOpenprojectUrl
 			}
 			this.formDirty = false
 			this.resetErrors()
@@ -186,7 +196,7 @@ export default {
 					}
 
 					this.formDirty = false
-					this.previousUrl = this.serverUrl
+					this.savedOpenprojectUrl = this.serverUrl
 				} catch (error) {
 					showError(
 						t('integration_openproject', 'Failed to save OpenProject admin options'),

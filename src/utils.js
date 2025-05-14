@@ -97,14 +97,37 @@ export const ADMIN_SETTINGS_FORM = {
 	// order: 1
 	serverHost: {
 		id: 'server-host',
+		order: 1,
 		complete: false,
 		value: '',
 	},
 	// order: 2
 	authenticationMethod: {
 		id: 'authentication-method',
+		order: 2,
 		complete: false,
 		value: '',
+	},
+	// order: 3
+	openprojectOauth: {
+		id: 'openproject-oauth',
+		order: 3,
+		complete: false,
+		value: {},
+	},
+	// order: 4
+	nextcloudOauth: {
+		id: 'nextcloud-oauth',
+		order: 4,
+		complete: false,
+		value: {},
+	},
+	// order: 3
+	ssoSettings: {
+		id: 'sso-settings',
+		order: 3,
+		complete: false,
+		value: {},
 	},
 	projectFolder: {
 		id: 'project-folder',
