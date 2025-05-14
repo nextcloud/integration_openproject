@@ -40,6 +40,7 @@
 					</NcCheckboxRadioSwitch>
 					<ErrorLabel
 						v-if="!hasEnabledSupportedUserOidcApp"
+						class="error-label"
 						:error="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinUserOidcAppVersion)}`" />
 				</div>
 			</div>
@@ -232,19 +233,15 @@ export default {
 		async confirmSaveSettings() {
 			this.loading = true
 			try {
-				const otherConfigs = {}
-				if (this.isFormComplete) {
-					// reset other settings
-					otherConfigs.openproject_client_id = null
-					otherConfigs.openproject_client_secret = null
-					otherConfigs.sso_provider_type = null
-					otherConfigs.oidc_provider = null
-					otherConfigs.targeted_audience_client_id = null
-					otherConfigs.token_exchange = null
-				}
 				await saveAdminConfig({
 					authorization_method: this.selectedAuthMethod,
-					...otherConfigs,
+					// reset other settings
+					openproject_client_id: null,
+					openproject_client_secret: null,
+					sso_provider_type: null,
+					oidc_provider: null,
+					targeted_audience_client_id: null,
+					token_exchange: null,
 				})
 
 				this.setFromToViewMode()
@@ -264,14 +261,31 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.form-actions {
-	display: flex;
-	align-items: center;
-	padding: 15px 0;
-}
-
-.pb-1 {
-	padding-bottom: .5rem;
+.auth-method {
+	&--hint {
+		font-size: 14px;
+		.title {
+			font-weight: 700;
+		}
+		.description {
+			margin-top: 0.1rem;
+		}
+	}
+	&--options {
+		margin-top: 1rem;
+		.radio-check {
+			font-weight: 500;
+		}
+		.error-label {
+			margin-left: 2.4rem;
+			font-size: 14px;
+		}
+	}
+	.form-actions {
+		display: flex;
+		align-items: center;
+		padding: 15px 0;
+	}
 }
 
 .mr-2 {
