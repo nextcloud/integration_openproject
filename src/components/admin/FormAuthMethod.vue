@@ -65,7 +65,7 @@
 					data-test-id="save-auth-method"
 					type="primary"
 					:disabled="disableSave"
-					@click="saveAuthMethod">
+					@click="saveSettings">
 					<template #icon>
 						<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
 						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
@@ -195,10 +195,10 @@ export default {
 			if (this.authMethod) {
 				this.selectedAuthMethod = this.authMethod
 			} else {
-				this.selectedAuthMethod = this.saveAuthMethod
+				this.selectedAuthMethod = this.savedAuthMethod
 			}
 		},
-		async saveAuthMethod() {
+		async saveSettings() {
 			// open the confirmation dialog when only swithing back and forth between two authorization method
 			if (this.isEditMode && this.isFormComplete) {
 				await OC.dialogs.confirmDestructive(
@@ -219,7 +219,7 @@ export default {
 					},
 					async (result) => {
 						if (result) {
-							await this.confirmSaveAuthMethod()
+							await this.confirmSaveSettings()
 							window.location.reload()
 						}
 					},
@@ -227,9 +227,9 @@ export default {
 				)
 				return
 			}
-			await this.confirmSaveAuthMethod()
+			await this.confirmSaveSettings()
 		},
-		async confirmSaveAuthMethod() {
+		async confirmSaveSettings() {
 			this.loading = true
 			try {
 				const otherConfigs = {}
