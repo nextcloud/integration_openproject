@@ -135,6 +135,42 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(false)
 				expect(wrapper.html()).toMatchSnapshot()
 			})
+			it('should show error on save failure', async () => {
+				saveAdminConfig.mockImplementation(() => Promise.reject(new Error('Failure')))
+				const saveFormButton = wrapper.find(selectors.saveFormButton)
+				expect(wrapper.vm.savedAuthMethod).toBe(null)
+
+				wrapper.vm.selectedAuthMethod = AUTH_METHOD.OIDC
+				await flushPromises()
+				expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
+
+				saveFormButton.vm.$emit('click')
+				await flushPromises()
+
+				expect(saveAdminConfig).toHaveBeenCalledWith({
+					authorization_method: AUTH_METHOD.OIDC,
+					openproject_client_id: null,
+					openproject_client_secret: null,
+					sso_provider_type: null,
+					oidc_provider: null,
+					targeted_audience_client_id: null,
+					token_exchange: null,
+				})
+				expect(showSuccess).toHaveBeenCalledTimes(0)
+				expect(showError).toHaveBeenCalledTimes(1)
+				expect(wrapper.vm.loading).toBe(false)
+				expect(wrapper.vm.formMode).toBe(F_MODES.EDIT)
+				expect(wrapper.vm.savedAuthMethod).toBe(null)
+				expect(wrapper.emitted()).toEqual({})
+
+				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
+				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
+				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
+				expect(wrapper.find(selectors.editFormButton).exists()).toBe(false)
+				expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(false)
+				expect(wrapper.find(selectors.cancelFormButton).exists()).toBe(false)
+				expect(wrapper.html()).toMatchSnapshot()
+			})
 
 		})
 

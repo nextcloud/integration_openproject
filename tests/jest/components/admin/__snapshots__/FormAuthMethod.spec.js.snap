@@ -104,6 +104,38 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
 </div>"
 `;
 
+exports[`Component: FormAuthMethod initial incomplete form current setting: authentication-method should show error on save failure 1`] = `
+"<div class="authentication-method">
+  <formheading-stub index="2" title="Authentication method"></formheading-stub>
+  <div class="auth-method">
+    <div>
+      <div class="auth-method--hint">
+        <p class="title">
+          Need help setting this up?
+        </p>
+        <p class="description">Please read our guide on {htmlLink}.</p>
+      </div>
+      <div class="auth-method--options">
+        <nccheckboxradioswitch-stub id="oauth-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oidc" value="oauth2" class="radio-check">
+          Two-way OAuth 2.0 authorization code flow
+        </nccheckboxradioswitch-stub>
+        <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oidc" value="oidc" class="radio-check">
+          Single-Sign-On through OpenID Connect Identity Provider
+        </nccheckboxradioswitch-stub>
+        <!---->
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
 exports[`Component: FormAuthMethod initial incomplete form current setting: authentication-method should show the required form fields 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
