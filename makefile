@@ -102,11 +102,6 @@ lint-fix: lint-php-fix lint-js-fix
 phpunit:
 	composer run test:unit
 
-# The following make block can be removed once Nextcloud no longer supports PHP 8.0
-.PHONY: phpunitforphp8.0
-phpunitforphp8.0:
-	composer run test:unit -- --exclude-group ignoreWithPHP8.0
-
 .PHONY: jsunit
 jsunit:
 	npm run test:unit
