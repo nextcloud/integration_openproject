@@ -36,13 +36,13 @@ Feature: API endpoint for direct upload
     """
     And the content of file at "<file-name>" for user "Carol" should be "some data"
     Examples:
-      | valid-file-name     | file-name       | pattern                     |
-      | textfile0.txt       | textfile0.txt   | textfile0\\.txt             |
-      | असजिलो file         | असजिलो file     | असजिलो file                 |
-      | ?&$%?§ file.txt     | ?&$%?§ file.txt | \\?\\&\\$\\%\\?§ file\\.txt |
-      | ../textfile.txt     | textfile.txt    | textfile\\.txt              |
-      | folder/testfile.txt | testfile.txt    | testfile\\.txt              |
-      | text\file.txt       | file.txt        | file\\.txt                  |
+      | valid-file-name     | file-name       | pattern                           |
+      | textfile0.txt       | textfile0.txt   | textfile0\\\.txt                  |
+      | असजिलो file         | असजिलो file     | असजिलो file                       |
+      | ?&$%?§ file.txt     | ?&$%?§ file.txt | \\\?\\\&\\\$\\\%\\\?§ file\\\.txt |
+      | ../textfile.txt     | textfile.txt    | textfile\\\.txt                   |
+      | folder/testfile.txt | testfile.txt    | testfile\\\.txt                   |
+      | text\file.txt       | file.txt        | file\\\.txt                       |
 
 
   Scenario: Send an invalid filename to the direct-upload endpoint
