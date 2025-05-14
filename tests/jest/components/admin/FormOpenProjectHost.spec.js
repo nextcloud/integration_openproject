@@ -408,7 +408,7 @@ describe('Component: FormOpenProjectHost', () => {
 				expect(wrapper.vm.formDirty).toBe(false)
 				expect(wrapper.vm.serverUrl).toBe(newUrl)
 				expect(wrapper.vm.savedOpenprojectUrl).toBe(newUrl)
-				expect(wrapper.emitted().formcomplete.length).toBe(1)
+				expect(wrapper.emitted().formcomplete.length).toBe(2)
 			})
 		})
 	})
