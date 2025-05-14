@@ -15,82 +15,13 @@
 			:openproject-url="state.openproject_instance_url"
 			:current-setting="currentSetting"
 			@formcomplete="markFormComplete" />
-		<div class="authorization-method">
-			<FormHeading index="2"
-				:title="t('integration_openproject', 'Authentication method')"
-				:is-complete="isAuthorizationMethodFormComplete"
-				:is-disabled="isAuthorizationFormInDisabledMode"
-				:is-dark-theme="isDarkTheme" />
-			<div v-if="showAuthMethodSettings">
-				<div v-if="isAuthorizationFormInEditMode" class="authorization-method">
-					<div class="authorization-method--description">
-						<p class="title">
-							{{ t('integration_openproject', 'Need help setting this up?') }}
-						</p>
-						<p class="description" v-html="getAuthorizationMethodHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-					</div>
-					<div class="authorization-method--options">
-						<NcCheckboxRadioSwitch
-							id="oauth2-auth-method"
-							class="radio-check"
-							:checked.sync="authorizationMethod.authorizationMethodSet"
-							:value="authMethods.OAUTH2"
-							type="radio">
-							{{ authMethodsLabel.OAUTH2 }}
-						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch
-							id="oidc-auth-method"
-							class="radio-check"
-							:checked.sync="authorizationMethod.authorizationMethodSet"
-							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
-							type="radio">
-							{{ authMethodsLabel.OIDC }}
-						</NcCheckboxRadioSwitch>
-						<p class="oidc-app-check-description">
-							{{ messages.opRequiredVersionAndPlanHint }}
-						</p>
-						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<ErrorLabel
-							v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
-							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)}`" />
-					</div>
-				</div>
-				<div v-else>
-					<p class="title">
-						{{ getSelectedAuthenticatedMethod }}
-					</p>
-				</div>
-				<div class="form-actions">
-					<NcButton v-if="isAuthorizationMethodFormInViewMode"
-						data-test-id="reset-authorization-method-btn"
-						@click="setAuthorizationMethodInEditMode">
-						<template #icon>
-							<PencilIcon :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Edit authentication method') }}
-					</NcButton>
-					<NcButton v-if="isAuthorizationFormInEditMode && authorizationMethod.currentAuthorizationMethodSelected !== null"
-						class="mr-2"
-						data-test-id="cancel-edit-auth-method-btn"
-						@click="setAuthorizationMethodToViewMode">
-						{{ t('integration_openproject', 'Cancel') }}
-					</NcButton>
-					<NcButton v-if="isAuthorizationFormInEditMode"
-						data-test-id="submit-auth-method-values-btn"
-						type="primary"
-						:disabled="isAuthorizationMethodSelected"
-						@click="selectAuthorizationMethod">
-						<template #icon>
-							<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Save') }}
-					</NcButton>
-				</div>
-			</div>
-		</div>
-		<div v-if="authorizationMethod.currentAuthorizationMethodSelected === authMethods.OIDC" class="authorization-settings">
+		<FormAuthMethod
+			:is-dark-theme="isDarkTheme"
+			:auth-method="state.authorization_method"
+			:apps="state.apps"
+			:current-setting="currentSetting"
+			@formcomplete="markFormComplete" />
+		<div v-if="isOidcMethod" class="authorization-settings">
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'Authentication settings')"
 				:is-complete="isAuthorizationSettingFormComplete"
@@ -227,13 +158,13 @@
 				</NcButton>
 			</div>
 		</div>
-		<div v-if="authorizationMethod.currentAuthorizationMethodSelected === authMethods.OAUTH2 || authorizationMethod.currentAuthorizationMethodSelected === null" class="openproject-oauth-values">
+		<div v-if="showOAuthSettings" class="openproject-oauth-values">
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'OpenProject OAuth settings')"
 				:is-complete="isOPOAuthFormComplete"
 				:is-disabled="isOPOAuthFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="authorizationMethod.currentAuthorizationMethodSelected !== null">
+			<div v-if="form.authenticationMethod.complete">
 				<FieldValue v-if="isOPOAuthFormInView"
 					is-required
 					:value="state.openproject_client_id"
@@ -281,7 +212,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="authorizationMethod.currentAuthorizationMethodSelected === authMethods.OAUTH2 || authorizationMethod.currentAuthorizationMethodSelected === null" class="nextcloud-oauth-values">
+		<div v-if="showOAuthSettings" class="nextcloud-oauth-values">
 			<FormHeading index="4"
 				:title="t('integration_openproject', 'Nextcloud OAuth client')"
 				:is-complete="isNcOAuthFormComplete"
@@ -347,7 +278,7 @@
 			</div>
 		</div>
 		<div class="project-folder-setup">
-			<FormHeading :index="authorizationMethod.currentAuthorizationMethodSelected === authMethods.OIDC ? '4' : '5'"
+			<FormHeading :index="isOidcMethod ? '4' : '5'"
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
@@ -564,6 +495,7 @@ import { messages, messagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
 import ErrorLabel from './ErrorLabel.vue'
 import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
+import FormAuthMethod from './admin/FormAuthMethod.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -586,6 +518,7 @@ export default {
 		NcNoteCard,
 		ErrorNote,
 		FormOpenProjectHost,
+		FormAuthMethod,
 	},
 	data() {
 		return {
@@ -667,9 +600,6 @@ export default {
 				|| this.state.openproject_client_secret
 			return formAdded || hasPreSEtup
 		},
-		showAuthMethodSettings() {
-			return this.currentSetting === ADMIN_SETTINGS_FORM.authenticationMethod.id
-		},
 		ncClientId() {
 			return this.state.nc_oauth_client?.nextcloud_client_id
 		},
@@ -704,9 +634,6 @@ export default {
 		isNcOAuthFormComplete() {
 			return this.isFormCompleted.ncOauth
 		},
-		isAuthorizationMethodFormInViewMode() {
-			return this.formMode.authorizationMethod === F_MODES.VIEW
-		},
 		isAuthorizationSettingsInViewMode() {
 			return this.formMode.authorizationSetting === F_MODES.VIEW
 		},
@@ -719,9 +646,6 @@ export default {
 		isOPOAuthFormInDisableMode() {
 			return this.formMode.opOauth === F_MODES.DISABLE
 		},
-		isAuthorizationFormInDisabledMode() {
-			return this.formMode.authorizationMethod === F_MODES.DISABLE
-		},
 		isAuthorizationSettingFormInDisabledMode() {
 			return this.formMode.authorizationSetting === F_MODES.DISABLE
 		},
@@ -730,9 +654,6 @@ export default {
 		},
 		isProjectFolderSetupFormInEdit() {
 			return this.formMode.projectFolderSetUp === F_MODES.EDIT
-		},
-		isAuthorizationFormInEditMode() {
-			return this.formMode.authorizationMethod === F_MODES.EDIT
 		},
 		isAuthorizationSettingInEditMode() {
 			return this.formMode.authorizationSetting === F_MODES.EDIT
@@ -754,6 +675,15 @@ export default {
 		},
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
+		},
+		isOAuthMethod() {
+			return this.form.authenticationMethod.value === AUTH_METHOD.OAUTH2
+		},
+		isOidcMethod() {
+			return this.form.authenticationMethod.value === AUTH_METHOD.OIDC
+		},
+		showOAuthSettings() {
+			return this.isOAuthMethod || !this.form.authenticationMethod.complete
 		},
 		adminFileStorageHref() {
 			const path = '%s/admin/settings/storages'
@@ -793,16 +723,6 @@ export default {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
-		},
-		getAuthorizationMethodHintText() {
-			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
-			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#3-configure-authentication-method" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
-		},
-		getOIDCAppNotInstalledHintText() {
-			const url = this.appLinks.user_oidc.installLink
-			const htmlLink = `<a class="link" href="${url}" target="_blank" title="user_oidc">user_oidc</a>`
-			return t('integration_openproject', 'Please install the {htmlLink} app to use OIDC authentication method.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'OpenID Connect settings')
@@ -845,14 +765,6 @@ export default {
 			}
 			return this.state.encryption_info.server_side_encryption_enabled
 				&& !this.state.encryption_info.encryption_enabled_for_groupfolders
-		},
-		getSelectedAuthenticatedMethod() {
-			return this.authorizationMethod.authorizationMethodSet === this.authMethods.OIDC
-				? this.authMethodsLabel.OIDC
-				: this.authMethodsLabel.OAUTH2
-		},
-		isAuthorizationMethodSelected() {
-			return this.authorizationMethod.currentAuthorizationMethodSelected === this.authorizationMethod.authorizationMethodSet
 		},
 		disableSaveSSOSettings() {
 			const { currentOIDCProviderSelected, SSOProviderType, enableTokenExchange } = this.authorizationSetting
@@ -1085,11 +997,6 @@ export default {
 		closeRequestModal() {
 			this.show = false
 		},
-		setAuthorizationMethodToViewMode() {
-			this.formMode.authorizationMethod = F_MODES.VIEW
-			this.isFormCompleted.authorizationMethod = true
-			this.authorizationMethod.authorizationMethodSet = this.authorizationMethod.currentAuthorizationMethodSelected
-		},
 		setAuthorizationSettingToViewMode() {
 			this.formMode.authorizationSetting = F_MODES.VIEW
 			this.formMode.SSOSettings = F_MODES.VIEW
@@ -1098,10 +1005,6 @@ export default {
 			this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
 			this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
 			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
-		},
-		setAuthorizationMethodInEditMode() {
-			this.formMode.authorizationMethod = F_MODES.EDIT
-			this.isFormCompleted.authorizationMethod = false
 		},
 		setAuthorizationSettingInEditMode() {
 			this.formMode.authorizationSetting = F_MODES.EDIT
@@ -1194,24 +1097,6 @@ export default {
 				}
 			}
 		},
-		async saveAuthorizationMethodValue() {
-			this.isFormStep = FORM.AUTHORIZATION_METHOD
-			this.loadingAuthorizationMethodForm = true
-			const success = await this.saveOPOptions()
-			if (success) {
-				this.authorizationMethod.currentAuthorizationMethodSelected = this.authorizationMethod.authorizationMethodSet
-				this.formMode.authorizationMethod = F_MODES.VIEW
-				this.isFormCompleted.authorizationMethod = true
-				if (this.authorizationMethod.authorizationMethodSet === this.authMethods.OIDC && !this.isFormCompleted.authorizationSetting) {
-					this.formMode.authorizationSetting = F_MODES.EDIT
-				} else {
-					if (!this.isFormCompleted.opOauth) {
-						this.formMode.opOauth = F_MODES.EDIT
-					}
-				}
-			}
-			this.loadingAuthorizationMethodForm = false
-		},
 		async saveOIDCAuthSetting() {
 			this.isFormStep = FORM.AUTHORIZATION_SETTING
 			this.loadingAuthorizationMethodForm = true
@@ -1258,39 +1143,6 @@ export default {
 				},
 				true,
 			)
-		},
-		async selectAuthorizationMethod() {
-			// open the confirmation dialog when only swithing back and forth between two authorization method
-			if (this.isAuthorizationFormInEditMode && this.authorizationMethod.currentAuthorizationMethodSelected !== null) {
-				await OC.dialogs.confirmDestructive(
-					t('integration_openproject', `If you proceed this method, you will have an ${this.authorizationMethod.authorizationMethodSet.toUpperCase()} based authentication configuration which will delete all the configuration setting for current ${this.authorizationMethod.currentAuthorizationMethodSelected.toUpperCase()} based authentication. You can switch back to it anytime.`),
-					t('integration_openproject', 'Switch Authentication Method'),
-					{
-						type: OC.dialogs.YES_NO_BUTTONS,
-						confirm: t('integration_openproject', 'Yes, switch'),
-						confirmClasses: 'error',
-						cancel: t('integration_openproject', 'Cancel'),
-					},
-					async (result) => {
-						if (result) {
-							// here we switch either to oidc or oauth2 configuration
-							const authMethod = this.authorizationMethod.authorizationMethodSet
-							if (authMethod === AUTH_METHOD.OAUTH2) {
-								this.state.authorization_settings.targeted_audience_client_id = null
-								this.authorizationSetting.currentOIDCProviderSelected = null
-							} else {
-								this.state.openproject_client_id = ''
-								this.state.openproject_client_secret = ''
-							}
-							await this.saveAuthorizationMethodValue()
-						}
-						window.location.reload()
-					},
-					true,
-				)
-				return ''
-			}
-			await this.saveAuthorizationMethodValue()
 		},
 		async clearOPOAuthClientValues() {
 			this.isFormStep = FORM.OP_OAUTH
