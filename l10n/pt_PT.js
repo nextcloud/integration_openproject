@@ -3,11 +3,11 @@ OC.L10N.register(
     {
     "Error during OAuth exchanges" : "Erro durante trocas com o OAuth",
     "Bad HTTP method" : "Método HTTP incorreto",
-    "Documentation" : "Documentação",
     "Cancel" : "Cancelar",
-    "Save" : "Guardar",
     "Authentication method" : "Método de Autenticação",
+    "Save" : "Guardar",
     "Invalid token" : "token inválido",
+    "Documentation" : "Documentação",
     "Copied!" : "Copiado!",
     "Details" : "Detalhes",
     "Start typing to search" : "Digitar para pesquisar",
