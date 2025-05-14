@@ -249,9 +249,7 @@ export default {
 
 				this.setFromToViewMode()
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
-				if (!this.isFormComplete) {
-					this.$emit('formcomplete', this.markFormComplete)
-				}
+				this.$emit('formcomplete', this.markFormComplete)
 				this.savedAuthMethod = this.selectedAuthMethod
 			} catch (error) {
 				showError(

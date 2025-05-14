@@ -488,7 +488,7 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM, settingsFlowGenerator } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM, settingsFlowGenerator } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
@@ -566,17 +566,8 @@ export default {
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
-			authMethods: AUTH_METHOD,
-			authMethodsLabel: AUTH_METHOD_LABEL,
 			SSO_PROVIDER_TYPE,
 			SSO_PROVIDER_LABEL,
-			// here 'Set' defines that the method is selected and saved in database (e.g authorizationMethodSet)
-			// whereas 'Selected' defines that it is the current selection (e.g currentAuthorizationMethodSelected)
-			authorizationMethod: {
-				// default authorization method is set to 'oauth2'
-				authorizationMethodSet: AUTH_METHOD.OAUTH2,
-				currentAuthorizationMethodSelected: null,
-			},
 			authorizationSetting: {
 				oidcProviderSet: null,
 				currentOIDCProviderSelected: null,
@@ -676,11 +667,14 @@ export default {
 		isProjectFolderSetupCompleted() {
 			return this.isProjectFolderSetupFormInEdit ? false : this.opUserAppPassword
 		},
+		getCurrentAuthMethod() {
+			return this.form.authenticationMethod.value
+		},
 		isOAuthMethod() {
-			return this.form.authenticationMethod.value === AUTH_METHOD.OAUTH2
+			return this.getCurrentAuthMethod === AUTH_METHOD.OAUTH2
 		},
 		isOidcMethod() {
-			return this.form.authenticationMethod.value === AUTH_METHOD.OIDC
+			return this.getCurrentAuthMethod === AUTH_METHOD.OIDC
 		},
 		showOAuthSettings() {
 			return this.isOAuthMethod || !this.form.authenticationMethod.complete
@@ -889,7 +883,6 @@ export default {
 				if (this.state.authorization_method) {
 					this.formMode.authorizationMethod = F_MODES.VIEW
 					this.isFormCompleted.authorizationMethod = true
-					this.authorizationMethod.authorizationMethodSet = this.authorizationMethod.currentAuthorizationMethodSelected = this.state.authorization_method
 				}
 				if (this.state.openproject_instance_url && this.state.authorization_method) {
 					if (this.state.authorization_method === AUTH_METHOD.OAUTH2) {
@@ -1168,8 +1161,7 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						const authMethod = this.authorizationMethod.authorizationMethodSet
-						await this.resetAllAppValues(authMethod)
+						await this.resetAllAppValues(this.getCurrentAuthMethod)
 					}
 				},
 				true,
@@ -1189,7 +1181,7 @@ export default {
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
 			this.oPUserAppPassword = null
-			this.authorizationMethod.authorizationMethodSet = null
+			this.state.authorization_method = null
 			this.state.openproject_client_id = null
 			this.state.openproject_client_secret = null
 			this.state.openproject_instance_url = null
@@ -1209,27 +1201,20 @@ export default {
 				default_enable_unified_search: this.state.default_enable_unified_search,
 			}
 			if (this.state.openproject_instance_url === null) {
-				values.openproject_instance_url = this.state.openproject_instance_url
+				values.openproject_instance_url = null
 			}
-			if (this.authorizationMethod.authorizationMethodSet === null) {
-				// by default, it will be an oauth2 reset
+			// by default, it will be an oauth2 reset
+			if (this.state.authorization_method === null) {
 				values = {
 					...values,
-					authorization_method: this.authorizationMethod.authorizationMethodSet,
+					authorization_method: null,
 					setup_project_folder: false,
 					setup_app_password: false,
-				}
-				if (this.authorizationMethod.currentAuthorizationMethodSelected === AUTH_METHOD.OIDC
-					&& this.getCurrentSelectedOIDCProvider === null
-					&& this.state.authorization_settings.targeted_audience_client_id === null) {
-					// when reset is oidc
-					values = {
-						...values,
-						oidc_provider: this.getCurrentSelectedOIDCProvider,
-						targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
-						sso_provider_type: this.authorizationSetting.SSOProviderType,
-						token_exchange: this.authorizationSetting.enableTokenExchange,
-					}
+					oidc_provider: null,
+					targeted_audience_client_id: null,
+					sso_provider_type: null,
+					token_exchange: null,
+
 				}
 			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
 				values = {
@@ -1241,7 +1226,7 @@ export default {
 			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
 				values = {
 					...values,
-					authorization_method: this.authorizationMethod.authorizationMethodSet,
+					authorization_method: this.state.authorization_method,
 					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
 					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.authorizationSetting.currentTargetedAudienceClientIdSelected : null,
 					sso_provider_type: this.authorizationSetting.SSOProviderType,
@@ -1250,13 +1235,11 @@ export default {
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
 					values = {
-						authorization_method: this.authorizationMethod.authorizationMethodSet,
 						setup_project_folder: false,
 						setup_app_password: false,
 					}
 				} else if (this.isProjectFolderSwitchEnabled === true) {
 					values = {
-						authorization_method: this.authorizationMethod.authorizationMethodSet,
 						setup_project_folder: !this.isProjectFolderAlreadySetup,
 						setup_app_password: this.opUserAppPassword !== true,
 					}
