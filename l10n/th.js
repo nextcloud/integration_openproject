@@ -1,11 +1,11 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "Documentation" : "เอกสารประกอบ",
     "Cancel" : "ยกเลิก",
-    "Save" : "บันทึก",
     "Authentication method" : "วิธีการตรวจสอบความถูกต้อง",
+    "Save" : "บันทึก",
     "Connected as {user}" : "เชื่อมต่อเป็น {user} แล้ว",
+    "Documentation" : "เอกสารประกอบ",
     "Copied!" : "คัดลอกแล้ว!",
     "Details" : "รายละเอียด",
     "Start typing to search" : "เริ่มพิมพ์เพื่อค้นหา",
