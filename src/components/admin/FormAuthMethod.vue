@@ -41,6 +41,7 @@
 					<ErrorLabel
 						v-if="!hasEnabledSupportedUserOidcApp"
 						class="error-label"
+						:disabled="disableErrorLabel"
 						:error="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinUserOidcAppVersion)}`" />
 				</div>
 			</div>
@@ -166,6 +167,9 @@ export default {
 				|| this.savedAuthMethod === this.selectedAuthMethod
 			}
 			return false
+		},
+		disableErrorLabel() {
+			return this.authMethod !== this.authMethodType.OIDC
 		},
 	},
 	created() {
