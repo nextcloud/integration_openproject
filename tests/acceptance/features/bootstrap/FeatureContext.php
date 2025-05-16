@@ -158,7 +158,7 @@ class FeatureContext implements Context {
 			if ($retryCreate < 3) {
 				echo("\n\nRetrying ($retryCreate/2) to create user '$user' again...");
 			}
-			// sleep(2);
+			sleep(4);
 			$retryCreate++;
 		}
 		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
