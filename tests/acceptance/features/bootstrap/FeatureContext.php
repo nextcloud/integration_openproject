@@ -133,24 +133,32 @@ class FeatureContext implements Context {
 			if ($response->getStatusCode() === 200) {
 				$isUserCreated = true;
 				break;
-			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
-				echo("Error: " . $response->getBody()->getContents());
-				echo('Creating user ' . $user . ' failed!');
-				echo('Deleting the file system of ' . $user . ' and retrying the user creation again...');
+			}
+			echo("\nFailed to create user " . $user);
+			echo("\n-> HTTP Status Code: " . $response->getStatusCode());
+			if ($response->getStatusCode() === 400 && getenv('CI')) {
+				echo("\n-> Error: " . $response->getBody()->getContents());
+				echo("\nCleaning up resources...");
+				echo("\n-> Deleting the file system of " . $user);
 				exec(
-					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
+					"docker exec nextcloud /bin/bash -c 'rm -rf data/$user'",
 					$output,
 					$command_result_code
 				);
 				if ($command_result_code === 0) {
-					echo('File system for user ' . $user . ' has been deleted successfully!');
+					echo("\n-> File system for user " . $user . " has been deleted successfully!");
 				}
 			} else {
 				// in case of any other error we just log the response
-				echo("Status Code: " . $response->getStatusCode());
-				echo("Error: " . $response->getBody()->getContents());
+				echo("\n-> Error: " . $response->getBody()->getContents());
 			}
-			sleep(2);
+			// delete the user if it exists
+			echo("\nDeleting user: $user");
+			$this->theAdministratorDeletesTheUser($user);
+			if ($retryCreate < 3) {
+				echo("\n\nRetrying ($retryCreate/2) to create user '$user' again...");
+			}
+			// sleep(2);
 			$retryCreate++;
 		}
 		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
@@ -160,8 +168,6 @@ class FeatureContext implements Context {
 	 * @Given user :user has been created
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
-		// delete the user if it exists
-		$this->theAdministratorDeletesTheUser($user);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
