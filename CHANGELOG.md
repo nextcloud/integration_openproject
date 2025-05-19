@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Rename admin settings labels: `Authorization` -> `Authentication` [#758](https://github.com/nextcloud/integration_openproject/pull/758)
+- Replaced deprecated method "\OC_Helper::uploadLimit()" with "\OCP\Util::uploadLimit()" [#825](https://github.com/nextcloud/integration_openproject/pull/825)
 
 ## 2.8.1 - 2025-02-05
 

@@ -275,7 +275,7 @@ class DirectUploadController extends ApiController {
 		} catch (OpenprojectFileNotUploadedException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
-				'upload_limit' => \OC_Helper::uploadLimit()
+				'upload_limit' => \OCP\Util::uploadLimit()
 			], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidContentException $e) { // files_antivirus throws this exception
 			return new DataResponse([
