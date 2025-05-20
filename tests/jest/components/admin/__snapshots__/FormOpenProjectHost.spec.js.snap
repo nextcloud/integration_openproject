@@ -3,15 +3,17 @@
 exports[`Component: FormOpenProjectHost completed form edit mode should show input form fields 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server" iscomplete="true"></formheading-stub>
-  <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-server-host-edit" class="mr-2">
-      Cancel
-    </ncbutton-stub>
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host" disabled="true">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-server-host-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -19,13 +21,15 @@ exports[`Component: FormOpenProjectHost completed form edit mode should show inp
 exports[`Component: FormOpenProjectHost completed form should show text field value with edit button 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server" iscomplete="true"></formheading-stub>
-  <fieldvalue-stub title="OpenProject host" value="http://example.openproject.test" isrequired="true" class="pb-1"></fieldvalue-stub>
-  <div class="form-actions">
-    <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-server-host">
-      Edit server information
-    </ncbutton-stub>
-    <!---->
-    <!---->
+  <div class="openproject-host">
+    <fieldvalue-stub title="OpenProject host" value="http://example.openproject.test" isrequired="true" class="pb-1"></fieldvalue-stub>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-server-host">
+        Edit server information
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
   </div>
 </div>"
 `;
@@ -33,13 +37,15 @@ exports[`Component: FormOpenProjectHost completed form should show text field va
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url client_exception: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://not.found.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" errormessagedetails="Response: &quot;404 Not Found&quot;" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://not.found.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" errormessagedetails="Response: &quot;404 Not Found&quot;" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -47,13 +53,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url clie
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url invalid: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://test.invalid.url" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="URL is invalid" errormessagedetails="The URL should have the form &quot;https://openproject.org&quot;" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://test.invalid.url" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="URL is invalid" errormessagedetails="The URL should have the form &quot;https://openproject.org&quot;" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -61,13 +69,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url inva
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url local_remote_servers_not_allowed: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://local.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Accessing OpenProject servers with local addresses is not allowed." errormessagedetails="To be able to use an OpenProject server with a local address, enable the \`allow_local_remote_servers\` setting. {htmlLink}." isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://local.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Accessing OpenProject servers with local addresses is not allowed." errormessagedetails="To be able to use an OpenProject server with a local address, enable the \`allow_local_remote_servers\` setting. {htmlLink}." isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -75,13 +85,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url loca
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url network_error: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -89,13 +101,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url netw
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url not_valid_body: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://not.found.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://not.found.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -103,13 +117,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url not_
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url redirected: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://redirect.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://redirect.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -117,13 +133,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url redi
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url request_exception: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -131,13 +149,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url requ
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url server_exception: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Server replied with an error message, please check the Nextcloud logs" errormessagedetails="503 Service Unavailable" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Server replied with an error message, please check the Nextcloud logs" errormessagedetails="503 Service Unavailable" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -145,13 +165,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url serv
 exports[`Component: FormOpenProjectHost initial incomplete form invalid url unexpected_error: should show error if url is invalid 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="Could not connect to the given URL, please check the Nextcloud logs" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;
@@ -159,13 +181,15 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url unex
 exports[`Component: FormOpenProjectHost initial incomplete form should show the required form fields 1`] = `
 "<div id="server-host">
   <formheading-stub index="1" title="OpenProject server"></formheading-stub>
-  <textinput-stub value="" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
-  <div class="form-actions">
-    <!---->
-    <!---->
-    <ncbutton-stub alignment="center" disabled="true" type="primary" nativetype="button" data-test-id="save-server-host">
-      Save
-    </ncbutton-stub>
+  <div class="openproject-host">
+    <textinput-stub value="" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" type="primary" nativetype="button" data-test-id="save-server-host">
+        Save
+      </ncbutton-stub>
+    </div>
   </div>
 </div>"
 `;

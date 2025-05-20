@@ -11,9 +11,9 @@
 			<p class="note-card--info-description" v-html="getAdminAuditConfigurationHint" /> <!-- eslint-disable-line vue/no-v-html -->
 		</NcNoteCard>
 		<FormOpenProjectHost
-			:form-id="form.serverHost.id"
 			:is-dark-theme="isDarkTheme"
 			:openproject-url="state.openproject_instance_url"
+			:current-setting="currentSetting"
 			@formcomplete="markFormComplete" />
 		<div class="authorization-method">
 			<FormHeading index="2"
