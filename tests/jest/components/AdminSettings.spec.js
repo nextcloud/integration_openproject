@@ -9,6 +9,7 @@
 import axios from '@nextcloud/axios'
 import * as dialogs from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 import AdminSettings from '../../../src/components/AdminSettings.vue'
 import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
@@ -94,8 +95,8 @@ const selectors = {
 	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
 	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
 	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
-	opOauthClientIdInput: '#openproject-oauth-client-id > .text-input-input-wrapper > input',
-	opOauthClientSecretInput: '#openproject-oauth-client-secret > .text-input-input-wrapper > input',
+	opOauthClientIdInput: '#openproject-oauth-client-id',
+	opOauthClientSecretInput: '#openproject-oauth-client-secret',
 	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
@@ -560,342 +561,6 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Authorization Method', () => {
-		describe('view mode form complete', () => {
-			let wrapper, authorizationMethodForm
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-					},
-				})
-				authorizationMethodForm = wrapper.find(selectors.authorizationMethod)
-			})
-
-			afterEach(() => {
-				axios.put.mockReset()
-				jest.clearAllMocks()
-			})
-
-			it.each([
-				[AUTH_METHOD.OAUTH2],
-				[AUTH_METHOD.OIDC],
-			])('should show field values and hide the form completed with %s auth method', async (authorizationMethod) => {
-				await wrapper.setData({
-					state: {
-						authorization_method: authorizationMethod,
-					},
-				})
-				expect(authorizationMethodForm).toMatchSnapshot()
-			})
-		})
-
-		describe('edit mode form, incomplete admin configuration', () => {
-			let wrapper
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-					},
-				})
-			})
-			afterEach(() => {
-				axios.put.mockReset()
-				jest.clearAllMocks()
-			})
-			it('should show proper elements when user_oidc app is not installed', async () => {
-				wrapper = getWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						user_oidc_enabled: false,
-					},
-				})
-				expect(wrapper.find(selectors.authorizationMethod).element).toMatchSnapshot()
-			})
-			it('should show proper elements when supported user_oidc app is enabled', async () => {
-				wrapper = getWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						user_oidc_enabled: true,
-						user_oidc_supported: true,
-					},
-				})
-				expect(wrapper.find(selectors.authorizationMethod).element).toMatchSnapshot()
-			})
-			it('should disable "OpenID identity provider" radio button when an user_oidc app is not installed', async () => {
-				await wrapper.setData({
-					state: {
-						user_oidc_enabled: false,
-					},
-				})
-				const openIDProviderDisabled = wrapper.find(selectors.openIdIdentityDisabled)
-				expect(openIDProviderDisabled.isVisible()).toBe(true)
-			})
-			it('should disable "OpenID identity provider" radio button when an  unsupported user_oidc app is installed', async () => {
-				await wrapper.setData({
-					state: {
-						user_oidc_enabled: true,
-						user_oidc_supported: false,
-					},
-				})
-				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(true)
-			})
-			it('should not disable "OpenID identity provider" radio button for supported user_oidc app installed', async () => {
-				await wrapper.setData({
-					state: {
-						user_oidc_enabled: true,
-						user_oidc_supported: true,
-					},
-				})
-				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(false)
-			})
-
-			it('should show openproject oauth form for "oauth2" method selected', async () => {
-				const authMehodForm = wrapper.find(selectors.authorizationMethod)
-				const authMethodSaveButton = authMehodForm.find(selectors.authorizationMethodSaveButton)
-				expect(authMethodSaveButton.exists()).toBe(true)
-				await authMethodSaveButton.trigger('click')
-				await wrapper.vm.$nextTick()
-				expect(saveOPOptionsSpy).toBeCalledTimes(1)
-				expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
-					values: expect.objectContaining({
-						authorization_method: AUTH_METHOD.OAUTH2,
-					}),
-				}))
-				expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.VIEW)
-				expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
-			})
-
-			it('should show authorization settings form for "oidc" method selected for the supported OIDC app', async () => {
-				await wrapper.setData({
-					state: {
-						user_oidc_enabled: true,
-						user_oidc_supported: true,
-						authorization_settings: {
-							oidc_provider: null,
-							targeted_audience_client_id: null,
-						},
-					},
-				})
-				// select auth method to 'oidc' auth first
-				const authMehodForm = wrapper.find(selectors.authorizationMethod)
-				const oidcRadioCheck = authMehodForm.find(selectors.openIdIdentityRadio)
-				await oidcRadioCheck.trigger('click')
-				await wrapper.vm.$nextTick()
-				// save the option
-				const authMethodSaveButton = authMehodForm.find(selectors.authorizationMethodSaveButton)
-				expect(authMethodSaveButton.exists()).toBe(true)
-				await authMethodSaveButton.trigger('click')
-				await wrapper.vm.$nextTick()
-				expect(saveOPOptionsSpy).toBeCalledTimes(1)
-				expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
-					values: expect.objectContaining({
-						authorization_method: AUTH_METHOD.OIDC,
-					}),
-				}))
-				expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.VIEW)
-			})
-		})
-
-		describe('edit mode form, complete OAUTH2 admin config', () => {
-			describe('on trigger edit button', () => {
-				let wrapper, authorizationMethodForm, resetButton
-				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-					.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-				beforeEach(async () => {
-					wrapper = getMountedWrapper({
-						state: completeOAUTH2IntegrationState,
-					})
-					await wrapper.setData({ currentSetting: ADMIN_SETTINGS_FORM.authenticationMethod.id })
-
-					authorizationMethodForm = wrapper.find(selectors.authorizationMethod)
-					resetButton = authorizationMethodForm.find(selectors.authorizationMethodResetButton)
-					expect(resetButton.exists()).toBe(true)
-					await resetButton.trigger('click')
-				})
-
-				afterEach(() => {
-					axios.put.mockReset()
-					jest.clearAllMocks()
-				})
-				it('should set auth method form to edit mode', async () => {
-					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.EDIT)
-				})
-				it('should set "save" button as disabled', async () => {
-					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
-					expect(authMethodSaveButton.exists()).toBe(true)
-					expect(authMethodSaveButton.attributes().disabled).toBe('disabled')
-				})
-				it('should have "cancel" button', async () => {
-					const authCancelResetButton = authorizationMethodForm.find(selectors.authorizationCancelResetButton)
-					expect(authCancelResetButton.exists()).toBe(true)
-				})
-
-				it('should set auth method form to view on click "cancel" button', async () => {
-					const authCancelResetButton = authorizationMethodForm.find(selectors.authorizationCancelResetButton)
-					expect(authCancelResetButton.exists()).toBe(true)
-					await authCancelResetButton.trigger('click')
-					expect(wrapper.vm.formMode.authorizationMethod).toBe(F_MODES.VIEW)
-				})
-
-				it('should enable "save" button when OIDC auth is selected and the supported OIDC app is installed ', async () => {
-					await wrapper.setData({
-						state: {
-							user_oidc_enabled: true,
-							user_oidc_supported: true,
-						},
-					})
-					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
-					const oidcRadio = wrapper.find(selectors.openIdIdentityRadio)
-					expect(oidcRadio.exists()).toBe(true)
-					await oidcRadio.trigger('click')
-					expect(authMethodSaveButton.attributes().disabled).toBe(undefined)
-				})
-				describe('on trigger save', () => {
-					it('should open auth method switch dialog confirm "Yes, Switch"', async () => {
-						await wrapper.setData({
-							state: {
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
-							},
-						})
-						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authentication configuration which will delete'
-							+ ' all the configuration setting for current OAUTH2 based authentication.'
-							+ ' You can switch back to it anytime.'
-						const expectedDialogTitle = 'Switch Authentication Method'
-						const expectedDialogOpts = {
-							cancel: 'Cancel',
-							confirm: 'Yes, switch',
-							confirmClasses: 'error',
-							type: 70,
-						}
-						const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
-						const oidcRadio = wrapper.find(selectors.openIdIdentityRadio)
-						expect(oidcRadio.exists()).toBe(true)
-						await oidcRadio.trigger('click')
-						await authMethodSaveButton.trigger('click')
-						expect(confirmSpy).toBeCalledTimes(1)
-						expect(confirmSpy).toHaveBeenCalledWith(
-							expectedDialogMessage,
-							expectedDialogTitle,
-							expectedDialogOpts,
-							expect.any(Function),
-							true,
-						)
-					})
-					// this test is the switch from oauth2 to oidc
-					it('on confirm "Yes, switch" should reset oauth2 settings', async () => {
-						// the "Yes, switch" click from the dialog should reset openproject oauth2 settings only
-						await wrapper.setData({
-							state: {
-								openproject_client_id: '',
-								openproject_client_secret: '',
-							},
-						})
-						await wrapper.vm.saveAuthorizationMethodValue()
-						expect(saveOPOptionsSpy).toBeCalledTimes(1)
-						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
-							values: expect.objectContaining({
-								openproject_client_id: '',
-								openproject_client_secret: '',
-							}),
-						}))
-						expect(wrapper.vm.state.openproject_client_id).toBe('')
-						expect(wrapper.vm.state.openproject_client_secret).toBe('')
-					})
-				})
-			})
-		})
-
-		describe('edit mode form, complete OIDC admin config', () => {
-			describe('on trigger edit button', () => {
-				let wrapper, authorizationMethodForm, resetButton
-				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-					.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-				beforeEach(async () => {
-					wrapper = getMountedWrapper({
-						state: completeOIDCIntegrationState,
-					})
-					await wrapper.setData({
-						state: {
-							user_oidc_enabled: true,
-						},
-					})
-					authorizationMethodForm = wrapper.find(selectors.authorizationMethod)
-					resetButton = authorizationMethodForm.find(selectors.authorizationMethodResetButton)
-					expect(resetButton.exists()).toBe(true)
-					await resetButton.trigger('click')
-				})
-
-				afterEach(() => {
-					axios.put.mockReset()
-					jest.clearAllMocks()
-				})
-				it('should enable "save" button when OAUTH2 auth is selected', async () => {
-					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
-					const oauth2Radio = wrapper.find(selectors.oauth2Radio)
-					expect(oauth2Radio.exists()).toBe(true)
-					await oauth2Radio.trigger('click')
-					expect(authMethodSaveButton.attributes().disabled).toBe(undefined)
-				})
-
-				describe('on trigger save button', () => {
-					it('should open auth method switch dialog confirm "Yes, Switch"', async () => {
-						const expectedDialogMessage = 'If you proceed this method, you will have an OAUTH2 based authentication configuration which will delete'
-							+ ' all the configuration setting for current OIDC based authentication.'
-							+ ' You can switch back to it anytime.'
-						const expectedDialogTitle = 'Switch Authentication Method'
-						const expectedDialogOpts = {
-							cancel: 'Cancel',
-							confirm: 'Yes, switch',
-							confirmClasses: 'error',
-							type: 70,
-						}
-						const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
-						const oauth2Radio = wrapper.find(selectors.oauth2Radio)
-						expect(oauth2Radio.exists()).toBe(true)
-						await oauth2Radio.trigger('click')
-						await authMethodSaveButton.trigger('click')
-						expect(confirmSpy).toBeCalledTimes(1)
-						expect(confirmSpy).toHaveBeenCalledWith(
-							expectedDialogMessage,
-							expectedDialogTitle,
-							expectedDialogOpts,
-							expect.any(Function),
-							true,
-						)
-					})
-					// this test is the switch from oidc to oauth2
-					it('on confirm "Yes, switch" should reset oidc settings', async () => {
-						// the "Yes, switch" click from the dialog should reset authorization settings only
-						await wrapper.setData({
-							state: {
-								authorization_settings: {
-									targeted_audience_client_id: null,
-								},
-							},
-							authorizationSetting: {
-								currentOIDCProviderSelected: null,
-							},
-						})
-						await wrapper.vm.saveAuthorizationMethodValue()
-						expect(saveOPOptionsSpy).toBeCalledTimes(1)
-						expect(saveOPOptionsSpy).toBeCalledWith('http://localhost/apps/integration_openproject/admin-config', expect.objectContaining({
-							values: expect.objectContaining({
-								oidc_provider: null,
-								targeted_audience_client_id: null,
-							}),
-						}))
-						expect(wrapper.vm.state.authorization_settings.targeted_audience_client_id).toBe(null)
-						expect(wrapper.vm.authorizationSetting.currentOIDCProviderSelected).toBe(null)
-					})
-				})
-			})
-		})
-	})
-
 	describe('OIDC authorization settings', () => {
 		const formHeaderSelector = `${selectors.authorizationSettings} > formheading-stub`
 		const errorNoteSelector = `${selectors.authorizationSettings} > errornote-stub`
@@ -938,6 +603,7 @@ describe('AdminSettings.vue', () => {
 						state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true },
 						form: {
 							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 						},
 					})
 				})
@@ -963,6 +629,7 @@ describe('AdminSettings.vue', () => {
 						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false },
 						form: {
 							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 						},
 					})
 				})
@@ -994,6 +661,7 @@ describe('AdminSettings.vue', () => {
 						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false, user_oidc_supported: true },
 						form: {
 							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 						},
 					 })
 				})
@@ -1037,6 +705,7 @@ describe('AdminSettings.vue', () => {
 							},
 							form: {
 								serverHost: { complete: true },
+								authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 							},
 						})
 					})
@@ -1076,6 +745,7 @@ describe('AdminSettings.vue', () => {
 							},
 							form: {
 								serverHost: { complete: true },
+								authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 							},
 						})
 					})
@@ -1115,6 +785,10 @@ describe('AdminSettings.vue', () => {
 						},
 						user_oidc_enabled: true,
 						user_oidc_supported: true,
+					},
+					form: {
+						serverHost: { complete: true },
+						authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 					},
 				})
 				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1158,6 +832,10 @@ describe('AdminSettings.vue', () => {
 								},
 								user_oidc_enabled: true,
 								user_oidc_supported: true,
+							},
+							form: {
+								serverHost: { complete: true },
+								authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 							},
 						})
 						authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1206,6 +884,10 @@ describe('AdminSettings.vue', () => {
 								},
 								user_oidc_enabled: true,
 								user_oidc_supported: true,
+							},
+							form: {
+								serverHost: { complete: true },
+								authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 							},
 						})
 						authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1294,6 +976,10 @@ describe('AdminSettings.vue', () => {
 								},
 							},
 						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+						},
 					})
 					await wrapper.setData({
 						formMode: {
@@ -1323,7 +1009,13 @@ describe('AdminSettings.vue', () => {
 
 			describe('Supported user_oidc app enabled', () => {
 				beforeEach(async () => {
-					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true, user_oidc_supported: true } })
+					wrapper = getWrapper({
+						state: { ...state, user_oidc_enabled: true, user_oidc_supported: true },
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+						},
+					 })
 				})
 
 				it('should show authorization settings in edit mode without errors', () => {
@@ -1361,6 +1053,10 @@ describe('AdminSettings.vue', () => {
 								targeted_audience_client_id: null,
 							},
 						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+						},
 					})
 					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
@@ -1380,6 +1076,10 @@ describe('AdminSettings.vue', () => {
 						},
 						authorizationSetting: {
 							SSOProviderType: 'external',
+						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 						},
 					})
 
@@ -1416,6 +1116,10 @@ describe('AdminSettings.vue', () => {
 							authorizationSetting: {
 								SSOProviderType: 'external',
 							},
+							form: {
+								serverHost: { complete: true },
+								authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+							},
 						})
 						const providerInputField = wrapper.find(selectors.providerInput)
 						await providerInputField.setValue('key')
@@ -1445,6 +1149,10 @@ describe('AdminSettings.vue', () => {
 									SSOProviderType: 'external',
 									oidcProviderSet: 'keycloak',
 									currentOIDCProviderSelected: 'keycloak',
+								},
+								form: {
+									serverHost: { complete: true },
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 								},
 							})
 							const tokenExchange = wrapper.find(tokenExchangeSwitchSelector)
@@ -1478,6 +1186,10 @@ describe('AdminSettings.vue', () => {
 									...state,
 									user_oidc_enabled: true,
 									user_oidc_supported: true,
+								},
+								form: {
+									serverHost: { complete: true },
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 								},
 							 })
 							const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1525,6 +1237,10 @@ describe('AdminSettings.vue', () => {
 								},
 								authorizationSetting: {
 									SSOProviderType: 'external',
+								},
+								form: {
+									serverHost: { complete: true },
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 								},
 							 })
 							const providerInputField = wrapper.find(selectors.providerInput)
@@ -1575,6 +1291,10 @@ describe('AdminSettings.vue', () => {
 							user_oidc_enabled: false,
 							user_oidc_supported: true,
 						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+						},
 					})
 				})
 
@@ -1613,6 +1333,10 @@ describe('AdminSettings.vue', () => {
 							},
 							user_oidc_enabled: true,
 							user_oidc_supported: false,
+						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
 						},
 					})
 				})
@@ -1660,6 +1384,10 @@ describe('AdminSettings.vue', () => {
 								},
 							},
 						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
+						},
 					})
 				})
 
@@ -1691,6 +1419,13 @@ describe('AdminSettings.vue', () => {
 						openproject_client_id: 'openproject-client-id',
 						openproject_client_secret: 'openproject-client-secret',
 						nc_oauth_client: null,
+					},
+					form: {
+						serverHost: {
+							complete: true,
+							value: 'http://openproject.com',
+						},
+						authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
 					},
 				})
 				opOAuthForm = wrapper.find(selectors.opOauthForm)
@@ -1745,13 +1480,20 @@ describe('AdminSettings.vue', () => {
 							clientSecret: 'nc-client-secret101',
 						},
 					}))
-				wrapper = getMountedWrapper({
+				wrapper = getWrapper({
 					state: {
 						openproject_instance_url: 'http://openproject.com',
 						authorization_method: AUTH_METHOD.OAUTH2,
 						openproject_client_id: '',
 						openproject_client_secret: '',
 						nc_oauth_client: null,
+					},
+					form: {
+						serverHost: {
+							complete: true,
+							value: 'http://openproject.com',
+						},
+						authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
 					},
 				})
 			})
@@ -1768,9 +1510,9 @@ describe('AdminSettings.vue', () => {
 				it('should be enabled with complete client values', async () => {
 					let submitButton
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.attributes().disabled).toBe('disabled')
-					await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-					await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+					expect(submitButton.attributes().disabled).toBe('true')
+					await wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
+					await wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
 
 					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
 					expect(submitButton.attributes().disabled).toBe(undefined)
@@ -1778,9 +1520,10 @@ describe('AdminSettings.vue', () => {
 				describe('when clicked', () => {
 					describe('when the admin config is ok on save options', () => {
 						beforeEach(async () => {
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							await wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
+							await flushPromises()
 						})
 						it('should set the form to view mode', () => {
 							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.VIEW)
@@ -1799,7 +1542,7 @@ describe('AdminSettings.vue', () => {
 								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
 							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
 								.mockImplementationOnce(() => jest.fn())
-							const wrapper = getMountedWrapper({
+							const wrapper = getWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
 									authorization_method: AUTH_METHOD.OAUTH2,
@@ -1810,10 +1553,18 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
 								},
+								form: {
+									serverHost: {
+										complete: true,
+										value: 'http://openproject.com',
+									},
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
+								},
 							})
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
+							await flushPromises()
 							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
 						})
 
@@ -1877,9 +1628,10 @@ describe('AdminSettings.vue', () => {
 					jest.clearAllMocks()
 				})
 				it('should trigger the confirm dialog', async () => {
-					const wrapper = getMountedWrapper({
+					const wrapper = getWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
 							openproject_client_id: 'op-client-id',
 							openproject_client_secret: 'op-client-secret',
 							nc_oauth_client: {
@@ -1901,7 +1653,8 @@ describe('AdminSettings.vue', () => {
 					const expectedConfirmTitle = 'Replace Nextcloud OAuth values'
 
 					const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
-					await resetButton.trigger('click')
+					resetButton.vm.$emit('click')
+					await flushPromises()
 
 					expect(confirmSpy).toBeCalledTimes(1)
 					expect(confirmSpy).toBeCalledWith(
@@ -2166,7 +1919,6 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
-									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
@@ -2282,7 +2034,6 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
-										authorization_method: AUTH_METHOD.OAUTH2,
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
@@ -2347,7 +2098,6 @@ describe('AdminSettings.vue', () => {
 								'http://localhost/apps/integration_openproject/admin-config',
 								{
 									values: {
-										authorization_method: AUTH_METHOD.OAUTH2,
 										setup_app_password: true,
 										setup_project_folder: true,
 									},
@@ -2430,7 +2180,6 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
-									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
@@ -2446,7 +2195,6 @@ describe('AdminSettings.vue', () => {
 							'http://localhost/apps/integration_openproject/admin-config',
 							{
 								values: {
-									authorization_method: AUTH_METHOD.OAUTH2,
 									setup_app_password: false,
 									setup_project_folder: false,
 								},
@@ -2915,6 +2663,10 @@ describe('AdminSettings.vue', () => {
 							default_enable_unified_search: false,
 							setup_project_folder: false,
 							setup_app_password: false,
+							oidc_provider: null,
+							sso_provider_type: null,
+							targeted_audience_client_id: null,
+							token_exchange: null,
 						},
 					},
 				)
@@ -2952,6 +2704,10 @@ describe('AdminSettings.vue', () => {
 							default_enable_unified_search: false,
 							setup_project_folder: false,
 							setup_app_password: false,
+							oidc_provider: null,
+							sso_provider_type: null,
+							targeted_audience_client_id: null,
+							token_exchange: null,
 						},
 					},
 				)

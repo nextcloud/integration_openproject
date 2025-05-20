@@ -1,43 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Authorization Method edit mode form, incomplete admin configuration should show proper elements when supported user_oidc app is enabled 1`] = `
-<div
-  class="authorization-method"
->
-  <formheading-stub
-    index="2"
-    title="Authentication method"
-  />
-   
-  <!---->
-</div>
-`;
-
-exports[`AdminSettings.vue Authorization Method edit mode form, incomplete admin configuration should show proper elements when user_oidc app is not installed 1`] = `
-<div
-  class="authorization-method"
->
-  <formheading-stub
-    index="2"
-    title="Authentication method"
-  />
-   
-  <!---->
-</div>
-`;
-
-exports[`AdminSettings.vue Authorization Method view mode form complete should show field values and hide the form completed with oauth2 auth method 1`] = `
-Wrapper {
-  "selector": ".authorization-method",
-}
-`;
-
-exports[`AdminSettings.vue Authorization Method view mode form complete should show field values and hide the form completed with oidc auth method 1`] = `
-Wrapper {
-  "selector": ".authorization-method",
-}
-`;
-
 exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
 Wrapper {
   "selector": ".nextcloud-oauth-values",
