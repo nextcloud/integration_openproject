@@ -1194,6 +1194,11 @@ class FeatureContext implements Context {
 			);
 			if ($command_result_code === 0) {
 				echo("\n-> File system for user " . $user . " has been deleted successfully!");
+			} else {
+				echo("\n-> Failed to delete" . $user);
+				echo("\nerror\n");
+				$stringified = json_encode($output);
+				echo $stringified;
 			}
 		}
 		foreach ($this->createdgroups as $groups) {
