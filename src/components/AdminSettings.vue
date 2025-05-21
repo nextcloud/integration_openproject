@@ -1139,8 +1139,10 @@ export default {
 			this.formMode.authorizationSetting = F_MODES.VIEW
 			this.formMode.SSOSettings = F_MODES.VIEW
 			this.isFormCompleted.authorizationSetting = true
-			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
+			this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
+			this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
+			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 		},
 		setServerHostFormToEditMode() {
 			this.formMode.server = F_MODES.EDIT
@@ -1300,6 +1302,10 @@ export default {
 					this.isProjectFolderSwitchEnabled = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				}
+				this.state.authorization_settings.sso_provider_type = this.authorizationSetting.SSOProviderType
+				this.state.authorization_settings.oidc_provider = this.authorizationSetting.currentOIDCProviderSelected
+				this.state.authorization_settings.token_exchange = this.authorizationSetting.enableTokenExchange
+				this.state.authorization_settings.targeted_audience_client_id = this.authorizationSetting.currentTargetedAudienceClientIdSelected
 			}
 			this.loadingAuthorizationMethodForm = false
 		},
