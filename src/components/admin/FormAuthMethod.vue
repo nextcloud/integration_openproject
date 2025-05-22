@@ -38,11 +38,15 @@
 						type="radio">
 						{{ authMethodLabel.OIDC }}
 					</NcCheckboxRadioSwitch>
-					<ErrorLabel
-						v-if="!hasEnabledSupportedUserOidcApp"
-						class="error-label"
-						:disabled="disableErrorLabel"
-						:error="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinUserOidcAppVersion)}`" />
+					<div class="info-container">
+						<p>
+							{{ messages.opRequiredVersionAndPlanHint }}
+						</p>
+						<ErrorLabel
+							v-if="!hasEnabledSupportedUserOidcApp"
+							:disabled="disableErrorLabel"
+							:error="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinUserOidcAppVersion)}`" />
+					</div>
 				</div>
 			</div>
 			<p v-else class="auth-method--label">
@@ -280,7 +284,7 @@ export default {
 		.radio-check {
 			font-weight: 500;
 		}
-		.error-label {
+		.info-container {
 			margin-left: 2.4rem;
 			font-size: 14px;
 		}
