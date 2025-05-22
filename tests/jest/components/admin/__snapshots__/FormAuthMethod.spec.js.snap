@@ -18,7 +18,12 @@ exports[`Component: FormAuthMethod completed form edit mode should show form fie
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oidc" value="oidc" class="radio-check">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <!---->
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <!---->
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -52,7 +57,12 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oauth2" value="oidc" disabled="true" class="radio-check">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true" class="error-label"></errorlabel-stub>
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -86,7 +96,12 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oidc" value="oidc" class="radio-check" disabled="true">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" class="error-label"></errorlabel-stub>
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -156,7 +171,12 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oidc" value="oidc" class="radio-check">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <!---->
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <!---->
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -188,7 +208,12 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oauth2" value="oidc" class="radio-check">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <!---->
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <!---->
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -227,7 +252,12 @@ exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc
         <nccheckboxradioswitch-stub id="sso-auth-method" arialabel="" type="radio" buttonvariantgrouped="no" checked="oauth2" value="oidc" class="radio-check" disabled="true">
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
-        <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true" class="error-label"></errorlabel-stub>
+        <div class="info-container">
+          <p>
+            Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
+          </p>
+          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+        </div>
       </div>
     </div>
     <div class="form-actions">
