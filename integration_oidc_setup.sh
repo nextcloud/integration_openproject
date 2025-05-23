@@ -70,7 +70,7 @@ if [[ -z "$OP_ADMIN_USERNAME" || -z "$OP_ADMIN_PASSWORD" ]]; then
   exit 1
 fi
 
-if [[ $INTEGRATION_SETUP_TEMP_DIR == ""  ]]; then
+if [[ $INTEGRATION_SETUP_TEMP_DIR == "" ]]; then
   log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
   INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
   mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
@@ -85,7 +85,7 @@ fi
 # Validate required configs for integration setup
 if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
-  [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]] ; then
+  [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]]; then
   log_error "Following configs are required for integration setup:"
   log_error "\tNC_INTEGRATION_ENABLE_NAVIGATION"
   log_error "\tNC_INTEGRATION_ENABLE_SEARCH"
@@ -112,7 +112,7 @@ elif [[ "$OP_USE_LOGIN_TOKEN" == "true" ]]; then
 fi
 
 # Support for "Debug mode"
-if [[ $INTEGRATION_SETUP_DEBUG == "true"  ]]; then
+if [[ $INTEGRATION_SETUP_DEBUG == "true" ]]; then
   log_info "Debug mode is enabled"
   set -x
   set -v
@@ -143,19 +143,20 @@ NC_OIDC_OP_CLIENT_NAME="openproject"
 OP_STORAGE_ENDPOINT="${OP_HOST}/api/v3/storages"
 OP_HOST_CONFIG=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP_HOST}/api/v3/configuration)
 # Minimum OpenProject version required to run this script
-OP_MINIMUM_VERSION="15.5.0"
+OP_MINIMUM_VERSION="16.0.0"
 
 # Helper function for OpenProject
 opCheckIntegrationConfiguration() {
   op_status=
-  op_storages_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+  op_storages_response=$(
+    curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
       ${OP_STORAGE_ENDPOINT} \
       -H 'accept: application/hal+json' \
       -H 'Content-Type: application/json' \
       -H 'X-Requested-With: XMLHttpRequest'
-    )
-    op_storage_status=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
-    has_nc_app_password=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
+  )
+  op_storage_status=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
+  has_nc_app_password=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
     if [[ ${op_storage_status} == 'true' && ${has_nc_app_password} == 'true' ]]; then
       op_status=0
@@ -184,14 +185,14 @@ opCheckIntegrationConfiguration() {
 opDeleteStorage() {
   log_error "Setup of OpenProject and Nextcloud integration failed when the OIDC Provider Type is '$NC_INTEGRATION_PROVIDER_TYPE'."
   delete_storage_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${OP_STORAGE_ENDPOINT}/${OP_STORAGE_ID} \
-                      -H 'accept: application/hal+json' \
-                      -H 'Content-Type: application/json' \
-                      -H 'X-Requested-With: XMLHttpRequest')
+    ${OP_STORAGE_ENDPOINT}/${OP_STORAGE_ID} \
+    -H 'accept: application/hal+json' \
+    -H 'Content-Type: application/json' \
+    -H 'X-Requested-With: XMLHttpRequest')
   if [[ ${delete_storage_response} == 204 ]]; then
-      log_info "File storage name \"${OP_STORAGE_NAME}\" has been deleted from OpenProject!"
+    log_info "File storage name \"${OP_STORAGE_NAME}\" has been deleted from OpenProject!"
   else
-      log_info "Failed to delete file storage \"${OP_STORAGE_NAME}\" from OpenProject!"
+    log_info "Failed to delete file storage \"${OP_STORAGE_NAME}\" from OpenProject!"
   fi
 }
 
@@ -199,10 +200,10 @@ opDeleteStorage() {
 ncCheckIntegrationConfiguration() {
   nc_integration_config_ok=
   nc_integration_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-          ${NC_INTEGRATION_BASE_URL}/check-admin-config \
-          -H 'accept: application/hal+json' \
-          -H 'Content-Type: application/json' \
-          -H 'X-Requested-With: XMLHttpRequest')
+    ${NC_INTEGRATION_BASE_URL}/check-admin-config \
+    -H 'accept: application/hal+json' \
+    -H 'Content-Type: application/json' \
+    -H 'X-Requested-With: XMLHttpRequest')
   nc_setup_without_project_folder=$(echo $nc_integration_config_response | jq -r ".config_status_without_project_folder")
   nc_project_folder_status=$(echo $nc_integration_config_response | jq -r ".project_folder_setup_status")
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
@@ -230,8 +231,8 @@ ncCheckIntegrationConfiguration() {
 ncCheckAppVersion() {
   # checks the version of a specified Nextcloud app.
   app_name=$1
-  
-  # assign app_miniimum version 
+
+  # assign app_miniimum version
   if [ $app_name = 'user_oidc' ]; then
     app_min_version=$MIN_SUPPORTED_USER_OIDC_APP_VERSION
   elif [ $app_name = 'oidc' ]; then
@@ -243,8 +244,9 @@ ncCheckAppVersion() {
     exit 1
   fi
 
-  nc_apps_version_response=$(curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
-    -H 'OCS-APIRequest: true' \
+  nc_apps_version_response=$(
+    curl -s -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_HOST}/ocs/v2.php/cloud/apps/$app_name?format=json" \
+      -H 'OCS-APIRequest: true'
   )
 
   nc_app_version=$(echo $nc_apps_version_response | jq -r ".ocs.data.version")
@@ -253,20 +255,20 @@ ncCheckAppVersion() {
     log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
     exit 1
   elif [[ "$nc_app_version" < "$app_min_version" ]]; then
-   log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$nc_app_version'"
-   exit 1
+    log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$nc_app_version'"
+    exit 1
   fi
 }
 
 # delete oidc client [oidc apps]
 deleteOidcClient() {
-    nc_delete_client_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                      ${NC_OIDC_BASE_URL}/clients/$1 \
-                      -H 'Content-Type: application/json' \
-                      -H 'OCS-APIRequest: true')
-    if [[ ${nc_delete_client_response} != 200 ]]; then
-      log_error "Failed to delete oidc client name \"${NC_OIDC_OP_CLIENT_NAME}\" from oidc app!"
-    fi
+  nc_delete_client_response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+    ${NC_OIDC_BASE_URL}/clients/$1 \
+    -H 'Content-Type: application/json' \
+    -H 'OCS-APIRequest: true')
+  if [[ ${nc_delete_client_response} != 200 ]]; then
+    log_error "Failed to delete oidc client name \"${NC_OIDC_OP_CLIENT_NAME}\" from oidc app!"
+  fi
 }
 
 createOidcClient() {
@@ -282,17 +284,18 @@ createOidcClient() {
 }
 EOF
 
-  nc_oidc_client_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_OIDC_BASE_URL}/clients" \
-    -H 'Content-Type: application/json' \
-    -H 'OCS-APIRequest: true' \
-    -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
+  nc_oidc_client_response=$(
+    curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_OIDC_BASE_URL}/clients" \
+      -H 'Content-Type: application/json' \
+      -H 'OCS-APIRequest: true' \
+      -d @"${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json"
   )
 
-  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
+  if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_1_oidc_create_oidc_client.json; fi
 
   if ! [[ $(echo "$nc_oidc_client_response" | jq -r '.name') = "$NC_OIDC_OP_CLIENT_NAME" ]]; then
     log_info "The response is missing openproject_client_name"
-    log_error "[OIDC app]:Failed when creating '$NC_OIDC_OP_CLIENT_NAME' oidc client";
+    log_error "[OIDC app]:Failed when creating '$NC_OIDC_OP_CLIENT_NAME' oidc client"
     exit 1
   fi
 
@@ -372,15 +375,16 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 }
 EOF
 
-create_storage_response=$(curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-  ${OP_STORAGE_ENDPOINT} \
-  -H 'accept: application/hal+json' \
-  -H 'Content-Type: application/json' \
-  -H 'X-Requested-With: XMLHttpRequest' \
-  -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
+create_storage_response=$(
+  curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+    ${OP_STORAGE_ENDPOINT} \
+    -H 'accept: application/hal+json' \
+    -H 'Content-Type: application/json' \
+    -H 'X-Requested-With: XMLHttpRequest' \
+    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
 )
 
-if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
+if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
 # check for errors
 response_type=$(echo $create_storage_response | jq -r "._type")
 if [[ ${response_type} == "Error" ]]; then
@@ -403,9 +407,9 @@ if [[ ${response_type} == "Error" ]]; then
       elif [[ "$element" == "Name has already been taken." ]]; then
         name_already_taken=true
       fi
-      (( error_count +=1 ))
+      ((error_count += 1))
     done
-    if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2  ]]; then
+    if [[ $host_already_taken != true || $name_already_taken != true || "$error_count" -ne 2 ]]; then
       logUnhandledError
       exit 1
     fi
@@ -415,7 +419,7 @@ if [[ ${response_type} == "Error" ]]; then
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
     # A PropertyConstraintViolation is always a single error
     error_messages_grep=$(echo $create_storage_response | jq -r '.message')
-    if [[ "$error_messages_grep" == "Host has already been taken." ||  "$error_messages_grep" == "Name has already been taken." ]]; then
+    if [[ "$error_messages_grep" == "Host has already been taken." || "$error_messages_grep" == "Name has already been taken." ]]; then
       opCheckIntegrationConfiguration
       ncCheckIntegrationConfiguration
       logAlreadyCompletedIntegrationConfiguration
@@ -449,17 +453,17 @@ log_success "Creating file storage name \"${OP_STORAGE_NAME}\" in OpenProject wa
 # Otherwise, use the OpenProject client ID provided via environment variable.
 if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
   createOidcClient
-elif [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "external" ]] && 
-    [[ -z $NC_INTEGRATION_PROVIDER_NAME || -z $NC_INTEGRATION_TOKEN_EXCHANGE ]]; then
-    log_error "Following configs are required to setup integration with external provider:"
-    log_error "\tNC_INTEGRATION_PROVIDER_NAME"
-    log_error "\tNC_INTEGRATION_TOKEN_EXCHANGE"
-    help
-    exit 1
+elif [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "external" ]] &&
+  [[ -z $NC_INTEGRATION_PROVIDER_NAME || -z $NC_INTEGRATION_TOKEN_EXCHANGE ]]; then
+  log_error "Following configs are required to setup integration with external provider:"
+  log_error "\tNC_INTEGRATION_PROVIDER_NAME"
+  log_error "\tNC_INTEGRATION_TOKEN_EXCHANGE"
+  help
+  exit 1
 elif [[ "$NC_INTEGRATION_TOKEN_EXCHANGE" == "true" ]] && [[ -z $NC_INTEGRATION_OP_CLIENT_ID ]]; then
-    log_error "'NC_INTEGRATION_OP_CLIENT_ID' is required with token exchange enabled."
-    help
-    exit 1
+  log_error "'NC_INTEGRATION_OP_CLIENT_ID' is required with token exchange enabled."
+  help
+  exit 1
 fi
 
 cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json <<EOF
@@ -482,38 +486,39 @@ EOF
 # If OIDC provider is keycloak, add provider-specific values to the JSON
 if [[ $NC_INTEGRATION_PROVIDER_TYPE != "nextcloud_hub" ]]; then
   jq --arg nc_integration_provider_name "$NC_INTEGRATION_PROVIDER_NAME" \
-     --argjson nc_integration_token_exchange "$NC_INTEGRATION_TOKEN_EXCHANGE" \
-     '.values += {
+    --argjson nc_integration_token_exchange "$NC_INTEGRATION_TOKEN_EXCHANGE" \
+    '.values += {
         "oidc_provider": $nc_integration_provider_name,
         "token_exchange": $nc_integration_token_exchange
       }' \
-     "${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json" > tempEdit.json
+    "${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json" >tempEdit.json
 
   mv tempEdit.json "${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json"
 fi
 
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
-nc_integration_setup_response=$(curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
-  -H 'Content-Type: application/json' \
-  -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json
+nc_integration_setup_response=$(
+  curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
+    -H 'Content-Type: application/json' \
+    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json
 )
 
-if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json; fi
+if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json; fi
 
-if [[ "$nc_integration_setup_response" != *"nextcloud_oauth_client_name"* ]] && \
-    [[ "$nc_integration_setup_response" != *"openproject_redirect_uri"* ]]; then
+if [[ "$nc_integration_setup_response" != *"nextcloud_oauth_client_name"* ]] &&
+  [[ "$nc_integration_setup_response" != *"openproject_redirect_uri"* ]]; then
 
-    log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
-    log_error "Failed to setup OIDC from Nextcloud."
-    opDeleteStorage "$nc_integration_setup_response"
+  log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
+  log_error "Failed to setup OIDC from Nextcloud."
+  opDeleteStorage "$nc_integration_setup_response"
 
-    if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nc_integration_setup_response" != *"openproject_user_app_password"* ]]; then
-      log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
-      log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
-    elif [[ $NC_INTEGRATION_PROVIDER_TYPE = "nextcloud_hub" ]]; then
-      deleteOidcClient "$NC_OIDC_OP_CLIENT_ID"
-    fi
-    exit 1
+  if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nc_integration_setup_response" != *"openproject_user_app_password"* ]]; then
+    log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
+    log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
+  elif [[ $NC_INTEGRATION_PROVIDER_TYPE = "nextcloud_hub" ]]; then
+    deleteOidcClient "$NC_OIDC_OP_CLIENT_ID"
+  fi
+  exit 1
 fi
 
 if [[ ${SETUP_PROJECT_FOLDER} == true ]]; then
@@ -530,14 +535,15 @@ if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
     "applicationPassword": ${NC_APP_PASSWORD}
   }
 EOF
-  op_save_nc_app_password_response=$(curl -s -XPATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-                                    ${OP_STORAGE_ENDPOINT}/${OP_STORAGE_ID} \
-                                    -H 'accept: application/hal+json' \
-                                    -H 'Content-Type: application/json' \
-                                    -H 'X-Requested-With: XMLHttpRequest' \
-                                    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json
+  op_save_nc_app_password_response=$(
+    curl -s -XPATCH -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+      ${OP_STORAGE_ENDPOINT}/${OP_STORAGE_ID} \
+      -H 'accept: application/hal+json' \
+      -H 'Content-Type: application/json' \
+      -H 'X-Requested-With: XMLHttpRequest' \
+      -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json
   )
-  if [[ $INTEGRATION_SETUP_DEBUG != "true"  ]] ; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json; fi
+  if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_set_project_folder_app_password.json; fi
 
   if [[ "$op_save_nc_app_password_response" == *"_type"* ]]; then
     app_password_response_type=$(echo $op_save_nc_app_password_response | jq -r "._type")
