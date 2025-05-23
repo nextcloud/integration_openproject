@@ -229,12 +229,6 @@ jobs:
 
       - name: Setup server and apps
         run: |
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
-            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
-            sed -i 's/10.0.0-beta2/7.1/g' composer.json
-            composer update
-          fi
           # integration_openproject app
           composer install --no-progress --prefer-dist --optimize-autoloader
           # user_oidc app
@@ -245,11 +239,6 @@ jobs:
 
       - name: PHP code analysis and linting
         run: |
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
-            # Ignoring the pact test for php 8.0
-            sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
-          fi
           make psalm
           make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
@@ -270,12 +259,7 @@ jobs:
       - name: PHP Unit Tests
         run: |
           cd server/apps/integration_openproject
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{ matrix.phpVersion }}" = "8.0" ]; then
-            make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
-          else
-            make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
-          fi
+          make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
@@ -323,14 +307,6 @@ jobs:
         env:
           NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
-          # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
-            # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
-            echo "PHP 8.0: Updating composer.json"
-            sed -i 's/10.0.0-beta2/7.1/g' composer.json
-            cat composer.json
-            composer update
-          fi
           composer install --no-progress --prefer-dist --optimize-autoloader
           until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
           make api-test
