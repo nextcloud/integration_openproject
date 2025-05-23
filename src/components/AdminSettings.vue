@@ -796,7 +796,7 @@ export default {
 		},
 		getAuthorizationMethodHintText() {
 			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
-			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#3-configure-authentication-method" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getOIDCAppNotInstalledHintText() {
