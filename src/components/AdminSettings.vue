@@ -1300,6 +1300,7 @@ export default {
 					this.isProjectFolderSwitchEnabled = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				}
+				this.state.authorization_settings.targeted_audience_client_id = this.authorizationSetting.currentTargetedAudienceClientIdSelected
 			}
 			this.loadingAuthorizationMethodForm = false
 		},
