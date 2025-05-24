@@ -1,13 +1,15 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Bad HTTP method" : "Vigane HTTP-meetod",
-    "Documentation" : "Dokumentatsioon",
     "Cancel" : "Loobu",
-    "Save" : "Salvesta",
     "Authentication method" : "Autentimise meetod",
+    "Save" : "Salvesta",
     "Connected as {user}" : "Ühendatud kui {user}",
+    "Documentation" : "Dokumentatsioon",
     "Copied!" : "Kopeeritud!",
+    "Copied to the clipboard" : "Kopeeritud lõikelauale.",
     "Details" : "Üksikasjad",
     "Start typing to search" : "Otsimiseks alusta kirjutamist",
     "Select a user or group" : "Vali kasutaja või grupp",
