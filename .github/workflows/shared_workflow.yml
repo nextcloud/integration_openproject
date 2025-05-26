@@ -285,7 +285,7 @@ jobs:
           title: '' # Optional title.
           tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
           customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
-          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
+          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tools.
 
       - name: PHP Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
