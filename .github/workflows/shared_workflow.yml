@@ -25,13 +25,13 @@ jobs:
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
 
       - name: Checkout
         if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Read package.json node and npm engines version
         uses: skjnldsv/read-package-engines-version-actions@v2
@@ -41,7 +41,7 @@ jobs:
           fallbackNpm: '^7'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
           cache: 'npm'
@@ -80,13 +80,13 @@ jobs:
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
 
       - name: Checkout
         if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create matrix
         id: create-matrix
@@ -153,14 +153,14 @@ jobs:
     steps:
       - name: Checkout for nightly CI
         if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
 
       - name: Checkout
         if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: integration_openproject
 
@@ -170,27 +170,27 @@ jobs:
           apt install git -y
 
       - name: Checkout activity app
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nextcloud/activity
           path: activity
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Checkout groupfolders app
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nextcloud/groupfolders
           path: groupfolders
           ref: ${{ matrix.nextcloudVersion }}
 
       - name: Checkout user_oidc app
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nextcloud/user_oidc
           path: user_oidc
 
       - name: Checkout oidc app
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: h2CK/oidc
           ref: 1.6.0
@@ -198,7 +198,7 @@ jobs:
           path: oidc
 
       - name: Checkout server (for phpunit and psalm)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           repository: nextcloud/server
@@ -221,7 +221,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('./composer.lock') }}
@@ -263,7 +263,7 @@ jobs:
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
