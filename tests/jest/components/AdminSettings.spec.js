@@ -1783,11 +1783,15 @@ describe('AdminSettings.vue', () => {
 									...state,
 									user_oidc_enabled: true,
 									user_oidc_supported: true,
+									authorization_settings: {},
 								},
+							 })
+							 await wrapper.setData({
 								authorizationSetting: {
 									SSOProviderType: 'external',
 								},
 							 })
+							await localVue.nextTick()
 							const providerInputField = wrapper.find(selectors.providerInput)
 							await providerInputField.setValue('key')
 							await localVue.nextTick()
