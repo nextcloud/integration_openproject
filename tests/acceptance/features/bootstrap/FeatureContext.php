@@ -160,14 +160,15 @@ class FeatureContext implements Context {
 	 * @Given user :user has been created
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
-		// delete the user if it exists
-		$this->theAdministratorDeletesTheUser($user);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-		$this->createUserWithRetry($user, $userAttributes);
+		$response = $this->sendOCSRequest(
+			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+		);
+		Assert::assertSame(200, $response->getStatusCode(), 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
 		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
@@ -1184,7 +1185,37 @@ class FeatureContext implements Context {
 	 */
 	public function after():void {
 		foreach ($this->createdUsers as $userData) {
-			$this->theAdministratorDeletesTheUser($userData['userid']);
+			$user = $userData['userid'];
+			$this->userHasBeenDeleted($user);
+			exec(
+				"docker exec nextcloud /bin/bash -c 'if [ -d \"data/$user\" ]; then echo \"Exists\" && rm -rf \"data/$user\"; else exit 1; fi'",
+				$output,
+				$command_result_code
+			);
+
+			if ($command_result_code === 0) {
+				echo("\n-> File system for user " . $user . " has been deleted successfully!");
+			} else {
+				echo("\n-> Failed to delete" . $user);
+				echo("command_result_code= " . $command_result_code);
+				echo("\nerror\n");
+				$stringified = json_encode($output);
+				echo $stringified;
+			}
+
+			// exec(
+			// 	"docker exec nextcloud /bin/bash -c 'rm -rf data/$user'",
+			// 	$output,
+			// 	$command_result_code
+			// );
+			// if ($command_result_code === 0) {
+			// 	echo("\n-> File system for user " . $user . " has been deleted successfully!");
+			// } else {
+			// 	echo("\n-> Failed to delete" . $user);
+			// 	echo("\nerror\n");
+			// 	$stringified = json_encode($output);
+			// 	echo $stringified;
+			// }
 		}
 		foreach ($this->createdgroups as $groups) {
 			$this->theAdministratorDeletesTheGroup($groups);
