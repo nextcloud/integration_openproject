@@ -109,6 +109,8 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-22.04
+    container:
+      image: ubuntu:22.04
 
     defaults:
       run:
@@ -162,11 +164,6 @@ jobs:
         with:
           path: integration_openproject
 
-      - name: Install git
-        run: |
-          apt update
-          apt install git -y
-
       - name: Checkout activity app
         uses: actions/checkout@v3
         with:
@@ -203,6 +200,7 @@ jobs:
           path: integration_openproject/server
           ref: ${{ matrix.nextcloudVersion }}
 
+      # NOTE: required for API tests wich make use of docker command to cleanup user data in the server container.
       - name: install docker
         uses: papodaca/install-docker-action@main
 
