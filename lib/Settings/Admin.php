@@ -73,6 +73,7 @@ class Admin implements ISettings {
 		$authenticationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if (!$authenticationMethod && $this->openProjectAPIService->isAdminConfigOkForOauth2($this->config)){
 			$authenticationMethod = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+			$this->config->setAppValue(Application::APP_ID, 'authorization_method', $authenticationMethod);
 		}
 
 		$adminConfig = [
