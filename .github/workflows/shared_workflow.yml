@@ -109,8 +109,6 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-22.04
-    container:
-      image: public.ecr.aws/lts/ubuntu:22.04
 
     defaults:
       run:
