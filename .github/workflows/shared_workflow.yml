@@ -109,8 +109,6 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-22.04
-    container:
-      image: public.ecr.aws/lts/ubuntu:22.04
 
     defaults:
       run:
@@ -128,9 +126,11 @@ jobs:
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 120
+        ports:
+          - 80:80
         options: --name=nextcloud
         volumes:
-          - /home/runner/work/integration_openproject/integration_openproject:/var/www/html/apps-shared
+          - ${{ github.workspace }}:/var/www/html/apps-shared
 
       database-postgres:
         image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
@@ -163,11 +163,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: integration_openproject
-
-      - name: Install git
-        run: |
-          apt update
-          apt install git -y
 
       - name: Checkout activity app
         uses: actions/checkout@v3
@@ -207,9 +202,6 @@ jobs:
           path: integration_openproject/server
           ref: ${{ matrix.nextcloudVersion }}
 
-      - name: install docker
-        uses: papodaca/install-docker-action@main
-
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@v2
         with:
@@ -242,8 +234,6 @@ jobs:
           # user_oidc app
           composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
           cd server && ./occ maintenance:install --admin-pass=admin
-          # Disable share rate limit protection
-          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
 
       - name: PHP code analysis and linting
         run: |
@@ -321,9 +311,14 @@ jobs:
           min_coverage: '56'
           path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
 
+      - name: Configure Nextcloud server
+        run: |
+          # Disable share rate limit protection
+          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
+
       - name: API Tests
         env:
-          NEXTCLOUD_BASE_URL: http://nextcloud
+          NEXTCLOUD_BASE_URL: http://localhost
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
           if [ "${{matrix.phpVersion}}" = "8.0" ]; then
@@ -334,7 +329,15 @@ jobs:
             composer update
           fi
           composer install --no-progress --prefer-dist --optimize-autoloader
-          until curl -s -f http://nextcloud/status.php | grep '"installed":true'; do echo .; sleep 10; done
+          if ! timeout 5m bash -c '
+            until curl -s -f http://localhost/status.php | grep '"'"'"installed":true'"'"'; do
+              echo "[INFO] Waiting for server to be ready..."
+              sleep 10
+            done
+          '; then
+            echo "[ERROR] Server not ready within 5 minutes."
+            exit 1
+          fi
           make api-test
 
   notify-nightly-report:
