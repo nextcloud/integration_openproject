@@ -67,11 +67,18 @@ class Admin implements ISettings {
 		$isAllTermsOfServiceSignedForUserOpenProject = $this->openProjectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
 		$isAdminAuditConfigurationSetUpCorrectly = $this->openProjectAPIService->isAdminAuditConfigSetCorrectly();
 
+		// NOTE: for migration compatibility
+		// set 'authorization_method' to Oauth2 if authorization_method is not set and there is existing Oauth2
+		$authenticationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if (!$authenticationMethod && $this->openProjectAPIService->isAdminConfigOkForOauth2($this->config)){
+			$authenticationMethod = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+		}
+
 		$adminConfig = [
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
 			'openproject_instance_url' => $oauthUrl,
-			'authorization_method' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', ''),
+			'authorization_method' => $authenticationMethod,
 			'authorization_settings' => [
 				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
 				'targeted_audience_client_id' => $this->config->getAppValue(
