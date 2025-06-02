@@ -1770,6 +1770,10 @@ describe('AdminSettings.vue', () => {
 								},
 							)
 							expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+							expect(wrapper.vm.state.authorization_settings.sso_provider_type).toBe('nextcloud_hub')
+							expect(wrapper.vm.state.authorization_settings.oidc_provider).toBe('Nextcloud Hub')
+							expect(wrapper.vm.state.authorization_settings.token_exchange).toBe(false)
+							expect(wrapper.vm.state.authorization_settings.targeted_audience_client_id).toBe('openproject')
 						})
 					})
 
@@ -1822,6 +1826,10 @@ describe('AdminSettings.vue', () => {
 								},
 							)
 							expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+							expect(wrapper.vm.state.authorization_settings.sso_provider_type).toBe('external')
+							expect(wrapper.vm.state.authorization_settings.oidc_provider).toBe('keycloak')
+							expect(wrapper.vm.state.authorization_settings.token_exchange).toBe(false)
+							expect(wrapper.vm.state.authorization_settings.targeted_audience_client_id).toBe(null)
 						})
 					})
 				})
