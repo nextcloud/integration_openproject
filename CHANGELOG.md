@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 2.9.1 - 2025-06-03
+
 ### Fixed
 
 - Fix authentication-method not being set after upgrading to 2.9.0 [#833](https://github.com/nextcloud/integration_openproject/pull/833)
