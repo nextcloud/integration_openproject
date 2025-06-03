@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixes
 
 - Fix authentication-method not being set after upgrading to 2.9.0 [#833](https://github.com/nextcloud/integration_openproject/pull/833)
+- Fix OpenProject icon for proper rendering [#835](https://github.com/nextcloud/integration_openproject/pull/834)
 
 ## 2.9.0 - 2025-05-21
 
