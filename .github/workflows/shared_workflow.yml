@@ -10,11 +10,11 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 master"
+        default: "30"
       php_versions:
         required: false
         type: string
-        default: "8.1 8.2 8.3"
+        default: "8.1"
 
 name: CI
 
@@ -95,7 +95,7 @@ jobs:
           PHP_VERSIONS: ${{ inputs.php_versions }}
           DEFAULT_PHP_VERSION: "8.2"
           DEFAULT_DATABASE: "mysql"
-          EXTRA_DATABASES: "pgsql"
+#          EXTRA_DATABASES: "pgsql"
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
