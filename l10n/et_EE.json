@@ -14,6 +14,7 @@
     "Description" : "Kirjeldus",
     "Create" : "Lisa",
     "Mark as read" : "Märgi loetuks",
+    "Unlink" : "Eemalda lõiming",
     "Connected accounts" : "Ühendatud kasutajakontod",
     "Reset" : "Lähtesta"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
