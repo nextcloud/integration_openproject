@@ -1198,9 +1198,9 @@ class FeatureContext implements Context {
 			} else {
 				echo("\n-> Failed to delete" . $user);
 				echo("command_result_code= " . $command_result_code);
-				echo("\nerror\n");
-				$stringified = json_encode($output);
-				echo $stringified;
+				//				echo("\nerror\n");
+				//				$stringified = json_encode($output);
+				//				echo $stringified;
 			}
 
 			// exec(
