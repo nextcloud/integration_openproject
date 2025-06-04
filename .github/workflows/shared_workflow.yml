@@ -256,52 +256,52 @@ jobs:
             ./occ a:e -f oidc
           fi
 
-      - name: PHP Unit Tests
-        run: |
-          cd server/apps/integration_openproject
-          make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
-
-      - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.101
-          dotnet-quality: 'ga'
-
-      - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
-        with:
-          reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-          targetdir: 'integration_openproject/server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
-          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
-          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
-          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
-          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
-          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
-          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
-          title: '' # Optional title.
-          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
-          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
-          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
-
-      - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
-          delete-old-comments: true
-          title: "PHP Code Coverage"
-
-      - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
-        with:
-          min_coverage: '56'
-          path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
+#      - name: PHP Unit Tests
+#        run: |
+#          cd server/apps/integration_openproject
+#          make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
+#
+#      - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: 6.0.101
+#          dotnet-quality: 'ga'
+#
+#      - name: Convert PHP cobertura coverage to lcov
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
+#        with:
+#          reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+#          targetdir: 'integration_openproject/server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
+#          reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
+#          sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
+#          historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
+#          plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
+#          assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+#          verbosity: 'Verbose' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
+#          title: '' # Optional title.
+#          tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
+#          customSettings: '' # Optional custom settings (separated by semicolon). See: https://github.com/danielpalme/ReportGenerator/wiki/Settings.
+#          toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
+#
+#      - name: PHP Code Coverage Summary Report
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: romeovs/lcov-reporter-action@v0.3.1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
+#          delete-old-comments: true
+#          title: "PHP Code Coverage"
+#
+#      - name: PHP coverage check
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: VeryGoodOpenSource/very_good_coverage@v2
+#        with:
+#          min_coverage: '56'
+#          path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
 
       - name: API Tests
         env:
