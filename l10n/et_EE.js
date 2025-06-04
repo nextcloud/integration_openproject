@@ -16,6 +16,7 @@ OC.L10N.register(
     "Description" : "Kirjeldus",
     "Create" : "Lisa",
     "Mark as read" : "Märgi loetuks",
+    "Unlink" : "Eemalda lõiming",
     "Connected accounts" : "Ühendatud kasutajakontod",
     "Reset" : "Lähtesta"
 },
