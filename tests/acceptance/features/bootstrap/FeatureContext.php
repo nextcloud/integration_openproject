@@ -227,6 +227,12 @@ class FeatureContext implements Context {
 	public function userHasBeenDeleted(string $user):void {
 		$this->theAdministratorDeletesTheUser($user);
 		$this->theHttpStatusCodeShouldBe(200);
+		foreach ($this->createdUsers as $key => $userData) {
+			if ($userData['userid'] === $user) {
+				unset($this->createdUsers[$key]);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -1186,24 +1192,8 @@ class FeatureContext implements Context {
 	public function after():void {
 		foreach ($this->createdUsers as $userData) {
 			$user = $userData['userid'];
-			//			$this->userHasBeenDeleted($user);
-			$this->theAdministratorDeletesTheUser($user);
-			//			exec(
-			//				"docker exec nextcloud /bin/bash -c 'if [ -d \"data/$user\" ]; then echo \"Exists\" && rm -rf \"data/$user\"; else exit 1; fi'",
-			//				$output,
-			//				$command_result_code
-			//			);
-			//
-			//			if ($command_result_code === 0) {
-			//				echo("\n-> File system for user " . $user . " has been deleted successfully!");
-			//			} else {
-			//				echo("\n-> Failed to delete" . $user);
-			//				echo("command_result_code= " . $command_result_code);
-			//				//				echo("\nerror\n");
-			//				//				$stringified = json_encode($output);
-			//				//				echo $stringified;
-			//			}
-
+			$this->userHasBeenDeleted($user);
+			//			$this->theAdministratorDeletesTheUser($user);
 			exec(
 				"docker exec nextcloud /bin/bash -c 'rm -rf data/$user'",
 				$output,
@@ -1213,9 +1203,6 @@ class FeatureContext implements Context {
 				echo("\n-> File system for user " . $user . " has been deleted successfully!");
 			} else {
 				echo("\n-> Failed to delete" . $user);
-				//			 	echo("\nerror\n");
-				//			 	$stringified = json_encode($output);
-				//			 	echo $stringified;
 			}
 		}
 		foreach ($this->createdgroups as $groups) {

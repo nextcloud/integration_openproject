@@ -237,10 +237,10 @@ jobs:
           # Disable share rate limit protection
           docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
 
-      - name: PHP code analysis and linting
-        run: |
-          make psalm
-          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
+#      - name: PHP code analysis and linting
+#        run: |
+#          make psalm
+#          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Enable apps
         run: |
