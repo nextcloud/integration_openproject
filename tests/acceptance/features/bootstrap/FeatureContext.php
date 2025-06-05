@@ -115,45 +115,14 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
-	 * So user is created with retry in order to comeback the flakiness in CI
-	 *
 	 * @param string $user
 	 * @param array<mixed> $userAttributes
 	 *
 	 */
-	private function createUserWithRetry(string $user, array $userAttributes): void {
-		$retryCreate = 1;
-		$isUserCreated = false;
-		$response = null;
-		while ($retryCreate <= 3) {
-			$response = $this->sendOCSRequest(
-				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-			);
-			if ($response->getStatusCode() === 200) {
-				$isUserCreated = true;
-				break;
-			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
-				echo("Error: " . $response->getBody()->getContents());
-				echo('Creating user ' . $user . ' failed!');
-				echo('Deleting the file system of ' . $user . ' and retrying the user creation again...');
-				exec(
-					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
-					$output,
-					$command_result_code
-				);
-				if ($command_result_code === 0) {
-					echo('File system for user ' . $user . ' has been deleted successfully!');
-				}
-			} else {
-				// in case of any other error we just log the response
-				echo("Status Code: " . $response->getStatusCode());
-				echo("Error: " . $response->getBody()->getContents());
-			}
-			sleep(2);
-			$retryCreate++;
-		}
-		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
+	private function createUser(string $user, array $userAttributes): void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+		);
 	}
 
 	/**
@@ -165,10 +134,8 @@ class FeatureContext implements Context {
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-		$response = $this->sendOCSRequest(
-			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-		);
-		Assert::assertSame(200, $response->getStatusCode(), 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
+		$this->createUser($user, $userAttributes);
+		$this->theHTTPStatusCodeShouldBe(200);
 		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
@@ -1163,6 +1130,55 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
+	 * So user is deleted with retry in order to comeback the flakiness in CI
+	 *
+	 * @param string $user
+	 *
+	 */
+	private function retryDeleteUser(string $user): void {
+		for ($attempt = 1; $attempt <= 3; $attempt++) {
+			$this->theAdministratorDeletesTheUser($user);
+
+			if ($this->response->getStatusCode() === 200) {
+				if (getenv('CI')) {
+					$this->deleteUserDataFromDocker($user);
+				}
+				return;
+			}
+
+			// in case of any other error we just log the response
+			echo("Attempt $attempt failed for deleting user $user\n");
+			echo("Status Code: " . $this->response->getStatusCode() . "\n");
+			echo("Error: " . $this->response->getBody()->getContents() . "\n");
+			sleep(2);
+		}
+	}
+
+	/**
+	 * Deletes user data from the Docker container in CI environments.
+	 *
+	 * @param string $user
+	 *
+	 */
+	private function deleteUserDataFromDocker(string $user): void {
+		$checkCmd = "docker exec nextcloud /bin/bash -c 'ls data/$user'";
+		exec($checkCmd, $output, $checkCode);
+
+		if ($checkCode === 0) {
+			echo "Files still exist for user $user. Deleting...\n";
+			$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
+			exec($deleteCmd, $output, $deleteCode);
+
+			if ($deleteCode === 0) {
+				echo "File system for user $user deleted successfully.\n";
+			} else {
+				echo "Failed to delete file system for user $user.\n";
+			}
+		}
+	}
+
+	/**
 	 * This will run before EVERY scenario.
 	 * It will set the properties for this object.
 	 *
@@ -1193,33 +1209,7 @@ class FeatureContext implements Context {
 	 */
 	public function after():void {
 		foreach ($this->createdUsers as $userData) {
-			$user = $userData['userid'];
-			$retryDelete = 1;
-			while ($retryDelete <= 3) {
-				$this->theAdministratorDeletesTheUser($user);
-				if ($this->response->getStatusCode() === 200) {
-					break;
-				}
-				if (getenv('CI')) {
-					echo("Error: " . $this->response->getBody()->getContents());
-					echo('Deleting user ' . $user . ' failed!');
-					echo("Deleting the file system of user $user ...");
-					exec(
-						"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
-						$output,
-						$command_result_code
-					);
-					if ($command_result_code === 0) {
-						echo('File system for user ' . $user . ' has been deleted successfully!');
-					}
-				} else {
-					// in case of any other error we just log the response
-					echo("Status Code: " . $this->response->getStatusCode());
-					echo("Error: " . $this->response->getBody()->getContents());
-				}
-				sleep(2);
-				$retryDelete++;
-			}
+			$this->retryDeleteUser($userData['userid']);
 		}
 		foreach ($this->createdgroups as $groups) {
 			$this->theAdministratorDeletesTheGroup($groups);
