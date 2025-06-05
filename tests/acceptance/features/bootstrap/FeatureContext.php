@@ -227,12 +227,6 @@ class FeatureContext implements Context {
 	public function userHasBeenDeleted(string $user):void {
 		$this->theAdministratorDeletesTheUser($user);
 		$this->theHttpStatusCodeShouldBe(200);
-		foreach ($this->createdUsers as $key => $userData) {
-			if ($userData['userid'] === $user) {
-				unset($this->createdUsers[$key]);
-				break;
-			}
-		}
 	}
 
 	/**
@@ -242,6 +236,14 @@ class FeatureContext implements Context {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
+		if ($this->response->getStatusCode() === 200) {
+			foreach ($this->createdUsers as $key => $userData) {
+				if ($userData['userid'] === $user) {
+					unset($this->createdUsers[$key]);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -1192,17 +1194,31 @@ class FeatureContext implements Context {
 	public function after():void {
 		foreach ($this->createdUsers as $userData) {
 			$user = $userData['userid'];
-			$this->userHasBeenDeleted($user);
-			//			$this->theAdministratorDeletesTheUser($user);
-			exec(
-				"docker exec nextcloud /bin/bash -c 'rm -rf data/$user'",
-				$output,
-				$command_result_code
-			);
-			if ($command_result_code === 0) {
-				echo("\n-> File system for user " . $user . " has been deleted successfully!");
-			} else {
-				echo("\n-> Failed to delete" . $user);
+			$retryDelete = 1;
+			while ($retryDelete <= 3) {
+				$this->theAdministratorDeletesTheUser($user);
+				if ($this->response->getStatusCode() === 200) {
+					break;
+				}
+				if (getenv('CI')) {
+					echo("Error: " . $this->response->getBody()->getContents());
+					echo('Deleting user ' . $user . ' failed!');
+					echo("Deleting the file system of user $user ...");
+					exec(
+						"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
+						$output,
+						$command_result_code
+					);
+					if ($command_result_code === 0) {
+						echo('File system for user ' . $user . ' has been deleted successfully!');
+					}
+				} else {
+					// in case of any other error we just log the response
+					echo("Status Code: " . $this->response->getStatusCode());
+					echo("Error: " . $this->response->getBody()->getContents());
+				}
+				sleep(2);
+				$retryDelete++;
 			}
 		}
 		foreach ($this->createdgroups as $groups) {
