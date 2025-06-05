@@ -194,6 +194,12 @@ class FeatureContext implements Context {
 	public function userHasBeenDeleted(string $user):void {
 		$this->theAdministratorDeletesTheUser($user);
 		$this->theHttpStatusCodeShouldBe(200);
+		foreach ($this->createdUsers as $key => $userData) {
+			if ($userData['userid'] === $user) {
+				unset($this->createdUsers[$key]);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -203,14 +209,6 @@ class FeatureContext implements Context {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user, 'DELETE', $this->getAdminUsername()
 		);
-		if ($this->response->getStatusCode() === 200) {
-			foreach ($this->createdUsers as $key => $userData) {
-				if ($userData['userid'] === $user) {
-					unset($this->createdUsers[$key]);
-					break;
-				}
-			}
-		}
 	}
 
 	/**
@@ -235,7 +233,7 @@ class FeatureContext implements Context {
 
 			if ($this->response->getStatusCode() === 200) {
 				if (getenv('CI')) {
-					$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user]'";
+					$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
 					exec($checkCmd, $output, $checkCode);
 
 					if ($checkCode === 0) {
@@ -248,6 +246,13 @@ class FeatureContext implements Context {
 						} else {
 							echo "Failed to delete file system for user $user.\n";
 						}
+					}
+				}
+				# delete user from $this->createdUsers
+				foreach ($this->createdUsers as $key => $userData) {
+					if ($userData['userid'] === $user) {
+						unset($this->createdUsers[$key]);
+						break;
 					}
 				}
 				return;
