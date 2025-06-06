@@ -227,19 +227,25 @@ class FeatureContext implements Context {
 	 * @param string $user
 	 */
 	private function deleteUserDataFromDocker(string $user): void {
-		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
-		exec($checkCmd, $output, $checkCode);
+		$deleteStatusCode = $this->response->getStatusCode();
+		if ($deleteStatusCode === 200 || $deleteStatusCode === 500) {
+			$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
+			exec($checkCmd, $output, $checkCode);
 
-		if ($checkCode === 0) {
-			echo "Files still exist for user $user. Deleting...\n";
-			$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
-			exec($deleteCmd, $output, $deleteCode);
+			if ($checkCode === 0) {
+				echo "Files still exist for user $user. Deleting...\n";
+				$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
+				exec($deleteCmd, $output, $deleteCode);
 
-			if ($deleteCode === 0) {
-				echo "File system for user $user deleted successfully.\n";
-			} else {
-				echo "Failed to delete file system for user $user.\n";
+				if ($deleteCode === 0) {
+					echo "File system for user $user deleted successfully.\n";
+				} else {
+					echo "Failed to delete file system for user $user.\n";
+				}
 			}
+		} else {
+			echo("Status Code: " . $deleteStatusCode . "\n");
+			echo("Error: \n" . $this->response->getBody()->getContents() . "\n");
 		}
 	}
 
