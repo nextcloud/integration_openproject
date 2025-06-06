@@ -1211,13 +1211,27 @@ describe('AdminSettings.vue', () => {
 				},
 			}
 
-			describe('supported user_oidc app enabled', () => {
+			describe.each([
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'nextcloud_hub',
+					targeted_audience_client_id: 'some-target-aud-client-id',
+				}],
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'external',
+					token_exchange: false,
+				}],
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'external',
+					token_exchange: true,
+					targeted_audience_client_id: 'some-target-aud-client-id',
+				}],
+			])('supported user_oidc app enabled', (settings) => {
 				beforeEach(async () => {
 					const authSettings = {
-						authorization_settings: {
-							...authorizationSettingsState.authorization_settings,
-							sso_provider_type: 'nextcloud_hub',
-						},
+						authorization_settings: settings,
 					}
 					wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
 				})
@@ -1226,10 +1240,12 @@ describe('AdminSettings.vue', () => {
 					const formHeader = wrapper.find(formHeaderSelector)
 					const errorNote = wrapper.find(errorNoteSelector)
 
-					expect(authorizationSettingsForm.element).toMatchSnapshot()
+					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+					expect(wrapper.find(NCProviderTypeSelector).exists()).toBe(false)
 					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
 					expect(formHeader.attributes().haserror).toBe(undefined)
 					expect(errorNote.exists()).toBe(false)
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
 				})
 				it('should not disable reset button', () => {
 					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
@@ -1294,7 +1310,7 @@ describe('AdminSettings.vue', () => {
 					beforeEach(async () => {
 						const authSettings = {
 							authorization_settings: {
-								...authorizationSettingsState.authorization_settings,
+								oidc_provider: 'some-oidc-provider',
 								sso_provider_type: 'external',
 							},
 						}
@@ -1359,6 +1375,33 @@ describe('AdminSettings.vue', () => {
 
 		})
 
+		describe.each([
+			[{
+				oidc_provider: 'some-oidc-provider',
+				sso_provider_type: 'nextcloud_hub',
+			}],
+			[{
+				sso_provider_type: 'external',
+				token_exchange: true,
+			}],
+		])('form partially complete', (settings) => {
+			let wrapper
+			beforeEach(async () => {
+				const authSettings = {
+					authorization_settings: settings,
+				}
+				wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
+			})
+
+			it('should show authorization settings in edit mode', () => {
+				expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
+				expect(wrapper.find(selectors.authorizationSettingsCancelButton).exists()).toBe(false)
+				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+				expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+			})
+
+		})
+
 		describe('edit mode form, complete admin configuration with supported user_oidc app', () => {
 			let wrapper, authorizationSettingsForm, authSettingsResetButton
 			beforeEach(async () => {
@@ -1383,7 +1426,7 @@ describe('AdminSettings.vue', () => {
 				await authSettingsResetButton.trigger('click')
 			})
 
-			it('should show authorization settings in view mode', () => {
+			it('should show authorization settings in edit mode', () => {
 				expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
 			})
 
@@ -1765,14 +1808,14 @@ describe('AdminSettings.vue', () => {
 										oidc_provider: 'Nextcloud Hub',
 										sso_provider_type: 'nextcloud_hub',
 										targeted_audience_client_id: 'openproject',
-										token_exchange: false,
+										token_exchange: undefined,
 									},
 								},
 							)
 							expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
 							expect(wrapper.vm.state.authorization_settings.sso_provider_type).toBe('nextcloud_hub')
 							expect(wrapper.vm.state.authorization_settings.oidc_provider).toBe('Nextcloud Hub')
-							expect(wrapper.vm.state.authorization_settings.token_exchange).toBe(false)
+							expect(wrapper.vm.state.authorization_settings.token_exchange).toBe(undefined)
 							expect(wrapper.vm.state.authorization_settings.targeted_audience_client_id).toBe('openproject')
 						})
 					})

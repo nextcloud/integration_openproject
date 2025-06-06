@@ -350,6 +350,134 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
 </div>
 `;
 
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode supported user_oidc app enabled should show configured OIDC authorization 2`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    index="3"
+    iscomplete="true"
+    title="Authentication settings"
+  />
+   
+  <!---->
+   
+  <!---->
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider Type"
+      value="external"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider"
+      value="some-oidc-provider"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      title="Enable token exchange"
+    />
+     
+    <!---->
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authentication settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`AdminSettings.vue OIDC authorization settings form complete: view mode supported user_oidc app enabled should show configured OIDC authorization 3`] = `
+<div
+  class="authorization-settings"
+>
+  <formheading-stub
+    index="3"
+    iscomplete="true"
+    title="Authentication settings"
+  />
+   
+  <!---->
+   
+  <!---->
+   
+  <div
+    class="authorization-settings--content"
+  >
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider Type"
+      value="external"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      isrequired="true"
+      title="OIDC Provider"
+      value="some-oidc-provider"
+    />
+     
+    <fieldvalue-stub
+      class="pb-1"
+      title="Enable token exchange"
+      value="true"
+    />
+     
+    <div>
+      <fieldvalue-stub
+        class="pb-1"
+        isrequired="true"
+        title="OpenProject client ID"
+        value="some-target-aud-client-id"
+      />
+    </div>
+  </div>
+   
+  <div
+    class="form-actions"
+  >
+    <ncbutton-stub
+      alignment="center"
+      data-test-id="reset-auth-settings-btn"
+      nativetype="button"
+      type="secondary"
+    >
+      
+				Edit authentication settings
+			
+    </ncbutton-stub>
+     
+    <!---->
+     
+    <!---->
+  </div>
+</div>
+`;
+
 exports[`AdminSettings.vue OIDC authorization settings form complete: view mode unsupported user_oidc app enabled should show field values and hide authorization settings form 1`] = `
 <div
   class="authorization-settings"
