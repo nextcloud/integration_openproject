@@ -221,29 +221,24 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * When we run API tests in CI, deleting a user sometimes fails with a 500 status code.
-	 * After that, the user is deleted, but the user's data directory is not.
-	 * So user data directory is deleted to handle the flakiness in CI.
+	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
+	 * So user's data directory is deleted to handle the flakiness in CI.
 	 *
 	 * @param string $user
 	 */
 	private function deleteUserDataFromDocker(string $user): void {
-		echo("Status Code: " . $this->response->getStatusCode() . "\n");
-		echo("Error: \n" . $this->response->getBody()->getContents() . "\n");
-		if ($this->response->getStatusCode() === 500) {
-			$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
-			exec($checkCmd, $output, $checkCode);
+		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
+		exec($checkCmd, $output, $checkCode);
 
-			if ($checkCode === 0) {
-				echo "Files still exist for user $user. Deleting...\n";
-				$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
-				exec($deleteCmd, $output, $deleteCode);
+		if ($checkCode === 0) {
+			echo "Files still exist for user $user. Deleting...\n";
+			$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
+			exec($deleteCmd, $output, $deleteCode);
 
-				if ($deleteCode === 0) {
-					echo "File system for user $user deleted successfully.\n";
-				} else {
-					echo "Failed to delete file system for user $user.\n";
-				}
+			if ($deleteCode === 0) {
+				echo "File system for user $user deleted successfully.\n";
+			} else {
+				echo "Failed to delete file system for user $user.\n";
 			}
 		}
 	}
@@ -1189,8 +1184,8 @@ class FeatureContext implements Context {
 			$user = $userData['userid'];
 			$this->theAdministratorDeletesTheUser($user);
 
-			// In CI, delete user data directory if user delete API requests returns 500 Error.
-			if ($this->response->getStatusCode() !== 200 && getenv('CI')) {
+			// In CI, delete user's data directory if it exists.
+			if (getenv('CI')) {
 				$this->deleteUserDataFromDocker($user);
 			}
 		}
