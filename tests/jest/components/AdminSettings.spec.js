@@ -1211,13 +1211,27 @@ describe('AdminSettings.vue', () => {
 				},
 			}
 
-			describe('supported user_oidc app enabled', () => {
+			describe.each([
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'nextcloud_hub',
+					targeted_audience_client_id: 'some-target-aud-client-id',
+				}],
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'external',
+					token_exchange: false,
+				}],
+				[{
+					oidc_provider: 'some-oidc-provider',
+					sso_provider_type: 'external',
+					token_exchange: true,
+					targeted_audience_client_id: 'some-target-aud-client-id',
+				}],
+			])('supported user_oidc app enabled', (settings) => {
 				beforeEach(async () => {
 					const authSettings = {
-						authorization_settings: {
-							...authorizationSettingsState.authorization_settings,
-							sso_provider_type: 'nextcloud_hub',
-						},
+						authorization_settings: settings,
 					}
 					wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
 				})
@@ -1226,10 +1240,12 @@ describe('AdminSettings.vue', () => {
 					const formHeader = wrapper.find(formHeaderSelector)
 					const errorNote = wrapper.find(errorNoteSelector)
 
-					expect(authorizationSettingsForm.element).toMatchSnapshot()
+					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+					expect(wrapper.find(NCProviderTypeSelector).exists()).toBe(false)
 					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
 					expect(formHeader.attributes().haserror).toBe(undefined)
 					expect(errorNote.exists()).toBe(false)
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
 				})
 				it('should not disable reset button', () => {
 					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
