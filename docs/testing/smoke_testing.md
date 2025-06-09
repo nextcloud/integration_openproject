@@ -5,6 +5,16 @@
 This file consists of some smoke testing to be done before the release (major and minor) of `integration_application` application.
 The need for this smoke testing (manual) is that we do not have e2e test setup to automate that involves both `OpenProject` and `Nextcloud`.
 
+This document covers smoke tests for two authentication methods used in the `integration_openproject` apps:
+
+1. **Two-way OAuth 2.0 authorization code flow** 
+2. **Single-Sign-On through OpenID Connect Identity Provider**
+    - **Nextcloud Hub** as the IdP  
+    - **External Provider** as the IdP
+      - With token exchange enable
+      - With token exchange disable
+
+
 ## Smoke Test for `integration_openproject` (In Nextcloud and OpenProject)
 ### 1. Oauth configuration (without project folder setup/Automatically managed folders)
 - [ ] In `OpenProject`, navigate to `Administration > Files`.
@@ -126,3 +136,30 @@ bash integration_setup.sh
 - [ ] Upon success, try Smoke Test No 4 (Skip first check).
 - [ ] Also, to set up the integration configuration with project folder setup, just set environment `SETUP_PROJECT_FOLDER=true` and run the script.
 - [ ] Re-run the script again after it is already setup (Should not give any error).
+
+
+13. SSO Authentication via OpenID Connect (Nextcloud Hub as Identity Provider, without Token Exchange)
+
+**In nextcloud**
+
+- [ ] Install and enable `oidc` app (min version 1.6.0)
+- [ ] Go to `Administation > Security`
+- [ ] Under "OpenID Connect clients" section:
+    - Add a client name (not an identifier)
+    - Add a redirect URL (<openproject_host>/auth/oidc-<idp-displayname-from-OP>/callback)
+    - Save
+    - Note Client ID and Client secret
+- [ ] Create a new user: username, displayname, password, and email 
+- [ ] Also install and enable `user_oidc` apps
+- [ ] Run following command:
+    - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_token_generation
+    - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation
+
+**In openproject**
+
+- [ ] Navigate to `Administration > Authentication > OpenID providers`
+- [ ] Add a custom OpenID provider:
+  - Display name: nextcloud (use this name as redirect URL in Nextcloud: <idp-displayname-from-OP>)
+  - Discovery URL: <nextcloud-host>/index.php/.well-known/openid-configuration
+  - Client ID: client-id from Nextcloud
+  - Client secret: client-secret from Nextcloud
