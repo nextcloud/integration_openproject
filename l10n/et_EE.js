@@ -2,6 +2,8 @@ OC.L10N.register(
     "integration_openproject",
     {
     "OpenProject" : "OpenProject",
+    "Error getting OAuth access token" : "Viga OAuth tunnusloa laadimisel",
+    "Error during OAuth exchanges" : "Viga OAuth andmevahetusel",
     "Bad HTTP method" : "Vigane HTTP-meetod",
     "Cancel" : "Loobu",
     "Authentication method" : "Autentimise meetod",
