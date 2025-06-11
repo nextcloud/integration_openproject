@@ -54,7 +54,7 @@ class Admin implements ISettings {
 	public function getForm(): TemplateResponse {
 		$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		$oauthUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$opUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 
 		// get automatically created NC oauth client for OP
 		$clientInfo = null;
@@ -67,11 +67,24 @@ class Admin implements ISettings {
 		$isAllTermsOfServiceSignedForUserOpenProject = $this->openProjectAPIService->isAllTermsOfServiceSignedForUserOpenProject();
 		$isAdminAuditConfigurationSetUpCorrectly = $this->openProjectAPIService->isAdminAuditConfigSetCorrectly();
 
+		// NOTE: for migration compatibility
+		// set 'authorization_method' to Oauth2 if authorization_method is not set
+		// and there is existing complete Oauth2 setup
+		$authenticationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+		if (!$authenticationMethod && OpenProjectAPIService::isAdminConfigOkForOauth2($this->config)) {
+			$authenticationMethod = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+			$this->config->setAppValue(Application::APP_ID, 'authorization_method', $authenticationMethod);
+		}
+
 		$adminConfig = [
+			// admin settings form
+			'openproject_instance_url' => $opUrl,
+			'authorization_method' => $authenticationMethod,
+			// oauth2 form configs
 			'openproject_client_id' => $clientID,
 			'openproject_client_secret' => $clientSecret,
-			'openproject_instance_url' => $oauthUrl,
-			'authorization_method' => $this->config->getAppValue(Application::APP_ID, 'authorization_method', ''),
+			'nc_oauth_client' => $clientInfo,
+			// oidc form configs
 			'authorization_settings' => [
 				'oidc_provider' => $this->config->getAppValue(Application::APP_ID, 'oidc_provider', ''),
 				'targeted_audience_client_id' => $this->config->getAppValue(
@@ -80,12 +93,14 @@ class Admin implements ISettings {
 				'sso_provider_type' => $this->config->getAppValue(Application::APP_ID, 'sso_provider_type', ''),
 				'token_exchange' => \boolval($this->config->getAppValue(Application::APP_ID, 'token_exchange')),
 			],
-			'nc_oauth_client' => $clientInfo,
+			// project folder form configs
+			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
+			'project_folder_info' => $projectFolderStatusInformation,
+			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
+			// general form configs
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
 			'default_enable_unified_search' => $this->config->getAppValue(Application::APP_ID, 'default_enable_unified_search', '0') === '1',
-			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
-			'project_folder_info' => $projectFolderStatusInformation,
-			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
+			// other states
 			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
 			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly,
 			'encryption_info' => [
