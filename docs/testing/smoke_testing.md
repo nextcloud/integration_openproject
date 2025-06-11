@@ -155,6 +155,11 @@ bash integration_setup.sh
     - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_token_generation
     - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation
 
+- [ ] Then, Navigate to `Administration > OpenProject`
+- [ ] On `Authentication Method` section, choose `Single-Sign-On through OpenID Connect Identity Provider`
+- [ ] On `Authentication settings` section, choose `provider Type` as `Nextcloud Hub`
+- [ ] Add Openproject client ID: client-id from Nextcloud
+
 **In openproject**
 
 - [ ] Navigate to `Administration > Authentication > OpenID providers`
@@ -163,3 +168,7 @@ bash integration_setup.sh
   - Discovery URL: <nextcloud-host>/index.php/.well-known/openid-configuration
   - Client ID: client-id from Nextcloud
   - Client secret: client-secret from Nextcloud
+
+- [ ] Navigate to the `Administration > Files`
+- [ ] Go to file storage type named as `Nextcloud` which is created before.
+- [ ] On `OAuth configuration` section choose `Use access token obtained during user log in`
