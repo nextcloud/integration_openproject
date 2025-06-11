@@ -992,14 +992,26 @@ export default {
 						}
 					}
 				}
-				if (this.state.authorization_method === AUTH_METHOD.OIDC
-					&& this.state.authorization_settings.oidc_provider
-					&& this.state.authorization_settings.targeted_audience_client_id
-					&& this.state.authorization_settings.sso_provider_type
-				) {
-					this.formMode.authorizationSetting = F_MODES.VIEW
-					this.formMode.SSOSettings = F_MODES.VIEW
-					this.isFormCompleted.authorizationSetting = true
+				if (this.state.authorization_method === AUTH_METHOD.OIDC && this.state.authorization_settings.sso_provider_type) {
+					if (this.state.authorization_settings.sso_provider_type === SSO_PROVIDER_TYPE.nextcloudHub) {
+						if (this.state.authorization_settings.targeted_audience_client_id) {
+							this.formMode.authorizationSetting = F_MODES.VIEW
+							this.formMode.SSOSettings = F_MODES.VIEW
+							this.isFormCompleted.authorizationSetting = true
+						}
+					} else if (this.state.authorization_settings.oidc_provider) {
+						if (this.state.authorization_settings.token_exchange) {
+							if (this.state.authorization_settings.targeted_audience_client_id) {
+								this.formMode.authorizationSetting = F_MODES.VIEW
+								this.formMode.SSOSettings = F_MODES.VIEW
+								this.isFormCompleted.authorizationSetting = true
+							}
+						} else {
+							this.formMode.authorizationSetting = F_MODES.VIEW
+							this.formMode.SSOSettings = F_MODES.VIEW
+							this.isFormCompleted.authorizationSetting = true
+						}
+					}
 					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
 					this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
@@ -1082,8 +1094,10 @@ export default {
 			this.formMode.authorizationSetting = F_MODES.VIEW
 			this.formMode.SSOSettings = F_MODES.VIEW
 			this.isFormCompleted.authorizationSetting = true
-			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
+			this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
+			this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
+			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
 		},
 		setAuthorizationMethodInEditMode() {
 			this.formMode.authorizationMethod = F_MODES.EDIT
@@ -1220,6 +1234,10 @@ export default {
 					this.isProjectFolderSwitchEnabled = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				}
+				this.state.authorization_settings.sso_provider_type = this.authorizationSetting.SSOProviderType
+				this.state.authorization_settings.oidc_provider = this.authorizationSetting.currentOIDCProviderSelected
+				this.state.authorization_settings.token_exchange = this.authorizationSetting.enableTokenExchange
+				this.state.authorization_settings.targeted_audience_client_id = this.authorizationSetting.currentTargetedAudienceClientIdSelected
 			}
 			this.loadingAuthorizationMethodForm = false
 		},
