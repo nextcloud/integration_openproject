@@ -24,6 +24,7 @@ This document covers smoke tests for two authentication methods used in the `int
 - [ ] Copy `Nextcloud` Oauth Credential (client_id and client_secret) and save them in `OpenProject`.
 
 ### 2. Connect Nextcloud with OpenProject (Without project folder setup)
+
 - [ ] Complete Smoke Test No 1.
 - [ ] In `Nextcloud`, navigate to `Personal Settings > Openproject` and click on `Connect to OpenProject` button.
 - [ ] `Nextcloud` admin should be connected as an `OpenProject` admin.
@@ -138,7 +139,7 @@ bash integration_setup.sh
 - [ ] Re-run the script again after it is already setup (Should not give any error).
 
 
-13. SSO Authentication via OpenID Connect (Nextcloud Hub as Identity Provider, without Token Exchange)
+13. SSO Configuration (Nextcloud Hub as IdP)
 
 **In nextcloud**
 
@@ -147,28 +148,92 @@ bash integration_setup.sh
 - [ ] Under "OpenID Connect clients" section:
     - Add a client name (not an identifier)
     - Add a redirect URL (<openproject_host>/auth/oidc-<idp-displayname-from-OP>/callback)
+    - Set `Refresh Token Expire Time` to `Never`
     - Save
-    - Note Client ID and Client secret
-- [ ] Create a new user: username, displayname, password, and email 
-- [ ] Also install and enable `user_oidc` apps
+    - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject)
+- [ ] Create a new user( with username, display name, password, and email) 
+- [ ] Install and enable `user_oidc` apps
 - [ ] Run following command:
-    - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_token_generation
     - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation
 
-- [ ] Then, Navigate to `Administration > OpenProject`
-- [ ] On `Authentication Method` section, choose `Single-Sign-On through OpenID Connect Identity Provider`
-- [ ] On `Authentication settings` section, choose `provider Type` as `Nextcloud Hub`
-- [ ] Add Openproject client ID: client-id from Nextcloud
+**In openproject**
+
+- [ ] Go to `Administration > Authentication > OpenID providers`
+- [ ] Add a new custom OpenID provider:
+  - Display name: `nextcloud` (use this name as redirect URL in Nextcloud: <idp-displayname-from-OP>)
+  - Discovery URL: `<nextcloud-host>/index.php/.well-known/openid-configuration`
+  - Client ID: Client ID copied earlier from Nextcloud
+  - Client secret: Client secret copied earlier from Nextcloud
+- [ ] Go to `Administration > Files`
+- [ ] Select the file storage type called Nextcloud (created earlier in previous test)
+- [ ] Under `OAuth configuration`, select `Use access token obtained during user log in`
+
+14. Configure SSO Settings in Nextcloud(IdP as nextcloud )
+- [ ] Complete Smoke Test No 13.
+- [ ] Navigate to `Administration > OpenProject` in nextcloud
+- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`
+- [ ] In `Authentication settings`, select `provider Type` as `Nextcloud Hub`
+- [ ] Set Openproject client ID by Client ID copied earlier in nextcloud.
+- [ ] Then click on complete the set up
+
+15. Login to Nextcloud as created User(IdP as nextcloud )
+- [ ] Complete Smoke Test No 14.
+- [ ] Login as nextcloud-created user in `nextcloud`. 
+- [ ] In `openproject`, use the SSO button on the login page to sign in as the nextcloud-created user.
+- [ ] Login should be successful with the nextcloud-created user in `openproject`.
+
+16. Verify OpenProject Connection in Nextcloud( IdP as nextcloud )
+- [ ] Complete Smoke Test No 15.
+- [ ] Navigate to `settings > Openproject` in `Nextcloud` of nextcloud -created user
+- [ ] Created user should be connected as a `Nextcloud` user.
+
+14. SSO Authentication via OpenID Connect (IdP as keycloak without token exchange)
+
+We can follow up the following link to setup the keycloak
+https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak
+
+**In nextcloud**
+
+- [ ] Go to `Administration > OpenID Connect`
+- [ ] Enable `store login tokens` options.
+- [ ] Register a new providers with following data:
+    - Identifier: `keycloak`
+    - Client ID: nextcloud client id from keycloak
+    - Client Secret: nextcloud client secret from keycloak
+    - Discovery endpoint: `<keycloak-hosts>/realms/<realm-name>/.well-known/openid-configuration`
+    - Scope: openid email profile api_v3
+    - submit
+- [ ] Login as keycloak-created user in `Nextcloud` (Login to initialize the Keycloak user in Nextcloud)
+- [ ] Logout
 
 **In openproject**
 
 - [ ] Navigate to `Administration > Authentication > OpenID providers`
-- [ ] Add a custom OpenID provider:
-  - Display name: nextcloud (use this name as redirect URL in Nextcloud: <idp-displayname-from-OP>)
-  - Discovery URL: <nextcloud-host>/index.php/.well-known/openid-configuration
-  - Client ID: client-id from Nextcloud
-  - Client secret: client-secret from Nextcloud
+- [ ] Add a new custom OpenID provider:
+  - Display name: `keycloak`
+  - Discovery URL: `<keycloak-host>/realms/<realm-name>/.well-known/openid-configuration`
+  - Client ID: Client ID of openproject from keycloak
+  - Client secret: Client secret of openproject from keycloak
+- [ ] Login as keycloak-created user in `Openproject`
+- [ ] Log out, then Login as admin in `Openproject`
+- [ ] Add keycloak-created user as a member in one of the project.
 
-- [ ] Navigate to the `Administration > Files`
-- [ ] Go to file storage type named as `Nextcloud` which is created before.
-- [ ] On `OAuth configuration` section choose `Use access token obtained during user log in`
+**Testing**
+- [ ] Go to `Administration > OpenProject` in nextcloud
+- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`
+- [ ] In `Authentication settings`, select `provider Type` as `Keycloak`
+- [ ] Disable `token exchange`
+
+
+15. SSO Authentication via OpenID Connect (IdP as keycloak with token exchange)
+
+We can follow up the following link to setup the link
+https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak
+
+**Testing**
+- [ ] Go to `Administration > OpenProject` in nextcloud
+- [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`
+- [ ] In `Authentication settings`, select `provider Type` as `Keycloak`
+- [ ] Enable `token exchange`
+- [ ] Set `OpenProject client ID *` as `Openproject`
+- [ ] Click on `keep current setup`
