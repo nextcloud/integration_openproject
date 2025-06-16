@@ -67,6 +67,7 @@ OC.L10N.register(
     "Start typing to search" : "Започнете да пишете, за търсене",
     "Search for a work package to create a relation" : "Потърсете работен пакет, за да създадете връзка",
     "Select a user or group" : "Избор на потребител или група",
+    "Description" : "Описание",
     "Create" : "Създаване",
     "Mark as read" : "Маркиране като прочетено",
     "Failed to get OpenProject notifications" : "Неуспешно получаване на известия от OpenProject",
