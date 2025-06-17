@@ -190,7 +190,6 @@ export default {
 		},
 	},
 	created() {
-		console.info(this.currentSetting)
 		if (this.authMethod) {
 			this.setFromToViewMode()
 			this.selectedAuthMethod = this.authMethod

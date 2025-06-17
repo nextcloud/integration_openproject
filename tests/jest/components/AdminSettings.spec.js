@@ -799,7 +799,16 @@ describe('AdminSettings.vue', () => {
 				const authSettings = {
 					authorization_settings: settings,
 				}
-				wrapper = getWrapper({ state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true } })
+				wrapper = getWrapper({
+					state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true },
+					form: {
+						serverHost: {
+							complete: true,
+							value: state.openproject_instance_url,
+						},
+						authenticationMethod: { complete: true, value: state.authorization_method },
+					},
+				})
 			})
 
 			it('should show authorization settings in edit mode', () => {
