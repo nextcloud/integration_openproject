@@ -115,59 +115,27 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
-	 * So user is created with retry in order to comeback the flakiness in CI
-	 *
 	 * @param string $user
 	 * @param array<mixed> $userAttributes
 	 *
 	 */
-	private function createUserWithRetry(string $user, array $userAttributes): void {
-		$retryCreate = 1;
-		$isUserCreated = false;
-		$response = null;
-		while ($retryCreate <= 3) {
-			$response = $this->sendOCSRequest(
-				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-			);
-			if ($response->getStatusCode() === 200) {
-				$isUserCreated = true;
-				break;
-			} elseif ($response->getStatusCode() === 400 && getenv('CI')) {
-				echo("Error: " . $response->getBody()->getContents());
-				echo('Creating user ' . $user . ' failed!');
-				echo('Deleting the file system of ' . $user . ' and retrying the user creation again...');
-				exec(
-					"docker exec nextcloud  /bin/bash -c 'rm -rf data/$user'",
-					$output,
-					$command_result_code
-				);
-				if ($command_result_code === 0) {
-					echo('File system for user ' . $user . ' has been deleted successfully!');
-				}
-			} else {
-				// in case of any other error we just log the response
-				echo("Status Code: " . $response->getStatusCode());
-				echo("Error: " . $response->getBody()->getContents());
-			}
-			sleep(2);
-			$retryCreate++;
-		}
-		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $response->getStatusCode());
+	private function createUser(string $user, array $userAttributes): void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+		);
 	}
 
 	/**
 	 * @Given user :user has been created
 	 */
 	public function userHasBeenCreated(string $user, string $displayName = null):void {
-		// delete the user if it exists
-		$this->theAdministratorDeletesTheUser($user);
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-		$this->createUserWithRetry($user, $userAttributes);
+		$this->createUser($user, $userAttributes);
+		$this->theHTTPStatusCodeShouldBe(200);
 		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
 		$this->response = $this->makeDavRequest(
@@ -226,6 +194,12 @@ class FeatureContext implements Context {
 	public function userHasBeenDeleted(string $user):void {
 		$this->theAdministratorDeletesTheUser($user);
 		$this->theHttpStatusCodeShouldBe(200);
+		foreach ($this->createdUsers as $key => $userData) {
+			if ($userData['userid'] === $user) {
+				unset($this->createdUsers[$key]);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -244,6 +218,29 @@ class FeatureContext implements Context {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/groups/' . $group, 'DELETE', $this->getAdminUsername()
 		);
+	}
+
+	/**
+	 * When we run API tests in CI, the user file system sometime does not get deleted from the data directory.
+	 * So user's data directory is deleted to handle the flakiness in CI.
+	 *
+	 * @param string $user
+	 */
+	private function deleteUserDataFromDocker(string $user): void {
+		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
+		exec($checkCmd, $output, $checkCode);
+
+		if ($checkCode === 0) {
+			echo "Files still exist for user $user. Deleting...\n";
+			$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
+			exec($deleteCmd, $output, $deleteCode);
+
+			if ($deleteCode === 0) {
+				echo "File system for user $user deleted successfully.\n";
+			} else {
+				echo "Failed to delete file system for user $user.\n";
+			}
+		}
 	}
 
 	/**
@@ -1183,9 +1180,28 @@ class FeatureContext implements Context {
 	 * @throws Exception
 	 */
 	public function after():void {
+		// Clean up users
 		foreach ($this->createdUsers as $userData) {
-			$this->theAdministratorDeletesTheUser($userData['userid']);
+			$user = $userData['userid'];
+			$this->theAdministratorDeletesTheUser($user);
+			$deleteStatusCode = $this->response->getStatusCode();
+
+			// User deletion may return 200, or sometimes 500 and user gets deleted, but their data might remain.
+			// Throw error message if delete failed with unexpected status (not 200 or 500)
+			if ($deleteStatusCode !== 200 && $deleteStatusCode !== 500) {
+				$message = "Failed to delete user: {$user}\n"
+					. "Status Code: " . $deleteStatusCode . "\n"
+					. "Error: \n" . $this->response->getBody()->getContents() . "\n";
+				throw new Exception($message);
+			}
+
+			// In CI, delete user's data directory if it exists.
+			if (getenv('CI')) {
+				$this->deleteUserDataFromDocker($user);
+			}
 		}
+
+		// Clean up groups
 		foreach ($this->createdgroups as $groups) {
 			$this->theAdministratorDeletesTheGroup($groups);
 		}
