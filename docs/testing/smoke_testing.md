@@ -11,9 +11,9 @@ This document covers smoke tests for two authentication methods used in the `int
 
 **Section A: OAuth 2.0 (Two-Way Authorization Code Flow)**
 
-**Section B: Single Sign-On (SSO) via OpenID Connect**
-  - **Nextcloud Hub** as the IdP  
-  - **External Provider** as the IdP (with token exchange enable/disable)
+**Section B: Single Sign-On (SSO) through OpenID Connect** where **Nextcloud Hub** as the IdP
+
+**Section C: Single Sign-On (SSO) through OpenID Connect** where **External Provider** as the IdP with token exchange enable/disable
 
 # Smoke Testing Coverage (In Nextcloud and OpenProject)
 
@@ -60,7 +60,7 @@ This document covers smoke tests for two authentication methods used in the `int
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
 - [ ] Try to delete `OpenProject` or `OpenProject > Demo project(1)`. They should not be deleted.
 
-## Section A: OAuth 2.0 Authentication Tests
+## Section A: OAuth 2.0 (Two-Way Authorization Code Flow)
 
 ### A1. Oauth configuration (without project folder setup/Automatically managed folders)
 - [ ] In `OpenProject`, navigate to `Administration > Files`.
@@ -132,10 +132,13 @@ bash integration_setup.sh
 - [ ] Also, to set up the integration configuration with project folder setup, just set environment `SETUP_PROJECT_FOLDER=true` and run the script.
 - [ ] Re-run the script again after it is already setup (Should not give any error).
 
-## Section B: SSO via OpenID Connect (Nextcloud as Identity Provider)
+## Section B: Single Sign-On (SSO) through OpenID Connect** where **Nextcloud Hub** as the IdP
 
 ### B1. Configure Nextcloud (IdP Setup)
-- [ ] In Nextcloud, enable `oidc` apps.
+- [ ] In Nextcloud, install and enable `oidc` and `user_oidc` apps.
+- [ ] Create a new user( with username, display name, password, and email)
+- [ ] Run following command:
+  - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation
 - [ ] Go to `Administation > Security`
 - [ ] Under "OpenID Connect clients" section:
   - Add a client name (not an identifier)
@@ -144,10 +147,6 @@ bash integration_setup.sh
   - Set `Refresh Token Expire Time` to `Never`
   - Save
   - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject)
-- [ ] Create a new user( with username, display name, password, and email)
-- [ ] Install and enable `user_oidc` apps
-- [ ] Run following command:
-  - php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation
 
 ###  B2. Configure OpenProject (Client)
 - [ ] In OpenProject, go to `Administration > Authentication > OpenID providers`
@@ -194,7 +193,8 @@ bash integration_setup.sh
 - [ ] Complete Smoke **Test No 4**.
 - [ ] Complete Smoke **Test No 5**.
 
-## Section C: SSO Authentication via OpenID Connect (IdP as keycloak with token exchange enable/disable)
+## Section C: Single Sign-On (SSO) through OpenID Connect** where **External Provider** as the IdP with token exchange enable/disable
+> Here keycloak is an External Provider
 
 ### C1. Configure Keycloak (IdP Setup)
 - [ ] Set up Keycloak using this guide: [Keycloak Setup](https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak)
@@ -251,7 +251,7 @@ bash integration_setup.sh
 - [ ] Enable `token exchange`
 - [ ] Set `OpenProject client ID *` as `Openproject`
 
-### C12. Verify Connection in nextcloud
+### C7. Verify Connection in nextcloud
 - [ ] Complete Smoke **Test No C1**.
 - [ ] Complete Smoke **Test No C2**.
 - [ ] Complete Smoke **Test No C3**.
@@ -267,7 +267,7 @@ bash integration_setup.sh
 - [ ] Complete Smoke **Test No 4**.
 - [ ] Complete Smoke **Test No 5**.
 
-### C13. Check the integration script for sso setup(idp as nextcloud)
+### C8. Check the integration script for sso setup (idp as nextcloud)
 
 > Before Running the script make sure that your `Nextcloud` and `OpenProject` instance is up and running
 > If you're using Nextcloud as the Identity Provider (OIDC), make sure the following apps are installed and enabled in Nextcloud:
@@ -280,8 +280,9 @@ bash integration_setup.sh
 >
 > To add the Nextcloud storage, delete the 'nextcloud' file storage from OpenProject, reset the Nextcloud config, and run the script again.
 
-
-### To setup sso where nextcloud as IdP
+### To set up sso where nextcloud as IdP
+- [ ] Complete Smoke **Test No B1** (only the first , second and thrid steps are required).
+- [ ] Complete Smoke **Test No B2** (only the first and second steps are required).
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
 ```bash
@@ -299,12 +300,20 @@ OP_USE_LOGIN_TOKEN=true \
 bash integration_oidc_setup.sh
 ```
 
-- [ ] Upon success, try Smoke Test No C4.
-- [ ] Upon success, try Smoke Test No C5.
+- [ ] Upon success, try Smoke **Test No B4**.
+- [ ] Upon success, try Smoke **Test No B5**.
+- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
+- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
+- [ ] Then, reset the Nextcloud config.
+- [ ] set environment `SETUP_PROJECT_FOLDER=true` and run the script.
+- [ ] Run the script again after it is already setup (Should not give any error).
 
-### To setup sso where keycloak as IdP where token exchange is disable
+### To set up sso where keycloak as IdP (token exchange disable)
 > Before Running the below script make sure that you delete the 'nextcloud' file storage from OpenProject and reset the Nextcloud config.
 
+- [ ] Complete Smoke **Test No C1**.
+- [ ] Complete Smoke **Test No C2**.
+- [ ] Complete Smoke **Test No C3**.
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
 ```bash
@@ -326,13 +335,20 @@ bash integration_oidc_setup.sh
 
 ```
 
-- [ ] Upon success, try Smoke Test No C4.
 - [ ] Upon success, try Smoke Test No C5.
+- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
+- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
+- [ ] Then, reset the Nextcloud config.
+- [ ] set environment `SETUP_PROJECT_FOLDER=true` and run the script.
+- [ ] Run the script again after it is already setup (Should not give any error).
 
 
-### To setup sso where keycloak as IdP where token exchange is enable
+### To set up sso where keycloak as IdP (token exchange enable)
 > Before Running the below script make sure that you delete the 'nextcloud' file storage from OpenProject and reset the Nextcloud config.
 
+- [ ] Complete Smoke **Test No C1**.
+- [ ] Complete Smoke **Test No C2**.
+- [ ] Complete Smoke **Test No C3**.
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
 ```bash
@@ -353,5 +369,9 @@ OP_STORAGE_AUDIENCE=nextcloud \
 bash integration_oidc_setup.sh
 ```
 
-- [ ] Upon success, try Smoke Test No C4.
-- [ ] Upon success, try Smoke Test No C5.
+- [ ] Upon success, try Smoke Test No C7.
+- [ ] Also, to set up the integration configuration with project folder setup, at first delete 'nextcloud' file storage from OpenProject.
+- [ ] In nextcloud, delete the `OpenProject` user, group and team folder from the nextcloud (if they exist).
+- [ ] Then, reset the Nextcloud config.
+- [ ] set environment `SETUP_PROJECT_FOLDER=true` and run the script.
+- [ ] Run the script again after it is already setup (Should not give any error).
