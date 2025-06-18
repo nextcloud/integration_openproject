@@ -99,7 +99,7 @@ services:
       SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
-      NEXTCLOUD_AUTOINSTALL_APPS: user_oidc oidc groupfolders
+      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders user_oidc
       NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
