@@ -254,7 +254,7 @@ ncCheckAppVersion() {
   if [ -z "$nc_app_version" ]; then
     log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
     exit 1
-  elif [[ "$nc_app_version" < "$app_min_version" ]]; then
+  elif ! printf "%s\n%s" "$app_min_version" "$nc_app_version" | sort -VC; then
     log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$nc_app_version'"
     exit 1
   fi
