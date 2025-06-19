@@ -75,6 +75,7 @@ services:
       POSTGRES_DB: nextcloud
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      PGUSER: postgres
     volumes:
       - ncdb:/var/lib/postgresql/data
     networks:
@@ -98,7 +99,7 @@ services:
       SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
-      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders
+      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders user_oidc
       NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
@@ -128,7 +129,7 @@ services:
       traefik.http.routers.nextcloud.entrypoints: websecure
 
   openproject:
-    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-15}
+    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-16}
     restart: unless-stopped
     entrypoint: bash
     command: /openproject.sh
@@ -145,7 +146,7 @@ services:
     volumes:
       - ./openproject.sh:/openproject.sh
       - opdata:/var/openproject/assets
-      - opdb:/var/postgresql/data
+      - opdb:/var/openproject/pgdata
       - step:/step:ro
     networks:
       - nc-op
