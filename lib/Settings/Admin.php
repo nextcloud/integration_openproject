@@ -116,7 +116,12 @@ class Admin implements ISettings {
 					'enabled' => $this->openProjectAPIService->isOIDCAppEnabled(),
 					'supported' => $this->openProjectAPIService->isOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION,
-				]
+				],
+				'user_oidc' => [
+					'enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
+					'supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
+					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
+				],
 			],
 		];
 
