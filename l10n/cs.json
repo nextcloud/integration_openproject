@@ -20,7 +20,6 @@
     "Admin Audit" : "Audit správce",
     "documentation" : "dokumentace",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Pro aktivaci auditních záznamů událostí pro napojení na OpenProject, zapněte aplikaci {htmlLinkForAdminAudit} a následujte kroky nastavení nastíněné v {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Přečtěte si příručku na {htmlLink}.",
     "OpenProject admin options saved" : "Předvolby pro správu OpenProject uloženy",
     "Failed to save OpenProject admin options" : "Nepodařilo se uložit předvolby pro správu OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Požadavek na odvolání platnosti se nepodařilo provést kvůli chybě spojení s OpenProject serverem",
@@ -35,10 +34,6 @@
     "Failed to create Nextcloud OAuth client" : "Nepodařilo se vytvořit Nextcloud OAuth klienta",
     "Default user configuration saved" : "Výchozí nastavení pro uživatele uložena",
     "Failed to save default user configuration" : "Výchozí nastavení pro uživatele se nepodařilo uložit",
-    "Authentication method" : "Metoda ověření",
-    "Need help setting this up?" : "Potřebujete pomoc s nastavením tohoto?",
-    "Edit authentication method" : "Upravit metodu ověřování se",
-    "Save" : "Uložit",
     "Authentication settings" : "Nastavení ověřování se",
     "OIDC Provider Type" : "Typ poskytovatele OIDC",
     "OIDC Provider" : "Poskytovatel OIDC",
@@ -46,6 +41,7 @@
     "Select an OIDC provider" : "Vybrat poskytovatele OIDC",
     "OIDC provider" : "poskytovatel OIDC",
     "Edit authentication settings" : "Upravit nastavení ověřování se",
+    "Save" : "Uložit",
     "OpenProject OAuth settings" : "Nastavení OAuth pro OpenProject",
     "Replace OpenProject OAuth values" : "Nahradit OAuth hodnoty pro OpenProject",
     "Nextcloud OAuth client" : "OAuth klient pro Nextcloud",
@@ -73,6 +69,9 @@
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Enable unified search for tickets" : "Zahrnout vyhledávání v požadavcích do celkového sjednoceného vyhledávání",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varování: vše co napíšete do kolonky sjednoceného vyhledávání v rámci Nextcloud, bude odesíláno i do vámi používané instance OpenProject!",
+    "Authentication method" : "Metoda ověření",
+    "Need help setting this up?" : "Potřebujete pomoc s nastavením tohoto?",
+    "Edit authentication method" : "Upravit metodu ověřování se",
     "URL is invalid" : "URL není platná",
     "The URL should have the form \"https://openproject.org\"" : "URL by měla mít podobu „https://openproject.org",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Na této URL neočekává spojení žádná platná instance OpenProject – podívejte se do záznamů událostí (log) v Nextcloud",
@@ -210,6 +209,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Aby bylo možné automaticky spravovat složky projektů, tato aplikace potřebuje vytvořit speciální skupinovou složku, přiřazenou skupině a spravovanou uživatelem, každá nazvaná „OpenProject“.",
     "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm",
     "Download and enable it here" : "Stáhněte a zapněte zde",
-    "Please introduce a valid OpenProject hostname" : "Zadejte platný název stroje, na kterém je provozována instance OpenProject"
+    "Please introduce a valid OpenProject hostname" : "Zadejte platný název stroje, na kterém je provozována instance OpenProject",
+    "Please read our guide on {htmlLink}." : "Přečtěte si příručku na {htmlLink}."
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
