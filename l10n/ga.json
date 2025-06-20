@@ -21,7 +21,6 @@
     "Admin Audit" : "Iniúchadh Riaracháin",
     "documentation" : "doiciméadú",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Chun logaí iniúchta do chomhtháthú OpenProject a ghníomhachtú, cumasaigh an aip {htmlLinkForAdminAudit}agus lean na céimeanna cumraíochta atá leagtha amach sa {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Léigh ár dtreoir ar{htmlLink}le do thoil.",
     "OpenProject admin options saved" : "Sábháladh roghanna riaracháin OpenProject",
     "Failed to save OpenProject admin options" : "Theip ar shábháil roghanna riaracháin OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Theip ar an iarratas cúlghairme a dhéanamh mar gheall ar earráid cheangail leis an bhfreastalaí OpenProject",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "Níorbh fhéidir cliant Nextcloud OAuth a chruthú",
     "Default user configuration saved" : "Sábháladh cumraíocht réamhshocraithe úsáideora",
     "Failed to save default user configuration" : "Theip ar an chumraíocht úsáideora réamhshocraithe a shábháil",
-    "Authentication method" : "Modh fíordheimhnithe",
-    "Need help setting this up?" : "An bhfuil cabhair uait chun é seo a shocrú?",
-    "Edit authentication method" : "Cuir modh fíordheimhnithe in eagar",
-    "Save" : "Sábháil",
     "Authentication settings" : "Socruithe fíordheimhnithe",
     "OIDC Provider Type" : "Cineál Soláthraí OIDC",
     "OIDC Provider" : "Soláthraí OIDC",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "Roghnaigh soláthraí OIDC",
     "OIDC provider" : "Soláthraí OIDC",
     "Edit authentication settings" : "Cuir socruithe fíordheimhnithe in eagar",
+    "Save" : "Sábháil",
     "OpenProject OAuth settings" : "Socruithe OpenProject OAuth",
     "Replace OpenProject OAuth values" : "Ionadaigh luachanna OpenProject OAuth",
     "Nextcloud OAuth client" : "Cliant Nextcloud OAuth",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "Cumasaigh nasc nascleanúna",
     "Enable unified search for tickets" : "Cumasaigh cuardach aontaithe le haghaidh ticéid",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Rabhadh, seolfar gach rud a chlóscríobhann tú sa bharra cuardaigh chuig do shampla OpenProject.",
+    "Authentication method" : "Modh fíordheimhnithe",
+    "Need help setting this up?" : "An bhfuil cabhair uait chun é seo a shocrú?",
+    "Edit authentication method" : "Cuir modh fíordheimhnithe in eagar",
     "URL is invalid" : "Tá an URL neamhbhailí",
     "The URL should have the form \"https://openproject.org\"" : "Ba cheart go mbeadh an fhoirm \"https://openproject.org\" san URL",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Níl aon ásc bailí OpenProject ag éisteacht leis an URL sin, seiceáil na logaí Nextcloud le do thoil",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Chun fillteáin tionscadail a bhainistiú go huathoibríoch, ní mór don aip seo fillteán grúpa speisialta a shocrú, a shanntar do ghrúpa agus a bhainistíonn úsáideoir, ar a dtugtar \"OpenProject\" gach ceann acu.",
     "Please link a project to this Nextcloud storage" : "Nasc tionscadal leis an stóras Nextcloud seo le do thoil",
     "Download and enable it here" : "Íoslódáil agus cumasaigh anseo é",
-    "Please introduce a valid OpenProject hostname" : "Tabhair isteach óstainm OpenProject bailí"
+    "Please introduce a valid OpenProject hostname" : "Tabhair isteach óstainm OpenProject bailí",
+    "Please read our guide on {htmlLink}." : "Léigh ár dtreoir ar{htmlLink}le do thoil."
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
