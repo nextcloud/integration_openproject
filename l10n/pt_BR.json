@@ -21,7 +21,6 @@
     "Admin Audit" : "Auditoria Administrativa",
     "documentation" : "documentação",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Para ativar os registros de auditoria para a integração do OpenProject, por favor, ative o aplicativo {htmlLinkForAdminAudit} e siga as etapas de configuração descritas na {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Por favor, leia nosso guia em {htmlLink}.",
     "OpenProject admin options saved" : "Opções de administração do OpenProject salvas",
     "Failed to save OpenProject admin options" : "Falha ao salvar as opções de administração do OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Falha ao realizar solicitação de revogação devido a erro de conexão com o servidor OpenProject",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "Falha ao criar cliente OAuth do Nextcloud",
     "Default user configuration saved" : "Configuração de usuário padrão salva",
     "Failed to save default user configuration" : "Falha ao salvar a configuração de usuário padrão",
-    "Authentication method" : "Método de autenticação",
-    "Need help setting this up?" : "Precisa de ajuda para configurar isso?",
-    "Edit authentication method" : "Editar método de autenticação",
-    "Save" : "Salvar",
     "Authentication settings" : "Configurações de autenticação",
     "OIDC Provider Type" : "Tipo de provedor OIDC",
     "OIDC Provider" : "Provedor OIDC",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "Selecione um provedor OIDC",
     "OIDC provider" : "Provedor OIDC",
     "Edit authentication settings" : "Editar configurações de autenticação",
+    "Save" : "Salvar",
     "OpenProject OAuth settings" : "Configurações de OAuth do OpenProject",
     "Replace OpenProject OAuth values" : "Substituir os valores OAuth do OpenProject",
     "Nextcloud OAuth client" : "Cliente OAuth do Nextcloud",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "Ativar link de navegação",
     "Enable unified search for tickets" : "Ativar a pesquisa unificada de tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Atenção, tudo o que você digitar na barra de pesquisa será enviado para sua instância do OpenProject.",
+    "Authentication method" : "Método de autenticação",
+    "Need help setting this up?" : "Precisa de ajuda para configurar isso?",
+    "Edit authentication method" : "Editar método de autenticação",
     "URL is invalid" : "URL é inválido",
     "The URL should have the form \"https://openproject.org\"" : "O URL deve ter o formato \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Não há nenhuma instância válida do OpenProject escutando nesse URL, verifique os logs do Nextcloud",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para gerenciar automaticamente as pastas do projeto, este aplicativo precisa configurar uma pasta de grupo especial, atribuída a um grupo e gerenciada por um usuário, cada um chamado \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "Vincule um projeto a este armazenamento Nextcloud",
     "Download and enable it here" : "Faça o download e ative-o aqui",
-    "Please introduce a valid OpenProject hostname" : "Por favor, insira um nome de host válido do OpenProject"
+    "Please introduce a valid OpenProject hostname" : "Por favor, insira um nome de host válido do OpenProject",
+    "Please read our guide on {htmlLink}." : "Por favor, leia nosso guia em {htmlLink}."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

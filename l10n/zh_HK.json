@@ -21,7 +21,6 @@
     "Admin Audit" : "管理員審計",
     "documentation" : "說明書",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "要啟用 OpenProject 整合的審計記錄，請啟用 {htmlLinkForAdminAudit} 應用並按照 {htmlLinkForDocumentaion} 中概述的配置步驟進行操作。",
-    "Please read our guide on {htmlLink}." : "請閱讀我們關於 {htmlLink} 的指南。",
     "OpenProject admin options saved" : "已保存 OpenProject 管理選項",
     "Failed to save OpenProject admin options" : "未能保存 OpenProject 管理選項",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "由於與 OpenProject 伺服器的連接錯誤，無法執行撤銷請求",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "無法創建 NextCloud Oauth 客戶端",
     "Default user configuration saved" : "默認用戶配置已保存",
     "Failed to save default user configuration" : "保存默認用戶配置失敗",
-    "Authentication method" : "認證方式",
-    "Need help setting this up?" : "需要幫助設定這個嗎？",
-    "Edit authentication method" : "編輯驗證方式",
-    "Save" : "保存",
     "Authentication settings" : "驗證設定",
     "OIDC Provider Type" : "OIDC 提供者類型",
     "OIDC Provider" : "OIDC 提供者",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "選擇 OIDC 提供者",
     "OIDC provider" : "OIDC 提供者",
     "Edit authentication settings" : "編輯驗證設定",
+    "Save" : "保存",
     "OpenProject OAuth settings" : "OpenProject OAuth 設定",
     "Replace OpenProject OAuth values" : "取代 OpenProject OAuth 值",
     "Nextcloud OAuth client" : "Nextcloud OAuth 客戶端",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "啟用導覽連結",
     "Enable unified search for tickets" : "啟用統一搜尋票證",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "警告，您在搜尋列中輸入的所有東西都會傳送到 OpenProject。",
+    "Authentication method" : "認證方式",
+    "Need help setting this up?" : "需要幫助設定這個嗎？",
+    "Edit authentication method" : "編輯驗證方式",
     "URL is invalid" : "URL 無效",
     "The URL should have the form \"https://openproject.org\"" : "URL 的格式應為 “https://openproject.org”",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "該 URL 沒有有效的 OpenProject 實例監聽，請檢查 Nextcloud 記錄",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "為了自動管理專案資料夾，此應用程式需要設置一個特殊的群組資料夾，分配給一個群組並由用戶管理，每個資料夾稱為“OpenProject”。",
     "Please link a project to this Nextcloud storage" : "請將專案連結到此 Nextcloud 儲存",
     "Download and enable it here" : "在此處下載並啟用",
-    "Please introduce a valid OpenProject hostname" : "請輸入一個有效的 OpenProject 主機名"
+    "Please introduce a valid OpenProject hostname" : "請輸入一個有效的 OpenProject 主機名",
+    "Please read our guide on {htmlLink}." : "請閱讀我們關於 {htmlLink} 的指南。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

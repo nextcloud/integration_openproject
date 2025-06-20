@@ -21,7 +21,6 @@
     "Admin Audit" : "Administrationsaudit",
     "documentation" : "Dokumentation",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Um Audit-Protokolle für die OpenProject-Integration zu aktivieren, bitte die App {htmlLinkForAdminAudit} aktivieren und den Konfigurationsschritten folgen, die in der {htmlLinkForDocumentaion} beschrieben sind.",
-    "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen.",
     "OpenProject admin options saved" : "OpenProject-Administrationseinstellungen gespeichert",
     "Failed to save OpenProject admin options" : "OpenProject-Administrationseinstellungen konnten nicht gespeichert werden",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Die Widerrufsanforderung konnte aufgrund eines Verbindungsfehlers mit dem OpenProject-Server nicht ausgeführt werden",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "Nextcloud OAuth-Client konnte nicht erstellt werden",
     "Default user configuration saved" : "Standardbenutzereinstellungen gespeichert",
     "Failed to save default user configuration" : "Standardbenutzereinstellungen konnten nicht gespeichert werden",
-    "Authentication method" : "Authentifizierungsmethode",
-    "Need help setting this up?" : "Benötigen Sie Hilfe beim Einrichten?",
-    "Edit authentication method" : "Authentifizierungsmethode bearbeiten",
-    "Save" : "Speichern",
     "Authentication settings" : "Authentifizierungseinstellungen",
     "OIDC Provider Type" : "OIDC-Anbieter-Typ",
     "OIDC Provider" : "OIDC-Anbieter",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "Wählen Sie einen OIDC-Anbieter aus",
     "OIDC provider" : "OIDC-Anbieter",
     "Edit authentication settings" : "Authentifizierungseinstellungen bearbeiten",
+    "Save" : "Speichern",
     "OpenProject OAuth settings" : "OpenProject OAuth-Einstellungen",
     "Replace OpenProject OAuth values" : "OpenProject OAuth-Werte ersetzen",
     "Nextcloud OAuth client" : "Nextcloud OAuth-Client",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "Navigations-Link aktivieren",
     "Enable unified search for tickets" : "Einheitliche Suche nach Tickets aktivieren",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Achtung, alles, was Sie in die Suchleiste eingeben, wird an Ihre OpenProject-Instanz gesendet.",
+    "Authentication method" : "Authentifizierungsmethode",
+    "Need help setting this up?" : "Benötigen Sie Hilfe beim Einrichten?",
+    "Edit authentication method" : "Authentifizierungsmethode bearbeiten",
     "URL is invalid" : "URL ist ungültig",
     "The URL should have the form \"https://openproject.org\"" : "Die URL sollte folgende Form haben \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Keine gültige OpenProjekt-Instanz horcht auf dieser URL, bitte die Nextcloud-Protokolle prüfen",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Für die automatische Verwaltung von Projektordnern muss diese App einen speziellen Gruppenordner einrichten, der einer Gruppe zugewiesen und von einem Benutzer verwaltet wird. Ordner wie auch Benutzer heissen \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "Bitte verknüpfen Sie ein Projekt mit diesem Nextcloud-Speicher.",
     "Download and enable it here" : "Hier herunterladen und aktivieren",
-    "Please introduce a valid OpenProject hostname" : "Bitte einen gültigen OpenProject-Hostnamen eingeben"
+    "Please introduce a valid OpenProject hostname" : "Bitte einen gültigen OpenProject-Hostnamen eingeben",
+    "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
