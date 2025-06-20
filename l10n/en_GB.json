@@ -21,7 +21,6 @@
     "Admin Audit" : "Admin Audit",
     "documentation" : "documentation",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Please read our guide on {htmlLink}.",
     "OpenProject admin options saved" : "OpenProject admin options saved",
     "Failed to save OpenProject admin options" : "Failed to save OpenProject admin options",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Failed to perform revoke request due to connection error with the OpenProject server",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "Failed to create Nextcloud OAuth client",
     "Default user configuration saved" : "Default user configuration saved",
     "Failed to save default user configuration" : "Failed to save default user configuration",
-    "Authentication method" : "Authentication method",
-    "Need help setting this up?" : "Need help setting this up?",
-    "Edit authentication method" : "Edit authentication method",
-    "Save" : "Save",
     "Authentication settings" : "Authentication settings",
     "OIDC Provider Type" : "OIDC Provider Type",
     "OIDC Provider" : "OIDC Provider",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "Select an OIDC provider",
     "OIDC provider" : "OIDC provider",
     "Edit authentication settings" : "Edit authentication settings",
+    "Save" : "Save",
     "OpenProject OAuth settings" : "OpenProject OAuth settings",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
     "Nextcloud OAuth client" : "Nextcloud OAuth client",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "Enable navigation link",
     "Enable unified search for tickets" : "Enable unified search for tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Warning, everything you type in the search bar will be sent to your OpenProject instance.",
+    "Authentication method" : "Authentication method",
+    "Need help setting this up?" : "Need help setting this up?",
+    "Edit authentication method" : "Edit authentication method",
     "URL is invalid" : "URL is invalid",
     "The URL should have the form \"https://openproject.org\"" : "The URL should have the form \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "Please link a project to this Nextcloud storage",
     "Download and enable it here" : "Download and enable it here",
-    "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname"
+    "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname",
+    "Please read our guide on {htmlLink}." : "Please read our guide on {htmlLink}."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
