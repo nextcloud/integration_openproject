@@ -20,7 +20,6 @@
     "Admin Audit" : "Auditoría de administración",
     "documentation" : "documentación",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Para activar rexistros de auditoría para a integración de OpenProject, active a aplicación {htmlLinkForAdminAudit} e siga os pasos de configuración descritos na {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Lea a nosa guía en {htmlLink}.",
     "OpenProject admin options saved" : "Gardáronse as opcións de administración de OpenProject",
     "Failed to save OpenProject admin options" : "Non foi posíbel gardar as opcións de administrador de OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Produciuse un erro ao realizar a solicitude de revogación por mor dun erro de conexión co servidor OpenProject",
@@ -35,12 +34,10 @@
     "Failed to create Nextcloud OAuth client" : "Produciuse un erro ao crear o cliente OAuth de Nextcloud",
     "Default user configuration saved" : "Gardouse a configuración predeterminada de usuario",
     "Failed to save default user configuration" : "Produciuse un erro ao gardar a configuración predeterminada de usuario",
-    "Authentication method" : "Método de autenticación",
-    "Need help setting this up?" : "Necesitas axuda para axustar isto?",
-    "Save" : "Gardar",
     "OIDC Provider" : "Provedor de OIDC",
     "Select an OIDC provider" : "Seleccione un provedor de OIDC",
     "OIDC provider" : "Provedor de OIDC",
+    "Save" : "Gardar",
     "OpenProject OAuth settings" : "Axustes de OpenProject OAuth",
     "Replace OpenProject OAuth values" : "Substituír os valores de OpenProject OAuth",
     "Nextcloud OAuth client" : "Cliente OAuth de Nextcloud",
@@ -67,6 +64,8 @@
     "Enable navigation link" : "Activar a ligazón de navegación",
     "Enable unified search for tickets" : "Activar a busca unificada de billetes",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Advertencia, todo o que escriba na barra de busca enviarase á súa instancia de OpenProject.",
+    "Authentication method" : "Método de autenticación",
+    "Need help setting this up?" : "Necesitas axuda para axustar isto?",
     "URL is invalid" : "O URL non é válido",
     "The URL should have the form \"https://openproject.org\"" : "O URL debe ter a forma «https://openproject.org»",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Non hai ningunha instancia de OpenProject válida escoitando nese URL, consulte os ficheiros de rexistro de Nextcloud",
@@ -193,6 +192,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para xestionar automaticamente os cartafoles do proxecto, esta aplicación necesita configurar un cartafol de grupo especial, asignado a un grupo e xestionado por un usuario, cada un chamado «OpenProject».",
     "Please link a project to this Nextcloud storage" : "Ligue un proxecto a este almacenamento Nextcloud",
     "Download and enable it here" : "Descargar e activalo aquí",
-    "Please introduce a valid OpenProject hostname" : "Introduza un nome de máquina de OpenProject válido"
+    "Please introduce a valid OpenProject hostname" : "Introduza un nome de máquina de OpenProject válido",
+    "Please read our guide on {htmlLink}." : "Lea a nosa guía en {htmlLink}."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

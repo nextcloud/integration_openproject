@@ -3,10 +3,10 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Nederīgs HTTP pieprasījuma veids",
     "Cancel" : "Atcelt",
-    "Authentication method" : "Autentificēšanās veids",
     "Save" : "Saglabāt",
     "Automatically managed folders" : "Automātiski pārvaldītas mapes",
     "Automatically managed folders:" : "Automātiski pārvaldītās mapes:",
+    "Authentication method" : "Autentificēšanās veids",
     "Documentation" : "Dokumentācija",
     "Copied!" : "Nokopēts!",
     "Details" : "Detaļas",
