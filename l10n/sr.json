@@ -21,7 +21,6 @@
     "Admin Audit" : "Админ ревизија",
     "documentation" : "документација",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Да бисте активирали ревизионе дневнике за OpenProject интеграцију, молимо вас да укључите апликацију {htmlLinkForAdminAudit} и следите кораке конфигурације који су наведени у {htmlLinkForDocumentaion}.",
-    "Please read our guide on {htmlLink}." : "Молимо вас да читате наше упутство на {htmlLink}",
     "OpenProject admin options saved" : "Сачуване су OpenProject админ опције",
     "Failed to save OpenProject admin options" : "Није успело чување OpenProject админ опција",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Није успело повлачења захтева услед грешке у повезивању са  OpenProject сервером",
@@ -36,10 +35,6 @@
     "Failed to create Nextcloud OAuth client" : "Није успело креирање Nextcloud OAuth клијента",
     "Default user configuration saved" : "Сачувана је подразумевана корисничка конфигурација",
     "Failed to save default user configuration" : "Није успело чување подразумеване корисничке конфигурације",
-    "Authentication method" : "Начин провере идентитета",
-    "Need help setting this up?" : "Треба вам помоћ да ово поставите?",
-    "Edit authentication method" : "Уреди методу провере идентитета",
-    "Save" : "Сачувај",
     "Authentication settings" : "Подешавања провере идентитета",
     "OIDC Provider Type" : "Тип пружаоца OIDC услуге",
     "OIDC Provider" : "Пружалац OIDC услуге",
@@ -47,6 +42,7 @@
     "Select an OIDC provider" : "Изаберите пружаоца OIDC услуге",
     "OIDC provider" : "Пружалац OIDC услуге",
     "Edit authentication settings" : "Уреди подешавања провере идентитета",
+    "Save" : "Сачувај",
     "OpenProject OAuth settings" : "OpenProject OAuth подешавања",
     "Replace OpenProject OAuth values" : "Замени OpenProject OAuth вредности",
     "Nextcloud OAuth client" : "Nextcloud OAuth клијент",
@@ -74,6 +70,9 @@
     "Enable navigation link" : "Укључи линк за навигацију",
     "Enable unified search for tickets" : "Укључи обједињену претрагу тикета",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Упозорење, све што куцате у линији за претрагу се шаље вашој OpenProject инстанци.",
+    "Authentication method" : "Начин провере идентитета",
+    "Need help setting this up?" : "Треба вам помоћ да ово поставите?",
+    "Edit authentication method" : "Уреди методу провере идентитета",
     "URL is invalid" : "URL је неисправан",
     "The URL should have the form \"https://openproject.org\"" : "URL би требало да има облик https://openproject.org”",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Нема исправне OpenProject инстанце која слуша на тој URL адреси, молимо вас да погледате Nextcloud дневнике",
@@ -212,6 +211,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Да би аутоматски управљала фолдерима пројекта, ова апликација мора да подеси специјални фолдер групе који се додељује групи и којим управља корисник, сваки под именом „OpenProject”.",
     "Please link a project to this Nextcloud storage" : "Молим да се пројекат повеже са овим Nextcloud складиштем",
     "Download and enable it here" : "Преузмите и укључите је овде",
-    "Please introduce a valid OpenProject hostname" : "Молимо вас да представите исправно име OpenProject хоста"
+    "Please introduce a valid OpenProject hostname" : "Молимо вас да представите исправно име OpenProject хоста",
+    "Please read our guide on {htmlLink}." : "Молимо вас да читате наше упутство на {htmlLink}"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

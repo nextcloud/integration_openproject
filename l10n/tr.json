@@ -20,7 +20,6 @@
     "Admin Audit" : "Yönetici denetimi",
     "documentation" : "belgeler",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "OpenProject bütünleştirmesi için denetim günlüklerini açmak amacıyla lütfen {htmlLinkForAdminAudit} uygulamasını etkinleştirin ve {htmlLinkForDocumentaion} bölümündeki yapılandırma adımlarını izleyin.",
-    "Please read our guide on {htmlLink}." : "Lütfen {htmlLink} bölümündeki rehberimizi okuyun.",
     "OpenProject admin options saved" : "OpenProject yönetici ayarları kaydedildi",
     "Failed to save OpenProject admin options" : "OpenProject yönetici ayarları kaydedilemedi",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Geçersiz kılma isteği, OpenProject sunucusuyla bağlantı sorunu nedeniyle yerine getirilemedi",
@@ -35,10 +34,6 @@
     "Failed to create Nextcloud OAuth client" : "Nextcloud OAuth istemcisi oluşturulamadı",
     "Default user configuration saved" : "Varsayılan kullanıcı yapılandırması kaydedildi",
     "Failed to save default user configuration" : "Varsayılan kullanıcı yapılandırması kaydedilemedi",
-    "Authentication method" : "Kimlik doğrulama yöntemi",
-    "Need help setting this up?" : "Bunu ayarlamak için yardım gerekiyor mu?",
-    "Edit authentication method" : "Kimlik doğrulama yöntemini düzenle",
-    "Save" : "Kaydet",
     "Authentication settings" : "Kimlik doğrulama ayarları",
     "OIDC Provider Type" : "OIDC hizmeti sağlayıcısı türü",
     "OIDC Provider" : "OIDC hizmeti sağlayıcısı",
@@ -46,6 +41,7 @@
     "Select an OIDC provider" : "Bir OIDC hizmeti sağlayıcısı seçin",
     "OIDC provider" : "OIDC hizmeti sağlayıcısı",
     "Edit authentication settings" : "Kimlik doğrulama ayarlarını düzenle",
+    "Save" : "Kaydet",
     "OpenProject OAuth settings" : "OpenProject OAuth ayarları",
     "Replace OpenProject OAuth values" : "OpenProject OAuth değerlerini değiştir",
     "Nextcloud OAuth client" : "Nextcloud OAuth istemcisi",
@@ -72,6 +68,9 @@
     "Enable navigation link" : "Gezinme bağlantısı kullanılsın",
     "Enable unified search for tickets" : "Destek kayıtları için birleşik arama yapılabilsin",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Uyarı, arama çubuğuna yazdığınız her şey OpenProject kopyanıza gönderilecek.",
+    "Authentication method" : "Kimlik doğrulama yöntemi",
+    "Need help setting this up?" : "Bunu ayarlamak için yardım gerekiyor mu?",
+    "Edit authentication method" : "Kimlik doğrulama yöntemini düzenle",
     "URL is invalid" : "Adres geçersiz",
     "The URL should have the form \"https://openproject.org\"" : "Adres \"https://openproject.org\" biçiminde olmalıdır",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Bu adresi dinleyen geçerli bir OpenProject kopyası yok. Lütfen Nextcloud günlüklerini denetleyin",
@@ -210,6 +209,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Proje klasörlerinin otomatik olarak yönetilmesi için, bu uygulamanın her biri \"OpenProject\" adlı bir kullanıcı tarafından yönetilen ve bir gruba atanmış özel bir grup klasörü oluşturması gerekir.",
     "Please link a project to this Nextcloud storage" : "Lütfen bu Nextcloud depolama alanına bir proje bağlayın",
     "Download and enable it here" : "İndirip buradan etkinleştirin",
-    "Please introduce a valid OpenProject hostname" : "Lütfen geçerli bir OpenProject sunucu adı yazın"
+    "Please introduce a valid OpenProject hostname" : "Lütfen geçerli bir OpenProject sunucu adı yazın",
+    "Please read our guide on {htmlLink}." : "Lütfen {htmlLink} bölümündeki rehberimizi okuyun."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
