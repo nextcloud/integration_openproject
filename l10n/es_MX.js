@@ -2,8 +2,8 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Cancel" : "Cancelar",
-    "Authentication method" : "Método de autenticación",
     "Save" : "Guardar",
+    "Authentication method" : "Método de autenticación",
     "Documentation" : "Documentación",
     "Copied!" : "¡Copiado!",
     "Copied to the clipboard" : "Copiado al portapapeles",

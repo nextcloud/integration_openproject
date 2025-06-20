@@ -20,7 +20,6 @@
     "Admin Audit" : "Auditoría de Administrador",
     "documentation" : "documentación",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Para activar los registros de auditoría para la integración con OpenProject, por favor, habilite el app{htmlLinkForAdminAudit}y siga los pasos de configuración descritos en la {htmlLinkForDocumentaion}",
-    "Please read our guide on {htmlLink}." : "Por favor, lea nuestra guía en {htmlLink}",
     "OpenProject admin options saved" : "Opciones de administración de OpenProject guardadas",
     "Failed to save OpenProject admin options" : "Fallo al guardar las opciones de administración de OpenProject",
     "Failed to perform revoke request due to connection error with the OpenProject server" : "Fallo al ejecutar la solicitud de revocación ya que hubo un problema de conexión con el servidor OpenProject",
@@ -35,10 +34,6 @@
     "Failed to create Nextcloud OAuth client" : "Fallo al crear el cliente OAuth de Nextcloud",
     "Default user configuration saved" : "Configuración predeterminada de usuario guardada",
     "Failed to save default user configuration" : "Fallo al guardar la configuración predeterminada de usuario",
-    "Authentication method" : "Método de autenticación",
-    "Need help setting this up?" : "¿Necesita ayuda configurando esto?",
-    "Edit authentication method" : "Editar método de autenticación",
-    "Save" : "Guardar",
     "Authentication settings" : "Ajustes de autenticación",
     "OIDC Provider Type" : "Tipo de Proveedor OIDC",
     "OIDC Provider" : "Proveedor OIDC",
@@ -46,6 +41,7 @@
     "Select an OIDC provider" : "Seleccione un proveedor OIDC",
     "OIDC provider" : "proveedor OIDC",
     "Edit authentication settings" : "Editar los ajustes de autenticación",
+    "Save" : "Guardar",
     "OpenProject OAuth settings" : "Configuraciones OAuth de OpenProject",
     "Replace OpenProject OAuth values" : "Sustituir los valores OAuth de OpenProject",
     "Nextcloud OAuth client" : "Cliente Oath Nextcloud",
@@ -72,6 +68,9 @@
     "Enable navigation link" : "Activar enlace de navegación",
     "Enable unified search for tickets" : "Activar búsqueda unificada de tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Aviso: todo lo que escriba en la barra de búsqueda será enviado a su instancia de OpenProject",
+    "Authentication method" : "Método de autenticación",
+    "Need help setting this up?" : "¿Necesita ayuda configurando esto?",
+    "Edit authentication method" : "Editar método de autenticación",
     "URL is invalid" : "La URL no es válida.",
     "The URL should have the form \"https://openproject.org\"" : "La URL debería tener el formato \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "No existe una instancia OpenProject válida escuchando en esa URL, por favor compruebe los registros de Nextcloud",
@@ -210,6 +209,7 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para el manejo automatizado de las carpetas de proyecto, esta app necesita configurar una carpeta de grupo especial, asignada a un grupo y administrada por un usuario, cada uno llamado \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "Por favor, enlace un proyecto a este almacenamiento Nextcloud",
     "Download and enable it here" : "Descárguela y actívela aquí ",
-    "Please introduce a valid OpenProject hostname" : "Por favor, introduzca un nombre de host OpenProject válido "
+    "Please introduce a valid OpenProject hostname" : "Por favor, introduzca un nombre de host OpenProject válido ",
+    "Please read our guide on {htmlLink}." : "Por favor, lea nuestra guía en {htmlLink}"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
