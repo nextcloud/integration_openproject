@@ -13,6 +13,7 @@ OC.L10N.register(
     "Start typing to search" : "Anza kuandika ili kutafuta",
     "Description" : "Maelezo",
     "Create" : "Tengeneza",
-    "Connected accounts" : "Akaunti zilizounganishwa"
+    "Connected accounts" : "Akaunti zilizounganishwa",
+    "Reset" : "Pangilia upya"
 },
 "nplurals=2; plural=(n != 1);");
