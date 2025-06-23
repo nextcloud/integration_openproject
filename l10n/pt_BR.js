@@ -72,6 +72,8 @@ OC.L10N.register(
     "Enable navigation link" : "Ativar link de navegação",
     "Enable unified search for tickets" : "Ativar a pesquisa unificada de tickets",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Atenção, tudo o que você digitar na barra de pesquisa será enviado para sua instância do OpenProject.",
+    "Switch Authentication Method" : "Alterar Método de Autenticação",
+    "Yes, switch" : "Sim, alterar",
     "Authentication method" : "Método de autenticação",
     "Need help setting this up?" : "Precisa de ajuda para configurar isso?",
     "Edit authentication method" : "Editar método de autenticação",
