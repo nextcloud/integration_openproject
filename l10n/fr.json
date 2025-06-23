@@ -12,8 +12,10 @@
     "OpenProject Integration" : "Intégration OpenProject",
     "Link Nextcloud files to OpenProject work packages" : "Lier des fichiers Nextcloud aux lots de travaux OpenProject",
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* Create work packages directly in Nextcloud\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n* Link multiple files and folder to a work package at once\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Cette application permet une intégration transparente avec le logiciel open source de gestion de projet et de collaboration OpenProject.\n\nDu côté de Nextcloud, elle permet aux utilisateurs de :\n\n* Lier des fichiers et des dossiers avec des lots de travaux dans OpenProject\n* Trouver tous les lots de travaux liés à un fichier ou un dossier\n* Créer des lots de travaux directement dans Nextcloud\n* Voir les notifications d'OpenProject via le tableau de bord\n* Rechercher des lots de travaux en utilisant la barre de recherche de Nextcloud.\n* Lier des lots de travaux dans des champs de texte enrichis avec le sélecteur intelligent\n* Prévisualiser des liens de lots de travaux dans les champs de texte\n* Lier plusieurs fichiers et dossiers dans un lot de travaux en une fois\n\nDu côté d'OpenProject, les utilisateurs peuvent :\n\n* Voir tous les fichiers et dossiers Nextcloud liés à un lot de travaux\n* Téléverser et télécharger les fichiers directement dans Nextcloud depuis un lot de travaux\n* Ouvrir les fichiers liés dans Nextclodu pour les modifier\n* Laisser OpenProejct créer des dossiers partagés par projet\n\nPour plus d'informations sur la façon de configurer et d'utiliser l'application OpenProject, veuillez vous référer au [guide de configuration de l'intégration] (https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) pour les administrateurs, et au [guide de l'utilisateur] (https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
+    "Keep current setup" : "Conserver le statut actuel",
     "Administration > File storages" : "Administration > Stockage de fichiers",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiez les valeurs suivantes dans OpenProject {htmlLink} en tant qu'administrateur",
+    "Admin Audit" : "Audit admin",
     "documentation" : "documentation",
     "OpenProject admin options saved" : "Options d'administration OpenProject enregistrées",
     "Failed to save OpenProject admin options" : "Échec de l'enregistrement des options d'administration OpenProject",
@@ -31,6 +33,7 @@
     "OIDC Provider Type" : "Type de fournisseur OIDC",
     "OIDC Provider" : "Fournisseur OIDC",
     "OIDC provider" : "fournisseur OIDC",
+    "Edit authentication settings" : "Modifier les paramètres d'authentification",
     "Save" : "Enregistrer",
     "OpenProject OAuth settings" : "OpenProject OAuth paramètres",
     "Replace OpenProject OAuth values" : "Remplacez les valeurs OAuth d'OpenProject",
@@ -59,6 +62,7 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Attention, tout ce que vous tapez dans la barre de recherche sera envoyé à votre instance OpenProject.",
     "Yes, switch" : "Oui, basculer",
     "Authentication method" : "Méthode d'authentification",
+    "Edit authentication method" : "Modifier la méthode d'authentification",
     "URL is invalid" : "URL invalide",
     "The URL should have the form \"https://openproject.org\"" : "L'URL doit être de la forme \"https://openproject.org\"",
     "There is no valid OpenProject instance listening at that URL, please check the Nextcloud logs" : "Il n’y a pas d’instance OpenProject valide accessible à cette URL, veuillez vérifier les journaux Nextcloud",
@@ -141,8 +145,10 @@
     "OpenProject work package picker" : "Sélecteur de lot de travaux d'OpenProject",
     "OpenProject API error" : "Erreur de l'API OpenProject",
     "OpenProject settings" : "Paramètres OpenProjct",
+    "Token Exchange" : "Échange de jeton",
     "Nextcloud Hub" : "Hub NextCloud",
     "External Provider" : "Fournisseur externe",
+    "The \"{app}\" app is not installed" : "L'application \"{app}\" n'est pas installée",
     "Link to work package" : "Lier à un lot de travaux",
     "Failed to link file to work package" : "Échec de liaison du fichier au lot de travaux",
     "Successfully connected to OpenProject!" : "Connexion à OpenProject réussie !",
@@ -174,6 +180,7 @@
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Jeton·s d’accès OpenProject OAuth révoqué·s avec succès",
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Cette application permet une intégration transparente avec le logiciel open source de gestion de projet et de collaboration OpenProject.\n\nDu côté de Nextcloud, elle permet aux utilisateurs de :\n\n* Lier des fichiers et des dossiers avec des lots de travaux dans OpenProject\n* Trouver tous les lots de travaux liés à un fichier ou un dossier\n* Voir les notifications d'OpenProject via le tableau de bord\n* Rechercher des lots de travaux en utilisant la barre de recherche de Nextcloud.\n* Lier des lots de travaux dans des champs de texte enrichis avec le sélecteur intelligent\n* Prévisualiser des liens de lots de travaux dans les champs de texte\n\nDu côté d'OpenProject, les utilisateurs peuvent :\n\n* Voir tous les fichiers et dossiers Nextcloud liés à un lot de travaux\n* Téléverser et télécharger les fichiers directement dans Nextcloud depuis un lot de travaux\n* Ouvrir les fichiers liés dans Nextclodu pour les modifier\n* Laisser OpenProejct créer des dossiers partagés par projet\n\nPour plus d'informations sur la façon de configurer et d'utiliser l'application OpenProject, veuillez vous référer au [guide de configuration de l'intégration] (https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) pour les administrateurs, et au [guide de l'utilisateur] (https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Pour gérer automatiquement les dossiers de projet, cette application a besoin de configurer un dossier de groupe spécial, affecté à un groupe et géré par un utilisateur, chacun étant appelé « OpenProject ».",
-    "Please link a project to this Nextcloud storage" : "Veuillez lier un projet à ce stockage Nextcloud"
+    "Please link a project to this Nextcloud storage" : "Veuillez lier un projet à ce stockage Nextcloud",
+    "Download and enable it here" : "Télécharger et activer ici"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
