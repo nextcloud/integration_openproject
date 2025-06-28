@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Reset" : "Reiniciar",
     "Authentication method" : "Método de autenticación",
     "Documentation" : "Documentación",
     "Copied!" : "¡Copiado!",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Start typing to search" : "Empiece a escribir para buscar",
     "Select a user or group" : "Seleccionar un usuario o grupo",
     "Description" : "Descripción",
-    "Create" : "Crear",
-    "Reset" : "Reiniciar"
+    "Create" : "Crear"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

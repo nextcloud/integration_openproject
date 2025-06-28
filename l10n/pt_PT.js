@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad HTTP method" : "Método HTTP incorreto",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
+    "Reset" : "Reiniciar",
     "Invalid token" : "token inválido",
     "Authentication method" : "Método de Autenticação",
     "Documentation" : "Documentação",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Start typing to search" : "Digitar para pesquisar",
     "Select a user or group" : "Selecionar utilizador ou grupo",
     "Description" : "Descrição",
-    "Create" : "Criar",
-    "Reset" : "Reiniciar"
+    "Create" : "Criar"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

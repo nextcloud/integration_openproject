@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Cancel",
     "Save" : "Save",
+    "Reset" : "Reset",
     "Documentation" : "Documentation",
     "Copied!" : "Copied!",
     "Details" : "Details",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Description" : "Description",
     "Create" : "Create",
     "Mark as read" : "Mark as read",
-    "Unlink" : "Unlink",
-    "Reset" : "Reset"
+    "Unlink" : "Unlink"
 },
 "nplurals=2; plural=(n!=1);");

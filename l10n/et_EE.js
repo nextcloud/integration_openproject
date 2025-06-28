@@ -8,8 +8,9 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuthi tunnusluba pole õige.",
     "Cancel" : "Loobu",
     "Save" : "Salvesta",
-    "Connected as {user}" : "Ühendatud kui {user}",
+    "Reset" : "Lähtesta",
     "Enable navigation link" : "Lisa menüülink",
+    "Connected as {user}" : "Ühendatud kui {user}",
     "Authentication method" : "Autentimise meetod",
     "Documentation" : "Dokumentatsioon",
     "Copied!" : "Kopeeritud!",
@@ -23,7 +24,6 @@ OC.L10N.register(
     "Mark as read" : "Märgi loetuks",
     "Unlink" : "Eemalda lõiming",
     "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:",
-    "Connected accounts" : "Ühendatud kasutajakontod",
-    "Reset" : "Lähtesta"
+    "Connected accounts" : "Ühendatud kasutajakontod"
 },
 "nplurals=2; plural=(n != 1);");
