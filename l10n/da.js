@@ -7,9 +7,10 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth adgangsnøgle afvist",
     "Cancel" : "Annuller",
     "Save" : "Gem",
+    "Reset" : "Nulstil",
+    "Enable navigation link" : "Aktiver navigationslink",
     "Invalid token" : "Ugyldigt token ",
     "Connected as {user}" : "Forbundet som {user}",
-    "Enable navigation link" : "Aktiver navigationslink",
     "Authentication method" : "Godkendelsesmetode",
     "Documentation" : "Dokumentation",
     "Copied!" : "Kopieret!",
@@ -22,7 +23,6 @@ OC.L10N.register(
     "Mark as read" : "Marker som læst",
     "Download and enable it" : "Download og aktiver det",
     "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:",
-    "Connected accounts" : "Forbundne konti",
-    "Reset" : "Nulstil"
+    "Connected accounts" : "Forbundne konti"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,6 +1,7 @@
 { "translations": {
     "Cancel" : "Cancel",
     "Save" : "Save",
+    "Reset" : "Reset",
     "Documentation" : "Documentation",
     "Copied!" : "Copied!",
     "Details" : "Details",
@@ -9,7 +10,6 @@
     "Description" : "Description",
     "Create" : "Create",
     "Mark as read" : "Mark as read",
-    "Unlink" : "Unlink",
-    "Reset" : "Reset"
+    "Unlink" : "Unlink"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }
