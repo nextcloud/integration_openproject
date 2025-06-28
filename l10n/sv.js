@@ -7,11 +7,12 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-token avvisades",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
+    "Reset" : "Återställ",
+    "Enable navigation link" : "Aktivera navigeringslänk",
+    "Enable unified search for tickets" : "Aktivera enhetlig sökning efter ärenden",
     "Incorrect access token" : "Ogiltig åtkomst-token",
     "Invalid token" : "Ogiltig token",
     "Connected as {user}" : "Ansluten som {user}",
-    "Enable navigation link" : "Aktivera navigeringslänk",
-    "Enable unified search for tickets" : "Aktivera enhetlig sökning efter ärenden",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varning, allt du skriver i sökfältet kommer att skickas till din OpenProject-instans.",
     "Authentication method" : "Autentiseringsmetod",
     "Documentation" : "Dokumentation",
@@ -25,7 +26,6 @@ OC.L10N.register(
     "Mark as read" : "Markera som läst",
     "Unlink" : "Unlink",
     "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:",
-    "Connected accounts" : "Anslutna konton",
-    "Reset" : "Återställ"
+    "Connected accounts" : "Anslutna konton"
 },
 "nplurals=2; plural=(n != 1);");

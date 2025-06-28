@@ -9,17 +9,18 @@
     "OAuth access token refused" : "Токен доступу OAuth відхилено",
     "OpenProject Integration" : "Інтеграція OpenProject",
     "Link Nextcloud files to OpenProject work packages" : "Пов’яжіть файли Nextcloud із робочими пакетами OpenProject",
-    "Replace Nextcloud OAuth values" : "Замінити значення Nextcloud OAuth",
+    "Replace OpenProject OAuth values" : "Замінити значення OpenProject OAuth",
     "Cancel" : "Скасувати",
+    "Replace Nextcloud OAuth values" : "Замінити значення Nextcloud OAuth",
     "Save" : "Зберегти",
     "OpenProject OAuth settings" : "Параметри OpenProject OAuth",
-    "Replace OpenProject OAuth values" : "Замінити значення OpenProject OAuth",
     "Nextcloud OAuth client" : "Клієнт Nextcloud OAuth",
     "Yes, I have copied these values" : "Так, я скопіював ці значення",
     "Create Nextcloud OAuth values" : "Створіть Nextcloud OAuth",
     "Project folders (recommended)" : "Каталоги проєкту (рекомендовано)",
-    "Invalid token" : "Недісний токен",
+    "Reset" : "Скидання",
     "Enable unified search for tickets" : "Увімкнути універсальний пошук заявок",
+    "Invalid token" : "Недісний токен",
     "Authentication method" : "Спосіб авторизації",
     "Documentation" : "Документація",
     "OpenProject server" : "Сервер OpenProject",
@@ -36,7 +37,6 @@
     "Mark as read" : "Позначити прочитаним",
     "OAuth access token could not be obtained:" : "Не вдалося отримати токен доступу OAuth:",
     "Connected accounts" : "Підключені облікові записи",
-    "Please introduce your OpenProject host name" : "Будь ласка, введіть ім'я вашого хосту OpenProject",
-    "Reset" : "Скидання"
+    "Please introduce your OpenProject host name" : "Будь ласка, введіть ім'я вашого хосту OpenProject"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }
