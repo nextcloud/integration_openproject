@@ -6,9 +6,10 @@ OC.L10N.register(
     "OAuth access token refused" : "Одбиен OAuth пристапен токен ",
     "Cancel" : "Откажи",
     "Save" : "Зачувај",
+    "Reset" : "Ресетирање",
+    "Enable navigation link" : "Овозможи линк за навигација",
     "Incorrect access token" : "Неточен токен за пристап",
     "Connected as {user}" : "Поврзан како {user}",
-    "Enable navigation link" : "Овозможи линк за навигација",
     "Authentication method" : "Начин на автентификација",
     "Documentation" : "Документација",
     "Copied!" : "Копирано!",
@@ -17,7 +18,6 @@ OC.L10N.register(
     "Select a user or group" : "Избери корисник или група",
     "Create" : "Креирај",
     "Mark as read" : "Означи како прочитано",
-    "Connected accounts" : "Поврзани сметки",
-    "Reset" : "Ресетирање"
+    "Connected accounts" : "Поврзани сметки"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
