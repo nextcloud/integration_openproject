@@ -6,9 +6,10 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
+    "Reset" : "Endurstilla",
+    "Enable navigation link" : "Virkja flakktengil",
     "Incorrect access token" : "Rangt aðgangsteikn",
     "Connected as {user}" : "Tengt sem {user}",
-    "Enable navigation link" : "Virkja flakktengil",
     "Authentication method" : "Auðkenningarmáti",
     "Documentation" : "Hjálparskjöl",
     "Copied!" : "Afritað!",
@@ -20,7 +21,6 @@ OC.L10N.register(
     "Create" : "Búa til",
     "Mark as read" : "Merkja sem lesið",
     "Unlink" : "Aftengja",
-    "Connected accounts" : "Tengdir aðgangar",
-    "Reset" : "Endurstilla"
+    "Connected accounts" : "Tengdir aðgangar"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
