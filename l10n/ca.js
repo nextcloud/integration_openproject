@@ -12,6 +12,7 @@ OC.L10N.register(
     "OpenProject Integration" : "Integració OpenProject",
     "Link Nextcloud files to OpenProject work packages" : "Enllaceu fitxers Nextcloud als paquets de treball de l'OpenProject",
     "Administration > File storages" : "Administració > Emmagatzematge de fitxers",
+    "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Aneu al vostre OpenProject {htmlLink} com a administrador i inicieu la configuració i copieu els valors aquí.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Torneu a copiar els valors següents a l'OpenProject {htmlLink} com a administrador.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Si continueu, haureu d'actualitzar aquesta configuració amb les noves credencials d'OAuth de l'OpenProject. A més, tots els usuaris hauran de tornar a autoritzar l'accés al seu compte d'OpenProject.",
     "Replace OpenProject OAuth values" : "Substituïu els valors d'OAuth d'OpenProject",
