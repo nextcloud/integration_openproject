@@ -7,10 +7,11 @@ OC.L10N.register(
     "OAuth access token refused" : "Odbijen token za pristup OAuth",
     "Cancel" : "Odustani",
     "Save" : "Spremi",
-    "Incorrect access token" : "Pogrešan token za pristup",
-    "Connected as {user}" : "Povezan kao {user}",
+    "Reset" : "Resetiraj",
     "Enable navigation link" : "Omogući navigacijsku poveznicu",
     "Enable unified search for tickets" : "Omogući objedinjeno pretraživanje prijava",
+    "Incorrect access token" : "Pogrešan token za pristup",
+    "Connected as {user}" : "Povezan kao {user}",
     "Authentication method" : "Način autentifikacije",
     "Documentation" : "Dokumentacija",
     "Copied!" : "Kopirano!",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "Create" : "Stvori",
     "Mark as read" : "Označi kao pročitano",
     "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:",
-    "Connected accounts" : "Povezani računi",
-    "Reset" : "Resetiraj"
+    "Connected accounts" : "Povezani računi"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

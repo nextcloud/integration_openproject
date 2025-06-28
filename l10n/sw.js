@@ -7,13 +7,13 @@ OC.L10N.register(
     "OAuth access token refused" : "Ufikiaji wa token za OAuth umekataliwa",
     "Cancel" : "Cancel",
     "Save" : "Hifadhi",
-    "Connected as {user}" : "Imeunganishwa kama {user}",
+    "Reset" : "Pangilia upya",
     "Enable navigation link" : "Enable navigation link",
+    "Connected as {user}" : "Imeunganishwa kama {user}",
     "Details" : "Maelezo ya kina",
     "Start typing to search" : "Anza kuandika ili kutafuta",
     "Description" : "Maelezo",
     "Create" : "Tengeneza",
-    "Connected accounts" : "Akaunti zilizounganishwa",
-    "Reset" : "Pangilia upya"
+    "Connected accounts" : "Akaunti zilizounganishwa"
 },
 "nplurals=2; plural=(n != 1);");
