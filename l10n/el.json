@@ -7,12 +7,13 @@
     "Link Nextcloud files to OpenProject work packages" : "Σύνδεση αρχείων Nextcloud με πακέτα εργασίας OpenProject",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
+    "Reset" : "Επαναφορά",
+    "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
+    "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
     "Connect to OpenProject" : "Σύνδεση στο OpenProject",
     "Incorrect access token" : "Λανθασμένο token πρόσβασης",
     "Connected as {user}" : "Συνδεδεμένος ως {user}",
     "Disconnect from OpenProject" : "Αποσύνδεση από το OpenProject",
-    "Enable navigation link" : "Ενεργοποίηση συνδέσμου πλοήγησης",
-    "Enable unified search for tickets" : "Ενεργοποίηση ενοποιημένης αναζήτησης εισιτηρίων",
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Προσοχή, όλα όσα πληκτρολογείτε στη γραμμή αναζήτησης θα αποστέλλονται στο OpenProject.",
     "Authentication method" : "Μέθοδος πιστοποίησης",
     "Documentation" : "Τεκμηρίωση",
@@ -56,7 +57,6 @@
     "OAuth access token could not be obtained:" : "Δεν ήταν δυνατή η λήψη διακριτικού πρόσβασης OAuth:",
     "OpenProject notifications" : "Ειδοποιήσεις του OpenProject",
     "OpenProject activity" : "Δραστηριότητα του OpenProject",
-    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί",
-    "Reset" : "Επαναφορά"
+    "Connected accounts" : "Συνδεδεμένοι λογαριασμοί"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

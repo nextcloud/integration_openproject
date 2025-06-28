@@ -7,9 +7,10 @@ OC.L10N.register(
     "OAuth access token refused" : "Token akses OAuth ditolak",
     "Cancel" : "Membatalkan",
     "Save" : "Simpan",
+    "Reset" : "Setel ulang",
+    "Enable navigation link" : "Aktifkan tautan navigasi",
     "Incorrect access token" : "Token akses tidak benar",
     "Connected as {user}" : "Terhubung sebagai {user}",
-    "Enable navigation link" : "Aktifkan tautan navigasi",
     "Authentication method" : "Metode otentikasi",
     "Documentation" : "Dokumentasi",
     "Copied!" : "Tersalin!",
@@ -19,7 +20,6 @@ OC.L10N.register(
     "Description" : "Deskrisi",
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
-    "Connected accounts" : "Akun terhubung",
-    "Reset" : "Setel ulang"
+    "Connected accounts" : "Akun terhubung"
 },
 "nplurals=1; plural=0;");
