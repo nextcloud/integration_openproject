@@ -7,9 +7,10 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Reset" : "Palauta",
+    "Enable navigation link" : "Näytä navigointipalkissa",
     "Incorrect access token" : "Virheellinen käyttöpoletti",
     "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
-    "Enable navigation link" : "Näytä navigointipalkissa",
     "Authentication method" : "Tunnistautumistapa",
     "Documentation" : "Dokumentaatio",
     "Copied!" : "Kopioitu!",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
     "Unlink" : "Poista linkitys",
-    "Connected accounts" : "Yhdistetyt tilit",
-    "Reset" : "Palauta"
+    "Connected accounts" : "Yhdistetyt tilit"
 },
 "nplurals=2; plural=(n != 1);");

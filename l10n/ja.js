@@ -7,9 +7,10 @@ OC.L10N.register(
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
     "Cancel" : "キャンセル",
     "Save" : "保存",
+    "Reset" : "リセット",
+    "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Incorrect access token" : "正しくないアクセストークン",
     "Connected as {user}" : "{user} に接続済み",
-    "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Authentication method" : "認証方法",
     "Documentation" : "ドキュメント",
     "Copied!" : "コピーしました！",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "Create" : "作成",
     "Mark as read" : "既読にする",
     "Unlink" : "アンリンク",
-    "Connected accounts" : "接続済みアカウント",
-    "Reset" : "リセット"
+    "Connected accounts" : "接続済みアカウント"
 },
 "nplurals=1; plural=0;");
