@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Cancel" : "Anullar",
     "Save" : "Enregistrar",
+    "Reset" : "Reïnicializar",
     "Invalid token" : "Geton invalid",
     "Connected as {user}" : "Connectat coma {user}",
     "Documentation" : "Documentacion",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Description" : "Descripcion",
     "Create" : "Crear",
     "Mark as read" : "Marcar coma legit",
-    "Connected accounts" : "Comptes connectats",
-    "Reset" : "Reïnicializar"
+    "Connected accounts" : "Comptes connectats"
 },
 "nplurals=2; plural=(n > 1);");
