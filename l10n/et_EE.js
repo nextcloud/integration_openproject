@@ -10,6 +10,7 @@ OC.L10N.register(
     "Save" : "Salvesta",
     "Reset" : "Lähtesta",
     "Enable navigation link" : "Lisa menüülink",
+    "Incorrect access token" : "Vigane tunnusluba ligipääsuks",
     "Connected as {user}" : "Ühendatud kui {user}",
     "Authentication method" : "Autentimise meetod",
     "Documentation" : "Dokumentatsioon",
