@@ -25,6 +25,9 @@ OC.L10N.register(
     "Admin Audit" : "Audit správce",
     "documentation" : "dokumentace",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Pro aktivaci auditních záznamů událostí pro napojení na OpenProject, zapněte aplikaci {htmlLinkForAdminAudit} a následujte kroky nastavení nastíněné v {htmlLinkForDocumentaion}.",
+    "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Šifrování na straně serveru je aktivní, ale šifrování pro Týmové složky zatím ještě zapnuté není. Aby bylo zajištěno zabezpečené úložiště souborů v projektových složkách, následujte kroky nastavování v {htmlLink}.",
+    "OpenID Connect settings" : "Nastavení pro OpenID connect",
+    "Please install the \"groupfolders\" app to be able to use automatically managed folders. {htmlLink}" : "Aby bylo možné používat automaticky spravované složky, nainstalujte aplikaci „groupfolders“. {htmlLink}",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Pokud budete pokračovat, bude třeba aktualizovat nastavení těmi novými  OpenProject OAuth přihlašovacími údaji. Také bude třeba, aby všichni uživatelé znovu udělili oprávnění k přístupu ke svým účtům v OpenProject.",
     "Replace OpenProject OAuth values" : "Nahradit OAuth hodnoty pro OpenProject",
     "Yes, replace" : "Ano, nahradit",
@@ -65,6 +68,7 @@ OC.L10N.register(
     "The app will never delete files or folders, even if you deactivate this later." : "Tato aplikace nikdy nebude mazat soubory či složky, i když ji později vypnete.",
     "Retry setup OpenProject user, group and folder" : "Zkusit znovu vytvořit uživatele, skupinu a složku OpenProject",
     "Automatically managed folders:" : "Automaticky spravované složky:",
+    "Encryption for the Team Folders App is not enabled." : "Šifrování pro aplikaci Týmové složky není zapnuté.",
     "Edit project folders" : "Upravit složky projektu",
     "Project folders application connection" : "Napojení aplikace na projektové složky",
     "Application Password" : "Heslo aplikace",
@@ -76,6 +80,8 @@ OC.L10N.register(
     "Enable navigation link" : "Zapnout navigační odkaz",
     "Enable unified search for tickets" : "Zahrnout vyhledávání v požadavcích do celkového sjednoceného vyhledávání",
     "Administration Settings > OpenProject" : "Nastavení správy > OpenProject",
+    "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}" : "Některá nastavení aplikace pro napojení na OpenProject nefungují. Nastavte napojení na OpenProject v: {htmlLink}",
+    "Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator." : "Některá nastavení aplikace pro napojení na OpenProject nefungují. Obraťte se na správce vámi využívané instance Nextcloud.",
     "Failed to redirect to OpenProject" : "Přesměrování na OpenProject se nezdařilo",
     "Connect to OpenProject" : "Připojeno k OpenProject",
     "OpenProject options saved" : "Předvolby pro OpenProject uloženy",
@@ -232,6 +238,9 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Aby bylo možné automaticky spravovat složky projektů, tato aplikace potřebuje vytvořit speciální skupinovou složku, přiřazenou skupině a spravovanou uživatelem, každá nazvaná „OpenProject“.",
     "Please link a project to this Nextcloud storage" : "Propojte projekt s tímto Nextcloud úložištěm",
     "Download and enable it here" : "Stáhněte a zapněte zde",
-    "Please introduce a valid OpenProject hostname" : "Zadejte platný název stroje, na kterém je provozována instance OpenProject"
+    "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "Aby bylo možné používat automaticky spravované složky, nainstalujte aplikaci „Skupinové složky“. {htmlLink}",
+    "Please introduce a valid OpenProject hostname" : "Zadejte platný název stroje, na kterém je provozována instance OpenProject",
+    "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Šifrování na straně serveru je aktivní, ale šifrování pro Skupinové složky zatím ještě zapnuté není. Aby bylo zajištěno zabezpečené úložiště souborů v projektových složkách, následujte kroky nastavování v {htmlLink}.",
+    "Encryption for the Group Folders App is not enabled." : "Šifrování pro aplikaci Skupinové složky není zapnuté."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
