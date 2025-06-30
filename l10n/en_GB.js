@@ -26,6 +26,9 @@ OC.L10N.register(
     "Admin Audit" : "Admin Audit",
     "documentation" : "documentation",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.",
+    "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.",
+    "OpenID Connect settings" : "OpenID Connect settings",
+    "Please install the \"groupfolders\" app to be able to use automatically managed folders. {htmlLink}" : "Please install the \"groupfolders\" app to be able to use automatically managed folders. {htmlLink}",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorise access to their OpenProject account.",
     "Replace OpenProject OAuth values" : "Replace OpenProject OAuth values",
     "Yes, replace" : "Yes, replace",
@@ -66,6 +69,7 @@ OC.L10N.register(
     "The app will never delete files or folders, even if you deactivate this later." : "The app will never delete files or folders, even if you deactivate this later.",
     "Retry setup OpenProject user, group and folder" : "Retry setup OpenProject user, group and folder",
     "Automatically managed folders:" : "Automatically managed folders:",
+    "Encryption for the Team Folders App is not enabled." : "Encryption for the Team Folders App is not enabled.",
     "Edit project folders" : "Edit project folders",
     "Project folders application connection" : "Project folders application connection",
     "Application Password" : "Application Password",
@@ -77,6 +81,8 @@ OC.L10N.register(
     "Enable navigation link" : "Enable navigation link",
     "Enable unified search for tickets" : "Enable unified search for tickets",
     "Administration Settings > OpenProject" : "Administration Settings > OpenProject",
+    "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}" : "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}",
+    "Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator." : "Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator.",
     "Failed to redirect to OpenProject" : "Failed to redirect to OpenProject",
     "Connect to OpenProject" : "Connect to OpenProject",
     "OpenProject options saved" : "OpenProject options saved",
@@ -234,6 +240,9 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "Please link a project to this Nextcloud storage",
     "Download and enable it here" : "Download and enable it here",
-    "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname"
+    "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}",
+    "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname",
+    "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.",
+    "Encryption for the Group Folders App is not enabled." : "Encryption for the Group Folders App is not enabled."
 },
 "nplurals=2; plural=(n != 1);");
