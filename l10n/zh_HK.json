@@ -24,6 +24,9 @@
     "Admin Audit" : "管理員審計",
     "documentation" : "說明書",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "要啟用 OpenProject 整合的審計記錄，請啟用 {htmlLinkForAdminAudit} 應用並按照 {htmlLinkForDocumentaion} 中概述的配置步驟進行操作。",
+    "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "伺服器端加密已啟用，但團隊資料夾加密尚未啟用。為確保專案資料夾中檔案的安全存儲，請按照 {htmlLink} 中的設定步驟操作。",
+    "OpenID Connect settings" : "OpenID 連接設定",
+    "Please install the \"groupfolders\" app to be able to use automatically managed folders. {htmlLink}" : "請安裝 「groupfolders」應用程式以使用自動管理資料夾功能。{htmlLink}",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "如果繼續，您將需要使用新的 OpenProject OAuth 憑據更新這些設置。 此外，所有用戶都需要重新授權訪問其 OpenProject 帳戶。",
     "Replace OpenProject OAuth values" : "取代 OpenProject OAuth 值",
     "Yes, replace" : "是的，取代",
@@ -64,6 +67,7 @@
     "The app will never delete files or folders, even if you deactivate this later." : "該應用程式永遠不會刪除檔案或資料夾，即使您稍後將其停用也是如此。",
     "Retry setup OpenProject user, group and folder" : "重試 OpenProject 用戶、群組和資料夾的設置",
     "Automatically managed folders:" : "自動託管的資料夾",
+    "Encryption for the Team Folders App is not enabled." : "未啟用團隊資料夾應用程式的加密。",
     "Edit project folders" : "編輯專案資料夾",
     "Project folders application connection" : "專案資料夾應用程式連接",
     "Application Password" : "應用程式密碼",
@@ -75,6 +79,8 @@
     "Enable navigation link" : "啟用導覽連結",
     "Enable unified search for tickets" : "啟用統一搜尋票證",
     "Administration Settings > OpenProject" : "管理設定 > OpenProject",
+    "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}" : "某些 OpenProject 整合應用程序設置無法正常工作。請在以下位置配置 OpenProject 集成：{htmlLink}",
+    "Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator." : "某些 OpenProject 整合應用程序設置無法正常工作。請聯絡您的 Nextcloud 管理員。",
     "Failed to redirect to OpenProject" : "無法重定向到 OpenProject",
     "Connect to OpenProject" : "連接到 OpenProject",
     "OpenProject options saved" : "已儲存 OpenProject 選項",
@@ -232,6 +238,9 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "為了自動管理專案資料夾，此應用程式需要設置一個特殊的群組資料夾，分配給一個群組並由用戶管理，每個資料夾稱為“OpenProject”。",
     "Please link a project to this Nextcloud storage" : "請將專案連結到此 Nextcloud 儲存",
     "Download and enable it here" : "在此處下載並啟用",
-    "Please introduce a valid OpenProject hostname" : "請輸入一個有效的 OpenProject 主機名"
+    "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "請安裝 「Group folders」應用程式以使用自動管理資料夾功能。{htmlLink}",
+    "Please introduce a valid OpenProject hostname" : "請輸入一個有效的 OpenProject 主機名",
+    "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "伺服器端加密已啟用，但群組資料夾加密尚未啟用。為確保專案資料夾中檔案的安全存儲，請按照 {htmlLink} 中的設定步驟操作。",
+    "Encryption for the Group Folders App is not enabled." : "未啟用群組資料夾應用程式的加密。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
