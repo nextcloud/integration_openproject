@@ -14,6 +14,7 @@ OC.L10N.register(
     "Start typing to search" : "Anza kuandika ili kutafuta",
     "Description" : "Maelezo",
     "Create" : "Tengeneza",
+    "Mark as read" : "Weka alama kama iliyosomwa",
     "Connected accounts" : "Akaunti zilizounganishwa"
 },
 "nplurals=2; plural=(n != 1);");
