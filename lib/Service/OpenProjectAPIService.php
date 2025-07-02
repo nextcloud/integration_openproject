@@ -910,14 +910,14 @@ class OpenProjectAPIService {
 		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
 		$ssoProviderType = $config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
-		$tokenExchange = $config->getAppValue(Application::APP_ID, 'token_exchange');
+		$tokenExchange = (bool)$config->getAppValue(Application::APP_ID, 'token_exchange');
 
 		if (empty($ssoProviderType) || empty($oidcProvider)) {
 			return false;
 		}
 
 		// check for external sso without token exchange
-		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange !== true) {
+		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === false) {
 			return true;
 		}
 
@@ -933,7 +933,13 @@ class OpenProjectAPIService {
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
+
 		if (empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
+			return false;
+		}
+
+		if ($freshProjectFolderSetUp === true) {
 			return false;
 		}
 
