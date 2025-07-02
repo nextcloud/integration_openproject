@@ -11,7 +11,7 @@ const StyleLintPlugin = require('stylelint-webpack-plugin')
 
 const buildMode = process.env.NODE_ENV
 const isDev = buildMode === 'development'
-webpackConfig.devtool = isDev ? 'cheap-source-map' : 'source-map'
+webpackConfig.devtool = isDev ? 'cheap-source-map' : false
 
 webpackConfig.stats = {
 	colors: true,
@@ -35,7 +35,7 @@ webpackConfig.plugins.push(
 		extensions: ['js', 'vue'],
 		files: 'src',
 		failOnError: !isDev,
-	})
+	}),
 )
 webpackConfig.plugins.push(
 	new StyleLintPlugin({
