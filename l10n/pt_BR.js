@@ -18,7 +18,7 @@ OC.L10N.register(
     "Complete without project folders" : "Completar sem pastas de projeto",
     "Setup OpenProject user, group and folder" : "Configurar usuário, grupo e pasta do OpenProject",
     "Administration > File storages" : "Administração > Armazenamentos de arquivos",
-    "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vá para o seu OpenProject {htmlLink} como administrador e inicie a configuração e copie os valores aqui.",
+    "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Vá para o seu {htmlLink} do OpenProject como administrador e inicie a configuração e copie os valores aqui.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copie os seguintes valores de volta para o OpenProject {htmlLink} como Administrador.",
     "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Este valor só poderá ser acessado uma vez. Agora, como administrador, copie essa senha para OpenProject {htmlLink}.",
     "troubleshooting guide" : "guia de solução de problemas",
