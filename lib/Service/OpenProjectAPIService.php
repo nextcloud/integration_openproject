@@ -888,7 +888,6 @@ class OpenProjectAPIService {
 
 	/**
 	 * checks if every admin config for oauth2 based authorization variables are set
-	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
@@ -901,7 +900,6 @@ class OpenProjectAPIService {
 
 	/**
 	 * checks if every admin config for oidc based authorization variables are set
-	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
@@ -931,8 +929,8 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOk(IConfig $config): bool {
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
 
 		if (empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {

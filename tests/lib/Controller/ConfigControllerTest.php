@@ -465,7 +465,7 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $apiServiceMock,
 		]);
 		$configController = new ConfigController(...$constructArgs);
-	
+
 		$configController->oauthRedirect('code', 'randomString');
 	}
 
@@ -525,9 +525,10 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
@@ -537,9 +538,10 @@ class ConfigControllerTest extends TestCase {
 				'123',
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				$credsToUpdate['openproject_instance_url'],
+				false,
 				$credsToUpdate['openproject_client_id'],
 				$credsToUpdate['openproject_client_secret'],
-				$credsToUpdate['openproject_instance_url']
 			);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
@@ -637,9 +639,13 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'targeted_audience_client_id'],
 				['integration_openproject', 'nc_oauth_client_id', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'authorization_method'], // yaha samma thik xa
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'oidc_provider'],
+				['integration_openproject', 'sso_provider_type'],
 				['integration_openproject', 'targeted_audience_client_id'],
+				['integration_openproject', 'token_exchange'],
 				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
@@ -650,8 +656,12 @@ class ConfigControllerTest extends TestCase {
 				'123',
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				$credsToUpdate['openproject_instance_url'],
+				false,
 				$credsToUpdate['oidc_provider'],
+				SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
 				$credsToUpdate['targeted_audience_client_id'],
+				true,
 				$credsToUpdate['openproject_instance_url']
 
 			);
@@ -1409,18 +1419,20 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'authorization_method', ''],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
 				['integration_openproject', 'authorization_method', ''],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url']
 			)
 			->willReturnOnConsecutiveCalls(
 				'http://localhost:3000',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'http://localhost:3000',
+				false,
 				'some_cilent_id',
 				'some_cilent_secret',
-				'http://localhost:3000'
 			);
 		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
 		$secureRandomMock

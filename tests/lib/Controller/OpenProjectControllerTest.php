@@ -283,16 +283,18 @@ class OpenProjectControllerTest extends TestCase {
 			->method('getAppValue')
 			->withConsecutive(
 				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_instance_url'],
 			)->willReturnOnConsecutiveCalls(
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'http://openproject.org',
+				false,
 				'myClientID',
 				'myClientSecret',
-				'http://openproject.org',
 				'myClientID',
 				'http://openproject.org',
 			);
