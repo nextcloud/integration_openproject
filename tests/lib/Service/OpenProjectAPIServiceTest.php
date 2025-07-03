@@ -584,6 +584,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'oidc_provider' => '',
 			'targeted_audience_client_id' => '',
 			'sso_provider_type' => 'external',
+			'token_exchange' => false,
 		];
 		$appValues = [];
 		foreach ($withValues as $key => $value) {
@@ -3051,49 +3052,21 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'openproject_client_id' => '',
 				'openproject_client_secret' => '',
-				'openproject_instance_url' => '',
 				'expected' => false,
 			],
 			[
 				'openproject_client_id' => 'clientID',
 				'openproject_client_secret' => '',
-				'openproject_instance_url' => 'https://openproject',
+				'expected' => false,
+			],
+			[
+				'openproject_client_id' => 'clientID',
+				'openproject_client_secret' => '',
 				'expected' => false,
 			],
 			[
 				'openproject_client_id' => 'clientID',
 				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => '',
-				'expected' => false,
-			],
-			[
-				'openproject_client_id' => 'clientID',
-				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => 'https://',
-				'expected' => false,
-			],
-			[
-				'openproject_client_id' => 'clientID',
-				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => 'openproject.com',
-				'expected' => false,
-			],
-			[
-				'openproject_client_id' => 'clientID',
-				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => 'https://openproject',
-				'expected' => true,
-			],
-			[
-				'openproject_client_id' => 'clientID',
-				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => 'https://openproject.com/',
-				'expected' => true,
-			],
-			[
-				'openproject_client_id' => 'clientID',
-				'openproject_client_secret' => 'clientSecret',
-				'openproject_instance_url' => 'https://openproject.com',
 				'expected' => true,
 			],
 		];
@@ -3104,7 +3077,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testiSAdminConfigOkForOauth2(
-		string $client_id, string $client_secret, string $oauth_instance_url, bool $expected
+		string $client_id, string $client_secret, bool $expected
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -3112,7 +3085,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'openproject_client_id' => $client_id,
 				'openproject_client_secret' => $client_secret,
-				'openproject_instance_url' => $oauth_instance_url,
 			]));
 
 		$this->assertSame($expected, $this->service::isAdminConfigOkForOauth2($configMock));
@@ -3126,49 +3098,113 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'oidc_provider' => '',
 				'targeted_audience_client_id' => '',
-				'openproject_instance_url' => '',
+				'sso_provider_type' => '',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => '',
+				'token_exchange' => false,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => 'external',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => 'external',
+				'token_exchange' => false,
 				'expected' => false,
 			],
 			[
 				'oidc_provider' => 'oidcProvider',
 				'targeted_audience_client_id' => '',
-				'openproject_instance_url' => 'https://openproject',
+				'sso_provider_type' => 'external',
+				'token_exchange' => true,
 				'expected' => false,
 			],
 			[
 				'oidc_provider' => 'oidcProvider',
-				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => '',
-				'expected' => false,
-			],
-			[
-				'oidc_provider' => 'oidcProvider',
-				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => 'https://',
-				'expected' => false,
-			],
-			[
-				'oidc_provider' => 'oidcProvider',
-				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => 'openproject.com',
-				'expected' => false,
-			],
-			[
-				'oidc_provider' => 'oidcProvider',
-				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => 'https://openproject',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => 'external',
+				'token_exchange' => false,
 				'expected' => true,
 			],
 			[
 				'oidc_provider' => 'oidcProvider',
 				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => 'https://openproject.com/',
+				'sso_provider_type' => '',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => '',
+				'token_exchange' => false,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => 'external',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => 'external',
+				'token_exchange' => false,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => '',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => '',
+				'token_exchange' => false,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => 'external',
+				'token_exchange' => true,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => '',
+				'targeted_audience_client_id' => '',
+				'sso_provider_type' => 'external',
+				'token_exchange' => false,
+				'expected' => false,
+			],
+			[
+				'oidc_provider' => 'oidcProvider',
+				'targeted_audience_client_id' => 'targetClientID',
+				'sso_provider_type' => 'external',
+				'token_exchange' => true,
 				'expected' => true,
 			],
 			[
 				'oidc_provider' => 'oidcProvider',
 				'targeted_audience_client_id' => 'targetClientID',
-				'openproject_instance_url' => 'https://openproject.com',
+				'sso_provider_type' => 'external',
+				'token_exchange' => false,
 				'expected' => true,
 			],
 		];
@@ -3179,7 +3215,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsAdminConfigOkForOIDCAuth(
-		string $oidc_procider, string $targetd_audience_client_id, string $oauth_instance_url, bool $expected
+		string $oidc_procider,
+		string $targetd_audience_client_id,
+		string $ssoProviderType,
+		bool $tokenExchange,
+		bool $expected
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -3187,7 +3227,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'oidc_provider' => $oidc_procider,
 				'targeted_audience_client_id' => $targetd_audience_client_id,
-				'openproject_instance_url' => $oauth_instance_url,
+				'sso_provider_type' => $ssoProviderType,
+				'token_exchange' => $tokenExchange
 			]));
 
 		$this->assertSame($expected, $this->service::isAdminConfigOkForOIDCAuth($configMock));
