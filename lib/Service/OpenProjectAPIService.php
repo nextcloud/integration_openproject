@@ -933,11 +933,7 @@ class OpenProjectAPIService {
 		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
 
-		if (empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
-			return false;
-		}
-
-		if ($freshProjectFolderSetUp === true) {
+		if ($freshProjectFolderSetUp === true || empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
 			return false;
 		}
 
