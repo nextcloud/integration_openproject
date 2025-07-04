@@ -10,6 +10,7 @@ OC.L10N.register(
     "Reset" : "Pangilia upya",
     "Enable navigation link" : "Enable navigation link",
     "Connected as {user}" : "Imeunganishwa kama {user}",
+    "Documentation" : "Uhifadhi wa nyaraka",
     "Details" : "Maelezo ya kina",
     "Start typing to search" : "Anza kuandika ili kutafuta",
     "Description" : "Maelezo",
