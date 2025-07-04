@@ -11,7 +11,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 - [Section A: Two-Way OAuth 2.0 Authorization Code Flow](#section-a-two-way-oauth-20-authorization-code-flow)
 - [Section B: Single-Sign-On through OpenID Connect Identity Provider](#section-b-single-sign-on-through-openid-connect-identity-provider)
-  - [B.1: Nextcloud Hub](#B1-nextcloud-hub)
+  - [B.1: Nextcloud Hub as IDP](#B1-nextcloud-hub-as-idp)
   - [B.2: External Provider](#B2-External-Provider)
 
 - [Common Smoke Test Steps](#common-smoke-test-steps)
@@ -92,9 +92,9 @@ bash integration_setup.sh
 
 ## Section B: Single-Sign-On through OpenID Connect Identity Provider
 
-### B.1: Nextcloud Hub
+### B.1: Nextcloud Hub as IDP
 
-#### B.1.1. Configure Nextcloud (IdP Setup)
+#### B.1.1. Configure Nextcloud
 - [ ] In Nextcloud, install and enable `oidc` and `user_oidc` apps.
 - [ ] Create a new user( with username, display name, password, and email)
 - [ ] Run following command:
@@ -121,7 +121,7 @@ bash integration_setup.sh
 - [ ] Under `OAuth configuration`, select `Use access token obtained during user log in`
 
 #### B.1.3. Setup integration (Without project folder setup)
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud-IdP-Setup).
+- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
 - [ ] Complete step [Test No B.1.2](#B12-Add-Nextcloud-Idp-in-OpenProject).
 - [ ] In nextcloud, go to `Administration > OpenProject`.
 - [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
@@ -129,7 +129,7 @@ bash integration_setup.sh
 - [ ] Set Openproject `client ID` by Client ID copied earlier in **Test No B1**.
 
 #### B.1.4. Login to OpenProject using Nextcloud user
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud-IdP-Setup)
+- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud)
 - [ ] Complete step [Test No B.1.2](#B12-Add-Nextcloud-Idp-in-OpenProject).
 - [ ] Complete step [Test No B.1.3](#b13-Setup-integration-Without-project-folder-setup).
 - [ ] In `nextcloud`, login as nextcloud-created user.
@@ -139,7 +139,7 @@ bash integration_setup.sh
 - [ ] The OpenProject username must match the Nextcloud-created user’s name.
 
 #### B.1.5. Verify Connection of Nextcloud user with OpenProject
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud-IdP-Setup).
+- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
 - [ ] Complete step [Test No B.1.2](#B12-Add-Nextcloud-Idp-in-OpenProject).
 - [ ] Complete step [Test No B.1.3](#b13-Setup-integration-Without-project-folder-setup).
 - [ ] Complete step [Test No B.1.4](#b14-Login-to-OpenProject-using-Nextcloud-user).
@@ -151,12 +151,12 @@ bash integration_setup.sh
 - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
 
 ### B.2: External Provider
-> Here keycloak is an External Provider
+> Here, keycloak is an External Provider
 
-#### B.2.1. Configure Keycloak (IdP Setup)
+#### B.2.1. Configure Keycloak
 - [ ] Set up Keycloak using this guide: [Keycloak Setup](https://www.openproject-edge.com/docs/system-admin-guide/integrations/nextcloud/oidc-sso/#keycloak)
 
-#### B.2.2. Configure Nextcloud (Client)
+#### B.2.2. Configure Nextcloud
 - [ ] In **nextcloud**, go to `Administration > OpenID Connect`.
 - [ ] Enable `store login tokens` options.
 - [ ] Register a new providers with following data:
@@ -188,8 +188,8 @@ bash integration_setup.sh
 - [ ] Disable `token exchange`
 
 #### B.2.5. Verify Connection in nextcloud
-- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak-IdP-Setup).
-- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud-Client).
+- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
+- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud).
 - [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-IDP-in-OpenProject).
 - [ ] Complete step [Test No B.2.4](#b24-Setup-integration-token-exchange-disabled).
 - [ ] In nextcloud, login as keycloak-created user.
@@ -200,8 +200,8 @@ bash integration_setup.sh
 - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
 
 #### B.2.7.Setup integration (token exchange enabled)
-- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak-IdP-Setup).
-- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud-Client).
+- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
+- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud).
 - [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-IDP-in-OpenProject).
 - [ ] Go to `Administration > OpenProject` in nextcloud
 - [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`
@@ -210,8 +210,8 @@ bash integration_setup.sh
 - [ ] Set `OpenProject client ID *` as `Openproject`
 
 #### B.2.8. Verify Connection in nextcloud
-- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak-IdP-Setup).
-- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud-Client).
+- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
+- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud).
 - [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-IDP-in-OpenProject).
 - [ ] Complete step [Test No B.2.5](#b25-Verify-Connection-in-nextcloud).
 - [ ] In nextcloud, login as keycloak-created user.
@@ -221,7 +221,7 @@ bash integration_setup.sh
 #### B.2.9. Complete the common smoke tests
 - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
 
-#### B.2.10. Check the integration script for sso setup (Nextcloud Hub)
+### Check the integration script for sso setup (Nextcloud Hub)
 
 > Before Running the script make sure that your `Nextcloud` and `OpenProject` instance is up and running
 > If you're using Nextcloud as the Identity Provider (OIDC), make sure the following apps are installed and enabled in Nextcloud:
@@ -234,7 +234,7 @@ bash integration_setup.sh
 >
 > To add the Nextcloud storage, delete the 'nextcloud' file storage from OpenProject, reset the Nextcloud config, and run the script again.
 
-- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud-IdP-Setup) (only the first , second and thrid steps are required).
+- [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud) (only the first , second and thrid steps are required).
 - [ ] Complete step [Test No B.1.2](#B12-Add-Nextcloud-Idp-in-OpenProject) (only the first and second steps are required).
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
@@ -261,11 +261,11 @@ bash integration_oidc_setup.sh
 - [ ] set environment `SETUP_PROJECT_FOLDER=true` and run the script.
 - [ ] Run the script again after it is already setup (Should not give any error).
 
-#### Check the integration script for sso setup (External provider  without token exchange)
+### Check the integration script for sso setup (External provider  without token exchange)
 > Before running the script make sure that you delete the 'nextcloud' file storage from OpenProject and reset the integration settings in Nextcloud.
 
-- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak-IdP-Setup).
-- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud-Client).
+- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
+- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud).
 - [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-IDP-in-OpenProject).
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
@@ -296,11 +296,11 @@ bash integration_oidc_setup.sh
 - [ ] Run the script again after it is already setup (Should not give any error).
 
 
-#### Check the integration script for sso setup (External provider  with token exchange)
+### Check the integration script for sso setup (External provider  with token exchange)
 > Before Running the below script make sure that you delete the 'nextcloud' file storage from OpenProject and reset the Nextcloud config.
 
-- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak-IdP-Setup).
-- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud-Client).
+- [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
+- [ ] Complete step [Test No B.2.2](#b22-Configure-Nextcloud).
 - [ ] Complete step [Test No B.2.3](#b23-Add-Keycloak-IDP-in-OpenProject).
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
