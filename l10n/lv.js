@@ -8,6 +8,7 @@ OC.L10N.register(
     "Automatically managed folders" : "Automātiski pārvaldītas mapes",
     "Automatically managed folders:" : "Automātiski pārvaldītās mapes:",
     "Reset" : "Atiestatīt",
+    "Connected as {user}" : "Savienojies kā {user}",
     "Authentication method" : "Autentificēšanās veids",
     "Documentation" : "Dokumentācija",
     "Copied!" : "Nokopēts!",
