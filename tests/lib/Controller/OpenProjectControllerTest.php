@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Psr7\Utils;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
@@ -161,21 +162,22 @@ class OpenProjectControllerTest extends TestCase {
 		$requestMock = $this->getMockBuilder('\Psr\Http\Message\RequestInterface')->getMock();
 		$privateInstance = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
 		$privateInstance->method('getBody')->willReturn(
-			'{"_type":"Error","errorIdentifier":"urn:openproject-org:api:v3:errors:Unauthenticated"}'
+			Utils::streamFor('{"_type":"Error","errorIdentifier":"urn:openproject-org:api:v3:errors:Unauthenticated"}')
 		);
 		$notOP = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
-		$notOP->method('getBody')->willReturn('Unauthenticated');
+		$notOPResponseBody = 'Unauthenticated';
+		$notOP->method('getBody')->willReturn(Utils::streamFor($notOPResponseBody));
 		$notOP->method('getReasonPhrase')->willReturn('Unauthenticated');
-		$notOP->method('getStatusCode')->willReturn('401');
+		$notOP->method('getStatusCode')->willReturn(401);
 		$notOPButJSON = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
 		$notOPButJSON->method('getBody')->willReturn(
-			'{"what":"Error","why":"Unauthenticated"}'
+			Utils::streamFor('{"what":"Error","why":"Unauthenticated"}')
 		);
 		$notOPButJSON->method('getReasonPhrase')->willReturn('Unauthenticated');
-		$notOPButJSON->method('getStatusCode')->willReturn('401');
+		$notOPButJSON->method('getStatusCode')->willReturn(401);
 		$otherResponseMock = $this->getMockBuilder('\Psr\Http\Message\ResponseInterface')->getMock();
 		$otherResponseMock->method('getReasonPhrase')->willReturn('Internal Server Error');
-		$otherResponseMock->method('getStatusCode')->willReturn('500');
+		$otherResponseMock->method('getStatusCode')->willReturn(500);
 		return [
 			[
 				new ConnectException('a connection problem', $requestMock),
