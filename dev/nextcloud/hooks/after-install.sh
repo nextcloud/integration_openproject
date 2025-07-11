@@ -12,6 +12,6 @@ occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bear
 occ user_oidc:provider:delete Keycloak
 occ user_oidc:provider Keycloak \
     -c 'nextcloud' \
-    -s 'RGF6WCCOzm2bmnqgRelaIA5fp3XaMTIH' \
+    -s 'nextcloud-secret' \
     -d 'https://keycloak.local/realms/opnc/.well-known/openid-configuration' \
     -o 'openid profile email api_v3'
