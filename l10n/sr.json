@@ -24,6 +24,9 @@
     "Admin Audit" : "Админ ревизија",
     "documentation" : "документација",
     "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Да бисте активирали ревизионе дневнике за OpenProject интеграцију, молимо вас да укључите апликацију {htmlLinkForAdminAudit} и следите кораке конфигурације који су наведени у {htmlLinkForDocumentaion}.",
+    "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Активно је шифровање на страни сервера, али још увек није укључено шифровање за Фолдере Тима. Да бисте обезбедили безбедно складиштење фајлова у фолдере пројекта, молимо вас са следите кораке за конфигурацију у {htmlLink}.",
+    "OpenID Connect settings" : "OpenID Connect подешавања",
+    "Please install the \"groupfolders\" app to be able to use automatically managed folders. {htmlLink}" : "Молимо вас да инсталирате апликацију „Фолдери групе” да би се омогућило аутоматско управљање фолдерима. {htmlLink}",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Ако наставите, мораћете да ажурирате ова подешавања са новим OpenProject OAuth подацима за приступ. Такође, сви корисници ће поново морати да ауторизују приступ свом OpenProject налогу.",
     "Replace OpenProject OAuth values" : "Замени OpenProject OAuth вредности",
     "Yes, replace" : "Да, замени",
@@ -64,6 +67,7 @@
     "The app will never delete files or folders, even if you deactivate this later." : "Ова апликација никада неће да обрише фајлове или фолдере, чак и ако касније ово искључите.",
     "Retry setup OpenProject user, group and folder" : "Поново покушај постављање OpenProject корисника, групе и фолдера",
     "Automatically managed folders:" : "Фолдери којима се аутоматски управља:",
+    "Encryption for the Team Folders App is not enabled." : "Није укључено шифровање за апликацију Фолдери тима.",
     "Edit project folders" : "Уреди фолдере пројекта",
     "Project folders application connection" : "Веза фолдера пројекта и апликације",
     "Application Password" : "Лозинка апликације",
@@ -75,6 +79,8 @@
     "Enable navigation link" : "Укључи линк за навигацију",
     "Enable unified search for tickets" : "Укључи обједињену претрагу тикета",
     "Administration Settings > OpenProject" : "Административна подешавања > OpenProject",
+    "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}" : "Нека подешавања апликације OpenProject интеграције не функционишу. Молимо вас да се конфигуришете OpenProject интеграцију у: {htmlLink}",
+    "Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator." : "Нека подешавања апликације OpenProject интеграције не функционишу. Молимо вас да се обратите свом Nextcloud администратору.",
     "Failed to redirect to OpenProject" : "Није успело преусмеравање на OpenProject",
     "Connect to OpenProject" : "Повежи се са OpenProject",
     "OpenProject options saved" : "Сачуване су OpenProject опције",
@@ -232,6 +238,9 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Да би аутоматски управљала фолдерима пројекта, ова апликација мора да подеси специјални фолдер групе који се додељује групи и којим управља корисник, сваки под именом „OpenProject”.",
     "Please link a project to this Nextcloud storage" : "Молим да се пројекат повеже са овим Nextcloud складиштем",
     "Download and enable it here" : "Преузмите и укључите је овде",
-    "Please introduce a valid OpenProject hostname" : "Молимо вас да представите исправно име OpenProject хоста"
+    "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "Молимо вас да инсталирате апликацију „Фолдери групе” да би се омогућило аутоматско управљање фолдерима. {htmlLink}",
+    "Please introduce a valid OpenProject hostname" : "Молимо вас да представите исправно име OpenProject хоста",
+    "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Активно је шифровање на страни сервера, али још увек није укључено шифровање за Фолдере групе. Да бисте обезбедили безбедно складиштење фајлова у фолдере пројекта, молимо вас са следите кораке за конфигурацију у {htmlLink}.",
+    "Encryption for the Group Folders App is not enabled." : "Није укључено шифровање за апликацију Фолдери групе."
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
