@@ -888,7 +888,6 @@ class OpenProjectAPIService {
 
 	/**
 	 * checks if every admin config for oauth2 based authorization variables are set
-	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
@@ -896,32 +895,41 @@ class OpenProjectAPIService {
 	public static function isAdminConfigOkForOauth2(IConfig $config):bool {
 		$clientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
 		$clientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$checkIfConfigIsSet = !!($clientId) && !!($clientSecret) && !!($oauthInstanceUrl);
-		if (!$checkIfConfigIsSet) {
-			return false;
-		} else {
-			return self::validateURL($oauthInstanceUrl);
-		}
+		return !(empty($clientId) || empty($clientSecret));
 	}
 
 	/**
 	 * checks if every admin config for oidc based authorization variables are set
-	 * checks if the oauth instance url is valid
 	 *
 	 * @param IConfig $config
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
 		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
+		$ssoProviderType = $config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$checkIfConfigIsSet = !!($oidcProvider) && !!($targetAudienceClientId) && !!($oauthInstanceUrl);
-		if (!$checkIfConfigIsSet) {
+		$tokenExchange = (bool)$config->getAppValue(Application::APP_ID, 'token_exchange');
+
+		if (empty($ssoProviderType) || empty($oidcProvider)) {
 			return false;
-		} else {
-			return self::validateURL($oauthInstanceUrl);
 		}
+
+		// check for nextcloud_hub sso
+		if ($ssoProviderType === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+			return !empty($targetAudienceClientId);
+		}
+
+		// check for external sso without token exchange
+		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === false) {
+			return true;
+		}
+
+		// check for external sso with token exchange
+		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === true) {
+			return !empty($targetAudienceClientId);
+		}
+
+		return false;
 	}
 
 
@@ -932,9 +940,18 @@ class OpenProjectAPIService {
 	 */
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
+
+		if ($freshProjectFolderSetUp === true || empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
+			return false;
+		}
+
 		if ($authMethod === self::AUTH_METHOD_OAUTH) {
 			return self::isAdminConfigOkForOauth2($config);
-		} elseif ($authMethod === self::AUTH_METHOD_OIDC) {
+		}
+
+		if ($authMethod === self::AUTH_METHOD_OIDC) {
 			return self::isAdminConfigOkForOIDCAuth($config);
 		}
 		return false;

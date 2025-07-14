@@ -104,21 +104,23 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
 				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'0', '0',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				$oauthInstanceUrl,
+				false,
 				$clientId,
 				$clientSecret,
 				$oauthInstanceUrl,
 				$clientId,
-				$oauthInstanceUrl,
 			);
 
 
@@ -170,21 +172,23 @@ class PersonalTest extends TestCase {
 				['integration_openproject', 'default_enable_unified_search'],
 				['integration_openproject', 'default_enable_navigation'],
 				['integration_openproject', 'authorization_method'],
+				['integration_openproject', 'openproject_instance_url'],
+				['integration_openproject', 'fresh_project_folder_setup'],
 				['integration_openproject', 'openproject_client_id'],
 				['integration_openproject', 'openproject_client_secret'],
 				['integration_openproject', 'openproject_instance_url'],
 				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_instance_url'],
 			)
 			->willReturnOnConsecutiveCalls(
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
 				'1', '1',
 				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				"http://localhost",
+				false,
 				"some-client-id",
 				"some-client-secret",
 				"http://localhost",
 				"some-client-id",
-				"http://localhost",
 			);
 		$this->initialState
 			->method('provideInitialState')
