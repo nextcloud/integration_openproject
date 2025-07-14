@@ -914,12 +914,22 @@ class OpenProjectAPIService {
 			return false;
 		}
 
+		// check for nextcloud_hub sso
+		if ($ssoProviderType === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+			return !empty($targetAudienceClientId);
+		}
+
 		// check for external sso without token exchange
 		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === false) {
 			return true;
 		}
 
-		return !empty($targetAudienceClientId);
+		// check for external sso with token exchange
+		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === true) {
+			return !empty($targetAudienceClientId);
+		}
+
+		return false;
 	}
 
 
