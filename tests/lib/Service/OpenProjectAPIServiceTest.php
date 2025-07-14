@@ -77,6 +77,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	private $service;
 
+	private MockObject $classExistsMock;
+
 	/**
 	 * @var string
 	 */
@@ -604,6 +606,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @before
 	 */
 	public function setupMockServer(): void {
+		// NOTE: mocking 'class_exists' must be done before anything else
+		$this->classExistsMock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
+
 		$this->pactMockServerConfig = new MockServerEnvConfig();
 
 		// find an unused port and use it for the mock server
@@ -2238,6 +2243,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	public function testIsProjectFoldersSetupComplete(): void {
+		$this->classExistsMock->expects($this->any())->willReturn(true);
 		$userMock = $this->createMock(IUser::class);
 		$groupMock = $this->createMock(IGroup::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
@@ -2457,6 +2463,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	public function testIsSystemReadyForProjectFolderSetUp(): void {
+		$this->classExistsMock->expects($this->any())->willReturn(true);
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
@@ -2530,6 +2537,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		bool $groupFolderExists,
 		string $exception
 	): void {
+		$this->classExistsMock->expects($this->any())->with('\OCA\GroupFolders\Folder\FolderManager')->willReturn($appEnabled);
 		$userMock = $this->createMock(IUser::class);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
@@ -2554,7 +2562,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn($appEnabled);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['getGroupFolderManager', 'groupFolderToArray'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
@@ -2564,9 +2572,57 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$folderManagerMock = $this->getFolderManagerMock();
 		$service->method('getGroupFolderManager')
 			->willReturn($folderManagerMock);
+		$service->method('groupFolderToArray')
+			->willReturn([
+				'id' => 123,
+				'folder_id' => 123,
+				'mount_point' => Application::OPEN_PROJECT_ENTITIES_NAME,
+				'groups' => Application::OPEN_PROJECT_ENTITIES_NAME,
+				'quota' => 1234,
+				'size' => 0,
+				'acl' => true,
+				'permissions' => 31,
+			]);
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($exception);
 		$service->isSystemReadyForProjectFolderSetUp();
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function groupFolderToArrayDataProvider(): array {
+		$folder = new class {
+			public function toArray(): array {
+				return ['id' => 123];
+			}
+		};
+		return [
+			[true, $folder, ['id' => 123, 'folder_id' => 123]],
+			[false, ['id' => 123], ['id' => 123]],
+			[true, null, "Invalid folder type. Expected array, got: NULL"],
+		];
+	}
+
+	/**
+	 * @param bool $classExists
+	 * @param mixed $folder
+	 * @return void
+	 * @dataProvider groupFolderToArrayDataProvider
+	 */
+	public function testGroupFolderToArray(
+		bool $classExists,
+		mixed $folder,
+		array|string $expectedResult,
+	): void {
+		$this->classExistsMock->expects($this->any())->willReturn($classExists);
+		$service = $this->getOpenProjectAPIServiceMock();
+		if ($folder === null) {
+			$this->expectException(\InvalidArgumentException::class);
+			$this->expectExceptionMessage($expectedResult);
+		}
+		$result = $service->groupFolderToArray($folder);
+		$this->assertSame($expectedResult, $result);
 	}
 
 	public function testProjectFolderHasAppPassword(): void {
@@ -4372,8 +4428,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock->method('getAppValue')->willReturn($SSOProviderType);
 
 		if ($SSOProviderType !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
-			$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-			$mock->expects($this->once())->willReturn($hasOIDCBackend);
+			$this->classExistsMock->expects($this->once())->willReturn($hasOIDCBackend);
 		}
 
 		$userSessionMock = $this->createMock(IUserSession::class);
@@ -4454,8 +4509,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @dataProvider dataProviderForIsUserOIDCAppSupported
 	 */
 	public function testIsUserOIDCAppSupported($appInstalledAndEnabled, $classesExist, $version, $expected): void {
-		$mock = $this->getFunctionMock(__NAMESPACE__, "class_exists");
-		$mock->expects($this->any())->willReturn($classesExist);
+		$this->classExistsMock->expects($this->any())->willReturn($classesExist);
 
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('getAppVersion')->with('user_oidc')->willReturn($version);

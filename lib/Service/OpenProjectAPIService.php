@@ -1116,10 +1116,31 @@ class OpenProjectAPIService {
 		return $groupfoldersFolderManager;
 	}
 
+	/**
+	 * @param mixed $folder
+	 * @return array<mixed>
+	 */
+	public function groupFolderToArray(mixed $folder): array {
+		// NOTE: groupfolders app has changed the return type in the recent versions
+		// for backwards compatibility we check if the new class exists
+		// and get the folder as an array
+		if (class_exists('\OCA\GroupFolders\Folder\FolderDefinition') && is_object($folder)) {
+			$folder = $folder->toArray();
+			$folder['folder_id'] = $folder['id'];
+		}
+		if (!is_array($folder)) {
+			throw new InvalidArgumentException(
+				'Invalid folder type. Expected array, got: ' . gettype($folder)
+			);
+		}
+		return $folder;
+	}
+
 	public function isOpenProjectGroupfolderCreated(): bool {
 		$groupfoldersFolderManager = $this->getGroupFolderManager();
 		$folders = $groupfoldersFolderManager->getAllFolders();
 		foreach ($folders as $folder) {
+			$folder = $this->groupFolderToArray($folder);
 			if ($folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME) {
 				return true;
 			}
@@ -1278,6 +1299,7 @@ class OpenProjectAPIService {
 		$groupFolderManager = $this->getGroupFolderManager();
 		$folders = $groupFolderManager->getFoldersForGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
 		foreach ($folders as $folder) {
+			$folder = $this->groupFolderToArray($folder);
 			if (
 				$folder['mount_point'] === Application::OPEN_PROJECT_ENTITIES_NAME &&
 				$folder['permissions'] === 31 &&
