@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Consume groupfolder properties as an array [#851](https://github.com/nextcloud/integration_openproject/pull/851)
+
 ## 2.9.1 - 2025-06-13
 
 ### Fixed
