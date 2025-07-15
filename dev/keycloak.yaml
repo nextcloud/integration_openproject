@@ -19,16 +19,13 @@ services:
       start_period: 10s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.2
+    build:
+      context: ./keycloak
+      args:
+        IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
+        IMAGE_TAG: ${KC_IMAGE_TAG:-26.2}
     restart: unless-stopped
-    command:
-      [
-        'start-dev',
-        '--proxy-headers',
-        'xforwarded',
-        '--spi-connections-http-client-default-disable-trust-manager=true',
-        '--import-realm'
-      ]
+    command: ["--proxy-headers", "xforwarded", "--spi-connections-http-client-default-disable-trust-manager=true"]
     environment:
       KC_DB: postgres
       KC_DB_USERNAME: keycloak
@@ -40,10 +37,16 @@ services:
       KC_HOSTNAME: keycloak.local
       KC_FEATURES: preview
       KC_TRANSACTION_XA_ENABLED: false
+      KC_REALM_NAME: opnc
+      KC_NEXTCLOUD_CLIENT_ID: nextcloud
+      KC_NEXTCLOUD_CLIENT_SECRET: nextcloud-secret
+      KC_NEXTCLOUD_CLIENT_HOST: nextcloud.local
+      KC_OPENPROJECT_CLIENT_ID: openproject
+      KC_OPENPROJECT_CLIENT_SECRET: openproject-secret
+      KC_OPENPROJECT_CLIENT_HOST: openproject.local
     networks:
       - nc-op
     volumes:
-      - ./opnc-realm.json:/opt/keycloak/data/import/opnc-realm.json
       - step:/step:ro
       - keycloakdata:/opt/keycloak/data/
     labels:
