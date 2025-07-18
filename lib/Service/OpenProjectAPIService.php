@@ -887,15 +887,42 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * check common admin settings
+	 * @param IConfig $config
+	 *
+	 * @return bool
+	 */
+	public static function isCommonAdminConfigOk(IConfig $config): bool {
+		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
+
+		if ($freshProjectFolderSetUp === true || empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * checks if every admin config for oauth2 based authorization variables are set
 	 *
 	 * @param IConfig $config
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOauth2(IConfig $config):bool {
-		$clientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
-		$clientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		return !(empty($clientId) || empty($clientSecret));
+		if (!self::isCommonAdminConfigOk($config)) {
+			return false;
+		}
+
+		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		if ($authMethod !== self::AUTH_METHOD_OAUTH) {
+			return false;
+		}
+
+		$opClientId = $config->getAppValue(Application::APP_ID, 'openproject_client_id');
+		$opClientSecret = $config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+		$ncClientId = $config->getAppValue(Application::APP_ID, 'nc_oauth_client_id');
+		return !(empty($opClientId) || empty($opClientSecret) || empty($ncClientId));
 	}
 
 	/**
@@ -905,6 +932,15 @@ class OpenProjectAPIService {
 	 * @return bool
 	 */
 	public static function isAdminConfigOkForOIDCAuth(IConfig $config):bool {
+		if (!self::isCommonAdminConfigOk($config)) {
+			return false;
+		}
+
+		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
+		if ($authMethod !== self::AUTH_METHOD_OIDC) {
+			return false;
+		}
+
 		$oidcProvider = $config->getAppValue(Application::APP_ID, 'oidc_provider');
 		$ssoProviderType = $config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		$targetAudienceClientId = $config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
@@ -932,7 +968,6 @@ class OpenProjectAPIService {
 		return false;
 	}
 
-
 	/**
 	 * returns overall admin config status whether it be 'oidc' or 'oauth2'
 	 *
@@ -940,12 +975,6 @@ class OpenProjectAPIService {
 	 */
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
-		$oauthInstanceUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$freshProjectFolderSetUp = (bool)$config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup');
-
-		if ($freshProjectFolderSetUp === true || empty($oauthInstanceUrl) || !self::validateURL($oauthInstanceUrl)) {
-			return false;
-		}
 
 		if ($authMethod === self::AUTH_METHOD_OAUTH) {
 			return self::isAdminConfigOkForOauth2($config);
@@ -954,6 +983,7 @@ class OpenProjectAPIService {
 		if ($authMethod === self::AUTH_METHOD_OIDC) {
 			return self::isAdminConfigOkForOIDCAuth($config);
 		}
+
 		return false;
 	}
 
