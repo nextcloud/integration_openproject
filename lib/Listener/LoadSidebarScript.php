@@ -90,14 +90,17 @@ class LoadSidebarScript implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		// When user is non oidc based or there is some error when getting token for the targeted client
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
-		if (
-			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			!$this->openProjectAPIService->getOIDCToken()
-		) {
-			return;
+		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$accessToken = $this->openProjectAPIService->getOIDCToken();
+			if (!$accessToken) {
+				return;
+			}
+			// for 'oidc' the user info needs to be set (once token has been exchanged)
+			$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
 		}
 		if (!($event instanceof LoadSidebar)) {
 			return;
@@ -114,7 +117,6 @@ class LoadSidebarScript implements IEventListener {
 		}
 		Util::addStyle(Application::APP_ID, 'tab');
 
-		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		$this->initialStateService->provideInitialState('authorization_method', $authorizationMethod);
 		$this->initialStateService->provideInitialState(
 			'openproject-url', $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url')
@@ -122,11 +124,6 @@ class LoadSidebarScript implements IEventListener {
 		$this->initialStateService->provideInitialState(
 			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config)
 		);
-
-		// authorization method can be either a 'oidc' or 'oauth2'
-		// for 'oidc' the user info needs to be set (once token has been exchanged)
-		$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
-
 		// for 'oauth2' state to be loaded
 		$this->initialStateService->provideInitialState(
 			'oauth-connection-result', $this->oauthConnectionResult
