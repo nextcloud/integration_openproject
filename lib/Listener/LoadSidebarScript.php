@@ -91,7 +91,6 @@ class LoadSidebarScript implements IEventListener {
 
 	public function handle(Event $event): void {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		$accessToken = null;
 		// When user is non oidc based or there is some error when getting token for the targeted client
 		// then we need to hide the oidc based connection for the user
 		// so this check is required

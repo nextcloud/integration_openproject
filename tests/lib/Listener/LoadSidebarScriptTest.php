@@ -14,13 +14,14 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\IConfig;
 use OCP\IUserSession;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class LoadSidebarScriptTest extends TestCase {
 	private LoadSidebarScript $listener;
-	private IConfig $config;
-	private IInitialState $initialState;
-	private OpenProjectAPIService $openProjectService;
+	private MockObject|IConfig $config;
+	private MockObject|IInitialState $initialState;
+	private MockObject|OpenProjectAPIService $openProjectService;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -87,7 +88,7 @@ class LoadSidebarScriptTest extends TestCase {
 		} else {
 			$this->openProjectService->expects($this->never())
 				->method('setUserInfoForOidcBasedAuth');
-		}	
+		}
 
 		$this->listener->handle($this->createMock(Event::class));
 	}
