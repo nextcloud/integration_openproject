@@ -915,7 +915,9 @@ class OpenProjectAPIService {
 		}
 
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
-		if ($authMethod !== self::AUTH_METHOD_OAUTH) {
+		// NOTE: For backwards compability, check the auth method only if provided
+		// version: 2.8 -> 2.9
+		if ($authMethod && $authMethod !== self::AUTH_METHOD_OAUTH) {
 			return false;
 		}
 

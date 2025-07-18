@@ -999,18 +999,49 @@ class ConfigControllerTest extends TestCase {
 		$oauthServiceMock = $this->createMock(OauthService::class);
 		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 
-		$configMock
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', $oldAdminConfig['authorization_method']],
-				[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
-				[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
-				[Application::APP_ID, 'oidc_provider', '', ''],
-				[Application::APP_ID, 'targeted_audience_client_id', '', ''],
-				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client-id'],
-				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
-			]);
+		if ($mode === "reset") {
+			$configMock
+				->expects($this->exactly(3))
+				->method('deleteAppValue')
+				->withConsecutive(
+					['integration_openproject', 'nc_oauth_client_id'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				);
+			$configMock
+				->method('getAppValue')
+				->willReturnMap([
+					[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
+					[Application::APP_ID, 'authorization_method', '', ''],
+					[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
+					[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
+					[Application::APP_ID, 'oidc_provider', '', ''],
+					[Application::APP_ID, 'targeted_audience_client_id', '', ''],
+					[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client-id'],
+					[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+				]);
+		} else {
+			$configMock
+				->expects($this->exactly(2))
+				->method('deleteAppValue')
+				->withConsecutive(
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				);
+			$configMock
+				->method('getAppValue')
+				->willReturnMap([
+					[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
+					[Application::APP_ID, 'authorization_method', '', $oldAdminConfig['authorization_method']],
+					[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
+					[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
+					[Application::APP_ID, 'oidc_provider', '', ''],
+					[Application::APP_ID, 'targeted_audience_client_id', '', ''],
+					[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client-id'],
+					[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+				]);
+		}
+
 		$configMock
 			->method('setAppValue')
 			->withConsecutive(
@@ -1056,14 +1087,6 @@ class ConfigControllerTest extends TestCase {
 				[$this->user1->getUID(), 'integration_openproject', 'user_name'],
 				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
 			);
-		$configMock
-			->expects($this->exactly(2))
-			->method('deleteAppValue')
-			->withConsecutive(
-				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-			);
-
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
