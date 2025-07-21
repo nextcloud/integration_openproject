@@ -2092,6 +2092,103 @@ describe('AdminSettings.vue', () => {
 					expect(submitButton.attributes().disabled).toBe(undefined)
 				})
 				describe('when clicked', () => {
+					describe('when the save is successful', () => {
+						beforeEach(async () => {
+							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(true)
+							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+						})
+						it('should set the form to view mode', async () => {
+							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.VIEW)
+						})
+						it('should set the isFormCompleted to true', async () => {
+							expect(wrapper.vm.isFormCompleted.opOauth).toBe(true)
+						})
+
+						it('should not create Nextcloud OAuth client if already present', async () => {
+							jest.spyOn(axios, 'put')
+								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
+							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
+								.mockImplementationOnce(() => jest.fn())
+							const wrapper = getMountedWrapper({
+								state: {
+									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
+									openproject_client_id: '',
+									openproject_client_secret: '',
+									nc_oauth_client: {
+										nextcloud_client_id: 'abcdefg',
+										nextcloud_client_secret: 'slkjdlkjlkd',
+									},
+								},
+							})
+							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
+						})
+
+						it('should create Nextcloud OAuth client if not already present', async () => {
+							jest.spyOn(axios, 'post')
+								.mockImplementationOnce(() => Promise.resolve({ data: { status: false } }))
+							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
+								.mockImplementationOnce(() => jest.fn())
+							const wrapper = getMountedWrapper({
+								state: {
+									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
+									openproject_client_id: '',
+									openproject_client_secret: '',
+									nc_oauth_client: '',
+								},
+							})
+							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+
+							expect(createNCOAuthClientSpy).toBeCalledTimes(1)
+						})
+					})
+
+					describe('when the save fails', () => {
+						beforeEach(async () => {
+							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(false)
+							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+						})
+						it('should set the form to view mode', async () => {
+							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
+						})
+						it('should set the isFormCompleted to true', async () => {
+							expect(wrapper.vm.isFormCompleted.opOauth).toBe(false)
+						})
+
+						it('should not create Nextcloud OAuth client', async () => {
+							jest.spyOn(axios, 'put')
+								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
+							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
+								.mockImplementationOnce(() => jest.fn())
+							const wrapper = getMountedWrapper({
+								state: {
+									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
+									openproject_client_id: '',
+									openproject_client_secret: '',
+									nc_oauth_client: {
+										nextcloud_client_id: 'abcdefg',
+										nextcloud_client_secret: 'slkjdlkjlkd',
+									},
+								},
+							})
+							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
+							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
+						})
+					})
+
 					describe('when the admin config is ok on save options', () => {
 						beforeEach(async () => {
 							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
