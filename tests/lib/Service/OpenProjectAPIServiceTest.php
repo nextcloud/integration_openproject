@@ -4250,6 +4250,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetOIDCTokenSuccess(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
+			]));
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
@@ -4270,6 +4275,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$result = $service->getOIDCToken();
 		$this->assertEquals('exchanged-access-token', $result);
+	}
+
+	public function testGetOIDCTokenReturnsNullIfNotOIDC(): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
+			]));
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'config' => $configMock,
+			],
+		);
+		$result = $service->getOIDCToken();
+		$this->assertNull($result);
 	}
 
 	/**
