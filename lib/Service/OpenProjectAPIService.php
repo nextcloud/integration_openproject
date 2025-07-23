@@ -1615,6 +1615,10 @@ class OpenProjectAPIService {
 	 * @return string|null
 	 */
 	public function getOIDCToken(): ?string {
+		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
+		if ($authorizationMethod !== SettingsService::AUTH_METHOD_OIDC) {
+			return null;
+		}
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
 			$this->logger->error("The 'user_oidc' app is not enabled or supported");
 			return null;

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Consume groupfolder properties as an array [#851](https://github.com/nextcloud/integration_openproject/pull/851)
 - Prevent unnecessary API calls when the account is setup via OAuth2 but not connected[#856](https://github.com/nextcloud/integration_openproject/pull/856)
 - Fix next form not being loaded after saving OpenProject client settings [#857](https://github.com/nextcloud/integration_openproject/pull/857)
+- Avoid checking user_oidc app when set up with OAuth2 [#855](https://github.com/nextcloud/integration_openproject/pull/855)
 
 ## 2.9.1 - 2025-06-13
 
