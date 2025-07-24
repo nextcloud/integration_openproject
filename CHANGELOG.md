@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## 2.9.2 - 2025-07-24
+
+### Fixed
+
 - Fix initial set-up with external IDP without token exchange [#848](https://github.com/nextcloud/integration_openproject/pull/848)
 - Consume groupfolder properties as an array [#851](https://github.com/nextcloud/integration_openproject/pull/851)
 - Prevent unnecessary API calls when the account is setup via OAuth2 but not connected[#856](https://github.com/nextcloud/integration_openproject/pull/856)
