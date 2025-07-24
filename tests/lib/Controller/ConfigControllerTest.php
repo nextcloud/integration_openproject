@@ -517,32 +517,14 @@ class ConfigControllerTest extends TestCase {
 			);
 		$configMock
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_instance_url', ''],
-				['integration_openproject', 'authorization_method', ''],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'nc_oauth_client_id', ''],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'fresh_project_folder_setup'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'http://localhost:3000',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'',
-				'',
-				'123',
-				'',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				$credsToUpdate['openproject_instance_url'],
-				false,
-				$credsToUpdate['openproject_client_id'],
-				$credsToUpdate['openproject_client_secret'],
-			);
+			->willReturnMap([
+				[Application::APP_ID, 'openproject_instance_url', '', $credsToUpdate['openproject_instance_url']],
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_client_id', '', $credsToUpdate['openproject_client_id']],
+				[Application::APP_ID, 'openproject_client_secret', '', $credsToUpdate['openproject_client_secret']],
+				[Application::APP_ID, 'nc_oauth_client_id', '', '123'],
+				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+			]);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -632,39 +614,14 @@ class ConfigControllerTest extends TestCase {
 			);
 		$configMock
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_instance_url', ''],
-				['integration_openproject', 'authorization_method', ''],
-				['integration_openproject', 'oidc_provider'],
-				['integration_openproject', 'targeted_audience_client_id'],
-				['integration_openproject', 'nc_oauth_client_id', ''],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'fresh_project_folder_setup'],
-				['integration_openproject', 'oidc_provider'],
-				['integration_openproject', 'sso_provider_type'],
-				['integration_openproject', 'targeted_audience_client_id'],
-				['integration_openproject', 'token_exchange'],
-				['integration_openproject', 'openproject_instance_url']
-			)
-			->willReturnOnConsecutiveCalls(
-				'http://localhost:3000',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'',
-				'',
-				'123',
-				'',
-				OpenProjectAPIService::AUTH_METHOD_OIDC,
-				$credsToUpdate['openproject_instance_url'],
-				false,
-				$credsToUpdate['oidc_provider'],
-				SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
-				$credsToUpdate['targeted_audience_client_id'],
-				true,
-				$credsToUpdate['openproject_instance_url']
-
-			);
+			->willReturnMap([
+				[Application::APP_ID, 'openproject_instance_url', '', $credsToUpdate['openproject_instance_url']],
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OIDC],
+				[Application::APP_ID, 'oidc_provider', '', $credsToUpdate['oidc_provider']],
+				[Application::APP_ID, 'sso_provider_type', '', SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE],
+				[Application::APP_ID, 'targeted_audience_client_id', '', $credsToUpdate['targeted_audience_client_id']],
+				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+			]);
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -1042,75 +999,49 @@ class ConfigControllerTest extends TestCase {
 		$oauthServiceMock = $this->createMock(OauthService::class);
 		$oauthSettingsControllerMock = $this->createMock('OCA\OAuth2\Controller\SettingsController');
 
-		if ($mode === 'reset') {
+		if ($mode === "reset") {
+			$configMock
+				->expects($this->exactly(3))
+				->method('deleteAppValue')
+				->withConsecutive(
+					['integration_openproject', 'nc_oauth_client_id'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+				);
 			$configMock
 				->method('getAppValue')
-				->withConsecutive(
-					['integration_openproject', 'openproject_instance_url', ''],
-					['integration_openproject', 'authorization_method', ''],
-					['integration_openproject', 'openproject_client_id', ''],
-					['integration_openproject', 'openproject_client_secret', ''],
-					['integration_openproject', 'nc_oauth_client_id', ''],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for user
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''], // for the last check
-					['integration_openproject', 'authorization_method', ''],
-					['integration_openproject', 'openproject_instance_url'],
-					['integration_openproject', 'fresh_project_folder_setup'],
-					['integration_openproject', 'openproject_client_id'],
-					['integration_openproject', 'openproject_client_secret'],
-					['integration_openproject', 'openproject_instance_url'],
-				)
-				->willReturnOnConsecutiveCalls(
-					$oldAdminConfig['openproject_instance_url'],
-					$oldAdminConfig['authorization_method'],
-					$oldAdminConfig['openproject_client_id'],
-					$oldAdminConfig['openproject_client_secret'],
-					'',
-					'',
-					'',
-					'',
-					OpenProjectAPIService::AUTH_METHOD_OAUTH,
-					$newConfig['openproject_instance_url'],
-					false,
-					$newConfig['openproject_client_id'],
-					$newConfig['openproject_client_secret'],
-					$newConfig['openproject_instance_url'],
-				);
+				->willReturnMap([
+					[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
+					[Application::APP_ID, 'authorization_method', '', ''],
+					[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
+					[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
+					[Application::APP_ID, 'oidc_provider', '', ''],
+					[Application::APP_ID, 'targeted_audience_client_id', '', ''],
+					[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client-id'],
+					[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+				]);
 		} else {
 			$configMock
-				->method('getAppValue')
+				->expects($this->exactly(2))
+				->method('deleteAppValue')
 				->withConsecutive(
-					['integration_openproject', 'openproject_instance_url', ''],
-					['integration_openproject', 'authorization_method', ''],
-					['integration_openproject', 'openproject_client_id', ''],
-					['integration_openproject', 'openproject_client_secret', ''],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-					['integration_openproject', 'authorization_method', ''],
-					['integration_openproject', 'openproject_instance_url'],
-					['integration_openproject', 'fresh_project_folder_setup'],
-					['integration_openproject', 'openproject_client_id'],
-					['integration_openproject', 'openproject_client_secret'],
-					['integration_openproject', 'openproject_instance_url'],
-				)
-				->willReturnOnConsecutiveCalls(
-					$oldAdminConfig['openproject_instance_url'],
-					$oldAdminConfig['authorization_method'],
-					$oldAdminConfig['openproject_client_id'],
-					$oldAdminConfig['openproject_client_secret'],
-					'',
-					'',
-					'',
-					OpenProjectAPIService::AUTH_METHOD_OAUTH,
-					$newConfig['openproject_instance_url'],
-					false,
-					$newConfig['openproject_client_id'],
-					$newConfig['openproject_client_secret'],
-					$newConfig['openproject_instance_url'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
+					['integration_openproject', 'oPOAuthTokenRevokeStatus'],
 				);
+			$configMock
+				->method('getAppValue')
+				->willReturnMap([
+					[Application::APP_ID, 'openproject_instance_url', '', $oldAdminConfig['openproject_instance_url']],
+					[Application::APP_ID, 'authorization_method', '', $oldAdminConfig['authorization_method']],
+					[Application::APP_ID, 'openproject_client_id', '', $oldAdminConfig['openproject_client_id']],
+					[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
+					[Application::APP_ID, 'oidc_provider', '', ''],
+					[Application::APP_ID, 'targeted_audience_client_id', '', ''],
+					[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client-id'],
+					[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
+				]);
 		}
+
 		$configMock
 			->method('setAppValue')
 			->withConsecutive(
@@ -1156,14 +1087,6 @@ class ConfigControllerTest extends TestCase {
 				[$this->user1->getUID(), 'integration_openproject', 'user_name'],
 				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
 			);
-		$configMock
-			->expects($this->exactly(2))
-			->method('deleteAppValue')
-			->withConsecutive(
-				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-			);
-
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
@@ -1426,26 +1349,12 @@ class ConfigControllerTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_instance_url', ''],
-				['integration_openproject', 'authorization_method', ''],
-				['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-				['integration_openproject', 'authorization_method', ''],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'fresh_project_folder_setup'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'http://localhost:3000',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'http://localhost:3000',
-				false,
-				'some_cilent_id',
-				'some_cilent_secret',
-			);
+			->willReturnMap([
+				[Application::APP_ID, 'openproject_instance_url', '', 'http://localhost:3000'],
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_client_id', '', 'some_cilent_id'],
+				[Application::APP_ID, 'openproject_client_secret', '', 'some_cilent_secret'],
+			]);
 		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
 		$secureRandomMock
 			->method('generate')
