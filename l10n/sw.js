@@ -18,6 +18,7 @@ OC.L10N.register(
     "Description" : "Maelezo",
     "Create" : "Tengeneza",
     "Mark as read" : "Weka alama kama iliyosomwa",
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
     "Connected accounts" : "Akaunti zilizounganishwa"
 },
 "nplurals=2; plural=(n != 1);");
