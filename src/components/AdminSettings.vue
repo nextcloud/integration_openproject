@@ -831,6 +831,11 @@ export default {
 				this.authorizationSetting.currentOIDCProviderSelected = null
 			}
 		},
+		'form.authenticationMethod.value'() {
+			if (this.getCurrentAuthMethod === AUTH_METHOD.OIDC) {
+				this.formMode.authorizationSetting = F_MODES.EDIT
+			}
+		},
 	},
 	created() {
 		this.currentSetting = this.settingsStepper.next().value
