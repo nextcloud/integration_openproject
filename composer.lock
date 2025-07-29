@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "363745730b0250fc7651fd5878b8df78",
+    "content-hash": "94ec2fa3a324b70fd3f60e6344b47f34",
     "packages": [],
     "packages-dev": [
         {
@@ -1887,16 +1887,16 @@
         },
         {
             "name": "pact-foundation/pact-php",
-            "version": "10.0.0-beta2",
+            "version": "10.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pact-foundation/pact-php.git",
-                "reference": "dac7e69aff10114a335d15e6d59e05e29ef3f66c"
+                "reference": "8e1fffb9b7fc15e7f30af18676fa4f289f83673a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pact-foundation/pact-php/zipball/dac7e69aff10114a335d15e6d59e05e29ef3f66c",
-                "reference": "dac7e69aff10114a335d15e6d59e05e29ef3f66c",
+                "url": "https://api.github.com/repos/pact-foundation/pact-php/zipball/8e1fffb9b7fc15e7f30af18676fa4f289f83673a",
+                "reference": "8e1fffb9b7fc15e7f30af18676fa4f289f83673a",
                 "shasum": ""
             },
             "require": {
@@ -1911,47 +1911,48 @@
             },
             "require-dev": {
                 "behat/behat": "^3.13",
+                "clue/framework-x": "^0.17.0",
                 "ext-sockets": "*",
                 "friendsofphp/php-cs-fixer": "^3.0",
                 "galbar/jsonpath": "^3.0",
                 "guzzlehttp/guzzle": "^7.8",
                 "pact-foundation/example-protobuf-sync-message-provider": "@dev",
-                "php-amqplib/php-amqplib": "^3.0",
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^10.1|^11",
+                "phpstan/phpstan": "^2.0.4",
+                "phpunit/phpunit": "^10.1.0|^11.0",
                 "ramsey/uuid": "^4.7",
+                "rector/rector": "^2.0",
                 "roave/security-advisories": "dev-latest",
-                "slim/slim": "^4.13"
+                "webonyx/graphql-php": "^15.14"
             },
             "type": "library",
             "extra": {
                 "downloads": {
-                    "pact-ffi-headers": {
-                        "version": "0.4.21",
-                        "url": "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v{$version}/pact.h",
-                        "path": "bin/pact-ffi-headers/pact.h"
-                    },
                     "pact-ffi-lib": {
-                        "version": "0.4.21",
-                        "variables": {
-                            "{$prefix}": "PHP_OS_FAMILY === 'Windows' ? 'pact_ffi' : 'libpact_ffi'",
-                            "{$os}": "PHP_OS === 'Darwin' ? 'macos' : strtolower(PHP_OS_FAMILY)",
-                            "{$architecture}": "in_array(php_uname('m'), ['arm64', 'aarch64']) ? 'aarch64' : 'x86_64'",
-                            "{$musl}": "PHP_OS === 'Linux' && musl() === true ? '-musl' : ''",
-                            "{$extension}": "PHP_OS_FAMILY === 'Windows' ? 'dll' : (PHP_OS === 'Darwin' ? 'dylib' : 'so')"
-                        },
                         "url": "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v{$version}/{$prefix}-{$os}-{$architecture}{$musl}.{$extension}.gz",
-                        "path": "bin/pact-ffi-lib/pact.{$extension}"
+                        "path": "bin/pact-ffi-lib/pact.{$extension}",
+                        "version": "0.4.26",
+                        "variables": {
+                            "{$os}": "PHP_OS === 'Darwin' ? 'macos' : strtolower(PHP_OS_FAMILY)",
+                            "{$musl}": "PHP_OS === 'Linux' && musl() === true ? '-musl' : ''",
+                            "{$prefix}": "PHP_OS_FAMILY === 'Windows' ? 'pact_ffi' : 'libpact_ffi'",
+                            "{$extension}": "PHP_OS_FAMILY === 'Windows' ? 'dll' : (PHP_OS === 'Darwin' ? 'dylib' : 'so')",
+                            "{$architecture}": "in_array(php_uname('m'), ['arm64', 'aarch64']) ? 'aarch64' : 'x86_64'"
+                        }
+                    },
+                    "pact-ffi-headers": {
+                        "url": "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v{$version}/pact.h",
+                        "path": "bin/pact-ffi-headers/pact.h",
+                        "version": "0.4.26"
                     },
                     "pact-stub-server": {
+                        "url": "https://github.com/pact-foundation/pact-stub-server/releases/download/v{$version}/pact-stub-server-{$os}-{$architecture}{$extension}.gz",
+                        "path": "bin/pact-stub-server/pact-stub-server{$extension}",
                         "version": "0.6.0",
                         "variables": {
                             "{$os}": "PHP_OS === 'Darwin' ? 'osx' : strtolower(PHP_OS_FAMILY)",
-                            "{$architecture}": "in_array(php_uname('m'), ['arm64', 'aarch64']) ? 'aarch64' : 'x86_64'",
-                            "{$extension}": "PHP_OS_FAMILY === 'Windows' ? '.exe' : ''"
+                            "{$extension}": "PHP_OS_FAMILY === 'Windows' ? '.exe' : ''",
+                            "{$architecture}": "in_array(php_uname('m'), ['arm64', 'aarch64']) ? 'aarch64' : 'x86_64'"
                         },
-                        "url": "https://github.com/pact-foundation/pact-stub-server/releases/download/v{$version}/pact-stub-server-{$os}-{$architecture}{$extension}.gz",
-                        "path": "bin/pact-stub-server/pact-stub-server{$extension}",
                         "executable": true
                     }
                 }
@@ -1983,9 +1984,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pact-foundation/pact-php/issues",
-                "source": "https://github.com/pact-foundation/pact-php/tree/10.0.0-beta2"
+                "source": "https://github.com/pact-foundation/pact-php/tree/10.1.1"
             },
-            "time": "2024-06-20T15:34:19+00:00"
+            "time": "2025-01-09T15:02:26+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -6921,9 +6922,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "pact-foundation/pact-php": 10
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

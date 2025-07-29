@@ -60,6 +60,7 @@ use PhpPact\Consumer\Model\Body\Binary;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
 use PhpPact\Standalone\MockService\MockServerEnvConfig;
+use PhpPact\Consumer\Model\Body\Text;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -1171,12 +1172,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$refreshTokenRequest
 			->setMethod('POST')
 			->setPath('/oauth/token')
-			->addHeader('Content-Type', 'application/x-www-form-urlencoded')
 			->addHeader('User-Agent', 'Nextcloud OpenProject integration')
-			->setBody(
+			->setBody(new Text(
 				'client_id=' . $this->clientId .
 				'&client_secret=' . $this->clientSecret .
-				'&grant_type=refresh_token&refresh_token=oAuthRefreshToken'
+				'&grant_type=refresh_token&refresh_token=oAuthRefreshToken', 'application/x-www-form-urlencoded')
 			);
 
 		$refreshTokenResponse = new ProviderResponse();
