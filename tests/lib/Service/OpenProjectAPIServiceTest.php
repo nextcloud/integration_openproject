@@ -1027,7 +1027,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1102,7 +1101,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodForOauth2DataProvider
@@ -1145,7 +1143,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodForOauth2DataProvider
@@ -1229,7 +1226,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1264,7 +1260,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1309,7 +1304,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1345,7 +1339,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1386,7 +1379,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1422,7 +1414,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1455,7 +1446,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -1538,7 +1528,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2752,7 +2741,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2790,7 +2778,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2826,7 +2813,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2886,7 +2872,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2945,7 +2930,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -2985,7 +2969,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3033,7 +3016,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3068,7 +3050,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3341,7 +3322,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3394,7 +3374,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			sort($result));
 	}
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3457,7 +3436,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3490,7 +3468,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3526,7 +3503,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3623,7 +3599,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3695,7 +3670,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
@@ -3764,7 +3738,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @group ignoreWithPHP8.0
 	 * @param string $authorizationMethod
 	 * @return void
 	 * @dataProvider getAuthorizationMethodDataProvider
