@@ -227,19 +227,36 @@ class FeatureContext implements Context {
 	 * @param string $user
 	 */
 	private function deleteUserDataFromDocker(string $user): void {
-		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d data/$user ]'";
-		exec($checkCmd, $output, $checkCode);
+		$dataDir = "data";
+		// check if docker exists
+		if (!exec("docker --version")) {
+			echo "'docker' command not found. Skipping user data deletion.\n";
+			return;
+		}
 
-		if ($checkCode === 0) {
-			echo "Files still exist for user $user. Deleting...\n";
-			$deleteCmd = "docker exec nextcloud /bin/bash -c 'rm -rf data/$user'";
-			exec($deleteCmd, $output, $deleteCode);
+		$firstChar = substr($user, 0, 1);
+		$restChars = substr($user, 1);
+		// Example: Carol -> [cC]arol
+		$userPattern = sprintf('[%s%s]%s', strtolower($firstChar), strtoupper($firstChar), $restChars);
+		$folder1 = "$dataDir/" . strtolower($firstChar) . $restChars;
+		$folder2 = "$dataDir/" . strtoupper($firstChar) . $restChars;
 
-			if ($deleteCode === 0) {
-				echo "File system for user $user deleted successfully.\n";
-			} else {
-				echo "Failed to delete file system for user $user.\n";
+		// check data folders
+		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]'";
+		exec($checkCmd, $checkOutput, $checkCode);
+		if ($checkCode === 1) {
+			echo "User data directory doesn't exist, skipping deletion.\n";
+			if (count($checkOutput) > 0) {
+				echo "Command output: " . implode("\n", $checkOutput);
 			}
+			return;
+		}
+		// delete user data directory
+		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern'";
+		exec($rmCmd, $output, $rmCode);
+		if ($rmCode !== 0) {
+			echo "Failed to delete data directory of user '$user'.\n";
+			echo "Command output: " . implode("\n", $output);
 		}
 	}
 
