@@ -1585,9 +1585,9 @@ describe('AdminSettings.vue', () => {
 					describe('when the save is successful', () => {
 						beforeEach(async () => {
 							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(true)
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
 						})
 						it('should set the form to view mode', async () => {
 							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.VIEW)
@@ -1612,9 +1612,16 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
 								},
+								form: {
+									serverHost: {
+										complete: true,
+										value: 'http://openproject.com',
+									},
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
+								},
 							})
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
 							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
 							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
 						})
@@ -1632,9 +1639,16 @@ describe('AdminSettings.vue', () => {
 									openproject_client_secret: '',
 									nc_oauth_client: '',
 								},
+								form: {
+									serverHost: {
+										complete: true,
+										value: 'http://openproject.com',
+									},
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
+								},
 							})
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
 							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
 
 							expect(createNCOAuthClientSpy).toBeCalledTimes(1)
@@ -1644,9 +1658,9 @@ describe('AdminSettings.vue', () => {
 					describe('when the save fails', () => {
 						beforeEach(async () => {
 							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(false)
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
+							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
+							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
 						})
 						it('should set the form to view mode', async () => {
 							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
@@ -1671,9 +1685,16 @@ describe('AdminSettings.vue', () => {
 										nextcloud_client_secret: 'slkjdlkjlkd',
 									},
 								},
+								form: {
+									serverHost: {
+										complete: true,
+										value: 'http://openproject.com',
+									},
+									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
+								},
 							})
-							await wrapper.find(selectors.opOauthClientIdInput).setValue('qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
+							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
 							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
 							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
 						})
