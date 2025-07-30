@@ -118,7 +118,7 @@ OC.L10N.register(
     "Failed to get OpenProject notifications" : "Не удалось получить уведомления OpenProject",
     "Date alert" : "Дата оповещения",
     "assignee" : "правопреемник",
-    "accountable" : "подотчетный",
+    "accountable" : "подотчётный",
     "watcher" : "наблюдатель",
     "commented" : "прокомментировал",
     "mentioned" : "упомянул",
