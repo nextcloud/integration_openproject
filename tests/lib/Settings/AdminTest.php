@@ -58,6 +58,8 @@ class AdminTest extends TestCase {
 					"authorization_method" => "",
 					"openproject_client_id" => "openproject",
 					"openproject_client_secret" => "op-secret",
+					"nc_oauth_client_id" => "nc-client",
+					"fresh_project_folder_setup" => false,
 				],
 				"setupWithOauth" => true,
 			],

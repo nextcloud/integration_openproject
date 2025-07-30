@@ -14,6 +14,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7\Utils;
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\LocalServerException;
@@ -283,21 +284,14 @@ class OpenProjectControllerTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_instance_url'],
-			)->willReturnOnConsecutiveCalls(
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'myClientID',
-				'myClientSecret',
-				'http://openproject.org',
-				'myClientID',
-				'http://openproject.org',
-			);
+			->willReturnMap([
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_instance_url', '', 'http://openproject.org'],
+				[Application::APP_ID, 'openproject_client_id', '', 'myClientID'],
+				[Application::APP_ID, 'openproject_client_secret', '', 'myClientSecret'],
+				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
+				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
+			]);
 		$configMock
 			->expects($this->exactly(2))
 			->method('setUserValue')

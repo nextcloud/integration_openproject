@@ -1079,8 +1079,7 @@ export default {
 		},
 		async saveOPOAuthClientValues() {
 			this.isFormStep = FORM.OP_OAUTH
-			await this.saveOPOptions()
-			if (this.isAdminConfigOk) {
+			if (await this.saveOPOptions()) {
 				this.formMode.opOauth = F_MODES.VIEW
 				this.isFormCompleted.opOauth = true
 
