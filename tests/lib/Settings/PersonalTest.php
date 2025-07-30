@@ -7,6 +7,7 @@
 
 namespace OCA\OpenProject\Settings;
 
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -50,23 +51,32 @@ class PersonalTest extends TestCase {
 		return [
 			[
 				// valid dataset
-				"clientId" => 'some-client-id',
-				"clientSecret" => 'some-client-secret',
-				"oauthInstanceUrl" => 'http://some.url',
+				"config" => [
+					"clientId" => 'some-client-id',
+					"clientSecret" => 'some-client-secret',
+					"oauthInstanceUrl" => 'http://some.url',
+					"nc_oauth_client_id" => 'nc-client',
+					"authentication_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					"fresh_project_folder_setup" => false,
+				],
 				"adminConfigStatus" => true,
 			],
 			[
 				// dataset with empty client secret
-				"clientId" => 'some-client-id',
-				"clientSecret" => '',
-				"oauthInstanceUrl" => 'http://some.url',
+				"config" => [
+					"clientId" => 'some-client-id',
+					"clientSecret" => '',
+					"oauthInstanceUrl" => 'http://some.url',
+				],
 				"adminConfigStatus" => false,
 			],
 			[
 				// dataset with invalid oauth instance url
-				"clientId" => 'some-client-id',
-				"clientSecret" => 'some-secret',
-				"oauthInstanceUrl" => 'http:/',
+				"config" => [
+					"clientId" => 'some-client-id',
+					"clientSecret" => 'some-secret',
+					"oauthInstanceUrl" => 'http:/',
+				],
 				"adminConfigStatus" => false,
 			],
 		];
@@ -75,14 +85,13 @@ class PersonalTest extends TestCase {
 	/**
 	 * @dataProvider dataTestGetForm
 	 *
-	 * @param string $clientId
-	 * @param string $clientSecret
-	 * @param string $oauthInstanceUrl
+	 * @param array $config
 	 * @param bool $adminConfigStatus
 	 * @return void
 	 */
 	public function testGetForm(
-		string $clientId, string $clientSecret, string $oauthInstanceUrl, bool $adminConfigStatus
+		array $config,
+		bool $adminConfigStatus,
 	) {
 		$this->config
 			->method('getUserValue')
@@ -99,29 +108,16 @@ class PersonalTest extends TestCase {
 			);
 		$this->config
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'default_enable_unified_search'],
-				['integration_openproject', 'default_enable_navigation'],
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_instance_url'],
-			)
-			->willReturnOnConsecutiveCalls(
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'0', '0',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				$clientId,
-				$clientSecret,
-				$oauthInstanceUrl,
-				$clientId,
-				$oauthInstanceUrl,
-			);
-
-
+			->willReturnMap([
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_instance_url', '', $config['oauthInstanceUrl']],
+				[Application::APP_ID, 'openproject_client_id', '', $config['clientId']],
+				[Application::APP_ID, 'openproject_client_secret', '', $config['clientSecret']],
+				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
+				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
+				[Application::APP_ID, 'default_enable_unified_search', '0', '0'],
+				[Application::APP_ID, 'default_enable_navigation', '0', '0'],
+			]);
 
 		$this->initialState
 			->method('provideInitialState')
@@ -165,27 +161,16 @@ class PersonalTest extends TestCase {
 			);
 		$this->config
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'default_enable_unified_search'],
-				['integration_openproject', 'default_enable_navigation'],
-				['integration_openproject', 'authorization_method'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_instance_url'],
-			)
-			->willReturnOnConsecutiveCalls(
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'1', '1',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				"some-client-id",
-				"some-client-secret",
-				"http://localhost",
-				"some-client-id",
-				"http://localhost",
-			);
+			->willReturnMap([
+				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'openproject_instance_url', '', 'http://some.url'],
+				[Application::APP_ID, 'openproject_client_id', '', 'op-client'],
+				[Application::APP_ID, 'openproject_client_secret', '', 'op-secret'],
+				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
+				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
+				[Application::APP_ID, 'default_enable_unified_search', '0', '1'],
+				[Application::APP_ID, 'default_enable_navigation', '0', '1'],
+			]);
 		$this->initialState
 			->method('provideInitialState')
 			->withConsecutive(
