@@ -51,10 +51,12 @@
 						type="radio">
 						{{ messages.nextcloudHubProvider }}
 					</NcCheckboxRadioSwitch>
-					<ErrorLabel
-						v-if="!hasEnabledSupportedOIDCApp"
-						:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`"
-						:disabled="disableNCHubUnsupportedHint" />
+					<div class="error-container">
+						<ErrorLabel
+							v-if="!hasEnabledSupportedOIDCApp"
+							:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`"
+							:disabled="disableNCHubUnsupportedHint" />
+					</div>
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
 						:disabled="!hasEnabledSupportedUserOidcApp"
@@ -1507,10 +1509,6 @@ export default {
 			.radio-check {
 				font-weight: 500;
 			}
-			.oidc-app-check-description {
-				margin-left: 2.4rem;
-				font-size: 14px;
-			}
 		}
 	}
 	.authorization-settings {
@@ -1528,6 +1526,10 @@ export default {
 		.description {
 			margin-top: 0.1rem;
 		}
+	}
+	.error-container {
+		margin-left: 2.4rem;
+		font-size: 14px;
 	}
 }
 
