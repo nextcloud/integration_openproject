@@ -27,17 +27,11 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported" />
+				:has-error="!hasEnabledSupportedUserOidcApp" />
 			<ErrorNote
-				v-if="!isOIDCAppInstalledAndEnabled"
-				:error-title="messagesFmt.appNotInstalled('user_oidc')"
+				v-if="!hasEnabledSupportedUserOidcApp"
+				:error-title="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedUserOidcVersion)}`"
 				:error-message="messages.appRequiredForOIDCMethod"
-				:error-link="appLinks.user_oidc.installLink"
-				:error-link-label="messages.downloadAndEnableApp" />
-			<ErrorNote
-				v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported"
-				:error-title="messagesFmt.appNotSupported('user_oidc')"
-				:error-message="messagesFmt.minimumVersionRequired(getUserOidcMinimumVersion)"
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.downloadAndEnableApp" />
 			<div class="authorization-settings--content">
@@ -52,7 +46,7 @@
 					</p>
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
-						:disabled="!isOIDCAppSupported || !hasEnabledSupportedOIDCApp"
+						:disabled="!hasEnabledSupportedUserOidcApp || !hasEnabledSupportedOIDCApp"
 						:value="SSO_PROVIDER_TYPE.nextcloudHub"
 						type="radio">
 						{{ messages.nextcloudHubProvider }}
@@ -63,7 +57,7 @@
 						:disabled="disableNCHubUnsupportedHint" />
 					<NcCheckboxRadioSwitch
 						:checked.sync="authorizationSetting.SSOProviderType"
-						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+						:disabled="!hasEnabledSupportedUserOidcApp"
 						:value="SSO_PROVIDER_TYPE.external"
 						type="radio">
 						{{ messages.externalOIDCProvider }}
@@ -80,7 +74,7 @@
 					</p>
 					<NcSelect
 						input-id="provider-search-input"
-						:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+						:disabled="!hasEnabledSupportedUserOidcApp"
 						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 						:options="registeredOidcProviders"
 						:value="getCurrentSelectedOIDCProvider"
@@ -122,7 +116,7 @@
 							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
 							class="py-1"
 							is-required
-							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+							:disabled="!hasEnabledSupportedUserOidcApp"
 							:place-holder="messages.opClientId"
 							:label="messages.opClientId"
 							:hint-text="messages.opClientIdHintText" />
@@ -131,7 +125,7 @@
 			</div>
 			<div class="form-actions">
 				<NcButton v-if="isAuthorizationSettingsInViewMode"
-					:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+					:disabled="!hasEnabledSupportedUserOidcApp"
 					data-test-id="reset-auth-settings-btn"
 					@click="setAuthorizationSettingInEditMode">
 					<template #icon>
@@ -793,11 +787,11 @@ export default {
 		getSSOProviderType() {
 			return this.authorizationSetting.SSOProviderType
 		},
-		isOIDCAppInstalledAndEnabled() {
-			return this.state.user_oidc_enabled
+		hasEnabledSupportedUserOidcApp() {
+			return this.state.apps.user_oidc.enabled && this.state.apps.user_oidc.supported
 		},
-		isOIDCAppSupported() {
-			return this.state.user_oidc_supported
+		getMinSupportedUserOidcVersion() {
+			return this.state.apps.user_oidc.minimum_version
 		},
 		hasEnabledSupportedOIDCApp() {
 			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
