@@ -141,6 +141,11 @@ const appState = {
 			supported: true,
 			minimum_version: '1.4.0',
 		},
+		user_oidc: {
+			enabled: true,
+			supported: true,
+			minimum_version: '2.0.0',
+		},
 	},
 }
 
@@ -579,6 +584,7 @@ describe('AdminSettings.vue', () => {
 				targeted_audience_client_id: null,
 				sso_provider_type: 'nextcloud_hub',
 			},
+			...appState,
 		}
 
 		describe('form complete: view mode', () => {
@@ -614,7 +620,7 @@ describe('AdminSettings.vue', () => {
 						authorization_settings: settings,
 					}
 					wrapper = getWrapper({
-						state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true },
+						state: { ...state, ...authSettings },
 						form: {
 							serverHost: { complete: true },
 							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
@@ -642,7 +648,18 @@ describe('AdminSettings.vue', () => {
 			describe('unsupported user_oidc app enabled', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({
-						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true, user_oidc_supported: false },
+						state: {
+							...state,
+							...authorizationSettingsState,
+							apps: {
+								...appState.apps,
+								user_oidc: {
+									enabled: true,
+									supported: false,
+									minimum_version: appState.apps.user_oidc.minimum_version,
+								},
+							},
+						},
 						form: {
 							serverHost: { complete: true },
 							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
@@ -665,8 +682,8 @@ describe('AdminSettings.vue', () => {
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
-					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
+					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
@@ -674,7 +691,18 @@ describe('AdminSettings.vue', () => {
 			describe('supported user_oidc app disabled', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({
-						state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false, user_oidc_supported: true },
+						state: {
+							...state,
+							...authorizationSettingsState,
+							apps: {
+								...appState.apps,
+								user_oidc: {
+									enabled: false,
+									supported: true,
+									minimum_version: appState.apps.user_oidc.minimum_version,
+								},
+							},
+						},
 						form: {
 							serverHost: { complete: true },
 							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
@@ -697,7 +725,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
 					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
@@ -716,8 +744,6 @@ describe('AdminSettings.vue', () => {
 							state: {
 								...state,
 								...authSettings,
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
 							},
 							form: {
 								serverHost: { complete: true },
@@ -756,8 +782,6 @@ describe('AdminSettings.vue', () => {
 							state: {
 								...state,
 								...authSettings,
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
 							},
 							form: {
 								serverHost: { complete: true },
@@ -800,7 +824,10 @@ describe('AdminSettings.vue', () => {
 					authorization_settings: settings,
 				}
 				wrapper = getWrapper({
-					state: { ...state, ...authSettings, user_oidc_enabled: true, user_oidc_supported: true },
+					state: {
+						...state,
+						...authSettings,
+					},
 					form: {
 						serverHost: {
 							complete: true,
@@ -827,6 +854,7 @@ describe('AdminSettings.vue', () => {
 				jest.clearAllMocks()
 				wrapper = getMountedWrapper({
 					state: {
+						...appState,
 						openproject_instance_url: 'http://openproject.com',
 						authorization_method: AUTH_METHOD.OIDC,
 						authorization_settings: {
@@ -835,8 +863,6 @@ describe('AdminSettings.vue', () => {
 							targeted_audience_client_id: 'some-target-aud-client-id',
 							token_exchange: false,
 						},
-						user_oidc_enabled: true,
-						user_oidc_supported: true,
 					},
 					form: {
 						serverHost: { complete: true },
@@ -875,6 +901,7 @@ describe('AdminSettings.vue', () => {
 						wrapper = getMountedWrapper({
 							registeredOidcProviders: ['keycloak'],
 							state: {
+								...appState,
 								openproject_instance_url: 'http://openproject.com',
 								authorization_method: AUTH_METHOD.OIDC,
 								authorization_settings: {
@@ -882,8 +909,6 @@ describe('AdminSettings.vue', () => {
 									targeted_audience_client_id: 'some-target-aud-client-id',
 									sso_provider_type: 'external',
 								},
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
 							},
 							form: {
 								serverHost: { complete: true },
@@ -926,6 +951,7 @@ describe('AdminSettings.vue', () => {
 						wrapper = getMountedWrapper({
 							registeredOidcProviders: ['keycloak'],
 							state: {
+								...appState,
 								openproject_instance_url: 'http://openproject.com',
 								authorization_method: AUTH_METHOD.OIDC,
 								authorization_settings: {
@@ -934,8 +960,6 @@ describe('AdminSettings.vue', () => {
 									sso_provider_type: 'external',
 									token_exchange: true,
 								},
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
 							},
 							form: {
 								serverHost: { complete: true },
@@ -1018,9 +1042,8 @@ describe('AdminSettings.vue', () => {
 								targeted_audience_client_id: 'some-target-aud-client-id',
 								sso_provider_type: 'nextcloud_hub',
 							},
-							user_oidc_enabled: true,
-							user_oidc_supported: true,
 							apps: {
+								...appState.apps,
 								oidc: {
 									enabled: false,
 									supported: false,
@@ -1062,7 +1085,10 @@ describe('AdminSettings.vue', () => {
 			describe('Supported user_oidc app enabled', () => {
 				beforeEach(async () => {
 					wrapper = getWrapper({
-						state: { ...state, user_oidc_enabled: true, user_oidc_supported: true },
+						state: {
+							...state,
+							...appState,
+						},
 						form: {
 							serverHost: { complete: true },
 							authenticationMethod: { complete: true, value: AUTH_METHOD.OIDC },
@@ -1098,6 +1124,7 @@ describe('AdminSettings.vue', () => {
 				it('should disable "save" button for empty "targeted_audience_client_id"', () => {
 					const wrapper = getWrapper({
 						state: {
+							...appState,
 							openproject_instance_url: 'http://openproject.com',
 							authorization_method: AUTH_METHOD.OIDC,
 							authorization_settings: {
@@ -1117,14 +1144,13 @@ describe('AdminSettings.vue', () => {
 				describe('external SSO provider', () => {
 					const wrapper = getWrapper({
 						state: {
+							...appState,
 							openproject_instance_url: 'http://openproject.com',
 							authorization_method: AUTH_METHOD.OIDC,
 							authorization_settings: {
 								oidc_provider: '',
 								targeted_audience_client_id: '',
 							},
-							user_oidc_enabled: true,
-							user_oidc_supported: true,
 						},
 						authorizationSetting: {
 							SSOProviderType: 'external',
@@ -1156,14 +1182,13 @@ describe('AdminSettings.vue', () => {
 						const wrapper = getMountedWrapper({
 							registeredOidcProviders: ['keycloak'],
 							state: {
+								...appState,
 								openproject_instance_url: 'http://openproject.com',
 								authorization_method: AUTH_METHOD.OIDC,
 								authorization_settings: {
 									oidc_provider: '',
 									targeted_audience_client_id: '',
 								},
-								user_oidc_enabled: true,
-								user_oidc_supported: true,
 							},
 							authorizationSetting: {
 								SSOProviderType: 'external',
@@ -1188,14 +1213,13 @@ describe('AdminSettings.vue', () => {
 							wrapper = getMountedWrapper({
 								registeredOidcProviders: ['keycloak'],
 								state: {
+									...appState,
 									openproject_instance_url: 'http://openproject.com',
 									authorization_method: AUTH_METHOD.OIDC,
 									authorization_settings: {
 										oidc_provider: '',
 										targeted_audience_client_id: '',
 									},
-									user_oidc_enabled: true,
-									user_oidc_supported: true,
 								},
 								authorizationSetting: {
 									SSOProviderType: 'external',
@@ -1236,8 +1260,7 @@ describe('AdminSettings.vue', () => {
 							wrapper = getMountedWrapper({
 								state: {
 									...state,
-									user_oidc_enabled: true,
-									user_oidc_supported: true,
+									...appState,
 								},
 								form: {
 									serverHost: { complete: true },
@@ -1288,8 +1311,7 @@ describe('AdminSettings.vue', () => {
 								registeredOidcProviders: ['keycloak'],
 								state: {
 									...state,
-									user_oidc_enabled: true,
-									user_oidc_supported: true,
+									...appState,
 									authorization_settings: {},
 								},
 							 })
@@ -1352,8 +1374,14 @@ describe('AdminSettings.vue', () => {
 								oidc_provider: '',
 								targeted_audience_client_id: '',
 							},
-							user_oidc_enabled: false,
-							user_oidc_supported: true,
+							apps: {
+								...appState.apps,
+								user_oidc: {
+									enabled: false,
+									supported: true,
+									minimum_version: appState.apps.user_oidc.minimum_version,
+								},
+							},
 						},
 						form: {
 							serverHost: { complete: true },
@@ -1369,7 +1397,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
 					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
@@ -1395,8 +1423,14 @@ describe('AdminSettings.vue', () => {
 								oidc_provider: '',
 								targeted_audience_client_id: '',
 							},
-							user_oidc_enabled: true,
-							user_oidc_supported: false,
+							apps: {
+								...appState.apps,
+								user_oidc: {
+									enabled: true,
+									supported: false,
+									minimum_version: appState.apps.user_oidc.minimum_version,
+								},
+							},
 						},
 						form: {
 							serverHost: { complete: true },
@@ -1412,8 +1446,8 @@ describe('AdminSettings.vue', () => {
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotSupported())
-					expect(errorNote.attributes().errormessage).toBe(messagesFmt.minimumVersionRequired())
+					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 				it('should disable form elements', () => {
@@ -1438,9 +1472,8 @@ describe('AdminSettings.vue', () => {
 								oidc_provider: '',
 								targeted_audience_client_id: '',
 							},
-							user_oidc_enabled: true,
-							user_oidc_supported: true,
 							apps: {
+								...appState.apps,
 								oidc: {
 									enabled: false,
 									supported: false,
