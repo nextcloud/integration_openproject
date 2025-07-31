@@ -27,10 +27,8 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     errorlink="http://localhost/settings/apps/files/user_oidc"
     errorlinklabel="Download and enable it"
     errormessage="This app is required to use the OIDC authentication method"
-    errortitle="The "{app}" app is not installed"
+    errortitle="The "{app}" app is not enabled or supported. Requires app version "{minimumAppVersion}" or later"
   />
-   
-  <!---->
    
   <div
     class="authorization-settings--content"
@@ -87,8 +85,6 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     iscomplete="true"
     title="Authentication settings"
   />
-   
-  <!---->
    
   <!---->
    
@@ -149,8 +145,6 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
    
   <!---->
    
-  <!---->
-   
   <div
     class="authorization-settings--content"
   >
@@ -206,8 +200,6 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     iscomplete="true"
     title="Authentication settings"
   />
-   
-  <!---->
    
   <!---->
    
@@ -276,13 +268,11 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     title="Authentication settings"
   />
    
-  <!---->
-   
   <errornote-stub
     errorlink="http://localhost/settings/apps/files/user_oidc"
     errorlinklabel="Download and enable it"
-    errormessage="Requires app version "{minimumAppVersion}" or later"
-    errortitle="The "{app}" app is not supported"
+    errormessage="This app is required to use the OIDC authentication method"
+    errortitle="The "{app}" app is not enabled or supported. Requires app version "{minimumAppVersion}" or later"
   />
    
   <div
@@ -340,8 +330,6 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     iscomplete="true"
     title="Authentication settings"
   />
-   
-  <!---->
    
   <!---->
    
@@ -408,8 +396,6 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     iscomplete="true"
     title="Authentication settings"
   />
-   
-  <!---->
    
   <!---->
    
