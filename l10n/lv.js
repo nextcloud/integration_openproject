@@ -16,6 +16,7 @@ OC.L10N.register(
     "No OpenProject account connected" : "Nav sasaistītu OpenProject kontu",
     "Start typing to search" : "Sākt rakstīt, lai meklētu",
     "Status is not set to one of the allowed values." : "Stāvoklis nav iestatīts ar vienu no atļautajām vērtībām.",
+    "Select project status" : "Atlasīt projekta stāvokli",
     "Description" : "Apraksts",
     "Download and enable it" : "Lejupielādēt un iespējot to",
     "Connected accounts" : "Sasaistītie konti",
