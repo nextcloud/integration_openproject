@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Hitilafu katika kupata token ya ufikiaji ya OAuth",
     "Error during OAuth exchanges" : "Hitilafu wakati wa kubadilishana OAuth",
     "Bad HTTP method" : "Njia mbaya ya HTTP ",
