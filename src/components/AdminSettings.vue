@@ -20,7 +20,8 @@
 			:auth-method="state.authorization_method"
 			:apps="state.apps"
 			:current-setting="currentSetting"
-			@formcomplete="markFormComplete" />
+			@formcomplete="markFormComplete"
+			@oidc-method-selected="setAuthorizationSettingInEditMode" />
 		<div v-if="isOidcMethod" class="authorization-settings">
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'Authentication settings')"
