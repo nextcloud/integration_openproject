@@ -7,7 +7,7 @@ import { translate as t } from '@nextcloud/l10n'
 import APP_ID from './appID.js'
 
 export const messages = {
-	appRequiredForOIDCMethod: t(APP_ID, 'This app is required to use the OIDC authentication method'),
+	installLatestVersionNow: t(APP_ID, 'Install latest version now'),
 	downloadAndEnableApp: t(APP_ID, 'Download and enable it'),
 	featureNotAvailable: t(APP_ID, 'This feature is not available for this user account'),
 	opConnectionUnauthorized: t(APP_ID, 'Unauthorized to connect to OpenProject'),
@@ -22,6 +22,6 @@ export const messages = {
 }
 
 export const messagesFmt = {
-	appNotEnabledOrUnsupported: (app, version) => t(APP_ID, 'This feature requires version {version} (or higher) of {app name}. Please install or update the app.', { app, version }),
+	appNotEnabledOrUnsupported: (app, version) => t(APP_ID, 'This feature requires version {version} (or higher) of {app}. Please install or update the app.', { app, version }),
 	configureOIDCProviders: (settingsLink) => t(APP_ID, 'You can configure OIDC providers in the {settingsLink}', { settingsLink }, null, { escape: false, sanitize: false }),
 }

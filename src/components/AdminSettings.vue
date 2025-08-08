@@ -31,9 +31,8 @@
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
 				:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
-				:error-message="messages.appRequiredForOIDCMethod"
 				:error-link="appLinks.user_oidc.installLink"
-				:error-link-label="messages.downloadAndEnableApp" />
+				:error-link-label="messages.installLatestVersionNow" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
