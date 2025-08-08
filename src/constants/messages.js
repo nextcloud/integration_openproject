@@ -22,9 +22,6 @@ export const messages = {
 }
 
 export const messagesFmt = {
-	appNotInstalled: (app) => t(APP_ID, 'The "{app}" app is not installed', { app }),
-	appNotSupported: (app) => t(APP_ID, 'The "{app}" app is not supported', { app }),
-	appNotEnabledOrSupported: (app) => t(APP_ID, 'The "{app}" app is not enabled or supported', { app }),
-	minimumVersionRequired: (minimumAppVersion) => t(APP_ID, 'Requires app version "{minimumAppVersion}" or later', { minimumAppVersion }),
+	appNotEnabledOrUnsupported: (app, version) => t(APP_ID, 'This feature requires version {version} (or higher) of {app name}. Please install or update the app.', { app, version }),
 	configureOIDCProviders: (settingsLink) => t(APP_ID, 'You can configure OIDC providers in the {settingsLink}', { settingsLink }, null, { escape: false, sanitize: false }),
 }

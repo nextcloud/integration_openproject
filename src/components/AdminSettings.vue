@@ -30,7 +30,7 @@
 				:has-error="!hasEnabledSupportedUserOidcApp" />
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
-				:error-title="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedUserOidcVersion)}`"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
 				:error-message="messages.appRequiredForOIDCMethod"
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.downloadAndEnableApp" />
@@ -54,7 +54,7 @@
 					<div class="error-container">
 						<ErrorLabel
 							v-if="!hasEnabledSupportedOIDCApp"
-							:error="`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedOIDCVersion)}`"
+							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOIDCVersion)"
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
