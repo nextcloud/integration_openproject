@@ -22,7 +22,7 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -61,7 +61,7 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app."></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -139,7 +139,7 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -178,7 +178,7 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app."></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -334,7 +334,7 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -371,7 +371,7 @@ exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc
           <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <errorlabel-stub error="The &quot;{app}&quot; app is not enabled or supported. Requires app version &quot;{minimumAppVersion}&quot; or later" disabled="true"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublish
 import AdminSettings from '../../../src/components/AdminSettings.vue'
 import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
-import { messages, messagesFmt } from '../../../src/constants/messages.js'
+import { messagesFmt } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -682,8 +682,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
-					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
@@ -725,8 +724,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
-					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
@@ -1073,7 +1071,7 @@ describe('AdminSettings.vue', () => {
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('nextcloud_hub')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
-					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
+					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe(undefined)
 				})
 			})
@@ -1397,8 +1395,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
-					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 				it('should disable form elements', () => {
@@ -1446,8 +1443,7 @@ describe('AdminSettings.vue', () => {
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(`${messagesFmt.appNotEnabledOrSupported()}. ${messagesFmt.minimumVersionRequired()}`)
-					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 				it('should disable form elements', () => {
@@ -1496,7 +1492,7 @@ describe('AdminSettings.vue', () => {
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('external')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
-					expect(errorLabel.attributes().error).toBe(`${messagesFmt.appNotEnabledOrSupported('oidc')}. ${messagesFmt.minimumVersionRequired('oidc')}`)
+					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe('true')
 				})
 			})
