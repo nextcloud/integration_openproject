@@ -19,11 +19,10 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <p class="oidc-app-check-description">Please install the {htmlLink} app to use OIDC authentication method.</p>
-          <!---->
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -59,11 +58,10 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <p class="oidc-app-check-description">Please install the {htmlLink} app to use OIDC authentication method.</p>
-          <!---->
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app."></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -99,10 +97,9 @@ exports[`Component: FormAuthMethod completed form edit mode should show form fie
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
           <!---->
         </div>
       </div>
@@ -139,11 +136,10 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
-          <errorlabel-stub error="The &quot;{app}&quot; app is not supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -179,11 +175,10 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
-          <errorlabel-stub error="The &quot;{app}&quot; app is not supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app."></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -255,10 +250,9 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
           <!---->
         </div>
       </div>
@@ -293,10 +287,9 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
           <!---->
         </div>
       </div>
@@ -319,7 +312,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: othe
 </div>"
 `;
 
-exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc app should show error message and disabled sso button 1`] = `
+exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc app should show disabled error message and disabled sso button 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
   <div class="auth-method">
@@ -338,11 +331,10 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <p class="oidc-app-check-description">Please install the {htmlLink} app to use OIDC authentication method.</p>
-          <!---->
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
@@ -357,7 +349,7 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
 </div>"
 `;
 
-exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc app should show error message and disabled sso button 1`] = `
+exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc app should show disabled error message and disabled sso button 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
   <div class="auth-method">
@@ -376,11 +368,10 @@ exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc
           Single-Sign-On through OpenID Connect Identity Provider
         </nccheckboxradioswitch-stub>
         <div class="info-container">
-          <p class="oidc-app-check-description">
+          <p>
             Requires OpenProject version 16.0 (or higher) and an active Corporate plan.
           </p>
-          <!---->
-          <errorlabel-stub error="The &quot;{app}&quot; app is not supported. Requires app version &quot;{minimumAppVersion}&quot; or later"></errorlabel-stub>
+          <errorlabel-stub error="This feature requires version {version} (or higher) of {app}. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
       </div>
     </div>
