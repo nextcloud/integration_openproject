@@ -37,6 +37,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IClientService;
 use OCP\IAvatarManager;
@@ -755,19 +756,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$this->createMock(IRemoteHostValidator::class),
 			$this->createMock(LoggerInterface::class));
 
-		$clientService = $this->getMockBuilder('\OCP\Http\Client\IClientService')->getMock();
+		$clientService = $this->getMockBuilder(IClientService::class)->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);
 
-		$avatarManagerMock = $this->getMockBuilder('\OCP\IAvatarManager')
+		$guestAvatarMock = $this->getMockBuilder(GuestAvatar::class)->disableOriginalConstructor()->getMock();
+
+		$avatarFileMock = $this->createMock(ISimpleFile::class);
+		$avatarFileMock->method('getContent')
+			->willReturn(\file_get_contents(__DIR__ . "/../fixtures/openproject-icon.jpg"));
+
+		$guestAvatarMock->method('getFile')
+			->willReturn($avatarFileMock);
+
+		$avatarManagerMock = $this->getMockBuilder(IAvatarManager::class)
 			->getMock();
 		$avatarManagerMock
 			->method('getGuestAvatar')
-			->willReturn(
-				new GuestAvatar(
-					'test',
-					$this->createMock(LoggerInterface::class)
-				)
-			);
+			->willReturn($guestAvatarMock);
 		if ($storageMock === null) {
 			$storageMock = $this->createMock(IRootFolder::class);
 		}
