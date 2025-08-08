@@ -45,7 +45,7 @@
 						<ErrorLabel
 							v-if="!hasEnabledSupportedUserOidcApp"
 							:disabled="disableErrorLabel"
-							:error="`${messagesFmt.appNotEnabledOrSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinSupportedUserOidcVersion)}`" />
+							:error="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)" />
 					</div>
 				</div>
 			</div>
