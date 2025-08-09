@@ -17,6 +17,7 @@ OC.L10N.register(
     "Copied!" : "Copied!",
     "Details" : "Maelezo ya kina",
     "Start typing to search" : "Anza kuandika ili kutafuta",
+    "Assignee" : "Assignee",
     "Select a user or group" : "Select a user or group",
     "Description" : "Maelezo",
     "Create" : "Tengeneza",
