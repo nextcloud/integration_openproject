@@ -28,7 +28,6 @@ use OCP\IRequest;
 
 class OpenProjectAPIController extends OCSController {
 
-	private string $accessToken;
 	private string $openprojectUrl;
 
 	public function __construct(string $appName,
@@ -38,20 +37,12 @@ class OpenProjectAPIController extends OCSController {
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
-		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 	}
 
 	private function validatePreRequestConditions(): array {
 		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH && $this->accessToken === '') {
-			return [
-				'status' => false,
-				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
-			];
-		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			!$this->openprojectAPIService->getOIDCToken()
-		) {
+		if (!$this->openprojectAPIService->getAccessToken($this->userId)) {
 			return [
 				'status' => false,
 				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
