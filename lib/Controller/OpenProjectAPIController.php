@@ -42,7 +42,8 @@ class OpenProjectAPIController extends OCSController {
 
 	private function validatePreRequestConditions(): array {
 		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		if (!$this->openprojectAPIService->getAccessToken($this->userId)) {
+		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		if (!$token) {
 			return [
 				'status' => false,
 				'result' => new DataResponse('', Http::STATUS_UNAUTHORIZED)
