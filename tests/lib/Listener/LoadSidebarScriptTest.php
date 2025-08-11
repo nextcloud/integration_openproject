@@ -7,11 +7,11 @@
 
 namespace OCA\OpenProject\Listener;
 
+use OCA\Files\Event\LoadSidebar;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\EventDispatcher\Event;
 use OCP\IConfig;
 use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,6 +21,7 @@ class LoadSidebarScriptTest extends TestCase {
 	private LoadSidebarScript $listener;
 	private MockObject|IConfig $config;
 	private MockObject|IInitialState $initialState;
+	private MockObject|IAppManager $appManager;
 	private MockObject|OpenProjectAPIService $openProjectService;
 
 	protected function setUp(): void {
@@ -28,13 +29,13 @@ class LoadSidebarScriptTest extends TestCase {
 		$this->config = $this->createMock(IConfig::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$userSession = $this->createMock(IUserSession::class);
-		$appManager = $this->createMock(IAppManager::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->openProjectService = $this->createMock(OpenProjectAPIService::class);
 		$this->listener = new LoadSidebarScript(
 			$this->initialState,
 			$this->config,
 			$userSession,
-			$appManager,
+			$this->appManager,
 			$this->openProjectService,
 			'testUser'
 		);
@@ -47,19 +48,15 @@ class LoadSidebarScriptTest extends TestCase {
 		return [
 			[
 				'authMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'accessToken' => '',
+				'openprojectUrl' => 'http://local.test',
 			],
 			[
 				'authMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-				'accessToken' => 'access-token',
-			],
-			[
-				'authMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-				'accessToken' => '',
+				'openprojectUrl' => 'http://local.test',
 			],
 			[
 				'authMethod' => '',
-				'accessToken' => '',
+				'openprojectUrl' => '',
 			],
 		];
 	}
@@ -68,28 +65,37 @@ class LoadSidebarScriptTest extends TestCase {
 	 * @dataProvider dataTestHandle
 	 *
 	 * @param string $authMethod
-	 * @param string $accessToken
+	 * @param string $openprojectUrl
 	 *
 	 * @return void
 	 */
-	public function testHandle(string $authMethod, string $accessToken) {
+	public function testHandle(string $authMethod, string $openprojectUrl) {
 		$this->config
 			->method('getAppValue')
 			->willReturnMap([
 				[Application::APP_ID, 'authorization_method', '', $authMethod],
+				[Application::APP_ID, 'openproject_instance_url', '', $openprojectUrl],
 			]);
-		$this->openProjectService->method('getOIDCToken')
-			->willReturn($accessToken);
+		$this->appManager
+			->method('isEnabledForUser')
+			->willReturn(true);
 
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC && $accessToken) {
-			$this->openProjectService->expects($this->once())
-			->method('setUserInfoForOidcBasedAuth')
-			->with('testUser');
-		} else {
-			$this->openProjectService->expects($this->never())
-				->method('setUserInfoForOidcBasedAuth');
-		}
+		$initStateCalls = [];
+		$this->initialState
+			->method('provideInitialState')
+			->willReturnCallback(function ($state, $config) use (&$initStateCalls) {
+				$initStateCalls[] = [$state, $config];
+			});
 
-		$this->listener->handle($this->createMock(Event::class));
+		$expectedCalls = [
+			['authorization_method', $authMethod],
+			['openproject-url', $openprojectUrl],
+			['admin_config_ok', false],
+			['oauth-connection-result', null],
+			['oauth-connection-error-message', null],
+		];
+
+		$this->listener->handle($this->createMock(LoadSidebar::class));
+		$this->assertEquals($expectedCalls, $initStateCalls);
 	}
 }
