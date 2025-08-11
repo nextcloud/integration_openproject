@@ -72,6 +72,11 @@ class OpenProjectAPIService {
 	public const MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION = '1.0.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
+	public const OP_ENDPOINTS = [
+		'token' => '/oauth/token',
+		'profile' => '/users/me',
+	];
+
 	/**
 	 * @var string
 	 */
@@ -470,14 +475,7 @@ class OpenProjectAPIService {
 		array $params = [],
 		string $method = 'GET'
 	): array {
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCToken();
-		} else {
-			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		}
+		$accessToken = $this->getAccessToken($userId);
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
 			return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
@@ -491,39 +489,11 @@ class OpenProjectAPIService {
 			}
 			return json_decode($response->getBody(), true);
 		} catch (ServerException | ClientException $e) {
+			$message = $e->getMessage();
 			$response = $e->getResponse();
 			$body = (string) $response->getBody();
-			// refresh token if it's invalid and we are using oauth
-			// response can be : 'OAuth2 token is expired!', 'Invalid token!' or 'Not authorized'
-			// This condition applies exclusively to the OAuth2 authorization method and not to OIDC authorization,
-			// as token refreshing for OIDC is managed by the 'user_oidc' application.
-			if ($response->getStatusCode() === 401 &&
-				$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OAUTH
-			) {
-				$this->logger->info('Trying to REFRESH the access token', ['app' => $this->appName]);
-				// try to refresh the token
-				$result = $this->requestOAuthAccessToken($openprojectUrl, [
-					'client_id' => $clientID,
-					'client_secret' => $clientSecret,
-					'grant_type' => 'refresh_token',
-					'refresh_token' => $refreshToken,
-				], 'POST');
-				if (isset($result['refresh_token'])) {
-					$refreshToken = $result['refresh_token'];
-					$this->config->setUserValue(
-						$userId, Application::APP_ID, 'refresh_token', $refreshToken
-					);
-				}
-				if (isset($result['access_token'])) {
-					$accessToken = $result['access_token'];
-					$this->config->setUserValue($userId, Application::APP_ID, 'token', $accessToken);
-					// retry the request with new access token
-					return $this->request($userId, $endPoint, $params, $method);
-				}
-			}
-			// try to get the error in the response
-			$this->logger->warning('OpenProject API error : '.$e->getMessage(), ['app' => $this->appName]);
 			$decodedBody = json_decode($body, true);
+			// try to get the error in the response
 			if ($decodedBody && isset($decodedBody['message'])) {
 				if (gettype($decodedBody['message']) === 'array') {
 					// the OpenProject API sometimes responds with an array as message
@@ -534,15 +504,15 @@ class OpenProjectAPIService {
 				} else {
 					$message = $decodedBody['message'];
 				}
-				$this->logger->warning('OpenProject API error : '. $message, ['app' => $this->appName]);
 			}
+			$this->logger->error('OpenProject API error : '. $message, ['app' => $this->appName]);
 			return [
-				'error' => $response->getBody(),
-				'message' => $e->getMessage(),
+				'error' => $body,
+				'message' => $message,
 				'statusCode' => $response->getStatusCode(),
 			];
 		} catch (ConnectException $e) {
-			$this->logger->warning('OpenProject connection error : '.$e->getMessage(), ['app' => $this->appName]);
+			$this->logger->error('OpenProject connection error : '.$e->getMessage(), ['app' => $this->appName]);
 			return [
 				'error' => $e->getMessage(),
 				'statusCode' => 404,
@@ -557,14 +527,15 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @param string $userId
 	 * @param string $url
 	 * @param array<mixed> $params passed to `http_build_query` for GET requests, else send as body
 	 * @param string $method
 	 * @return array<mixed>
 	 */
-	public function requestOAuthAccessToken(string $url, array $params = [], string $method = 'GET'): array {
+	public function requestOAuthAccessToken(string $userId, string $url, array $params = [], string $method = 'POST'): array {
 		try {
-			$url = $url . '/oauth/token';
+			$url = $url . self::OP_ENDPOINTS['token'];
 			$options = [
 				'headers' => [
 					'User-Agent' => 'Nextcloud OpenProject integration',
@@ -584,10 +555,6 @@ class OpenProjectAPIService {
 				$response = $this->client->get($url, $options);
 			} elseif ($method === 'POST') {
 				$response = $this->client->post($url, $options);
-			} elseif ($method === 'PUT') {
-				$response = $this->client->put($url, $options);
-			} elseif ($method === 'DELETE') {
-				$response = $this->client->delete($url, $options);
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
@@ -596,9 +563,20 @@ class OpenProjectAPIService {
 
 			if ($respCode >= 400) {
 				return ['error' => $this->l10n->t('OAuth access token refused')];
-			} else {
-				return json_decode($body, true);
 			}
+
+			$resJson = json_decode($body, true);
+
+			if (isset($resJson['access_token'])) {
+				$this->config->setUserValue($userId, Application::APP_ID, 'token', $resJson['access_token']);
+				$expiresAt = $this->calculateTokenExpiresAt($resJson['created_at'], $resJson['expires_in']);
+				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
+			}
+			if (isset($resJson['refresh_token'])) {
+				$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
+			}
+
+			return $resJson;
 		} catch (Exception $e) {
 			$this->logger->warning('OpenProject OAuth error : '.$e->getMessage(), ['app' => $this->appName]);
 			return ['error' => $e->getMessage()];
@@ -1654,7 +1632,6 @@ class OpenProjectAPIService {
 		return $result;
 	}
 
-
 	/**
 	 * @return string|null
 	 */
@@ -1706,15 +1683,82 @@ class OpenProjectAPIService {
 				return null;
 			}
 		}
+
+		$this->config->setUserValue($userId, Application::APP_ID, 'token', $token->getAccessToken());
+		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $token->getExpiresInFromNow());
+
 		return $token->getAccessToken();
 	}
 
 	/**
+	 * @param int $createdAt
+	 * @param int $expiresIn
+	 *
+	 * @return int
+	 */
+	public function calculateTokenExpiresAt(int $createdAt, int $expiresIn): int {
+		$expiresAt = $createdAt + $expiresIn;
+		return $expiresAt - time();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isAccessTokenExpired(string $userId): bool {
+		$expiresAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at', 0);
+		return time() >= $expiresAt;
+	}
+
+	/**
 	 * @param string $userId
-	 * @return void
+	 *
+	 * @return string|null
+	 */
+	public function getAccessToken(string $userId): ?string {
+		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		if ($token && !$this->isAccessTokenExpired($userId)) {
+			return $token;
+		}
+
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
+		// For OAuth2 setup, only try to refresh the expired token.
+		// Token exchange needs to be initiated from the UI.
+		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $token) {
+			$this->logger->debug('Refreshing expired access token.', ['app' => $this->appName]);
+			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
+			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
+			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			$result = $this->requestOAuthAccessToken(
+				$userId,
+				$openprojectUrl,
+				[
+					'client_id' => $clientID,
+					'client_secret' => $clientSecret,
+					'grant_type' => 'refresh_token',
+					'refresh_token' => $refreshToken,
+				],
+			);
+			if (isset($result['error'])) {
+				$this->logger->error('Failed to refresh token: ' . $result['error'], ['app' => $this->appName]);
+				return null;
+			}
+			return $result['access_token'];
+		} else if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+			return $this->getOIDCToken();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param string $userId
+	 *
+	 * @return array<mixed>
+	 * @throws PreConditionNotMetException
 	 */
 	public function setUserInfoForOidcBasedAuth(string $userId): void {
-		$info = $this->request($userId, 'users/me');
+		$info = $this->request($userId, self::OP_ENDPOINTS['profile']);
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
