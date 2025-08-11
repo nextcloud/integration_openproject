@@ -1757,13 +1757,19 @@ class OpenProjectAPIService {
 	 * @return array<mixed>
 	 * @throws PreConditionNotMetException
 	 */
-	public function setUserInfoForOidcBasedAuth(string $userId): void {
+	public function initUserInfo(string $userId): array {
 		$info = $this->request($userId, self::OP_ENDPOINTS['profile']);
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
 			$this->config->setUserValue($userId, Application::APP_ID, 'user_name', $fullName);
+			return ['user_name' => $fullName];
 		}
+		if (!isset($info['error'])) {
+			$info['error'] = 'Failed to get user profile';
+		}
+		$this->logger->error($info['error'], ['app' => $this->appName]);
+		return $info;
 	}
 
 	public function getRegisteredOidcProviders(): array {

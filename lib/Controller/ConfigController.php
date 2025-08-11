@@ -184,7 +184,7 @@ class ConfigController extends Controller {
 
 		if (isset($values['token'])) {
 			if ($values['token']) {
-				$result = $this->storeUserInfo();
+				$result = $this->openprojectAPIService->initUserInfo($this->userId);
 			} else {
 				$this->clearUserInfo();
 				$result = [
@@ -573,13 +573,13 @@ class ConfigController extends Controller {
 				],
 			);
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
-				// get user info
-				// ToDo check response for errors
-				$this->storeUserInfo();
-				$this->config->setUserValue(
-					$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
-				);
-
+				// set user info
+				$userInfo = $this->openprojectAPIService->initUserInfo($this->userId);
+				if (isset($userInfo['user_name'])) {
+					$this->config->setUserValue(
+						$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
+					);
+				}
 				return new RedirectResponse($newUrl);
 			}
 			if (!isset($result['access_token'])) {
@@ -606,31 +606,6 @@ class ConfigController extends Controller {
 			$this->userId, Application::APP_ID, 'oauth_connection_error_message', $errorMessage
 		);
 		return new RedirectResponse($newUrl);
-	}
-
-	/**
-	 * @return array<mixed>
-	 * @throws PreConditionNotMetException
-	 */
-	private function storeUserInfo(): array {
-		$info = $this->openprojectAPIService->request($this->userId, 'users/me');
-		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
-			$fullName = $info['firstName'] . ' ' . $info['lastName'];
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $fullName);
-			return ['user_name' => $fullName];
-		} else {
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
-			if (isset($info['statusCode']) && $info['statusCode'] === 404) {
-				$info['error'] = 'Not found';
-			} else {
-				if (!isset($info['error'])) {
-					$info['error'] = 'Invalid token';
-				}
-			}
-			return $info;
-		}
 	}
 
 	/**

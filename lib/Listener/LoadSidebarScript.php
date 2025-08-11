@@ -100,7 +100,7 @@ class LoadSidebarScript implements IEventListener {
 				return;
 			}
 			// for 'oidc' the user info needs to be set (once token has been exchanged)
-			$this->openProjectAPIService->setUserInfoForOidcBasedAuth($this->userId);
+			$this->openProjectAPIService->initUserInfo($this->userId);
 		}
 		if (!($event instanceof LoadSidebar)) {
 			return;
