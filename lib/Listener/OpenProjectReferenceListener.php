@@ -40,6 +40,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		IInitialState $initialStateService,
 		IConfig $config,
 		OpenProjectAPIService $openProjectAPIService,
+		private ?string $userId,
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->config = $config;
@@ -51,7 +52,7 @@ class OpenProjectReferenceListener implements IEventListener {
 		// so this check is required
 		if (
 			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			!$this->openProjectAPIService->getOIDCToken()
+			!$this->config->getUserValue($this->userId, Application::APP_ID, 'token')
 		) {
 			return;
 		}

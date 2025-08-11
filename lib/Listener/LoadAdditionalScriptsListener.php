@@ -33,6 +33,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 	public function __construct(
 		IConfig $config,
 		OpenProjectAPIService $openProjectAPIService,
+		private ?string $userId,
 	) {
 		$this->config = $config;
 		$this->openProjectAPIService = $openProjectAPIService;
@@ -44,7 +45,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 		// so this check is required
 		if (
 			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
-			!$this->openProjectAPIService->getOIDCToken()
+			!$this->config->getUserValue($this->userId, Application::APP_ID, 'token')
 		) {
 			return;
 		}
