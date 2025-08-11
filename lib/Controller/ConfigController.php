@@ -600,7 +600,7 @@ class ConfigController extends Controller {
 			if (!$validClientSecret) {
 				$this->logger->error('invalid OAuth client secret', ['app' => $this->appName]);
 			}
-			$errorMessage = $this->l->t('Error while processing OAuth request');
+			$errorMessage = $this->l->t('Error during OAuth exchanges');
 		}
 		$this->config->setUserValue(
 			$this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
