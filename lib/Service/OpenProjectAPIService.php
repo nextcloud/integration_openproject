@@ -341,13 +341,7 @@ class OpenProjectAPIService {
 		string $openprojectUserName,
 		string $nextcloudUserId
 	): array {
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCToken();
-		} else {
-			$accessToken = $this->config->getUserValue($nextcloudUserId, Application::APP_ID, 'token');
-			$this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
-			$this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
-		}
+		$accessToken = $this->getAccessToken($nextcloudUserId);
 		$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
 		try {
 			$response = $this->rawRequest(
@@ -1398,12 +1392,8 @@ class OpenProjectAPIService {
 	 * @return array<mixed>|null
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
-		if ($this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === self::AUTH_METHOD_OIDC) {
-			$accessToken = $this->getOIDCToken();
-		} else {
-			$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
-		}
-		if ($accessToken) {
+		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		if ($token) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 			if (isset($searchResult['error'])) {
 				return null;
@@ -1674,6 +1664,13 @@ class OpenProjectAPIService {
 
 		$this->config->setUserValue($userId, Application::APP_ID, 'token', $token->getAccessToken());
 		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $token->getExpiresInFromNow());
+
+		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
+		$savedUsername = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		if (!$savedUserId || !$savedUsername) {
+			// get user info
+			$this->initUserInfo($userId);
+		}
 
 		return $token->getAccessToken();
 	}

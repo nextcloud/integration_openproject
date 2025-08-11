@@ -91,17 +91,6 @@ class LoadSidebarScript implements IEventListener {
 
 	public function handle(Event $event): void {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		// When user is non oidc based or there is some error when getting token for the targeted client
-		// then we need to hide the oidc based connection for the user
-		// so this check is required
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
-			$accessToken = $this->openProjectAPIService->getOIDCToken();
-			if (!$accessToken) {
-				return;
-			}
-			// for 'oidc' the user info needs to be set (once token has been exchanged)
-			$this->openProjectAPIService->initUserInfo($this->userId);
-		}
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}
