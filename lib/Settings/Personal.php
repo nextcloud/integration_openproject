@@ -53,7 +53,7 @@ class Personal implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
-		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		$token = $this->openProjectAPIService->getAccessToken($this->userId);
 		$userName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
 		// take the fallback value from the defaults
 		$searchEnabled = $this->config->getUserValue(
