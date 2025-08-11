@@ -563,8 +563,9 @@ class OpenProjectAPIService {
 
 			if (isset($resJson['access_token'])) {
 				$this->config->setUserValue($userId, Application::APP_ID, 'token', $resJson['access_token']);
-				$expiresAt = $this->calculateTokenExpiresAt($resJson['created_at'], $resJson['expires_in']);
+				$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
 				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
+				$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
 			}
 			if (isset($resJson['refresh_token'])) {
 				$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
@@ -1404,7 +1405,7 @@ class OpenProjectAPIService {
 	 * @return array<mixed>|null
 	 */
 	public function getWorkPackageInfo(string $userId, int $wpId): ?array {
-		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$token = $this->getAccessToken($userId);
 		if ($token) {
 			$searchResult = $this->searchWorkPackage($userId, null, null, false, $wpId);
 			if (isset($searchResult['error'])) {
@@ -1623,9 +1624,11 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @param string $userId
+	 *
 	 * @return string|null
 	 */
-	public function getOIDCToken(): ?string {
+	public function getOIDCToken(string $userId): ?string {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
 		if ($authorizationMethod !== SettingsService::AUTH_METHOD_OIDC) {
 			return null;
@@ -1650,8 +1653,6 @@ class OpenProjectAPIService {
 			$this->logger->error("Token event has not been caught by 'user_oidc'");
 			return null;
 		}
-		// token expiration info
-		$this->logger->debug('Obtained a token that expires in ' . $token->getExpiresInFromNow());
 
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
 		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
@@ -1674,8 +1675,12 @@ class OpenProjectAPIService {
 			}
 		}
 
+		// token expiration info
+		$tokenExpiresAt = $token->getCreatedAt() + $token->getExpiresIn();
+		$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $tokenExpiresAt));
+
 		$this->config->setUserValue($userId, Application::APP_ID, 'token', $token->getAccessToken());
-		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $token->getExpiresInFromNow());
+		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $tokenExpiresAt);
 
 		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
 		$savedUsername = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
@@ -1685,17 +1690,6 @@ class OpenProjectAPIService {
 		}
 
 		return $token->getAccessToken();
-	}
-
-	/**
-	 * @param int $createdAt
-	 * @param int $expiresIn
-	 *
-	 * @return int
-	 */
-	public function calculateTokenExpiresAt(int $createdAt, int $expiresIn): int {
-		$expiresAt = $createdAt + $expiresIn;
-		return $expiresAt - time();
 	}
 
 	/**
@@ -1717,11 +1711,15 @@ class OpenProjectAPIService {
 			return $token;
 		}
 
+		if ($token) {
+			$this->logger->debug('Token has expired.', ['app' => $this->appName]);
+			$this->logger->debug('Refreshing access token.', ['app' => $this->appName]);
+		}
+
 		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
 		// For OAuth2 setup, only try to refresh the expired token.
 		// Token exchange needs to be initiated from the UI.
 		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $token) {
-			$this->logger->debug('Refreshing expired access token.', ['app' => $this->appName]);
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
@@ -1741,8 +1739,8 @@ class OpenProjectAPIService {
 				return null;
 			}
 			return $result['access_token'];
-		} else if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
-			return $this->getOIDCToken();
+		} elseif ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+			return $this->getOIDCToken($userId);
 		}
 
 		return null;

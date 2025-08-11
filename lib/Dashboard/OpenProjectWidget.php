@@ -121,7 +121,7 @@ class OpenProjectWidget implements IWidget {
 			'admin_config_ok', OpenProjectAPIService::isAdminConfigOk($this->config)
 		);
 
-		$token = $this->config->getUserValue($this->user->getUID(), Application::APP_ID, 'token');
+		$token = $this->openProjectAPIService->getAccessToken($this->user->getUID());
 		$this->initialStateService->provideInitialState('user-has-oidc-token', boolval($token));
 		$this->initialStateService->provideInitialState('oidc_user', $this->openProjectAPIService->isOIDCUser());
 
