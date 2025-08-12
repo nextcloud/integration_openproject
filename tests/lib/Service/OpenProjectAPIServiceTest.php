@@ -4310,7 +4310,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
 	}
 
@@ -4327,7 +4327,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'config' => $configMock,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertNull($result);
 	}
 
@@ -4348,7 +4348,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'manager' => $iManagerMock,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4375,7 +4375,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4401,7 +4401,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4443,7 +4443,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'oidcClientMapper' => $clientMapperMock,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
