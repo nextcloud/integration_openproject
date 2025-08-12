@@ -178,8 +178,8 @@ class PersonalTest extends TestCase {
 				[
 					'token' => $token,
 					'user_name' => $username,
-					'search_enabled' => $searchEnabled,
-					'navigation_enabled' => $navigationEnabled,
+					'search_enabled' => $searchEnabled === '1',
+					'navigation_enabled' => $navigationEnabled === '1',
 					'admin_config_ok' => $adminConfigStatus,
 					'authorization_method' => $config['authentication_method'],
 					'oidc_user' => $oidcUser,
@@ -190,6 +190,6 @@ class PersonalTest extends TestCase {
 		];
 
 		$this->setting->getForm();
-		$this->assertEquals($expectedCalls, $initStateCalls);
+		$this->assertEqualsCanonicalizing($expectedCalls, $initStateCalls);
 	}
 }

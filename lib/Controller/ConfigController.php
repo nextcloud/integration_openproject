@@ -399,9 +399,6 @@ class ConfigController extends Controller {
 			});
 		} elseif ($runningFullResetWithOIDCAuth) {
 			$this->resetOIDCConfigs();
-			$this->userManager->callForAllUsers(function (IUser $user) {
-				$this->clearUserInfo($user->getUID());
-			});
 		}
 
 
