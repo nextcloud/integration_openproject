@@ -96,6 +96,6 @@ class LoadSidebarScriptTest extends TestCase {
 		];
 
 		$this->listener->handle($this->createMock(LoadSidebar::class));
-		$this->assertEquals($expectedCalls, $initStateCalls);
+		$this->assertEqualsCanonicalizing($expectedCalls, $initStateCalls);
 	}
 }
