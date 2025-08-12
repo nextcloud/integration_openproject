@@ -2132,6 +2132,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getUserValue')
 			->withConsecutive(
 				['','integration_openproject', 'token'],
+				['','integration_openproject', 'token_expires_at'],
 				['','integration_openproject', 'refresh_token'],
 			)
 			->willReturnOnConsecutiveCalls(
@@ -4081,8 +4082,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getUserValue')
 			->willReturnMap([
-				['testUser', Application::APP_ID, 'token', '', 'test_token'],
-				['testUser', Application::APP_ID, 'token_expires_at', 0, time() + 7200],
+				['testUser', Application::APP_ID, 'token', '', null],
 			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
@@ -4292,6 +4292,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
 			]));
+		$calls = [];
+		$configMock
+			->method('setUserValue')
+			->willReturnCallback(function($uid, $app, $key) use (&$calls) {
+				$calls[] = [$uid, $app, $key];
+			});
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
@@ -4312,6 +4318,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
+		$expectedCalls = [
+			['testUser', Application::APP_ID, 'token', 'access_token'],
+			['testUser', Application::APP_ID, 'token_expires_at', '0'],
+		];
+		$this->assertEqualsCanonicalizing($expectedCalls, $calls);
 	}
 
 	public function testGetOIDCTokenReturnsNullIfNotOIDC(): void {

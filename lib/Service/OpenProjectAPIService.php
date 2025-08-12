@@ -72,11 +72,6 @@ class OpenProjectAPIService {
 	public const MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION = '1.0.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
-	public const OP_ENDPOINTS = [
-		'token' => '/oauth/token',
-		'profile' => '/users/me',
-	];
-
 	/**
 	 * @var string
 	 */
@@ -391,7 +386,7 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param string $accessToken
+	 * @param string|null $accessToken
 	 * @param string $openprojectUrl
 	 * @param string $endPoint
 	 * @param array<mixed> $params
@@ -400,7 +395,7 @@ class OpenProjectAPIService {
 	 * @return array{error: string} | IResponse
 	 */
 	public function rawRequest(
-		string $accessToken,
+		?string $accessToken,
 		string $openprojectUrl,
 		string $endPoint, array $params = [],
 		string $method = 'GET',
@@ -529,7 +524,7 @@ class OpenProjectAPIService {
 	 */
 	public function requestOAuthAccessToken(string $userId, string $url, array $params = [], string $method = 'POST'): array {
 		try {
-			$url = $url . self::OP_ENDPOINTS['token'];
+			$url = $url . '/oauth/token';
 			$options = [
 				'headers' => [
 					'User-Agent' => 'Nextcloud OpenProject integration',
@@ -1753,7 +1748,7 @@ class OpenProjectAPIService {
 	 * @throws PreConditionNotMetException
 	 */
 	public function initUserInfo(string $userId): array {
-		$info = $this->request($userId, self::OP_ENDPOINTS['profile']);
+		$info = $this->request($userId, '/users/me');
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
