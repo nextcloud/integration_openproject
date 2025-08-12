@@ -1701,7 +1701,7 @@ class OpenProjectAPIService {
 	 * @return string|null
 	 */
 	public function getAccessToken(string $userId): ?string {
-		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
 		if ($token && !$this->isAccessTokenExpired($userId)) {
 			return $token;
 		}
