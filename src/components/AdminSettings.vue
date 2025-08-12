@@ -27,11 +27,16 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!hasEnabledSupportedUserOidcApp" />
+				:has-error="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub" />
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
 				:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
 				:error-link="appLinks.user_oidc.installLink"
+				:error-link-label="messages.installLatestVersionNow" />
+			<ErrorNote
+				v-if="hasEnabledSupportedUserOidcApp && hasOidcAppErrorWithNextcloudHub"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
+				:error-link="appLinks.oidc.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
@@ -53,7 +58,7 @@
 					<div class="error-container">
 						<ErrorLabel
 							v-if="!hasEnabledSupportedOIDCApp"
-							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOIDCVersion)"
+							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
@@ -117,7 +122,7 @@
 							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
 							class="py-1"
 							is-required
-							:disabled="!hasEnabledSupportedUserOidcApp"
+							:disabled="hasOidcAppErrorWithNextcloudHub"
 							:place-holder="messages.opClientId"
 							:label="messages.opClientId"
 							:hint-text="messages.opClientIdHintText" />
@@ -797,11 +802,14 @@ export default {
 		hasEnabledSupportedOIDCApp() {
 			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
 		},
-		getMinSupportedOIDCVersion() {
+		getMinSupportedOidcVersion() {
 			return this.state.apps.oidc.minimum_version
 		},
 		isExternalSSOProvider() {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
+		},
+		hasOidcAppErrorWithNextcloudHub() {
+			return !this.hasEnabledSupportedOIDCApp && this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub
 		},
 		disableNCHubUnsupportedHint() {
 			if (!this.hasEnabledSupportedOIDCApp) {
