@@ -269,6 +269,11 @@ export default {
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				this.$emit('formcomplete', this.markFormComplete)
 				this.savedAuthMethod = this.selectedAuthMethod
+
+				// If OIDC method is selected, set authorization settings to edit mode
+				if (this.selectedAuthMethod === this.authMethodType.OIDC) {
+					this.$emit('oidc-method-selected')
+				}
 			} catch (error) {
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options'),
