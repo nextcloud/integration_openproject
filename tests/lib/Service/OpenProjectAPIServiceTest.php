@@ -4292,6 +4292,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
 			]));
+		$configMock
+			->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'user_id', null],
+				['testUser', Application::APP_ID, 'user_name', null],
+			]);
 		$calls = [];
 		$configMock
 			->method('setUserValue')
@@ -4316,6 +4322,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
+		$service->expects($this->once())->method('initUserInfo')->with('testUser');
 		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
 		$expectedCalls = [
