@@ -40,7 +40,7 @@ export default {
 		},
 		errorLinkLabel: {
 			type: String,
-			default: '',
+			default: 'Link',
 		},
 	},
 }
