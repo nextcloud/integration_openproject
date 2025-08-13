@@ -14,4 +14,8 @@ export const appLinks = {
 		installLink: generateUrl('settings/apps/files/oidc'),
 		settingsLink: generateUrl('settings/admin/oidc_provider'),
 	},
+	groupfolders: {
+		installLink: generateUrl('settings/apps/files/groupfolders'),
+		settingsLink: generateUrl('settings/admin/groupfolders'),
+	},
 }
