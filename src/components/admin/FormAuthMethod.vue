@@ -39,13 +39,13 @@
 						{{ authMethodLabel.OIDC }}
 					</NcCheckboxRadioSwitch>
 					<div class="info-container">
-						<p class="oidc-app-check-description">
+						<p>
 							{{ messages.opRequiredVersionAndPlanHint }}
 						</p>
-						<p v-if="!isUserOidcAppEnabled" class="oidc-app-check-description" v-html="getUserOidcAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 						<ErrorLabel
-							v-if="isUserOidcAppEnabled && !isUserOidcAppSupported"
-							:error="`${messagesFmt.appNotSupported('user_oidc')}. ${messagesFmt.minimumVersionRequired(getMinUserOidcAppVersion)}`" />
+							v-if="!hasEnabledSupportedUserOidcApp"
+							:disabled="disableErrorLabel"
+							:error="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)" />
 					</div>
 				</div>
 			</div>
@@ -91,7 +91,6 @@ import FormHeading from './FormHeading.vue'
 import ErrorLabel from '../ErrorLabel.vue'
 import { F_MODES, AUTH_METHOD, AUTH_METHOD_LABEL, ADMIN_SETTINGS_FORM } from '../../utils.js'
 import { messages, messagesFmt } from '../../constants/messages.js'
-import { appLinks } from '../../constants/links.js'
 import { saveAdminConfig } from '../../api/settings.js'
 
 export default {
@@ -132,7 +131,6 @@ export default {
 			authMethodLabel: AUTH_METHOD_LABEL,
 			messages,
 			messagesFmt,
-			appLinks,
 			loading: false,
 			// state that holds the current changed auth method
 			selectedAuthMethod: AUTH_METHOD.OAUTH2,
@@ -153,16 +151,10 @@ export default {
 		isEditMode() {
 			return this.formMode === F_MODES.EDIT
 		},
-		isUserOidcAppEnabled() {
-			return this.apps.user_oidc.enabled
-		},
-		isUserOidcAppSupported() {
-			return this.apps.user_oidc.supported
-		},
 		hasEnabledSupportedUserOidcApp() {
 			return this.apps.user_oidc.enabled && this.apps.user_oidc.supported
 		},
-		getMinUserOidcAppVersion() {
+		getMinSupportedUserOidcVersion() {
 			return this.apps.user_oidc.minimum_version
 		},
 		getSelectedAuthMethodLabel() {
@@ -172,11 +164,6 @@ export default {
 			const linkText = t('integration_openproject', 'authentication methods you can use with OpenProject')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#3-configure-authentication-method" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please read our guide on {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
-		},
-		getUserOidcAppNotInstalledHintText() {
-			const url = this.appLinks.user_oidc.installLink
-			const htmlLink = `<a class="link" href="${url}" target="_blank" title="user_oidc">user_oidc</a>`
-			return t('integration_openproject', 'Please install the {htmlLink} app to use OIDC authentication method.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		disableSave() {
 			if (this.isFormComplete) {
@@ -297,7 +284,7 @@ export default {
 		.radio-check {
 			font-weight: 500;
 		}
-		.oidc-app-check-description {
+		.info-container {
 			margin-left: 2.4rem;
 			font-size: 14px;
 		}

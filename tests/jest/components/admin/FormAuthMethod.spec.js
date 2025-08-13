@@ -175,7 +175,7 @@ describe('Component: FormAuthMethod', () => {
 		})
 
 		describe('disabled user_oidc app', () => {
-			it('should show error message and disabled sso button', async () => {
+			it('should show disabled error message and disabled sso button', async () => {
 				await wrapper.setProps({
 					apps: {
 						user_oidc: {
@@ -189,7 +189,8 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
-				expect(wrapper.find(selectors.errorLabel).exists()).toBe(false)
+				expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
+				expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
 
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 				expect(wrapper.html()).toMatchSnapshot()
@@ -197,7 +198,7 @@ describe('Component: FormAuthMethod', () => {
 		})
 
 		describe('unsupported user_oidc app', () => {
-			it('should show error message and disabled sso button', async () => {
+			it('should show disabled error message and disabled sso button', async () => {
 				await wrapper.setProps({
 					apps: {
 						user_oidc: {
@@ -212,6 +213,7 @@ describe('Component: FormAuthMethod', () => {
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 				expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
+				expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
 
 				expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 				expect(wrapper.html()).toMatchSnapshot()
@@ -328,7 +330,8 @@ describe('Component: FormAuthMethod', () => {
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
-					expect(wrapper.find(selectors.errorLabel).exists()).toBe(false)
+					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
+					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
@@ -356,7 +359,8 @@ describe('Component: FormAuthMethod', () => {
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
-					expect(wrapper.find(selectors.errorLabel).exists()).toBe(false)
+					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
+					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
@@ -411,6 +415,7 @@ describe('Component: FormAuthMethod', () => {
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
+					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')

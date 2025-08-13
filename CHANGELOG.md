@@ -13,7 +13,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+- Combine error messages for app not enabled and not supported [#865](https://github.com/nextcloud/integration_openproject/pull/865)
+
 ### Fixed
+
+### Removed
 
 ## 2.9.2 - 2025-07-24
 
