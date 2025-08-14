@@ -25,10 +25,10 @@ OC.L10N.register(
     "Mark as read" : "Märgi loetuks",
     "Unlink" : "Eemalda lõiming",
     "External Provider" : "Väline teenusepakkuja",
+    "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:",
+    "Connected accounts" : "Ühendatud kasutajakontod",
     "The \"{app}\" app is not installed" : "„{app}“ rakendus pole paigaldatud",
     "The \"{app}\" app is not supported" : "„{app}“ rakendus pole toetatud",
-    "The \"{app}\" app is not enabled or supported" : "„{app}“ rakendus pole kasutusel või toetatud",
-    "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:",
-    "Connected accounts" : "Ühendatud kasutajakontod"
+    "The \"{app}\" app is not enabled or supported" : "„{app}“ rakendus pole kasutusel või toetatud"
 },
 "nplurals=2; plural=(n != 1);");

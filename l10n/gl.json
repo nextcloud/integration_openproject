@@ -175,9 +175,6 @@
     "This feature is not available for this user account" : "Esta característica non está dispoñíbel para esta conta de usuario",
     "Unauthorized to connect to OpenProject" : "Non ten autorización para conectarse a OpenProject",
     "OpenProject client ID" : "ID de cliente de OpenProject",
-    "The \"{app}\" app is not installed" : "A aplicación «{app}» non está instalada",
-    "The \"{app}\" app is not supported" : "A aplicación «{app}» non é compatíbel",
-    "Requires app version \"{minimumAppVersion}\" or later" : "Require a versión «{minimumAppVersion}» ou posterior da aplicación",
     "Link to work package" : "Ligazón ao paquete de traballo",
     "Failed to link file to work package" : "Produciuse un fallo ao vincular o ficheiro ao paquete de traballo",
     "Successfully connected to OpenProject!" : "Conectado correctamente a OpenProject!",
@@ -208,6 +205,9 @@
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para xestionar automaticamente os cartafoles do proxecto, esta aplicación necesita configurar un cartafol de grupo especial, asignado a un grupo e xestionado por un usuario, cada un chamado «OpenProject».",
     "Please link a project to this Nextcloud storage" : "Ligue un proxecto a este almacenamento Nextcloud",
     "Download and enable it here" : "Descargar e activalo aquí",
-    "Please introduce a valid OpenProject hostname" : "Introduza un nome de máquina de OpenProject válido"
+    "Please introduce a valid OpenProject hostname" : "Introduza un nome de máquina de OpenProject válido",
+    "The \"{app}\" app is not installed" : "A aplicación «{app}» non está instalada",
+    "The \"{app}\" app is not supported" : "A aplicación «{app}» non é compatíbel",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Require a versión «{minimumAppVersion}» ou posterior da aplicación"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
