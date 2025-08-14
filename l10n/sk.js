@@ -171,7 +171,6 @@ OC.L10N.register(
     "OpenProject work package picker" : "Výber pracovného balíka OpenProject",
     "OpenProject API error" : "Chyba OpenProject API",
     "OpenProject settings" : "Nastavenia OpenProject",
-    "This app is required to use the OIDC authentication method" : "Táto aplikácia je potrebná na používanie metódy overenia OIDC",
     "Download and enable it" : "Stiahnuť a povoliť",
     "This feature is not available for this user account" : "Táto funkcia nie je dostupná pre tento uživateľský účet",
     "Unauthorized to connect to OpenProject" : "Nemáte práva pre pripojenie k OpenProject",
@@ -183,10 +182,6 @@ OC.L10N.register(
     "External Provider" : "Externý poskytovateľ",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Po povolení sa aplikácia pokúsi získať token od poskytovateľa identity. Ak je zakázané, použije sa prístupový token získaný počas procesu prihlásenia.",
     "Requires OpenProject version 16.0 (or higher) and an active Corporate plan." : "Vyžaduje OpenProject verziu 16.0 (alebo vyššiu) a aktívny firemný účet.",
-    "The \"{app}\" app is not installed" : "Aplikácia \"{app}\" nie je nainštalovaná",
-    "The \"{app}\" app is not supported" : "Aplikácia \"{app}\" nie je podporovaná",
-    "The \"{app}\" app is not enabled or supported" : "Aplikácia \"{app}\" nie je podporovaná alebo povolená",
-    "Requires app version \"{minimumAppVersion}\" or later" : "Vyžaduje sa verzia aplikácie \"{minimumAppVersion}\" alebo vyššia",
     "You can configure OIDC providers in the {settingsLink}" : "Môžete nastaviť poskytovateľov OIDC v {settingsLink}",
     "Link to work package" : "Odkaz na pracovný balík",
     "Failed to link file to work package" : "Nepodarilo sa pripojiť pracovný balík",
@@ -220,6 +215,11 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Pre automatickú správu adresárov projektu musí táto aplikácia nastaviť špeciálny adresár skupiny, priradený skupine a spravovaný užívateľom, každý s názvom „OpenProject“.",
     "Please link a project to this Nextcloud storage" : "Prepojte projekt s týmto úložiskom Nextcloud",
     "Download and enable it here" : "Stiahnite si a aktivujte to tu",
-    "Please introduce a valid OpenProject hostname" : "Prosím zadajte platný názov hostiteľa OpenProject"
+    "Please introduce a valid OpenProject hostname" : "Prosím zadajte platný názov hostiteľa OpenProject",
+    "This app is required to use the OIDC authentication method" : "Táto aplikácia je potrebná na používanie metódy overenia OIDC",
+    "The \"{app}\" app is not installed" : "Aplikácia \"{app}\" nie je nainštalovaná",
+    "The \"{app}\" app is not supported" : "Aplikácia \"{app}\" nie je podporovaná",
+    "The \"{app}\" app is not enabled or supported" : "Aplikácia \"{app}\" nie je podporovaná alebo povolená",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Vyžaduje sa verzia aplikácie \"{minimumAppVersion}\" alebo vyššia"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
