@@ -93,7 +93,6 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Warning, everything you type in the search bar will be sent to your OpenProject instance.",
     "authentication methods you can use with OpenProject" : "authentication methods you can use with OpenProject",
     "Please read our guide on {htmlLink}." : "Please read our guide on {htmlLink}.",
-    "Please install the {htmlLink} app to use OIDC authentication method." : "Please install the {htmlLink} app to use OIDC authentication method.",
     "If you proceed this method, you will have an " : "If you proceed this method, you will have an ",
     "Switch Authentication Method" : "Switch Authentication Method",
     "Yes, switch" : "Yes, switch",
@@ -189,7 +188,6 @@
     "OpenProject work package picker" : "OpenProject work package picker",
     "OpenProject API error" : "OpenProject API error",
     "OpenProject settings" : "OpenProject settings",
-    "This app is required to use the OIDC authentication method" : "This app is required to use the OIDC authentication method",
     "Download and enable it" : "Download and enable it",
     "This feature is not available for this user account" : "This feature is not available for this user account",
     "Unauthorized to connect to OpenProject" : "Unauthorized to connect to OpenProject",
@@ -201,10 +199,6 @@
     "External Provider" : "External Provider",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.",
     "Requires OpenProject version 16.0 (or higher) and an active Corporate plan." : "Requires OpenProject version 16.0 (or higher) and an active Corporate plan.",
-    "The \"{app}\" app is not installed" : "The \"{app}\" app is not installed",
-    "The \"{app}\" app is not supported" : "The \"{app}\" app is not supported",
-    "The \"{app}\" app is not enabled or supported" : "The \"{app}\" app is not enabled or supported",
-    "Requires app version \"{minimumAppVersion}\" or later" : "Requires app version \"{minimumAppVersion}\" or later",
     "You can configure OIDC providers in the {settingsLink}" : "You can configure OIDC providers in the {settingsLink}",
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
@@ -241,6 +235,12 @@
     "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}",
     "Please introduce a valid OpenProject hostname" : "Please introduce a valid OpenProject hostname",
     "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.",
-    "Encryption for the Group Folders App is not enabled." : "Encryption for the Group Folders App is not enabled."
+    "Encryption for the Group Folders App is not enabled." : "Encryption for the Group Folders App is not enabled.",
+    "Please install the {htmlLink} app to use OIDC authentication method." : "Please install the {htmlLink} app to use OIDC authentication method.",
+    "This app is required to use the OIDC authentication method" : "This app is required to use the OIDC authentication method",
+    "The \"{app}\" app is not installed" : "The \"{app}\" app is not installed",
+    "The \"{app}\" app is not supported" : "The \"{app}\" app is not supported",
+    "The \"{app}\" app is not enabled or supported" : "The \"{app}\" app is not enabled or supported",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Requires app version \"{minimumAppVersion}\" or later"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
