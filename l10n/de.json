@@ -93,7 +93,6 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Achtung, alles, was du in die Suchleiste eingibst, wird an deine OpenProject-Instanz gesendet.",
     "authentication methods you can use with OpenProject" : "Anmeldemethoden, die mit OpenProject verwendet werden können",
     "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen.",
-    "Please install the {htmlLink} app to use OIDC authentication method." : "Bitte die {htmlLink}-App installieren, um die OIDC-Authentifizierungsmethode zu verwenden.",
     "If you proceed this method, you will have an " : "Wenn du diese Methode anwendest, erhältst du eine",
     "Switch Authentication Method" : "Anmeldemethode umschalten",
     "Yes, switch" : "Ja, umschalten",
@@ -189,7 +188,6 @@
     "OpenProject work package picker" : "OpenProject-Arbeitspaketauswahl",
     "OpenProject API error" : "OpenProject API-Fehler",
     "OpenProject settings" : "OpenProject-Einstellungen",
-    "This app is required to use the OIDC authentication method" : "Diese App ist erforderlich, um die OIDC-Authentifizierungsmethode zu verwenden",
     "Download and enable it" : "Herunterladen und aktivieren",
     "This feature is not available for this user account" : "Diese Funktion ist für dieses Benutzerkonto nicht verfügbar",
     "Unauthorized to connect to OpenProject" : "Keine Berechtigung zur Verbindung mit OpenProject",
@@ -201,10 +199,6 @@
     "External Provider" : "Externer Anbieter",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Wenn diese Option aktiviert ist, versucht die App, vom Identitätsanbieter ein Token für die angegebene Zielgruppe zu erhalten. Wenn sie deaktiviert ist, wird das beim Anmeldevorgang erhaltene Zugriffstoken verwendet.",
     "Requires OpenProject version 16.0 (or higher) and an active Corporate plan." : "Erfordert OpenProject Version 16.0 (oder höher) und einen aktiven Corporate-Plan.",
-    "The \"{app}\" app is not installed" : "Die \"{app}\" App ist nicht installiert",
-    "The \"{app}\" app is not supported" : "Die \"{app}\" App wird nicht unterstützt.",
-    "The \"{app}\" app is not enabled or supported" : "Die \"{app}\"-App ist nicht aktiviert oder wird nicht unterstützt",
-    "Requires app version \"{minimumAppVersion}\" or later" : "Erfordert App-Version \"{minimumAppVersion}\" oder höher",
     "You can configure OIDC providers in the {settingsLink}" : "Die OIDC-Anbieter können unter {settingsLink}eingerichtet werden",
     "Link to work package" : "Link zum Arbeitspaket",
     "Failed to link file to work package" : "Datei konnte nicht mit dem Arbeitspaket verknüpft werden",
@@ -241,6 +235,12 @@
     "Please install the \"Group folders\" app to be able to use automatically managed folders. {htmlLink}" : "Um automatisch verwaltete Ordner nutzen zu können, bitte die App \"Gruppenordner\" installieren. {htmlLink}",
     "Please introduce a valid OpenProject hostname" : "Bitte einen gültigen OpenProject-Hostnamen eingeben",
     "Server-side encryption is active, but encryption for Group Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Die serverseitige Verschlüsselung ist aktiv, die Verschlüsselung für Teamordner ist jedoch noch nicht aktiviert. Um die sichere Speicherung von Dateien in Projektordnern zu gewährleisten, bitte die unter {htmlLink} angegebenen Konfigurationsschritte befolgen.",
-    "Encryption for the Group Folders App is not enabled." : "Verschlüsselung für die Team-Ordner-App ist nicht aktiviert."
+    "Encryption for the Group Folders App is not enabled." : "Verschlüsselung für die Team-Ordner-App ist nicht aktiviert.",
+    "Please install the {htmlLink} app to use OIDC authentication method." : "Bitte die {htmlLink}-App installieren, um die OIDC-Authentifizierungsmethode zu verwenden.",
+    "This app is required to use the OIDC authentication method" : "Diese App ist erforderlich, um die OIDC-Authentifizierungsmethode zu verwenden",
+    "The \"{app}\" app is not installed" : "Die \"{app}\" App ist nicht installiert",
+    "The \"{app}\" app is not supported" : "Die \"{app}\" App wird nicht unterstützt.",
+    "The \"{app}\" app is not enabled or supported" : "Die \"{app}\"-App ist nicht aktiviert oder wird nicht unterstützt",
+    "Requires app version \"{minimumAppVersion}\" or later" : "Erfordert App-Version \"{minimumAppVersion}\" oder höher"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
