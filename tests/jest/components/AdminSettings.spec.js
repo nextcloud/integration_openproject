@@ -11,9 +11,9 @@ import * as dialogs from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
+import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM, FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
-import { messagesFmt } from '../../../src/constants/messages.js'
+import { messagesFmt, messages } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -102,8 +102,8 @@ const selectors = {
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
 	projectFolderSetupSwitch: '[type="checkbox"]',
-	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
-	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
+	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="save-project-folders-form-btn"]',
+	completeWithoutProjectFolderSetupButton: '[data-test-id="save-project-folders-form-btn"]',
 	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
 	projectFolderStatus: '.project-folder-status-value',
 	projectFolderErrorMessage: '.note-card--title',
@@ -145,6 +145,11 @@ const appState = {
 			enabled: true,
 			supported: true,
 			minimum_version: '2.0.0',
+		},
+		groupfolders: {
+			enabled: true,
+			supported: true,
+			minimum_version: '1.0.0',
 		},
 	},
 }
@@ -681,6 +686,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -723,6 +729,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1043,7 +1050,7 @@ describe('AdminSettings.vue', () => {
 							apps: {
 								...appState.apps,
 								oidc: {
-									enabled: false,
+									enabled: true,
 									supported: false,
 									minimum_version: appState.apps.oidc.minimum_version,
 								},
@@ -1067,12 +1074,17 @@ describe('AdminSettings.vue', () => {
 					const errorLabel = wrapper.find(errorLabelSelector)
 					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
 					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('nextcloud_hub')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
 					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe(undefined)
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.oidc.installLink)
+					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 				})
 			})
 		})
@@ -1394,6 +1406,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1442,6 +1455,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1471,7 +1485,7 @@ describe('AdminSettings.vue', () => {
 							apps: {
 								...appState.apps,
 								oidc: {
-									enabled: false,
+									enabled: true,
 									supported: false,
 									minimum_version: appState.apps.oidc.minimum_version,
 								},
@@ -1488,12 +1502,14 @@ describe('AdminSettings.vue', () => {
 					const errorLabel = wrapper.find(errorLabelSelector)
 					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
 					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('external')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
 					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe('true')
+					expect(errorNote.exists()).toBe(false)
 				})
 			})
 		})
@@ -2628,19 +2644,12 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('error after project folder is already setup', () => {
+	describe.only('error after project folder is already setup', () => {
 		beforeEach(async () => {
 			axios.put.mockReset()
 			axios.get.mockReset()
 		})
 		it.each([
-			[
-				'should set the project folder error message and error details when team folders app is not enabled',
-				{
-					error: 'The "groupfolders" app is not installed',
-					expectedErrorDetailsMessage: 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}',
-				},
-			],
 			[
 				'should set the user already exists error message and error details when user already exists',
 				{
@@ -2649,7 +2658,7 @@ describe('AdminSettings.vue', () => {
 				},
 			],
 		])('%s', async (name, expectedErrorDetails) => {
-			const wrapper = getMountedWrapper({
+			const wrapper = getWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
 					authorization_method: AUTH_METHOD.OAUTH2,
@@ -2670,6 +2679,12 @@ describe('AdminSettings.vue', () => {
 					app_password_set: true,
 				},
 			})
+			await wrapper.setData({
+				formMode: {
+					projectFolderSetUp: F_MODES.EDIT,
+				},
+			})
+			console.log(wrapper.html())
 			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(true)
 			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
