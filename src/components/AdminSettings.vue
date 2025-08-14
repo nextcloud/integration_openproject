@@ -859,8 +859,8 @@ export default {
 						this.isProjectFolderAlreadySetup = true
 					}
 				}
-				if (this.state.fresh_project_folder_setup === true) {
-					this.currentProjectFolderState = false
+				if (this.state.fresh_project_folder_setup === true && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
+					this.currentProjectFolderState = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				} else {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
