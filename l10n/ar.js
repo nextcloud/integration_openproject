@@ -178,7 +178,6 @@ OC.L10N.register(
     "OpenProject work package picker" : "مُنتقِي حزم العمل work package picker في OpenProject",
     "OpenProject API error" : "خطأ واجهة برمجة التطبيقات لـ OpenProject",
     "OpenProject settings" : "إعدادات OpenProject",
-    "This app is required to use the OIDC authentication method" : "هذا التطبيق مطلوب ليمكن استعمال طريقة OIDC للتحقُّق من الهُوِيَّة",
     "Download and enable it" : "قم بتنزيله وتمكينه",
     "This feature is not available for this user account" : "هذه الميزة غير متاحة لحساب المستخدِم هذا",
     "Unauthorized to connect to OpenProject" : "غير مُخوَّل بالوصول إلى \"أوبن بروجكت\" OpenProject",
@@ -189,10 +188,6 @@ OC.L10N.register(
     "Nextcloud Hub" : "نكست كلاود \"هَبْ\"",
     "External Provider" : "مُزوِّد خارجي",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "عند تفعيل هذه الميزة، سيحاول التطبيق الحصول على أَمَارَة للحُضُور المُحدَّد من مُزوِّد ​​الهُوِيَّة. أما في حال تعطيلها، فسيستخدم أَمَارَة الوصول المُكتسبة أثناء عملية تسجيل الدخول.",
-    "The \"{app}\" app is not installed" : "التطبيق \"{app}\" غير مُثبَّت",
-    "The \"{app}\" app is not supported" : "التطبيق \"{app}\" غير مدعوم",
-    "The \"{app}\" app is not enabled or supported" : "التطبيق \"{app}\" غير مُمَكَّن أو غير مدعوم",
-    "Requires app version \"{minimumAppVersion}\" or later" : "يلزم أن يكون التطبيق من الإصدار \"{minimumAppVersion}\" فما أعلى",
     "You can configure OIDC providers in the {settingsLink}" : "يمكنك تهيئة مُزوِّدي OIDC في{settingsLink}",
     "Link to work package" : "رابط لحزمة العمل",
     "Failed to link file to work package" : "فشل في ربط الملف بحزمة العمل",
@@ -226,6 +221,11 @@ OC.L10N.register(
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "لغرض إدارة مجلدات المشروع تلقائيًا، يحتاج هذا التطبيق إلى تنصيب مجلد مجموعة خاص، والذي يتم تخصيصه لمجموعة ويديره مستخدم، وكل منها يسمى \"OpenProject\".",
     "Please link a project to this Nextcloud storage" : "من فضلك، إربِط مشروعاً مع وحدة تخزين نكست كلاود هذه",
     "Download and enable it here" : "قُم بتنزيلها وتمكينها هنا",
-    "Please introduce a valid OpenProject hostname" : "يُرجَى إدخال اسم مُضِيف صحيح لـ OpenProject"
+    "Please introduce a valid OpenProject hostname" : "يُرجَى إدخال اسم مُضِيف صحيح لـ OpenProject",
+    "This app is required to use the OIDC authentication method" : "هذا التطبيق مطلوب ليمكن استعمال طريقة OIDC للتحقُّق من الهُوِيَّة",
+    "The \"{app}\" app is not installed" : "التطبيق \"{app}\" غير مُثبَّت",
+    "The \"{app}\" app is not supported" : "التطبيق \"{app}\" غير مدعوم",
+    "The \"{app}\" app is not enabled or supported" : "التطبيق \"{app}\" غير مُمَكَّن أو غير مدعوم",
+    "Requires app version \"{minimumAppVersion}\" or later" : "يلزم أن يكون التطبيق من الإصدار \"{minimumAppVersion}\" فما أعلى"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
