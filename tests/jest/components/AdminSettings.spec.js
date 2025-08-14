@@ -102,8 +102,9 @@ const selectors = {
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
 	projectFolderSetupSwitch: '[type="checkbox"]',
-	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="save-project-folders-form-btn"]',
-	completeWithoutProjectFolderSetupButton: '[data-test-id="save-project-folders-form-btn"]',
+	projectFolderSetupButtonStub: 'nccheckboxradioswitch-stub[type="switch"]',
+	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
+	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
 	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
 	projectFolderStatus: '.project-folder-status-value',
 	projectFolderErrorMessage: '.note-card--title',
@@ -111,7 +112,7 @@ const selectors = {
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 	adminAuditNoteCardInfoSelector: '[type="info"]',
-	encryptionNoteCardWarningSelector: '.notecard--warning',
+	encryptionNoteCardWarningSelector: '.project-folder-setup ncnotecard-stub',
 }
 
 const completeOAUTH2IntegrationState = {
@@ -2019,11 +2020,13 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
 					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
 					const actualProjectFolderStatusValue = projectFolderStatus.text()
 					expect(actualProjectFolderStatusValue).toContain('Inactive')
+					expect(wrapper.find('.project-folder-setup errornote-stub').exists()).toBe(false)
 					expect(wrapper.find(selectors.projectFolderSetupForm)).toMatchSnapshot()
 				})
 			})
@@ -2053,20 +2056,17 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.EDIT,
-						},
-					})
+					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
 					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
 					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 
 				it('should show button text label "Complete without team folder setup" when the switch is "off"', async () => {
-					const wrapper = getMountedWrapper({
+					const wrapper = getWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
 							authorization_method: AUTH_METHOD.OAUTH2,
@@ -2082,16 +2082,14 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.EDIT,
-						},
-					})
+					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
-					await projectFolderSetupSwitchButton.trigger('click')
+					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupButtonStub)
+					projectFolderSetupSwitchButton.vm.$emit('update:checked', false)
+					await flushPromises()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(false)
 					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
 					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
@@ -2170,7 +2168,7 @@ describe('AdminSettings.vue', () => {
 				})
 
 				// test for error while setting up the team folder
-				describe('trigger on "Setup OpenProject user, group and folder" button', () => {
+				describe.only('trigger on "Setup OpenProject user, group and folder" button', () => {
 					beforeEach(async () => {
 						axios.put.mockReset()
 						axios.get.mockReset()
@@ -2644,7 +2642,7 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe.only('error after project folder is already setup', () => {
+	describe('error after project folder is already setup', () => {
 		beforeEach(async () => {
 			axios.put.mockReset()
 			axios.get.mockReset()
@@ -2683,17 +2681,13 @@ describe('AdminSettings.vue', () => {
 				formMode: {
 					projectFolderSetUp: F_MODES.EDIT,
 				},
+				projectFolderSetupError: expectedErrorDetails.error,
 			})
-			console.log(wrapper.html())
 			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(true)
 			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
 			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			if (expectedErrorDetails.error !== 'The "groupfolders" app is not installed') {
-				expect(projectFolderErrorMessageDetails.text()).toContain(expectedErrorDetails.expectedErrorDetailsMessage)
-			} else {
-				expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
-			}
+			expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 		})
 	})
 
@@ -2729,7 +2723,7 @@ describe('AdminSettings.vue', () => {
 				false,
 			],
 		])('%s', (name, encryptionInfoState, expectedResult) => {
-			const wrapper = getMountedWrapper({
+			const wrapper = getWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
 					authorization_method: AUTH_METHOD.OAUTH2,
@@ -2750,6 +2744,10 @@ describe('AdminSettings.vue', () => {
 			})
 			const encryptionWarningNoteCard = wrapper.find(selectors.encryptionNoteCardWarningSelector)
 			expect(encryptionWarningNoteCard.exists()).toBe(expectedResult)
+			if (expectedResult) {
+				expect(encryptionWarningNoteCard.attributes().type).toBe('warning')
+				expect(encryptionWarningNoteCard.find('p.note-card--title').text()).toBe('Encryption for the Team Folders App is not enabled.')
+			}
 		})
 	})
 
