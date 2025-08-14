@@ -122,7 +122,7 @@
 							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
 							class="py-1"
 							is-required
-							:disabled="hasOidcAppErrorWithNextcloudHub"
+							:disabled="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub"
 							:place-holder="messages.opClientId"
 							:label="messages.opClientId"
 							:hint-text="messages.opClientIdHintText" />
@@ -303,24 +303,12 @@
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="isProjectFolderSwitchEnabled" @update:checked="changeProjectFolderSetUpState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
-					<div v-if="isProjectFolderSwitchEnabled === false" class="complete-without-groupfolders">
+					<div v-if="!isProjectFolderSwitchEnabled">
 						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.')
 							}}
 						</p>
-						<div class="form-actions">
-							<NcButton type="primary"
-								data-test-id="complete-without-project-folder-form-btn"
-								@click="completeIntegrationWithoutProjectFolderSetUp">
-								<template #icon>
-									<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
-								</template>
-								{{
-									textLabelProjectFolderSetupButton
-								}}
-							</NcButton>
-						</div>
 					</div>
 					<div v-else>
 						<p class="project-folder-description">
@@ -338,26 +326,26 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
 							}}
 						</p>
-						<NcNoteCard v-if="!hasGroupfoldersAppStateError && projectFolderSetupError" class="note-card" type="error">
-							<p class="note-card--title">
-								<b>{{ projectFolderSetupError }}</b>
-							</p>
-							<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
-						</NcNoteCard>
-						<div class="form-actions">
-							<NcButton
-								type="primary"
-								:disabled="hasGroupfoldersAppStateError"
-								data-test-id="complete-with-project-folders-form-btn"
-								@click="setUpProjectGroupFolders">
-								<template #icon>
-									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
-									<RestoreIcon v-else-if="projectFolderSetupError" fill-color="#FFFFFF" :size="20" />
-									<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-								</template>
-								{{ getProjectFoldersButtonLabel }}
-							</NcButton>
-						</div>
+					</div>
+					<NcNoteCard v-if="!hasGroupfoldersAppStateError && projectFolderSetupError" class="note-card" type="error">
+						<p class="note-card--title">
+							<b>{{ projectFolderSetupError }}</b>
+						</p>
+						<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
+					</NcNoteCard>
+					<div class="form-actions">
+						<NcButton
+							type="primary"
+							:disabled="hasGroupfoldersAppStateError"
+							data-test-id="save-project-folders-form-btn"
+							@click="setUpProjectGroupFolders">
+							<template #icon>
+								<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
+								<RestoreIcon v-else-if="projectFolderSetupError" fill-color="#FFFFFF" :size="20" />
+								<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
+							</template>
+							{{ getProjectFoldersButtonLabel }}
+						</NcButton>
 					</div>
 				</div>
 				<div v-else class="project-folder-status">
@@ -829,9 +817,9 @@ export default {
 			return this.authorizationSetting.enableTokenExchange
 		},
 		getProjectFoldersButtonLabel() {
-			if (!this.state.app_password_set && this.isProjectFolderSwitchEnabled) {
+			if (!this.isManagedGroupFolderSetUpComplete && this.isProjectFolderSwitchEnabled) {
 				return this.buttonTextLabel.completeWithProjectFolderSetup
-			} else if (!this.state.app_password_set && !this.isProjectFolderSwitchEnabled) {
+			} else if (!this.isManagedGroupFolderSetUpComplete && !this.isProjectFolderSwitchEnabled) {
 				return this.buttonTextLabel.completeWithoutProjectFolderSetup
 			} else if (this.isProjectFolderSwitchEnabled && this.projectFolderSetupError) {
 				return this.buttonTextLabel.retrySetupWithProjectFolder
@@ -1050,8 +1038,31 @@ export default {
 				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithoutProjectFolderSetup
 			}
 		},
+		async setupWithoutProjectFolderSetUp() {
+			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
+			const success = await this.saveOPOptions()
+			if (success) {
+				// also make password form disable and complete as false
+				if (this.opUserAppPassword) {
+					this.isFormCompleted.opUserAppPassword = false
+					this.formMode.opUserAppPassword = F_MODES.DISABLE
+				}
+				this.state.app_password_set = false
+				this.currentProjectFolderState = this.isProjectFolderSwitchEnabled
+				this.isFormCompleted.projectFolderSetUp = true
+				this.formMode.projectFolderSetUp = F_MODES.VIEW
+			}
+			// we want to show the error only when project folder form is in edit mode
+			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
+				this.projectFolderSetupError = null
+			}
+		},
 		async setUpProjectGroupFolders() {
 			this.isFormStep = FORM.GROUP_FOLDER
+			if (this.isProjectFolderSwitchEnabled === false) {
+				return this.setupWithoutProjectFolderSetUp()
+			}
+
 			this.loadingProjectFolderSetup = true
 			this.isProjectFolderAlreadySetup = await this.checkIfProjectFolderIsAlreadyReadyForSetup()
 			if (this.isProjectFolderAlreadySetup) {
@@ -1334,26 +1345,6 @@ export default {
 				},
 				true,
 			)
-		},
-		async completeIntegrationWithoutProjectFolderSetUp() {
-			this.isFormStep = FORM.GROUP_FOLDER
-			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			const success = await this.saveOPOptions()
-			if (success) {
-				// also make password form disable and complete as false
-				if (this.opUserAppPassword) {
-					this.isFormCompleted.opUserAppPassword = false
-					this.formMode.opUserAppPassword = F_MODES.DISABLE
-				}
-				this.state.app_password_set = false
-				this.currentProjectFolderState = this.isProjectFolderSwitchEnabled
-				this.isFormCompleted.projectFolderSetUp = true
-				this.formMode.projectFolderSetUp = F_MODES.VIEW
-			}
-			// we want to show the error only when project folder form is in edit mode
-			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
-				this.projectFolderSetupError = null
-			}
 		},
 		resetOPUserAppPassword() {
 			OC.dialogs.confirmDestructive(
