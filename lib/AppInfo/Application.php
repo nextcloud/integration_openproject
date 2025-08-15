@@ -16,6 +16,7 @@ use OCA\OpenProject\Dashboard\OpenProjectWidget;
 use OCA\OpenProject\Listener\BeforeGroupDeletedListener;
 use OCA\OpenProject\Listener\BeforeNodeInsideOpenProjectGroupfilderChangedListener;
 use OCA\OpenProject\Listener\BeforeUserDeletedListener;
+use OCA\OpenProject\Listener\BeforeUserRemovedListener;
 use OCA\OpenProject\Listener\LoadAdditionalScriptsListener;
 use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
@@ -33,9 +34,10 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 
+use OCP\Group\Events\BeforeUserRemovedEvent;
+use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
-use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
@@ -51,8 +53,8 @@ use OCP\User\Events\UserChangedEvent;
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
-	public const  OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
-	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
+	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
+	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectAll';
 
 	/**
 	 * @var mixed
@@ -88,6 +90,9 @@ class Application extends App implements IBootstrap {
 		);
 		$context->registerEventListener(
 			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
+		);
+		$context->registerEventListener(
+			BeforeUserRemovedEvent::class, BeforeUserRemovedListener::class
 		);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
