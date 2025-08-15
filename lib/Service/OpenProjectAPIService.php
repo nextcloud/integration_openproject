@@ -1692,7 +1692,11 @@ class OpenProjectAPIService {
 	 */
 	public function isAccessTokenExpired(string $userId): bool {
 		$expiresAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at', 0);
-		return time() >= $expiresAt;
+		// Consider token expired 60 seconds early
+		// to avoid race conditions caused by various factors
+		$tokenExpirySafetyMargin = 60;
+		$expiresAt = (int)$expiresAt - $tokenExpirySafetyMargin;
+		return time() > $expiresAt;
 	}
 
 	/**
