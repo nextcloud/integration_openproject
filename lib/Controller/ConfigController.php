@@ -207,18 +207,7 @@ class ConfigController extends Controller {
 		$appPassword = null;
 
 		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
-			$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
-			if ($isSystemReady) {
-				$password = $this->secureRandom->generate($this->openprojectAPIService->getPasswordLength(), ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS);
-				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-				$group->addUser($user);
-				$this->subAdminManager->createSubAdmin($user, $group);
-				$this->openprojectAPIService->createGroupfolder();
-				if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
-				}
-			}
+			$settingsService->setupProjectFolder();
 		}
 
 		// creates or replace the app password
