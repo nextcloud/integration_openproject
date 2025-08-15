@@ -12,9 +12,9 @@
 			:is-complete="isFormComplete"
 			:is-disabled="!showSettings"
 			:is-dark-theme="isDarkTheme"
-			:has-error="!hasEnabledSupportedUserOidcApp" />
+			:has-error="showUserOidcAppError" />
 		<ErrorNote
-			v-if="!hasEnabledSupportedUserOidcApp"
+			v-if="showUserOidcAppError"
 			:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
 			:error-link="appLinks.user_oidc.installLink"
 			:error-link-label="messages.installLatestVersionNow" />
@@ -163,6 +163,9 @@ export default {
 		},
 		hasEnabledSupportedUserOidcApp() {
 			return this.apps.user_oidc.enabled && this.apps.user_oidc.supported
+		},
+		showUserOidcAppError() {
+			return !this.disableErrorLabel && !this.hasEnabledSupportedUserOidcApp
 		},
 		getMinSupportedUserOidcVersion() {
 			return this.apps.user_oidc.minimum_version
