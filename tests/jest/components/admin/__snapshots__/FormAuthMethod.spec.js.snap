@@ -3,6 +3,7 @@
 exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc app should show disabled error message and disabled sso button when oauth2 is selected 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -41,7 +42,8 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
 
 exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc app should show error message and disabled sso button when oidc is selected 1`] = `
 "<div class="authentication-method">
-  <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <formheading-stub index="2" title="Authentication method" iscomplete="true" haserror="true"></formheading-stub>
+  <errornote-stub errortitle="This feature requires version {version} (or higher) of {app}. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -81,6 +83,7 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
 exports[`Component: FormAuthMethod completed form edit mode should show form fields 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -120,6 +123,7 @@ exports[`Component: FormAuthMethod completed form edit mode should show form fie
 exports[`Component: FormAuthMethod completed form edit mode unsupported user_oidc app should show disabled error message and disabled sso button when oauth2 is selected 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -158,7 +162,8 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
 
 exports[`Component: FormAuthMethod completed form edit mode unsupported user_oidc app should show error message and disabled sso button when oidc is selected 1`] = `
 "<div class="authentication-method">
-  <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <formheading-stub index="2" title="Authentication method" iscomplete="true" haserror="true"></formheading-stub>
+  <errornote-stub errortitle="This feature requires version {version} (or higher) of {app}. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -195,9 +200,48 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
 </div>"
 `;
 
-exports[`Component: FormAuthMethod completed form should show set form label 1`] = `
+exports[`Component: FormAuthMethod completed form should show set form label in view mode 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
+  <div class="auth-method">
+    <p class="auth-method--label">
+      Single-Sign-On through OpenID Connect Identity Provider
+    </p>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+        Edit authentication method
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormAuthMethod completed form view mode: disabled user_oidc app should not show form errors if setup with oauth 1`] = `
+"<div class="authentication-method">
+  <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
+  <div class="auth-method">
+    <p class="auth-method--label">
+      Two-way OAuth 2.0 authorization code flow
+    </p>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+        Edit authentication method
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormAuthMethod completed form view mode: disabled user_oidc app should show form errors if setup with oidc 1`] = `
+"<div class="authentication-method">
+  <formheading-stub index="2" title="Authentication method" iscomplete="true" haserror="true"></formheading-stub>
+  <errornote-stub errortitle="This feature requires version {version} (or higher) of {app}. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
   <div class="auth-method">
     <p class="auth-method--label">
       Single-Sign-On through OpenID Connect Identity Provider
@@ -216,6 +260,7 @@ exports[`Component: FormAuthMethod completed form should show set form label 1`]
 exports[`Component: FormAuthMethod initial incomplete form current setting: authentication-method should save the setting on submit 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" iscomplete="true"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <p class="auth-method--label">
       Single-Sign-On through OpenID Connect Identity Provider
@@ -234,6 +279,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
 exports[`Component: FormAuthMethod initial incomplete form current setting: authentication-method should show error on save failure 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -271,6 +317,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
 exports[`Component: FormAuthMethod initial incomplete form current setting: authentication-method should show the required form fields 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -309,12 +356,14 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: othe
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method" isdisabled="true"></formheading-stub>
   <!---->
+  <!---->
 </div>"
 `;
 
 exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc app should show disabled error message and disabled sso button 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
@@ -352,6 +401,7 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
 exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc app should show disabled error message and disabled sso button 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
+  <!---->
   <div class="auth-method">
     <div>
       <div class="auth-method--hint">
