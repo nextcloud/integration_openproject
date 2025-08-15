@@ -282,16 +282,23 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
-				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup || hasGroupfoldersAppStateError"
+				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
-				v-if="hasGroupfoldersAppStateError"
+				v-if="showGroupfoldersAppError"
 				:error-title="messagesFmt.appNotEnabledOrUnsupported('groupfolders', getMinSupportedGroupfoldersVersion)"
 				:error-link="appLinks.groupfolders.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
+			<NcNoteCard v-else-if="projectFolderSetupError || isThereErrorAfterProjectFolderAndAppPasswordSetup" class="note-card" type="error">
+				<p class="note-card--title">
+					<b v-if="isThereErrorAfterProjectFolderAndAppPasswordSetup">{{ state.project_folder_info.errorMessage }}</b>
+					<b v-else>{{ projectFolderSetupError }}</b>
+				</p>
+				<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
+			</NcNoteCard>
 			<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
 				<p class="note-card--title">
 					<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
@@ -338,16 +345,10 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
 							}}
 						</p>
-						<NcNoteCard v-if="!hasGroupfoldersAppStateError && projectFolderSetupError" class="note-card" type="error">
-							<p class="note-card--title">
-								<b>{{ projectFolderSetupError }}</b>
-							</p>
-							<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
-						</NcNoteCard>
 						<div class="form-actions">
 							<NcButton
 								type="primary"
-								:disabled="hasGroupfoldersAppStateError"
+								:disabled="showGroupfoldersAppError"
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
@@ -809,7 +810,7 @@ export default {
 		hasOidcAppErrorWithNextcloudHub() {
 			return !this.hasEnabledSupportedOIDCApp && this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub
 		},
-		hasGroupfoldersAppStateError() {
+		showGroupfoldersAppError() {
 			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp
 		},
 		disableNCHubUnsupportedHint() {
