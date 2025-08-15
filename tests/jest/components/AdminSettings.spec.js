@@ -11,7 +11,7 @@ import * as dialogs from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 import AdminSettings from '../../../src/components/AdminSettings.vue'
-import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM, FORM } from '../../../src/utils.js'
+import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
 import { messagesFmt, messages } from '../../../src/constants/messages.js'
 
