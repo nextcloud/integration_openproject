@@ -39,12 +39,19 @@ class BeforeGroupDeletedListener implements IEventListener {
 			return;
 		}
 
-		$group = $event->getGroup();
-		if ($group->getGID() === Application::OPEN_PROJECT_ENTITIES_NAME) {
-			$this->logger->error('Group "OpenProject" is needed to be protected by the app "OpenProject Integration", thus cannot be deleted. Please check the documentation "https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" for further information.');
-			throw new OCSBadRequestException('<p>&nbsp;Group "OpenProject" is needed to be protected by the app "OpenProject Integration", thus cannot be deleted.
-			Please check the <a style="color:var(--color-primary-default)" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting"
-			target="_blank"><u>troubleshooting guide</u></a> for further information.</p>');
+		$group = $event->getGroup()->getGID();
+		if ($group === Application::OPEN_PROJECT_ENTITIES_NAME || $group === Application::OPENPROJECT_ALL_GROUP_NAME) {
+			$troubleshootLink = 'https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting';
+			$this->logger->error(
+				"Group '$group' is needed to be protected by the app 'OpenProject Integration', thus cannot be deleted." .
+				" Please check the documentation '$troubleshootLink' for further information."
+			);
+			throw new OCSBadRequestException(
+				"<p>&nbsp;Group '$group' is needed to be protected by the app 'OpenProject Integration', thus cannot be deleted." .
+				" Please check the " .
+				"<a href='$troubleshootLink' target='_blank'><u>troubleshooting guide</u></a>" .
+				" for further information.</p>"
+			);
 		}
 	}
 }

@@ -207,7 +207,7 @@ class ConfigController extends Controller {
 		$appPassword = null;
 
 		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
-			$settingsService->setupProjectFolder();
+			$this->settingsService->setupProjectFolder();
 		}
 
 		// creates or replace the app password
