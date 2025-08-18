@@ -16,13 +16,16 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\OpenProject\Service\SettingsService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception;
+use OCP\Group\ISubAdmin;
 use OCP\IConfig;
 use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -93,6 +96,19 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @return SettingsService
+	 */
+	public function getSettingsService(): SettingsService {
+		return new SettingsService(
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+		);
+	}
+
+	/**
 	 * Format has to be [<string> => <object|string>] with the first being the constructor parameter name and the second one the mock.
 	 * Example: ['config' => $createdMockObject]
 	 * @param array<string, object|string> $constructParams specific mocks for the constructor of OpenProjectAPIService
@@ -111,7 +127,7 @@ class ConfigControllerTest extends TestCase {
 			'loggerInterface' => $this->createMock(LoggerInterface::class),
 			'oauthService' => $this->createMock(OauthService::class),
 			'settingsController' => $this->createMock(SettingsController::class),
-			'settingsService' => $this->createMock(SettingsService::class),
+			'settingsService' => $this->getSettingsService(),
 			'userId' => 'testUser'
 		];
 
