@@ -1329,7 +1329,7 @@ class OpenProjectAPIService {
 	 */
 	private function isGroupfolderAppCorrectlySetup():bool {
 		$groupFolderManager = $this->getGroupFolderManager();
-		$folders = $groupFolderManager->getFoldersForGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+		$folders = $groupFolderManager->getFoldersForGroups([Application::OPEN_PROJECT_ENTITIES_NAME]);
 		foreach ($folders as $folder) {
 			$folder = $this->groupFolderToArray($folder);
 			if (
