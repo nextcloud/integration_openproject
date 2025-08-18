@@ -33,11 +33,10 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\IEventDispatcher;
-
-use OCP\Group\Events\BeforeUserRemovedEvent;
-use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
+use OCP\Group\Events\BeforeGroupDeletedEvent;
+use OCP\Group\Events\BeforeUserRemovedEvent;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\INavigationManager;
@@ -55,6 +54,7 @@ class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
 	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectAll';
+	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
 
 	/**
 	 * @var mixed
@@ -91,9 +91,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
 		);
-		$context->registerEventListener(
-			BeforeUserRemovedEvent::class, BeforeUserRemovedListener::class
-		);
+		$context->registerEventListener(BeforeUserRemovedEvent::class, BeforeUserRemovedListener::class);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
 			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);

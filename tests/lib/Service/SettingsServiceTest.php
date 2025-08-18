@@ -8,9 +8,62 @@
 namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
+use OCA\OpenProject\AppInfo\Application;
+use OCP\Group\ISubAdmin;
+use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SettingsServiceTest extends TestCase {
+	/**
+	 * Format has to be [<string> => <object|string>] with the first being the constructor parameter name and the second one the mock.
+	 * Example: ['config' => $createdMockObject]
+	 * @param array<string, object|string> $constructParams specific mocks for the constructor of OpenProjectAPIService
+	 *
+	 * @return array
+	 */
+	private function getSettingsServiceConstructArgs(array $constructParams = []): array {
+		$constructArgs = [
+			// order should be the same as in the constructor
+			'userManager' => $this->createMock(IUserManager::class),
+			'groupManager' => $this->createMock(IGroupManager::class),
+			'openProjectAPIService' => $this->createMock(OpenProjectAPIService::class),
+			'secureRandom' => $this->createMock(ISecureRandom::class),
+			'subAdmin' => $this->createMock(ISubAdmin::class),
+		];
+
+		// replace default mocks with manually passed in mocks
+		foreach ($constructParams as $key => $value) {
+			if (!array_key_exists($key, $constructArgs)) {
+				throw new \InvalidArgumentException("Invalid construct parameter: $key");
+			}
+
+			$constructArgs[$key] = $value;
+		}
+
+		return [Application::APP_ID, ...array_values($constructArgs)];
+	}
+
+	/**
+	 * @param array<string> $mockMethods
+	 * @param array<string, object> $constructParams
+	 *
+	 * @return MockObject
+	 */
+	private function getSettingsServiceMock(
+		array $mockMethods = [],
+		array $constructParams = [],
+	): MockObject {
+		$constructArgs = $this->getSettingsServiceConstructArgs($constructParams);
+		$mock = $this->getMockBuilder(SettingsService::class)
+			->setConstructorArgs($constructArgs)
+			->onlyMethods($mockMethods)
+			->getMock();
+		return $mock;
+	}
+
 	public function invalidSettingsProvider(): array {
 		return [
 			"Random missing settings" => [
@@ -254,7 +307,7 @@ class SettingsServiceTest extends TestCase {
 	 * @dataProvider invalidSettingsProvider
 	 */
 	public function testValidateAdminSettingsFormInvalid(array $configs, bool $completeSetup, string $message): void {
-		$service = new SettingsService();
+		$service = $this->getSettingsServiceMock();
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);
@@ -265,7 +318,7 @@ class SettingsServiceTest extends TestCase {
 	 * @dataProvider validSettingsProvider
 	 */
 	public function testValidateAdminSettingsFormValid(array $configs, bool $completeSetup): void {
-		$service = new SettingsService();
+		$service = $this->getSettingsServiceMock();
 
 		$this->assertNull($service->validateAdminSettingsForm($configs, $completeSetup));
 	}

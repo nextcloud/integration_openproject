@@ -25,17 +25,13 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\DB\Exception as DBException;
-use OCP\Group\ISubAdmin;
 use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
-
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -80,20 +76,6 @@ class ConfigController extends Controller {
 	 */
 	private $oauthSettingsController;
 
-	/**
-	 * @var IGroupManager
-	 */
-	private $groupManager;
-
-	/**
-	 * @var ISecureRandom
-	 */
-	private ISecureRandom $secureRandom;
-
-	/**
-	 * @var ISubAdmin
-	 */
-	private ISubAdmin $subAdminManager;
 	private SettingsService $settingsService;
 
 	public function __construct(
@@ -107,9 +89,6 @@ class ConfigController extends Controller {
 		LoggerInterface $logger,
 		OauthService $oauthService,
 		SettingsController $oauthSettingsController,
-		IGroupManager $groupManager,
-		ISecureRandom $secureRandom,
-		ISubAdmin $subAdminManager,
 		SettingsService $settingsService,
 		?string $userId
 	) {
@@ -123,9 +102,6 @@ class ConfigController extends Controller {
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
 		$this->oauthSettingsController = $oauthSettingsController;
-		$this->groupManager = $groupManager;
-		$this->secureRandom = $secureRandom;
-		$this->subAdminManager = $subAdminManager;
 		$this->settingsService = $settingsService;
 	}
 
