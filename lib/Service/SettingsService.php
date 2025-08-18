@@ -9,8 +9,6 @@ namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
-use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -49,7 +47,7 @@ class SettingsService {
 		private IGroupManager $groupManager,
 		private OpenProjectAPIService $openprojectAPIService,
 		private ISecureRandom $secureRandom,
-		private ISubAdmin $subAdminManager,
+		private ISubAdmin $subAdmin,
 	) {
 	}
 
@@ -240,8 +238,8 @@ class SettingsService {
 			$allGroup = $this->groupManager->createGroup(Application::OPENPROJECT_ALL_GROUP_NAME);
 			$group->addUser($user);
 			$allGroup->addUser($user);
-			$this->subAdminManager->createSubAdmin($user, $group);
-			$this->subAdminManager->createSubAdmin($user, $allGroup);
+			$this->subAdmin->createSubAdmin($user, $group);
+			$this->subAdmin->createSubAdmin($user, $allGroup);
 			$this->openprojectAPIService->createGroupfolder();
 			if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
