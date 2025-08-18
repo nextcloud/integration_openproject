@@ -11,6 +11,10 @@ use InvalidArgumentException;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectGroupfolderSetupConflictException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\Group\ISubAdmin;
+use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 
 class SettingsService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
@@ -44,6 +48,8 @@ class SettingsService {
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private OpenProjectAPIService $openprojectAPIService,
+		private ISecureRandom $secureRandom,
+		private ISubAdmin $subAdminManager,
 	) {
 	}
 
@@ -242,5 +248,4 @@ class SettingsService {
 			}
 		}
 	}
-	// OCP\Group\Events\BeforeUserRemovedEvent
 }

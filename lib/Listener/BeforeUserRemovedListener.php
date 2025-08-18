@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\OpenProject\Listener;
 
 use OCA\OpenProject\AppInfo\Application;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\BeforeUserRemovedEvent;
@@ -43,30 +44,42 @@ class BeforeUserRemovedListener implements IEventListener {
 		if (!($event instanceof BeforeUserRemovedEvent)) {
 			return;
 		}
-		$userToRemove = $event->getUser()->getUID();
-		$fromGroup = $event->getGroup()->getGID();
-		$this->logger->error('User: ' . $userToRemove);
-		$this->logger->error('Group: ' . $fromGroup);
 
-		// TODO: check user is OpenProject and the target group is OpenProject
+		$fromGroup = $event->getGroup()->getGID();
+		$userToRemove = $event->getUser()->getUID();
 		$adminUser = $this->userSession->getUser();
 		if ($adminUser === null) {
 			return;
 		}
-		$this->logger->error('By User: ' . $adminUser->getUID());
-		if (!$this->groupManager->isInGroup($userToRemove, Application::OPENPROJECT_ALL_GROUP_NAME)) {
-			$this->logger->error('User not found in the "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group.');
-			$this->logger->error("Adding user '$userToRemove' to '" . Application::OPENPROJECT_ALL_GROUP_NAME . "' group...");
-			$allGroup = $this->groupManager->get(Application::OPENPROJECT_ALL_GROUP_NAME);
-			if ($allGroup === null) {
-				throw new \Exception('Group "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" not found');
-			}
-			$allGroup->addUser($event->getUser());
-		} else {
-			$this->logger->error('User is already in the "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group');
+
+		// Only handle OpenProject group
+		if ($fromGroup !== Application::OPEN_PROJECT_ENTITIES_NAME) {
+			return;
 		}
-		if ($this->groupManager->isInGroup($userToRemove, Application::OPEN_PROJECT_ENTITIES_NAME)) {
-			$this->logger->error('User found in "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" group. Removing...');
+
+		// Prevent removing users from OpenProject group by other admins
+		if ($adminUser->getUID() !== Application::OPEN_PROJECT_ENTITIES_NAME) {
+			$errorMessage = "Cannot remove user from group '$fromGroup'. " .
+				"This action can only be performed by '" . Application::OPEN_PROJECT_ENTITIES_NAME . "' admin user.";
+			$this->logger->error($errorMessage);
+			throw new OCSBadRequestException($errorMessage);
+		}
+
+		if (!$this->groupManager->isInGroup($userToRemove, Application::OPENPROJECT_ALL_GROUP_NAME)) {
+			$this->logger->debug('User not found in "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group.');
+			$allGroup = $this->groupManager->get(Application::OPENPROJECT_ALL_GROUP_NAME);
+
+			if ($allGroup === null) {
+				$errorMessage = 'Group "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" not found.' .
+					' This group is required before removing users from "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" group.';
+				$this->logger->error($errorMessage);
+				throw new OCSBadRequestException($errorMessage);
+			}
+
+			$allGroup->addUser($event->getUser());
+			$this->logger->debug("User '$userToRemove' added to '" . Application::OPENPROJECT_ALL_GROUP_NAME . "' group.");
+		} else {
+			$this->logger->debug('User already exists in "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group');
 		}
 	}
 }
