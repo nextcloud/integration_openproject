@@ -15,7 +15,6 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\BeforeUserRemovedEvent;
 use OCP\IGroupManager;
-use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -24,13 +23,11 @@ use Psr\Log\LoggerInterface;
 class BeforeUserRemovedListener implements IEventListener {
 	/**
 	 * @param LoggerInterface $logger
-	 * @param IUserSession $userSession
 	 * @param IGroupManager $groupManager
 	 */
 	public function __construct(
 		private LoggerInterface $logger,
-		private IUserSession $userSession,
-		private IGroupManager $groupManager
+		private IGroupManager $groupManager,
 	) {
 	}
 
@@ -47,22 +44,10 @@ class BeforeUserRemovedListener implements IEventListener {
 
 		$fromGroup = $event->getGroup()->getGID();
 		$userToRemove = $event->getUser()->getUID();
-		$adminUser = $this->userSession->getUser();
-		if ($adminUser === null) {
-			return;
-		}
 
 		// Only handle OpenProject group
 		if ($fromGroup !== Application::OPEN_PROJECT_ENTITIES_NAME) {
 			return;
-		}
-
-		// Prevent removing users from OpenProject group by other admins
-		if ($adminUser->getUID() !== Application::OPEN_PROJECT_ENTITIES_NAME) {
-			$errorMessage = "Cannot remove user from group '$fromGroup'. " .
-				"This action can only be performed by '" . Application::OPEN_PROJECT_ENTITIES_NAME . "' admin user.";
-			$this->logger->error($errorMessage);
-			throw new OCSBadRequestException($errorMessage);
 		}
 
 		if (!$this->groupManager->isInGroup($userToRemove, Application::OPENPROJECT_ALL_GROUP_NAME)) {
