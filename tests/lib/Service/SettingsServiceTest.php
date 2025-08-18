@@ -8,7 +8,6 @@
 namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
-use OCA\OpenProject\AppInfo\Application;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -37,25 +36,25 @@ class SettingsServiceTest extends TestCase {
 		// replace default mocks with manually passed in mocks
 		foreach ($constructParams as $key => $value) {
 			if (!array_key_exists($key, $constructArgs)) {
-				throw new \InvalidArgumentException("Invalid construct parameter: $key");
+				throw new InvalidArgumentException("Invalid construct parameter: $key");
 			}
 
 			$constructArgs[$key] = $value;
 		}
 
-		return [Application::APP_ID, ...array_values($constructArgs)];
+		return array_values($constructArgs);
 	}
 
 	/**
 	 * @param array<string> $mockMethods
 	 * @param array<string, object> $constructParams
 	 *
-	 * @return MockObject
+	 * @return MockObject|SettingsService
 	 */
 	private function getSettingsServiceMock(
 		array $mockMethods = [],
 		array $constructParams = [],
-	): MockObject {
+	): MockObject|SettingsService {
 		$constructArgs = $this->getSettingsServiceConstructArgs($constructParams);
 		$mock = $this->getMockBuilder(SettingsService::class)
 			->setConstructorArgs($constructArgs)
