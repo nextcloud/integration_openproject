@@ -2225,8 +2225,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]];
 		}
 		$folderManagerMock
-			->method('getFoldersForGroup')
-			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->method('getFoldersForGroups')
+			->with([Application::OPEN_PROJECT_ENTITIES_NAME])
 			->willReturn($getFoldersForGroupResponse);
 
 		$folderManagerMock
