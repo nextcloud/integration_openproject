@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Show form errors if required apps are not enabled or not supported [#868](https://github.com/nextcloud/integration_openproject/pull/868)
+- Allow OpenProject subadmin to remove users from OpenProject group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
 
 ### Changed
 
