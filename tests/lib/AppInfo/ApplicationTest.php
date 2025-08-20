@@ -58,14 +58,14 @@ class ApplicationTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testListenUserRemoveRequestUnrelated(string $method, string $path): void {
+	public function testListenRemoveUserFromGroupRequestUnrelated(string $method, string $path): void {
 		$this->request->expects($this->once())->method('getMethod')->willReturn($method);
 		$this->request->expects($this->any())->method('getPathInfo')->willReturn($path);
 		$this->request->expects($this->never())->method('getParam');
 		$this->userManager->expects($this->never())->method('get');
 
 		$app = new Application();
-		$app->listenUserRemoveRequest(
+		$app->listenRemoveUserFromGroupRequest(
 			$this->request,
 			$this->groupManager,
 			$this->userManager,
@@ -109,7 +109,7 @@ class ApplicationTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testListenUserRemoveRequestEarlyReturn(
+	public function testListenRemoveUserFromGroupRequestEarlyReturn(
 		string $groupName,
 		string $userName,
 		bool $hasUser,
@@ -142,7 +142,7 @@ class ApplicationTest extends TestCase {
 		$this->logger->expects($this->never())->method('error');
 
 		$app = new Application();
-		$app->listenUserRemoveRequest(
+		$app->listenRemoveUserFromGroupRequest(
 			$this->request,
 			$this->groupManager,
 			$this->userManager,
@@ -153,7 +153,7 @@ class ApplicationTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testListenUserRemoveRequestError(): void {
+	public function testListenRemoveUserFromGroupRequestError(): void {
 		$userMock = $this->createMock(IUser::class);
 		$testUser = 'testuser';
 
@@ -182,7 +182,7 @@ class ApplicationTest extends TestCase {
 		$this->expectExceptionMessageMatches('/(.*)This group is required before removing users(.*)/');
 
 		$app = new Application();
-		$app->listenUserRemoveRequest(
+		$app->listenRemoveUserFromGroupRequest(
 			$this->request,
 			$this->groupManager,
 			$this->userManager,
@@ -193,7 +193,7 @@ class ApplicationTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testListenUserRemoveRequestSuccess(): void {
+	public function testListenRemoveUserFromGroupRequestSuccess(): void {
 		$userMock = $this->createMock(IUser::class);
 		$groupMock = $this->createMock(IGroup::class);
 		$testUser = 'testuser';
@@ -219,7 +219,7 @@ class ApplicationTest extends TestCase {
 		$this->logger->expects($this->never())->method('error');
 
 		$app = new Application();
-		$app->listenUserRemoveRequest(
+		$app->listenRemoveUserFromGroupRequest(
 			$this->request,
 			$this->groupManager,
 			$this->userManager,

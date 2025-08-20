@@ -105,7 +105,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
-		$context->injectFn(Closure::fromCallable([$this, 'listenUserRemoveRequest']));
+		$context->injectFn(Closure::fromCallable([$this, 'listenRemoveUserFromGroupRequest']));
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
@@ -172,7 +172,7 @@ class Application extends App implements IBootstrap {
 	 * @return void
 	 * @throws OCSBadRequestException
 	 */
-	public function listenUserRemoveRequest(
+	public function listenRemoveUserFromGroupRequest(
 		IRequest $request,
 		IGroupManager $groupManager,
 		IUserManager $userManager,
