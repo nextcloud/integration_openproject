@@ -47,6 +47,7 @@ use OCP\IUserSession;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Application
@@ -180,7 +181,7 @@ class Application extends App implements IBootstrap {
 		// url path pattern to remove user from group
 		// e.g: /cloud/users/{userid}/groups   (path returned by $request->getPathInfo())
 		$urlPattern = '/.*\/users\/([^\/]+)\/groups$/';
-		if ($request->getMethod() === 'DELETE' && \preg_match($urlPattern, $request->getPathInfo())) {
+		if ($request->getMethod() === Request::METHOD_DELETE && \preg_match($urlPattern, $request->getPathInfo())) {
 			$fromGroup = $request->getParam('groupid');
 			$userToRemove = \preg_replace($urlPattern, '$1', $request->getPathInfo());
 			if (!$fromGroup || !$userToRemove) {
