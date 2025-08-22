@@ -191,12 +191,32 @@ class ApplicationTest extends TestCase {
 	}
 
 	/**
+	 * @return array<mixed>
+	 */
+	public function successDataProvider(): array {
+		return [
+			[
+				'user' => 'testuser',
+			],
+			[
+				'user' => 'Alice\');',
+			],
+			[
+				'user' => '0000',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider successDataProvider
+	 *
+	 * @param string $testUser
+	 *
 	 * @return void
 	 */
-	public function testListenRemoveUserFromGroupRequestSuccess(): void {
+	public function testListenRemoveUserFromGroupRequestSuccess(string $testUser): void {
 		$userMock = $this->createMock(IUser::class);
 		$groupMock = $this->createMock(IGroup::class);
-		$testUser = 'testuser';
 
 		$this->request->expects($this->once())->method('getMethod')->willReturn('DELETE');
 		$this->request->expects($this->any())->method('getPathInfo')->willReturn("/cloud/users/$testUser/groups");

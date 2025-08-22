@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Allow OpenProject subadmin to remove users from OpenProject group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
+- Allow OpenProject subadmin to remove users from OpenProject group, by adding that user first to and other group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
 
 ### Changed
 
