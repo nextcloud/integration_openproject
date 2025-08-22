@@ -72,6 +72,9 @@ class OpenProjectAPIService {
 	public const MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION = '1.0.0';
 	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
 
+	// 1 hour expiration
+	public const DEFAULT_ACCESS_TOKEN_EXPIRATION = 3600;
+
 	/**
 	 * @var string
 	 */
@@ -558,9 +561,23 @@ class OpenProjectAPIService {
 
 			if (isset($resJson['access_token'])) {
 				$this->config->setUserValue($userId, Application::APP_ID, 'token', $resJson['access_token']);
-				$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
-				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
-				$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
+				if ($resJson['created_at'] && isset($resJson['expires_in'])) {
+					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
+					$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
+					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
+				} else {
+					$this->logger->warning('Token response does not contain created_at or expires_in. Using default expiration.', ['app' => $this->appName]);
+
+					if (!isset($resJson['created_at'])) {
+						$resJson['created_at'] = time();
+					}
+					if (!isset($resJson['expires_in'])) {
+						$resJson['expires_in'] = self::DEFAULT_ACCESS_TOKEN_EXPIRATION;
+					}
+					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
+					$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
+					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
+				}
 			}
 			if (isset($resJson['refresh_token'])) {
 				$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
