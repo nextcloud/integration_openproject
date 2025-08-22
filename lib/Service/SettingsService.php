@@ -229,7 +229,7 @@ class SettingsService {
 	/**
 	 * @return void
 	 */
-	public function setupProjectFolder() {
+	public function setupProjectFolder(): void {
 		$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
 		if ($isSystemReady) {
 			$password = $this->secureRandom->generate($this->openprojectAPIService->getPasswordLength(), ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS);

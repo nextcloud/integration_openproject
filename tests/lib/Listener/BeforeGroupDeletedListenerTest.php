@@ -53,7 +53,7 @@ class BeforeGroupDeletedListenerTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testHandle(string $eventClass, string $group, bool $expectError) {
+	public function testHandle(string $eventClass, string $group, bool $expectError): void {
 		$groupMock = $this->createMock(IGroup::class);
 		$event = $this->createMock($eventClass);
 		$logger = $this->createMock(LoggerInterface::class);
