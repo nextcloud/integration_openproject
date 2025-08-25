@@ -49,7 +49,7 @@ class PersonalTest extends TestCase {
 	public function dataTestGetForm(): array {
 		return [
 			[
-				'token' => null,
+				'token' => '',
 				'username' => '',
 				"config" => [
 					"openproject_instance_url" => '',

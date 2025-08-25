@@ -4346,7 +4346,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 		);
 		$result = $service->getOIDCToken('testUser');
-		$this->assertNull($result);
+		$this->assertEquals('', $result);
 	}
 
 	/**

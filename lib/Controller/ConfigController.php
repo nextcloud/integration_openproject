@@ -158,14 +158,9 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetOIDCConfigs(string $userId = null): void {
-		if ($userId === null) {
-			$userId = $this->userId;
-		}
+	public function resetOIDCConfigs(): void {
 		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
 		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 	}
 
 
@@ -397,10 +392,12 @@ class ConfigController extends Controller {
 				}
 				$this->clearUserInfo($userUID);
 			});
-		} elseif ($runningFullResetWithOIDCAuth) {
+		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset) {
 			$this->resetOIDCConfigs();
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
+			});
 		}
-
 
 		// whenever doing full reset we want the project folder switch state to be "on" in the UI
 		// so setting `fresh_project_folder_setup` as true

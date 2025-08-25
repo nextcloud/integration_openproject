@@ -857,6 +857,7 @@ class ConfigControllerTest extends TestCase {
 
 		$this->assertEqualsCanonicalizing($expectedCalls, $deleteCalls);
 	}
+
 	/**
 	 * @return void
 	 */
@@ -1631,7 +1632,7 @@ class ConfigControllerTest extends TestCase {
 		$userManager = $this->checkForUsersCountBeforeTest();
 		$this->user1 = $userManager->createUser('test101', 'test101');
 
-		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock = $this->createMock(IConfig::class);
 		$oauthServiceMock = $this->createMock(OauthService::class);
 		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
 			->disableOriginalConstructor()
@@ -1668,7 +1669,7 @@ class ConfigControllerTest extends TestCase {
 			->method('deleteClient')
 			->with(123);
 		$configMock
-			->expects($this->exactly(12)) // 5 times for each user
+			->expects($this->exactly(12))
 			->method('deleteUserValue')
 			->withConsecutive(
 				['admin', 'integration_openproject', 'token'],
@@ -1783,11 +1784,21 @@ class ConfigControllerTest extends TestCase {
 				$newConfig['openproject_instance_url']
 			);
 		$configMock
-			->expects($this->exactly(2))
+			->expects($this->exactly(12))
 			->method('deleteUserValue')
 			->withConsecutive(
-				[$testUser, 'integration_openproject', 'user_id'],
-				[$testUser, 'integration_openproject', 'user_name']
+				['admin', 'integration_openproject', 'token'],
+				['admin', 'integration_openproject', 'login'],
+				['admin', 'integration_openproject', 'user_id'],
+				['admin', 'integration_openproject', 'user_name'],
+				['admin', 'integration_openproject', 'refresh_token'],
+				['admin', 'integration_openproject', 'token_expires_at'],
+				[$this->user1->getUID(), 'integration_openproject', 'token'],
+				[$this->user1->getUID(), 'integration_openproject', 'login'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_id'],
+				[$this->user1->getUID(), 'integration_openproject', 'user_name'],
+				[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
+				[$this->user1->getUID(), 'integration_openproject', 'token_expires_at'],
 			);
 
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)

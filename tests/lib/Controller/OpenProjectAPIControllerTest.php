@@ -336,7 +336,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->getMock();
 		$service
 			->method('getAccessToken')
-			->willReturn(null);
+			->willReturn('');
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
 			'config' => $this->getConfigMock($authorizationMethod, ''),
