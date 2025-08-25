@@ -562,8 +562,6 @@ class OpenProjectAPIService {
 				$this->config->setUserValue($userId, Application::APP_ID, 'token', $resJson['access_token']);
 				if ($resJson['created_at'] && isset($resJson['expires_in'])) {
 					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
-					$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
-					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
 				} else {
 					$this->logger->warning('Token response does not contain created_at or expires_in. Using default expiration.', ['app' => $this->appName]);
 
@@ -574,9 +572,9 @@ class OpenProjectAPIService {
 						$resJson['expires_in'] = self::DEFAULT_ACCESS_TOKEN_EXPIRATION;
 					}
 					$expiresAt = $resJson['created_at'] + $resJson['expires_in'];
-					$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
-					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
 				}
+				$this->logger->debug('New token expires at ' . date('Y/m/d H:i:s', $expiresAt), ['app' => $this->appName]);
+				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
 			}
 			if (isset($resJson['refresh_token'])) {
 				$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $resJson['refresh_token']);
@@ -1709,9 +1707,9 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function getAccessToken(string $userId): ?string {
+	public function getAccessToken(string $userId): string {
 		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
 		if ($token && !$this->isAccessTokenExpired($userId)) {
 			return $token;

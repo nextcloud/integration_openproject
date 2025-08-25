@@ -158,14 +158,9 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetOIDCConfigs(string $userId = null): void {
-		if ($userId === null) {
-			$userId = $this->userId;
-		}
+	public function resetOIDCConfigs(): void {
 		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
 		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 	}
 
 
@@ -399,8 +394,10 @@ class ConfigController extends Controller {
 			});
 		} elseif ($runningFullResetWithOIDCAuth) {
 			$this->resetOIDCConfigs();
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
+			});
 		}
-
 
 		// whenever doing full reset we want the project folder switch state to be "on" in the UI
 		// so setting `fresh_project_folder_setup` as true
@@ -419,12 +416,18 @@ class ConfigController extends Controller {
 		if (key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC && $runningOauth2Reset) {
 			$this->resetOauth2Configs();
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
+			});
 		}
 
 		// when switching from "oidc" to "oauth2" authorization method
 		if (key_exists('authorization_method', $values) &&
 			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH && $runningOIDCReset) {
 			$this->resetOIDCConfigs();
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
+			});
 		}
 
 		// if the revoke has failed at least once, the last status is stored in the database
