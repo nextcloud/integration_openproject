@@ -13,7 +13,7 @@ import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublish
 import AdminSettings from '../../../src/components/AdminSettings.vue'
 import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
-import { messagesFmt } from '../../../src/constants/messages.js'
+import { messagesFmt, messages } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -101,17 +101,20 @@ const selectors = {
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
+	projectFolderFormHeading: '.project-folder-setup formheading-stub',
 	projectFolderSetupSwitch: '[type="checkbox"]',
+	projectFolderSetupButtonStub: 'nccheckboxradioswitch-stub[type="switch"]',
 	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
 	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
 	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
 	projectFolderStatus: '.project-folder-status-value',
 	projectFolderErrorMessage: '.note-card--title',
 	projectFolderErrorMessageDetails: '.note-card--error-description',
+	projectFolderErrorNote: '.project-folder-setup errornote-stub',
 	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 	adminAuditNoteCardInfoSelector: '[type="info"]',
-	encryptionNoteCardWarningSelector: '.notecard--warning',
+	encryptionNoteCardWarningSelector: '.project-folder-setup ncnotecard-stub',
 }
 
 const completeOAUTH2IntegrationState = {
@@ -145,6 +148,11 @@ const appState = {
 			enabled: true,
 			supported: true,
 			minimum_version: '2.0.0',
+		},
+		groupfolders: {
+			enabled: true,
+			supported: true,
+			minimum_version: '1.0.0',
 		},
 	},
 }
@@ -681,6 +689,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -723,6 +732,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1043,7 +1053,7 @@ describe('AdminSettings.vue', () => {
 							apps: {
 								...appState.apps,
 								oidc: {
-									enabled: false,
+									enabled: true,
 									supported: false,
 									minimum_version: appState.apps.oidc.minimum_version,
 								},
@@ -1067,12 +1077,17 @@ describe('AdminSettings.vue', () => {
 					const errorLabel = wrapper.find(errorLabelSelector)
 					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
 					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('nextcloud_hub')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
 					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe(undefined)
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.oidc.installLink)
+					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 				})
 			})
 		})
@@ -1394,6 +1409,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1442,6 +1458,7 @@ describe('AdminSettings.vue', () => {
 
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
+					expect(wrapper.findAll(errorNoteSelector)).toHaveLength(1)
 					expect(errorNote.exists()).toBe(true)
 					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
@@ -1471,7 +1488,7 @@ describe('AdminSettings.vue', () => {
 							apps: {
 								...appState.apps,
 								oidc: {
-									enabled: false,
+									enabled: true,
 									supported: false,
 									minimum_version: appState.apps.oidc.minimum_version,
 								},
@@ -1488,12 +1505,14 @@ describe('AdminSettings.vue', () => {
 					const errorLabel = wrapper.find(errorLabelSelector)
 					const ncProviderRadio = wrapper.find(NCProviderTypeSelector)
 					const externalProviderRadio = wrapper.find(externalProviderTypeSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
 
 					expect(ncProviderRadio.attributes().disabled).toBe('true')
 					expect(ncProviderRadio.attributes().checked).toBe('external')
 					expect(externalProviderRadio.attributes().disabled).toBe(undefined)
 					expect(errorLabel.attributes().error).toBe(messagesFmt.appNotEnabledOrUnsupported('oidc'))
 					expect(errorLabel.attributes().disabled).toBe('true')
+					expect(errorNote.exists()).toBe(false)
 				})
 			})
 		})
@@ -2003,12 +2022,94 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
 					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
 					const actualProjectFolderStatusValue = projectFolderStatus.text()
 					expect(actualProjectFolderStatusValue).toContain('Inactive')
+					expect(wrapper.find(selectors.projectFolderErrorNote).exists()).toBe(false)
 					expect(wrapper.find(selectors.projectFolderSetupForm)).toMatchSnapshot()
+				})
+			})
+
+			describe('disabled groupfolders app', function() {
+				it('should not show error message if project folder is not setup', async () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
+							openproject_client_id: 'some-client-id-here',
+							openproject_client_secret: 'some-client-secret-here',
+							nc_oauth_client: {
+								nextcloud_client_id: 'some-nc-client-id-here',
+								nextcloud_client_secret: 'some-nc-client-secret-here',
+							},
+							fresh_project_folder_setup: true,
+							app_password_set: false,
+							apps: {
+								...appState.apps,
+								groupfolders: {
+									enabled: false,
+									supported: false,
+								},
+							},
+						},
+						formMode: {
+							projectFolderSetUp: F_MODES.VIEW,
+						},
+					})
+					const formHeading = wrapper.find(selectors.projectFolderFormHeading)
+					const errorNote = wrapper.find(selectors.projectFolderErrorNote)
+					const editButton = wrapper.find(selectors.editProjectFolderSetup)
+					expect(formHeading.exists()).toBe(true)
+					expect(formHeading.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(false)
+					expect(editButton.attributes().disabled).toBe(undefined)
+				})
+
+				it('should show error message if project folder is setup', async () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OAUTH2,
+							openproject_client_id: 'some-client-id-here',
+							openproject_client_secret: 'some-client-secret-here',
+							nc_oauth_client: {
+								nextcloud_client_id: 'some-nc-client-id-here',
+								nextcloud_client_secret: 'some-nc-client-secret-here',
+							},
+							fresh_project_folder_setup: false,
+							project_folder_info: {
+								status: true,
+							},
+							app_password_set: true,
+							encryption_info: {
+								server_side_encryption_enabled: false,
+								encryption_enabled_for_groupfolders: false,
+							},
+							apps: {
+								...appState.apps,
+								groupfolders: {
+									enabled: false,
+									supported: false,
+								},
+							},
+						},
+						formMode: {
+							projectFolderSetUp: F_MODES.VIEW,
+						},
+					})
+					const formHeading = wrapper.find(selectors.projectFolderFormHeading)
+					const errorNote = wrapper.find(selectors.projectFolderErrorNote)
+					const editButton = wrapper.find(selectors.editProjectFolderSetup)
+					expect(formHeading.exists()).toBe(true)
+					expect(formHeading.attributes().haserror).toBe('true')
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.groupfolders.installLink)
+					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
+					expect(editButton.attributes().disabled).toBe(undefined)
 				})
 			})
 		})
@@ -2037,20 +2138,17 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.EDIT,
-						},
-					})
+					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
 					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
 					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
 				})
 
 				it('should show button text label "Complete without team folder setup" when the switch is "off"', async () => {
-					const wrapper = getMountedWrapper({
+					const wrapper = getWrapper({
 						state: {
 							openproject_instance_url: 'http://openproject.com',
 							authorization_method: AUTH_METHOD.OAUTH2,
@@ -2066,16 +2164,14 @@ describe('AdminSettings.vue', () => {
 								status: false,
 							},
 							app_password_set: false,
+							...appState,
 						},
 					})
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.EDIT,
-						},
-					})
+					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
-					await projectFolderSetupSwitchButton.trigger('click')
+					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupButtonStub)
+					projectFolderSetupSwitchButton.vm.$emit('update:checked', false)
+					await flushPromises()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(false)
 					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
 					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
@@ -2163,36 +2259,29 @@ describe('AdminSettings.vue', () => {
 					describe('upon failure', () => {
 						it.each([
 							[
-								'should set the project folder error message and error details when team folders app is not enabled',
-								{
-									error: 'The "groupfolders" app is not installed',
-									expectedErrorDetailsMessage: 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}',
-								},
-							],
-							[
 								'should set the user already exists error message and error details when user already exists',
 								{
 									error: 'The user "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the team folder name already exists error message and error details when team folder already exists',
 								{
 									error: 'The team folder name "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the group already exists error message and error details when group already exists',
 								{
 									error: 'The group "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
+									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
 
 						])('%s', async (name, expectedErrorDetails) => {
-							const wrapper = getMountedWrapper({
+							const wrapper = getWrapper({
 								state: {
 									openproject_instance_url: 'http://openproject.com',
 									authorization_method: AUTH_METHOD.OAUTH2,
@@ -2210,6 +2299,7 @@ describe('AdminSettings.vue', () => {
 									},
 									app_password_set: false,
 									projectFolderSetupError: null,
+									...appState,
 								},
 							})
 
@@ -2232,14 +2322,9 @@ describe('AdminSettings.vue', () => {
 
 							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 								.mockImplementationOnce(() => Promise.reject(err))
-							if (expectedErrorDetails.error !== 'The "groupfolders" app is not installed') {
-								jest.spyOn(wrapper.vm, 'projectFolderSetUpErrorMessageDescription').mockReturnValue(
-									'Setting up the OpenProject user, group and team folder was not possible. Please check this troubleshooting guide on how to resolve this situation.',
-								)
-							}
 							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-							await completeProjectFolderSetupWithGroupFolderButton.trigger('click')
-							await wrapper.vm.$nextTick()
+							completeProjectFolderSetupWithGroupFolderButton.vm.$emit('click')
+							await flushPromises()
 							expect(getgroupfolderStatus).toBeCalledTimes(1)
 							expect(saveOPOptionsSpy).toBeCalledWith(
 								'http://localhost/apps/integration_openproject/admin-config',
@@ -2250,7 +2335,6 @@ describe('AdminSettings.vue', () => {
 									},
 								},
 							)
-							await wrapper.vm.$nextTick()
 							const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 							const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
 							expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
@@ -2418,7 +2502,7 @@ describe('AdminSettings.vue', () => {
 				})
 			})
 
-			describe('default deavtivate state', function() {
+			describe('default deactivate state', function() {
 				let wrapper = {}
 				beforeEach(async () => {
 					wrapper = getMountedWrapper({
@@ -2551,6 +2635,69 @@ describe('AdminSettings.vue', () => {
 						})
 						expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
 					})
+
+					describe('disabled groupfolders app', function() {
+						beforeEach(async () => {
+							wrapper = getWrapper({
+								state: {
+									openproject_instance_url: 'http://openproject.com',
+									authorization_method: AUTH_METHOD.OAUTH2,
+									openproject_client_id: 'some-client-id-here',
+									openproject_client_secret: 'some-client-secret-here',
+									nc_oauth_client: {
+										nextcloud_client_id: 'some-nc-client-id-here',
+										nextcloud_client_secret: 'some-nc-client-secret-here',
+									},
+									fresh_project_folder_setup: false,
+									project_folder_info: {
+										status: true,
+									},
+									app_password_set: true,
+									encryption_info: {
+										server_side_encryption_enabled: false,
+										encryption_enabled_for_groupfolders: false,
+									},
+									apps: {
+										...appState.apps,
+										groupfolders: {
+											enabled: false,
+											supported: false,
+										},
+									},
+								},
+								isGroupFolderAlreadySetup: null,
+							})
+							await wrapper.find(selectors.editProjectFolderSetup).vm.$emit('click')
+						})
+						it('should show error message', async () => {
+							const formHeading = wrapper.find(selectors.projectFolderFormHeading)
+							const errorNote = wrapper.find(selectors.projectFolderErrorNote)
+							const saveButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
+							expect(formHeading.exists()).toBe(true)
+							expect(formHeading.attributes().haserror).toBe('true')
+							expect(errorNote.exists()).toBe(true)
+							expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+							expect(errorNote.attributes().errorlink).toBe(appLinks.groupfolders.installLink)
+							expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
+							expect(saveButton.attributes().disabled).toBe('true')
+							expect(saveButton.text()).toBe('Keep current setup')
+						})
+						it('should be able to disable the project folder setup and no error card', async () => {
+							const toggleButton = wrapper.find(selectors.projectFolderSetupButtonStub)
+							expect(toggleButton.attributes().checked).toBe('true')
+
+							await toggleButton.vm.$emit('update:checked', false)
+
+							const saveButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
+							expect(toggleButton.attributes().checked).toBe(undefined)
+							expect(saveButton.text()).toBe('Complete without project folders')
+
+							const formHeading = wrapper.find(selectors.projectFolderFormHeading)
+							const errorNote = wrapper.find(selectors.projectFolderErrorNote)
+							expect(formHeading.attributes().haserror).toBe(undefined)
+							expect(errorNote.exists()).toBe(false)
+						})
+					})
 				})
 			})
 		})
@@ -2635,21 +2782,14 @@ describe('AdminSettings.vue', () => {
 		})
 		it.each([
 			[
-				'should set the project folder error message and error details when team folders app is not enabled',
-				{
-					error: 'The "groupfolders" app is not installed',
-					expectedErrorDetailsMessage: 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}',
-				},
-			],
-			[
 				'should set the user already exists error message and error details when user already exists',
 				{
 					error: 'The user "OpenProject" already exists',
-					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible.',
+					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 				},
 			],
 		])('%s', async (name, expectedErrorDetails) => {
-			const wrapper = getMountedWrapper({
+			const wrapper = getWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
 					authorization_method: AUTH_METHOD.OAUTH2,
@@ -2670,15 +2810,17 @@ describe('AdminSettings.vue', () => {
 					app_password_set: true,
 				},
 			})
+			await wrapper.setData({
+				formMode: {
+					projectFolderSetUp: F_MODES.EDIT,
+				},
+				projectFolderSetupError: expectedErrorDetails.error,
+			})
 			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(true)
 			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
 			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
 			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			if (expectedErrorDetails.error !== 'The "groupfolders" app is not installed') {
-				expect(projectFolderErrorMessageDetails.text()).toContain(expectedErrorDetails.expectedErrorDetailsMessage)
-			} else {
-				expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
-			}
+			expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 		})
 	})
 
@@ -2714,7 +2856,7 @@ describe('AdminSettings.vue', () => {
 				false,
 			],
 		])('%s', (name, encryptionInfoState, expectedResult) => {
-			const wrapper = getMountedWrapper({
+			const wrapper = getWrapper({
 				state: {
 					openproject_instance_url: 'http://openproject.com',
 					authorization_method: AUTH_METHOD.OAUTH2,
@@ -2735,6 +2877,10 @@ describe('AdminSettings.vue', () => {
 			})
 			const encryptionWarningNoteCard = wrapper.find(selectors.encryptionNoteCardWarningSelector)
 			expect(encryptionWarningNoteCard.exists()).toBe(expectedResult)
+			if (expectedResult) {
+				expect(encryptionWarningNoteCard.attributes().type).toBe('warning')
+				expect(encryptionWarningNoteCard.find('p.note-card--title').text()).toBe('Encryption for the Team Folders App is not enabled.')
+			}
 		})
 	})
 

@@ -122,6 +122,11 @@ class Admin implements ISettings {
 					'supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 				],
+				'groupfolders' => [
+					'enabled' => $this->openProjectAPIService->isGroupfoldersAppEnabled(),
+					'supported' => $this->openProjectAPIService->isGroupfoldersAppSupported(),
+					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION,
+				],
 			],
 		];
 
