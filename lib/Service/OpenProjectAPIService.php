@@ -1638,16 +1638,16 @@ class OpenProjectAPIService {
 	/**
 	 * @param string $userId
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function getOIDCToken(string $userId): ?string {
+	public function getOIDCToken(string $userId): string {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
 		if ($authorizationMethod !== SettingsService::AUTH_METHOD_OIDC) {
-			return null;
+			return '';
 		}
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
 			$this->logger->error("The 'user_oidc' app is not enabled or supported");
-			return null;
+			return '';
 		}
 
 		try {
@@ -1658,12 +1658,12 @@ class OpenProjectAPIService {
 			$this->eventDispatcher->dispatchTyped($event);
 		} catch (Exception $e) {
 			$this->logger->error('Failed to get token: ' . $e->getMessage());
-			return null;
+			return '';
 		}
 		$token = $event->getToken();
 		if ($token === null) {
 			$this->logger->error("Token event has not been caught by 'user_oidc'");
-			return null;
+			return '';
 		}
 
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
@@ -1683,7 +1683,7 @@ class OpenProjectAPIService {
 					"JWT access token is not enabled for oidc client '$oidcClientId' in OIDC provider app."
 					. " The opaque token is not supported by OpenProject."
 				);
-				return null;
+				return '';
 			}
 		}
 
@@ -1705,6 +1705,8 @@ class OpenProjectAPIService {
 	}
 
 	/**
+	 * @param string $userId
+	 *
 	 * @return bool
 	 */
 	public function isAccessTokenExpired(string $userId): bool {
@@ -1752,14 +1754,14 @@ class OpenProjectAPIService {
 			);
 			if (isset($result['error'])) {
 				$this->logger->error('Failed to refresh token: ' . $result['error'], ['app' => $this->appName]);
-				return null;
+				return '';
 			}
 			return $result['access_token'];
 		} elseif ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
 			return $this->getOIDCToken($userId);
 		}
 
-		return null;
+		return '';
 	}
 
 	/**
