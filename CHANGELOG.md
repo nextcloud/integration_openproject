@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Show form errors if required apps are not enabled or not supported [#868](https://github.com/nextcloud/integration_openproject/pull/868)
+
 ### Changed
 
 - Combine error messages for app not enabled and not supported [#865](https://github.com/nextcloud/integration_openproject/pull/865)
