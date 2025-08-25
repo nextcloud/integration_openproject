@@ -3127,6 +3127,124 @@ describe('AdminSettings.vue', () => {
 			expect(adminAuditLogNoteCard.exists()).toBe(expectedResult)
 		})
 	})
+
+	describe('OIDC authorization settings save button visibility', () => {
+		describe('when authorization setting is in disabled mode', () => {
+			it('should not show the save button when formMode.authorizationSetting is DISABLE', () => {
+				const wrapper = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OIDC,
+						authorization_settings: {
+							oidc_provider: 'some-oidc-provider',
+							targeted_audience_client_id: 'some-target-aud-client-id',
+							sso_provider_type: 'nextcloud_hub',
+						},
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+					formMode: {
+						authorizationSetting: F_MODES.DISABLE, // This causes the issue
+					},
+				})
+
+				// Verify that isAuthorizationSettingInEditMode returns false
+				expect(wrapper.vm.isAuthorizationSettingInEditMode).toBe(false)
+				
+				// Verify that the save button does not exist in the DOM
+				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+				expect(authSettingsSaveButton.exists()).toBe(false)
+			})
+
+			it('should show the save button when formMode.authorizationSetting is EDIT', () => {
+				const wrapper = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OIDC,
+						authorization_settings: {
+							oidc_provider: 'some-oidc-provider',
+							targeted_audience_client_id: 'some-target-aud-client-id',
+							sso_provider_type: 'nextcloud_hub',
+						},
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+					formMode: {
+						authorizationSetting: F_MODES.EDIT, // This should show the button
+					},
+				})
+
+				// Verify that isAuthorizationSettingInEditMode returns true
+				expect(wrapper.vm.isAuthorizationSettingInEditMode).toBe(true)
+				
+				// Verify that the save button exists in the DOM
+				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+				expect(authSettingsSaveButton.exists()).toBe(true)
+			})
+
+			it('should not show the save button in VIEW mode', () => {
+				const wrapper = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OIDC,
+						authorization_settings: {
+							oidc_provider: 'some-oidc-provider',
+							targeted_audience_client_id: 'some-target-aud-client-id',
+							sso_provider_type: 'nextcloud_hub',
+						},
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+					formMode: {
+						authorizationSetting: F_MODES.VIEW, // This should not show the save button
+					},
+				})
+
+				// Verify that isAuthorizationSettingInEditMode returns false
+				expect(wrapper.vm.isAuthorizationSettingInEditMode).toBe(false)
+				
+				// Verify that the save button does not exist in the DOM
+				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+				expect(authSettingsSaveButton.exists()).toBe(false)
+			})
+
+			it('should verify that formMode.authorizationSetting controls save button visibility through isAuthorizationSettingInEditMode computed property', () => {
+				// Test with DISABLE mode
+				const wrapperDisabled = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OIDC,
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+					formMode: {
+						authorizationSetting: F_MODES.DISABLE,
+					},
+				})
+
+				expect(wrapperDisabled.vm.formMode.authorizationSetting).toBe(F_MODES.DISABLE)
+				expect(wrapperDisabled.vm.isAuthorizationSettingInEditMode).toBe(false)
+				expect(wrapperDisabled.find(selectors.authorizationSettingsSaveButton).exists()).toBe(false)
+
+				// Test with EDIT mode  
+				const wrapperEdit = getWrapper({
+					state: {
+						openproject_instance_url: 'http://openproject.com',
+						authorization_method: AUTH_METHOD.OIDC,
+						user_oidc_enabled: true,
+						user_oidc_supported: true,
+					},
+					formMode: {
+						authorizationSetting: F_MODES.EDIT,
+					},
+				})
+
+				expect(wrapperEdit.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
+				expect(wrapperEdit.vm.isAuthorizationSettingInEditMode).toBe(true)
+				expect(wrapperEdit.find(selectors.authorizationSettingsSaveButton).exists()).toBe(true)
+			})
+		})
+	})
 })
 
 function getWrapper(data = {}) {
