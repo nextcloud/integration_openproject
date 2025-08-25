@@ -20,7 +20,7 @@ INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
 help() {
   echo -e "Available environment variables:"
   echo -e "Nextcloud:"
-  echo -e "\t NC_HOST \t\t\t Nextcloud host URL"
+  echo -e "\t NC_HOST \t\t\t\t Nextcloud host URL"
   echo -e "\t NC_ADMIN_USERNAME \t\t\t Nextcloud admin username"
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
   echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
@@ -29,15 +29,16 @@ help() {
   echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_ENABLE_NAVIGATION \t Enable navigate to OpenProject header (true/false)"
   echo -e "\t NC_INTEGRATION_ENABLE_SEARCH \t\t Enable unified search (true/false)"
-  echo -e "\t SETUP_PROJECT_FOLDER \t Enable project folder setup (true/false). Default: false"
+  echo -e "\t SETUP_PROJECT_FOLDER \t\t\t Enable project folder setup (true/false). Default: false"
   echo -e ""
   echo -e "OpenProject:"
-  echo -e "\t OP_HOST \t OpenProject host URL"
+  echo -e "\t OP_HOST \t\t OpenProject host URL"
   echo -e "\t OP_ADMIN_USERNAME \t OpenProject admin username"
   echo -e "\t OP_ADMIN_PASSWORD \t OpenProject admin password"
   echo -e "\t OP_STORAGE_NAME \t OpenProject file storage name (eg: nextcloud)"
   echo -e "\t OP_USE_LOGIN_TOKEN \t Use first access token obtained by IDP (true/false). Default: false"
   echo -e "\t OP_STORAGE_AUDIENCE \t Name of the storage audience (Not required when using 'OP_USE_LOGIN_TOKEN=true')"
+  echo -e "\t OP_STORAGE_SCOPE \t Scope for token exchange (Not required when using 'OP_USE_LOGIN_TOKEN=true')"
 }
 
 log_error() {
@@ -103,11 +104,14 @@ if [[ -z $OP_STORAGE_NAME ]]; then
 fi
 
 if [[ -z $OP_USE_LOGIN_TOKEN ]] || [[ "$OP_USE_LOGIN_TOKEN" == "false" ]]; then
-  if [[ -z $OP_STORAGE_AUDIENCE ]]; then
-    log_error "'OP_STORAGE_AUDIENCE' is required for OpenProject setup."
+  if [[ -z $OP_STORAGE_AUDIENCE ]] || [[ -z $OP_STORAGE_SCOPE ]]; then
+    log_error "'OP_STORAGE_AUDIENCE' and 'OP_STORAGE_SCOPE' are required when 'OP_USE_LOGIN_TOKEN' is false or not set."
+    help
+    exit 1
   fi
 elif [[ "$OP_USE_LOGIN_TOKEN" == "true" ]]; then
   OP_STORAGE_AUDIENCE="__op-idp__"
+  OP_STORAGE_SCOPE=""
   log_info "Setting OpenProject storage to use first access token"
 fi
 
@@ -360,6 +364,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
 {
   "name": "${OP_STORAGE_NAME}",
   "storageAudience": "${OP_STORAGE_AUDIENCE}",
+  "tokenExchangeScope": "${OP_STORAGE_SCOPE}",
   "applicationPassword": "",
   "_links": {
     "origin": {
@@ -470,7 +475,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json <<EO
 {
   "values":{
     "openproject_instance_url": "$OP_HOST",
-    "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE", 
+    "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE",
     "authorization_method": "oidc",
     "targeted_audience_client_id" : "$NC_INTEGRATION_OP_CLIENT_ID",
     "default_enable_navigation": $NC_INTEGRATION_ENABLE_SEARCH,
