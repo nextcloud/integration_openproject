@@ -39,7 +39,9 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Group\ISubAdmin;
+use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -4792,4 +4794,74 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$actualResult = $service->isOIDCAppSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	public function dataProviderForRequestOAuthAccessToken(): array {
+		return [
+			'has expiry time' => [
+				'createdAt' => time(),
+				'expiresIn' => 7200,
+			],
+			'no expiry time' => [
+				'createdAt' => null,
+				'expiresIn' => null,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForRequestOAuthAccessToken
+	 *
+	 * @param int|null $createdAt
+	 * @param int|null $expiresIn
+	 *
+	 * @return void
+	 */
+	public function testRequestOAuthAccessToken(?int $createdAt, ?int $expiresIn): void {
+		$responseBody = [
+			'access_token' => 'testtoken',
+			'refresh_token' => 'testrefreshtoken',
+		];
+		if ($createdAt !== null && $expiresIn !== null) {
+			$responseBody['created_at'] = $createdAt;
+			$responseBody['expires_in'] = $expiresIn;
+		} else {
+			$responseBody['created_at'] = time();
+			$responseBody['expires_in'] = OpenProjectAPIService::DEFAULT_ACCESS_TOKEN_EXPIRATION;
+		}
+		$responseMock = $this->createMock(IResponse::class);
+		$responseMock
+			->expects($this->once())
+			->method('getBody')
+			->willReturn(json_encode($responseBody));
+		$responseMock
+			->expects($this->once())
+			->method('getStatusCode')
+			->willReturn(200);
+		$clientMock = $this->createMock(IClient::class);
+		$clientMock
+			->expects($this->once())
+			->method('post')
+			->willReturn($responseMock);
+		$clientService = $this->createMock(IClientService::class);
+		$clientService->method('newClient')->willReturn($clientMock);
+		$config = $this->createMock(IConfig::class);
+		$config->expects($this->exactly(3))->method('setUserValue');
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->once())->method('debug');
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isOIDCAppEnabled'],
+			[
+				'config' => $config,
+				'loggerInterface' => $logger,
+				'clientService' => $clientService,
+			],
+		);
+		$result = $service->requestOAuthAccessToken('testuser', 'http://op.local.test');
+		$this->assertEquals($responseBody, $result);
+	}
+
 }
