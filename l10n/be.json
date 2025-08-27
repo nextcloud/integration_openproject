@@ -1,0 +1,24 @@
+{ "translations": {
+    "OpenProject" : "OpenProject",
+    "Replace OpenProject OAuth values" : "Замяніць значэнні OAuth OpenProject",
+    "Yes, replace" : "Yes, replace",
+    "Cancel" : "Скасаваць",
+    "Save" : "Захаваць",
+    "Reset" : "Скінуць",
+    "Documentation" : "Дакументацыя",
+    "Copied!" : "Скапіявана!",
+    "Copy value" : "Скапіяваць значэнне",
+    "Copied to the clipboard" : "Скапіявана ў буфер абмену",
+    "Unexpected Error" : "Нечаканая памылка",
+    "Start typing to search" : "Пачніце ўводзіць тэкст для пошуку",
+    "Project *" : "Праект *",
+    "Select a project" : "Выберыце праект",
+    "Subject *" : "Тэма *",
+    "Type *" : "Тып *",
+    "Select project type" : "Выберыце тып праекта",
+    "Please select a project" : "Выберыце праект",
+    "Select a user or group" : "Выберыце карыстальніка або групу",
+    "Description" : "Апісанне",
+    "Create" : "Стварыць"
+},"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
+}
