@@ -39,7 +39,9 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Group\ISubAdmin;
+use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -787,20 +789,22 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'authorization_method' => $authMethod ?? OpenProjectAPIService::AUTH_METHOD_OAUTH,
 			]));
 
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
-			$this->defaultConfigMock
-				->method('getUserValue')
-				->withConsecutive(
-					[$userId, 'integration_openproject', 'token'],
-					[$userId, 'integration_openproject', 'refresh_token'],
-					[$userId, 'integration_openproject', 'token'],
-				)
-				->willReturnOnConsecutiveCalls(
-					$oAuth2OrOidcToken,
-					'oAuthRefreshToken',
-					'new-Token'
-				);
-		} elseif ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+		$tokenExpiryTime = $oAuth2OrOidcToken === 'expired' ? 0 : time() + 7200;
+		$this->defaultConfigMock
+			->method('getUserValue')
+			->withConsecutive(
+				[$userId, 'integration_openproject', 'token'],
+				[$userId, 'integration_openproject', 'token_expires_at'],
+				[$userId, 'integration_openproject', 'refresh_token'],
+				[$userId, 'integration_openproject', 'token'],
+			)
+			->willReturnOnConsecutiveCalls(
+				$oAuth2OrOidcToken,
+				$tokenExpiryTime,
+				'oAuthRefreshToken',
+				'new-Token'
+			);
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
 			$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
 			$exchangedTokenRequestedEventMock->method('getToken')->willReturn($tokenMock);
@@ -1181,12 +1185,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			);
 
 		$refreshTokenResponse = new ProviderResponse();
+		$tokenCreatedAt = time();
 		$refreshTokenResponse
 			->setStatus(Http::STATUS_OK)
 			->addHeader('Content-Type', 'application/json')
 			->setBody([
 				"access_token" => "new-Token",
-				"refresh_token" => "newRefreshToken"
+				"refresh_token" => "newRefreshToken",
+				"created_at" => $tokenCreatedAt,
+				'expires_in' => 7200,
 			]);
 
 		$this->builder->newInteraction();
@@ -1213,13 +1220,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequestNewOAuthToken)
 			->willRespondWith($providerResponseNewOAuthToken);
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod, null, 'invalid');
+		$service = $this->getOpenProjectAPIService($authorizationMethod, null, 'expired');
 		$this->defaultConfigMock
-			->expects($this->exactly(2))
+			->expects($this->exactly(3))
 			->method('setUserValue')
 			->withConsecutive(
+				['testUser', 'integration_openproject', 'token', 'new-Token'],
+				['testUser', 'integration_openproject', 'token_expires_at', $tokenCreatedAt + 7200],
 				['testUser', 'integration_openproject', 'refresh_token', 'newRefreshToken'],
-				['testUser', 'integration_openproject', 'token', 'new-Token']
 			);
 
 		$result = $service->request(
@@ -2126,6 +2134,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('getUserValue')
 			->withConsecutive(
 				['','integration_openproject', 'token'],
+				['','integration_openproject', 'token_expires_at'],
 				['','integration_openproject', 'refresh_token'],
 			)
 			->willReturnOnConsecutiveCalls(
@@ -3978,8 +3987,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetSubline(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
-			->willReturn("access-token");
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', 'test_token'],
+				['testUser', Application::APP_ID, 'token_expires_at', 0, time() + 7200],
+			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$service = $this->getOpenProjectAPIServiceMock(
@@ -3995,8 +4007,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetMainText() : void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
-			->willReturn("access-token");
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', 'test_token'],
+				['testUser', Application::APP_ID, 'token_expires_at', 0, time() + 7200],
+			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$service = $this->getOpenProjectAPIServiceMock(
@@ -4012,8 +4027,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetWorkPackageInfoForExistentWorkPackage(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
-			->willReturn("access-token");
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', 'test_token'],
+				['testUser', Application::APP_ID, 'token_expires_at', 0, time() + 7200],
+			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$iULGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
@@ -4042,8 +4060,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetWorkPackageInfoForNonExistentWorkPackage(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
-			->willReturn("access-token");
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', 'test_token'],
+				['testUser', Application::APP_ID, 'token_expires_at', 0, time() + 7200],
+			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$service = $this->getOpenProjectAPIServiceMock(
@@ -4061,8 +4082,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function testGetWorkPackageInfoForNoUserAccessToken(): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock->method('getUserValue')->with('testUser', Application::APP_ID, 'token')
-			->willReturn(null);
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', null],
+			]);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$service = $this->getOpenProjectAPIServiceMock(
@@ -4271,6 +4294,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
 			]));
+		$configMock
+			->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'user_id', null],
+				['testUser', Application::APP_ID, 'user_name', null],
+			]);
+		$calls = [];
+		$configMock
+			->method('setUserValue')
+			->willReturnCallback(function ($uid, $app, $key, $value) use (&$calls) {
+				$calls[] = [$uid, $app, $key, $value];
+			});
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('isInstalled')->willReturn(true);
@@ -4281,7 +4316,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$eventMock->method('getToken')->willReturn($tokenMock);
 		$tokenMock->method('getAccessToken')->willReturn('exchanged-access-token');
 		$service = $this->getOpenProjectAPIServiceMock(
-			[],
+			['initUserInfo'],
 			[
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
@@ -4289,8 +4324,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$service->expects($this->once())->method('initUserInfo')->with('testUser');
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
+		$expectedCalls = [
+			['testUser', Application::APP_ID, 'token', 'exchanged-access-token'],
+			['testUser', Application::APP_ID, 'token_expires_at', '0'],
+		];
+		$this->assertEqualsCanonicalizing($expectedCalls, $calls);
 	}
 
 	public function testGetOIDCTokenReturnsNullIfNotOIDC(): void {
@@ -4306,8 +4347,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'config' => $configMock,
 			],
 		);
-		$result = $service->getOIDCToken();
-		$this->assertNull($result);
+		$result = $service->getOIDCToken('testUser');
+		$this->assertEquals('', $result);
 	}
 
 	/**
@@ -4327,7 +4368,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'manager' => $iManagerMock,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4354,7 +4395,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4380,7 +4421,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
 	}
 
@@ -4422,8 +4463,147 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'oidcClientMapper' => $clientMapperMock,
 			],
 		);
-		$result = $service->getOIDCToken();
+		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals(null, $result);
+	}
+
+	public function getAccessTokenDataProvider(): array {
+		return [
+			'no token' => [
+				'token' => null,
+				'expired' => false,
+				'authMethod' => '',
+				'tokenRefreshFailed' => false,
+				'expected' => null,
+			],
+			'has oauth token' => [
+				'token' => 'test_token',
+				'expired' => false,
+				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'tokenRefreshFailed' => false,
+				'expected' => 'test_token',
+			],
+			'has expired oauth token' => [
+				'token' => 'test_token',
+				'expired' => true,
+				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'tokenRefreshFailed' => false,
+				'expected' => 'new_token',
+			],
+			'has expired oauth token and refresh fails' => [
+				'token' => 'test_token',
+				'expired' => true,
+				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'tokenRefreshFailed' => true,
+				'expected' => null,
+			],
+			'has oidc token' => [
+				'token' => 'test_token',
+				'expired' => false,
+				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
+				'tokenRefreshFailed' => false,
+				'expected' => 'test_token',
+			],
+			'has expired oidc token' => [
+				'token' => 'test_token',
+				'expired' => true,
+				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
+				'tokenRefreshFailed' => false,
+				'expected' => 'new_token',
+			],
+		];
+	}
+	/**
+	 * @dataProvider getAccessTokenDataProvider
+	 * @param string|null $token
+	 * @param bool $expired
+	 * @param string $authMethod
+	 * @param bool $tokenRefreshFailed
+	 * @param string|null $expectedToken
+	 *
+	 * @return void
+	 */
+	public function testGetAccessToken(
+		?string $token,
+		bool $expired,
+		string $authMethod,
+		bool $tokenRefreshFailed,
+		?string $expectedToken,
+	): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://test.local',
+				'authorization_method' => $authMethod,
+				'openproject_client_id' => 'client-id',
+				'openproject_client_secret' => 'client-secret',
+			]));
+		$configMock->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'token', '', $token],
+				['testUser', Application::APP_ID, 'refresh_token', '', 'refresh-token'],
+			]);
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isAccessTokenExpired', 'getOIDCToken', 'requestOAuthAccessToken'],
+			[
+				'config' => $configMock,
+			],
+		);
+		if ($token) {
+			$service->expects($this->once())
+			->method('isAccessTokenExpired')
+			->with('testUser')
+			->willReturn($expired);
+		}
+
+		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $expired) {
+			if ($tokenRefreshFailed) {
+				$service->expects($this->once())
+					->method('requestOAuthAccessToken')
+					->with(
+						'testUser',
+						'http://test.local',
+						[
+							'client_id' => 'client-id',
+							'client_secret' => 'client-secret',
+							'grant_type' => 'refresh_token',
+							'refresh_token' => 'refresh-token',
+						],
+					)
+					->willReturn([
+						'error' => 'some-error',
+					]);
+			} else {
+				$service->expects($this->once())
+					->method('requestOAuthAccessToken')
+					->with(
+						'testUser',
+						'http://test.local',
+						[
+							'client_id' => 'client-id',
+							'client_secret' => 'client-secret',
+							'grant_type' => 'refresh_token',
+							'refresh_token' => 'refresh-token',
+						],
+					)
+					->willReturn([
+						'access_token' => $expectedToken,
+					]);
+			}
+		} else {
+			$service->expects($this->never())->method('requestOAuthAccessToken');
+		}
+		if ($authMethod === SettingsService::AUTH_METHOD_OIDC && $expired) {
+			$service->expects($this->once())
+				->method('getOIDCToken')
+				->with('testUser')
+				->willReturn($expectedToken);
+		} else {
+			$service->expects($this->never())->method('getOIDCToken');
+		}
+
+		$result = $service->getAccessToken('testUser');
+		$this->assertEquals($expectedToken, $result);
 	}
 
 	public function dataProviderForIsOIDCUser(): array {
@@ -4614,4 +4794,74 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$actualResult = $service->isOIDCAppSupported();
 		$this->assertEquals($expected, $actualResult);
 	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	public function dataProviderForRequestOAuthAccessToken(): array {
+		return [
+			'has expiry time' => [
+				'createdAt' => time(),
+				'expiresIn' => 7200,
+			],
+			'no expiry time' => [
+				'createdAt' => null,
+				'expiresIn' => null,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataProviderForRequestOAuthAccessToken
+	 *
+	 * @param int|null $createdAt
+	 * @param int|null $expiresIn
+	 *
+	 * @return void
+	 */
+	public function testRequestOAuthAccessToken(?int $createdAt, ?int $expiresIn): void {
+		$responseBody = [
+			'access_token' => 'testtoken',
+			'refresh_token' => 'testrefreshtoken',
+		];
+		if ($createdAt !== null && $expiresIn !== null) {
+			$responseBody['created_at'] = $createdAt;
+			$responseBody['expires_in'] = $expiresIn;
+		} else {
+			$responseBody['created_at'] = time();
+			$responseBody['expires_in'] = OpenProjectAPIService::DEFAULT_ACCESS_TOKEN_EXPIRATION;
+		}
+		$responseMock = $this->createMock(IResponse::class);
+		$responseMock
+			->expects($this->once())
+			->method('getBody')
+			->willReturn(json_encode($responseBody));
+		$responseMock
+			->expects($this->once())
+			->method('getStatusCode')
+			->willReturn(200);
+		$clientMock = $this->createMock(IClient::class);
+		$clientMock
+			->expects($this->once())
+			->method('post')
+			->willReturn($responseMock);
+		$clientService = $this->createMock(IClientService::class);
+		$clientService->method('newClient')->willReturn($clientMock);
+		$config = $this->createMock(IConfig::class);
+		$config->expects($this->exactly(3))->method('setUserValue');
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->once())->method('debug');
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			['isOIDCAppEnabled'],
+			[
+				'config' => $config,
+				'loggerInterface' => $logger,
+				'clientService' => $clientService,
+			],
+		);
+		$result = $service->requestOAuthAccessToken('testuser', 'http://op.local.test');
+		$this->assertEquals($responseBody, $result);
+	}
+
 }

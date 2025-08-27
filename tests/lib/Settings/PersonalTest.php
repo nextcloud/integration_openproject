@@ -9,7 +9,6 @@ namespace OCA\OpenProject\Settings;
 
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,34 +49,67 @@ class PersonalTest extends TestCase {
 	public function dataTestGetForm(): array {
 		return [
 			[
-				// valid dataset
+				'token' => '',
+				'username' => '',
 				"config" => [
-					"clientId" => 'some-client-id',
-					"clientSecret" => 'some-client-secret',
-					"oauthInstanceUrl" => 'http://some.url',
-					"nc_oauth_client_id" => 'nc-client',
+					"openproject_instance_url" => '',
+					"authentication_method" => '',
+					"openproject_client_id" => '',
+					"openproject_client_secret" => '',
+					"nc_oauth_client_id" => '',
+					"sso_provider_type" => '',
+					"oidc_provider" => '',
+					"token_exchange" => null,
+					"fresh_project_folder_setup" => true,
+					"default_enable_unified_search" => '0',
+					"default_enable_navigation" => '0',
+				],
+				"searchEnabled" => '0',
+				"navigationEnabled" => '0',
+				"adminConfigStatus" => false,
+				"oidcUser" => false,
+			],
+			[
+				'token' => 'test-token',
+				'username' => 'testUser',
+				"config" => [
+					"openproject_instance_url" => 'http://some.url',
 					"authentication_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					"openproject_client_id" => 'some-client-id',
+					"openproject_client_secret" => 'some-client-secret',
+					"nc_oauth_client_id" => 'nc-client',
+					"sso_provider_type" => '',
+					"oidc_provider" => '',
+					"token_exchange" => null,
 					"fresh_project_folder_setup" => false,
+					"default_enable_unified_search" => '1',
+					"default_enable_navigation" => '1',
 				],
+				"searchEnabled" => '1',
+				"navigationEnabled" => '1',
 				"adminConfigStatus" => true,
+				"oidcUser" => true,
 			],
 			[
-				// dataset with empty client secret
+				'token' => 'test-token',
+				'username' => 'testUser',
 				"config" => [
-					"clientId" => 'some-client-id',
-					"clientSecret" => '',
-					"oauthInstanceUrl" => 'http://some.url',
+					"openproject_instance_url" => 'http://some.url',
+					"authentication_method" => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					"openproject_client_id" => '',
+					"openproject_client_secret" => '',
+					"nc_oauth_client_id" => '',
+					"sso_provider_type" => 'external',
+					"oidc_provider" => 'test-idp',
+					"token_exchange" => false,
+					"fresh_project_folder_setup" => false,
+					"default_enable_unified_search" => '1',
+					"default_enable_navigation" => '1',
 				],
-				"adminConfigStatus" => false,
-			],
-			[
-				// dataset with invalid oauth instance url
-				"config" => [
-					"clientId" => 'some-client-id',
-					"clientSecret" => 'some-secret',
-					"oauthInstanceUrl" => 'http:/',
-				],
-				"adminConfigStatus" => false,
+				"searchEnabled" => '1',
+				"navigationEnabled" => '1',
+				"adminConfigStatus" => true,
+				"oidcUser" => true,
 			],
 		];
 	}
@@ -85,111 +117,79 @@ class PersonalTest extends TestCase {
 	/**
 	 * @dataProvider dataTestGetForm
 	 *
+	 * @param ?string $token
+	 * @param string $username
 	 * @param array $config
+	 * @param string $searchEnabled
+	 * @param string $navigationEnabled
 	 * @param bool $adminConfigStatus
+	 * @param bool $oidcUser
+	 *
 	 * @return void
 	 */
 	public function testGetForm(
+		?string $token,
+		string $username,
 		array $config,
+		string $searchEnabled,
+		string $navigationEnabled,
 		bool $adminConfigStatus,
-	) {
+		bool $oidcUser
+	): void {
+		$this->openProjectService
+			->method('getAccessToken')
+			->willReturn($token);
+		$this->openProjectService
+			->method('isOIDCUser')
+			->willReturn($oidcUser);
 		$this->config
 			->method('getUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'token'],
-				['testUser', 'integration_openproject', 'user_name'],
-				['testUser', 'integration_openproject', 'search_enabled', '0'],
-				['testUser', 'integration_openproject', 'navigation_enabled', '0'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'some-token',
-				'some-username',
-				'0', '0',
-			);
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'user_name', '', $username],
+				['testUser', Application::APP_ID, 'search_enabled', $config['default_enable_unified_search'], $searchEnabled],
+				['testUser', Application::APP_ID, 'navigation_enabled', $config['default_enable_navigation'], $navigationEnabled],
+			]);
 		$this->config
 			->method('getAppValue')
 			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
-				[Application::APP_ID, 'openproject_instance_url', '', $config['oauthInstanceUrl']],
-				[Application::APP_ID, 'openproject_client_id', '', $config['clientId']],
-				[Application::APP_ID, 'openproject_client_secret', '', $config['clientSecret']],
-				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
-				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
-				[Application::APP_ID, 'default_enable_unified_search', '0', '0'],
-				[Application::APP_ID, 'default_enable_navigation', '0', '0'],
+				[Application::APP_ID, 'openproject_instance_url', '', $config['openproject_instance_url']],
+				[Application::APP_ID, 'authorization_method', '', $config['authentication_method']],
+				[Application::APP_ID, 'openproject_client_id', '', $config['openproject_client_id']],
+				[Application::APP_ID, 'openproject_client_secret', '', $config['openproject_client_secret']],
+				[Application::APP_ID, 'nc_oauth_client_id', '', $config['nc_oauth_client_id']],
+				[Application::APP_ID, 'sso_provider_type', '', $config['sso_provider_type']],
+				[Application::APP_ID, 'oidc_provider', '', $config['oidc_provider']],
+				[Application::APP_ID, 'token_exchange', '', $config['token_exchange']],
+				[Application::APP_ID, 'fresh_project_folder_setup', '', $config['fresh_project_folder_setup']],
+				[Application::APP_ID, 'default_enable_unified_search', '0', $config['default_enable_unified_search']],
+				[Application::APP_ID, 'default_enable_navigation', '0', $config['default_enable_navigation']],
 			]);
 
+		$initStateCalls = [];
 		$this->initialState
 			->method('provideInitialState')
-			->withConsecutive(
-				[
-					'user-config', [
-						'token' => 'some-token',
-						'user_name' => 'some-username',
-						'search_enabled' => false,
-						'navigation_enabled' => false,
-						'admin_config_ok' => $adminConfigStatus,
-						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
-						'oidc_user' => false,
-					]
-				],
-				['oauth-connection-result'],
-				['oauth-connection-error-message']
-			);
+			->willReturnCallback(function ($state, $config) use (&$initStateCalls) {
+				$initStateCalls[] = [$state, $config];
+			});
 
-		$form = $this->setting->getForm();
-		$expected = new TemplateResponse('integration_openproject', 'personalSettings');
-		$this->assertEquals($expected, $form);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testNoPersonalSettingsShouldUseValueFromTheDefaults() {
-		$this->config
-			->method('getUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'token'],
-				['testUser', 'integration_openproject', 'user_name'],
-				['testUser', 'integration_openproject', 'search_enabled', '1'],
-				['testUser', 'integration_openproject', 'navigation_enabled', '1'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'some-token',
-				'some-username',
-				'1', '1',
-			);
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
-				[Application::APP_ID, 'openproject_instance_url', '', 'http://some.url'],
-				[Application::APP_ID, 'openproject_client_id', '', 'op-client'],
-				[Application::APP_ID, 'openproject_client_secret', '', 'op-secret'],
-				[Application::APP_ID, 'fresh_project_folder_setup', '', false],
-				[Application::APP_ID, 'nc_oauth_client_id', '', 'nc-client'],
-				[Application::APP_ID, 'default_enable_unified_search', '0', '1'],
-				[Application::APP_ID, 'default_enable_navigation', '0', '1'],
-			]);
-		$this->initialState
-			->method('provideInitialState')
-			->withConsecutive(
+		$expectedCalls = [
+			[
+				'user-config',
 				[
-					'user-config', [
-						'token' => 'some-token',
-						'user_name' => 'some-username',
-						'search_enabled' => true,
-						'navigation_enabled' => true,
-						'admin_config_ok' => true,
-						'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
-						'oidc_user' => false,
-					]
+					'token' => $token,
+					'user_name' => $username,
+					'search_enabled' => $searchEnabled === '1',
+					'navigation_enabled' => $navigationEnabled === '1',
+					'admin_config_ok' => $adminConfigStatus,
+					'authorization_method' => $config['authentication_method'],
+					'oidc_user' => $oidcUser,
 				],
-				['oauth-connection-result'],
-				['oauth-connection-error-message']
-			);
-		$form = $this->setting->getForm();
-		$expected = new TemplateResponse('integration_openproject', 'personalSettings');
-		$this->assertEquals($expected, $form);
+			],
+			['oauth-connection-result', null],
+			['oauth-connection-error-message', null]
+		];
+
+		$this->setting->getForm();
+		$this->assertEqualsCanonicalizing($expectedCalls, $initStateCalls);
 	}
 }

@@ -142,6 +142,7 @@ class ConfigController extends Controller {
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 		$this->config->deleteUserValue($userId, Application::APP_ID, 'refresh_token');
+		$this->config->deleteUserValue($userId, Application::APP_ID, 'token_expires_at');
 	}
 
 	/**
@@ -157,14 +158,9 @@ class ConfigController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function resetOIDCConfigs(string $userId = null): void {
-		if ($userId === null) {
-			$userId = $this->userId;
-		}
+	public function resetOIDCConfigs(): void {
 		$this->config->setAppValue(Application::APP_ID, 'oidc_provider', "");
 		$this->config->setAppValue(Application::APP_ID, 'targeted_audience_client_id', "");
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
-		$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 	}
 
 
@@ -183,7 +179,7 @@ class ConfigController extends Controller {
 
 		if (isset($values['token'])) {
 			if ($values['token']) {
-				$result = $this->storeUserInfo();
+				$result = $this->openprojectAPIService->initUserInfo($this->userId);
 			} else {
 				$this->clearUserInfo();
 				$result = [
@@ -396,10 +392,12 @@ class ConfigController extends Controller {
 				}
 				$this->clearUserInfo($userUID);
 			});
-		} elseif ($runningFullResetWithOIDCAuth) {
+		} elseif ($runningFullResetWithOIDCAuth || $runningOIDCReset) {
 			$this->resetOIDCConfigs();
+			$this->userManager->callForAllUsers(function (IUser $user) {
+				$this->clearUserInfo($user->getUID());
+			});
 		}
-
 
 		// whenever doing full reset we want the project folder switch state to be "on" in the UI
 		// so setting `fresh_project_folder_setup` as true
@@ -556,39 +554,39 @@ class ConfigController extends Controller {
 			$validClientSecret = (preg_match('/^.{10,}$/', $clientSecret) === 1);
 		}
 
+		$errorMessage = '';
 		if ($clientID && $validClientSecret && $validCodeVerifier && $configState !== '' && $configState === $state) {
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-			$result = $this->openprojectAPIService->requestOAuthAccessToken($openprojectUrl, [
-				'client_id' => $clientID,
-				'client_secret' => $clientSecret,
-				'code' => $code,
-				'redirect_uri' => openprojectAPIService::getOauthRedirectUrl($this->urlGenerator),
-				'grant_type' => 'authorization_code',
-				'code_verifier' => $codeVerifier
-			], 'POST');
+			$result = $this->openprojectAPIService->requestOAuthAccessToken(
+				$this->userId,
+				$openprojectUrl,
+				[
+					'client_id' => $clientID,
+					'client_secret' => $clientSecret,
+					'code' => $code,
+					'redirect_uri' => openprojectAPIService::getOauthRedirectUrl($this->urlGenerator),
+					'grant_type' => 'authorization_code',
+					'code_verifier' => $codeVerifier
+				],
+			);
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
-				$accessToken = $result['access_token'];
-				$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $accessToken);
-				$refreshToken = $result['refresh_token'];
-				$this->config->setUserValue($this->userId, Application::APP_ID, 'refresh_token', $refreshToken);
-				// get user info
-				// ToDo check response for errors
-				$this->storeUserInfo();
-				$this->config->setUserValue(
-					$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
-				);
+				// set user info
+				$userInfo = $this->openprojectAPIService->initUserInfo($this->userId);
+				if (isset($userInfo['user_name'])) {
+					$this->config->setUserValue(
+						$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
+					);
+				}
 				return new RedirectResponse($newUrl);
 			}
-			$error = '';
 			if (!isset($result['access_token'])) {
-				$error = $this->l->t('Error getting OAuth access token');
+				$errorMessage = $this->l->t('Error getting OAuth access token');
 			} elseif (!isset($result['refresh_token'])) {
-				$error = $this->l->t('Error getting OAuth refresh token');
+				$errorMessage = $this->l->t('Error getting OAuth refresh token');
 			}
 			if (isset($result['error'])) {
-				$error = $error . '. ' . $result['error'];
+				$errorMessage .= '. ' . $result['error'];
 			}
-			$result = $error;
 		} else {
 			if (!$validCodeVerifier) {
 				$this->logger->error('invalid OAuth code verifier', ['app' => $this->appName]);
@@ -596,40 +594,15 @@ class ConfigController extends Controller {
 			if (!$validClientSecret) {
 				$this->logger->error('invalid OAuth client secret', ['app' => $this->appName]);
 			}
-			$result = $this->l->t('Error during OAuth exchanges');
+			$errorMessage = $this->l->t('Error during OAuth exchanges');
 		}
 		$this->config->setUserValue(
 			$this->userId, Application::APP_ID, 'oauth_connection_result', 'error'
 		);
 		$this->config->setUserValue(
-			$this->userId, Application::APP_ID, 'oauth_connection_error_message', $result
+			$this->userId, Application::APP_ID, 'oauth_connection_error_message', $errorMessage
 		);
 		return new RedirectResponse($newUrl);
-	}
-
-	/**
-	 * @return array<mixed>
-	 * @throws PreConditionNotMetException
-	 */
-	private function storeUserInfo(): array {
-		$info = $this->openprojectAPIService->request($this->userId, 'users/me');
-		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
-			$fullName = $info['firstName'] . ' ' . $info['lastName'];
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $info['id']);
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $fullName);
-			return ['user_name' => $fullName];
-		} else {
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_id');
-			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
-			if (isset($info['statusCode']) && $info['statusCode'] === 404) {
-				$info['error'] = 'Not found';
-			} else {
-				if (!isset($info['error'])) {
-					$info['error'] = 'Invalid token';
-				}
-			}
-			return $info;
-		}
 	}
 
 	/**
