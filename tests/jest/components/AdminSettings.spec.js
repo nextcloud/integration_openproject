@@ -1154,6 +1154,66 @@ describe('AdminSettings.vue', () => {
 					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
 				})
 
+				it('should show authorization settings save button after completing authentication method by selecting OIDC', async () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: null,
+							user_oidc_enabled: true,
+							user_oidc_supported: true,
+							authorization_settings: {
+								sso_provider_type: null,
+								oidc_provider: null,
+								token_exchange: false,
+							},
+							apps: {
+								oidc: {
+									enabled: true,
+									supported: true,
+									minimum_version: '1.4.0',
+								},
+								user_oidc: {
+									enabled: true,
+									supported: true,
+									minimum_version: '1.4.0',
+								},
+							},
+						},
+						form: {
+							serverHost: { complete: true },
+							authenticationMethod: { complete: false },
+						},
+						formMode: {
+							authorizationMethod: F_MODES.EDIT,
+							authorizationSetting: F_MODES.DISABLE,
+						},
+					})
+
+					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.DISABLE)
+
+					await wrapper.setData({
+						form: {
+							authenticationMethod: {
+								complete: true,
+								value: AUTH_METHOD.OIDC,
+							},
+						},
+						state: {
+							authorization_method: AUTH_METHOD.OIDC,
+						},
+					})
+					await localVue.nextTick()
+
+					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
+					expect(wrapper.vm.getCurrentAuthMethod).toBe(AUTH_METHOD.OIDC)
+
+					const authorizationSettingsSection = wrapper.find(selectors.authorizationSettings)
+					expect(authorizationSettingsSection.exists()).toBe(true)
+
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					expect(authSettingsSaveButton.exists()).toBe(true)
+				})
+
 				describe('external SSO provider', () => {
 					const wrapper = getWrapper({
 						state: {

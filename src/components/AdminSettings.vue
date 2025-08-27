@@ -836,6 +836,11 @@ export default {
 				this.authorizationSetting.currentOIDCProviderSelected = null
 			}
 		},
+		'form.authenticationMethod.complete'() {
+			if (this.form.authenticationMethod.complete && this.formMode.authorizationSetting === F_MODES.DISABLE) {
+				this.formMode.authorizationSetting = F_MODES.EDIT
+			}
+		},
 	},
 	created() {
 		this.currentSetting = this.settingsStepper.next().value
