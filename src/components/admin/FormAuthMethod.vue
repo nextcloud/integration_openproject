@@ -11,7 +11,13 @@
 			:title="t('integration_openproject', 'Authentication method')"
 			:is-complete="isFormComplete"
 			:is-disabled="!showSettings"
-			:is-dark-theme="isDarkTheme" />
+			:is-dark-theme="isDarkTheme"
+			:has-error="showUserOidcAppError" />
+		<ErrorNote
+			v-if="showUserOidcAppError"
+			:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
+			:error-link="appLinks.user_oidc.installLink"
+			:error-link-label="messages.installLatestVersionNow" />
 		<div v-if="showSettings" class="auth-method">
 			<div v-if="isEditMode">
 				<div class="auth-method--hint">
@@ -89,9 +95,11 @@ import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import FormHeading from './FormHeading.vue'
 import ErrorLabel from '../ErrorLabel.vue'
+import ErrorNote from '../settings/ErrorNote.vue'
 import { F_MODES, AUTH_METHOD, AUTH_METHOD_LABEL, ADMIN_SETTINGS_FORM } from '../../utils.js'
-import { messages, messagesFmt } from '../../constants/messages.js'
 import { saveAdminConfig } from '../../api/settings.js'
+import { messages, messagesFmt } from '../../constants/messages.js'
+import { appLinks } from '../../constants/links.js'
 
 export default {
 	name: 'FormAuthMethod',
@@ -103,6 +111,7 @@ export default {
 		PencilIcon,
 		FormHeading,
 		ErrorLabel,
+		ErrorNote,
 	},
 	props: {
 		apps: {
@@ -136,6 +145,7 @@ export default {
 			selectedAuthMethod: AUTH_METHOD.OAUTH2,
 			// state that holds the saved (to server) auth method
 			savedAuthMethod: null,
+			appLinks,
 		}
 	},
 	computed: {
@@ -153,6 +163,9 @@ export default {
 		},
 		hasEnabledSupportedUserOidcApp() {
 			return this.apps.user_oidc.enabled && this.apps.user_oidc.supported
+		},
+		showUserOidcAppError() {
+			return !this.disableErrorLabel && !this.hasEnabledSupportedUserOidcApp
 		},
 		getMinSupportedUserOidcVersion() {
 			return this.apps.user_oidc.minimum_version

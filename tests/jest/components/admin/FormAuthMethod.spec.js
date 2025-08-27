@@ -12,6 +12,8 @@ import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublish
 import { ADMIN_SETTINGS_FORM, AUTH_METHOD, F_MODES } from '../../../../src/utils.js'
 import { saveAdminConfig } from '../../../../src/api/settings.js'
 import FormAuthMethod from '../../../../src/components/admin/FormAuthMethod.vue'
+import { messagesFmt, messages } from '../../../../src/constants/messages.js'
+import { appLinks } from '../../../../src/constants/links.js'
 
 // global mocks
 global.t = (app, text) => text
@@ -42,6 +44,7 @@ const selectors = {
 	editFormButton: '[data-test-id="edit-auth-method"]',
 	cancelFormButton: '[data-test-id="cancel-auth-method-edit"]',
 	errorLabel: 'errorlabel-stub',
+	errorNote: 'errornote-stub',
 }
 
 const defaultProps = {
@@ -186,6 +189,8 @@ describe('Component: FormAuthMethod', () => {
 					},
 				})
 
+				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
@@ -209,6 +214,8 @@ describe('Component: FormAuthMethod', () => {
 					},
 				})
 
+				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
@@ -228,7 +235,7 @@ describe('Component: FormAuthMethod', () => {
 			wrapper = getWrapper({ props: { authMethod: AUTH_METHOD.OIDC } })
 		})
 
-		it('should show set form label', () => {
+		it('should show set form label in view mode', () => {
 			expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(true)
 			expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
 			expect(wrapper.vm.formMode).toBe(F_MODES.VIEW)
@@ -242,6 +249,51 @@ describe('Component: FormAuthMethod', () => {
 			expect(wrapper.vm.selectedAuthMethod).toBe(AUTH_METHOD.OIDC)
 			expect(wrapper.vm.savedAuthMethod).toBe(AUTH_METHOD.OIDC)
 			expect(wrapper.html()).toMatchSnapshot()
+		})
+
+		describe('view mode: disabled user_oidc app', () => {
+			it('should not show form errors if setup with oauth', async () => {
+				wrapper = getWrapper({
+					props: {
+						authMethod: AUTH_METHOD.OAUTH2,
+						apps: {
+							user_oidc: {
+								enabled: false,
+								supported: false,
+								minimum_version: '1.0.0',
+							},
+						},
+					},
+				})
+				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
+				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
+				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
+				expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.html()).toMatchSnapshot()
+			})
+			it('should show form errors if setup with oidc', async () => {
+				wrapper = getWrapper({
+					props: {
+						authMethod: AUTH_METHOD.OIDC,
+						apps: {
+							user_oidc: {
+								enabled: false,
+								supported: false,
+								minimum_version: '1.0.0',
+							},
+						},
+					},
+				})
+				expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
+				const errorNote = wrapper.find(selectors.errorNote)
+				expect(errorNote.exists()).toBe(true)
+				expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+				expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+				expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
+				expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
+				expect(wrapper.find(selectors.editFormButton).attributes().disabled).toBe(undefined)
+				expect(wrapper.html()).toMatchSnapshot()
+			})
 		})
 
 		describe('edit mode', () => {
@@ -326,12 +378,18 @@ describe('Component: FormAuthMethod', () => {
 						},
 					})
 
+					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
 					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
+					const errorNote = wrapper.find(selectors.errorNote)
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
@@ -355,12 +413,14 @@ describe('Component: FormAuthMethod', () => {
 					editButton.vm.$emit('click')
 					await flushPromises()
 
+					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
 					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
@@ -381,12 +441,18 @@ describe('Component: FormAuthMethod', () => {
 						},
 					})
 
+					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OIDC)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
 					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe(undefined)
+					const errorNote = wrapper.find(selectors.errorNote)
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')
@@ -410,12 +476,14 @@ describe('Component: FormAuthMethod', () => {
 					editButton.vm.$emit('click')
 					await flushPromises()
 
+					expect(wrapper.find(selectors.formheading).attributes().haserror).toBe(undefined)
 					expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
 					expect(wrapper.find(selectors.ssoRadioBox).attributes().disabled).toBe('true')
 					expect(wrapper.find(selectors.oauthRadioBox).attributes().checked).toBe(AUTH_METHOD.OAUTH2)
 					expect(wrapper.find(selectors.errorLabel).exists()).toBe(true)
 					expect(wrapper.find(selectors.errorLabel).attributes().disabled).toBe('true')
+					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 
 					expect(wrapper.find(selectors.saveFormButton).exists()).toBe(true)
 					expect(wrapper.find(selectors.saveFormButton).attributes().disabled).toBe('true')

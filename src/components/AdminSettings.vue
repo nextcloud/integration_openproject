@@ -27,11 +27,16 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!hasEnabledSupportedUserOidcApp" />
+				:has-error="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub" />
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
 				:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
 				:error-link="appLinks.user_oidc.installLink"
+				:error-link-label="messages.installLatestVersionNow" />
+			<ErrorNote
+				v-else-if="hasOidcAppErrorWithNextcloudHub"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
+				:error-link="appLinks.oidc.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
@@ -53,7 +58,7 @@
 					<div class="error-container">
 						<ErrorLabel
 							v-if="!hasEnabledSupportedOIDCApp"
-							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOIDCVersion)"
+							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
@@ -117,7 +122,7 @@
 							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
 							class="py-1"
 							is-required
-							:disabled="!hasEnabledSupportedUserOidcApp"
+							:disabled="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub"
 							:place-holder="messages.opClientId"
 							:label="messages.opClientId"
 							:hint-text="messages.opClientIdHintText" />
@@ -277,11 +282,29 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
-				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup"
+				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
 				:is-dark-theme="isDarkTheme" />
+			<ErrorNote
+				v-if="showGroupfoldersAppError"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported('groupfolders', getMinSupportedGroupfoldersVersion)"
+				:error-link="appLinks.groupfolders.installLink"
+				:error-link-label="messages.installLatestVersionNow" />
+			<NcNoteCard v-else-if="projectFolderSetupError || isThereErrorAfterProjectFolderAndAppPasswordSetup" class="note-card" type="error">
+				<p class="note-card--title">
+					<b v-if="isThereErrorAfterProjectFolderAndAppPasswordSetup">{{ state.project_folder_info.errorMessage }}</b>
+					<b v-else>{{ projectFolderSetupError }}</b>
+				</p>
+				<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
+			</NcNoteCard>
+			<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
+				<p class="note-card--title">
+					<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
+				</p>
+				<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
+			</NcNoteCard>
 			<div v-if="showDefaultManagedProjectFolders">
 				<div v-if="isProjectFolderSetupFormInEdit">
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="isProjectFolderSwitchEnabled" @update:checked="changeProjectFolderSetUpState">
@@ -322,32 +345,18 @@
 								t('integration_openproject', 'The app will never delete files or folders, even if you deactivate this later.')
 							}}
 						</p>
-						<NcNoteCard v-if="projectFolderSetupError !== null" class="note-card" type="error">
-							<p class="note-card--title">
-								<b>{{ projectFolderSetupError }}</b>
-							</p>
-							<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(projectFolderSetupError)" /> <!-- eslint-disable-line vue/no-v-html -->
-						</NcNoteCard>
 						<div class="form-actions">
-							<NcButton v-if="projectFolderSetupError === null"
+							<NcButton
 								type="primary"
+								:disabled="showGroupfoldersAppError"
 								data-test-id="complete-with-project-folders-form-btn"
 								@click="setUpProjectGroupFolders">
 								<template #icon>
 									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
+									<RestoreIcon v-else-if="projectFolderSetupError" fill-color="#FFFFFF" :size="20" />
 									<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
 								</template>
 								{{ textLabelProjectFolderSetupButton }}
-							</NcButton>
-							<NcButton v-else-if="projectFolderSetupError"
-								type="primary"
-								data-test-id="complete-with-project-folders-form-btn"
-								@click="setUpProjectGroupFolders">
-								<template #icon>
-									<NcLoadingIcon v-if="loadingProjectFolderSetup" class="loading-spinner" :size="20" />
-									<RestoreIcon v-else fill-color="#FFFFFF" :size="20" />
-								</template>
-								{{ t('integration_openproject', 'Retry setup OpenProject user, group and folder') }}
 							</NcButton>
 						</div>
 					</div>
@@ -356,18 +365,6 @@
 					<div class="project-folder-status-value">
 						<b>{{ t('integration_openproject','Automatically managed folders:') }}</b> {{ opUserAppPassword ? t('integration_openproject', 'Active') : t('integration_openproject', 'Inactive') }}
 					</div>
-					<NcNoteCard v-if="state.app_password_set && !isProjectFolderSetupCorrect" class="note-card" type="error">
-						<p class="note-card--title">
-							<b>{{ state.project_folder_info.errorMessage }}</b>
-						</p>
-						<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription(state.project_folder_info.errorMessage)" /> <!-- eslint-disable-line vue/no-v-html -->
-					</NcNoteCard>
-					<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
-						<p class="note-card--title">
-							<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
-						</p>
-						<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
-					</NcNoteCard>
 					<div class="form-actions">
 						<NcButton
 							data-test-id="edit-project-folder-setup"
@@ -538,6 +535,7 @@ export default {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
 				completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
 				completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
+				retrySetupWithProjectFolder: t('integration_openproject', 'Retry setup OpenProject user, group and folder'),
 			},
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
@@ -694,7 +692,7 @@ export default {
 			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		errorHintForProjectFolderConfigAlreadyExists() {
+		projectFolderSetUpErrorMessageDescription() {
 			const linkText = t('integration_openproject', 'troubleshooting guide')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
@@ -797,11 +795,23 @@ export default {
 		hasEnabledSupportedOIDCApp() {
 			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
 		},
-		getMinSupportedOIDCVersion() {
+		getMinSupportedOidcVersion() {
 			return this.state.apps.oidc.minimum_version
+		},
+		hasEnabledSupportedGroupfoldersApp() {
+			return this.state.apps.groupfolders.enabled && this.state.apps.groupfolders.supported
+		},
+		getMinSupportedGroupfoldersVersion() {
+			return this.state.apps.groupfolders.minimum_version
 		},
 		isExternalSSOProvider() {
 			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
+		},
+		hasOidcAppErrorWithNextcloudHub() {
+			return !this.hasEnabledSupportedOIDCApp && this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub
+		},
+		showGroupfoldersAppError() {
+			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp
 		},
 		disableNCHubUnsupportedHint() {
 			if (!this.hasEnabledSupportedOIDCApp) {
@@ -850,7 +860,7 @@ export default {
 						this.isProjectFolderAlreadySetup = true
 					}
 				}
-				if (this.state.fresh_project_folder_setup === true) {
+				if (this.state.fresh_project_folder_setup === true && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
 					this.currentProjectFolderState = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				} else {
@@ -970,17 +980,6 @@ export default {
 		},
 		nextSettings() {
 			this.currentSetting = this.settingsStepper.next().value
-		},
-		projectFolderSetUpErrorMessageDescription(errorKey) {
-			const linkText = this.messages.downloadAndEnableApp
-			const url = generateUrl('settings/apps/files/groupfolders')
-			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
-			switch (errorKey) {
-			case 'The "groupfolders" app is not installed' :
-				return t('integration_openproject', 'Please install the "groupfolders" app to be able to use automatically managed folders. {htmlLink}', { htmlLink }, null, { escape: false, sanitize: false })
-			default:
-				return this.errorHintForProjectFolderConfigAlreadyExists
-			}
 		},
 		closeRequestModal() {
 			this.show = false
