@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix: Each request to OpenProject gets new token when setup with external SSO with token-exchange [#867](https://github.com/nextcloud/integration_openproject/pull/867)
+- Improve translation support and fix grammar in the authentication method switch confirmation message [#875](https://github.com/nextcloud/integration_openproject/pull/875)
 
 ### Removed
 
