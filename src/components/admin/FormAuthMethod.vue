@@ -223,15 +223,16 @@ export default {
 		async saveSettings() {
 			// open the confirmation dialog when only swithing back and forth between two authorization method
 			if (this.isEditMode && this.isFormComplete) {
+				const message = t(
+					'integration_openproject',
+					'If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime.',
+					{
+						selectedAuthMethod: this.selectedAuthMethod.toUpperCase(),
+						savedAuthMethod: this.savedAuthMethod.toUpperCase(),
+					},
+				)
 				await OC.dialogs.confirmDestructive(
-					t(
-						'integration_openproject',
-						'If you proceed this method, you will have an '
-							+ this.selectedAuthMethod.toUpperCase()
-							+ ' based authentication configuration which will delete all the configuration setting for current '
-							+ this.savedAuthMethod.toUpperCase()
-							+ ' based authentication. You can switch back to it anytime.',
-					),
+					message,
 					t('integration_openproject', 'Switch Authentication Method'),
 					{
 						type: OC.dialogs.YES_NO_BUTTONS,
