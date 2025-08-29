@@ -11,6 +11,7 @@ OC.L10N.register(
     "Copied!" : "Скапіявана!",
     "Copy value" : "Скапіяваць значэнне",
     "Copied to the clipboard" : "Скапіявана ў буфер абмену",
+    "Details" : "Падрабязнасці",
     "Unexpected Error" : "Нечаканая памылка",
     "Start typing to search" : "Пачніце ўводзіць тэкст для пошуку",
     "Project *" : "Праект *",

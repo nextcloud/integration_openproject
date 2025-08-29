@@ -92,7 +92,6 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Упозорење, све што куцате у линији за претрагу се шаље вашој OpenProject инстанци.",
     "authentication methods you can use with OpenProject" : "метода провере идентитета које можете користити са OpenProject",
     "Please read our guide on {htmlLink}." : "Молимо вас да читате наше упутство на {htmlLink}",
-    "If you proceed this method, you will have an " : "Ако наставите са овом методом, имаћете",
     "Switch Authentication Method" : "Промени метод провере идентитета",
     "Yes, switch" : "Да, промени",
     "Authentication method" : "Начин провере идентитета",
