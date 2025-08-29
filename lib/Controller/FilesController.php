@@ -261,15 +261,20 @@ class FilesController extends OCSController {
 			'files',
 			$fileId
 		);
+
+		// activities are in descending order
+		// so the first event in the list is the most recent one
 		foreach ($activities['data'] as $activity) {
-			if ($activity['type'] === 'file_changed') {
+			if (in_array($activity['type'], ['file_changed', 'file_created'])) {
 				$activityDetails = $activityData->getById($activity['activity_id']);
-				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
-				// sadly we only get the localized subject from the `get()` request and need to do an other request
 				if (!method_exists($activityDetails, 'getSubject')) {
 					return null;
 				}
-				if (str_starts_with($activityDetails->getSubject(), 'changed')) {
+				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
+				// sadly we only get the localized subject from the `get()` request and need to do an other request.
+				// get modifier for created and changed (content changed) events only.
+				if (str_starts_with($activityDetails->getSubject(), 'created')
+					|| str_starts_with($activityDetails->getSubject(), 'changed')) {
 					return $this->userManager->get($activity['user']);
 				}
 			}
