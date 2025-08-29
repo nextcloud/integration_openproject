@@ -94,7 +94,6 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Uyarı, arama çubuğuna yazdığınız her şey OpenProject kopyanıza gönderilecek.",
     "authentication methods you can use with OpenProject" : "OpenProject ile kullanabileceğiniz kimlik doğrulama yöntemleri",
     "Please read our guide on {htmlLink}." : "Lütfen {htmlLink} bölümündeki rehberimizi okuyun.",
-    "If you proceed this method, you will have an " : "Bu yöntemle ilerlerseniz, şunu alacaksınız",
     "Switch Authentication Method" : "Kimlik doğrulama yöntemini değiştir",
     "Yes, switch" : "Evet, değiştir",
     "Authentication method" : "Kimlik doğrulama yöntemi",
