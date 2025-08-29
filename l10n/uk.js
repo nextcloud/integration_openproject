@@ -94,7 +94,6 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Увага, все, що ви введете у рядок пошуку, буде надіслано до вашого екземпляра OpenProject.",
     "authentication methods you can use with OpenProject" : "методи автентифікації, які можна використовувати з OpenProject",
     "Please read our guide on {htmlLink}." : "Будь ласка, прочитайте наш путівник на {htmlLink}.",
-    "If you proceed this method, you will have an " : "Якщо ви скористаєтеся цим методом, у вас буде",
     "Switch Authentication Method" : "Метод автентифікації комутатора",
     "Yes, switch" : "Так, перемикач.",
     "Authentication method" : "Спосіб авторизації",
