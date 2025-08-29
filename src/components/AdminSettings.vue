@@ -30,12 +30,12 @@
 				:has-error="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub" />
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported('user_oidc', getMinSupportedUserOidcVersion)"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported(getUserOidcAppName, getMinSupportedUserOidcVersion)"
 				:error-link="appLinks.user_oidc.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<ErrorNote
 				v-else-if="hasOidcAppErrorWithNextcloudHub"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
 				:error-link="appLinks.oidc.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<div class="authorization-settings--content">
@@ -58,7 +58,7 @@
 					<div class="error-container">
 						<ErrorLabel
 							v-if="!hasEnabledSupportedOIDCApp"
-							:error="messagesFmt.appNotEnabledOrUnsupported('oidc', getMinSupportedOidcVersion)"
+							:error="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
@@ -289,7 +289,7 @@
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
 				v-if="showGroupfoldersAppError"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported('groupfolders', getMinSupportedGroupfoldersVersion)"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported(getGroupFoldersAppName, getMinSupportedGroupfoldersVersion)"
 				:error-link="appLinks.groupfolders.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<NcNoteCard v-else-if="projectFolderSetupError || isThereErrorAfterProjectFolderAndAppPasswordSetup" class="note-card" type="error">
@@ -785,6 +785,15 @@ export default {
 		},
 		getSSOProviderType() {
 			return this.authorizationSetting.SSOProviderType
+		},
+		getUserOidcAppName() {
+			return this.state.apps.user_oidc.name
+		},
+		getOidcAppName() {
+			return this.state.apps.oidc.name
+		},
+		getGroupFoldersAppName() {
+			return this.state.apps.groupfolders.name
 		},
 		hasEnabledSupportedUserOidcApp() {
 			return this.state.apps.user_oidc.enabled && this.state.apps.user_oidc.supported

@@ -113,16 +113,19 @@ class Admin implements ISettings {
 			'user_oidc_minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 			'apps' => [
 				'oidc' => [
+					'name' => $this->openProjectAPIService->getAppsName('oidc'),
 					'enabled' => $this->openProjectAPIService->isOIDCAppEnabled(),
 					'supported' => $this->openProjectAPIService->isOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION,
 				],
 				'user_oidc' => [
+					'name' => $this->openProjectAPIService->getAppsName('user_oidc'),
 					'enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
 					'supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 				],
 				'groupfolders' => [
+					'name' => $this->openProjectAPIService->getAppsName('groupfolders'),
 					'enabled' => $this->openProjectAPIService->isGroupfoldersAppEnabled(),
 					'supported' => $this->openProjectAPIService->isGroupfoldersAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION,

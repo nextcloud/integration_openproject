@@ -1842,4 +1842,11 @@ class OpenProjectAPIService {
 		}
 		return false;
 	}
+
+	/**
+	 * return string|null
+	 */
+	public function getAppsName($appId): ?string {
+		return $this->appManager->getAppInfo($appId)['name'];
+	}
 }
