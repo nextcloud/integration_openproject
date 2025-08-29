@@ -54,6 +54,7 @@ const defaultProps = {
 			enabled: true,
 			supported: true,
 			minimum_version: '1.0.0',
+			name: 'OpenID Connect user backend',
 		},
 	},
 }
@@ -185,6 +186,7 @@ describe('Component: FormAuthMethod', () => {
 							enabled: false,
 							supported: false,
 							minimum_version: '1.0.0',
+							name: 'OpenID Connect user backend',
 						},
 					},
 				})
@@ -210,6 +212,7 @@ describe('Component: FormAuthMethod', () => {
 							enabled: true,
 							supported: false,
 							minimum_version: '1.0.0',
+							name: 'OpenID Connect user backend',
 						},
 					},
 				})
@@ -261,6 +264,7 @@ describe('Component: FormAuthMethod', () => {
 								enabled: false,
 								supported: false,
 								minimum_version: '1.0.0',
+								name: 'OpenID Connect user backend',
 							},
 						},
 					},
@@ -280,6 +284,7 @@ describe('Component: FormAuthMethod', () => {
 								enabled: false,
 								supported: false,
 								minimum_version: '1.0.0',
+								name: 'OpenID Connect user backend',
 							},
 						},
 					},
@@ -374,6 +379,7 @@ describe('Component: FormAuthMethod', () => {
 								enabled: false,
 								supported: false,
 								minimum_version: '1.0.0',
+								name: 'OpenID Connect user backend',
 							},
 						},
 					})
@@ -405,6 +411,7 @@ describe('Component: FormAuthMethod', () => {
 									enabled: false,
 									supported: false,
 									minimum_version: '1.0.0',
+									name: 'OpenID Connect user backend',
 								},
 							},
 						},
@@ -437,6 +444,7 @@ describe('Component: FormAuthMethod', () => {
 								enabled: true,
 								supported: false,
 								minimum_version: '1.0.0',
+								name: 'OpenID Connect user backend',
 							},
 						},
 					})
@@ -468,6 +476,7 @@ describe('Component: FormAuthMethod', () => {
 									enabled: true,
 									supported: false,
 									minimum_version: '1.0.0',
+									name: 'OpenID Connect user backend',
 								},
 							},
 						},

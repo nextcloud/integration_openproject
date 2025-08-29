@@ -27,7 +27,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     errorlink="http://localhost/settings/apps/files/user_oidc"
     errorlinklabel="Install latest version now"
     errormessage=""
-    errortitle="This feature requires version {version} (or higher) of {app}. Please install or update the app."
+    errortitle="This feature requires version {version} (or higher) of "{app}" app. Please install or update the app."
   />
    
   <div
@@ -272,7 +272,7 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
     errorlink="http://localhost/settings/apps/files/user_oidc"
     errorlinklabel="Install latest version now"
     errormessage=""
-    errortitle="This feature requires version {version} (or higher) of {app}. Please install or update the app."
+    errortitle="This feature requires version {version} (or higher) of "{app}" app. Please install or update the app."
   />
    
   <div
