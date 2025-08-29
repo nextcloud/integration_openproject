@@ -93,7 +93,6 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varování: vše co napíšete do kolonky sjednoceného vyhledávání v rámci Nextcloud, bude odesíláno i do vámi používané instance OpenProject!",
     "authentication methods you can use with OpenProject" : "metody ověřování, které je možné použít pro OpenProject",
     "Please read our guide on {htmlLink}." : "Přečtěte si příručku na {htmlLink}.",
-    "If you proceed this method, you will have an " : "Pokud budete pokračovat touto metodou, bude mít",
     "Switch Authentication Method" : "Přepnout metodu ověřování",
     "Yes, switch" : "Ano, přepnout",
     "Authentication method" : "Metoda ověření",
