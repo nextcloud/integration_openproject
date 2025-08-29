@@ -57,7 +57,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
-	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectAll';
+	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectSuspended';
 	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
 
 	/**
@@ -161,7 +161,7 @@ class Application extends App implements IBootstrap {
 	/**
 	 * Listen to remove user from group API requests
 	 * and if the request is to remove user from OpenProject group
-	 * check that the user is in OpenProjectAll group and add to it if not
+	 * check that the user is in OpenProjectSuspended group and add to it if not
 	 * then continue the request
 	 *
 	 * @param IRequest $request
