@@ -92,7 +92,6 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "警告，您在搜尋列中輸入的所有東西都會傳送到 OpenProject。",
     "authentication methods you can use with OpenProject" : "OpenProject 可用的身份驗證方法",
     "Please read our guide on {htmlLink}." : "請閱讀我們關於 {htmlLink} 的指南。",
-    "If you proceed this method, you will have an " : "如果您採用此方法，您將會有一個 ",
     "Switch Authentication Method" : "切換驗證方法",
     "Yes, switch" : "是的，切換",
     "Authentication method" : "認證方式",
