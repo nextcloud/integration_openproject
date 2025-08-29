@@ -25,17 +25,13 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\DB\Exception as DBException;
-use OCP\Group\ISubAdmin;
 use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
-
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class ConfigController extends Controller {
@@ -80,20 +76,6 @@ class ConfigController extends Controller {
 	 */
 	private $oauthSettingsController;
 
-	/**
-	 * @var IGroupManager
-	 */
-	private $groupManager;
-
-	/**
-	 * @var ISecureRandom
-	 */
-	private ISecureRandom $secureRandom;
-
-	/**
-	 * @var ISubAdmin
-	 */
-	private ISubAdmin $subAdminManager;
 	private SettingsService $settingsService;
 
 	public function __construct(
@@ -107,9 +89,6 @@ class ConfigController extends Controller {
 		LoggerInterface $logger,
 		OauthService $oauthService,
 		SettingsController $oauthSettingsController,
-		IGroupManager $groupManager,
-		ISecureRandom $secureRandom,
-		ISubAdmin $subAdminManager,
 		SettingsService $settingsService,
 		?string $userId
 	) {
@@ -123,9 +102,6 @@ class ConfigController extends Controller {
 		$this->userId = $userId;
 		$this->oauthService = $oauthService;
 		$this->oauthSettingsController = $oauthSettingsController;
-		$this->groupManager = $groupManager;
-		$this->secureRandom = $secureRandom;
-		$this->subAdminManager = $subAdminManager;
 		$this->settingsService = $settingsService;
 	}
 
@@ -207,18 +183,7 @@ class ConfigController extends Controller {
 		$appPassword = null;
 
 		if (key_exists('setup_project_folder', $values) && $values['setup_project_folder'] === true) {
-			$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
-			if ($isSystemReady) {
-				$password = $this->secureRandom->generate($this->openprojectAPIService->getPasswordLength(), ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS);
-				$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
-				$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
-				$group->addUser($user);
-				$this->subAdminManager->createSubAdmin($user, $group);
-				$this->openprojectAPIService->createGroupfolder();
-				if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
-					$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
-				}
-			}
+			$this->settingsService->setupProjectFolder();
 		}
 
 		// creates or replace the app password

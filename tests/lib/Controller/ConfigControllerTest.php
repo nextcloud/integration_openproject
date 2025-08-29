@@ -96,6 +96,19 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @return SettingsService
+	 */
+	public function getSettingsService(): SettingsService {
+		return new SettingsService(
+			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
+			$this->createMock(OpenProjectAPIService::class),
+			$this->createMock(ISecureRandom::class),
+			$this->createMock(ISubAdmin::class),
+		);
+	}
+
+	/**
 	 * Format has to be [<string> => <object|string>] with the first being the constructor parameter name and the second one the mock.
 	 * Example: ['config' => $createdMockObject]
 	 * @param array<string, object|string> $constructParams specific mocks for the constructor of OpenProjectAPIService
@@ -114,10 +127,7 @@ class ConfigControllerTest extends TestCase {
 			'loggerInterface' => $this->createMock(LoggerInterface::class),
 			'oauthService' => $this->createMock(OauthService::class),
 			'settingsController' => $this->createMock(SettingsController::class),
-			'groupManager' => $this->createMock(IGroupManager::class),
-			'secureRandom' => $this->createMock(ISecureRandom::class),
-			'subAdmin' => $this->createMock(ISubAdmin::class),
-			'settingsService' => new SettingsService(),
+			'settingsService' => $this->getSettingsService(),
 			'userId' => 'testUser'
 		];
 
@@ -1324,11 +1334,6 @@ class ConfigControllerTest extends TestCase {
 				[Application::APP_ID, 'openproject_client_id', '', 'some_cilent_id'],
 				[Application::APP_ID, 'openproject_client_secret', '', 'some_cilent_secret'],
 			]);
-		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
-		$secureRandomMock
-			->method('generate')
-			->with(15, ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS)
-			->willReturn('thisisapassword123');
 		$service
 			->method('getPasswordLength')
 			->willReturn(15);
@@ -1346,23 +1351,11 @@ class ConfigControllerTest extends TestCase {
 		$groupMock
 			->method('addUser')
 			->with($userMock);
-		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
-		$groupManagerMock
-			->method('createGroup')
-			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
-			->willReturn($groupMock);
-		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
-		$subAdminManagerMock
-			->method('createSubAdmin')
-			->with($userMock, $groupMock);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
-			'groupManager' => $groupManagerMock,
-			'secureRandom' => $secureRandomMock,
-			'subAdmin' => $subAdminManagerMock,
 			'userId' => 'admin'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1388,17 +1381,11 @@ class ConfigControllerTest extends TestCase {
 			->willReturn(true);
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
-		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
-		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
-		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
-			'groupManager' => $groupManagerMock,
-			'secureRandom' => $secureRandomMock,
-			'subAdmin' => $subAdminManagerMock,
 			'userId' => 'admin'
 		]);
 		$configController = new ConfigController(...$constructArgs);
@@ -1419,17 +1406,11 @@ class ConfigControllerTest extends TestCase {
 		$service->method('signTermsOfServiceForUserOpenProject')->willThrowException(new Exception("Database Error!"));
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)->getMock();
-		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)->getMock();
-		$secureRandomMock = $this->getMockBuilder(ISecureRandom::class)->getMock();
-		$subAdminManagerMock = $this->getMockBuilder(ISubAdmin::class)->getMock();
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
 			'userManager' => $userManagerMock,
 			'openprojectAPIService' => $service,
-			'groupManager' => $groupManagerMock,
-			'secureRandom' => $secureRandomMock,
-			'subAdmin' => $subAdminManagerMock,
 			'userId' => 'admin'
 		]);
 		$configController = new ConfigController(...$constructArgs);

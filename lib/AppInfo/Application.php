@@ -30,19 +30,24 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\IEventDispatcher;
-
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\Group\Events\BeforeGroupDeletedEvent;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\INavigationManager;
+use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Application
@@ -51,7 +56,8 @@ use OCP\User\Events\UserChangedEvent;
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
-	public const  OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
+	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
+	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectSuspended';
 	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
 
 	/**
@@ -99,6 +105,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
+		$context->injectFn(Closure::fromCallable([$this, 'listenRemoveUserFromGroupRequest']));
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
@@ -147,6 +154,65 @@ class Application extends App implements IBootstrap {
 						];
 					});
 				}
+			}
+		}
+	}
+
+	/**
+	 * Listen to remove user from group API requests
+	 * and if the request is to remove user from OpenProject group
+	 * check that the user is in OpenProjectSuspended group and add to it if not
+	 * then continue the request
+	 *
+	 * @param IRequest $request
+	 * @param IGroupManager $groupManager
+	 * @param IUserManager $userManager
+	 * @param LoggerInterface $logger
+	 *
+	 * @return void
+	 * @throws OCSBadRequestException
+	 */
+	public function listenRemoveUserFromGroupRequest(
+		IRequest $request,
+		IGroupManager $groupManager,
+		IUserManager $userManager,
+		LoggerInterface $logger,
+	): void {
+		// url path pattern to remove user from group
+		// e.g: /cloud/users/{userid}/groups   (path returned by $request->getPathInfo())
+		$urlPattern = '/.*\/users\/([^\/]+)\/groups$/';
+		if ($request->getMethod() === Request::METHOD_DELETE && \preg_match($urlPattern, $request->getPathInfo())) {
+			$fromGroup = $request->getParam('groupid');
+			$userToRemove = \preg_replace($urlPattern, '$1', $request->getPathInfo());
+			if (!$fromGroup || !$userToRemove) {
+				return;
+			}
+
+			$user = $userManager->get($userToRemove);
+			if ($user === null) {
+				return;
+			}
+
+			// Only handle OpenProject group
+			if ($fromGroup !== Application::OPEN_PROJECT_ENTITIES_NAME) {
+				return;
+			}
+
+			if (!$groupManager->isInGroup($userToRemove, Application::OPENPROJECT_ALL_GROUP_NAME)) {
+				$logger->debug('User not found in "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group.');
+				$allGroup = $groupManager->get(Application::OPENPROJECT_ALL_GROUP_NAME);
+
+				if ($allGroup === null) {
+					$errorMessage = 'Group "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" not found.' .
+						' This group is required before removing users from "' . Application::OPEN_PROJECT_ENTITIES_NAME . '" group.';
+					$logger->error($errorMessage);
+					throw new OCSBadRequestException($errorMessage);
+				}
+
+				$allGroup->addUser($user);
+				$logger->debug("User '$userToRemove' added to '" . Application::OPENPROJECT_ALL_GROUP_NAME . "' group.");
+			} else {
+				$logger->debug('User already exists in "' . Application::OPENPROJECT_ALL_GROUP_NAME . '" group');
 			}
 		}
 	}

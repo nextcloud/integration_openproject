@@ -8,6 +8,11 @@
 namespace OCA\OpenProject\Service;
 
 use InvalidArgumentException;
+use OCA\OpenProject\AppInfo\Application;
+use OCP\Group\ISubAdmin;
+use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 
 class SettingsService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
@@ -36,6 +41,15 @@ class SettingsService {
 		'targeted_audience_client_id' => 'string',
 		'token_exchange' => 'boolean',
 	];
+
+	public function __construct(
+		private IUserManager $userManager,
+		private IGroupManager $groupManager,
+		private OpenProjectAPIService $openprojectAPIService,
+		private ISecureRandom $secureRandom,
+		private ISubAdmin $subAdmin,
+	) {
+	}
 
 	/**
 	 * @return array<string, mixed>
@@ -210,5 +224,26 @@ class SettingsService {
 	private function isValidURL(string $url): bool {
 		return filter_var($url, FILTER_VALIDATE_URL) &&
 			preg_match('/^https?/', $url);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function setupProjectFolder(): void {
+		$isSystemReady = $this->openprojectAPIService->isSystemReadyForProjectFolderSetUp();
+		if ($isSystemReady) {
+			$password = $this->secureRandom->generate($this->openprojectAPIService->getPasswordLength(), ISecureRandom::CHAR_ALPHANUMERIC.ISecureRandom::CHAR_SYMBOLS);
+			$user = $this->userManager->createUser(Application::OPEN_PROJECT_ENTITIES_NAME, $password);
+			$group = $this->groupManager->createGroup(Application::OPEN_PROJECT_ENTITIES_NAME);
+			$allGroup = $this->groupManager->createGroup(Application::OPENPROJECT_ALL_GROUP_NAME);
+			$group->addUser($user);
+			$allGroup->addUser($user);
+			$this->subAdmin->createSubAdmin($user, $group);
+			$this->subAdmin->createSubAdmin($user, $allGroup);
+			$this->openprojectAPIService->createGroupfolder();
+			if ($this->openprojectAPIService->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
+				$this->openprojectAPIService->signTermsOfServiceForUserOpenProject();
+			}
+		}
 	}
 }
