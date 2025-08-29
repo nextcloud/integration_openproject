@@ -92,7 +92,6 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Aviso: todo lo que escriba en la barra de búsqueda será enviado a su instancia de OpenProject",
     "authentication methods you can use with OpenProject" : "métodos de autenticación que puede utilizar con OpenProject",
     "Please read our guide on {htmlLink}." : "Por favor, lea nuestra guía en {htmlLink}",
-    "If you proceed this method, you will have an " : "Si sigue adelante con este método, tendrá una",
     "Switch Authentication Method" : "Cambiar el método de autenticación",
     "Yes, switch" : "Si, cambiar",
     "Authentication method" : "Método de autenticación",

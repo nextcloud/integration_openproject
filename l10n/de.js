@@ -94,7 +94,6 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Achtung, alles, was du in die Suchleiste eingibst, wird an deine OpenProject-Instanz gesendet.",
     "authentication methods you can use with OpenProject" : "Anmeldemethoden, die mit OpenProject verwendet werden können",
     "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen.",
-    "If you proceed this method, you will have an " : "Wenn du diese Methode anwendest, erhältst du eine",
     "Switch Authentication Method" : "Anmeldemethode umschalten",
     "Yes, switch" : "Ja, umschalten",
     "Authentication method" : "Authentifizierungsmethode",
