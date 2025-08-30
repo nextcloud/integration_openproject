@@ -92,6 +92,7 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Rabhadh, seolfar gach rud a chlóscríobhann tú sa bharra cuardaigh chuig do shampla OpenProject.",
     "authentication methods you can use with OpenProject" : "modhanna fíordheimhnithe is féidir leat a úsáid le OpenProject",
     "Please read our guide on {htmlLink}." : "Léigh ár dtreoir ar{htmlLink}le do thoil.",
+    "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime." : "Má leanann tú ar aghaidh leis an modh seo, beidh cumraíocht fíordheimhnithe bunaithe ar {selectedAuthMethod} agat a scriosfaidh na socruithe cumraíochta go léir don fhíordheimhniú reatha bunaithe ar {savedAuthMethod}. Is féidir leat filleadh air am ar bith.",
     "Switch Authentication Method" : "Athraigh Modh Fíordheimhnithe",
     "Yes, switch" : "Sea, aistrigh",
     "Authentication method" : "Modh fíordheimhnithe",
