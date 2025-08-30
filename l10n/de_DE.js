@@ -94,6 +94,7 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Achtung, alles, was Sie in die Suchleiste eingeben, wird an Ihre OpenProject-Instanz gesendet.",
     "authentication methods you can use with OpenProject" : "Anmeldemethoden, die mit OpenProject verwendet werden können",
     "Please read our guide on {htmlLink}." : "Bitte unseren Leitfaden unter {htmlLink} lesen.",
+    "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime." : "Wenn Sie mit dieser Methode fortfahren, erhalten Sie eine {selectedAuthMethod} basierte Authentifizierungskonfiguration, die alle Konfigurationseinstellungen für die aktuelle basierte {savedAuthMethod} Authentifizierung löscht. Sie können jederzeit wieder dorthin wechseln.",
     "Switch Authentication Method" : "Anmeldemethode umschalten",
     "Yes, switch" : "Ja, umschalten",
     "Authentication method" : "Authentifizierungsmethode",

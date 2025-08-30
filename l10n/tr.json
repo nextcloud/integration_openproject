@@ -92,6 +92,7 @@
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Uyarı, arama çubuğuna yazdığınız her şey OpenProject kopyanıza gönderilecek.",
     "authentication methods you can use with OpenProject" : "OpenProject ile kullanabileceğiniz kimlik doğrulama yöntemleri",
     "Please read our guide on {htmlLink}." : "Lütfen {htmlLink} bölümündeki rehberimizi okuyun.",
+    "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime." : "Bu yöntemle ilerlerseniz, geçerli {savedAuthMethod} tabanlı kimlik doğrulamasının tüm yapılandırma ayarlarını silecek olan {selectedAuthMethod} tabanlı bir kimlik doğrulama yapılandırmasına geçeceksiniz. İstediğiniz zaman geri dönebilirsiniz.",
     "Switch Authentication Method" : "Kimlik doğrulama yöntemini değiştir",
     "Yes, switch" : "Evet, değiştir",
     "Authentication method" : "Kimlik doğrulama yöntemi",
