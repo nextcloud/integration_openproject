@@ -94,6 +94,7 @@ OC.L10N.register(
     "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Warning, everything you type in the search bar will be sent to your OpenProject instance.",
     "authentication methods you can use with OpenProject" : "authentication methods you can use with OpenProject",
     "Please read our guide on {htmlLink}." : "Please read our guide on {htmlLink}.",
+    "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime." : "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime.",
     "Switch Authentication Method" : "Switch Authentication Method",
     "Yes, switch" : "Yes, switch",
     "Authentication method" : "Authentication method",
