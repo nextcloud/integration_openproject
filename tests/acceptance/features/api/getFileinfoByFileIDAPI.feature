@@ -44,8 +44,8 @@ Feature: retrieve file information of a single file, using the file ID
       "mimetype": {"type": "string", "pattern": "^text\/plain$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
       "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
@@ -94,8 +94,8 @@ Feature: retrieve file information of a single file, using the file ID
       "mimetype": {"type": "string", "pattern": "^text\/plain$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVW"},
       "path": {"type": "string", "pattern":"^files\/subfolder\/file.txt$"}
       }
@@ -286,8 +286,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
       "path": {"type": "string", "pattern":"^files/file.txt$"}
       }
@@ -328,8 +328,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
@@ -371,8 +371,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/file.txt$"}
       }
@@ -413,8 +413,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
       "path": {"type": "string", "pattern":"^files\/renamed.txt$"}
       }
@@ -456,8 +456,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^renamed.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol$"},
       "dav_permissions": {"type": "string", "pattern":"^SRGDNVW$"},
       "path": {"type": "string", "pattern":"^files\/to-share\/renamed.txt$"}
       }
@@ -946,8 +946,8 @@ Feature: retrieve file information of a single file, using the file ID
       "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "dav_permissions": {"type": "string", "pattern":"^RGDNVCK$"},
       "path": {"type": "string", "pattern":"^files\/folder\/$"}
       }
@@ -1156,8 +1156,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "dav_permissions": {"type": "string", "pattern":"^<requester-dav-permissions>$"},
       "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
@@ -1193,8 +1193,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^file.txt$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "dav_permissions": {"type": "string", "pattern":"^<owner-dav-permissions>$"},
       "path": {"type": "string", "pattern":"^files\/file.txt$"}
       }
@@ -1247,8 +1247,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^folder$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "dav_permissions": {"type": "string", "pattern":"^<requester-dav-permissions>$"},
       "path": {"type": "string", "pattern":"^files\/folder\/$"}
       }
@@ -1284,8 +1284,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^folder$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol Hansen$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": {"type": "string", "pattern": "^Carol$"},
+      "modifier_name": {"type": "string", "pattern": "^Carol Hansen$"},
       "dav_permissions": {"type": "string", "pattern":"^<owner-dav-permissions>$"},
       "path": {"type": "string", "pattern":"^files\/folder\/$"}
       }
@@ -1344,8 +1344,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^groupFolder$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": {"type": "null"},
-      "modifier_name": {"type": "null"},
+      "modifier_id": null,
+      "modifier_name": null,
       "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK$"},
       "path": {"type": "string", "pattern":"^files\/groupFolder\/$"}
       }
