@@ -103,6 +103,7 @@ class Admin implements ISettings {
 			// other states
 			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
 			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly,
+			'admin_audit_app_name' => $this->openProjectAPIService->getAppsName('admin_audit'),
 			'encryption_info' => [
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'

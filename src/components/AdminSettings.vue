@@ -698,12 +698,12 @@ export default {
 			return t('integration_openproject', 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getAdminAuditConfigurationHint() {
-			const linkTextForAdminAudit = t('integration_openproject', 'Admin Audit')
+			const linkTextForAdminAudit = t('integration_openproject', this.getAdminAuditAppName)
 			const adminAuditAppUrlForDownload = generateUrl('settings/apps/featured/admin_audit')
 			const linkTextForDocumentation = t('integration_openproject', 'documentation')
 			const htmlLinkForAdminAudit = `<a class="link" href="${adminAuditAppUrlForDownload}" target="_blank" title="${linkTextForAdminAudit}">${linkTextForAdminAudit}</a>`
 			const htmlLinkForDocumentaion = `<a class="link" href="https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/logging_configuration.html#admin-audit-log-optional" target="_blank" title="${linkTextForDocumentation}">${linkTextForDocumentation}</a>`
-			const hintTextForAdminAudit = t('integration_openproject', 'To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.', { htmlLinkForAdminAudit, htmlLinkForDocumentaion }, null, { escape: false, sanitize: false })
+			const hintTextForAdminAudit = t('integration_openproject', 'To activate audit logs for the OpenProject integration, please enable the "{htmlLinkForAdminAudit}" app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}.', { htmlLinkForAdminAudit, htmlLinkForDocumentaion }, null, { escape: false, sanitize: false })
 			return dompurify.sanitize(hintTextForAdminAudit, { ADD_ATTR: ['target'] })
 		},
 		getGroupFoldersEncryptionWarningHint() {
@@ -794,6 +794,9 @@ export default {
 		},
 		getGroupFoldersAppName() {
 			return this.state.apps.groupfolders.name
+		},
+		getAdminAuditAppName() {
+			return this.state.admin_audit_app_name
 		},
 		hasEnabledSupportedUserOidcApp() {
 			return this.state.apps.user_oidc.enabled && this.state.apps.user_oidc.supported
