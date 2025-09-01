@@ -1844,9 +1844,23 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * return string|null
+	 * @param string $appId
+	 *
+	 * @return string
 	 */
-	public function getAppsName($appId): ?string {
-		return $this->appManager->getAppInfo($appId)['name'];
+	public function getAppsName(string $appId): string {
+		$appInfo = $this->appManager->getAppInfo($appId);
+
+		if ($appInfo === null) {
+			$this->logger->debug("App not found using appId: $appId", ['app' => $this->appName]);
+			return '';
+		}
+
+		if (!array_key_exists('name', $appInfo)) {
+			$this->logger->debug("Missing 'name' property for app: $appId", ['app' => $this->appName]);
+			return '';
+		}
+
+		return $appInfo['name'];
 	}
 }

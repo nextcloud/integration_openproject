@@ -289,7 +289,7 @@
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
 				v-if="showGroupfoldersAppError"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported(getGroupFoldersAppName, getMinSupportedGroupfoldersVersion)"
+				:error-title="messagesFmt.appNotEnabledOrUnsupported(getGroupfoldersAppName, getMinSupportedGroupfoldersVersion)"
 				:error-link="appLinks.groupfolders.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
 			<NcNoteCard v-else-if="projectFolderSetupError || isThereErrorAfterProjectFolderAndAppPasswordSetup" class="note-card" type="error">
@@ -792,7 +792,7 @@ export default {
 		getOidcAppName() {
 			return this.state.apps.oidc.name
 		},
-		getGroupFoldersAppName() {
+		getGroupfoldersAppName() {
 			return this.state.apps.groupfolders.name
 		},
 		getAdminAuditAppName() {
