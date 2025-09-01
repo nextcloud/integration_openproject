@@ -15,3 +15,4 @@ occ user_oidc:provider Keycloak \
     -s 'nextcloud-secret' \
     -d 'https://keycloak.local/realms/opnc/.well-known/openid-configuration' \
     -o 'openid profile email api_v3'
+occ user_oidc:provider Keycloak --check-bearer 1
