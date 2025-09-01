@@ -64,8 +64,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Carol$"},
               "owner_name": {"type": "string", "pattern": "^Carol$"},
-              "modifier_id": {"type": "null"},
-              "modifier_name": {"type": "null"},
+              "modifier_id": {"type": "string", "pattern": "^Carol$"},
+              "modifier_name": {"type": "string", "pattern": "^Carol$"},
               "dav_permissions": {"type": "string", "pattern":"^RGDNVW$"},
               "path": {"type": "string", "pattern":"^files\/file.txt$"}
             }
@@ -99,8 +99,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^text\/plain$"},
               "owner_id": {"type": "string", "pattern": "^Brian$"},
               "owner_name": {"type": "string", "pattern": "^Brian Adams$"},
-              "modifier_id": {"type": "null"},
-              "modifier_name": {"type": "null"},
+              "modifier_id": {"type": "string", "pattern": "^Brian$"},
+              "modifier_name": {"type": "string", "pattern": "^Brian Adams$"},
               "dav_permissions": {"type": "string", "pattern":"^SRGNVW$"},
               "path": {"type": "string", "pattern":"^files\/renamedByCarol.txt$"}
             }
@@ -215,8 +215,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
               "owner_id": {"type": "string", "pattern": "^Carol$"},
               "owner_name": {"type": "string", "pattern": "^Carol$"},
-              "modifier_id": {"type": "null"},
-              "modifier_name": {"type": "null"},
+              "modifier_id": null,
+              "modifier_name": null,
               "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK"},
               "path": {"type": "string", "pattern":"^files/groupFolder\/$"}
             }
