@@ -142,7 +142,8 @@ services:
       OPENPROJECT_EDITION: ${OPENPROJECT_EDITION:-standard}
       OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET: false
       OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: true
-      OPENPROJECT_AUTHENTICATION: '{"global_basic_auth":{"user": "admin", "password": "admin"}}'
+      OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
+      OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
     volumes:
       - ./openproject.sh:/openproject.sh
       - opdata:/var/openproject/assets
