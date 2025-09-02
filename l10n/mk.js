@@ -16,6 +16,7 @@ OC.L10N.register(
     "Details" : "Детали",
     "Start typing to search" : "Напишете нешто за пребарување",
     "Select a user or group" : "Избери корисник или група",
+    "Description" : "Опис",
     "Create" : "Креирај",
     "Mark as read" : "Означи како прочитано",
     "Connected accounts" : "Поврзани сметки"
