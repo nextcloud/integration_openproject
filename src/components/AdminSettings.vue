@@ -639,6 +639,9 @@ export default {
 		isProjectFolderSetupFormInEdit() {
 			return this.formMode.projectFolderSetUp === F_MODES.EDIT
 		},
+		isProjectFolderSetupFormInDisableMode() {
+			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
+		},
 		isAuthorizationSettingInEditMode() {
 			return this.formMode.authorizationSetting === F_MODES.EDIT
 		},
@@ -823,7 +826,7 @@ export default {
 			return !this.hasEnabledSupportedOIDCApp && this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub
 		},
 		showGroupfoldersAppError() {
-			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp
+			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderSetupFormInDisableMode
 		},
 		disableNCHubUnsupportedHint() {
 			if (!this.hasEnabledSupportedOIDCApp) {
