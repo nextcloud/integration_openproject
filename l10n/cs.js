@@ -187,6 +187,7 @@ OC.L10N.register(
     "OpenProject work package picker" : "Dialog pro volbu balíčku práce z OpenProject",
     "OpenProject API error" : "Chyba OpenProject API",
     "OpenProject settings" : "Nastavení pro OpenProject",
+    "Install latest version now" : "Nainstalovat nejnovější verzi nyní",
     "Download and enable it" : "Stáhnout a zapnout",
     "This feature is not available for this user account" : "Tato funkce není pro tento uživatelský účet k dispozici",
     "Unauthorized to connect to OpenProject" : "Nemáte pověření pro připojení k OpenProject",
