@@ -3928,7 +3928,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	}
 
 	/**
-	 * @return array<mixed>
+	 * @return array
 	 */
 	public function termsOfServicesDataProvider(): array {
 		return [
@@ -4862,6 +4862,57 @@ class OpenProjectAPIServiceTest extends TestCase {
 		);
 		$result = $service->requestOAuthAccessToken('testuser', 'http://op.local.test');
 		$this->assertEquals($responseBody, $result);
+	}
+
+	/**
+	 * Data provider for testGetAppsName
+	 */
+	public function getAppsNameDataProvider(): array {
+		return [
+			'groupfolders' => [
+				'appId' => 'groupfolders',
+				'appInfo' => ['name' => 'Group folders'],
+				'expected' => 'Group folders',
+			],
+			'app info is null' => [
+				'appId' => 'nonexistent_app',
+				'appInfo' => null,
+				'expected' => '',
+			],
+			'app info missing name field' => [
+				'appId' => 'incomplete_app',
+				'appInfo' => ['description' => 'An app without name'],
+				'expected' => '',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider getAppsNameDataProvider
+	 *
+	 * @param string $appId
+	 * @param array<string, mixed>|null $appInfo
+	 * @param string $expected
+	 *
+	 * @return void
+	 */
+	public function testGetAppsName(string $appId, ?array $appInfo, string $expected): void {
+		$appManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
+		$appManagerMock
+			->expects($this->once())
+			->method('getAppInfo')
+			->with($appId)
+			->willReturn($appInfo);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'appManager' => $appManagerMock,
+			]
+		);
+
+		$result = $service->getAppsName($appId);
+		$this->assertSame($expected, $result);
 	}
 
 }

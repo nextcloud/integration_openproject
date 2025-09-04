@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Combine error messages for app not enabled and not supported [#865](https://github.com/nextcloud/integration_openproject/pull/865)
+- Use app name instead of app ID in error messages [#876](https://github.com/nextcloud/integration_openproject/pull/876)
 
 ### Fixed
 

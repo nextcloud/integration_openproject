@@ -103,6 +103,7 @@ class Admin implements ISettings {
 			// other states
 			'all_terms_of_services_signed' => $isAllTermsOfServiceSignedForUserOpenProject,
 			'admin_audit_configuration_correct' => $isAdminAuditConfigurationSetUpCorrectly,
+			'admin_audit_app_name' => $this->openProjectAPIService->getAppsName('admin_audit'),
 			'encryption_info' => [
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
@@ -113,16 +114,19 @@ class Admin implements ISettings {
 			'user_oidc_minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 			'apps' => [
 				'oidc' => [
+					'name' => $this->openProjectAPIService->getAppsName('oidc'),
 					'enabled' => $this->openProjectAPIService->isOIDCAppEnabled(),
 					'supported' => $this->openProjectAPIService->isOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION,
 				],
 				'user_oidc' => [
+					'name' => $this->openProjectAPIService->getAppsName('user_oidc'),
 					'enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
 					'supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 				],
 				'groupfolders' => [
+					'name' => $this->openProjectAPIService->getAppsName('groupfolders'),
 					'enabled' => $this->openProjectAPIService->isGroupfoldersAppEnabled(),
 					'supported' => $this->openProjectAPIService->isGroupfoldersAppSupported(),
 					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION,
