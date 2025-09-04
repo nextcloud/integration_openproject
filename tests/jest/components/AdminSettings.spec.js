@@ -2074,6 +2074,50 @@ describe('AdminSettings.vue', () => {
 	})
 
 	describe('Project folders form (Project Folder Setup)', () => {
+		describe('Disable mode', () => {
+			it('should not show groupfolders error note during initial setup if app is disabled', async () => {
+				const wrapper = getWrapper({
+					state: {
+						openproject_instance_url: null,
+						authorization_method: null,
+						openproject_client_id: null,
+						openproject_client_secret: null,
+						nc_oauth_client: null,
+						authorization_settings: {
+							oidc_provider: null,
+							targeted_audience_client_id: null,
+							sso_provider_type: null,
+						},
+						fresh_project_folder_setup: true,
+						project_folder_info: {
+							status: false,
+						},
+						app_password_set: false,
+						apps: {
+							...appState.apps,
+							groupfolders: {
+								enabled: false,
+								supported: false,
+								minimum_version: '1.0.0',
+							},
+						},
+						form: {
+							serverHost: { complete: false },
+							authenticationMethod: { complete: false },
+						},
+						formMode: {
+							// Initial setup - project folder form is in DISABLE mode
+							projectFolderSetUp: F_MODES.DISABLE,
+						},
+					},
+				},
+				)
+
+				expect(wrapper.vm.formMode.projectFolderSetUp).toBe(F_MODES.DISABLE)
+				expect(wrapper.vm.showGroupfoldersAppError).toBe(false)
+				expect(wrapper.find(selectors.projectFolderErrorNote).exists()).toBe(false)
+			})
+		})
 		describe('view mode', () => {
 			describe('without project folder setup', () => {
 				it('should show status as "Inactive"', () => {
