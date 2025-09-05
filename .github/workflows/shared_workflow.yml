@@ -10,7 +10,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 master"
+        default: "30 31 32 master"
       php_versions:
         required: false
         type: string
@@ -243,7 +243,7 @@ jobs:
           ./occ a:e groupfolders integration_openproject activity
           if [ "${{matrix.nextcloudVersion}}" != "stable27" ]; then
             cp -r ../../user_oidc ../../oidc apps
-            ./occ a:e user_oidc
+            ./occ a:e -f user_oidc
             # enable app even if it is not compatible with the current server version
             ./occ a:e -f oidc
           fi
