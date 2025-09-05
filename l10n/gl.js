@@ -23,9 +23,7 @@ OC.L10N.register(
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Copiar os seguintes valores en OpenProject {htmlLink} como administrador.",
     "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Este valor só será accesíbel unha vez. Agora, como administrador, copie este contrasinal en OpenProject {htmlLink}.",
     "troubleshooting guide" : "guía de solución de problemas",
-    "Admin Audit" : "Auditoría de administración",
     "documentation" : "documentación",
-    "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Para activar rexistros de auditoría para a integración de OpenProject, active a aplicación {htmlLinkForAdminAudit} e siga os pasos de configuración descritos na {htmlLinkForDocumentaion}.",
     "If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account." : "Se continúa, terá que actualizar estes axustes coas novas credenciais de OpenProject OAuth. Ademais, todos os usuarios terán que volver autorizar o acceso á súa conta OpenProject.",
     "Replace OpenProject OAuth values" : "Substituír os valores de OpenProject OAuth",
     "Yes, replace" : "Si, substituír",
@@ -208,6 +206,8 @@ OC.L10N.register(
     "Please link a project to this Nextcloud storage" : "Ligue un proxecto a este almacenamento Nextcloud",
     "Download and enable it here" : "Descargar e activalo aquí",
     "Please introduce a valid OpenProject hostname" : "Introduza un nome de máquina de OpenProject válido",
+    "Admin Audit" : "Auditoría de administración",
+    "To activate audit logs for the OpenProject integration, please enable the {htmlLinkForAdminAudit} app and follow the configuration steps outlined in the {htmlLinkForDocumentaion}." : "Para activar rexistros de auditoría para a integración de OpenProject, active a aplicación {htmlLinkForAdminAudit} e siga os pasos de configuración descritos na {htmlLinkForDocumentaion}.",
     "The \"{app}\" app is not installed" : "A aplicación «{app}» non está instalada",
     "The \"{app}\" app is not supported" : "A aplicación «{app}» non é compatíbel",
     "Requires app version \"{minimumAppVersion}\" or later" : "Require a versión «{minimumAppVersion}» ou posterior da aplicación"
