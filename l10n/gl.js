@@ -88,7 +88,7 @@ OC.L10N.register(
     "Response:" : "Resposta:",
     "Server replied with an error message, please check the Nextcloud logs" : "O servidor respondeu cunha mensaxe de erro, consulte os ficheiros de rexistro de Nextcloud",
     "Documentation" : "Documentación",
-    "Accessing OpenProject servers with local addresses is not allowed." : "Non se permite acceder aos servidores OpenProject con enderezos locais.",
+    "Accessing OpenProject servers with local addresses is not allowed." : "Non está permitido acceder aos servidores OpenProject con enderezos locais.",
     "To be able to use an OpenProject server with a local address, enable the `allow_local_remote_servers` setting. {htmlLink}." : "Para poder usar un servidor OpenProject cun enderezo local, active o axuste  «allow_local_remote_servers». {htmlLink}.",
     "The given URL redirects to '{location}'. Please do not use a URL that leads to a redirect." : "O URL indicado redirixe a «{location}». Non empregue un URL que leve a unha redirección.",
     "Could not connect to the given URL, please check the Nextcloud logs" : "Non foi posíbel conectar co URL indicado, consulte os ficheiros de rexistro de Nextcloud",
