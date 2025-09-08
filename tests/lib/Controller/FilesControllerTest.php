@@ -8,9 +8,6 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OCA\Activity\Data;
-use OCA\Activity\GroupHelperDisabled;
-use OCA\Activity\UserSettings;
 use OCP\Activity\IManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IUserMountCache;
@@ -209,7 +206,7 @@ class FilesControllerTest extends TestCase {
 				'/anotherUser/files/logo.png'
 			);
 
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -285,7 +282,7 @@ class FilesControllerTest extends TestCase {
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
 			->willReturn('files/logo.png');
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -333,7 +330,7 @@ class FilesControllerTest extends TestCase {
 				'files/logo.png',
 				'files/inFolder/image.png',
 			);
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -380,7 +377,7 @@ class FilesControllerTest extends TestCase {
 				'files/logo.png',
 				'files/inFolder/image.png',
 			);
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -438,7 +435,7 @@ class FilesControllerTest extends TestCase {
 				'files/myFolder/a-sub-folder',
 				'files'
 			);
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -538,7 +535,7 @@ class FilesControllerTest extends TestCase {
 				'files/myFolder/a-sub-folder',
 				''
 			);
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock->method('getUser')
 			->willReturn($ownerMock);
@@ -876,7 +873,7 @@ class FilesControllerTest extends TestCase {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
-		$userMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$userMock = $this->getMockBuilder(IUser::class)->getMock();
 		$userMock->method('getUID')->willReturn('testUser');
 
 		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
@@ -923,7 +920,7 @@ class FilesControllerTest extends TestCase {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 
-		$userMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$userMock = $this->getMockBuilder(IUser::class)->getMock();
 		$userMock->method('getUID')->willReturn('testUser');
 
 		$userSessionMock = $this->getMockBuilder('\OCP\IUserSession')->getMock();
@@ -975,7 +972,7 @@ class FilesControllerTest extends TestCase {
 		bool $isUpdateable = true,
 		bool $isCreatable = true
 	): Node {
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 
@@ -1002,7 +999,7 @@ class FilesControllerTest extends TestCase {
 	}
 
 	private function getSimpleMountCacheMock(string $internalPath): MockObject {
-		$ownerMock = $this->getMockBuilder(Iuser::class)->getMock();
+		$ownerMock = $this->getMockBuilder(IUser::class)->getMock();
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			ICachedMountFileInfo::class
