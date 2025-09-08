@@ -234,15 +234,14 @@ class FilesController extends OCSController {
 	}
 
 	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
-		if (class_exists('\OCA\Activity\Data') &&
-			class_exists('\OCA\Activity\GroupHelperDisabled') &&
-			class_exists('\OCA\Activity\UserSettings')
+		if (!class_exists('\OCA\Activity\Data') ||
+			!class_exists('\OCA\Activity\GroupHelperDisabled') ||
+			!class_exists('\OCA\Activity\UserSettings')
 		) {
-			$activityData = Server::get(Data::class);
-		} else {
 			return null;
 		}
 
+		$activityData = Server::get(Data::class);
 		$groupHelper = Server::get(GroupHelperDisabled::class);
 		$userSettings = Server::get(UserSettings::class);
 		if (!method_exists($activityData, 'get') ||
@@ -272,7 +271,7 @@ class FilesController extends OCSController {
 				}
 				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
 				// sadly we only get the localized subject from the `get()` request and need to do an other request.
-				// get modifier for created and changed (content changed) events only.
+				// Get modifier for created and changed (content changed) events only.
 				if (str_starts_with($activityDetails->getSubject(), 'created')
 					|| str_starts_with($activityDetails->getSubject(), 'changed')) {
 					return $this->userManager->get($activity['user']);
