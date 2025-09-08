@@ -215,8 +215,8 @@ Feature: retrieve information of multiple files using the file IDs
               "mimetype": {"type": "string", "pattern": "^application\/x-op-directory$"},
               "owner_id": {"type": "string", "pattern": "^Carol$"},
               "owner_name": {"type": "string", "pattern": "^Carol$"},
-              "modifier_id": null,
-              "modifier_name": null,
+              "modifier_id": {"type": "null"},
+              "modifier_name": {"type": "null"},
               "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK"},
               "path": {"type": "string", "pattern":"^files/groupFolder\/$"}
             }

@@ -1344,8 +1344,8 @@ Feature: retrieve file information of a single file, using the file ID
       "name": {"type": "string", "pattern": "^groupFolder$"},
       "owner_id": {"type": "string", "pattern": "^Carol$"},
       "owner_name": {"type": "string", "pattern": "^Carol$"},
-      "modifier_id": null,
-      "modifier_name": null,
+      "modifier_id": {"type": "null"},
+      "modifier_name": {"type": "null"},
       "dav_permissions": {"type": "string", "pattern":"^RMGDNVCK$"},
       "path": {"type": "string", "pattern":"^files\/groupFolder\/$"}
       }
