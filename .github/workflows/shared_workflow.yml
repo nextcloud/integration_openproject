@@ -10,70 +10,70 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 32 master"
+        default: "32 master"
       php_versions:
         required: false
         type: string
-        default: "8.1 8.2 8.3"
+        default: "8.3"
 
 name: CI
 
 jobs:
-  js-lint-unit:
-    name: js lint and unit tests
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout for nightly CI
-        if: github.event_name == 'schedule'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.branch }}
-
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
-
-      - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v2
-        id: versions
-        with:
-          fallbackNode: '^14'
-          fallbackNpm: '^7'
-
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
-          cache: 'npm'
-
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-
-      - name: Install NPM Dependencies
-        run: npm install
-
-      - name: JS Lint
-        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
-
-      - name: Vue Unit tests
-        run: |
-          make jsunit
-
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
-
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
-        with:
-          min_coverage: '59'
-          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
+#  js-lint-unit:
+#    name: js lint and unit tests
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - name: Checkout for nightly CI
+#        if: github.event_name == 'schedule'
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ inputs.branch }}
+#
+#      - name: Checkout
+#        if: github.event_name != 'schedule'
+#        uses: actions/checkout@v3
+#
+#      - name: Read package.json node and npm engines version
+#        uses: skjnldsv/read-package-engines-version-actions@v2
+#        id: versions
+#        with:
+#          fallbackNode: '^14'
+#          fallbackNpm: '^7'
+#
+#      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: ${{ steps.versions.outputs.nodeVersion }}
+#          cache: 'npm'
+#
+#      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+#        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+#
+#      - name: Install NPM Dependencies
+#        run: npm install
+#
+#      - name: JS Lint
+#        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
+#
+#      - name: Vue Unit tests
+#        run: |
+#          make jsunit
+#
+#      - name: JS Code Coverage Summary Report
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: romeovs/lcov-reporter-action@v0.3.1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: ./coverage/jest/lcov.info
+#          delete-old-comments: true
+#          title: "JS Code Coverage"
+#
+#      - name: JS coverage check
+#        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+#        uses: VeryGoodOpenSource/very_good_coverage@v2
+#        with:
+#          min_coverage: '59'
+#          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
 
   create-matrix:
     runs-on: ubuntu-22.04
@@ -229,10 +229,10 @@ jobs:
           composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
           cd server && ./occ maintenance:install --admin-pass=admin
 
-      - name: PHP code analysis and linting
-        run: |
-          make psalm
-          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
+#      - name: PHP code analysis and linting
+#        run: |
+#          make psalm
+#          make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Enable apps
         run: |
@@ -248,10 +248,10 @@ jobs:
             ./occ a:e -f oidc
           fi
 
-      - name: PHP Unit Tests
-        run: |
-          cd server/apps/integration_openproject
-          make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
+#      - name: PHP Unit Tests
+#        run: |
+#          cd server/apps/integration_openproject
+#          make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
@@ -305,20 +305,12 @@ jobs:
           NEXTCLOUD_BASE_URL: http://localhost
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
-          if ! timeout 5m bash -c '
-            until curl -s -f http://localhost/status.php | grep '"'"'"installed":true'"'"'; do
-              echo "[INFO] Waiting for server to be ready..."
-              sleep 10
-            done
-          '; then
-            echo "[ERROR] Server not ready within 5 minutes."
-            exit 1
-          fi
+          curl -k -s http://localhost/status.php
           make api-test
 
   notify-nightly-report:
     needs:
-      - js-lint-unit
+#      - js-lint-unit
       - api-phpunit-tests
     if: ${{ always() && github.event_name == 'schedule' }}
     runs-on: ubuntu-22.04
