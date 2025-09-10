@@ -12,12 +12,14 @@ namespace OCA\OpenProject\Listener;
 use OC_User;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\IGroupManager;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -38,16 +40,26 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 	 */
 	private $userSession;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	public function __construct(
 		OpenProjectAPIService $openprojectAPIService,
 		IUserSession $userSession,
-		IGroupManager $groupManager
+		IGroupManager $groupManager,
+		LoggerInterface $logger
 	) {
 		$this->openprojectAPIService = $openprojectAPIService;
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
+		$this->logger = $logger;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function handle(Event $event): void {
 		if (($event instanceof BeforeNodeDeletedEvent)) {
 			$parentNode = $event->getNode()->getParent();
@@ -69,14 +81,8 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 			$currentUserId !== Application::OPEN_PROJECT_ENTITIES_NAME &&
 			$this->groupManager->isInGroup($currentUserId, Application::OPEN_PROJECT_ENTITIES_NAME)
 		) {
-			if (!class_exists("\OCP\HintException")) {
-				throw new \OCP\HintException(
-					'project folders cannot be deleted or renamed'
-				);
-			}
-			throw new \OC\HintException(
-				'project folders cannot be deleted or renamed'
-			);
+			$this->logger->error('Project folder is protected and cannot be deleted or renamed.');
+			throw new OCSBadRequestException('Project folder is protected and cannot be deleted or renamed.');
 		}
 	}
 }
