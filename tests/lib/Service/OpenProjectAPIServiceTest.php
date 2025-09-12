@@ -4874,15 +4874,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'appInfo' => ['name' => 'Group folders'],
 				'expected' => 'Group folders',
 			],
-			'app is not enabled' => [
+			'disabled existing app' => [
+				'appId' => 'oidc',
+				'appInfo' => null,
+				'expected' => Application::getDefaultAppName('oidc'),
+			],
+			'non-existing app' => [
 				'appId' => 'nonexistent_app',
 				'appInfo' => null,
 				'expected' => 'nonexistent_app',
 			],
 			'app info missing name field' => [
-				'appId' => 'incomplete_app',
+				'appId' => 'user_oidc',
 				'appInfo' => ['description' => 'An app without name'],
-				'expected' => 'incomplete_app',
+				'expected' => Application::getDefaultAppName('user_oidc'),
 			],
 		];
 	}
