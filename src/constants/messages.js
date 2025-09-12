@@ -5,6 +5,7 @@
 
 import { translate as t } from '@nextcloud/l10n'
 import APP_ID from './appID.js'
+import OPENPROJECT_VERSION from './OpenProjectVersion.js'
 
 export const messages = {
 	installLatestVersionNow: t(APP_ID, 'Install latest version now'),
@@ -18,7 +19,7 @@ export const messages = {
 	nextcloudHubProvider: t(APP_ID, 'Nextcloud Hub'),
 	externalOIDCProvider: t(APP_ID, 'External Provider'),
 	tokenExchangeHintText: t(APP_ID, 'When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.'),
-	opRequiredVersionAndPlanHint: t(APP_ID, 'Requires OpenProject version 16.0 (or higher) and an active Corporate plan.'),
+	opRequiredVersionAndPlanHint: t(APP_ID, 'Requires OpenProject version {version} (or higher) and an active Corporate plan.', { version: OPENPROJECT_VERSION }),
 }
 
 export const messagesFmt = {
