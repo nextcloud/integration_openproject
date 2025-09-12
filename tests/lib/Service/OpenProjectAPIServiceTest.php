@@ -4869,20 +4869,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function getAppsNameDataProvider(): array {
 		return [
-			'groupfolders' => [
+			'enabled app' => [
 				'appId' => 'groupfolders',
 				'appInfo' => ['name' => 'Group folders'],
 				'expected' => 'Group folders',
 			],
-			'app info is null' => [
+			'app is not enabled' => [
 				'appId' => 'nonexistent_app',
 				'appInfo' => null,
-				'expected' => '',
+				'expected' => 'nonexistent_app',
 			],
 			'app info missing name field' => [
 				'appId' => 'incomplete_app',
 				'appInfo' => ['description' => 'An app without name'],
-				'expected' => '',
+				'expected' => 'incomplete_app',
 			],
 		];
 	}
