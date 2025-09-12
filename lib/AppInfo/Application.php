@@ -64,7 +64,7 @@ class Application extends App implements IBootstrap {
 	private const DEFAULT_APP_NAMES = [
 		'activity' => 'Activity',
 		'admin_audit' => 'Auditing / Logging',
-		'groupfolders' => 'Group folders',
+		'groupfolders' => 'Team folders',
 		'integration_openproject' => 'OpenProject Integration',
 		'oidc' => 'OIDC Identity Provider',
 		'user_oidc' => 'OpenID Connect user backend',
