@@ -4869,20 +4869,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function getAppsNameDataProvider(): array {
 		return [
-			'groupfolders' => [
+			'enabled app' => [
 				'appId' => 'groupfolders',
 				'appInfo' => ['name' => 'Group folders'],
 				'expected' => 'Group folders',
 			],
-			'app info is null' => [
+			'disabled existing app' => [
+				'appId' => 'oidc',
+				'appInfo' => null,
+				'expected' => Application::getDefaultAppName('oidc'),
+			],
+			'non-existing app' => [
 				'appId' => 'nonexistent_app',
 				'appInfo' => null,
-				'expected' => '',
+				'expected' => 'nonexistent_app',
 			],
 			'app info missing name field' => [
-				'appId' => 'incomplete_app',
+				'appId' => 'user_oidc',
 				'appInfo' => ['description' => 'An app without name'],
-				'expected' => '',
+				'expected' => Application::getDefaultAppName('user_oidc'),
 			],
 		];
 	}

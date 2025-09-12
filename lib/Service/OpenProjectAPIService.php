@@ -1853,12 +1853,12 @@ class OpenProjectAPIService {
 
 		if ($appInfo === null) {
 			$this->logger->debug("App not found using appId: $appId", ['app' => $this->appName]);
-			return '';
+			return Application::getDefaultAppName($appId);
 		}
 
 		if (!array_key_exists('name', $appInfo)) {
 			$this->logger->debug("Missing 'name' property for app: $appId", ['app' => $this->appName]);
-			return '';
+			return Application::getDefaultAppName($appId);
 		}
 
 		return $appInfo['name'];
