@@ -68,6 +68,7 @@ class Application extends App implements IBootstrap {
 		'integration_openproject' => 'OpenProject Integration',
 		'oidc' => 'OIDC Identity Provider',
 		'user_oidc' => 'OpenID Connect user backend',
+		'terms_of_service' => 'Terms of service',
 	];
 
 	/**
