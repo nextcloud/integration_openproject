@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improve translation support and fix grammar in the authentication method switch confirmation message [#875](https://github.com/nextcloud/integration_openproject/pull/875)
 - Do not show app error if the form is in disabled state [#880](https://github.com/nextcloud/integration_openproject/pull/880)
 - Fix: Empty app name if the app is not available [#886](https://github.com/nextcloud/integration_openproject/pull/886)
+- Fix: Show latest stable OpenProject version [#887](https://github.com/nextcloud/integration_openproject/pull/887)
 
 ### Removed
 
