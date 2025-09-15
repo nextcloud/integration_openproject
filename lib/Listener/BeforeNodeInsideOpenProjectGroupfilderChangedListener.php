@@ -71,11 +71,11 @@ class BeforeNodeInsideOpenProjectGroupfilderChangedListener implements IEventLis
 		) {
 			if (!class_exists("\OCP\HintException")) {
 				throw new \OCP\HintException(
-					'project folders cannot be deleted or renamed'
+					'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
 				);
 			}
 			throw new \OC\HintException(
-				'project folders cannot be deleted or renamed'
+				'This is configured as a project folder on OpenProject and cannot be deleted or renamed.'
 			);
 		}
 	}
