@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## 2.10.0 - 2025-09-17
+
+### Added
+
 - Show form errors if required apps are not enabled or not supported [#868](https://github.com/nextcloud/integration_openproject/pull/868)
 - Allow OpenProject subadmin to remove users from OpenProject group, by adding that user first to and other group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
 - Support Nextcloud 33 [#881](https://github.com/nextcloud/integration_openproject/pull/881)
@@ -23,15 +33,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Combine error messages for app not enabled and not supported [#865](https://github.com/nextcloud/integration_openproject/pull/865)
 - Use app name instead of app ID in error messages [#876](https://github.com/nextcloud/integration_openproject/pull/876)
+- Rename Nextcloud group name "OpenProjectSuspended" to "OpenProjectNoAutomaticProjectFolders" [#889](https://github.com/nextcloud/integration_openproject/pull/889)
 
 ### Fixed
 
+- Fix: No modifier for the first file upload [#877](https://github.com/nextcloud/integration_openproject/pull/877)
 - Fix: Each request to OpenProject gets new token when setup with external SSO with token-exchange [#867](https://github.com/nextcloud/integration_openproject/pull/867)
 - Improve translation support and fix grammar in the authentication method switch confirmation message [#875](https://github.com/nextcloud/integration_openproject/pull/875)
 - Do not show app error if the form is in disabled state [#880](https://github.com/nextcloud/integration_openproject/pull/880)
 - Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
 
 ### Removed
+- Fix: Empty app name if the app is not available [#886](https://github.com/nextcloud/integration_openproject/pull/886)
+- Fix: Show latest stable OpenProject version [#887](https://github.com/nextcloud/integration_openproject/pull/887)
 
 ## 2.9.2 - 2025-08-25
 
