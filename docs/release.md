@@ -2,6 +2,7 @@
   - SPDX-FileCopyrightText: 2024-2025 Jankari Tech Pvt. Ltd.
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
+
 # Release Process
 
 ## 1. Release Preparation
@@ -20,9 +21,10 @@ On the release branch:
    - `package.json`
 4. Add the new release branch in `.tx/backport` to allow transifex commits.
 5. Update `CHANGELOG.md` with the changes and the version to be released.
-6. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
-7. Perform confirmatory testing (Changelogs) - by the OpenProject team.
-8. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
+6. Check and update the latest stable version of OpenProject in [OpenProjectVersion.js](../src/constants/OpenProjectVersion.js).
+7. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
+8. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+9. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ### b. Patch Release
 
@@ -32,8 +34,9 @@ On the current release branch:
    - `appinfo/info.xml`
    - `package.json`
 2. Update `CHANGELOG.md` with the changes and the version to be released.
-3. Perform confirmatory testing (Changelogs) - by the OpenProject team.
-4. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
+3. Check and update the latest stable version of OpenProject in [OpenProjectVersion.js](../src/constants/OpenProjectVersion.js).
+4. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+5. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ## 2. Publish Release
 

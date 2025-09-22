@@ -57,8 +57,19 @@ use Symfony\Component\HttpFoundation\Request;
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
-	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectSuspended';
+	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectNoAutomaticProjectFolders';
 	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
+
+	// default app name
+	private const DEFAULT_APP_NAMES = [
+		'activity' => 'Activity',
+		'admin_audit' => 'Auditing / Logging',
+		'groupfolders' => 'Team folders',
+		'integration_openproject' => 'OpenProject Integration',
+		'oidc' => 'OIDC Identity Provider',
+		'user_oidc' => 'OpenID Connect user backend',
+		'terms_of_service' => 'Terms of service',
+	];
 
 	/**
 	 * @var mixed
@@ -75,6 +86,19 @@ class Application extends App implements IBootstrap {
 
 		$container = $this->getContainer();
 		$this->config = $container->get(IConfig::class);
+	}
+
+	/**
+	 * @param string $appId
+	 *
+	 * @return string
+	 */
+	public static function getDefaultAppName(string $appId): string {
+		if (isset(self::DEFAULT_APP_NAMES[$appId])) {
+			return self::DEFAULT_APP_NAMES[$appId];
+		}
+
+		return $appId;
 	}
 
 	public function register(IRegistrationContext $context): void {
@@ -161,7 +185,7 @@ class Application extends App implements IBootstrap {
 	/**
 	 * Listen to remove user from group API requests
 	 * and if the request is to remove user from OpenProject group
-	 * check that the user is in OpenProjectSuspended group and add to it if not
+	 * check that the user is in OpenProjectNoAutomaticProjectFolders group and add to it if not
 	 * then continue the request
 	 *
 	 * @param IRequest $request

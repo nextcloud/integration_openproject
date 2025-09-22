@@ -234,15 +234,14 @@ class FilesController extends OCSController {
 	}
 
 	private function getLastModifier(string $ownerId, int $fileId, int $since = 0): ?IUser {
-		if (class_exists('\OCA\Activity\Data') &&
-			class_exists('\OCA\Activity\GroupHelperDisabled') &&
-			class_exists('\OCA\Activity\UserSettings')
+		if (!class_exists('\OCA\Activity\Data') ||
+			!class_exists('\OCA\Activity\GroupHelperDisabled') ||
+			!class_exists('\OCA\Activity\UserSettings')
 		) {
-			$activityData = Server::get(Data::class);
-		} else {
 			return null;
 		}
 
+		$activityData = Server::get(Data::class);
 		$groupHelper = Server::get(GroupHelperDisabled::class);
 		$userSettings = Server::get(UserSettings::class);
 		if (!method_exists($activityData, 'get') ||
@@ -261,15 +260,20 @@ class FilesController extends OCSController {
 			'files',
 			$fileId
 		);
+
+		// activities are in descending order
+		// so the first event in the list is the most recent one
 		foreach ($activities['data'] as $activity) {
-			if ($activity['type'] === 'file_changed') {
+			if (in_array($activity['type'], ['file_changed', 'file_created'])) {
 				$activityDetails = $activityData->getById($activity['activity_id']);
-				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
-				// sadly we only get the localized subject from the `get()` request and need to do an other request
 				if (!method_exists($activityDetails, 'getSubject')) {
 					return null;
 				}
-				if (str_starts_with($activityDetails->getSubject(), 'changed')) {
+				// rename and move events are also of type `file_changed` but don't have `changed_*` in the subject
+				// sadly we only get the localized subject from the `get()` request and need to do an other request.
+				// Get modifier for created and changed (content changed) events only.
+				if (str_starts_with($activityDetails->getSubject(), 'created')
+					|| str_starts_with($activityDetails->getSubject(), 'changed')) {
 					return $this->userManager->get($activity['user']);
 				}
 			}
