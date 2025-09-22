@@ -20,6 +20,7 @@ OC.L10N.register(
     "Authentication method" : "Μέθοδος πιστοποίησης",
     "Documentation" : "Τεκμηρίωση",
     "Copied!" : "Αντιγράφηκαν!",
+    "Copied to the clipboard" : "Αντιγράφηκε στο πρόχειρο",
     "Details" : "Λεπτομέρειες",
     "No OpenProject links yet" : "Δεν υπάρχουν ακόμα σύνδεσμοι OpenProject",
     "To add a link, use the search bar above to find the desired work package" : "Για να προσθέσετε έναν σύνδεσμο, χρησιμοποιήστε την παραπάνω γραμμή αναζήτησης για να βρείτε το επιθυμητό πακέτο εργασίας.",
