@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Remove latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
 
 ### Fixed
 

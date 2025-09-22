@@ -21,7 +21,7 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
@@ -61,7 +61,7 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app."></errorlabel-stub>
         </div>
@@ -101,7 +101,7 @@ exports[`Component: FormAuthMethod completed form edit mode should show form fie
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <!---->
         </div>
@@ -141,7 +141,7 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
@@ -181,7 +181,7 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app."></errorlabel-stub>
         </div>
@@ -297,7 +297,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <!---->
         </div>
@@ -335,7 +335,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <!---->
         </div>
@@ -381,7 +381,7 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
@@ -419,7 +419,7 @@ exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc
         </nccheckboxradioswitch-stub>
         <div class="info-container">
           <p>
-            Requires OpenProject version {version} (or higher) and an active Corporate plan.
+            Requires an active Enterprise Corporate plan in OpenProject.
           </p>
           <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
         </div>
