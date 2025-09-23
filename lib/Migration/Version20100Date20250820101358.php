@@ -41,8 +41,9 @@ class Version20100Date20250820101358 extends SimpleMigrationStep {
 	 * @param IOutput $output
 	 * @param Closure(): ISchemaWrapper $schemaClosure
 	 * @param array $options
+	 * @return null|ISchemaWrapper
 	 */
-	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		if (OpenProjectAPIService::isCommonAdminConfigOk($this->config) && $this->openProjectAPIService->isProjectFoldersSetupComplete()) {
 			$opAllGroup = $this->groupManager->get(Application::OPENPROJECT_ALL_GROUP_NAME);
 			if ($opAllGroup === null) {
@@ -52,5 +53,6 @@ class Version20100Date20250820101358 extends SimpleMigrationStep {
 				$this->subAdmin->createSubAdmin($opUser, $opAllGroup);
 			}
 		}
+		return null;
 	}
 }
