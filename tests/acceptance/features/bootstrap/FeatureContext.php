@@ -13,6 +13,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use Helmich\JsonAssert\JsonAssertions;
@@ -157,7 +158,7 @@ class FeatureContext implements Context {
 			['groupid' => $group]
 		);
 		$this->theHttpStatusCodeShouldBe(200);
-		$this->createdgroups['groupid'] = $group;
+		$this->createdgroups[] = $group;
 	}
 
 	/**
@@ -166,6 +167,42 @@ class FeatureContext implements Context {
 	public function userHasBeenAddedToGroup(string $user, string $group):void {
 		$this->response = $this->sendOCSRequest(
 			'/cloud/users/' . $user . '/groups',
+			'POST',
+			$this->getAdminUsername(),
+			['groupid' => $group]
+		);
+		$this->theHttpStatusCodeShouldBe(200);
+	}
+
+	/**
+	 * @Given the following users have been added to the following groups
+	 *
+	 * @param TableNode $table
+	 *
+	 * @return void
+	 * @throws Exception|GuzzleException
+	 */
+	public function theFollowingUserHaveBeenAddedToTheFollowingGroup(TableNode $table):void {
+		$this->verifyTableNodeColumns($table, ['username', 'groupname']);
+		foreach ($table as $row) {
+			$user = $row['username'];
+			$group = $row['groupname'];
+			$this->response = $this->sendOCSRequest(
+				'/cloud/users/' . $user . '/groups',
+				'POST',
+				$this->getAdminUsername(),
+				['groupid' => $group]
+			);
+			$this->theHttpStatusCodeShouldBe(200);
+		}
+	}
+
+	/**
+	 * @Given user :user has been assigned the role group admin of group :group
+	 */
+	public function userHasBeenAssignedTheRoleGroupAdminOfGroup(string $user, string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/subadmins',
 			'POST',
 			$this->getAdminUsername(),
 			['groupid' => $group]
@@ -270,6 +307,29 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @When the group admin :groupAdmin removes the user :user from group :group
+	 */
+	public function theGroupAdminOfGroupRemovesTheUser(string $groupAdmin, string $user, string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/groups?groupid=' . $group,
+			'DELETE',
+			$groupAdmin
+		);
+	}
+
+
+	/**
+	 * @When the administrator removes the user :user from group :group
+	 */
+	public function theAdminOfGroupRemovesTheUser(string $user, string $group):void {
+		$this->response = $this->sendOCSRequest(
+			'/cloud/users/' . $user . '/groups?groupid=' . $group,
+			'DELETE',
+			$this->getAdminUsername(),
+		);
+	}
+
+	/**
 	 * @Given the administrator has changed the password of :user to the default testing password
 	 */
 	public function theAdministratorChangesPassword(string $user):void {
@@ -314,6 +374,64 @@ class FeatureContext implements Context {
 			$responseAsJson,
 			"User $user is not the subadmin of group $group"
 		);
+	}
+
+
+	/**
+	 * @Then /^user "([^"]*)" (should|should not) belong to group "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $shouldOrNot
+	 * @param string $group
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function userShouldBeTheMemberOfTheGroup(string $user, string $shouldOrNot, string $group):void {
+		$response = $this->sendOCSRequest('/cloud/groups/'. $group .'/users', 'GET', $this->getAdminUsername());
+		$responseAsJson = json_decode($response->getBody()->getContents());
+		$responseAsJson = $responseAsJson->ocs->data->users;
+		Assert::assertNotNull($responseAsJson, 'the response is null');
+		if ($shouldOrNot === "should") {
+			Assert::assertContainsEquals(
+				$user,
+				$responseAsJson,
+				"User $user is not the member of group $group"
+			);
+		} else {
+			Assert::assertNotContainsEquals(
+				$user,
+				$responseAsJson,
+				"User $user is the member of group $group"
+			);
+		}
+	}
+
+
+	/**
+	 * @Then the following users should not belong to the following groups
+	 *
+	 * @param TableNode $table
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function theTheFollowingUserShouldNotBelongToTheFollowingGroup(TableNode $table):void {
+		$this->verifyTableNodeColumns($table, ["username", "groupname"]);
+		$rows = $table->getHash();
+		foreach ($rows as $row) {
+			$user = $row["username"];
+			$group = $row["groupname"];
+			$response = $this->sendOCSRequest('/cloud/groups/'. $group .'/users', 'GET', $this->getAdminUsername());
+			$responseAsJson = json_decode($response->getBody()->getContents());
+			$responseAsJson = $responseAsJson->ocs->data->users;
+			Assert::assertNotNull($responseAsJson, 'the response is null');
+			Assert::assertNotContainsEquals(
+				$user,
+				$responseAsJson,
+				"User $user is the member of group $group"
+			);
+		}
 	}
 
 
