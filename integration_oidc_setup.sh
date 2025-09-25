@@ -341,9 +341,12 @@ logAlreadyCompletedIntegrationConfiguration() {
 
 # This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
 MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
-MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
+MIN_SUPPORTED_OIDC_APP_VERSION="1.9.0"
 MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
-ncCheckAppVersion "oidc"
+
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+  ncCheckAppVersion "oidc"
+fi
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
 
