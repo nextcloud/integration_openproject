@@ -23,6 +23,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.10.0 - 2025-09-17
 
+### ⚠️ Upgrade Notice
+
+When upgrading from old versions, the upgrade might fail with `Undefined constant` error due to the known cache issue in Nextcloud. To fix this, please run the following commands:
+
+```bash
+php occ upgrade
+php occ maintenance:mode --off
+```
+
 ### Added
 
 - Show form errors if required apps are not enabled or not supported [#868](https://github.com/nextcloud/integration_openproject/pull/868)
