@@ -199,6 +199,7 @@ OC.L10N.register(
     "Nextcloud Hub" : "Nextcloud Hub",
     "External Provider" : "Provedor externo",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Cando está activado, a aplicación pode tentar obter un testemuño para a audiencia especificada desde o provedor de identidade. Se está desactivado, empregará o testemuño de acceso obtido durante o proceso de acceso.",
+    "Requires an active Enterprise Corporate plan in OpenProject." : "Precisa dun plan corporativo empresarial activo en OpenProject.",
     "This feature requires version {version} (or higher) of \"{app}\" app. Please install or update the app." : "Esta funcionalidade precisa da versión {version} (ou superior) de «{app}». Instale ou actualice a aplicación.",
     "You can configure OIDC providers in the {settingsLink}" : "Pode configurar os provedores de OIDC en {settingsLink}",
     "Link to work package" : "Ligazón ao paquete de traballo",
