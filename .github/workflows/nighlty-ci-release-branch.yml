@@ -14,5 +14,5 @@ jobs:
     uses: ./.github/workflows/shared_workflow.yml
     secrets: inherit
     with:
-      branch: release/2.9
+      branch: release/2.10
       nextcloud_versions: "30 31"
