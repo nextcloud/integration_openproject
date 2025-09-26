@@ -26,7 +26,7 @@ help() {
   echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
   echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID"
-  echo -e "\t NC_INTEGRATION_OP_CLIENT_SECRET \t\t OpenProject client secret"
+  echo -e "\t NC_INTEGRATION_OP_CLIENT_SECRET \t OpenProject client secret"
   echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_ENABLE_NAVIGATION \t Enable navigate to OpenProject header (true/false)"
   echo -e "\t NC_INTEGRATION_ENABLE_SEARCH \t\t Enable unified search (true/false)"
