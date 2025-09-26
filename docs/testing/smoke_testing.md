@@ -22,6 +22,14 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
   - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)  
   - [6. Check New folder with automatically managed permissions in OpenProject](#6-check-new-folder-with-automatically-managed-permissions-in-openproject)  
 
+- [App Upgrade Testing](#app-upgrade-testing)
+  - [For OAuth 2.0 Setup](#for-oauth-20-setup)
+  - [For OIDC Setup](#for-oidc-setup)
+    - [A. Nextcloud Hub as IDP](#a-nextcloud-hub-as-idp)
+    - [B. External Provider (Keycloak)](#b-external-provider-keycloak)
+      - [B.1. Token Exchange Disabled](#b1-token-exchange-disabled)
+      - [B.2. Token Exchange Enabled](#b2-token-exchange-enabled)  
+
 ## Section A: Two-Way OAuth 2.0 Authorization Code Flow
 
 ### A1. Oauth configuration
@@ -371,3 +379,79 @@ bash integration_oidc_setup.sh
 - [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
 - [ ] Try to delete `OpenProject` or `OpenProject > Demo project(1)`. They should not be deleted.
+
+## App Upgrade Testing
+
+### Purpose
+Test that the app works after upgrading to the latest unstable version for both OAuth 2.0 and OIDC authentication methods.
+
+### Upgrade Command
+```bash
+php occ app:update --allow-unstable integration_openproject
+```
+
+### Test Steps
+
+#### For OAuth 2.0 Setup:
+
+1. **Before upgrade**:
+   - [ ] Check current app version: `php occ app:list | grep integration_openproject`
+   - [ ] Complete [smoke tests A1-A5](#section-a-two-way-oauth-20-authorization-code-flow).
+
+2. **Do upgrade**:
+   - [ ] Run: `php occ app:update --allow-unstable integration_openproject`
+   - [ ] Check upgrade finished without errors
+   - [ ] Check new app version: `php occ app:list | grep integration_openproject`
+
+3. **After upgrade**:
+   - [ ] Check Oauth 2.0 setup still saved
+   - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps)
+
+#### For OIDC Setup:
+
+##### A. Nextcloud Hub as IDP:
+
+1. **Before upgrade**:
+   - [ ] Check current app version: `php occ app:list | grep integration_openproject`
+   - [ ] Complete [smoke tests B.1.1-B.1.5](#b1-nextcloud-hub-as-idp)
+
+2. **Do upgrade**:
+   - [ ] Run: `php occ app:update --allow-unstable integration_openproject`
+   - [ ] Check upgrade finished without errors
+   - [ ] Check new app version: `php occ app:list | grep integration_openproject`
+
+3. **After upgrade**:
+   - [ ] Check Nextcloud Hub IDP setup still saved
+   - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps)
+
+##### B. External Provider (Keycloak):
+
+**B.1. Token Exchange Disabled:**
+
+1. **Before upgrade**:
+   - [ ] Check current app version: `php occ app:list | grep integration_openproject`
+   - [ ] Complete [smoke tests B.2.1-B.2.6](#b2-external-provider) (token exchange disabled)
+
+2. **Do upgrade**:
+   - [ ] Run: `php occ app:update --allow-unstable integration_openproject`
+   - [ ] Check upgrade finished without errors
+   - [ ] Check new app version: `php occ app:list | grep integration_openproject`
+
+3. **After upgrade**:
+   - [ ] Check Keycloak IDP with tokenexchange disable setup still saved
+   - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps)
+
+**B.2. Token Exchange Enabled:**
+
+1. **Before upgrade**:
+   - [ ] Check current app version: `php occ app:list | grep integration_openproject`
+   - [ ] Complete [smoke tests B.2.7-B.2.8](#b2-external-provider) (token exchange enabled)
+
+2. **Do upgrade**:
+   - [ ] Run: `php occ app:update --allow-unstable integration_openproject`
+   - [ ] Check upgrade finished without errors
+   - [ ] Check new app version: `php occ app:list | grep integration_openproject`
+
+3. **After upgrade**:
+   - [ ] Check Keycloak IDP with tokenexchange enable setup still saved
+   - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps)
