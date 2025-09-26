@@ -102,7 +102,7 @@ fi
 
 if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
   if [[ -z $NC_INTEGRATION_OP_CLIENT_ID ]] || [[ -z $NC_INTEGRATION_OP_CLIENT_SECRET ]]; then
-    log_info "Please provide the following environment variables to create the predefined OIDC client:\n  'NC_INTEGRATION_OP_CLIENT_ID'\n  'NC_INTEGRATION_OP_CLIENT_SECRET'"
+    log_info "You can provide the following environment variables to create the predefined OIDC client:\n  'NC_INTEGRATION_OP_CLIENT_ID'\n  'NC_INTEGRATION_OP_CLIENT_SECRET'"
   fi
   # regex check for pattern matching
   if [[ -n $NC_INTEGRATION_OP_CLIENT_ID ]] && [[ ! $NC_INTEGRATION_OP_CLIENT_ID =~ ^[a-zA-Z0-9]{32,64}$ ]]; then
