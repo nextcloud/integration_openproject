@@ -106,7 +106,7 @@ if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
   fi
   # regex check for pattern matching
   if [[ -n $NC_INTEGRATION_OP_CLIENT_ID ]] && [[ ! $NC_INTEGRATION_OP_CLIENT_ID =~ ^[a-zA-Z0-9]{32,64}$ ]]; then
-    log_error "NC_INTEGRATION_OP_CLIENT_ID=$NC_INTEGRATION_OP_CLIENT_ID is invalid.\nClient id should be 32-64 alphanumeric characters."
+    log_error "'NC_INTEGRATION_OP_CLIENT_ID=$NC_INTEGRATION_OP_CLIENT_ID' is invalid.\nClient id should be 32-64 alphanumeric characters."
     exit 1
   fi
   if [[ -n $NC_INTEGRATION_OP_CLIENT_SECRET ]] && [[ ! $NC_INTEGRATION_OP_CLIENT_SECRET =~ ^[a-zA-Z0-9]{32,64}$ ]]; then
