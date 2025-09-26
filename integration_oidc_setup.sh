@@ -25,7 +25,8 @@ help() {
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
   echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
   echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
-  echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID (Not required when using 'nextcloud_hub' type)"
+  echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID"
+  echo -e "\t NC_INTEGRATION_OP_CLIENT_SECRET \t OpenProject client secret"
   echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_ENABLE_NAVIGATION \t Enable navigate to OpenProject header (true/false)"
   echo -e "\t NC_INTEGRATION_ENABLE_SEARCH \t\t Enable unified search (true/false)"
@@ -52,6 +53,13 @@ log_info() {
 log_success() {
   echo -e "\e[32m$1\e[0m"
 }
+
+# Support for "Debug mode"
+if [[ $INTEGRATION_SETUP_DEBUG == "true" ]]; then
+  log_info "Debug mode is enabled"
+  set -x
+  set -v
+fi
 
 if [[ -z "$NC_HOST" || -z "$OP_HOST" ]]; then
   log_error "Nextcloud and OpenProject host URLs are required."
@@ -87,18 +95,29 @@ fi
 if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
   [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]]; then
-  log_error "Following configs are required for integration setup:"
-  log_error "\tNC_INTEGRATION_ENABLE_NAVIGATION"
-  log_error "\tNC_INTEGRATION_ENABLE_SEARCH"
-  log_error "\tNC_INTEGRATION_PROVIDER_TYPE"
+  log_error "Following configs are required for integration setup:\n  NC_INTEGRATION_ENABLE_NAVIGATION\n  NC_INTEGRATION_ENABLE_SEARCH\n  NC_INTEGRATION_PROVIDER_TYPE"
   help
   exit 1
 fi
 
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+  if [[ -z $NC_INTEGRATION_OP_CLIENT_ID ]] || [[ -z $NC_INTEGRATION_OP_CLIENT_SECRET ]]; then
+    log_info "You can provide the following environment variables to create the predefined OIDC client:\n  'NC_INTEGRATION_OP_CLIENT_ID'\n  'NC_INTEGRATION_OP_CLIENT_SECRET'"
+  fi
+  # regex check for pattern matching
+  if [[ -n $NC_INTEGRATION_OP_CLIENT_ID ]] && [[ ! $NC_INTEGRATION_OP_CLIENT_ID =~ ^[a-zA-Z0-9]{32,64}$ ]]; then
+    log_error "'NC_INTEGRATION_OP_CLIENT_ID=$NC_INTEGRATION_OP_CLIENT_ID' is invalid.\nClient id should be 32-64 alphanumeric characters."
+    exit 1
+  fi
+  if [[ -n $NC_INTEGRATION_OP_CLIENT_SECRET ]] && [[ ! $NC_INTEGRATION_OP_CLIENT_SECRET =~ ^[a-zA-Z0-9]{32,64}$ ]]; then
+    log_error "'NC_INTEGRATION_OP_CLIENT_SECRET=$NC_INTEGRATION_OP_CLIENT_SECRET' is invalid.\nClient secret should be 32-64 alphanumeric characters."
+    exit 1
+  fi
+fi
+
 # Validate required configs for OpenProject setup
 if [[ -z $OP_STORAGE_NAME ]]; then
-  log_error "Following configs are required for OpenProject setup:"
-  log_error "\tOP_STORAGE_NAME"
+  log_error "Following configs are required for OpenProject setup:\n  OP_STORAGE_NAME"
   help
   exit 1
 fi
@@ -113,13 +132,6 @@ elif [[ "$OP_USE_LOGIN_TOKEN" == "true" ]]; then
   OP_STORAGE_AUDIENCE="__op-idp__"
   OP_STORAGE_SCOPE=""
   log_info "Setting OpenProject storage to use first access token"
-fi
-
-# Support for "Debug mode"
-if [[ $INTEGRATION_SETUP_DEBUG == "true" ]]; then
-  log_info "Debug mode is enabled"
-  set -x
-  set -v
 fi
 
 if [[ -z "$SETUP_PROJECT_FOLDER" || "$SETUP_PROJECT_FOLDER" == "false" ]]; then
@@ -284,7 +296,9 @@ createOidcClient() {
   "redirectUri": "$OP_HOST/auth/oidc-nextcloud/callback",
   "signingAlg": "RS256",
   "tokenType": "jwt",
-  "type": "confidential"
+  "type": "confidential",
+  "clientId": "$NC_INTEGRATION_OP_CLIENT_ID",
+  "clientSecret": "$NC_INTEGRATION_OP_CLIENT_SECRET",
 }
 EOF
 
@@ -327,9 +341,12 @@ logAlreadyCompletedIntegrationConfiguration() {
 
 # This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
 MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
-MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
+MIN_SUPPORTED_OIDC_APP_VERSION="1.9.0"
 MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
-ncCheckAppVersion "oidc"
+
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+  ncCheckAppVersion "oidc"
+fi
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
 
