@@ -198,6 +198,7 @@ OC.L10N.register(
     "Nextcloud Hub" : "Nextcloud Hub",
     "External Provider" : "Externí poskytovatel",
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Pokud zapnuto, aplikace se pokusí získat token pro dané publikum z poskytovatele identit. Pokud vypnuto, použije přístupový token, získaný během procesu přihlašování.",
+    "Requires an active Enterprise Corporate plan in OpenProject." : "Vyžaduje aktivní předplatné pro podniky/korporace v OpenProject.",
     "This feature requires version {version} (or higher) of \"{app}\" app. Please install or update the app." : "Tato funkce vyžaduje verzi {version} (a novější) aplikace „{app}“. Nainstalujte ji či zaktualizujte.",
     "You can configure OIDC providers in the {settingsLink}" : "Poskytovatele OIDC je možné nastavit v {settingsLink}",
     "Link to work package" : "Odkaz na balíček práce",
