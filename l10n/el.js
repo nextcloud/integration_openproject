@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Σφάλμα κατά τη λήψη διακριτικού πρόσβασης OAuth",
     "Error during OAuth exchanges" : "Σφάλμα κατά την ανταλλαγή OAuth",
     "OpenProject work packages" : "Πακέτα εργασίας του OpenProject",
