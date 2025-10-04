@@ -29,6 +29,7 @@ OC.L10N.register(
     "OpenProject host" : "OpenProject host",
     "Edit server information" : "server informatie aanpassen",
     "Copied!" : "Gekopieerd!",
+    "Copied to the clipboard" : "Gekopieerd naar het klembord",
     "Details" : "Details",
     "Unexpected Error" : "Onverwachte fout",
     "Start typing to search" : "Begin met typen om te zoeken",
