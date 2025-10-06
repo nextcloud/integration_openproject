@@ -14,21 +14,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
+- Support Nextcloud 33 [#881](https://github.com/nextcloud/integration_openproject/pull/881)
 
 ### Changed
 - Remove latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
 
 ### Fixed
+- Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
 
 ### Removed
 
-## 2.10.0 - 2025-09-17
+## 2.10.0 - 2025-09-26
+
+### ⚠️ Upgrade Notice
+
+When upgrading from old versions, the upgrade might fail with `Undefined constant` error due to the known cache issue in Nextcloud. To fix this, please run the following commands:
+
+```bash
+php occ upgrade
+php occ maintenance:mode --off
+```
 
 ### Added
 
 - Show form errors if required apps are not enabled or not supported [#868](https://github.com/nextcloud/integration_openproject/pull/868)
-- Allow OpenProject subadmin to remove users from OpenProject group, by adding that user first to and other group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
-- Support Nextcloud 33 [#881](https://github.com/nextcloud/integration_openproject/pull/881)
+- Add a second OpenProject group in Nextcloud to avoid Nextcloud errors when user is removed from their last Group [#869](https://github.com/nextcloud/integration_openproject/pull/869)
 
 ### Changed
 
@@ -42,9 +53,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Each request to OpenProject gets new token when setup with external SSO with token-exchange [#867](https://github.com/nextcloud/integration_openproject/pull/867)
 - Improve translation support and fix grammar in the authentication method switch confirmation message [#875](https://github.com/nextcloud/integration_openproject/pull/875)
 - Do not show app error if the form is in disabled state [#880](https://github.com/nextcloud/integration_openproject/pull/880)
-- Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
-
-### Removed
 - Fix: Empty app name if the app is not available [#886](https://github.com/nextcloud/integration_openproject/pull/886)
 - Fix: Show latest stable OpenProject version [#887](https://github.com/nextcloud/integration_openproject/pull/887)
 
