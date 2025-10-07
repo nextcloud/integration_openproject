@@ -298,7 +298,7 @@ createOidcClient() {
   "tokenType": "jwt",
   "type": "confidential",
   "clientId": "$NC_INTEGRATION_OP_CLIENT_ID",
-  "clientSecret": "$NC_INTEGRATION_OP_CLIENT_SECRET",
+  "clientSecret": "$NC_INTEGRATION_OP_CLIENT_SECRET"
 }
 EOF
 
