@@ -36,6 +36,7 @@ OC.L10N.register(
     "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Калі ўключана, праграма паспрабуе атрымаць токен для дадзенай аўдыторыі ад пастаўшчыка ідэнтыфікацый. Калі выключана, будзе выкарыстоўвацца токен доступу, атрыманы падчас працэсу ўваходу ў сістэму.",
     "Requires an active Enterprise Corporate plan in OpenProject." : "Патрабуецца актыўны план Enterprise Corporate у OpenProject.",
     "OAuth access token could not be obtained:" : "Немагчыма атрымаць токен доступу OAuth:",
+    "Requires OpenProject version {version} (or higher) and an active Corporate plan." : "Патрабуецца OpenProject версіі {version} (або вышэй) і актыўны карпаратыўны план.",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Не атрымалася адклікаць токен(ы) доступу OpenProject OAuth некаторых карыстальнікаў",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Паспяхова адкліканы токен(ы) доступу карыстальніка(-аў) OpenProject OAuth"
 },
