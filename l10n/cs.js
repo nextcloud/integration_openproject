@@ -225,6 +225,7 @@ OC.L10N.register(
     "Work package linked successfully!" : "Balíček práce úspěšně propojen!",
     "No OpenProject notifications!" : "Žádná upozornění z OpenProject!",
     "Invalid key" : "Neplatná klávesa",
+    "Requires OpenProject version {version} (or higher) and an active Corporate plan." : "Vyžaduje OpenProject verze {version} (a novější) a aktivní předplatné pro podniky.",
     "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Nepodařilo se odvolat platnost OAuth přístupových tokenů pro některé OpenProject uživatele",
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Úspěšně odvolána platnost OAuth přístupových tokenů pro OpenProject uživatele",
     "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Vytvoření uživatele, skupiny a skupinové složky pro OpenProject nebylo možné. Podívejte se do {htmlLink} ohledně toho, jak tuto situaci řešit.",
