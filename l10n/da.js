@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Fejl ved anmodning om OAuth adgangsnøgle",
     "Error during OAuth exchanges" : "Fejl under OAuth-udvekslinger",
     "Bad HTTP method" : "Dårlig HTTP-metode",
@@ -21,6 +22,7 @@ OC.L10N.register(
     "Description" : "Beskrivelse",
     "Create" : "Opret",
     "Mark as read" : "Marker som læst",
+    "mentioned" : "omtalt",
     "Download and enable it" : "Download og aktiver det",
     "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:",
     "Connected accounts" : "Forbundne konti"
