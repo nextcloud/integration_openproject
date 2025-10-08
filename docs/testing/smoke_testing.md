@@ -20,7 +20,16 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
   - [3. Direct upload file/folder from OpenProject to Nextcloud](#3-direct-upload-filefolder-from-openproject-to-nextcloud)  
   - [4. Create a WorkPackage from Nextcloud](#4-create-a-workpackage-from-nextcloud)  
   - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)  
-  - [6. Check New folder with automatically managed permissions in OpenProject](#6-check-new-folder-with-automatically-managed-permissions-in-openproject)  
+  - [6. Check New folder with automatically managed permissions in OpenProject](#6-check-new-folder-with-automatically-managed-permissions-in-openproject)
+
+- [App Upgrade Testing](#app-upgrade-testing)
+  - [Upgrade Steps](#upgrade-steps)
+  - [For OAuth 2.0 Setup](#for-oauth-20-setup)
+  - [For OIDC Setup](#for-oidc-setup)
+    - [Nextcloud Hub as IDP](#nextcloud-hub-as-idp)
+    - [External Provider (Keycloak)](#external-provider-keycloak)
+      - [Token Exchange Disabled](#token-exchange-disabled)
+      - [Token Exchange Enabled](#token-exchange-enabled)  
 
 ## Section A: Two-Way OAuth 2.0 Authorization Code Flow
 
@@ -371,3 +380,47 @@ bash integration_oidc_setup.sh
 - [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
 - [ ] Try to delete `OpenProject` or `OpenProject > Demo project(1)`. They should not be deleted.
+
+## App Upgrade Testing
+
+### Upgrade Steps
+
+- [ ] **Check update is available**: `php occ app:update --showonly integration_openproject`
+- [ ] **Run upgrade**: `php occ app:update --allow-unstable integration_openproject`
+- [ ] **Verify upgrade**: Confirm no errors and version updated
+
+> **Important**: When upgrading from old versions, the upgrade might fail with "Undefined constant" error due to a known cache issue in Nextcloud. To fix this, please run the following commands:
+>
+> ```bash
+> php occ upgrade
+> php occ maintenance:mode --off
+> ```
+
+### Upgrade Test Cases
+#### Existing OAuth 2.0 Setup
+
+- [ ] **Before upgrade**: Perform complete setup with OAuth2 method (Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
+
+#### Existing SSO Setup
+
+##### Nextcloud Hub as IDP
+
+- [ ] **Before upgrade**: Perform complete setup with sso method (Nextcloud Hub as IDP, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
+
+#### External Provider (Keycloak)
+
+##### Token Exchange Disabled
+
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
+
+##### Token Exchange Enabled
+
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
