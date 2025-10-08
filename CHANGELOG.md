@@ -14,13 +14,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
-- Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
 
 ### Changed
 
 ### Fixed
 
 ### Removed
+
+## 2.10.1 - 2025-10-08
+
+### Added
+- Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
 
 ## 2.10.0 - 2025-09-26
 
