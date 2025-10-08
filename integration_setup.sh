@@ -88,10 +88,8 @@ MINIMUM_OP_VERSION="14.2.0"
 
 isNextcloudAdminConfigOk() {
   admin_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-          ${NC_INTEGRATION_BASE_URL}/check-admin-config \
-          -H 'accept: application/hal+json' \
-          -H 'Content-Type: application/json' \
-          -H 'X-Requested-With: XMLHttpRequest')
+    ${NC_INTEGRATION_BASE_URL}/check-admin-config
+  )
   config_status_without_project_folder=$(echo $admin_config_response | jq -r ".config_status_without_project_folder")
   project_folder_setup_status=$(echo $admin_config_response | jq -r ".project_folder_setup_status")
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
@@ -109,13 +107,10 @@ isNextcloudAdminConfigOk() {
 
 isOpenProjectFileStorageConfigOk() {
   all_file_storages_available_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-      ${OPENPROJECT_BASEURL_FOR_STORAGE} \
-      -H 'accept: application/hal+json' \
-      -H 'Content-Type: application/json' \
-      -H 'X-Requested-With: XMLHttpRequest'
-    )
-    oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
-    has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
+    ${OPENPROJECT_BASEURL_FOR_STORAGE}
+  )
+  oauth_configured_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
+  has_nc_application_password_status=$(echo $all_file_storages_available_response | jq -r --arg name "$OPENPROJECT_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
     if [[ ${oauth_configured_status} == 'true' && ${has_nc_application_password_status} == 'true' ]]; then
       echo 0
@@ -196,10 +191,8 @@ fi
 if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
   # make an api request to get the status of the project folder setup
   project_folder_setup_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-                ${NC_INTEGRATION_BASE_URL}/project-folder-status \
-                -H 'accept: application/hal+json' \
-                -H 'Content-Type: application/json' \
-                -H 'X-Requested-With: XMLHttpRequest')
+    ${NC_INTEGRATION_BASE_URL}/project-folder-status
+  )
   isProjectFolderAlreadySetup=$(echo $project_folder_setup_response | jq -r ".result")
   if [[ "$isProjectFolderAlreadySetup" == "true" ]]; then
     setup_project_folder=false

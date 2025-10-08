@@ -165,11 +165,7 @@ OP_MINIMUM_VERSION="16.0.0"
 opCheckIntegrationConfiguration() {
   op_status=
   op_storages_response=$(
-    curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-      ${OP_STORAGE_ENDPOINT} \
-      -H 'accept: application/hal+json' \
-      -H 'Content-Type: application/json' \
-      -H 'X-Requested-With: XMLHttpRequest'
+    curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OP_STORAGE_ENDPOINT}
   )
   op_storage_status=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .configured')
   has_nc_app_password=$(echo $op_storages_response | jq -r --arg name "$OP_STORAGE_NAME" '.["_embedded"].elements[] | select(.name == $name) | .hasApplicationPassword')
@@ -216,10 +212,8 @@ opDeleteStorage() {
 ncCheckIntegrationConfiguration() {
   nc_integration_config_ok=
   nc_integration_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
-    ${NC_INTEGRATION_BASE_URL}/check-admin-config \
-    -H 'accept: application/hal+json' \
-    -H 'Content-Type: application/json' \
-    -H 'X-Requested-With: XMLHttpRequest')
+    ${NC_INTEGRATION_BASE_URL}/check-admin-config
+  )
   nc_setup_without_project_folder=$(echo $nc_integration_config_response | jq -r ".config_status_without_project_folder")
   nc_project_folder_status=$(echo $nc_integration_config_response | jq -r ".project_folder_setup_status")
   if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
@@ -270,7 +264,7 @@ ncCheckAppVersion() {
   if [ -z "$nc_app_version" ]; then
     log_error "Failed to get the version information for the '$app_name' app. This might indicate that the app does not exist or is not enabled"
     exit 1
-  elif ! printf "%s\n%s" "$app_min_version" "$nc_app_version" | sort -VC; then
+  elif ! printf "%s\n%s" "$app_min_version" "$nc_app_version" | sort -Vc; then
     log_error "This script requires $app_name apps Version greater than or equal to '$app_min_version' but found version '$nc_app_version'"
     exit 1
   fi
