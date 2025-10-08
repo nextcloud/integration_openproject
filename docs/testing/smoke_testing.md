@@ -383,16 +383,12 @@ bash integration_oidc_setup.sh
 
 ## App Upgrade Testing
 
-### Purpose
-Test that the app works after upgrading to the latest unstable version for both OAuth 2.0 and OIDC authentication methods.
-
 ### Upgrade Steps
 
-- [ ] **Check current version**: `php occ app:list | grep integration_openproject` (ensure version is stable)
+- [ ] **Check update is available**: `php occ app:update --showonly integration_openproject`
 - [ ] **Run upgrade**: `php occ app:update --allow-unstable integration_openproject`
 - [ ] **Verify upgrade**: Confirm no errors and version updated
 
-#### Upgrade Notice
 > **Important**: When upgrading from old versions, the upgrade might fail with "Undefined constant" error due to a known cache issue in Nextcloud. To fix this, please run the following commands:
 >
 > ```bash
@@ -400,30 +396,31 @@ Test that the app works after upgrading to the latest unstable version for both 
 > php occ maintenance:mode --off
 > ```
 
-### For OAuth 2.0 Setup
+### Upgrade Test Cases
+#### Existing OAuth 2.0 Setup
 
-- [ ] **Before upgrade**: Complete [smoke tests A1-A5](#section-a-two-way-oauth-20-authorization-code-flow)
-- [ ] **Do upgrade**: Follow [Upgrade Steps](#upgrade-steps)
-- [ ] **After upgrade**: Check OAuth 2.0 setup still saved and complete [smoke tests 1-6](#common-smoke-test-steps)
+- [ ] **Before upgrade**: Perform complete setup with OAuth2 method (Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
-### For OIDC Setup
+#### Existing SSO Setup
 
-#### Nextcloud Hub as IDP
+##### Nextcloud Hub as IDP
 
-- [ ] **Before upgrade**: Complete [smoke tests B.1.1-B.1.5](#b1-nextcloud-hub-as-idp)
-- [ ] **Do upgrade**: Follow [Upgrade Steps](#upgrade-steps)
-- [ ] **After upgrade**: Check Nextcloud Hub IDP setup still saved and complete [smoke tests 1-6](#common-smoke-test-steps)
+- [ ] **Before upgrade**: Perform complete setup with sso method (Nextcloud Hub as IDP, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
 #### External Provider (Keycloak)
 
 ##### Token Exchange Disabled
 
-- [ ] **Before upgrade**: Complete [smoke tests B.2.1-B.2.6](#b2-external-provider) (token exchange disabled)
-- [ ] **Do upgrade**: Follow [Upgrade Steps](#upgrade-steps)
-- [ ] **After upgrade**: Check Keycloak IDP with token exchange disabled setup still saved and complete [smoke tests 1-6](#common-smoke-test-steps)
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
 ##### Token Exchange Enabled
 
-- [ ] **Before upgrade**: Complete [smoke tests B.2.7-B.2.8](#b2-external-provider) (token exchange enabled)
-- [ ] **Do upgrade**: Follow [Upgrade Steps](#upgrade-steps)
-- [ ] **After upgrade**: Check Keycloak IDP with token exchange enabled setup still saved and complete [smoke tests 1-6](#common-smoke-test-steps)
+- [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled)
+- [ ] [Upgrade app](#upgrade-steps)
+- [ ] **After upgrade**: Check that the integration setup and other changes are preserved
