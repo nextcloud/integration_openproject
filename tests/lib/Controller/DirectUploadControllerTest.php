@@ -7,7 +7,6 @@
 
 namespace OCA\OpenProject\Controller;
 
-use OC\Files\View;
 use OCP\Files\Folder;
 use OCP\Files\ForbiddenException as FileAccessForbiddenException;
 use OCP\Files\InvalidContentException;
@@ -202,8 +201,14 @@ class DirectUploadControllerTest extends TestCase {
 	}
 
 	public function testNegativeFreeSpace(): void {
+		$cacheMock = $this->getMockBuilder('\OCP\Files\Cache\ICache')->getMock();
+		$cacheMock->method('update')->willReturn(true);
+		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->getMock();
+		$storageMock->method('getCache')->willReturn($cacheMock);
+
 		$fileMock = $this->getMockBuilder('\OC\Files\Node\File')->disableOriginalConstructor()->getMock();
 		$fileMock->method('getId')->willReturn(123);
+		$fileMock->method('getStorage')->willReturn($storageMock);
 		$nodeMock = $this->getNodeMock('folder');
 		$tmpFileName = '/tmp/integration_openproject_unit_test';
 		touch($tmpFileName);
@@ -285,7 +290,6 @@ class DirectUploadControllerTest extends TestCase {
 			'size' => $uploadedFileSize,
 			'error' => $uploadedFileError
 		]);
-		$viewMock = $this->getMockBuilder(View::class)->disableOriginalConstructor()->getMock();
 		return new DirectUploadController(
 			'integration_openproject',
 			$requestMock,
@@ -296,7 +300,6 @@ class DirectUploadControllerTest extends TestCase {
 			$this->getMockBuilder('OCA\OpenProject\Service\DatabaseService')->disableOriginalConstructor()->getMock(),
 			$this->l,
 			'testUser',
-			$viewMock
 		);
 	}
 
@@ -311,8 +314,14 @@ class DirectUploadControllerTest extends TestCase {
 		$ownerMock->method('getDisplayName')->willReturn('Test User');
 		$ownerMock->method('getUID')->willReturn('3df8ff78-49cb-4d60-8d8b-171b29591fd3');
 
+		$cacheMock = $this->getMockBuilder('\OCP\Files\Cache\ICache')->getMock();
+		$cacheMock->method('update')->willReturn(true);
+		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->getMock();
+		$storageMock->method('getCache')->willReturn($cacheMock);
+
 		$fileMock = $this->createMock('\OCP\Files\File');
 		$fileMock->method('getId')->willReturn(123);
+		$fileMock->method('getStorage')->willReturn($storageMock);
 
 		$folderMock = $this->createMock('\OCP\Files\Folder');
 		$folderMock->method('getId')->willReturn($id);
