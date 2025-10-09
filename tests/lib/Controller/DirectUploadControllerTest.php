@@ -203,7 +203,7 @@ class DirectUploadControllerTest extends TestCase {
 	public function testNegativeFreeSpace(): void {
 		$cacheMock = $this->getMockBuilder('\OCP\Files\Cache\ICache')->getMock();
 		$cacheMock->method('update')->willReturn(true);
-		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->getMock();
+		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->disableOriginalConstructor()->getMock();
 		$storageMock->method('getCache')->willReturn($cacheMock);
 
 		$fileMock = $this->getMockBuilder('\OC\Files\Node\File')->disableOriginalConstructor()->getMock();
@@ -316,7 +316,7 @@ class DirectUploadControllerTest extends TestCase {
 
 		$cacheMock = $this->getMockBuilder('\OCP\Files\Cache\ICache')->getMock();
 		$cacheMock->method('update')->willReturn(true);
-		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->getMock();
+		$storageMock = $this->getMockBuilder('\OCP\Files\Storage\IStorage')->disableOriginalConstructor()->getMock();
 		$storageMock->method('getCache')->willReturn($cacheMock);
 
 		$fileMock = $this->createMock('\OCP\Files\File');
