@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Remove latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
+- Replace internal method with public API for updating file metadata [#908](https://github.com/nextcloud/integration_openproject/pull/908)
 
 ### Fixed
 - Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)

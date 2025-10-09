@@ -12,7 +12,6 @@ use DateTime;
 use InvalidArgumentException;
 use OC\Files\Filesystem;
 use OC\Files\Node\Folder;
-use OC\Files\View;
 use OC\ForbiddenException;
 use OC\User\NoUserException;
 use OCA\OpenProject\Exception\OpenprojectFileNotUploadedException;
@@ -79,10 +78,6 @@ class DirectUploadController extends ApiController {
 
 	private $l;
 
-	/**
-	 * @var View
-	 */
-	private $fileView;
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -92,8 +87,7 @@ class DirectUploadController extends ApiController {
 		DirectUploadService $directUploadService,
 		DatabaseService $databaseService,
 		IL10N  $l,
-		?string $userId,
-		View $fileView
+		?string $userId
 	) {
 		parent::__construct($appName, $request, 'POST');
 		$this->userId = $userId;
@@ -104,7 +98,6 @@ class DirectUploadController extends ApiController {
 		$this->databaseService = $databaseService;
 		$this->userSession = $userSession;
 		$this->l = $l;
-		$this->fileView = $fileView;
 	}
 
 	/**
@@ -245,7 +238,9 @@ class DirectUploadController extends ApiController {
 			$fileId = $fileInfo->getId();
 			// setting the creation time for the uploaded file
 			$creationTime = (new DateTime())->getTimestamp();
-			$this->fileView->putFileInfo($fileInfo->getPath(), ['creation_time' => $creationTime]);
+			$fileInfo->getStorage()->getCache()->update($fileId, [
+				'creation_time' => $creationTime
+			]);
 		} catch (OpenprojectUnauthorizedUserException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage())
