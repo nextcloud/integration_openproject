@@ -139,7 +139,7 @@ jobs:
           POSTGRES_DB: nextcloud
 
       database-mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
