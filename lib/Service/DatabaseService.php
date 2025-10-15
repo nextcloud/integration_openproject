@@ -95,7 +95,7 @@ class DatabaseService {
 			->where(
 				$query->expr()->lt('expires_on', $query->createNamedParameter(time()))
 			);
-		$query->execute();
+		$query->executeStatement();
 	}
 
 	/**
@@ -111,6 +111,6 @@ class DatabaseService {
 				$query->expr()->eq('token', $query->createNamedParameter($token))
 			);
 
-		$query->execute();
+		$query->executeStatement();
 	}
 }
