@@ -81,7 +81,7 @@ class DatabaseServiceTest extends TestCase {
 	protected function tearDown(): void {
 		$query = $this->databaseService->db->getQueryBuilder();
 		$query->delete(self::TABLE_NAME);
-		$query->execute();
+		$query->executeStatement();
 	}
 
 	/**
