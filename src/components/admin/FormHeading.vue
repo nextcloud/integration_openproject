@@ -96,22 +96,22 @@ export default {
 	padding: 15px 0;
 
 	.green-text {
-		color: var(--color-success);
+		color: var(--color-text-success);
 	}
 
 	.red-text {
-		color: var(--color-error);
+		color: var(--color-text-error);
 	}
 
 	.warn-text {
-		color: var(--color-warning);
+		color: var(--color-text-warning);
 	}
 
 	.complete {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		background-color: var(--color-success);
+		background-color: var(--color-element-success);
 		display: flex;
 		justify-content: center;
 		align-items: center;
