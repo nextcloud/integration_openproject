@@ -12,6 +12,7 @@ OC.L10N.register(
     "Successfully revoked users' OpenProject OAuth access tokens" : "Токены доступу карыстальнікаў да OpenProject OAuth паспяхова адкліканы",
     "Save" : "Захаваць",
     "Reset" : "Скінуць",
+    "Enable unified search for tickets" : "Уключыць уніфікаваны пошук білетаў",
     "Incorrect access token" : "Няправільны токен доступу",
     "Invalid token" : "Памылковы токен",
     "Documentation" : "Дакументацыя",
