@@ -13,6 +13,7 @@ OC.L10N.register(
     "Enable unified search for tickets" : "Enable unified search for tickets",
     "Incorrect access token" : "Incorrect access token",
     "Connected as {user}" : "Imeunganishwa kama {user}",
+    "Authentication method" : "Authentication method",
     "Documentation" : "Uhifadhi wa nyaraka",
     "Copied!" : "Copied!",
     "Details" : "Maelezo ya kina",
