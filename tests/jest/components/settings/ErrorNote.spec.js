@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { mount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 
 import ErrorNote from '../../../../src/components/settings/ErrorNote.vue'
 
@@ -31,7 +31,7 @@ describe('Component: ErrorNote', () => {
 })
 
 function getWrapper(propsData = {}) {
-	return mount(ErrorNote, {
+	return shallowMount(ErrorNote, {
 		propsData,
 	})
 }

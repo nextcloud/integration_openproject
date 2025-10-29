@@ -182,7 +182,7 @@ export default {
 		}
 		.check-icon {
 			padding-right: .2rem;
-			color: var(--color-success);
+			color: var(--color-element-success, var(--color-success));
 		}
 	}
 	&--hint {

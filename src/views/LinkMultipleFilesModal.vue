@@ -14,7 +14,7 @@
 					<div v-if="getError" class="link-progress-information-failed">
 						<div class="link-progress-information-failed--details">
 							<div class="link-progress-information-failed--details--info">
-								<AlertCircleOutline fill-color="var(--color-error)" :size="70" />
+								<AlertCircleOutline fill-color="var(--color-border-error, var(--color-error))" :size="70" />
 							</div>
 							<div class="link-progress-information-failed--details--info">
 								<p>{{ t('integration_openproject', `Files selected: ${getTotalNoOfFilesSelectedInChunking}`) }}</p>
@@ -285,7 +285,7 @@ h2 {
 		&--info {
 			padding: 13px;
 			&--error {
-				color: var(--color-error);
+				color: var(--color-text-error, var(--color-error));
 			}
 		}
 	}

@@ -29,10 +29,10 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
     </div>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-auth-method-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-auth-method-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -69,10 +69,10 @@ exports[`Component: FormAuthMethod completed form edit mode disabled user_oidc a
     </div>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-auth-method-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-auth-method-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -109,10 +109,10 @@ exports[`Component: FormAuthMethod completed form edit mode should show form fie
     </div>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-auth-method-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-auth-method-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -149,10 +149,10 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
     </div>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-auth-method-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-auth-method-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -189,10 +189,10 @@ exports[`Component: FormAuthMethod completed form edit mode unsupported user_oid
     </div>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-auth-method-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-auth-method-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -209,7 +209,7 @@ exports[`Component: FormAuthMethod completed form should show set form label in 
       Single-Sign-On through OpenID Connect Identity Provider
     </p>
     <div class="form-actions">
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-auth-method">
         Edit authentication method
       </ncbutton-stub>
       <!---->
@@ -228,7 +228,7 @@ exports[`Component: FormAuthMethod completed form view mode: disabled user_oidc 
       Two-way OAuth 2.0 authorization code flow
     </p>
     <div class="form-actions">
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-auth-method">
         Edit authentication method
       </ncbutton-stub>
       <!---->
@@ -247,7 +247,7 @@ exports[`Component: FormAuthMethod completed form view mode: disabled user_oidc 
       Single-Sign-On through OpenID Connect Identity Provider
     </p>
     <div class="form-actions">
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-auth-method">
         Edit authentication method
       </ncbutton-stub>
       <!---->
@@ -266,7 +266,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
       Single-Sign-On through OpenID Connect Identity Provider
     </p>
     <div class="form-actions">
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-auth-method">
         Edit authentication method
       </ncbutton-stub>
       <!---->
@@ -306,7 +306,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method">
         Save
       </ncbutton-stub>
     </div>
@@ -344,7 +344,7 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method">
         Save
       </ncbutton-stub>
     </div>
@@ -390,7 +390,7 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method">
         Save
       </ncbutton-stub>
     </div>
@@ -428,7 +428,7 @@ exports[`Component: FormAuthMethod initial incomplete form unsupported user_oidc
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-auth-method">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-auth-method">
         Save
       </ncbutton-stub>
     </div>

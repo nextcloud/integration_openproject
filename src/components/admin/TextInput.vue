@@ -192,11 +192,11 @@ export default {
 	}
 
 	&-error {
-		border: 2px solid var(--color-error) !important;
+		border: 2px solid var(--color-border-error, var(--color-error)) !important;
 	}
 
 	&-error-message {
-		color: var(--color-error);
+		color: var(--color-text-error, var(--color-error));
 		float: left;
 		margin-right: 10px;
 	}

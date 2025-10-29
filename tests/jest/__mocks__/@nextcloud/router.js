@@ -6,8 +6,8 @@
 
 const router = jest.createMockFromModule('@nextcloud/router')
 
-router.generateUrl = jest.fn(function(url) {
-	return 'http://localhost' + url
-})
+router.generateUrl = (path) => `http://localhost${path}`
+router.generateOcsUrl = (path) => `http://localhost${path}`
+router.imagePath = (path) => `http://localhost${path}`
 
 module.exports = router

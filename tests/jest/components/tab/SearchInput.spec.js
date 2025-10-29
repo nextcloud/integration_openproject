@@ -36,21 +36,12 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
-jest.mock('@nextcloud/l10n', () => ({
-	translate: jest.fn((app, msg) => msg),
-	getLanguage: jest.fn(() => ''),
-}))
 jest.mock('lodash/debounce', () =>
 	jest.fn(fn => {
 		fn.cancel = jest.fn()
 		return fn
 	}),
 )
-jest.mock('@nextcloud/router', () => ({
-	generateUrl: (path) => `http://nc.local${path}`,
-	generateOcsUrl: (path) => `http://nc.local${path}`,
-	imagePath: (path) => `http://nc.local${path}`,
-}))
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
@@ -60,6 +51,7 @@ jest.mock('@nextcloud/initial-state', () => {
 		loadState: jest.fn(() => {
 			return {
 				openproject_instance_url: null,
+				version: '32',
 			}
 		}),
 	}

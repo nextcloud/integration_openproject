@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
 
+### Fixed
+- Fix: UI colors too Light in Nextcloud 32 [#911](https://github.com/nextcloud/integration_openproject/pull/911)
+
 ## 2.10.0 - 2025-09-26
 
 ### ⚠️ Upgrade Notice

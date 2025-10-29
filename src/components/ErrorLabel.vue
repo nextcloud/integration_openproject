@@ -26,7 +26,7 @@ export default {
 
 <style scoped lang="scss">
 .error {
-	color: var(--color-error);
+	color: var(--color-text-error, var(--color-error));
 }
 
 .error[disabled] {

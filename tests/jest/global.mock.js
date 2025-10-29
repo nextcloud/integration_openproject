@@ -4,3 +4,4 @@
  */
 
 global.structuredClone = v => JSON.parse(JSON.stringify(v))
+global.appName = 'integration_openproject'

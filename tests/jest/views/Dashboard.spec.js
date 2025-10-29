@@ -19,11 +19,8 @@ import notificationsResponse from '../fixtures/notificationsResponse.json'
 import { messages } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/l10n', () => ({
-	translate: jest.fn((app, msg) => msg),
-	getLanguage: jest.fn(),
-}))
 jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
@@ -33,14 +30,9 @@ jest.mock('@nextcloud/initial-state', () => {
 		__esModule: true,
 		...originalModule,
 		default: jest.fn(),
-		loadState: jest.fn(() => ''),
+		loadState: jest.fn(() => ({ version: '32' })),
 	}
 })
-jest.mock('@nextcloud/router', () => ({
-	generateUrl: (path) => `http://nc.local${path}`,
-	generateOcsUrl: (path) => `http://nc.local${path}`,
-	imagePath: (path) => `http://nc.local${path}`,
-}))
 jest.mock('../../../src/utils.js', () => ({
 	...jest.requireActual('../../../src/utils.js'),
 	checkOauthConnectionResult: jest.fn(),

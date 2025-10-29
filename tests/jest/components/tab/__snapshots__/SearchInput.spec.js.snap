@@ -52,7 +52,7 @@ exports[`SearchInput.vue work packages select search list should only use the op
     "assignee": "some assignee",
     "fileId": 111,
     "id": 1,
-    "picture": "http://nc.local/apps/integration_openproject/api/v1/avatar?userId=&userName=some%20assignee",
+    "picture": "http://localhost/apps/integration_openproject/api/v1/avatar?userId=&userName=some%20assignee",
     "project": "some project",
     "projectId": "",
     "statusCol": "",

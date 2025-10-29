@@ -25,6 +25,7 @@ jest.mock('@nextcloud/initial-state', () => {
 				openproject_instance_url: null,
 				oauth_client_id: null,
 				oauth_client_secret: null,
+				version: '32',
 			}
 		}),
 	}
