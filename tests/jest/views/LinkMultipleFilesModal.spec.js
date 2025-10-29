@@ -53,7 +53,7 @@ jest.mock('@nextcloud/initial-state', () => {
 		__esModule: true,
 		...originalModule,
 		default: jest.fn(),
-		loadState: jest.fn(() => true),
+		loadState: jest.fn(() => ({ version: '32' })),
 	}
 })
 

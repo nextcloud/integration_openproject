@@ -20,7 +20,11 @@ import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
 
 const localVue = createLocalVue()
-
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 jest.mock('@nextcloud/initial-state', () => {
 	const originalModule = jest.requireActual('@nextcloud/initial-state')
 	return {
@@ -30,15 +34,11 @@ jest.mock('@nextcloud/initial-state', () => {
 		loadState: jest.fn(() => {
 			return {
 				openproject_instance_url: 'https://openproject.example.com',
+				version: '32',
 			}
 		}),
 	}
 })
-jest.mock('@nextcloud/router', () => ({
-	generateUrl: (path) => `http://nc.local${path}`,
-	generateOcsUrl: (path) => `http://nc.local${path}`,
-	imagePath: (path) => `http://nc.local${path}`,
-}))
 
 // url
 const projectsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/projects')
