@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "OAuth アクセストークン取得時のエラー",
     "Error during OAuth exchanges" : "OAuth 通信中のエラー",
     "Bad HTTP method" : "不正なHTTPメソッド",
