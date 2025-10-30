@@ -21,143 +21,14 @@
 			:apps="state.apps"
 			:current-setting="currentSetting"
 			@formcomplete="markFormComplete" />
-		<div v-if="isOidcMethod" class="authorization-settings">
-			<FormHeading index="3"
-				:title="t('integration_openproject', 'Authentication settings')"
-				:is-complete="isAuthorizationSettingFormComplete"
-				:is-disabled="isAuthorizationSettingFormInDisabledMode"
-				:is-dark-theme="isDarkTheme"
-				:has-error="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub" />
-			<ErrorNote
-				v-if="!hasEnabledSupportedUserOidcApp"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported(getUserOidcAppName, getMinSupportedUserOidcVersion)"
-				:error-link="appLinks.user_oidc.installLink"
-				:error-link-label="messages.installLatestVersionNow" />
-			<ErrorNote
-				v-else-if="hasOidcAppErrorWithNextcloudHub"
-				:error-title="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
-				:error-link="appLinks.oidc.installLink"
-				:error-link-label="messages.installLatestVersionNow" />
-			<div class="authorization-settings--content">
-				<FieldValue v-if="isAuthorizationSettingsInViewMode"
-					is-required
-					class="pb-1"
-					:title="t('integration_openproject', 'OIDC Provider Type')"
-					:value="getSSOProviderType" />
-				<div v-else class="authorization-settings--content--section sso-provider-type">
-					<p class="authorization-settings--content--label">
-						{{ t('integration_openproject', 'OIDC Provider Type') }} *
-					</p>
-					<NcCheckboxRadioSwitch
-						:checked.sync="authorizationSetting.SSOProviderType"
-						:disabled="!hasEnabledSupportedUserOidcApp || !hasEnabledSupportedOIDCApp"
-						:value="SSO_PROVIDER_TYPE.nextcloudHub"
-						type="radio">
-						{{ messages.nextcloudHubProvider }}
-					</NcCheckboxRadioSwitch>
-					<div class="error-container">
-						<ErrorLabel
-							v-if="!hasEnabledSupportedOIDCApp"
-							:error="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
-							:disabled="disableNCHubUnsupportedHint" />
-					</div>
-					<NcCheckboxRadioSwitch
-						:checked.sync="authorizationSetting.SSOProviderType"
-						:disabled="!hasEnabledSupportedUserOidcApp"
-						:value="SSO_PROVIDER_TYPE.external"
-						type="radio">
-						{{ messages.externalOIDCProvider }}
-					</NcCheckboxRadioSwitch>
-				</div>
-				<FieldValue v-if="isAuthorizationSettingsInViewMode && isExternalSSOProvider"
-					is-required
-					class="pb-1"
-					:title="t('integration_openproject', 'OIDC Provider')"
-					:value="getCurrentSelectedOIDCProvider" />
-				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-provider">
-					<p class="authorization-settings--content--label">
-						{{ t('integration_openproject', 'Select a provider *') }}
-					</p>
-					<NcSelect
-						input-id="provider-search-input"
-						:disabled="!hasEnabledSupportedUserOidcApp"
-						:placeholder="t('integration_openproject', 'Select an OIDC provider')"
-						:options="registeredOidcProviders"
-						:value="getCurrentSelectedOIDCProvider"
-						:filterable="true"
-						:close-on-select="true"
-						:clear-search-on-blur="() => false"
-						:append-to-body="false"
-						:label-outside="true"
-						:input-label="t('integration_openproject', 'OIDC provider')"
-						@option:selected="onSelectOIDCProvider" />
-					<p class="description" v-html="getConfigureOIDCHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-				</div>
-				<FieldValue v-if="isAuthorizationSettingsInViewMode && isExternalSSOProvider"
-					class="pb-1"
-					:title="messages.enableTokenExchange"
-					:value="authorizationSetting.enableTokenExchange" />
-				<div v-else-if="isExternalSSOProvider" class="authorization-settings--content--section sso-token-exchange">
-					<p class="authorization-settings--content--label">
-						{{ messages.tokenExchangeFormLabel }}
-					</p>
-					<p class="description">
-						{{ messages.tokenExchangeHintText }}
-					</p>
-					<NcCheckboxRadioSwitch
-						type="switch"
-						:checked.sync="authorizationSetting.enableTokenExchange">
-						<b>{{ messages.enableTokenExchange }}</b>
-					</NcCheckboxRadioSwitch>
-				</div>
-				<div v-if="showClientIDField">
-					<FieldValue v-if="isAuthorizationSettingsInViewMode"
-						is-required
-						class="pb-1"
-						:title="messages.opClientId"
-						:value="state.authorization_settings.targeted_audience_client_id" />
-					<div v-else class="authorization-settings--content--section sso-client-id">
-						<TextInput
-							id="authorization-method-target-client-id"
-							v-model="authorizationSetting.currentTargetedAudienceClientIdSelected"
-							class="py-1"
-							is-required
-							:disabled="!hasEnabledSupportedUserOidcApp || hasOidcAppErrorWithNextcloudHub"
-							:place-holder="messages.opClientId"
-							:label="messages.opClientId"
-							:hint-text="messages.opClientIdHintText" />
-					</div>
-				</div>
-			</div>
-			<div class="form-actions">
-				<NcButton v-if="isAuthorizationSettingsInViewMode"
-					:disabled="!hasEnabledSupportedUserOidcApp"
-					data-test-id="reset-auth-settings-btn"
-					@click="setAuthorizationSettingInEditMode">
-					<template #icon>
-						<PencilIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Edit authentication settings') }}
-				</NcButton>
-				<NcButton v-if="isSSOSettingsInEditMode"
-					class="mr-2"
-					data-test-id="cancel-edit-auth-setting-btn"
-					@click="setAuthorizationSettingToViewMode">
-					{{ t('integration_openproject', 'Cancel') }}
-				</NcButton>
-				<NcButton v-if="isAuthorizationSettingInEditMode"
-					data-test-id="submit-oidc-auth-settings-values-btn"
-					type="primary"
-					:disabled="disableSaveSSOSettings"
-					@click="saveOIDCAuthSetting">
-					<template #icon>
-						<NcLoadingIcon v-if="loadingAuthorizationMethodForm" class="loading-spinner" :size="20" />
-						<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Save') }}
-				</NcButton>
-			</div>
-		</div>
+		<FormSSOSettings
+			v-if="isOidcMethod"
+			:is-dark-theme="isDarkTheme"
+			:form="form"
+			:sso-settings="state.authorization_settings"
+			:sso-providers="state.oidc_providers"
+			:apps="state.apps"
+			@formcomplete="markFormComplete" />
 		<div v-if="showOAuthSettings" class="openproject-oauth-values">
 			<FormHeading index="3"
 				:title="t('integration_openproject', 'OpenProject OAuth settings')"
@@ -470,7 +341,6 @@ import {
 	NcCheckboxRadioSwitch,
 	NcButton,
 	NcNoteCard,
-	NcSelect,
 } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
@@ -485,15 +355,13 @@ import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
-import ErrorLabel from './ErrorLabel.vue'
 import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
 import FormAuthMethod from './admin/FormAuthMethod.vue'
+import FormSSOSettings from './admin/FormSSOSettings.vue'
 
 export default {
 	name: 'AdminSettings',
 	components: {
-		ErrorLabel,
-		NcSelect,
 		NcButton,
 		FieldValue,
 		FormHeading,
@@ -511,6 +379,7 @@ export default {
 		ErrorNote,
 		FormOpenProjectHost,
 		FormAuthMethod,
+		FormSSOSettings,
 	},
 	data() {
 		return {
@@ -713,12 +582,6 @@ export default {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
-		},
-		getConfigureOIDCHintText() {
-			const linkText = t('integration_openproject', 'OpenID Connect settings')
-			const settingsUrl = this.appLinks.user_oidc.settingsLink
-			const htmlLink = `<a class="link" href="${settingsUrl}" target="_blank" title="${linkText}">${linkText}</a>`
-			return this.messagesFmt.configureOIDCProviders(htmlLink)
 		},
 		getUserOidcMinimumVersion() {
 			return this.state.user_oidc_minimum_version
