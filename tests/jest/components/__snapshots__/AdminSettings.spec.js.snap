@@ -62,7 +62,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       data-test-id="reset-auth-settings-btn"
       disabled="true"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -119,7 +122,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       alignment="center"
       data-test-id="reset-auth-settings-btn"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -177,7 +183,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       alignment="center"
       data-test-id="reset-auth-settings-btn"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -243,7 +252,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       alignment="center"
       data-test-id="reset-auth-settings-btn"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -307,7 +319,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       data-test-id="reset-auth-settings-btn"
       disabled="true"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -373,7 +388,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       alignment="center"
       data-test-id="reset-auth-settings-btn"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings
@@ -431,7 +449,10 @@ exports[`AdminSettings.vue OIDC authorization settings form complete: view mode 
       alignment="center"
       data-test-id="reset-auth-settings-btn"
       nativetype="button"
+      size="normal"
+      target="_self"
       type="secondary"
+      variant="secondary"
     >
       
 				Edit authentication settings

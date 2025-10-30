@@ -100,7 +100,7 @@ export default {
 		text-align: center;
 		margin-top: 10px;
 		&-failure {
-			color: var(--color-error);
+			color: var(--color-text-error, var(--color-error));
 		}
 	}
 	&-button {

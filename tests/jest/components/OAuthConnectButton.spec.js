@@ -35,7 +35,11 @@ jest.mock('@nextcloud/auth', () => {
 		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-jest.mock('@nextcloud/dialogs')
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
 
 const realLocation = global.window.location
 const localVue = createLocalVue()

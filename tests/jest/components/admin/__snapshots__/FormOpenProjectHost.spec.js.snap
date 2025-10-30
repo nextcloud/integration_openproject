@@ -7,10 +7,10 @@ exports[`Component: FormOpenProjectHost completed form edit mode should show inp
     <textinput-stub value="http://example.openproject.test" type="text" placeholder="https://www.my-openproject.com" label="OpenProject host" hinttext="Please introduce your OpenProject hostname" errormessage="" errormessagedetails="" isrequired="true" data-test-id="openproject-server-host" class="pb-1"></textinput-stub>
     <div class="form-actions">
       <!---->
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="cancel-server-host-edit" class="mr-2">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-server-host-edit" class="mr-2">
         Cancel
       </ncbutton-stub>
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host" disabled="true">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host" disabled="true">
         Save
       </ncbutton-stub>
     </div>
@@ -24,7 +24,7 @@ exports[`Component: FormOpenProjectHost completed form should show text field va
   <div class="openproject-host">
     <fieldvalue-stub title="OpenProject host" value="http://example.openproject.test" isrequired="true" class="pb-1"></fieldvalue-stub>
     <div class="form-actions">
-      <ncbutton-stub alignment="center" type="secondary" nativetype="button" data-test-id="edit-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-server-host">
         Edit server information
       </ncbutton-stub>
       <!---->
@@ -42,7 +42,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url clie
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -58,7 +58,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url inva
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -74,7 +74,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url loca
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -90,7 +90,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url netw
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -106,7 +106,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url not_
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -122,7 +122,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url redi
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -138,7 +138,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url requ
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -154,7 +154,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url serv
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -170,7 +170,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form invalid url unex
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>
@@ -186,7 +186,7 @@ exports[`Component: FormOpenProjectHost initial incomplete form should show the 
     <div class="form-actions">
       <!---->
       <!---->
-      <ncbutton-stub alignment="center" disabled="true" type="primary" nativetype="button" data-test-id="save-server-host">
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-server-host">
         Save
       </ncbutton-stub>
     </div>

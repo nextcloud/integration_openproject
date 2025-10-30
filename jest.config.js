@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-const path = require('path')
-const rootDir = path.resolve(__dirname, '../../../')
-
 module.exports = {
 	testMatch: ['**/tests/**/*.spec.{js,ts}'],
 	moduleNameMapper: {
 		'\\.(scss)$': '<rootDir>/tests/jest/stubs/empty.js',
-		'@nextcloud/l10n/gettext': require.resolve('@nextcloud/l10n/gettext'),
+		'@nextcloud/l10n/gettext': '<rootDir>/tests/jest/__mocks__/@nextcloud/l10n.js',
+		'@nextcloud/router': '<rootDir>/tests/jest/__mocks__/@nextcloud/router.js',
 	},
 	transform: {
 		// process *.vue files with vue-jest
