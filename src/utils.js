@@ -129,6 +129,7 @@ export const ADMIN_SETTINGS_FORM = {
 		complete: false,
 		value: {},
 	},
+	// order: 4 or 5 depending on auth method
 	projectFolder: {
 		id: 'project-folder',
 		complete: false,
@@ -137,7 +138,19 @@ export const ADMIN_SETTINGS_FORM = {
 
 export function * settingsFlowGenerator() {
 	const settings = Object.values(ADMIN_SETTINGS_FORM).map(({ id }) => id)
+	let authMethod
 	for (const setting of settings) {
-		yield setting
+		if (authMethod === AUTH_METHOD.OIDC) {
+			const settingIdx = settings.indexOf(ADMIN_SETTINGS_FORM.openprojectOauth.id)
+			if (settingIdx !== -1) {
+				settings.splice(settingIdx, 2)
+			}
+		} else if (authMethod === AUTH_METHOD.OAUTH2) {
+			const settingIdx = settings.indexOf(ADMIN_SETTINGS_FORM.ssoSettings.id)
+			if (settingIdx !== -1) {
+				settings.splice(settingIdx, 1)
+			}
+		}
+		authMethod = yield setting
 	}
 }
