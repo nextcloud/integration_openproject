@@ -1481,12 +1481,6 @@ export default {
 			}
 		}
 
-		&--vue-error {
-			.button-vue__text {
-				color: #fff !important;
-			}
-		}
-
 		&__text {
 			font-weight: 400 !important;
 			font-size: 14px !important;

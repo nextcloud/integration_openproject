@@ -96,22 +96,22 @@ export default {
 	padding: 15px 0;
 
 	.green-text {
-		color: var(--color-success);
+		color: var(--color-text-success,var(--color-success));
 	}
 
 	.red-text {
-		color: var(--color-error);
+		color: var(--color-text-error, var(--color-error));
 	}
 
 	.warn-text {
-		color: var(--color-warning);
+		color: var(--color-text-warning, var(--color-warning));
 	}
 
 	.complete {
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		background-color: var(--color-success);
+		background-color: var(--color-element-success, var(--color-success));
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -127,11 +127,11 @@ export default {
 	}
 
 	.project-folder-setup-error {
-		background: var(--color-error);
+		background: var(--color-element-error, var(--color-error));
 	}
 
 	.project-folder-setup-warning {
-		background: var(--color-warning);
+		background: var(--color-text-warning, var(--color-warning));
 	}
 
 	.setup-complete-without-project-folders {

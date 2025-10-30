@@ -11,6 +11,12 @@ import EmptyContent from '../../../../src/components/tab/EmptyContent.vue'
 import { AUTH_METHOD, STATE } from '../../../../src/utils.js'
 const localVue = createLocalVue()
 
+jest.mock('@nextcloud/dialogs', () => ({
+	getLanguage: jest.fn(() => ''),
+	showError: jest.fn(),
+	showSuccess: jest.fn(),
+}))
+
 describe('EmptyContent.vue', () => {
 	let wrapper
 	const emptyContentMessageSelector = '.empty-content--message'

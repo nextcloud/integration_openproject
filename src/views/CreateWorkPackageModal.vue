@@ -694,7 +694,7 @@ export default {
 
 .validation-error {
 	margin-top: 10px;
-	color: var(--color-error) !important;
+	color: var(--color-text-error, var(--color-error)) !important;
 }
 
 .type-error {
@@ -702,7 +702,7 @@ export default {
 }
 
 .subject-error {
-	border-color: var(--color-error) !important;
+	border-color: var(--color-border-error, var(--color-error)) !important;
 }
 
 .create-workpackage-form {

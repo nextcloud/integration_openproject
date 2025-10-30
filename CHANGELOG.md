@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
-- Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
 - Support Nextcloud 33 [#881](https://github.com/nextcloud/integration_openproject/pull/881)
 
 ### Changed
@@ -25,6 +24,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
 
 ### Removed
+
+## 2.10.1 - 2025-10-08
+
+### Added
+- Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
+
+### Fixed
+- Fix: UI colors too Light in Nextcloud 32 [#911](https://github.com/nextcloud/integration_openproject/pull/911)
 
 ## 2.10.0 - 2025-09-26
 

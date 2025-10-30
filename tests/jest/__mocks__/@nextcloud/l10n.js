@@ -6,8 +6,15 @@
 
 const l10n = jest.createMockFromModule('@nextcloud/l10n')
 
-l10n.translate = jest.fn(function(app, msg) {
-	return msg
-})
+l10n.translate = jest.fn((app, msg) => msg)
+l10n.getGettextBuilder = jest.fn(() => ({
+	detectLanguage: () => ({
+		build: () => ({
+			ngettext: (s) => s,
+			gettext: (s) => s,
+			addTranslations: jest.fn(),
+		}),
+	}),
+}))
 
 module.exports = l10n
