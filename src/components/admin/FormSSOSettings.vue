@@ -219,7 +219,7 @@ export default {
 			// state that holds the current changed form values
 			currentForm: JSON.parse(JSON.stringify(initialForm)),
 			// state that holds the saved form values (useful for resetting)
-			savedForm: JSON.parse(JSON.stringify(initialForm)),
+			savedForm: JSON.parse(JSON.stringify(this.ssoSettings)),
 		}
 	},
 	computed: {
@@ -278,24 +278,19 @@ export default {
 			return this.apps.user_oidc.minimum_version
 		},
 		showClientIDField() {
-			// check using current form in edit mode
-			if (this.isEditMode) {
-				if (this.currentForm.sso_provider_type === this.ssoProviderType.nextcloudHub) {
-					return true
-				}
-				return this.currentForm.token_exchange
+			let state = this.savedForm
+			// check using current form in other modes
+			if (!this.isViewMode) {
+				state = this.currentForm
 			}
-			// check using saved form in view mode
-			if (this.savedForm.sso_provider_type === this.ssoProviderType.nextcloudHub) {
-				return true
-			} else if (this.savedForm.sso_provider_type === this.ssoProviderType.external && this.savedForm.token_exchange) {
+			if (state.sso_provider_type === this.ssoProviderType.nextcloudHub) {
 				return true
 			}
-			return false
+			return state.token_exchange
 		},
 		disableNCHubUnsupportedHint() {
 			if (!this.hasEnabledSupportedOIDCApp) {
-				if (this.formMode === F_MODES.DISABLE || this.formMode === F_MODES.NEW) {
+				if (this.formMode === F_MODES.NEW) {
 					return true
 				} else if (this.isExternalSSO) {
 					return true
@@ -341,14 +336,15 @@ export default {
 		},
 	},
 	created() {
-		this.savedForm = JSON.parse(JSON.stringify(this.ssoSettings))
 		// set the default type if not set
-		if (!this.hasEnabledSupportedOIDCApp && (this.formMode === F_MODES.DISABLE || this.formMode === F_MODES.NEW || !this.savedForm.sso_provider_type)) {
-			this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.external
-			this.savedForm.oidc_provider = null
-		} else if (!this.savedForm.sso_provider_type) {
-			this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.nextcloudHub
-			this.savedForm.oidc_provider = SSO_PROVIDER_LABEL.nextcloudHub
+		if (!this.savedForm.sso_provider_type) {
+			if (!this.hasEnabledSupportedOIDCApp && this.formMode === F_MODES.NEW) {
+				this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.external
+				this.savedForm.oidc_provider = null
+			} else {
+				this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.nextcloudHub
+				this.savedForm.oidc_provider = SSO_PROVIDER_LABEL.nextcloudHub
+			}
 		}
 		if (this.isFormComplete) {
 			this.setFromToViewMode()
@@ -448,4 +444,11 @@ export default {
 <!-- Test cases
 - switch to external from nextcloud hub option (DO NOT SET), form validation, enabled save, cleared unused fields, provider changed
 - switch to nextcloud hub from external option (DO NOT SET), form validation, enabled save, cleared unused fields, provider empty
+- check client-id field:
+	- first setup:
+		- NC hub
+		- change to external with/without token exchange
+	- edit setup:
+		- NC hub
+		- change to external with/without token exchange
 -->
