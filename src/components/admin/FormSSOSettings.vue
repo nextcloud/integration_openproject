@@ -155,7 +155,7 @@ import FormHeading from './FormHeading.vue'
 import TextInput from './TextInput.vue'
 import ErrorLabel from '../ErrorLabel.vue'
 import ErrorNote from '../settings/ErrorNote.vue'
-import { F_MODES, AUTH_METHOD, AUTH_METHOD_LABEL, ADMIN_SETTINGS_FORM, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../../utils.js'
+import { F_MODES, ADMIN_SETTINGS_FORM, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../../utils.js'
 import { saveAdminConfig } from '../../api/settings.js'
 import { messages, messagesFmt } from '../../constants/messages.js'
 import { appLinks } from '../../constants/links.js'
@@ -187,7 +187,7 @@ export default {
 			type: Object,
 			required: true,
 		},
-		form: {
+		formState: {
 			type: Object,
 			required: true,
 		},
@@ -209,8 +209,6 @@ export default {
 			formMode: F_MODES.NEW,
 			formId: ADMIN_SETTINGS_FORM.ssoSettings.id,
 			formOrder: ADMIN_SETTINGS_FORM.ssoSettings.order.toString(),
-			authMethodType: AUTH_METHOD,
-			authMethodLabel: AUTH_METHOD_LABEL,
 			ssoProviderType: SSO_PROVIDER_TYPE,
 			messages,
 			messagesFmt,
@@ -224,7 +222,7 @@ export default {
 	},
 	computed: {
 		showSettings() {
-			return this.form.authenticationMethod.complete
+			return this.formState.authenticationMethod.complete
 		},
 		isFormComplete() {
 			if (!this.savedForm.sso_provider_type) {
@@ -353,9 +351,9 @@ export default {
 		this.currentForm = JSON.parse(JSON.stringify(this.savedForm))
 	},
 	methods: {
-		markFormComplete(form) {
-			form.ssoSettings.complete = true
-			return form
+		markFormComplete(formState) {
+			formState.ssoSettings.complete = true
+			return formState
 		},
 		setFormMode(mode) {
 			this.formMode = mode

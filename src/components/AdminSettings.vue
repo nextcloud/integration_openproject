@@ -24,7 +24,7 @@
 		<FormSSOSettings
 			v-if="isOidcMethod"
 			:is-dark-theme="isDarkTheme"
-			:form="form"
+			:form-state="form"
 			:sso-settings="state.authorization_settings"
 			:sso-providers="state.oidc_providers"
 			:apps="state.apps"
@@ -389,16 +389,13 @@ export default {
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
-				authorizationMethod: F_MODES.DISABLE,
-				authorizationSetting: F_MODES.DISABLE,
-				SSOSettings: F_MODES.DISABLE,
 				opOauth: F_MODES.DISABLE,
 				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
 				projectFolderSetUp: F_MODES.DISABLE,
 			},
 			isFormCompleted: {
-				server: false, authorizationMethod: false, authorizationSetting: false, opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
+				opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
@@ -408,7 +405,6 @@ export default {
 			},
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
-			loadingAuthorizationSettingForm: false,
 			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			oPOAuthTokenRevokeStatus: null,
@@ -429,13 +425,6 @@ export default {
 			userSettingDescription: USER_SETTINGS,
 			SSO_PROVIDER_TYPE,
 			SSO_PROVIDER_LABEL,
-			authorizationSetting: {
-				oidcProviderSet: null,
-				currentOIDCProviderSelected: null,
-				currentTargetedAudienceClientIdSelected: null,
-				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
-				enableTokenExchange: false,
-			},
 			messages,
 			messagesFmt,
 			appLinks,
@@ -569,9 +558,6 @@ export default {
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		getUserOidcMinimumVersion() {
-			return this.state.user_oidc_minimum_version
-		},
 		isIntegrationCompleteWithOauth2() {
 			return (this.isServerHostFormComplete
 				&& this.isAuthorizationMethodFormComplete
@@ -605,20 +591,11 @@ export default {
 			return this.state.encryption_info.server_side_encryption_enabled
 				&& !this.state.encryption_info.encryption_enabled_for_groupfolders
 		},
-		getCurrentSelectedTargetedClientId() {
-			return this.state.authorization_settings.targeted_audience_client_id
-		},
-		getUserOidcAppName() {
-			return this.state.apps.user_oidc.name
-		},
 		getGroupfoldersAppName() {
 			return this.state.apps.groupfolders.name
 		},
 		getAdminAuditAppName() {
 			return this.state.admin_audit_app_name
-		},
-		getMinSupportedUserOidcVersion() {
-			return this.state.apps.user_oidc.minimum_version
 		},
 		hasEnabledSupportedGroupfoldersApp() {
 			return this.state.apps.groupfolders.enabled && this.state.apps.groupfolders.supported
@@ -663,65 +640,12 @@ export default {
 				) {
 					this.showDefaultManagedProjectFolders = true
 				}
-				// for oidc authorization
-				if (this.state.authorization_method === AUTH_METHOD.OIDC
-					&& this.state.openproject_instance_url
-					&& this.state.authorization_settings.oidc_provider
-					&& this.state.authorization_settings.targeted_audience_client_id
-				) {
-					this.showDefaultManagedProjectFolders = true
-				}
 				if (this.state.fresh_project_folder_setup === false) {
 					this.showDefaultManagedProjectFolders = true
-				}
-				if (this.state.authorization_method) {
-					this.formMode.authorizationMethod = F_MODES.VIEW
-					this.isFormCompleted.authorizationMethod = true
-				}
-				if (this.state.openproject_instance_url && this.state.authorization_method) {
-					if (this.state.authorization_method === AUTH_METHOD.OAUTH2) {
-						if (!this.state.openproject_client_id || !this.state.openproject_client_secret) {
-							this.formMode.authorizationSetting = F_MODES.EDIT
-						}
-					}
-					if (this.state.authorization_method === AUTH_METHOD.OIDC) {
-						if (!this.state.authorization_settings.oidc_provider || !this.state.authorization_settings.targeted_audience_client_id) {
-							this.formMode.authorizationSetting = F_MODES.EDIT
-							this.formMode.SSOSettings = F_MODES.NEW
-						}
-					}
-				}
-				if (this.state.authorization_method === AUTH_METHOD.OIDC && this.state.authorization_settings.sso_provider_type) {
-					if (this.state.authorization_settings.sso_provider_type === SSO_PROVIDER_TYPE.nextcloudHub) {
-						if (this.state.authorization_settings.targeted_audience_client_id) {
-							this.formMode.authorizationSetting = F_MODES.VIEW
-							this.formMode.SSOSettings = F_MODES.VIEW
-							this.isFormCompleted.authorizationSetting = true
-						}
-					} else if (this.state.authorization_settings.oidc_provider) {
-						if (this.state.authorization_settings.token_exchange) {
-							if (this.state.authorization_settings.targeted_audience_client_id) {
-								this.formMode.authorizationSetting = F_MODES.VIEW
-								this.formMode.SSOSettings = F_MODES.VIEW
-								this.isFormCompleted.authorizationSetting = true
-							}
-						} else {
-							this.formMode.authorizationSetting = F_MODES.VIEW
-							this.formMode.SSOSettings = F_MODES.VIEW
-							this.isFormCompleted.authorizationSetting = true
-						}
-					}
-					this.authorizationSetting.oidcProviderSet = this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
-					this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
-					this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
-					this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
 				}
 				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
 					this.formMode.opOauth = F_MODES.VIEW
 					this.isFormCompleted.opOauth = true
-				}
-				if (!this.state.authorization_method) {
-					this.formMode.authorizationMethod = F_MODES.EDIT
 				}
 				if (this.state.authorization_method) {
 					if (!this.state.openproject_client_id && !this.state.openproject_client_secret) {
@@ -742,7 +666,7 @@ export default {
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.projectFolderSetUp = true
 				}
-				if (this.formMode.ncOauth === F_MODES.VIEW || this.formMode.authorizationSetting === F_MODES.VIEW) {
+				if (this.formMode.ncOauth === F_MODES.VIEW || this.form.ssoSettings.complete) {
 					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.showDefaultManagedProjectFolders) {
@@ -765,9 +689,6 @@ export default {
 		},
 		nextSettings() {
 			this.currentSetting = this.settingsStepper.next().value
-		},
-		closeRequestModal() {
-			this.show = false
 		},
 		setProjectFolderSetUpToEditMode() {
 			this.formMode.projectFolderSetUp = F_MODES.EDIT
@@ -909,9 +830,7 @@ export default {
 
 			// reset form states to default
 			this.isFormCompleted.opOauth = false
-			this.isFormCompleted.server = false
 			this.formMode.opOauth = F_MODES.EDIT
-			this.formMode.SSOSettings = F_MODES.NEW
 
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
@@ -923,7 +842,6 @@ export default {
 			// if the authorization method is "oidc"
 			if (authMethod === AUTH_METHOD.OIDC) {
 				this.state.authorization_settings.targeted_audience_client_id = null
-				this.authorizationSetting.currentOIDCProviderSelected = null
 			}
 			await this.saveOPOptions()
 			window.location.reload()
