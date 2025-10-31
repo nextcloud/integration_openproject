@@ -408,7 +408,6 @@ export default {
 			},
 			loadingProjectFolderSetup: false,
 			loadingOPOauthForm: false,
-			loadingAuthorizationMethodForm: false,
 			loadingAuthorizationSettingForm: false,
 			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
@@ -437,7 +436,6 @@ export default {
 				SSOProviderType: SSO_PROVIDER_TYPE.nextcloudHub,
 				enableTokenExchange: false,
 			},
-			registeredOidcProviders: [],
 			messages,
 			messagesFmt,
 			appLinks,
@@ -470,10 +468,10 @@ export default {
 			return this.form.serverHost.complete
 		},
 		isAuthorizationMethodFormComplete() {
-			return this.isFormCompleted.authorizationMethod
+			return this.form.authenticationMethod.complete
 		},
 		isAuthorizationSettingFormComplete() {
-			return this.isFormCompleted.authorizationSetting
+			return this.form.ssoSettings.complete
 		},
 		isOPOAuthFormComplete() {
 			return this.isFormCompleted.opOauth
@@ -487,9 +485,6 @@ export default {
 		isNcOAuthFormComplete() {
 			return this.isFormCompleted.ncOauth
 		},
-		isAuthorizationSettingsInViewMode() {
-			return this.formMode.authorizationSetting === F_MODES.VIEW
-		},
 		isOPOAuthFormInView() {
 			return this.formMode.opOauth === F_MODES.VIEW
 		},
@@ -499,9 +494,6 @@ export default {
 		isOPOAuthFormInDisableMode() {
 			return this.formMode.opOauth === F_MODES.DISABLE
 		},
-		isAuthorizationSettingFormInDisabledMode() {
-			return this.formMode.authorizationSetting === F_MODES.DISABLE
-		},
 		isOPUserAppPasswordFormInEdit() {
 			return this.formMode.opUserAppPassword === F_MODES.EDIT
 		},
@@ -510,12 +502,6 @@ export default {
 		},
 		isProjectFolderSetupFormInDisableMode() {
 			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
-		},
-		isAuthorizationSettingInEditMode() {
-			return this.formMode.authorizationSetting === F_MODES.EDIT
-		},
-		isSSOSettingsInEditMode() {
-			return this.formMode.SSOSettings === F_MODES.EDIT
 		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
@@ -619,44 +605,11 @@ export default {
 			return this.state.encryption_info.server_side_encryption_enabled
 				&& !this.state.encryption_info.encryption_enabled_for_groupfolders
 		},
-		disableSaveSSOSettings() {
-			const { currentOIDCProviderSelected, SSOProviderType, enableTokenExchange } = this.authorizationSetting
-			if (SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
-				const typeChanged = SSOProviderType !== this.state.authorization_settings.sso_provider_type
-				const hasClientId = !!this.authorizationSetting.currentTargetedAudienceClientIdSelected || !!this.getCurrentSelectedTargetedClientId
-				const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
-				if (hasClientId) {
-					return !typeChanged && !clientIdChanged
-				}
-				return !hasClientId
-			}
-
-			const formValueChanged = currentOIDCProviderSelected !== this.state.authorization_settings.oidc_provider
-				|| enableTokenExchange !== this.state.authorization_settings.token_exchange
-
-			if (!enableTokenExchange) {
-				return currentOIDCProviderSelected === null || !formValueChanged
-			}
-
-			const clientIdChanged = this.authorizationSetting.currentTargetedAudienceClientIdSelected !== this.getCurrentSelectedTargetedClientId
-			return this.authorizationSetting.currentTargetedAudienceClientIdSelected === null
-				|| !this.authorizationSetting.currentTargetedAudienceClientIdSelected
-				|| (!formValueChanged && !clientIdChanged)
-		},
-		getCurrentSelectedOIDCProvider() {
-			return this.authorizationSetting.currentOIDCProviderSelected
-		},
 		getCurrentSelectedTargetedClientId() {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
-		getSSOProviderType() {
-			return this.authorizationSetting.SSOProviderType
-		},
 		getUserOidcAppName() {
 			return this.state.apps.user_oidc.name
-		},
-		getOidcAppName() {
-			return this.state.apps.oidc.name
 		},
 		getGroupfoldersAppName() {
 			return this.state.apps.groupfolders.name
@@ -664,17 +617,8 @@ export default {
 		getAdminAuditAppName() {
 			return this.state.admin_audit_app_name
 		},
-		hasEnabledSupportedUserOidcApp() {
-			return this.state.apps.user_oidc.enabled && this.state.apps.user_oidc.supported
-		},
 		getMinSupportedUserOidcVersion() {
 			return this.state.apps.user_oidc.minimum_version
-		},
-		hasEnabledSupportedOIDCApp() {
-			return this.state.apps.oidc.enabled && this.state.apps.oidc.supported
-		},
-		getMinSupportedOidcVersion() {
-			return this.state.apps.oidc.minimum_version
 		},
 		hasEnabledSupportedGroupfoldersApp() {
 			return this.state.apps.groupfolders.enabled && this.state.apps.groupfolders.supported
@@ -682,51 +626,13 @@ export default {
 		getMinSupportedGroupfoldersVersion() {
 			return this.state.apps.groupfolders.minimum_version
 		},
-		isExternalSSOProvider() {
-			return this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.external
-		},
-		hasOidcAppErrorWithNextcloudHub() {
-			return !this.hasEnabledSupportedOIDCApp && this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub
-		},
 		showGroupfoldersAppError() {
 			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderSetupFormInDisableMode
-		},
-		disableNCHubUnsupportedHint() {
-			if (!this.hasEnabledSupportedOIDCApp) {
-				if (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW) {
-					return true
-				} else if (this.isExternalSSOProvider) {
-					return true
-				}
-			}
-			return false
-		},
-		showClientIDField() {
-			if (this.authorizationSetting.SSOProviderType === SSO_PROVIDER_TYPE.nextcloudHub) {
-				return true
-			}
-			return this.authorizationSetting.enableTokenExchange
-		},
-	},
-	watch: {
-		'authorizationSetting.SSOProviderType'() {
-			if (this.isExternalSSOProvider && this.state.authorization_settings.sso_provider_type !== this.SSO_PROVIDER_TYPE.external) {
-				this.authorizationSetting.currentOIDCProviderSelected = null
-			}
-		},
-		'form.authenticationMethod.complete'() {
-			if (this.form.authenticationMethod.complete && this.formMode.authorizationSetting === F_MODES.DISABLE) {
-				this.formMode.authorizationSetting = F_MODES.EDIT
-			}
 		},
 	},
 	created() {
 		this.currentSetting = this.settingsStepper.next().value
-
 		this.init()
-		if (!this.hasEnabledSupportedOIDCApp && (this.formMode.SSOSettings === F_MODES.DISABLE || this.formMode.SSOSettings === F_MODES.NEW)) {
-			this.authorizationSetting.SSOProviderType = SSO_PROVIDER_TYPE.external
-		}
 	},
 	mounted() {
 		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
@@ -851,10 +757,6 @@ export default {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
-
-				if (this.state.oidc_providers) {
-					this.registeredOidcProviders = this.state.oidc_providers
-				}
 			}
 		},
 		markFormComplete(formFn) {
@@ -866,20 +768,6 @@ export default {
 		},
 		closeRequestModal() {
 			this.show = false
-		},
-		setAuthorizationSettingToViewMode() {
-			this.formMode.authorizationSetting = F_MODES.VIEW
-			this.formMode.SSOSettings = F_MODES.VIEW
-			this.isFormCompleted.authorizationSetting = true
-			this.authorizationSetting.SSOProviderType = this.state.authorization_settings.sso_provider_type
-			this.authorizationSetting.currentOIDCProviderSelected = this.state.authorization_settings.oidc_provider
-			this.authorizationSetting.enableTokenExchange = this.state.authorization_settings.token_exchange
-			this.authorizationSetting.currentTargetedAudienceClientIdSelected = this.state.authorization_settings.targeted_audience_client_id
-		},
-		setAuthorizationSettingInEditMode() {
-			this.formMode.authorizationSetting = F_MODES.EDIT
-			this.formMode.SSOSettings = F_MODES.EDIT
-			this.isFormCompleted.authorizationSetting = false
 		},
 		setProjectFolderSetUpToEditMode() {
 			this.formMode.projectFolderSetUp = F_MODES.EDIT
@@ -965,35 +853,6 @@ export default {
 					this.createNCOAuthClient()
 				}
 			}
-		},
-		async saveOIDCAuthSetting() {
-			this.isFormStep = FORM.AUTHORIZATION_SETTING
-			this.loadingAuthorizationMethodForm = true
-
-			if (this.authorizationSetting.SSOProviderType === this.SSO_PROVIDER_TYPE.nextcloudHub) {
-				this.authorizationSetting.oidcProviderSet = this.SSO_PROVIDER_LABEL.nextcloudHub
-				this.authorizationSetting.currentOIDCProviderSelected = this.SSO_PROVIDER_LABEL.nextcloudHub
-			} else {
-				this.authorizationSetting.oidcProviderSet = this.getCurrentSelectedOIDCProvider
-			}
-
-			const success = await this.saveOPOptions()
-			if (success) {
-				this.formMode.authorizationSetting = F_MODES.VIEW
-				this.formMode.SSOSettings = F_MODES.VIEW
-				this.isFormCompleted.authorizationSetting = true
-				if (!this.isIntegrationCompleteWithOIDC && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
-					this.formMode.projectFolderSetUp = F_MODES.EDIT
-					this.showDefaultManagedProjectFolders = true
-					this.isProjectFolderSwitchEnabled = true
-					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
-				}
-				this.state.authorization_settings.sso_provider_type = this.authorizationSetting.SSOProviderType
-				this.state.authorization_settings.oidc_provider = this.authorizationSetting.currentOIDCProviderSelected
-				this.state.authorization_settings.token_exchange = this.authorizationSetting.enableTokenExchange
-				this.state.authorization_settings.targeted_audience_client_id = this.authorizationSetting.currentTargetedAudienceClientIdSelected
-			}
-			this.loadingAuthorizationMethodForm = false
 		},
 		resetOPOAuthClientValues() {
 			OC.dialogs.confirmDestructive(
@@ -1091,22 +950,6 @@ export default {
 					sso_provider_type: null,
 					token_exchange: null,
 
-				}
-			} else if (this.isFormStep === FORM.AUTHORIZATION_SETTING) {
-				values = {
-					oidc_provider: this.getCurrentSelectedOIDCProvider,
-					targeted_audience_client_id: this.authorizationSetting.currentTargetedAudienceClientIdSelected,
-					sso_provider_type: this.authorizationSetting.SSOProviderType,
-					token_exchange: this.authorizationSetting.enableTokenExchange,
-				}
-			} else if (this.isFormStep === FORM.AUTHORIZATION_METHOD) {
-				values = {
-					...values,
-					authorization_method: this.state.authorization_method,
-					oidc_provider: this.isIntegrationCompleteWithOIDC ? this.getCurrentSelectedOIDCProvider : null,
-					targeted_audience_client_id: this.isIntegrationCompleteWithOIDC ? this.authorizationSetting.currentTargetedAudienceClientIdSelected : null,
-					sso_provider_type: this.authorizationSetting.SSOProviderType,
-					token_exchange: this.authorizationSetting.enableTokenExchange,
 				}
 			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
 				if (!this.isProjectFolderSwitchEnabled) {
@@ -1284,9 +1127,6 @@ export default {
 					+ ': ' + error.response.request.responseText,
 				)
 			})
-		},
-		onSelectOIDCProvider(selectedOption) {
-			this.authorizationSetting.currentOIDCProviderSelected = selectedOption
 		},
 	},
 }

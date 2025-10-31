@@ -343,7 +343,10 @@ export default {
 	created() {
 		this.savedForm = JSON.parse(JSON.stringify(this.ssoSettings))
 		// set the default type if not set
-		if (!this.savedForm.sso_provider_type) {
+		if (!this.hasEnabledSupportedOIDCApp && (this.formMode === F_MODES.DISABLE || this.formMode === F_MODES.NEW || !this.savedForm.sso_provider_type)) {
+			this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.external
+			this.savedForm.oidc_provider = null
+		} else if (!this.savedForm.sso_provider_type) {
 			this.savedForm.sso_provider_type = SSO_PROVIDER_TYPE.nextcloudHub
 			this.savedForm.oidc_provider = SSO_PROVIDER_LABEL.nextcloudHub
 		}
