@@ -118,8 +118,8 @@ export default {
 			type: Object,
 			required: true,
 		},
-		currentSetting: {
-			type: String,
+		formState: {
+			type: Object,
 			required: true,
 		},
 		isDarkTheme: {
@@ -150,7 +150,7 @@ export default {
 	},
 	computed: {
 		showSettings() {
-			return this.currentSetting === this.formId || !!this.isFormComplete
+			return this.formState.serverHost.complete || !!this.isFormComplete
 		},
 		isFormComplete() {
 			return !!this.savedAuthMethod
