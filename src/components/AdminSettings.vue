@@ -156,7 +156,7 @@
 				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
-				:is-disabled="isProjectFolderSetUpInDisableMode"
+				:is-disabled="isProjectFolderFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
 				v-if="showGroupfoldersAppError"
@@ -489,14 +489,11 @@ export default {
 		isProjectFolderSetupFormInEdit() {
 			return this.formMode.projectFolderSetUp === F_MODES.EDIT
 		},
-		isProjectFolderSetupFormInDisableMode() {
+		isProjectFolderFormInDisableMode() {
 			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
 		},
 		isNcOAuthFormInDisableMode() {
 			return this.formMode.ncOauth === F_MODES.DISABLE
-		},
-		isProjectFolderSetUpInDisableMode() {
-			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
 		},
 		isOPUserAppPasswordInDisableMode() {
 			return this.formMode.opUserAppPassword === F_MODES.DISABLE
@@ -604,7 +601,17 @@ export default {
 			return this.state.apps.groupfolders.minimum_version
 		},
 		showGroupfoldersAppError() {
-			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderSetupFormInDisableMode
+			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
+		},
+	},
+	watch: {
+		'form.ssoSettings.complete'() {
+			if (this.form.ssoSettings.complete && !this.state.authorization_settings.sso_provider_type) {
+				this.formMode.projectFolderSetUp = F_MODES.EDIT
+				this.showDefaultManagedProjectFolders = true
+				this.isProjectFolderSwitchEnabled = true
+				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
+			}
 		},
 	},
 	created() {
@@ -626,7 +633,7 @@ export default {
 						this.isProjectFolderAlreadySetup = true
 					}
 				}
-				if (this.state.fresh_project_folder_setup === true && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
+				if (this.state.fresh_project_folder_setup === true && this.isProjectFolderFormInDisableMode) {
 					this.currentProjectFolderState = true
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 				} else {
