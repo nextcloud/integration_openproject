@@ -13,13 +13,12 @@
 		<FormOpenProjectHost
 			:is-dark-theme="isDarkTheme"
 			:openproject-url="state.openproject_instance_url"
-			:current-setting="currentSetting"
 			@formcomplete="markFormComplete" />
 		<FormAuthMethod
 			:is-dark-theme="isDarkTheme"
 			:auth-method="state.authorization_method"
 			:apps="state.apps"
-			:current-setting="currentSetting"
+			:form-state="form"
 			@formcomplete="markFormComplete" />
 		<FormSSOSettings
 			v-if="isOidcMethod"
@@ -350,7 +349,7 @@ import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM, settingsFlowGenerator } from '../utils.js'
+import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
@@ -384,8 +383,6 @@ export default {
 	data() {
 		return {
 			form: JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM)),
-			currentSetting: null,
-			settingsStepper: settingsFlowGenerator(),
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
@@ -606,7 +603,7 @@ export default {
 	},
 	watch: {
 		'form.ssoSettings.complete'() {
-			if (this.form.ssoSettings.complete && !this.state.authorization_settings.sso_provider_type) {
+			if (this.form.ssoSettings.complete && (!this.state.authorization_settings.sso_provider_type || this.formMode.projectFolderSetUp === F_MODES.DISABLE)) {
 				this.formMode.projectFolderSetUp = F_MODES.EDIT
 				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
@@ -615,7 +612,6 @@ export default {
 		},
 	},
 	created() {
-		this.currentSetting = this.settingsStepper.next().value
 		this.init()
 	},
 	mounted() {
@@ -692,10 +688,6 @@ export default {
 		},
 		markFormComplete(formFn) {
 			formFn(this.form)
-			this.nextSettings()
-		},
-		nextSettings() {
-			this.currentSetting = this.settingsStepper.next().value
 		},
 		setProjectFolderSetUpToEditMode() {
 			this.formMode.projectFolderSetUp = F_MODES.EDIT
