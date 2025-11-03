@@ -414,7 +414,7 @@ describe('Component: FormOpenProjectHost', () => {
 	})
 })
 
-function getWrapper(data = {}, props = { currentSetting: ADMIN_SETTINGS_FORM.serverHost.id }) {
+function getWrapper(data = {}, props = { }) {
 	return shallowMount(FormOpenProjectHost, {
 		localVue,
 		mocks: {

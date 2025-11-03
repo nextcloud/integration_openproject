@@ -48,7 +48,7 @@ const selectors = {
 }
 
 const defaultProps = {
-	currentSetting: ADMIN_SETTINGS_FORM.authenticationMethod.id,
+	formState: JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM)),
 	apps: {
 		user_oidc: {
 			enabled: true,
@@ -71,11 +71,8 @@ describe('Component: FormAuthMethod', () => {
 			wrapper = getWrapper()
 		})
 
-		describe('current setting: other form', () => {
+		describe('server url not set', () => {
 			it('should show form heading with disabled status', async () => {
-				await wrapper.setProps({
-					currentSetting: ADMIN_SETTINGS_FORM.serverHost.id,
-				})
 				expect(wrapper.find(selectors.formheading).attributes().isdisabled).toBe('true')
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(false)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(false)
@@ -87,6 +84,11 @@ describe('Component: FormAuthMethod', () => {
 		})
 
 		describe('current setting: authentication-method', () => {
+			beforeEach(async () => {
+				const formState = JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM))
+				formState.serverHost.complete = true
+				wrapper = getWrapper({ props: { formState } })
+			})
 			it('should show the required form fields', async () => {
 				expect(wrapper.find(selectors.oauthRadioBox).exists()).toBe(true)
 				expect(wrapper.find(selectors.ssoRadioBox).exists()).toBe(true)
@@ -179,6 +181,11 @@ describe('Component: FormAuthMethod', () => {
 		})
 
 		describe('disabled user_oidc app', () => {
+			beforeEach(async () => {
+				const formState = JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM))
+				formState.serverHost.complete = true
+				wrapper = getWrapper({ props: { formState } })
+			})
 			it('should show disabled error message and disabled sso button', async () => {
 				await wrapper.setProps({
 					apps: {
@@ -205,6 +212,11 @@ describe('Component: FormAuthMethod', () => {
 		})
 
 		describe('unsupported user_oidc app', () => {
+			beforeEach(async () => {
+				const formState = JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM))
+				formState.serverHost.complete = true
+				wrapper = getWrapper({ props: { formState } })
+			})
 			it('should show disabled error message and disabled sso button', async () => {
 				await wrapper.setProps({
 					apps: {
@@ -235,9 +247,10 @@ describe('Component: FormAuthMethod', () => {
 		let wrapper
 
 		beforeEach(() => {
-			wrapper = getWrapper({ props: { authMethod: AUTH_METHOD.OIDC } })
+			const formState = JSON.parse(JSON.stringify(ADMIN_SETTINGS_FORM))
+			formState.serverHost.complete = true
+			wrapper = getWrapper({ props: { formState, authMethod: AUTH_METHOD.OIDC } })
 		})
-
 		it('should show set form label in view mode', () => {
 			expect(wrapper.find(selectors.formViewModeLabel).exists()).toBe(true)
 			expect(wrapper.find(selectors.editFormButton).exists()).toBe(true)
