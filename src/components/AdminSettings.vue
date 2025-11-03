@@ -1126,54 +1126,5 @@ export default {
 		color: #1a67a3 !important;
 		font-style: normal;
 	}
-	.authorization-method {
-		&--description {
-			font-size: 14px;
-			.title {
-				font-weight: 700;
-			}
-			.description {
-				margin-top: 0.1rem;
-			}
-		}
-		&--options {
-			margin-top: 1rem;
-			.radio-check {
-				font-weight: 500;
-			}
-		}
-	}
-	.authorization-settings {
-		&--content {
-			max-width: 550px;
-			&--label {
-				font-weight: 700;
-				font-size: .875rem;
-				color: var(--color-primary-text)
-			}
-			&--section {
-				margin-top: 0.7rem;
-			}
-		}
-		.description {
-			margin-top: 0.1rem;
-		}
-	}
-	.error-container {
-		margin-left: 2.4rem;
-		font-size: 14px;
-	}
-}
-
-[data-theme-light] {
-	#openproject_prefs {
-		.authorization-settings {
-			&--content {
-				&--label {
-					color: var(--color-main-text)
-				}
-			}
-		}
-	}
 }
 </style>

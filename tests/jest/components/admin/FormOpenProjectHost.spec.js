@@ -9,7 +9,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 
-import { ADMIN_SETTINGS_FORM, F_MODES } from '../../../../src/utils.js'
+import { F_MODES } from '../../../../src/utils.js'
 import { validateOPInstance, saveAdminConfig } from '../../../../src/api/settings.js'
 import FormOpenProjectHost from '../../../../src/components/admin/FormOpenProjectHost.vue'
 

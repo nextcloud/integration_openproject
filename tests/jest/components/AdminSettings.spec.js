@@ -320,51 +320,6 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('documentation link when OAUTH2 authorization', () => {
-		it.each([
-			[
-				'with all empty state',
-				{
-					openproject_instance_url: null,
-					authorization_method: null,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: null,
-				},
-			],
-			[
-				'with incomplete OpenProject OAuth and NC OAuth values',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: null,
-				},
-			],
-			[
-				'with incomplete NC OAuth values',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'client-id-here',
-					openproject_client_secret: 'client-secret-here',
-					nc_oauth_client: null,
-				},
-			],
-		])('should be visible %s', (name, state) => {
-			const wrapper = getMountedWrapper({ state })
-			const setupIntegrationDocumentationLink = wrapper.find(selectors.setupIntegrationDocumentationLinkSelector)
-			expect(setupIntegrationDocumentationLink.text()).toBe('Visit our documentation for in-depth information on {htmlLink} integration.')
-		})
-
-		it('should be visible when integration is completed', () => {
-			const wrapper = getMountedWrapper({ state: completeOAUTH2IntegrationState })
-			const setupIntegrationDocumentationLink = wrapper.find(selectors.setupIntegrationDocumentationLinkSelector)
-			expect(setupIntegrationDocumentationLink.text()).toBe('Visit our documentation for in-depth information on {htmlLink} integration.')
-		})
-	})
-
 	describe('OpenProject OAuth values form', () => {
 		describe('view mode and completed state', () => {
 			let wrapper, opOAuthForm, resetButton

@@ -1,0 +1,1593 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub change to external provider should reset the changes on cancel 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub change to external provider should set settings on save 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="keycloak" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id-new" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub change to external provider should show external provider form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub disabled oidc app should be able to select external provider 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="keycloak" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id-new" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub disabled oidc app should preserve the errors on cancel 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" haserror="true" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub should enable "save" button if client-id is changed 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub should reset the changes on cancel 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub should set sso settings on save 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id-new" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode Nextcloud Hub should show the form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider change to Nextcloud Hub should show form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider disabled oidc app should not show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub" disabled="true">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="keycloak" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider should reset the changes on cancel 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="keycloak" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider should set sso settings on save 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="new-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider should show the form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="keycloak" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider token exchange enabled should set sso settings on save 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="new-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings" class="">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: edit mode external provider token exchange enabled should show the form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="keycloak" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="cancel-sso-settings-edit" class="mr-2">
+        Cancel
+      </ncbutton-stub>
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings" disabled="true">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state disabled user_oidc app should show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state oidc app disabled app - Nextcloud Hub settings should show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state oidc app disabled app - external provider settings should not show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="some-oidc-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state oidc app unsupported app - Nextcloud Hub settings should show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state oidc app unsupported app - external provider settings should not show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="some-oidc-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode apps state unsupported user_oidc app should show error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="some-oidc-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode with supported apps enabled should show the settings in view mode - complete Nextcloud Hub 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode with supported apps enabled should show the settings in view mode - complete external provider with token exchange 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="some-oidc-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings complete form: view mode with supported apps enabled should show the settings in view mode - complete external provider without token exchange 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="some-oidc-provider" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state disabled oidc app should not show error card when preceding form is not complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" isdisabled="true"></formheading-stub>
+  <!---->
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state disabled oidc app should show disabled error label but not error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub" disabled="true">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state disabled user_oidc app should not show error card when preceding form is not complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" isdisabled="true" haserror="true"></formheading-stub>
+  <!---->
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state disabled user_oidc app should show error card with disabled form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub" disabled="true">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external" disabled="true">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" disabled="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state unsupported oidc app should not show error card when preceding form is not complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" isdisabled="true"></formheading-stub>
+  <!---->
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state unsupported oidc app should show disabled error label but not error card 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub" disabled="true">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <errorlabel-stub error="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." disabled="true"></errorlabel-stub>
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state unsupported user_oidc app should not show error card when preceding form is not complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" isdisabled="true" haserror="true"></formheading-stub>
+  <!---->
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode apps state unsupported user_oidc app should show error card with disabled form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" haserror="true"></formheading-stub>
+  <div class="sso-settings">
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/user_oidc" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub" disabled="true">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external" disabled="true">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" disabled="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled external SSO provider should enable "Save" button if the form is complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom" value="keycloak"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled external SSO provider when token change is enabled should enable "Save" button if the form is complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom" value="keycloak"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled external SSO provider when token change is enabled should show client-id field 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled save button Nextcloud Hub should set sso settings on save 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="nextcloud_hub" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <!---->
+      <!---->
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled save button external SSO Provider should set sso settings on save: with token exchange 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="keycloak" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="true" class="pb-1"></fieldvalue-stub>
+      <div>
+        <fieldvalue-stub title="OpenProject client ID" value="op-client-id" isrequired="true" class="pb-1"></fieldvalue-stub>
+      </div>
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled save button external SSO Provider should set sso settings on save: without token exchange 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" iscomplete="true"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <fieldvalue-stub title="OIDC Provider Type" value="external" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="OIDC Provider" value="keycloak" isrequired="true" class="pb-1"></fieldvalue-stub>
+      <fieldvalue-stub title="Enable token exchange" value="false" class="pb-1"></fieldvalue-stub>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-sso-settings">
+        Edit authentication settings
+      </ncbutton-stub>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled should enable "Save" button if the form is complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled should hide form fields when preceding form is not complete 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings" isdisabled="true"></formheading-stub>
+  <!---->
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled should show form fields without errors 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled should show form related to selected provider type 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings new form: edit mode with supported apps enabled should show form related to selected provider type 2`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings partially complete form Nextcloud Hub - should show form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings partially complete form external token exchange and without client-id - should show form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="keycloak" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings partially complete form external token exchange and without provider - should show form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings partially complete form external without provider - should show form fields 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="external" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <div class="sso-settings--content--section sso-provider">
+        <p class="sso-settings--content--label">
+          Select a provider *
+        </p>
+        <ncselect-stub value="" components="[object Object]" options="keycloak" clearable="true" searchable="true" placeholder="Select an OIDC provider" transition="vs__fade" clearsearchonselect="true" closeonselect="true" arialabellistbox="Options" arialabelclearselected="Clear selected" arialabeldeselectoption="[Function]" autocomplete="off" reduce="[Function]" selectable="[Function]" getoptionlabel="[Function]" getoptionkey="[Function]" ontab="[Function]" filterable="true" filter="[Function]" createoption="[Function]" resetfocusonoptionschange="true" clearsearchonblur="[Function]" inputid="provider-search-input" dir="auto" selectonkeycodes="13" searchinputqueryselector="[type=search]" mapkeydown="[Function]" dropdownshouldopen="[Function]" keyboardfocusborder="true" uid="__UID__" autoscroll="true" inputlabel="OIDC provider" labeloutside="true" placement="bottom"></ncselect-stub>
+        <p class="description">You can configure OIDC providers in the {settingsLink}</p>
+      </div>
+      <div class="sso-settings--content--section sso-token-exchange">
+        <p class="sso-settings--content--label">
+          Token Exchange
+        </p>
+        <p class="description">
+          When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no"><b>Enable token exchange</b></nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`Component: FormSSOSettings save failure should show error message on save failure 1`] = `
+"<div class="sso-settings">
+  <formheading-stub index="3" title="Authentication settings"></formheading-stub>
+  <div class="sso-settings">
+    <!---->
+    <div class="sso-settings--content">
+      <div class="sso-settings--content--section sso-provider-type">
+        <p class="sso-settings--content--label">
+          OIDC Provider Type *
+        </p>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="nextcloud_hub">
+          Nextcloud Hub
+        </nccheckboxradioswitch-stub>
+        <div class="info-container">
+          <!---->
+        </div>
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="radio" buttonvariantgrouped="no" checked="nextcloud_hub" value="external">
+          External Provider
+        </nccheckboxradioswitch-stub>
+      </div>
+      <!---->
+      <!---->
+      <div>
+        <div class="sso-settings--content--section sso-client-id">
+          <textinput-stub value="op-client-id" type="text" placeholder="OpenProject client ID" label="OpenProject client ID" hinttext="You can get this value from your identity provider when you configure the client" isrequired="true" id="__ID__" class="py-1"></textinput-stub>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <!---->
+      <!---->
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="save-sso-settings">
+        Save
+      </ncbutton-stub>
+    </div>
+  </div>
+</div>"
+`;
