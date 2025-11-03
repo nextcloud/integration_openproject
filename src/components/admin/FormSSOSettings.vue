@@ -8,11 +8,11 @@
 		<FormHeading
 			:index="formOrder"
 			:title="t('integration_openproject', 'Authentication settings')"
-			:is-complete="isFormComplete"
+			:is-complete="markHeadingAsComplete"
 			:is-disabled="!showSettings"
 			:is-dark-theme="isDarkTheme"
 			:has-error="!hasEnabledSupportedUserOidcApp || showOidcAppError" />
-		<div v-if="showSettings" class="sso-settings authorization-settings">
+		<div v-if="showSettings" class="sso-settings">
 			<ErrorNote
 				v-if="!hasEnabledSupportedUserOidcApp"
 				:error-title="messagesFmt.appNotEnabledOrUnsupported(getUserOidcAppName, getMinSupportedUserOidcVersion)"
@@ -23,14 +23,14 @@
 				:error-title="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
 				:error-link="appLinks.oidc.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
-			<div class="authorization-settings--content">
+			<div class="sso-settings--content">
 				<FieldValue v-if="isViewMode"
 					is-required
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider Type')"
 					:value="savedForm.sso_provider_type" />
-				<div v-else class="authorization-settings--content--section sso-provider-type">
-					<p class="authorization-settings--content--label">
+				<div v-else class="sso-settings--content--section sso-provider-type">
+					<p class="sso-settings--content--label">
 						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
 					<NcCheckboxRadioSwitch
@@ -40,7 +40,7 @@
 						type="radio">
 						{{ messages.nextcloudHubProvider }}
 					</NcCheckboxRadioSwitch>
-					<div class="error-container">
+					<div class="info-container">
 						<ErrorLabel
 							v-if="!hasEnabledSupportedOIDCApp"
 							:error="messagesFmt.appNotEnabledOrUnsupported(getOidcAppName, getMinSupportedOidcVersion)"
@@ -59,8 +59,8 @@
 					class="pb-1"
 					:title="t('integration_openproject', 'OIDC Provider')"
 					:value="savedForm.oidc_provider" />
-				<div v-else-if="isExternalSSOSelected" class="authorization-settings--content--section sso-provider">
-					<p class="authorization-settings--content--label">
+				<div v-else-if="isExternalSSOSelected" class="sso-settings--content--section sso-provider">
+					<p class="sso-settings--content--label">
 						{{ t('integration_openproject', 'Select a provider *') }}
 					</p>
 					<NcSelect
@@ -82,8 +82,8 @@
 					class="pb-1"
 					:title="messages.enableTokenExchange"
 					:value="savedForm.token_exchange ? 'true' : 'false'" />
-				<div v-else-if="isExternalSSOSelected" class="authorization-settings--content--section sso-token-exchange">
-					<p class="authorization-settings--content--label">
+				<div v-else-if="isExternalSSOSelected" class="sso-settings--content--section sso-token-exchange">
+					<p class="sso-settings--content--label">
 						{{ messages.tokenExchangeFormLabel }}
 					</p>
 					<p class="description">
@@ -92,7 +92,7 @@
 					<NcCheckboxRadioSwitch
 						type="switch"
 						:checked.sync="currentForm.token_exchange">
-						<b>{{ messages.token_exchange }}</b>
+						<b>{{ messages.enableTokenExchange }}</b>
 					</NcCheckboxRadioSwitch>
 				</div>
 				<div v-if="showClientIDField">
@@ -101,9 +101,9 @@
 						class="pb-1"
 						:title="messages.opClientId"
 						:value="savedForm.targeted_audience_client_id" />
-					<div v-else class="authorization-settings--content--section sso-client-id">
+					<div v-else class="sso-settings--content--section sso-client-id">
 						<TextInput
-							id="authorization-method-target-client-id"
+							id="sso-method-target-client-id"
 							v-model="currentForm.targeted_audience_client_id"
 							class="py-1"
 							is-required
@@ -224,6 +224,9 @@ export default {
 		showSettings() {
 			return this.formState.authenticationMethod.complete
 		},
+		markHeadingAsComplete() {
+			return this.isFormComplete && this.isViewMode
+		},
 		isFormComplete() {
 			if (!this.savedForm.sso_provider_type) {
 				return false
@@ -311,11 +314,11 @@ export default {
 				|| this.currentForm.token_exchange !== this.savedForm.token_exchange
 
 			if (!this.currentForm.token_exchange) {
-				return this.currentForm.oidc_provider === null || !formValueChanged
+				return !this.currentForm.oidc_provider || !formValueChanged
 			}
 
 			const clientIdChanged = this.currentForm.targeted_audience_client_id !== this.savedForm.targeted_audience_client_id
-			return !this.currentForm.targeted_audience_client_id || (!formValueChanged && !clientIdChanged)
+			return !this.currentForm.oidc_provider || !this.currentForm.targeted_audience_client_id || (!formValueChanged && !clientIdChanged)
 		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'OpenID Connect settings')
@@ -407,46 +410,50 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.auth-method {
-	&--hint {
-		font-size: 14px;
-		.title {
-			font-weight: 700;
-		}
-		.description {
-			margin-top: 0.1rem;
-		}
-	}
-	&--options {
-		margin-top: 1rem;
-		.radio-check {
-			font-weight: 500;
-		}
-		.info-container {
-			margin-left: 2.4rem;
-			font-size: 14px;
-		}
-	}
-	.form-actions {
-		display: flex;
-		align-items: center;
-		padding: 15px 0;
-	}
+.pb-1 {
+	padding-bottom: .5rem;
+}
+
+.py-1 {
+	padding: .3rem 0;
 }
 
 .mr-2 {
 	margin-right: .5rem;
 }
-</style>
 
-<!-- Test cases
-- switch to external from nextcloud hub option (DO NOT SET), form validation, enabled save, cleared unused fields, provider changed
-- switch to nextcloud hub from external option (DO NOT SET), form validation, enabled save, cleared unused fields, provider empty
-- check client-id field:
-	- first setup:
-		- NC hub
-		- change to external with/without token exchange
-	- edit setup:
-		- NC hub
-		- change to external with/without token exchange
--->
+.sso-settings {
+	width: 100%;
+	&--content {
+		max-width: 550px;
+		&--label {
+			font-weight: 700;
+			font-size: .875rem;
+			color: var(--color-primary-text)
+		}
+		&--section {
+			margin-top: 0.7rem;
+		}
+	}
+	.sso-provider div {
+		width: 100%;
+	}
+	.description {
+		margin-top: 0.1rem;
+	}
+	.info-container {
+		margin-left: 2.4rem;
+		font-size: 14px;
+	}
+}
+
+[data-theme-light] {
+	.sso-settings {
+		&--content {
+			&--label {
+				color: var(--color-main-text)
+			}
+		}
+	}
+}
+</style>
