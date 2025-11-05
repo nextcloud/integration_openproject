@@ -247,7 +247,7 @@ ncCheckAppVersion() {
   app_name=$1
   app_version=$2
 
-  # assign app_miniimum version
+  # assign app_minimum version
   if [ -n "$app_version" ]; then
     app_min_version=$app_version
   elif [ $app_name = 'user_oidc' ]; then
