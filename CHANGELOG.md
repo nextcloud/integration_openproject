@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-## 2.10.1 - 2025-10-08
+## 2.10.1 - 2025-11-05
 
 ### Added
 - Support Nextcloud 32 [#901](https://github.com/nextcloud/integration_openproject/pull/901)
