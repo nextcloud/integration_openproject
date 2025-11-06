@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# helper functions
+log_error() {
+  echo -e "\e[31m$1\e[0m"
+}
+
+log_info() {
+  echo -e "\e[37m$1\e[0m"
+}
+
+log_success() {
+  echo -e "\e[32m$1\e[0m"
+}
+
+
+
+
+
+get_latest_release_tag() {
+  yesterday_date=$(date -d "yesterday" +%F)
+
+  releases_json=$(curl -s -H "Authorization: token $TOKEN_GITHUB" "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases")
+
+  # releases_json=$(curl -s https://api.github.com/repos/nextcloud/server/releases)
+
+  nextcloud_latest_release_tag=$(echo "$releases_json" \
+    | jq -r '.[]
+    | select(.created_at | startswith("2025-08-07"))
+    | .tag_name')
+
+  # Check if the tag is empty or null
+  if [[ -z "$nextcloud_latest_release_tag" || "$nextcloud_latest_release_tag" == "null" ]]; then
+      log_info "No new Nextcloud release found for the date $yesterday_date."
+      exit 0
+  fi
+
+  # Count how many versions are in the release list
+  version_count=$(echo "$nextcloud_latest_release_tag" | wc -l)
+
+  if [[ $version_count -gt 1 ]]; then
+      log_info "Multiple Nextcloud releases found for the date $yesterday_date: $version_count versions."
+      mulitple="Multiple "
+  fi
+
+  # Join multiple releases into a single line, separated by comma + space
+  nextcloud_latest_release_tag=$(paste -sd', ' <<<"$nextcloud_latest_release_tag")
+
+  log_info "New Nextcloud release detected: $nextcloud_latest_release_tag"
+}
+
+send_message_to_room() {
+  send_message_to_room_response=$(
+  curl -s -o /dev/null -w "%{http_code}" -XPOST \
+    "$ELEMENT_CHAT_URL/_matrix/client/r0/rooms/%21$ELEMENT_ROOM_ID/send/m.room.message?access_token=$NIGHTLY_CI_USER_TOKEN" \
+    -d '{
+      "msgtype": "m.text",
+      "body": "",
+      "format": "org.matrix.custom.html",
+      "formatted_body": "<h3>🔔 '"$mulitple"' Nextcloud Release Alert! : '"$nextcloud_latest_release_tag"'</h3>"
+    }'
+)
+
+  # Check if the message was sent successfully
+  if [[ ${send_message_to_room_response} == 200 ]]; then
+      log_success "✅ Message sent successfully to Element room!"
+  else
+      log_error "❌ Failed to send message to Element room."
+      log_error "Response code: $send_message_to_room_response"
+      exit 1
+  fi
+
+  echo "nextcloud_latest_release_tag: $nextcloud_latest_release_tag"
+}
+
+
+get_latest_release_tag
+send_message_to_room
