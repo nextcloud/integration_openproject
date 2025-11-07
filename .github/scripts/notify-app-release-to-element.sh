@@ -18,7 +18,6 @@ log_success() {
 
 ELEMENT_ROOM_ID=wNGZBbAPrhCiGXtQYp:openproject.org
 
-
 is_latest_release_tag() {
   log_info "Checking for new $REPO_NAME release..."
   if [[ $REPO_NAME = "oidc" ]]; then
@@ -28,9 +27,16 @@ is_latest_release_tag() {
   fi
   yesterday_date=$(date -d "yesterday" +%F)
 
-  releases_json=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases")
+  releases_api_status_code=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases" -o /tmp/releases.json)
 
-  # releases_json=$(curl -s https://api.github.com/repos/nextcloud/server/releases)
+  releases_json=$(cat /tmp/releases.json)
+
+  if [[ "$releases_api_status_code" -ne 200 ]]; then
+    log_error "❌ Failed to get \"$REPO_NAME\" release info with status code $releases_api_status_code"
+    log_error "$releases_json"
+    exit 1
+  fi
 
   nextcloud_latest_release_tag=$(echo "$releases_json" \
     | jq -r '.[]
