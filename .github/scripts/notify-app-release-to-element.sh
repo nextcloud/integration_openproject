@@ -18,7 +18,6 @@ log_success() {
 
 ELEMENT_ROOM_ID=wNGZBbAPrhCiGXtQYp:openproject.org
 
-
 # Validate required environment variables
 validate_environment() {
   required_variables="GITHUB_TOKEN ELEMENT_ROOM_ID ELEMENT_CHAT_URL NIGHTLY_CI_USER_TOKEN REPO_NAMES"
@@ -54,8 +53,8 @@ is_latest_release_tag() {
   fi
 
   nextcloud_latest_release_tag=$(echo "$releases_json" \
-    | jq -r '.[]
-    | select(.created_at | startswith("2025-08-07"))
+    | jq -r --arg date "$yesterday_date" '.[]
+    | select(.created_at | startswith($date))
     | .tag_name')
 
   # Check if the tag is empty or null
@@ -64,6 +63,7 @@ is_latest_release_tag() {
       return 1 # false
   fi
 
+  # Some repos may have multiple releases in a day
   # Count how many versions are in the release list
   version_count=$(echo "$nextcloud_latest_release_tag" | wc -l)
 
