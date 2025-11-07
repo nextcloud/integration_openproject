@@ -15,7 +15,6 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-
 ELEMENT_ROOM_ID=wNGZBbAPrhCiGXtQYp:openproject.org
 
 # Validate required environment variables
@@ -32,6 +31,7 @@ validate_environment() {
 is_latest_release_tag() {
   # Use yesterday's date for checking releases
   yesterday_date=$(date -d "yesterday" +%F)
+  yesterday_date=2025-08-07
   log_info "Looking for releases created on: $yesterday_date"
 
   # Set repository owner based on repo name
@@ -42,7 +42,7 @@ is_latest_release_tag() {
   fi
 
   releases_api_status_code=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
-  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases" -o /tmp/releases.json)
+    "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases" -o /tmp/releases.json)
 
   releases_json=$(cat /tmp/releases.json)
 
@@ -52,15 +52,15 @@ is_latest_release_tag() {
     exit 1
   fi
 
-  nextcloud_latest_release_tag=$(echo "$releases_json" \
-    | jq -r --arg date "$yesterday_date" '.[]
+  nextcloud_latest_release_tag=$(echo "$releases_json" |
+    jq -r --arg date "$yesterday_date" '.[]
     | select(.created_at | startswith($date))
     | .tag_name')
 
   # Check if the tag is empty or null
   if [[ -z "$nextcloud_latest_release_tag" || "$nextcloud_latest_release_tag" == "null" ]]; then
-      log_info "No new \"$REPO_NAME\" release found."
-      return 1 # false
+    log_info "No new \"$REPO_NAME\" release found."
+    return 1 # false
   fi
 
   # Some repos may have multiple releases in a day
@@ -68,10 +68,10 @@ is_latest_release_tag() {
   version_count=$(echo "$nextcloud_latest_release_tag" | wc -l)
 
   if [[ $version_count -gt 1 ]]; then
-      log_info "Multiple $REPO_NAME releases found: $version_count versions."
-      # Join multiple releases into a single line, separated by comma + space
-      nextcloud_latest_release_tag=$(paste -sd', ' <<<"$nextcloud_latest_release_tag")
-      mulitple="Multiple "
+    log_info "Multiple $REPO_NAME releases found: $version_count versions."
+    # Join multiple releases into a single line, separated by comma + space
+    nextcloud_latest_release_tag=$(paste -sd', ' <<<"$nextcloud_latest_release_tag")
+    mulitple="Multiple "
   fi
 
   log_info "Found new release tag(s): $nextcloud_latest_release_tag"
@@ -82,23 +82,23 @@ send_message_to_room() {
   log_info "Sending message to Element room..."
 
   send_message_to_room_response=$(
-  curl -s -o /dev/null -w "%{http_code}" -XPOST \
-    "$ELEMENT_CHAT_URL/_matrix/client/r0/rooms/%21$ELEMENT_ROOM_ID/send/m.room.message?access_token=$NIGHTLY_CI_USER_TOKEN" \
-    -d '{
+    curl -s -o /dev/null -w "%{http_code}" -XPOST \
+      "$ELEMENT_CHAT_URL/_matrix/client/r0/rooms/%21$ELEMENT_ROOM_ID/send/m.room.message?access_token=$NIGHTLY_CI_USER_TOKEN" \
+      -d '{
       "msgtype": "m.text",
       "body": "",
       "format": "org.matrix.custom.html",
       "formatted_body": "<h3>🔔 '"$mulitple"' '"$REPO_NAME"' Release Alert! : '"$nextcloud_latest_release_tag"'</h3>"
     }'
-)
+  )
 
   # Check if the message was sent successfully
   if [[ ${send_message_to_room_response} == 200 ]]; then
-      log_success "✅ Message sent successfully to Element room!"
+    log_success "✅ Message sent successfully to Element room!"
   else
-      log_error "❌ Failed to send message to Element room."
-      log_error "Response code: $send_message_to_room_response"
-      exit 1
+    log_error "❌ Failed to send message to Element room."
+    log_error "Response code: $send_message_to_room_response"
+    exit 1
   fi
 }
 
@@ -112,7 +112,7 @@ main() {
     if is_latest_release_tag; then
       send_message_to_room
     fi
-    
+
     log_info "----------------------------------------------------"
   done
   log_success "Release check completed!"
