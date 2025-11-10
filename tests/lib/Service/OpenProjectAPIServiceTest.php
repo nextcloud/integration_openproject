@@ -54,6 +54,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use OCP\Log\ILogFactory;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
@@ -756,7 +757,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$certificateManager,
 			$client,
 			$this->createMock(IRemoteHostValidator::class),
-			$this->createMock(LoggerInterface::class));
+			$this->createMock(LoggerInterface::class),
+			$this->createMock(ServerVersion::class));
 
 		$clientService = $this->getMockBuilder(IClientService::class)->getMock();
 		$clientService->method('newClient')->willReturn($ocClient);
