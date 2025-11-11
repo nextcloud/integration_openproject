@@ -70,8 +70,17 @@ is_latest_release_tag() {
   if [[ $version_count -gt 1 ]]; then
     log_info "Multiple $REPO_NAME releases found: $version_count versions."
     # Join multiple releases into a single line, separated by comma + space
-    nextcloud_latest_release_tag=$(paste -sd', ' <<<"$nextcloud_latest_release_tag")
-    mulitple="Multiple "
+    message='<b>🔔 Alert! Multiple new releases of \"'$REPO_NAME'\":<b> '
+    mapfile -t tags <<< "$nextcloud_latest_release_tag" # Convert newlines into array elements
+
+    for tag in "${tags[@]}"; do
+      echo "$tag"
+      message+="<a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag'>$tag</a>, "
+    done
+
+    message=${message%, } # Remove trailing comma and space
+  else
+    message='<b>🔔 Alert! New release of \"'$REPO_NAME'\":<b> <a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$nextcloud_latest_release_tag'>'$nextcloud_latest_release_tag'</a>'
   fi
 
   log_info "Found new release tag(s): $nextcloud_latest_release_tag"
@@ -88,7 +97,7 @@ send_message_to_room() {
       "msgtype": "m.text",
       "body": "",
       "format": "org.matrix.custom.html",
-      "formatted_body": "<h3>🔔 '"$mulitple"' '"$REPO_NAME"' Release Alert! : '"$nextcloud_latest_release_tag"'</h3>"
+      "formatted_body": "'"$message"'"
     }'
   )
 
