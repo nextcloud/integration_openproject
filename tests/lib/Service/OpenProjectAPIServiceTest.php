@@ -751,15 +751,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 				true
 			);
 		// for nextcloud above 31 OC_Util::getVersion() method does not exists
-		if (class_exists('OCP\ServerVersion')) {
+		if (\class_exists('OCP\ServerVersion')) {
 			$version = $this->createMock(\OCP\ServerVersion::class);
 		} else {
 			/** @psalm-suppress UndefinedMethod getVersion() method is not in stable31 so making psalm not complain */
-			$version = $this->createMock(\stdClass::class);
+			$version = $this->createMock(\OC_Util::class);
 		}
 
 		//changed from nextcloud 26
-		/** @psalm-suppress TooManyArguments */
+		/** @psalm-suppress TooManyArguments from NC 31+ requires 6 parameters (including ServerVersion)*/
 		$ocClient = new Client(
 			$clientConfigMock,
 			$certificateManager,
@@ -874,23 +874,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function urlsDataProvider(): array {
 		return [
 			['http://127.0.0.1', true],
-			// ['https://127.0.0.1', true],
-			// ['https://127.0.0.1:443', true],
-			// ['http://127.0.0.1:8080', true],
-			// ['http://localhost', true],
-			// ['http://localhost', true],
-			// ['http://www.openproject.com', true],
-			// ['http://www.openproject.it:3000', true],
-			// ['https://www.openproject.it:8081', true],
-			// ['https://www.openproject.it:8081/home', true],
-			// ['ftp://localhost', false],
-			// ['http://loca lhost', false],
-			// ['https://loca lhost', false],
-			// ['http://openproject.dev ', false],
-			// ['http:/openproject.dev', false],
-			// ['http//openproject.dev', false],
-			// ['openproject.dev', false],
-			// ['://openproject.dev', false],
+			['https://127.0.0.1', true],
+			['https://127.0.0.1:443', true],
+			['http://127.0.0.1:8080', true],
+			['http://localhost', true],
+			['http://localhost', true],
+			['http://www.openproject.com', true],
+			['http://www.openproject.it:3000', true],
+			['https://www.openproject.it:8081', true],
+			['https://www.openproject.it:8081/home', true],
+			['ftp://localhost', false],
+			['http://loca lhost', false],
+			['https://loca lhost', false],
+			['http://openproject.dev ', false],
+			['http:/openproject.dev', false],
+			['http//openproject.dev', false],
+			['openproject.dev', false],
+			['://openproject.dev', false],
 		];
 	}
 
