@@ -7,7 +7,6 @@
 
 namespace OCA\OpenProject\Service;
 
-use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -55,7 +54,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Log\ILogFactory;
-use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use phpmock\phpunit\PHPMock;
 use PhpPact\Consumer\InteractionBuilder;
@@ -724,7 +722,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$clientConfigMock
 			->method('getSystemValueBool')
@@ -750,26 +747,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 				true,
 				true
 			);
-		// for nextcloud above 31 OC_Util::getVersion() method does not exists
-		if (\class_exists('OCP\ServerVersion')) {
-			$version = $this->createMock(\OCP\ServerVersion::class);
-		} else {
-			/** @psalm-suppress UndefinedMethod getVersion() method is not in stable31 so making psalm not complain */
-			$version = $this->createMock(\OC_Util::class);
-		}
-
-		//changed from nextcloud 26
-		/** @psalm-suppress TooManyArguments from NC 31+ requires 6 parameters (including ServerVersion)*/
-		$ocClient = new Client(
-			$clientConfigMock,
-			$certificateManager,
-			$client,
-			$this->createMock(IRemoteHostValidator::class),
-			$this->createMock(LoggerInterface::class),
-			$version);
 
 		$clientService = $this->getMockBuilder(IClientService::class)->getMock();
-		$clientService->method('newClient')->willReturn($ocClient);
+		$clientService->method('newClient')->willReturn($this->createMock(Client::class));
 
 		$guestAvatarMock = $this->getMockBuilder(GuestAvatar::class)->disableOriginalConstructor()->getMock();
 
