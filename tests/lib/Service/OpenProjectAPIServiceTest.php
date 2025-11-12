@@ -16,6 +16,7 @@ use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
+use OC\Http\Client\Response;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OIDCIdentityProvider\Db\Client as OIDCClient;
 use OCA\OpenProject\AppInfo\Application;
@@ -1290,8 +1291,26 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
-		$result = $service->getOpenProjectAvatar(
+
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getHeader')->willReturn('image/jpeg');
+		$mockResponse->method('getBody')->willReturn(
+			file_get_contents(__DIR__ . "/../fixtures/openproject-icon.jpg")
+		);
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
 			'NCuser'
