@@ -15,8 +15,6 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-ELEMENT_ROOM_ID=wNGZBbAPrhCiGXtQYp:openproject.org
-
 # Validate required environment variables
 validate_environment() {
   required_variables="GITHUB_TOKEN ELEMENT_ROOM_ID ELEMENT_CHAT_URL NIGHTLY_CI_USER_TOKEN REPO_NAMES"
@@ -30,8 +28,7 @@ validate_environment() {
 
 is_latest_release_tag() {
   # Use yesterday's date for checking releases
-  yesterday_date=$(date -d "yesterday" +%F)
-  yesterday_date=2025-08-07
+  yesterday_date=$(date -d "yesterday" +%F) # e.g. date format 2025-08-07
   log_info "Looking for releases created on: $yesterday_date"
 
   # Set repository owner based on repo name
@@ -74,7 +71,6 @@ is_latest_release_tag() {
     mapfile -t tags <<< "$nextcloud_latest_release_tag" # Convert newlines into array elements
 
     for tag in "${tags[@]}"; do
-      echo "$tag"
       message+="<a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag'>$tag</a>, "
     done
 
