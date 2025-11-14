@@ -2937,17 +2937,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService(
-			$authorizationMethod,
-			$storageMock,
-			'1234567890',
-			'http://not-existing'
-		);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string ',
+				'statusCode' => Http::STATUS_UNPROCESSABLE_ENTITY,
+				'message' => "The request was invalid. File Link logo.png - Storage was invalid."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = $this->singleFileInformation;
-		$service->linkWorkPackageToFile(
+		$serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
