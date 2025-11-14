@@ -7,7 +7,6 @@
 
 namespace OCA\OpenProject\Service;
 
-use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -17,6 +16,7 @@ use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
 use OC\Avatar\GuestAvatar;
 use OC\Http\Client\Client;
+use OC\Http\Client\Response;
 use OCA\GroupFolders\Folder\FolderManager;
 use OCA\OIDCIdentityProvider\Db\Client as OIDCClient;
 use OCA\OpenProject\AppInfo\Application;
@@ -55,7 +55,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Log\ILogFactory;
-use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use phpmock\phpunit\PHPMock;
 use PhpPact\Consumer\InteractionBuilder;
@@ -724,7 +723,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	) {
 		$certificateManager = $this->getMockBuilder('\OCP\ICertificateManager')->getMock();
 		$certificateManager->method('getAbsoluteBundlePath')->willReturn('/');
-		$client = new GuzzleClient();
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$clientConfigMock
 			->method('getSystemValueBool')
@@ -750,16 +748,9 @@ class OpenProjectAPIServiceTest extends TestCase {
 				true,
 				true
 			);
-		//changed from nextcloud 26
-		$ocClient = new Client(
-			$clientConfigMock,
-			$certificateManager,
-			$client,
-			$this->createMock(IRemoteHostValidator::class),
-			$this->createMock(LoggerInterface::class));
 
 		$clientService = $this->getMockBuilder(IClientService::class)->getMock();
-		$clientService->method('newClient')->willReturn($ocClient);
+		$clientService->method('newClient')->willReturn($this->createMock(Client::class));
 
 		$guestAvatarMock = $this->getMockBuilder(GuestAvatar::class)->disableOriginalConstructor()->getMock();
 
@@ -1300,8 +1291,26 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a request to get the avatar of a user that has an avatar')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$service = $this->getOpenProjectAPIService($authorizationMethod, null, '1234567890', 'https://nc.my-server.org', 'NCuser');
-		$result = $service->getOpenProjectAvatar(
+
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getHeader')->willReturn('image/jpeg');
+		$mockResponse->method('getBody')->willReturn(
+			file_get_contents(__DIR__ . "/../fixtures/openproject-icon.jpg")
+		);
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->getOpenProjectAvatar(
 			'openProjectUserWithAvatar',
 			'Me',
 			'NCuser'
@@ -2869,18 +2878,26 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService(
-			$authorizationMethod,
-			$storageMock,
-			'1234567890',
-			''
-		);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string ',
+				'statusCode' => Http::STATUS_UNPROCESSABLE_ENTITY,
+				'message' => "The request body was invalid."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
 
 		$values = $this->singleFileInformation;
-		$service->linkWorkPackageToFile(
+		$serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
@@ -2928,17 +2945,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService(
-			$authorizationMethod,
-			$storageMock,
-			'1234567890',
-			'http://not-existing'
-		);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string ',
+				'statusCode' => Http::STATUS_UNPROCESSABLE_ENTITY,
+				'message' => "The request was invalid. File Link logo.png - Storage was invalid."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = $this->singleFileInformation;
-		$service->linkWorkPackageToFile(
+		$serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
