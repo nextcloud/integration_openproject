@@ -337,19 +337,3 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           BRANCH_NAME: ${{ inputs.branch }}
         run: ./.github/scripts/notify-to-element.sh
-
-  notify-app-release:
-    if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: Notify nightly report to element
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAMES: "server groupfolders oidc user_oidc"
-        run: ./.github/scripts/notify-app-release-to-element.sh
