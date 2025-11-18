@@ -22,5 +22,5 @@ jobs:
           ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAMES: "server groupfolders oidc user_oidc"
+          REPO_NAMES: "server groupfolders oidc user_oidc terms_of_service"
         run: ./.github/scripts/notify-nc-and-apps-releases.sh
