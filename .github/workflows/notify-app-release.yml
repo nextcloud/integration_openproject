@@ -23,4 +23,4 @@ jobs:
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAMES: "server groupfolders oidc user_oidc"
-        run: ./.github/scripts/notify-app-release-to-element.sh
+        run: ./.github/scripts/notify-nc-and-apps-releases.sh
