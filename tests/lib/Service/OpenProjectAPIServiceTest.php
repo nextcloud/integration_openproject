@@ -2889,7 +2889,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$serviceMock->expects($this->once())
 			->method('request')
 			->willReturn([
-				'error' => 'some string ',
+				'error' => 'some string',
 				'statusCode' => Http::STATUS_UNPROCESSABLE_ENTITY,
 				'message' => "The request body was invalid."
 			]);
@@ -2956,7 +2956,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$serviceMock->expects($this->once())
 			->method('request')
 			->willReturn([
-				'error' => 'some string ',
+				'error' => 'some string',
 				'statusCode' => Http::STATUS_UNPROCESSABLE_ENTITY,
 				'message' => "The request was invalid. File Link logo.png - Storage was invalid."
 			]);
@@ -2997,12 +2997,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock, 'MissingPermission');
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string',
+				'statusCode' => Http::STATUS_FORBIDDEN,
+				'message' => "You are not authorized to access this resource."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = $this->singleFileInformation;
-		$service->linkWorkPackageToFile(
+		$serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
@@ -3036,8 +3049,22 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string',
+				'statusCode' => Http::STATUS_NOT_FOUND,
+				'message' => "The requested resource could not be found."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
 		$values = [
@@ -3049,7 +3076,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 				]
 			]
 		];
-		$service->linkWorkPackageToFile(
+
+		$serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
@@ -3113,9 +3141,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string',
+				'statusCode' => Http::STATUS_BAD_REQUEST,
+				'message' => "Filters Resource filter has invalid values."
+			]);
+
 		$this->expectException(OpenprojectErrorException::class);
-		$service->markAllNotificationsOfWorkPackageAsRead(
+		$serviceMock->markAllNotificationsOfWorkPackageAsRead(
 			789,
 			'testUser'
 		);
@@ -3518,10 +3561,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string',
+				'statusCode' => Http::STATUS_NOT_FOUND,
+				'message' => "The requested resource could not be found."
+			]);
+
 		$this->expectException(OpenprojectErrorException::class);
-		$service->getWorkPackageFileLinks(100, 'testUser');
+		$serviceMock->getWorkPackageFileLinks(100, 'testUser');
 	}
 
 	/**
@@ -3613,11 +3670,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'error' => 'some string',
+				'statusCode' => Http::STATUS_NOT_FOUND,
+				'message' => "The requested resource could not be found."
+			]);
 
 		$this->expectException(OpenprojectErrorException::class);
-		$service->deleteFileLink(12345, 'testUser');
+		$serviceMock->deleteFileLink(12345, 'testUser');
 	}
 
 	/**
