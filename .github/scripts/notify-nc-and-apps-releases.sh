@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
+# SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # helper functions
@@ -44,7 +44,7 @@ is_latest_release_tag() {
   releases_json=$(cat /tmp/releases.json)
 
   if [[ "$releases_api_status_code" -ne 200 ]]; then
-    log_error "❌ Failed to get \"$REPO_NAME\" release info with status code $releases_api_status_code"
+    log_error "❌ Failed to get new releases of \"$REPO_NAME\". Got status code: $releases_api_status_code"
     log_error "$releases_json"
     exit 1
   fi
@@ -56,7 +56,7 @@ is_latest_release_tag() {
 
   # Check if the tag is empty or null
   if [[ -z "$nextcloud_latest_release_tag" || "$nextcloud_latest_release_tag" == "null" ]]; then
-    log_info "No new \"$REPO_NAME\" release found."
+    log_info "No new release of \"$REPO_NAME\""
     return 1 # false
   fi
 
@@ -65,7 +65,7 @@ is_latest_release_tag() {
   version_count=$(echo "$nextcloud_latest_release_tag" | wc -l)
 
   if [[ $version_count -gt 1 ]]; then
-    log_info "Multiple $REPO_NAME releases found: $version_count versions."
+    log_info "Multiple new releases of \"$REPO_NAME\" found: $version_count versions."
     # Join multiple releases into a single line, separated by comma + space
     message='<b>🔔 Alert! Multiple new releases of \"'$REPO_NAME'\":<b> '
     mapfile -t tags <<< "$nextcloud_latest_release_tag" # Convert newlines into array elements
@@ -111,7 +111,7 @@ send_message_to_room() {
 main() {
   validate_environment
 
-  log_info "Starting release check for repositories: $REPO_NAMES"
+  log_info "Checking new releases of: $REPO_NAMES"
 
   for REPO_NAME in $REPO_NAMES; do
     if is_latest_release_tag; then
