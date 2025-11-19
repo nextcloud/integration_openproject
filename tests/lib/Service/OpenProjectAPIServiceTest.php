@@ -1267,7 +1267,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testRequestToNotExistingPath(string $authorizationMethod) {
-		//		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
