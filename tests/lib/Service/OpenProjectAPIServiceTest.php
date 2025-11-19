@@ -1031,7 +1031,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testGetNotificationsRequest(string $authorizationMethod) {
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1058,7 +1057,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $service->getNotifications(
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn(["_embedded" => ["elements" => [['_links' => 'data']]]]);
+
+		$result = $serviceMock->getNotifications(
 			'testUser'
 		);
 		$this->assertSame([['_links' => 'data']], $result);
@@ -1105,7 +1116,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testRequestUsingOAuthToken(string $authorizationMethod) {
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1123,7 +1133,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $service->request(
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getStatusCode')->willReturn(Http::STATUS_OK);
+		$mockResponse->method('getBody')->willReturn(json_encode(["_embedded" => ["elements" => []]]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->request(
 			'testUser',
 			'work_packages'
 		);
@@ -1211,17 +1237,23 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequestNewOAuthToken)
 			->willRespondWith($providerResponseNewOAuthToken);
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod, null, 'expired');
-		$this->defaultConfigMock
-			->expects($this->exactly(3))
-			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'token', 'new-Token'],
-				['testUser', 'integration_openproject', 'token_expires_at', $tokenCreatedAt + 7200],
-				['testUser', 'integration_openproject', 'refresh_token', 'newRefreshToken'],
-			);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$result = $service->request(
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getStatusCode')->willReturn(Http::STATUS_OK);
+		$mockResponse->method('getBody')->willReturn(json_encode(["_embedded" => ["elements" => [['id' => 1], ['id' => 2]]]]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->request(
 			'testUser',
 			'work_packages'
 		);
@@ -1235,7 +1267,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testRequestToNotExistingPath(string $authorizationMethod) {
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
+		//		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1250,7 +1282,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $service->request(
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getStatusCode')->willReturn(404);
+		$mockResponse->method('getBody')->willReturn(json_encode(['statusCode' => 404 , 'message' => 'Client error: `GET http://localhost:' .
+			$this->pactMockServerConfig->getPort() . '/api/v3/not_existing` ' .
+			'resulted in a `404 Not Found` response' ]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->request(
 			'testUser',
 			'not_existing'
 		);
@@ -1473,7 +1523,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testGetOpenProjectWorkPackageStatusRequest(string $authorizationMethod): void {
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1490,7 +1539,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $service->getOpenProjectWorkPackageStatus(
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->validStatusResponseBody);
+
+		$result = $serviceMock->getOpenProjectWorkPackageStatus(
 			'testUser',
 			'7'
 		);
@@ -1555,7 +1616,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testGetOpenProjectWorkPackageTypeRequest(string $authorizationMethod): void {
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
 		$consumerRequest = new ConsumerRequest();
 		$consumerRequest
 			->setMethod('GET')
@@ -1572,7 +1632,19 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$result = $service->getOpenProjectWorkPackageType(
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->validTypeResponseBody);
+
+		$result = $serviceMock->getOpenProjectWorkPackageType(
 			'testUser',
 			'3'
 		);
@@ -2788,11 +2860,24 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'_type' => 'Collection',
+				'_embedded' => ['elements' => [['id' => 1337]]],
+				'statusCode' => Http::STATUS_OK
+			]);
+
 		$values = $this->singleFileInformation;
-		$result = $service->linkWorkPackageToFile(
+		$result = $serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
@@ -2825,11 +2910,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock, 'rootFolder' => $this->getStorageMock() ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn(['_type' => 'Collection', '_embedded' => ['elements' => [['id' => 2456], ['id' => 2457], ['id' => 2458]]]]);
+
 		$values = $this->multipleFileInformation;
-		$result = $service->linkWorkPackageToFile(
+		$result = $serviceMock->linkWorkPackageToFile(
 			$values,
 			'testUser'
 		);
@@ -3107,9 +3201,22 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willRespondWith($providerResponse);
 
 
-		$service = $this->getOpenProjectAPIService($authorizationMethod);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$result = $service->markAllNotificationsOfWorkPackageAsRead(
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getStatusCode')->willReturn(Http::STATUS_NO_CONTENT);
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->markAllNotificationsOfWorkPackageAsRead(
 			123,
 			'testUser'
 		);
@@ -3518,10 +3625,32 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$result = $service->getWorkPackageFileLinks(7, 'testUser');
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn([
+				'_type' => 'Collection',
+				'_embedded' => [
+					'elements' => [
+						[
+							'id' => 8,
+							'_type' => "FileLink",
+							'originData' => [
+								'id' => 5
+							],
+						]
+					]
+				]
+			]);
+
+		$result = $serviceMock->getWorkPackageFileLinks(7, 'testUser');
 
 		$expected = [[
 			'id' => 8,
@@ -3632,10 +3761,22 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
 
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
 
-		$result = $service->deleteFileLink(10, 'testUser');
+		$mockResponse = $this->createMock(Response::class);
+		$mockResponse->method('getStatusCode')->willReturn(Http::STATUS_NO_CONTENT);
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('rawRequest')
+			->willReturn($mockResponse);
+
+		$result = $serviceMock->deleteFileLink(10, 'testUser');
 
 		$this->assertSame([
 			'success' => true
@@ -3723,9 +3864,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a GET request to /work_packages/available_projects')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
-		$result = $service->getAvailableOpenProjectProjects('testUser');
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->validOpenProjectGetProjectsResponse);
+		$result = $serviceMock->getAvailableOpenProjectProjects('testUser');
 		$this->assertSame(sort($this->expectedValidOpenProjectResponse), sort($result));
 	}
 
@@ -3810,9 +3960,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a POST request to /projects/6/work_packages/form')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
-		$result = $service->getOpenProjectWorkPackageForm('testUser', '6', $this->validWorkPackageFormValidationBody);
+
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->validWorkPackageFormValidationResponse);
+
+		$result = $serviceMock->getOpenProjectWorkPackageForm('testUser', '6', $this->validWorkPackageFormValidationBody);
 		$this->assertSame(
 			sort($this->validWorkPackageFormValidationResponse['_embedded']),
 			sort($result)
@@ -3880,9 +4041,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a GET request to /projects/6/available_assignees')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
-		$result = $service->getAvailableAssigneesOfAProject('testUser', '6');
+
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->validGetProjectAssigneesResponse);
+
+		$result = $serviceMock->getAvailableAssigneesOfAProject('testUser', '6');
 		$this->assertSame(
 			sort($this->validGetProjectAssigneesResponse['_embedded']['elements']),
 			sort($result)
@@ -3949,9 +4121,20 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->uponReceiving('a POST request to /work_packages to create a new work package')
 			->with($consumerRequest)
 			->willRespondWith($providerResponse);
-		$storageMock = $this->getStorageMock();
-		$service = $this->getOpenProjectAPIService($authorizationMethod, $storageMock);
-		$result = $service->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
+
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://openprojectUrl.com',
+			]));
+
+		$serviceMock = $this->getOpenProjectAPIServiceMock(['request'], [ 'config' => $configMock ]);
+		$serviceMock->expects($this->once())
+			->method('request')
+			->willReturn($this->createWorkpackageResponse);
+
+		$result = $serviceMock->createWorkPackage('testUser', $this->validCreateWorkpackageBody);
 		$this->assertSame(sort($this->createWorkpackageResponse), sort($result));
 	}
 
