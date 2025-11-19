@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Notify Nextcloud and apps new releases
+
+# workflow can be scheduled ONLY from DEFAULT branch
+# > This event will only trigger a workflow run if the workflow file is on the default branch.
+# See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
+on:
+  schedule:
+    - cron: '0 23 * * *' # run at 11 PM UTC
+
+jobs:
+  notify-new-releases:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Check and notify releases
+        env:
+          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAMES: "server groupfolders oidc user_oidc terms_of_service"
+        run: ./.github/scripts/notify-nc-and-apps-releases.sh
