@@ -7,7 +7,7 @@ name: Notify Nextcloud and apps new releases
 # See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
 on:
   schedule:
-    - cron: '0 23 * * *' # run at 11 PM UTC
+    - cron: '0 1 * * *' # run at 1 AM UTC
 
 jobs:
   notify-new-releases:
