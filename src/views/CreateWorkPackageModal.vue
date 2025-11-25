@@ -25,11 +25,12 @@
 					:options="mappedNodes"
 					:filterable="true"
 					:close-on-select="true"
-					:clear-search-on-blur="() => false"
+					:clear-search-on-blur="() => true"
 					:append-to-body="false"
 					:value="getSelectedProject"
 					:no-drop="noDropAvailableProjectDropDown"
 					:loading="isStateLoading"
+					@input="onClearProject"
 					@search="asyncFindProjects"
 					@option:selected="onSelectProject">
 					<template #option="{ label, relation, counter }">
@@ -74,7 +75,8 @@
 							:options="allowedTypes"
 							:filterable="true"
 							:close-on-select="true"
-							:clear-search-on-blur="() => false"
+							:clearable="false"
+							:clear-search-on-blur="() => true"
 							:append-to-body="false"
 							:placeholder="t('integration_openproject', 'Select project type')"
 							:value="getSelectedProjectType"
@@ -104,7 +106,8 @@
 							:options="allowedStatues"
 							:filterable="true"
 							:close-on-select="true"
-							:clear-search-on-blur="() => false"
+							:clearable="false"
+							:clear-search-on-blur="() => true"
 							:append-to-body="false"
 							:placeholder="t('integration_openproject', 'Select project status')"
 							:value="getSelectedProjectStatus"
@@ -131,9 +134,10 @@
 					:options="availableAssignees"
 					:filterable="true"
 					:close-on-select="true"
-					:clear-search-on-blur="() => false"
+					:clear-search-on-blur="() => true"
 					:append-to-body="false"
 					:value="getSelectedProjectAssignee"
+					@input="onClearAssignee"
 					@option:selected="onSelectAssignee">
 					<template #option="option">
 						{{ option.label }}
@@ -345,6 +349,26 @@ export default {
 				this.noDropAvailableProjectDropDown = false
 			}
 			return mappedNodes
+		},
+		onClearProject(value) {
+			this.setToDefaultProject()
+			this.projectId = null
+			this.previousProjectId = null
+			this.setToDefaultProjectType()
+			this.setDefaultProjectStatus()
+			this.setToDefaultProjectAssignee()
+			this.allowedTypes = []
+			this.allowedStatues = []
+			this.availableAssignees = []
+			if (this.error.error) {
+				this.setToDefaultError()
+			}
+			if (this.customTypeError) {
+				this.customTypeError = false
+			}
+		},
+		onClearAssignee(value) {
+			this.setToDefaultProjectAssignee()
 		},
 		async asyncFindProjects(query) {
 			// before fetching we do some filter search in the default available projects
