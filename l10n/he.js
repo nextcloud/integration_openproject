@@ -17,6 +17,7 @@ OC.L10N.register(
     "Start typing to search" : "להתחלת החיפוש יש להקליד",
     "Select a user or group" : "נא לבחור משתמש או קבוצה",
     "Description" : "תיאור",
+    "Create" : "יצירה",
     "Mark as read" : "סימון כנקרא",
     "Connected accounts" : "חשבונות מקושרים"
 },
