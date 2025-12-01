@@ -131,6 +131,30 @@ describe('CreateWorkPackageModal.vue', () => {
 				expect(searchResult.text()).toBe('No matching work projects found!')
 			})
 
+			it('should auto clear project if there is "No matching work projects found!"', async () => {
+				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse({}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				expect(searchResult.text()).toBe('No matching work projects found!')
+
+				// Trigger blur event (user moves to another field)
+				await inputField.trigger('blur')
+				await wrapper.vm.$nextTick()
+				expect(inputField.element.value).toBe('')
+			})
+
 			it('should fetch projects when not found in initial available projects', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponseAfterSearch))
@@ -865,6 +889,67 @@ describe('CreateWorkPackageModal.vue', () => {
 		const error = wrapper.find(validationErrorSelector)
 		expect(error.isVisible()).toBe(true)
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
+	})
+
+	it('should keep the existing project and auto clear the non-existing one when a user tries to replace it', async () => {
+		const axiosGetSpy = jest.spyOn(axios, 'get')
+			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
+
+		wrapper = mountWrapper(true, {
+			project: {
+				self: {
+					href: '/api/v3/projects/2',
+					title: 'Scrum project',
+				},
+				label: 'Scrum project',
+				children: [],
+			},
+			type: {
+				self: {
+					href: '/api/v3/types/1',
+					title: 'Task',
+				},
+				label: 'Task',
+			},
+			status: {
+				self: {
+					href: '/api/v3/statuses/1',
+					title: 'New',
+				},
+				label: 'New',
+			},
+			subject: 'This is a workpackage',
+			assignee: {
+            self: {
+                href: '/api/v3/users/15',
+                title: 'Second Admin',
+            },
+            label: 'Second Admin',
+        },
+		})
+
+		await wrapper.vm.$nextTick()
+		expect(axiosGetSpy).toHaveBeenCalledWith(projectsUrl, {})
+
+		const projectInputElement = wrapper.find(projectInputField)
+		await projectInputElement.trigger('focus')
+		await wrapper.vm.$nextTick()
+
+		// Type invalid project name that doesn't exist in available projects
+		projectInputElement.element.value = 'non-existing-project-12345'
+		await projectInputElement.trigger('input')
+		await wrapper.vm.$nextTick()
+
+		// Trigger blur event (user moves to another field)
+		await projectInputElement.trigger('blur')
+		await wrapper.vm.$nextTick()
+		expect(projectInputElement.element.value).toBe('')
+
+		// Verify label remains unchanged
+		expect(wrapper.vm.project.label).toBe("Scrum project")
+
+		axiosGetSpy.mockRestore()
+		jest.clearAllMocks()
 	})
 })
 
