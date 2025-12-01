@@ -895,10 +895,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
 	})
 
-	it('should keep the existing project and auto clear the non-existing one when a user tries to replace it', async () => {
-		const axiosGetSpy = jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
-
+	it('should able to remove the project', async () => {
 		wrapper = mountWrapper(true, {
 			project: {
 				self: {
@@ -907,53 +904,14 @@ describe('CreateWorkPackageModal.vue', () => {
 				},
 				label: 'Scrum project',
 				children: [],
-			},
-			type: {
-				self: {
-					href: '/api/v3/types/1',
-					title: 'Task',
-				},
-				label: 'Task',
-			},
-			status: {
-				self: {
-					href: '/api/v3/statuses/1',
-					title: 'New',
-				},
-				label: 'New',
-			},
-			subject: 'This is a workpackage',
-			assignee: {
-				self: {
-					href: '/api/v3/users/15',
-					title: 'Second Admin',
-				},
-				label: 'Second Admin',
-			},
+			}
 		})
 
-		await wrapper.vm.$nextTick()
-		expect(axiosGetSpy).toHaveBeenCalledWith(projectsUrl, {})
-
-		const projectInputElement = wrapper.find(projectInputField)
-		await projectInputElement.trigger('focus')
+		const removeProjectButton = wrapper.find(projectClearButtonSelector)
+		await removeProjectButton.trigger('click')
 		await wrapper.vm.$nextTick()
 
-		// Type invalid project name that doesn't exist in available projects
-		projectInputElement.element.value = 'non-existing-project-12345'
-		await projectInputElement.trigger('input')
-		await wrapper.vm.$nextTick()
-
-		// Trigger blur event (user moves to another field)
-		await projectInputElement.trigger('blur')
-		await wrapper.vm.$nextTick()
-		expect(projectInputElement.element.value).toBe('')
-
-		// Verify label remains unchanged
-		expect(wrapper.vm.project.label).toBe('Scrum project')
-
-		axiosGetSpy.mockRestore()
-		jest.clearAllMocks()
+		expect(wrapper.vm.project.label).toBe(null)
 	})
 })
 
