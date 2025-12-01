@@ -64,6 +64,7 @@ describe('CreateWorkPackageModal.vue', () => {
 	const validationErrorProjectSelector = '.multiple-error-project'
 	const validationErrorSubjectSelector = '.multiple-error-subject'
 	const validationErrorTypeSelector = '.type-error'
+	const projectClearButtonSelector = '[data-test-id="available-projects"] .vs__clear'
 	let wrapper = null
 
 	beforeEach(() => {
@@ -690,7 +691,10 @@ describe('CreateWorkPackageModal.vue', () => {
 			availableAssignees: [{ label: 'User 1' }],
 		})
 
-		await wrapper.vm.onClearProject()
+		const removeProjectButton = wrapper.find(projectClearButtonSelector)
+		await removeProjectButton.trigger('click')
+		await wrapper.vm.$nextTick()
+
 		expect(wrapper.vm.project.label).toBe(null)
 		expect(wrapper.vm.projectId).toBe(null)
 		expect(wrapper.vm.allowedTypes).toEqual([])
@@ -920,12 +924,12 @@ describe('CreateWorkPackageModal.vue', () => {
 			},
 			subject: 'This is a workpackage',
 			assignee: {
-            self: {
-                href: '/api/v3/users/15',
-                title: 'Second Admin',
-            },
-            label: 'Second Admin',
-        },
+				self: {
+					href: '/api/v3/users/15',
+					title: 'Second Admin',
+				},
+				label: 'Second Admin',
+			},
 		})
 
 		await wrapper.vm.$nextTick()
@@ -946,7 +950,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		expect(projectInputElement.element.value).toBe('')
 
 		// Verify label remains unchanged
-		expect(wrapper.vm.project.label).toBe("Scrum project")
+		expect(wrapper.vm.project.label).toBe('Scrum project')
 
 		axiosGetSpy.mockRestore()
 		jest.clearAllMocks()
