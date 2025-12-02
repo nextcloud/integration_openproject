@@ -38,7 +38,7 @@
 						<span>{{ label }}</span>
 					</template>
 					<template #no-options>
-						{{ getNoOptionText }}
+						{{ getNoOptionTextForProject }}
 					</template>
 				</NcSelect>
 				<p v-if="error.error && error.attribute === 'project'" class="validation-error">
@@ -85,7 +85,7 @@
 								{{ option.label }}
 							</template>
 							<template #no-options>
-								{{ t('integration_openproject', 'Please select a project') }}
+								{{ getNoOptionTextForType }}
 							</template>
 						</NcSelect>
 						<p v-if="customTypeError" class="validation-error type-error" v-html="sanitizedRequiredCustomTypeValidationErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
@@ -116,7 +116,7 @@
 								{{ option.label }}
 							</template>
 							<template #no-options>
-								{{ t('integration_openproject', 'Please select a project') }}
+								{{ getNoOptionTextForStatus }}
 							</template>
 						</NcSelect>
 						<p v-if="error.error && error.attribute === 'status'" class="validation-error">
@@ -143,7 +143,7 @@
 						{{ option.label }}
 					</template>
 					<template #no-options>
-						{{ t('integration_openproject', 'Please select a project') }}
+						{{ getNoOptionTextForAssignee }}
 					</template>
 				</NcSelect>
 				<div class="create-workpackage-form--label">
@@ -301,12 +301,22 @@ export default {
 		mappedNodes() {
 			return this.mappedProjects()
 		},
-		getNoOptionText() {
+		getNoOptionTextForProject() {
 			if (this.availableProjects.length === 0) {
 				return t('integration_openproject', 'No matching work projects found!')
 			}
 			// while projects are being searched we make the no text option empty
 			return ''
+		},
+		getNoOptionTextForStatus() {
+    		return this.getNoOptionText('status')
+		},
+		getNoOptionTextForType() {
+    		return this.getNoOptionText('type')
+		},
+
+		getNoOptionTextForAssignee() {
+			return this.getNoOptionText('assignee')
 		},
 		sanitizedRequiredCustomTypeValidationErrorMessage() {
 			// get the last number from the href i.e `/api/v3/types/1`, which is the type id
@@ -605,6 +615,12 @@ export default {
 				allowedValues.push(values)
 			}
 			return allowedValues
+		},
+		getNoOptionText(fieldName) {
+			if (this.project.label === null) {
+				return t('integration_openproject', 'Please select a project first!')
+			}
+			return t('integration_openproject', `No matching ${fieldName} found!`)
 		},
 		async setAvailableAssigneesForProject(projectId) {
 			this.availableAssignees = []
