@@ -149,6 +149,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 				const searchResult = wrapper.find(firstProjectSelectorSelector)
 				expect(searchResult.text()).toBe('No matching work projects found!')
+				expect(inputField.element.value).toBe('Scw')
 
 				// Trigger blur event (user moves to another field)
 				await inputField.trigger('blur')
@@ -868,7 +869,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
 	})
 
-	it('should able to remove the project', async () => {
+	it('should be able to remove the selected project', async () => {
 		wrapper = mountWrapper(true, {
 			project: {
 				self: {
@@ -879,6 +880,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				children: [],
 			},
 		})
+		expect(wrapper.vm.project.label).toBe('Scrum project')
 
 		const removeProjectButton = wrapper.find(projectClearButtonSelector)
 		await removeProjectButton.trigger('click')
