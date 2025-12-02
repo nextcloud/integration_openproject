@@ -904,7 +904,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				},
 				label: 'Scrum project',
 				children: [],
-			}
+			},
 		})
 
 		const removeProjectButton = wrapper.find(projectClearButtonSelector)

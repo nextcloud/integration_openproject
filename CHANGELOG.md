@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Work packagecreation with a non-existent project
+- Project Value in the field could not be removed
 
 ### Removed
 
