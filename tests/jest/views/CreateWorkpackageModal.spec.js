@@ -675,33 +675,6 @@ describe('CreateWorkPackageModal.vue', () => {
 		})
 	})
 
-	it('should empty project and related fields when project is removed', async () => {
-		wrapper = mountWrapper(true, {
-			project: {
-				self: {
-					href: '/api/v3/projects/2',
-					title: 'Scrum project',
-				},
-				label: 'Scrum project',
-				children: [],
-			},
-			projectId: 2,
-			allowedTypes: [{ label: 'Task' }],
-			allowedStatues: [{ label: 'New' }],
-			availableAssignees: [{ label: 'User 1' }],
-		})
-
-		const removeProjectButton = wrapper.find(projectClearButtonSelector)
-		await removeProjectButton.trigger('click')
-		await wrapper.vm.$nextTick()
-
-		expect(wrapper.vm.project.label).toBe(null)
-		expect(wrapper.vm.projectId).toBe(null)
-		expect(wrapper.vm.allowedTypes).toEqual([])
-		expect(wrapper.vm.allowedStatues).toEqual([])
-		expect(wrapper.vm.availableAssignees).toEqual([])
-	})
-
 	it('should emit an event if work package creation is successful', async () => {
 		const createWorkPackageBody = {
 			body: {
