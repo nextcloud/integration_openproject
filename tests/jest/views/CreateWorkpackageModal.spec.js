@@ -64,6 +64,7 @@ describe('CreateWorkPackageModal.vue', () => {
 	const validationErrorProjectSelector = '.multiple-error-project'
 	const validationErrorSubjectSelector = '.multiple-error-subject'
 	const validationErrorTypeSelector = '.type-error'
+	const projectClearButtonSelector = '[data-test-id="available-projects"] .vs__clear'
 	let wrapper = null
 
 	beforeEach(() => {
@@ -129,6 +130,31 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 				const searchResult = wrapper.find(firstProjectSelectorSelector)
 				expect(searchResult.text()).toBe('No matching work projects found!')
+			})
+
+			it('should auto clear project if there is "No matching work projects found!"', async () => {
+				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse({}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				expect(searchResult.text()).toBe('No matching work projects found!')
+				expect(inputField.element.value).toBe('Scw')
+
+				// Trigger blur event (user moves to another field)
+				await inputField.trigger('blur')
+				await wrapper.vm.$nextTick()
+				expect(inputField.element.value).toBe('')
 			})
 
 			it('should fetch projects when not found in initial available projects', async () => {
@@ -841,6 +867,26 @@ describe('CreateWorkPackageModal.vue', () => {
 		const error = wrapper.find(validationErrorSelector)
 		expect(error.isVisible()).toBe(true)
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
+	})
+
+	it('should be able to remove the selected project', async () => {
+		wrapper = mountWrapper(true, {
+			project: {
+				self: {
+					href: '/api/v3/projects/2',
+					title: 'Scrum project',
+				},
+				label: 'Scrum project',
+				children: [],
+			},
+		})
+		expect(wrapper.vm.project.label).toBe('Scrum project')
+
+		const removeProjectButton = wrapper.find(projectClearButtonSelector)
+		await removeProjectButton.trigger('click')
+		await wrapper.vm.$nextTick()
+
+		expect(wrapper.vm.project.label).toBe(null)
 	})
 })
 
