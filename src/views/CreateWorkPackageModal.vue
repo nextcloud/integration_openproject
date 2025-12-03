@@ -309,10 +309,10 @@ export default {
 			return ''
 		},
 		getNoOptionTextForStatus() {
-    		return this.getNoOptionText('status')
+			return this.getNoOptionText('status')
 		},
 		getNoOptionTextForType() {
-    		return this.getNoOptionText('type')
+			return this.getNoOptionText('type')
 		},
 
 		getNoOptionTextForAssignee() {

@@ -703,24 +703,24 @@ describe('CreateWorkPackageModal.vue', () => {
 		})
 
 		it.each([
-		{
-			fieldName: 'type',
-			inputSelector: typeInputFieldSelector,
-			resultSelector: firstTypeSelector,
-			expectedMessage: 'No matching type found!',
-		},
-		{
-			fieldName: 'status',
-			inputSelector: statusInputFieldSelector,
-			resultSelector: firstStatusSelector,
-			expectedMessage: 'No matching status found!',
-		},
-		{
-			fieldName: 'assignee',
-			inputSelector: assigneeInputFieldSelector,
-			resultSelector: firstAssigneeSelector,
-			expectedMessage: 'No matching assignee found!',
-		},
+			{
+				fieldName: 'type',
+				inputSelector: typeInputFieldSelector,
+				resultSelector: firstTypeSelector,
+				expectedMessage: 'No matching type found!',
+			},
+			{
+				fieldName: 'status',
+				inputSelector: statusInputFieldSelector,
+				resultSelector: firstStatusSelector,
+				expectedMessage: 'No matching status found!',
+			},
+			{
+				fieldName: 'assignee',
+				inputSelector: assigneeInputFieldSelector,
+				resultSelector: firstAssigneeSelector,
+				expectedMessage: 'No matching assignee found!',
+			},
 		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
 
 			wrapper = mountWrapper(true, {
@@ -848,7 +848,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				label: 'Required CF',
 			},
 		]
-		jest.spyOn(axios, 'get')			// description: 'should show "No matching type found!" when project is set and there is no type found in search query',
+		jest.spyOn(axios, 'get')
 
 			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
