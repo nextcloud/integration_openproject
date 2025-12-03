@@ -50,6 +50,9 @@ describe('CreateWorkPackageModal.vue', () => {
 	const createWorkPackageSelector = '.create-workpackage-modal'
 	const projectSelectSelector = '[data-test-id="available-projects"]'
 	const firstProjectSelectorSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
+	const firstTypeSelector = '[data-test-id="available-types"] [role="listbox"] > li'
+	const firstStatusSelector = '[data-test-id="available-statuses"] [role="listbox"] > li'
+	const firstAssigneeSelector = '[data-test-id="available-assignees"] [role="listbox"] > li'
 	const statusSelectSelector = '[data-test-id="available-statuses"]'
 	const typeSelectSelector = '[data-test-id="available-types"]'
 	const assigneesSelectSelector = '[data-test-id="available-assignees"]'
@@ -130,6 +133,30 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 				const searchResult = wrapper.find(firstProjectSelectorSelector)
 				expect(searchResult.text()).toBe('No matching work projects found!')
+			})
+
+			it.each([
+				{
+					fieldName: 'type',
+					inputSelector: typeInputFieldSelector,
+					resultSelector: firstTypeSelector,
+				},
+				{
+					fieldName: 'status',
+					inputSelector: statusInputFieldSelector,
+					resultSelector: firstStatusSelector,
+				},
+				{
+					fieldName: 'assignee',
+					inputSelector: assigneeInputFieldSelector,
+					resultSelector: firstAssigneeSelector,
+				},
+			])('should show "Please select a project first!" on initial state when the $fieldName is not found', async ({ inputSelector, resultSelector }) => {
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
+				await inputField.trigger('focus')
+				const searchResult = wrapper.find(resultSelector)
+				expect(searchResult.text()).toBe('Please select a project first!')
 			})
 
 			it('should auto clear project if there is "No matching work projects found!"', async () => {
@@ -674,6 +701,46 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.vm.$nextTick()
 			expect(wrapper.vm.status.label).toBe('')
 		})
+
+		it.each([
+		{
+			fieldName: 'type',
+			inputSelector: typeInputFieldSelector,
+			resultSelector: firstTypeSelector,
+			expectedMessage: 'No matching type found!',
+		},
+		{
+			fieldName: 'status',
+			inputSelector: statusInputFieldSelector,
+			resultSelector: firstStatusSelector,
+			expectedMessage: 'No matching status found!',
+		},
+		{
+			fieldName: 'assignee',
+			inputSelector: assigneeInputFieldSelector,
+			resultSelector: firstAssigneeSelector,
+			expectedMessage: 'No matching assignee found!',
+		},
+		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: 'Scrum project',
+					},
+					label: 'Scrum project',
+					children: [],
+				},
+			})
+
+			const input = wrapper.find(inputSelector)
+			await input.setValue('non-existent-assignee')
+			await input.trigger('focus')
+
+			const searchResult = wrapper.find(resultSelector)
+			expect(searchResult.text()).toBe(expectedMessage)
+		})
 	})
 
 	it('should emit an event if work package creation is successful', async () => {
@@ -781,7 +848,8 @@ describe('CreateWorkPackageModal.vue', () => {
 				label: 'Required CF',
 			},
 		]
-		jest.spyOn(axios, 'get')
+		jest.spyOn(axios, 'get')			// description: 'should show "No matching type found!" when project is set and there is no type found in search query',
+
 			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
 			.mockImplementationOnce(() => sendOCSResponse(requiredTypeResponse))
