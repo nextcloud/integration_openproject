@@ -26,5 +26,5 @@ export const messages = {
 export const messagesFmt = {
 	appNotEnabledOrUnsupported: (app, version) => t(APP_ID, 'This feature requires version {version} (or higher) of "{app}" app. Please install or update the app.', { app, version }),
 	configureOIDCProviders: (settingsLink) => t(APP_ID, 'You can configure OIDC providers in the {settingsLink}', { settingsLink }, null, { escape: false, sanitize: false }),
-	noMachingFound: (fieldName) => t(APP_ID, 'No matching {fieldName} found!', { fieldName }),
+	noMachingFound: (fieldName) => t(APP_ID, 'No matching {fieldName} found', { fieldName }),
 }

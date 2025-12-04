@@ -304,7 +304,7 @@ export default {
 		},
 		getNoOptionTextForProject() {
 			if (this.availableProjects.length === 0) {
-				return messagesFmt.noMachingFound('project')
+				return messagesFmt.noMachingFound('work projects')
 			}
 			// while projects are being searched we make the no text option empty
 			return ''

@@ -18,6 +18,7 @@ import availableProjectAssignees from '../fixtures/availableProjectAssigneesResp
 import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreationResponse.json'
 import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
+import { messagesFmt, messages } from '../../../src/constants/messages.js'
 
 const localVue = createLocalVue()
 jest.mock('@nextcloud/dialogs', () => ({
@@ -49,7 +50,7 @@ const createWorkPackageUrl = generateOcsUrl('/apps/integration_openproject/api/v
 describe('CreateWorkPackageModal.vue', () => {
 	const createWorkPackageSelector = '.create-workpackage-modal'
 	const projectSelectSelector = '[data-test-id="available-projects"]'
-	const firstProjectSelectorSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
+	const firstProjectSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
 	const firstTypeSelector = '[data-test-id="available-types"] [role="listbox"] > li'
 	const firstStatusSelector = '[data-test-id="available-statuses"] [role="listbox"] > li'
 	const firstAssigneeSelector = '[data-test-id="available-assignees"] [role="listbox"] > li'
@@ -117,7 +118,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 			})
 
-			it('should show "No matching work projects found!" when the searched project is not found', async () => {
+			it('should show "No matching work projects found" when the searched project is not found', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse({}))
 				await inputField.setValue('Scw')
@@ -131,8 +132,8 @@ describe('CreateWorkPackageModal.vue', () => {
 						},
 					},
 				)
-				const searchResult = wrapper.find(firstProjectSelectorSelector)
-				expect(searchResult.text()).toBe('No matching work projects found!')
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messagesFmt.noMachingFound('work projects'))
 			})
 
 			it.each([
@@ -151,15 +152,15 @@ describe('CreateWorkPackageModal.vue', () => {
 					inputSelector: assigneeInputFieldSelector,
 					resultSelector: firstAssigneeSelector,
 				},
-			])('should show "Please select a project first!" on initial state when the $fieldName is not found', async ({ inputSelector, resultSelector }) => {
+			])('should show "Please select a project" on initial state when the $fieldName is not found', async ({ inputSelector, resultSelector }) => {
 				const inputField = wrapper.find(inputSelector)
 				await inputField.setValue(' ')
 				await inputField.trigger('focus')
 				const searchResult = wrapper.find(resultSelector)
-				expect(searchResult.text()).toBe('Please select a project first!')
+				expect(searchResult.text()).toBe(messages.pleaseSelectProject)
 			})
 
-			it('should auto clear project if there is "No matching work projects found!"', async () => {
+			it('should auto clear project if there is "No matching work projects found"', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse({}))
 				await inputField.setValue('Scw')
@@ -174,8 +175,8 @@ describe('CreateWorkPackageModal.vue', () => {
 						},
 					},
 				)
-				const searchResult = wrapper.find(firstProjectSelectorSelector)
-				expect(searchResult.text()).toBe('No matching work projects found!')
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messagesFmt.noMachingFound('work projects'))
 				expect(inputField.element.value).toBe('Scw')
 
 				// Trigger blur event (user moves to another field)
@@ -198,7 +199,7 @@ describe('CreateWorkPackageModal.vue', () => {
 						},
 					},
 				)
-				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				const searchResult = wrapper.find(firstProjectSelector)
 				expect(searchResult.text()).toBe('searchedProject')
 			})
 
@@ -707,21 +708,21 @@ describe('CreateWorkPackageModal.vue', () => {
 				fieldName: 'type',
 				inputSelector: typeInputFieldSelector,
 				resultSelector: firstTypeSelector,
-				expectedMessage: 'No matching type found!',
+				expectedMessage: 'No matching type found',
 			},
 			{
 				fieldName: 'status',
 				inputSelector: statusInputFieldSelector,
 				resultSelector: firstStatusSelector,
-				expectedMessage: 'No matching status found!',
+				expectedMessage: 'No matching status found',
 			},
 			{
 				fieldName: 'assignee',
 				inputSelector: assigneeInputFieldSelector,
 				resultSelector: firstAssigneeSelector,
-				expectedMessage: 'No matching assignee found!',
+				expectedMessage: 'No matching assignee found',
 			},
-		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
+		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ fieldName, inputSelector, resultSelector }) => {
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -739,7 +740,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			await input.trigger('focus')
 
 			const searchResult = wrapper.find(resultSelector)
-			expect(searchResult.text()).toBe(expectedMessage)
+			expect(searchResult.text()).toBe(messagesFmt.noMachingFound(fieldName))
 		})
 	})
 
