@@ -38,7 +38,7 @@
 						<span>{{ label }}</span>
 					</template>
 					<template #no-options>
-						{{ getNoOptionText }}
+						{{ getNoOptionTextForProject }}
 					</template>
 				</NcSelect>
 				<p v-if="error.error && error.attribute === 'project'" class="validation-error">
@@ -85,7 +85,7 @@
 								{{ option.label }}
 							</template>
 							<template #no-options>
-								{{ t('integration_openproject', 'Please select a project') }}
+								{{ getNoOptionTextForType }}
 							</template>
 						</NcSelect>
 						<p v-if="customTypeError" class="validation-error type-error" v-html="sanitizedRequiredCustomTypeValidationErrorMessage" /> <!-- eslint-disable-line vue/no-v-html -->
@@ -116,7 +116,7 @@
 								{{ option.label }}
 							</template>
 							<template #no-options>
-								{{ t('integration_openproject', 'Please select a project') }}
+								{{ getNoOptionTextForStatus }}
 							</template>
 						</NcSelect>
 						<p v-if="error.error && error.attribute === 'status'" class="validation-error">
@@ -143,7 +143,7 @@
 						{{ option.label }}
 					</template>
 					<template #no-options>
-						{{ t('integration_openproject', 'Please select a project') }}
+						{{ getNoOptionTextForAssignee }}
 					</template>
 				</NcSelect>
 				<div class="create-workpackage-form--label">
@@ -171,6 +171,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { translate as t } from '@nextcloud/l10n'
 import { STATE } from '../utils.js'
 import debounce from 'lodash/debounce.js'
+import { messages } from '../constants/messages.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -301,12 +302,22 @@ export default {
 		mappedNodes() {
 			return this.mappedProjects()
 		},
-		getNoOptionText() {
+		getNoOptionTextForProject() {
 			if (this.availableProjects.length === 0) {
-				return t('integration_openproject', 'No matching work projects found!')
+				return messages.noMachingWorkProjectsFound
 			}
 			// while projects are being searched we make the no text option empty
 			return ''
+		},
+		getNoOptionTextForStatus() {
+			return this.getNoOptionText('status')
+		},
+		getNoOptionTextForType() {
+			return this.getNoOptionText('type')
+		},
+
+		getNoOptionTextForAssignee() {
+			return this.getNoOptionText('assignee')
 		},
 		sanitizedRequiredCustomTypeValidationErrorMessage() {
 			// get the last number from the href i.e `/api/v3/types/1`, which is the type id
@@ -605,6 +616,19 @@ export default {
 				allowedValues.push(values)
 			}
 			return allowedValues
+		},
+		getNoOptionText(fieldName) {
+			if (this.project.label === null) {
+				return messages.pleaseSelectProject
+			}
+			if (fieldName === 'assignee') {
+				return messages.noMachingAssigneeFound
+			} else if (fieldName === 'type') {
+				return messages.noMachingTypeFound
+			} else if (fieldName === 'status') {
+				return messages.noMachingStausFound
+			}
+			return ''
 		},
 		async setAvailableAssigneesForProject(projectId) {
 			this.availableAssignees = []
