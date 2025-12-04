@@ -18,7 +18,7 @@ import availableProjectAssignees from '../fixtures/availableProjectAssigneesResp
 import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreationResponse.json'
 import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
-import { messagesFmt, messages } from '../../../src/constants/messages.js'
+import { messages } from '../../../src/constants/messages.js'
 
 const localVue = createLocalVue()
 jest.mock('@nextcloud/dialogs', () => ({
@@ -133,7 +133,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					},
 				)
 				const searchResult = wrapper.find(firstProjectSelector)
-				expect(searchResult.text()).toBe(messagesFmt.noMachingFound('work projects'))
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
 			})
 
 			it.each([
@@ -176,7 +176,7 @@ describe('CreateWorkPackageModal.vue', () => {
 					},
 				)
 				const searchResult = wrapper.find(firstProjectSelector)
-				expect(searchResult.text()).toBe(messagesFmt.noMachingFound('work projects'))
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
 				expect(inputField.element.value).toBe('Scw')
 
 				// Trigger blur event (user moves to another field)
@@ -708,21 +708,21 @@ describe('CreateWorkPackageModal.vue', () => {
 				fieldName: 'type',
 				inputSelector: typeInputFieldSelector,
 				resultSelector: firstTypeSelector,
-				expectedMessage: 'No matching type found',
+				expectedMessage: messages.noMachingTypeFound,
 			},
 			{
 				fieldName: 'status',
 				inputSelector: statusInputFieldSelector,
 				resultSelector: firstStatusSelector,
-				expectedMessage: 'No matching status found',
+				expectedMessage: messages.noMachingStausFound,
 			},
 			{
 				fieldName: 'assignee',
 				inputSelector: assigneeInputFieldSelector,
 				resultSelector: firstAssigneeSelector,
-				expectedMessage: 'No matching assignee found',
+				expectedMessage: messages.noMachingAssigneeFound,
 			},
-		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ fieldName, inputSelector, resultSelector }) => {
+		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
 
 			wrapper = mountWrapper(true, {
 				project: {
@@ -740,7 +740,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			await input.trigger('focus')
 
 			const searchResult = wrapper.find(resultSelector)
-			expect(searchResult.text()).toBe(messagesFmt.noMachingFound(fieldName))
+			expect(searchResult.text()).toBe(expectedMessage)
 		})
 	})
 
