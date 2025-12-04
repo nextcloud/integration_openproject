@@ -171,6 +171,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { translate as t } from '@nextcloud/l10n'
 import { STATE } from '../utils.js'
 import debounce from 'lodash/debounce.js'
+import { messages, messagesFmt } from '../constants/messages.js'
 
 const SEARCH_CHAR_LIMIT = 1
 const DEBOUNCE_THRESHOLD = 500
@@ -303,7 +304,7 @@ export default {
 		},
 		getNoOptionTextForProject() {
 			if (this.availableProjects.length === 0) {
-				return t('integration_openproject', 'No matching work projects found!')
+				return messagesFmt.noMachingFound('project')
 			}
 			// while projects are being searched we make the no text option empty
 			return ''
@@ -618,9 +619,9 @@ export default {
 		},
 		getNoOptionText(fieldName) {
 			if (this.project.label === null) {
-				return t('integration_openproject', 'Please select a project first!')
+				return messages.pleaseSelectProject
 			}
-			return t('integration_openproject', `No matching ${fieldName} found!`)
+			return messagesFmt.noMachingFound(fieldName)
 		},
 		async setAvailableAssigneesForProject(projectId) {
 			this.availableAssignees = []

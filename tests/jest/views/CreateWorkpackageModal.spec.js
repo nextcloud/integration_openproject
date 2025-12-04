@@ -735,7 +735,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			})
 
 			const input = wrapper.find(inputSelector)
-			await input.setValue('non-existent-assignee')
+			await input.setValue('non-existent-search')
 			await input.trigger('focus')
 
 			const searchResult = wrapper.find(resultSelector)

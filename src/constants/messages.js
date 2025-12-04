@@ -20,9 +20,11 @@ export const messages = {
 	externalOIDCProvider: t(APP_ID, 'External Provider'),
 	tokenExchangeHintText: t(APP_ID, 'When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process.'),
 	opRequiredVersionAndPlanHint: t(APP_ID, 'Requires OpenProject version {version} (or higher) and an active Corporate plan.', { version: OPENPROJECT_VERSION }),
+	pleaseSelectProject: t(APP_ID, 'Please select a project'),
 }
 
 export const messagesFmt = {
 	appNotEnabledOrUnsupported: (app, version) => t(APP_ID, 'This feature requires version {version} (or higher) of "{app}" app. Please install or update the app.', { app, version }),
 	configureOIDCProviders: (settingsLink) => t(APP_ID, 'You can configure OIDC providers in the {settingsLink}', { settingsLink }, null, { escape: false, sanitize: false }),
+	noMachingFound: (fieldName) => t(APP_ID, 'No matching {fieldName} found!', { fieldName }),
 }

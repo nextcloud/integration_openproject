@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fix: Work package creation with a non-existent project [#923](https://github.com/nextcloud/integration_openproject/pull/923)
 - Fix: Project Value in the field could not be removed [#923](https://github.com/nextcloud/integration_openproject/pull/923)
-- Fix: misleading mesesage in select field during wp creation [#924] (https://github.com/nextcloud/integration_openproject/pull/924)
+- Fix: Misleading mesesage in select field during wp creation [#924] (https://github.com/nextcloud/integration_openproject/pull/924)
 
 ### Removed
 
