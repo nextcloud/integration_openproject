@@ -11,7 +11,6 @@ namespace OCA\OpenProject\Service;
 use OCA\OAuth2\Db\Client;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
-use OCA\OpenProject\ServerVersionHelper;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 
@@ -44,26 +43,6 @@ class OauthService {
 	}
 
 	/**
-	 * @param string $secret
-	 * @param string $nextcloudVersion
-	 * @return string
-	 */
-	public function hashOrEncryptSecretBasedOnNextcloudVersion(string $secret, string $nextcloudVersion): string {
-		switch (true) {
-			case version_compare($nextcloudVersion, '30.0.0.0') >= 0:
-			case version_compare($nextcloudVersion, '29.0.7.0') >= 0 && version_compare($nextcloudVersion, '30.0.0.0') < 0:
-			case version_compare($nextcloudVersion, '28.0.10.0') >= 0 && version_compare($nextcloudVersion, '29.0.0.0') < 0:
-			case version_compare($nextcloudVersion, '28.0.0.0') < 0:
-				$encryptedSecret = bin2hex($this->crypto->calculateHMAC($secret));
-				break;
-			default:
-				$encryptedSecret = $this->crypto->encrypt($secret);
-				break;
-		}
-		return $encryptedSecret;
-	}
-
-	/**
 	 * @param string $name
 	 * @param string $redirectUri
 	 * @return array<mixed>
@@ -74,8 +53,7 @@ class OauthService {
 		$client->setName($name);
 		$client->setRedirectUri(sprintf($redirectUri, $clientId));
 		$secret = $this->secureRandom->generate(64, self::validChars);
-		$nextcloudVersion = ServerVersionHelper::getNextcloudVersion();
-		$client->setSecret($this->hashOrEncryptSecretBasedOnNextcloudVersion($secret, $nextcloudVersion));
+		$client->setSecret(bin2hex($this->crypto->calculateHMAC($secret)));
 		$client->setClientIdentifier($clientId);
 		$client = $this->clientMapper->insert($client);
 
