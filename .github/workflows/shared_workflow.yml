@@ -60,7 +60,7 @@ jobs:
           make jsunit
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,11 +69,11 @@ jobs:
           title: "JS Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
           min_coverage: '59'
-          path: './server/apps/integration_openproject/coverage/jest/lcov.info'
+          path: './coverage/jest/lcov.info'
 
   create-matrix:
     runs-on: ubuntu-22.04
@@ -254,14 +254,14 @@ jobs:
           make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
         with:
           reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -280,7 +280,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -289,7 +289,7 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
           min_coverage: '56'
