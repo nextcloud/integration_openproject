@@ -14,12 +14,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Removed
+
+## 2.10.1 - 2025-12-15
+
+### Added
 - Support Nextcloud 33 [#881](https://github.com/nextcloud/integration_openproject/pull/881)
 
 ### Changed
 - Remove latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
 - Replace internal method with public API for updating file metadata [#908](https://github.com/nextcloud/integration_openproject/pull/908)
-- Drop support for Nextcloud 28 and 29 [#925] (https://github.com/nextcloud/integration_openproject/pull/925)
 
 ### Fixed
 - Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
@@ -28,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Misleading mesesage in select field during wp creation [#924] (https://github.com/nextcloud/integration_openproject/pull/924)
 
 ### Removed
+- Drop support for Nextcloud 28 and 29 [#925] (https://github.com/nextcloud/integration_openproject/pull/925)
 
 ## 2.10.1 - 2025-11-05
 
