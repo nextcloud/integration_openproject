@@ -9,7 +9,6 @@ namespace OCA\OpenProject\Listener;
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\ServerVersionHelper;
 use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -52,11 +51,6 @@ class LoadAdditionalScriptsListener implements IEventListener {
 		if (!$event instanceof LoadAdditionalScriptsEvent) {
 			return;
 		}
-		if (version_compare(ServerVersionHelper::getNextcloudVersion(), '28') < 0) {
-			Util::addScript(Application::APP_ID, Application::APP_ID . '-fileActions');
-			Util::addScript(Application::APP_ID, Application::APP_ID . '-filesPluginLessThan28', 'files');
-		} else {
-			Util::addScript(Application::APP_ID, Application::APP_ID . '-filesPlugin');
-		}
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-filesPlugin');
 	}
 }
