@@ -18,6 +18,7 @@ import availableProjectAssignees from '../fixtures/availableProjectAssigneesResp
 import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreationResponse.json'
 import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
+import { messages } from '../../../src/constants/messages.js'
 
 const localVue = createLocalVue()
 jest.mock('@nextcloud/dialogs', () => ({
@@ -49,7 +50,10 @@ const createWorkPackageUrl = generateOcsUrl('/apps/integration_openproject/api/v
 describe('CreateWorkPackageModal.vue', () => {
 	const createWorkPackageSelector = '.create-workpackage-modal'
 	const projectSelectSelector = '[data-test-id="available-projects"]'
-	const firstProjectSelectorSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
+	const firstProjectSelector = '[data-test-id="available-projects"] [role="listbox"] > li'
+	const firstTypeSelector = '[data-test-id="available-types"] [role="listbox"] > li'
+	const firstStatusSelector = '[data-test-id="available-statuses"] [role="listbox"] > li'
+	const firstAssigneeSelector = '[data-test-id="available-assignees"] [role="listbox"] > li'
 	const statusSelectSelector = '[data-test-id="available-statuses"]'
 	const typeSelectSelector = '[data-test-id="available-types"]'
 	const assigneesSelectSelector = '[data-test-id="available-assignees"]'
@@ -64,6 +68,7 @@ describe('CreateWorkPackageModal.vue', () => {
 	const validationErrorProjectSelector = '.multiple-error-project'
 	const validationErrorSubjectSelector = '.multiple-error-subject'
 	const validationErrorTypeSelector = '.type-error'
+	const projectClearButtonSelector = '[data-test-id="available-projects"] .vs__clear'
 	let wrapper = null
 
 	beforeEach(() => {
@@ -113,7 +118,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				)
 			})
 
-			it('should show "No matching work projects found!" when the searched project is not found', async () => {
+			it('should show "No matching work projects found" when the searched project is not found', async () => {
 				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
 					.mockImplementationOnce(() => sendOCSResponse({}))
 				await inputField.setValue('Scw')
@@ -127,8 +132,57 @@ describe('CreateWorkPackageModal.vue', () => {
 						},
 					},
 				)
-				const searchResult = wrapper.find(firstProjectSelectorSelector)
-				expect(searchResult.text()).toBe('No matching work projects found!')
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+			})
+
+			it.each([
+				{
+					fieldName: 'type',
+					inputSelector: typeInputFieldSelector,
+					resultSelector: firstTypeSelector,
+				},
+				{
+					fieldName: 'status',
+					inputSelector: statusInputFieldSelector,
+					resultSelector: firstStatusSelector,
+				},
+				{
+					fieldName: 'assignee',
+					inputSelector: assigneeInputFieldSelector,
+					resultSelector: firstAssigneeSelector,
+				},
+			])('should show "Please select a project" on initial state when the $fieldName is not found', async ({ inputSelector, resultSelector }) => {
+				const inputField = wrapper.find(inputSelector)
+				await inputField.setValue(' ')
+				await inputField.trigger('focus')
+				const searchResult = wrapper.find(resultSelector)
+				expect(searchResult.text()).toBe(messages.pleaseSelectProject)
+			})
+
+			it('should auto clear project if there is "No matching work projects found"', async () => {
+				const axiosSpyWithSearchQuery = jest.spyOn(axios, 'get')
+					.mockImplementationOnce(() => sendOCSResponse({}))
+				await inputField.setValue('Scw')
+				expect(wrapper.vm.isFetchingProjectsFromOpenProjectWithQuery).toBe(true)
+
+				// for a search debounce request, minimum 500 ms wait is required
+				await new Promise(resolve => setTimeout(resolve, 500))
+				expect(axiosSpyWithSearchQuery).toHaveBeenCalledWith(projectsUrl,
+					{
+						params: {
+							searchQuery: 'Scw',
+						},
+					},
+				)
+				const searchResult = wrapper.find(firstProjectSelector)
+				expect(searchResult.text()).toBe(messages.noMachingWorkProjectsFound)
+				expect(inputField.element.value).toBe('Scw')
+
+				// Trigger blur event (user moves to another field)
+				await inputField.trigger('blur')
+				await wrapper.vm.$nextTick()
+				expect(inputField.element.value).toBe('')
 			})
 
 			it('should fetch projects when not found in initial available projects', async () => {
@@ -145,7 +199,7 @@ describe('CreateWorkPackageModal.vue', () => {
 						},
 					},
 				)
-				const searchResult = wrapper.find(firstProjectSelectorSelector)
+				const searchResult = wrapper.find(firstProjectSelector)
 				expect(searchResult.text()).toBe('searchedProject')
 			})
 
@@ -648,6 +702,46 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.vm.$nextTick()
 			expect(wrapper.vm.status.label).toBe('')
 		})
+
+		it.each([
+			{
+				fieldName: 'type',
+				inputSelector: typeInputFieldSelector,
+				resultSelector: firstTypeSelector,
+				expectedMessage: messages.noMachingTypeFound,
+			},
+			{
+				fieldName: 'status',
+				inputSelector: statusInputFieldSelector,
+				resultSelector: firstStatusSelector,
+				expectedMessage: messages.noMachingStausFound,
+			},
+			{
+				fieldName: 'assignee',
+				inputSelector: assigneeInputFieldSelector,
+				resultSelector: firstAssigneeSelector,
+				expectedMessage: messages.noMachingAssigneeFound,
+			},
+		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
+
+			wrapper = mountWrapper(true, {
+				project: {
+					self: {
+						href: '/api/v3/projects/4',
+						title: 'Scrum project',
+					},
+					label: 'Scrum project',
+					children: [],
+				},
+			})
+
+			const input = wrapper.find(inputSelector)
+			await input.setValue('non-existent-search')
+			await input.trigger('focus')
+
+			const searchResult = wrapper.find(resultSelector)
+			expect(searchResult.text()).toBe(expectedMessage)
+		})
 	})
 
 	it('should emit an event if work package creation is successful', async () => {
@@ -756,6 +850,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			},
 		]
 		jest.spyOn(axios, 'get')
+
 			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
 			.mockImplementationOnce(() => sendOCSResponse(requiredTypeResponse))
@@ -841,6 +936,26 @@ describe('CreateWorkPackageModal.vue', () => {
 		const error = wrapper.find(validationErrorSelector)
 		expect(error.isVisible()).toBe(true)
 		expect(error.text()).toBe('Status is not set to one of the allowed values.')
+	})
+
+	it('should be able to remove the selected project', async () => {
+		wrapper = mountWrapper(true, {
+			project: {
+				self: {
+					href: '/api/v3/projects/2',
+					title: 'Scrum project',
+				},
+				label: 'Scrum project',
+				children: [],
+			},
+		})
+		expect(wrapper.vm.project.label).toBe('Scrum project')
+
+		const removeProjectButton = wrapper.find(projectClearButtonSelector)
+		await removeProjectButton.trigger('click')
+		await wrapper.vm.$nextTick()
+
+		expect(wrapper.vm.project.label).toBe(null)
 	})
 })
 
