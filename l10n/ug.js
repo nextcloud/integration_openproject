@@ -107,7 +107,6 @@ OC.L10N.register(
     "Link to work package created successfully!" : "مۇۋەپپەقىيەتلىك قۇرۇلغان خىزمەت بوغچىسىغا ئۇلىنىش!",
     "Links to work package created successfully for selected files!" : "تاللانغان ھۆججەتلەر ئۈچۈن مۇۋەپپەقىيەتلىك ياسالغان خىزمەت بوغچىسىغا ئۇلىنىش!",
     "Create and link a new work package" : "يېڭى خىزمەت بوغچىسى قۇرۇش ۋە ئۇلاش",
-    "No matching work projects found!" : "ماس كېلىدىغان خىزمەت تۈرلىرى تېپىلمىدى!",
     "This type has mandatory fields which cannot be filled here. Please, create work packages of this type directly in {htmlLink}." : "بۇ تۈرنىڭ بۇ يەردە تولدۇرغىلى بولمايدىغان مەجبۇرىي ساھەلىرى بار. بۇ تۈردىكى خىزمەت بوغچىلىرىنى بىۋاسىتە {htmlLink} in دا قۇرۇڭ.",
     "Status is not set to one of the allowed values." : "ھالەت رۇخسەت قىلىنغان قىممەتنىڭ بىرىگە تەڭشەلمىگەن.",
     "Project *" : "Project *",
@@ -116,7 +115,6 @@ OC.L10N.register(
     "Work package subject" : "خىزمەت بولىقى تېمىسى",
     "Type *" : "Type *",
     "Select project type" : "تۈر تىپىنى تاللاڭ",
-    "Please select a project" : "بىر تۈرنى تاللاڭ",
     "Status *" : "ھالەت *",
     "Select project status" : "تۈر ھالىتىنى تاللاڭ",
     "Assignee" : "ھاۋالە قىلغۇچى",
@@ -151,6 +149,7 @@ OC.L10N.register(
     "OpenProject work package picker" : "OpenProject خىزمەت بوغچىسى",
     "OpenProject API error" : "OpenProject API خاتالىقى",
     "OpenProject settings" : "OpenProject تەڭشىكى",
+    "Please select a project" : "بىر تۈرنى تاللاڭ",
     "Link to work package" : "خىزمەت بوغچىسىغا ئۇلىنىش",
     "Failed to link file to work package" : "ھۆججەتنى خىزمەت بوغچىسىغا ئۇلاش مەغلۇپ بولدى",
     "Successfully connected to OpenProject!" : "OpenProject غا مۇۋەپپەقىيەتلىك ئۇلاندى!",
@@ -175,6 +174,7 @@ OC.L10N.register(
     "Successfully revoked user(s) OpenProject OAuth access token(s)" : "مۇۋەپپەقىيەتلىك ئەمەلدىن قالدۇرۇلغان ئىشلەتكۈچى (لار) OpenProject OAuth زىيارەت بەلگىسى (لار)",
     "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n* Link work packages in rich text fields via Smart Picker\n* Preview links to work packages in text fields\n\nOn the OpenProject end, users are able to:\n\n* Link work packages with files and folders in Nextcloud\n* Upload and download files directly to Nextcloud from within a work package\n* Open linked files in Nextcloud to edit them\n* Let OpenProject create shared folders per project\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "بۇ پروگرامما ئوچۇق كودلۇق تۈر باشقۇرۇش ۋە ھەمكارلىق يۇمشاق دېتالى OpenProject بىلەن يوچۇقسىز بىرلەشتۈرۈشنى قوزغىتىدۇ.\n\nNextcloud ئاخىرىدا ، ئۇ ئىشلەتكۈچىلەرگە يول قويىدۇ:\n\n* ھۆججەت ۋە ھۆججەت قىسقۇچلارنى OpenProject دىكى خىزمەت بولىقى بىلەن ئۇلاڭ\n* ھۆججەت ياكى ھۆججەت قىسقۇچقا ئۇلانغان بارلىق خىزمەت بوغچىلىرىنى تېپىڭ\n* باشقۇرۇش تاختىسى ئارقىلىق OpenProject ئۇقتۇرۇشىنى كۆرۈڭ\n* Nextcloud نىڭ ئىزدەش بالدىقى ئارقىلىق خىزمەت بولىقىنى ئىزدەڭ\n* Smart Picker ئارقىلىق مول تېكىست ساھەسىدىكى خىزمەت بوغچىسىنى ئۇلاڭ\n* تېكىست ساھەسىدىكى خىزمەت بوغچىسىغا ئۇلىنىشلارنى ئالدىن كۆرۈڭ\n\nOpenProject نىڭ ئاخىرىدا ، ئىشلەتكۈچىلەر:\n\n* خىزمەت بوغچىسىنى Nextcloud دىكى ھۆججەت ۋە ھۆججەت قىسقۇچلار بىلەن ئۇلاڭ\n* ھۆججەت بوغچىسىدىن ھۆججەتلەرنى Nextcloud غا بىۋاسىتە يۈكلەڭ ۋە چۈشۈرۈڭ\n* Nextcloud دا ئۇلانغان ھۆججەتلەرنى ئېچىپ ئۇلارنى تەھرىرلەڭ\n* OpenProject ھەر بىر تۈردە ئورتاق ھۆججەت قىسقۇچ قۇرسۇن\n\nOpenProject قوللىنىشچان پروگراممىسىنى قانداق تەڭشەش ۋە ئىشلىتىش توغرىسىدا تېخىمۇ كۆپ ئۇچۇرغا ئېرىشمەكچى بولسىڭىز ، باشقۇرغۇچى ۋە [[https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) نى كۆرۈڭ. ئىشلەتكۈچى قوللانمىسى] (https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
     "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "تۈر قىسقۇچلىرىنى ئاپتوماتىك باشقۇرۇش ئۈچۈن ، بۇ ئەپ مەخسۇس گۇرۇپپا قىسقۇچ ئورنىتىشى كېرەك ، بىر گۇرۇپپىغا تەقسىم قىلىنغان ۋە ئىشلەتكۈچى تەرىپىدىن باشقۇرۇلىدۇ ، ھەر بىرى «OpenProject» دەپ ئاتىلىدۇ.",
-    "Please link a project to this Nextcloud storage" : "بۇ تۈرنى Nextcloud ساقلىغۇچقا ئۇلاڭ"
+    "Please link a project to this Nextcloud storage" : "بۇ تۈرنى Nextcloud ساقلىغۇچقا ئۇلاڭ",
+    "No matching work projects found!" : "ماس كېلىدىغان خىزمەت تۈرلىرى تېپىلمىدى!"
 },
 "nplurals=2; plural=(n != 1);");
