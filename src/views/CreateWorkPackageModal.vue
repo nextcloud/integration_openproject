@@ -774,6 +774,20 @@ export default {
 	}
 	&--subject {
 		width: 100%;
+		& > div {
+			padding: 0 !important;
+		}
+		.workpackage-subject {
+			padding: 0px 12px !important;
+			&:hover {
+				border: 1px solid var(--color-main-text) !important;
+				padding: 0px 11px !important;
+			}
+			&:focus {
+				border: 2px solid var(--color-main-text) !important;
+				padding: 0px 12px !important;
+			}
+		}
 	}
 	&--description {
 		width: 100%;
@@ -813,14 +827,6 @@ export default {
 			border: 1px solid var(--color-border-dark) !important;
 		}
 	}
-}
-
-.workpackage-subject {
-	border: 0.08rem solid var(--color-border-maxcontrast) !important;
-}
-
-.workpackage-subject:focus {
-	border: 0.15rem solid var(--color-main-text) !important;
 }
 
 .openProjectUrl {
