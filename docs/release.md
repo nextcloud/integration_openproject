@@ -14,27 +14,37 @@
 On the release branch:
 
 2. In case any new feature was added, update the feature description in:
-   - `README.md`
-   - `appinfo/info.xml`
+   - [README.md](../README.md)
+   - [appinfo/info.xml](../appinfo/info.xml)
 3. Update the version in:
-   - `appinfo/info.xml`
-   - `package.json`
-4. Add the new release branch in `.tx/backport` to allow transifex commits.
-5. Update `CHANGELOG.md` with the changes and the version to be released.
-6. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
-7. Perform confirmatory testing (Changelogs) - by the OpenProject team.
-8. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
+   - [appinfo/info.xml](../appinfo/info.xml)
+   - [package.json](../package.json)
+4. Update the minimum and maximum nexcloud version support in:
+   - [appinfo/info.xml](../appinfo/info.xml)
+   - [shared workflow CI](../.github/workflows/shared_workflow.yml)
+   - [nighlty ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
+   - [release CI](../.github/workflows/release.yml)
+5. Add the new release branch in `.tx/backport` to allow transifex commits.
+6. Update `CHANGELOG.md` with the changes and the version to be released.
+7. Update the new release branch in the [nightly CI](../.github/workflows/nighlty-ci-release-branch.yml).
+8. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+9. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ### b. Patch Release
 
 On the current release branch:
 
 1. Update the patch version in:
-   - `appinfo/info.xml`
-   - `package.json`
+   - [README.md](../README.md)
+   - [appinfo/info.xml](../appinfo/info.xml)
 2. Update `CHANGELOG.md` with the changes and the version to be released.
-3. Perform confirmatory testing (Changelogs) - by the OpenProject team.
-4. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
+3. Update the minimum and maximum nexcloud version support in:
+   - [appinfo/info.xml](../appinfo/info.xml)
+   - [shared workflow CI](../.github/workflows/shared_workflow.yml)
+   - [nighlty ci release branch](../.github/workflows/nighlty-ci-release-branch.yml)
+   - [release CI](../.github/workflows/release.yml)
+4. Perform confirmatory testing (Changelogs) - by the OpenProject team.
+5. Perform [smoke testing](testing/smoke_testing.md) - by the OpenProject team.
 
 ## 2. Publish Release
 
