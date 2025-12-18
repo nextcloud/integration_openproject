@@ -19,7 +19,7 @@ OC.L10N.register(
     "Setup OpenProject user, group and folder" : "Benutzer, Gruppe und Ordner für OpenProject einrichten",
     "Retry setup OpenProject user, group and folder" : "Erneut versuchen, OpenProject-Benutzer, -Gruppe und -Ordner einzurichten",
     "Administration > File storages" : "Administration > Dateispeicher",
-    "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Mit Administrationsrechten zu Ihrem OpenProject {htmlLink} gehen, das Setup starten und die Werte hierher kopieren.",
+    "Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here." : "Mit Administrationsrechten zu deinem OpenProject {htmlLink} gehen, das Setup starten und die Werte hierher kopieren.",
     "Copy the following values back into the OpenProject {htmlLink} as an Administrator." : "Kopiere mit Administrationsrechten die folgenden Werte zurück in das OpenProject {htmlLink}",
     "This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." : "Auf diesen Wert kann nur einmal zugegriffen werden. Dieses Passwort nun mit Administrationsrechten nach OpenProject kopieren {htmlLink}.",
     "troubleshooting guide" : "Anleitung zur Fehlerbehebung",
