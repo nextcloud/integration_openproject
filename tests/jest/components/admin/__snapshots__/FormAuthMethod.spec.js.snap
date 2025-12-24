@@ -352,14 +352,6 @@ exports[`Component: FormAuthMethod initial incomplete form current setting: auth
 </div>"
 `;
 
-exports[`Component: FormAuthMethod initial incomplete form current setting: other form should show form heading with disabled status 1`] = `
-"<div class="authentication-method">
-  <formheading-stub index="2" title="Authentication method" isdisabled="true"></formheading-stub>
-  <!---->
-  <!---->
-</div>"
-`;
-
 exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc app should show disabled error message and disabled sso button 1`] = `
 "<div class="authentication-method">
   <formheading-stub index="2" title="Authentication method"></formheading-stub>
@@ -395,6 +387,14 @@ exports[`Component: FormAuthMethod initial incomplete form disabled user_oidc ap
       </ncbutton-stub>
     </div>
   </div>
+</div>"
+`;
+
+exports[`Component: FormAuthMethod initial incomplete form server url not set should show form heading with disabled status 1`] = `
+"<div class="authentication-method">
+  <formheading-stub index="2" title="Authentication method" isdisabled="true"></formheading-stub>
+  <!---->
+  <!---->
 </div>"
 `;
 
