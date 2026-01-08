@@ -10,7 +10,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 32 master"
+        default: "30 31 32"
       php_versions:
         required: false
         type: string
@@ -121,7 +121,7 @@ jobs:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "Yes"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
+          NEXTCLOUD_AUTOINSTALL_APPS: "user_oidc oidc activity groupfolders integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
@@ -151,18 +151,11 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout for nightly CI
-        if: github.event_name == 'schedule'
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
-
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@v3
-        with:
-          path: integration_openproject
 
       - name: Checkout activity app
         uses: actions/checkout@v3
@@ -170,29 +163,6 @@ jobs:
           repository: nextcloud/activity
           path: activity
           ref: ${{ matrix.nextcloudVersion }}
-
-      - name: Checkout groupfolders app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/groupfolders
-          path: groupfolders
-          ref: ${{ matrix.nextcloudVersion }}
-
-      - name: Checkout user_oidc app
-        uses: actions/checkout@v3
-        with:
-          repository: nextcloud/user_oidc
-          ref: v7.2.0
-          fetch-tags: true
-          path: user_oidc
-
-      - name: Checkout oidc app
-        uses: actions/checkout@v3
-        with:
-          repository: h2CK/oidc
-          ref: 1.6.0
-          fetch-tags: true
-          path: oidc
 
       - name: Checkout server (for phpunit and psalm)
         uses: actions/checkout@v3
@@ -221,36 +191,37 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('./composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Setup server and apps
+      - name: Install PHP dependencies
         run: |
           # integration_openproject app
           composer install --no-progress --prefer-dist --optimize-autoloader
-          # user_oidc app
-          composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
-          cd server && ./occ maintenance:install --admin-pass=admin
+
+      - name: Prepare Nextcloud server (for phpunit and psalm)
+        run: |
+          cd server
+          ./occ maintenance:install --admin-pass=admin
 
       - name: PHP code analysis and linting
         run: |
           make psalm
           make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
-      - name: Enable apps
+      - name: Enable apps (for phpunit)
         run: |
+          # prepare apps
           mkdir -p server/apps/integration_openproject
           cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
-          cp -r ../groupfolders ../activity server/apps
-          cd server
-          ./occ a:e groupfolders integration_openproject activity
-          if [ "${{matrix.nextcloudVersion}}" != "stable27" ]; then
-            cp -r ../../user_oidc ../../oidc apps
-            ./occ a:e -f user_oidc
-            # enable app even if it is not compatible with the current server version
-            ./occ a:e -f oidc
+          cp -r ../activity server/apps
+          # install apps
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # enable app even if it is not compatible with the master branch
+            ./server/occ a:e -f oidc user_oidc activity groupfolders integration_openproject
           fi
+          ./server/occ a:e oidc user_oidc activity groupfolders integration_openproject
 
       - name: PHP Unit Tests
         run: |
-          cd server/apps/integration_openproject
+          # cd server/apps/integration_openproject
           make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
@@ -300,11 +271,8 @@ jobs:
           # Disable share rate limit protection
           docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
 
-      - name: API Tests
-        env:
-          NEXTCLOUD_BASE_URL: http://localhost
+      - name: Wait for Nextcloud server to be ready
         run: |
-          composer install --no-progress --prefer-dist --optimize-autoloader
           if ! timeout 5m bash -c '
             until curl -s -f http://localhost/status.php | grep '"'"'"installed":true'"'"'; do
               echo "[INFO] Waiting for server to be ready..."
@@ -314,7 +282,11 @@ jobs:
             echo "[ERROR] Server not ready within 5 minutes."
             exit 1
           fi
-          make api-test
+
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://localhost
+        run: make api-test
 
   notify-nightly-report:
     needs:
