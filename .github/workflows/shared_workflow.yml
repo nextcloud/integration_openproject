@@ -10,7 +10,7 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 32"
+        default: "30 31 32 master"
       php_versions:
         required: false
         type: string
@@ -218,6 +218,16 @@ jobs:
             ./server/occ a:e -f oidc user_oidc activity groupfolders integration_openproject
           fi
           ./server/occ a:e oidc user_oidc activity groupfolders integration_openproject
+
+      - name: Patch apps
+        run: |
+          # Sometimes some app might not be compatible with the latest Nextcloud master branch
+          # So, we need to patch them here
+          # NOTE: this should not be applied to stable branches
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # patch OIDC app to be compatible with NC master branch
+            sed -i 's|public $id;||' server/apps/oidc/lib/Db/Client.php
+          fi
 
       - name: PHP Unit Tests
         run: |
