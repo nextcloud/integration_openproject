@@ -20,6 +20,7 @@ OC.L10N.register(
     "Replace application password" : "Muuda rakenduse salasõna",
     "Reset" : "Lähtesta",
     "Enable navigation link" : "Lisa menüülink",
+    "Enable unified search for tickets" : "Kasuta ühendatud otsingut otsimiseks probleemihalduse süsteemist",
     "Incorrect access token" : "Vigane tunnusluba ligipääsuks",
     "Connected as {user}" : "Ühendatud kui {user}",
     "Authentication method" : "Autentimismeetod",
