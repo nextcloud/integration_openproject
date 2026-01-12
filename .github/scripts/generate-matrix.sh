@@ -155,8 +155,6 @@ for ncVersion in $nextcloudVersions; do
         phpVersion="8.1"
     elif [ "$ncVersion" = "stable30" ]; then
         phpVersion="8.2"
-    elif [ "$ncVersion" = "master" ]; then
-        phpVersion="8.3"
     else
         phpVersion="$defaultPhpVersion"
     fi
