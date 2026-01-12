@@ -120,8 +120,6 @@ jobs:
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "Yes"
-          NEXTCLOUD_AUTOINSTALL_APPS: "viewer activity groupfolders integration_openproject"
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
           VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
@@ -139,7 +137,7 @@ jobs:
           POSTGRES_DB: nextcloud
 
       database-mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
@@ -247,6 +245,11 @@ jobs:
             # enable app even if it is not compatible with the current server version
             ./occ a:e -f oidc
           fi
+
+      - name: Enable Apps inside docker
+        run: |
+          docker exec nextcloud /bin/bash -c 'occ app:enable groupfolders integration_openproject activity'
+          docker exec nextcloud /bin/bash -c 'occ app:enable -f user_oidc oidc'
 
       - name: PHP Unit Tests
         run: |
