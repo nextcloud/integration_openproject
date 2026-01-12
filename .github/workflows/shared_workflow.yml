@@ -14,7 +14,7 @@ on:
       php_versions:
         required: false
         type: string
-        default: "8.2 8.3 8.4"
+        default: "8.1 8.2 8.3"
 
 name: CI
 
@@ -111,7 +111,7 @@ jobs:
 
     services:
       nextcloud:
-        image: ghcr.io/juliusknorr/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
+        image: ghcr.io/juliusknorr/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:master
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
@@ -178,7 +178,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: h2CK/oidc
-          ref: 1.14.6
+          ref: 1.14.5
           fetch-tags: true
           path: oidc
 
