@@ -8,6 +8,7 @@ namespace OCA\OpenProject;
 
 use OCA\OIDCIdentityProvider\Db\Client;
 use OCA\OIDCIdentityProvider\Db\ClientMapper;
+use OCA\OIDCIdentityProvider\Db\CustomClaimMapper;
 use OCA\OIDCIdentityProvider\Db\RedirectUriMapper;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -42,6 +43,7 @@ class OIDCClientMapper {
 				$this->timeFactory,
 				$this->appConfig,
 				new RedirectUriMapper($this->db, $this->timeFactory, $this->appConfig),
+				new CustomClaimMapper($this->db, $this->timeFactory),
 				$this->random,
 				$this->logger,
 			);
