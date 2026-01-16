@@ -43,7 +43,7 @@ class OIDCClientMapper {
 				$this->timeFactory,
 				$this->appConfig,
 				new RedirectUriMapper($this->db, $this->timeFactory, $this->appConfig),
-				new CustomClaimMapper($this->db, $this->timeFactory),
+				new CustomClaimMapper($this->db, $this->logger),
 				$this->random,
 				$this->logger,
 			);
