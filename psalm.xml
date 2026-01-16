@@ -41,6 +41,7 @@
 				<referencedClass name="OCA\TermsOfService\Db\Mapper\TermsMapper" />
 				<!-- these classes belong to the oidc app -->
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\Client" />
+				<referencedClass name="OCA\OIDCIdentityProvider\Db\CustomClaimMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\ClientMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Db\RedirectUriMapper" />
 				<referencedClass name="OCA\OIDCIdentityProvider\Exceptions\ClientNotFoundException" />

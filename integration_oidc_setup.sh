@@ -146,8 +146,7 @@ fi
 # Nextcloud Variables
 # This script requires minimum versions of Nextcloud apps: OIDC, User OIDC, and OpenProject integration
 MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
-MIN_SUPPORTED_OIDC_APP_VERSION="1.5.0"
-MIN_SUPPORTED_OIDC_APP_VERSION_FOR_CLIENT_CREATION="1.9.0"
+MIN_SUPPORTED_OIDC_APP_VERSION="1.14.1"
 MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
 # These URLs are just to check if the Nextcloud instances have been started or not before running the script
 NC_HOST_STATUS=$(curl -s -X GET "${NC_HOST}/status.php")
@@ -342,11 +341,7 @@ logAlreadyCompletedIntegrationConfiguration() {
 }
 
 if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
-  if [[ -n $NC_INTEGRATION_OP_CLIENT_ID ]] && [[ -n $NC_INTEGRATION_OP_CLIENT_SECRET ]]; then
-    ncCheckAppVersion "oidc" $MIN_SUPPORTED_OIDC_APP_VERSION_FOR_CLIENT_CREATION
-  else
-    ncCheckAppVersion "oidc"
-  fi
+  ncCheckAppVersion "oidc"
 fi
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
