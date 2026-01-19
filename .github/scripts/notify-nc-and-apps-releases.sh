@@ -78,12 +78,12 @@ is_latest_release_tag() {
     mapfile -t tags <<< "$nextcloud_latest_release_tag" # Convert newlines into array elements
 
     for tag in "${tags[@]}"; do
-      message+="<a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag'>$tag</a>, "
+      message+="<a href=\"https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag\">$tag</a>, "
     done
 
     message=${message%, } # Remove trailing comma and space
   else
-    message='<b>🔔 Alert! New release of \"'$APP_NAME'\":<b> <a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$nextcloud_latest_release_tag'>'$nextcloud_latest_release_tag'</a>'
+    message='<b>🔔 Alert! New release of \"'$APP_NAME'\":<b> <a href=\"https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$nextcloud_latest_release_tag\">'$nextcloud_latest_release_tag'</a>'
   fi
 
   log_info "Found new release tag(s): $nextcloud_latest_release_tag"
