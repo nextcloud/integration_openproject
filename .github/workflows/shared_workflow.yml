@@ -24,10 +24,15 @@ jobs:
     name: js lint and unit tests
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v6
 
       - name: Read package.json node and npm engines version
         uses: skjnldsv/read-package-engines-version-actions@v3
@@ -74,10 +79,15 @@ jobs:
   create-matrix:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v6
 
       - name: Create matrix
         id: create-matrix
@@ -142,11 +152,18 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v6
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v6
+        with:
+          path: integration_openproject
 
       - name: Checkout activity app
         uses: actions/checkout@v6
