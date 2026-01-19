@@ -30,14 +30,14 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v2
+        uses: skjnldsv/read-package-engines-version-actions@v3
         id: versions
         with:
-          fallbackNode: '^14'
-          fallbackNpm: '^7'
+          fallbackNode: '^20'
+          fallbackNpm: '^10'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
           cache: 'npm'
