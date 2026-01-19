@@ -48,7 +48,7 @@ send_message_to_room_response=$(curl -s -XPOST "$ELEMENT_CHAT_URL/_matrix/client
                                             "msgtype": "m.text",
                                             "body": "",
                                             "format": "org.matrix.custom.html",
-                                            "formatted_body": "<a href='https://github.com/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID'>NC-Nightly-'$BRANCH_NAME'</a><br></br><b><i>Status: '$workflow_status'</i></b>"
+                                            "formatted_body": "<a href=\"https://github.com/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID\">NC-Nightly-'$BRANCH_NAME'</a><br></br><b><i>Status: '$workflow_status'</i></b>"
                                           }
                                         '
                                       )
