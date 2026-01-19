@@ -56,7 +56,7 @@ jobs:
           make jsunit
 
       - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
           title: "JS Code Coverage"
 
       - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
           min_coverage: '59'
@@ -245,7 +245,7 @@ jobs:
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable29' && matrix.phpVersion == '8.1' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
         with:
           reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
