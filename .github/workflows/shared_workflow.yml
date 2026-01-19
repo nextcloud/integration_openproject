@@ -84,7 +84,7 @@ jobs:
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
           PHP_VERSIONS: ${{ inputs.php_versions }}
-          DEFAULT_PHP_VERSION: "8.2"
+          DEFAULT_PHP_VERSION: "8.3"
           DEFAULT_DATABASE: "mysql"
           EXTRA_DATABASES: "pgsql"
         run: |
