@@ -11,7 +11,6 @@ RUN wget -qO /bin/curl https://github.com/moparisthebest/static-curl/releases/la
 FROM ${IMAGE_REPO}:${IMAGE_TAG}
 
 COPY --from=commands --chmod=755 /bin/curl /usr/bin/curl
-COPY --from=commands --chmod=755 /bin/which /usr/bin/which
 COPY --chmod=755 keycloak.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
