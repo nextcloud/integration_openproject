@@ -4,11 +4,7 @@
 
 set -eo pipefail
 
-CURL=$(which curl)
-if [ -z "$CURL" ]; then
-    echo "[ERROR] curl: command not found"
-    exit 1
-fi
+CURL=/usr/bin/curl
 
 KC_URL="http://localhost:8080"
 
