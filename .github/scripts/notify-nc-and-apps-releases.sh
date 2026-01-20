@@ -74,16 +74,16 @@ is_latest_release_tag() {
   if [[ $version_count -gt 1 ]]; then
     log_info "Multiple new releases of \"$APP_NAME\" found: $version_count versions."
     # Join multiple releases into a single line, separated by comma + space
-    message='<b>🔔 Alert! Multiple new releases of \"'$APP_NAME'\":<b> '
+    message="<b>🔔 Alert! Multiple new releases of '$APP_NAME':<b> "
     mapfile -t tags <<< "$nextcloud_latest_release_tag" # Convert newlines into array elements
 
     for tag in "${tags[@]}"; do
-      message+="<a href=\"https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag\">$tag</a>, "
+      message+="<a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$tag'>$tag</a>, "
     done
 
     message=${message%, } # Remove trailing comma and space
   else
-    message='<b>🔔 Alert! New release of \"'$APP_NAME'\":<b> <a href=\"https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$nextcloud_latest_release_tag\">'$nextcloud_latest_release_tag'</a>'
+    message="<b>🔔 Alert! New release of '$APP_NAME':<b> <a href='https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$nextcloud_latest_release_tag'>$nextcloud_latest_release_tag</a>"
   fi
 
   log_info "Found new release tag(s): $nextcloud_latest_release_tag"
