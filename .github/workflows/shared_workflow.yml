@@ -154,6 +154,14 @@ jobs:
           path: integration_openproject/server
           ref: ${{ matrix.nextcloudVersion }}
 
+      # activity app cannot be installed using occ command
+      - name: Checkout (activity)
+        uses: actions/checkout@v6
+        with:
+          repository: nextcloud/activity
+          ref: ${{ matrix.nextcloudVersion }}
+          path: activity
+
       - name: Checkout (groupfolders)
         uses: actions/checkout@v6
         if: ${{ matrix.nextcloudVersion == 'master' }}
@@ -206,12 +214,15 @@ jobs:
           make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Copy dependent apps
-        if: ${{ matrix.nextcloudVersion == 'master' }}
         run: |
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../oidc
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../groupfolders
-          cp -r ../oidc ../user_oidc ../groupfolders server/apps
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../activity
+          cp -r ../activity server/apps
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../oidc
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../groupfolders
+            cp -r ../oidc ../user_oidc ../groupfolders server/apps
+          fi
 
       - name: Enable apps (for phpunit)
         run: |
@@ -220,9 +231,9 @@ jobs:
           cd server
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
             # enable app even if it is not compatible with the master branch
-            ./occ a:e -f oidc user_oidc groupfolders integration_openproject
+            ./occ a:e -f activity oidc user_oidc groupfolders integration_openproject
           else
-            ./occ a:e oidc user_oidc groupfolders integration_openproject
+            ./occ a:e activity oidc user_oidc groupfolders integration_openproject
             cp -r apps/oidc apps/user_oidc apps/groupfolders ${{ github.workspace }}
           fi
 
@@ -280,9 +291,9 @@ jobs:
           # Enable apps
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
             # enable app even if it is not compatible with the master branch
-            docker exec nextcloud /bin/bash -c 'occ a:e -f oidc user_oidc groupfolders integration_openproject'
+            docker exec nextcloud /bin/bash -c 'occ a:e -f activity oidc user_oidc groupfolders integration_openproject'
           else
-            docker exec nextcloud /bin/bash -c 'occ a:e oidc user_oidc groupfolders integration_openproject'
+            docker exec nextcloud /bin/bash -c 'occ a:e activity oidc user_oidc groupfolders integration_openproject'
           fi
 
       - name: Wait for Nextcloud server to be ready
