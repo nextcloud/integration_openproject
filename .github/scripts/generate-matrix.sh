@@ -57,7 +57,7 @@ function parsePHPVersion() {
 }
 
 # Default values
-defaultPhpVersion="8.2"
+defaultPhpVersion="8.3"
 if [ -n "$DEFAULT_PHP_VERSION" ]; then
     checkPHPVersionFormat "$DEFAULT_PHP_VERSION"
     defaultPhpVersion=$(parsePHPVersion "$DEFAULT_PHP_VERSION")
@@ -155,8 +155,6 @@ for ncVersion in $nextcloudVersions; do
         phpVersion="8.1"
     elif [ "$ncVersion" = "stable30" ]; then
         phpVersion="8.2"
-    elif [ "$ncVersion" = "master" ]; then
-        phpVersion="8.3"
     else
         phpVersion="$defaultPhpVersion"
     fi
