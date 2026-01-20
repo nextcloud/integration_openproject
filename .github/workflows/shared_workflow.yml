@@ -208,9 +208,9 @@ jobs:
       - name: Copy dependent apps
         if: ${{ matrix.nextcloudVersion == 'master' }}
         run: |
-          composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
-          composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../oidc
-          composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=../groupfolders
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../oidc
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../groupfolders
           cp -r ../oidc ../user_oidc ../groupfolders server/apps
 
       - name: Enable apps (for phpunit)
