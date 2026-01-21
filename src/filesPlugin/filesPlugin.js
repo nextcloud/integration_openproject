@@ -47,8 +47,12 @@ const singleFileAction = new FileAction({
 	},
 	iconSvgInline: () => OpenProjectIcon,
 	async exec(node, view, dir) {
-		window.OCA.Files.Sidebar.setActiveTab('open-project')
-		await window.OCA.Files.Sidebar.open(node.path)
+		// Open the sidebar with the OpenProject tab
+		// In NC 33+, OCA.Files.Sidebar still exists for programmatic access
+		if (window.OCA?.Files?.Sidebar) {
+			window.OCA.Files.Sidebar.setActiveTab('open-project')
+			await window.OCA.Files.Sidebar.open(node.path)
+		}
 		return null
 	},
 })
