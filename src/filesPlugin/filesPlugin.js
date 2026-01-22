@@ -39,14 +39,15 @@ const singleFileAction = new FileAction({
 	id: 'open-project-single',
 	displayName: () => t('integration_openproject', 'OpenProject'),
 	order: 0,
-	enabled(nodes, view) {
+	enabled({ nodes, view }) {
 		// we don't want 'files.public' or any other view
 		return view.id === 'files'
 			&& nodes.length === 1
 			&& !nodes.some(({ permissions }) => (permissions & Permission.READ) === 0)
 	},
 	iconSvgInline: () => OpenProjectIcon,
-	async exec(node, view, dir) {
+	async exec({ nodes }) {
+		const node = nodes[0]
 		window.OCA.Files.Sidebar.setActiveTab('open-project')
 		await window.OCA.Files.Sidebar.open(node.path)
 		return null
@@ -59,14 +60,15 @@ const multipleFileAction = new FileAction({
 	id: 'open-project-multiple',
 	displayName: () => t('integration_openproject', 'Link to work package'),
 	order: 0,
-	enabled(nodes, view) {
+	enabled({ nodes, view }) {
 		// we don't want 'files.public' or any other view
 		return view.id === 'files'
 			&& nodes.length >= 1
 			&& !nodes.some(({ permissions }) => (permissions & Permission.READ) === 0)
 	},
 	iconSvgInline: () => OpenProjectIcon,
-	async exec(node, view, dir) {
+	async exec({ nodes }) {
+		const node = nodes[0]
 		console.debug('in the single action handler')
 		OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].setFileInfos([{
 			id: node.fileid,
@@ -76,7 +78,7 @@ const multipleFileAction = new FileAction({
 		// to avoid the toast message
 		return null
 	},
-	async execBatch(nodes, view, dir) {
+	async execBatch({ nodes }) {
 		console.debug('in the multi action handler')
 		compare(nodes)
 		// to avoid the toast message
