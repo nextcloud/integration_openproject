@@ -15,20 +15,13 @@ jobs:
       APP_ID: integration_openproject
     runs-on: ubuntu-latest
     steps:
-      - name: Read node and npm versions from package.json
-        uses: skjnldsv/read-package-engines-version-actions@v3
-        id: versions
-        with:
-          fallbackNode: '^20'
-          fallbackNpm: '^10'
-
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+      - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          node-version: 20
 
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+      - name: Setup npm
+        run: npm i -g npm
 
       - name: Setup PHP
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
