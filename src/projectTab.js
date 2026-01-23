@@ -9,7 +9,7 @@ import vueCustomElement from 'vue-custom-element'
 import { registerSidebarTab } from '@nextcloud/files'
 
 import './bootstrap.js'
-import OpenProjectSvgIcon from '../img/app.svg'
+import OpenProjectSvgIcon from '../img/openproject-icon.svg'
 import ProjectsTab from './views/ProjectsTab.vue'
 
 Vue.use(vueCustomElement)
