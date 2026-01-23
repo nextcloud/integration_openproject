@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "OpenProject" : "OpenProject",
     "Error getting OAuth access token" : "Terjadi kesalahan mendapatkan token akses OAuth",
     "Error during OAuth exchanges" : "Terjadi kesalahan saat penukaran OAuth",
     "Bad HTTP method" : "Metode HTTP tidak benar",
@@ -14,12 +15,14 @@ OC.L10N.register(
     "Authentication method" : "Metode otentikasi",
     "Documentation" : "Dokumentasi",
     "Copied!" : "Tersalin!",
+    "Copied to the clipboard" : "Disalin ke papan klip",
     "Details" : "Detail",
     "Start typing to search" : "Mulai mengetik untuk mencari",
     "Select a user or group" : "Pilih pengguna atau grup",
     "Description" : "Deskrisi",
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
+    "Unlink" : "Putuskan tautan",
     "Connected accounts" : "Akun terhubung"
 },
 "nplurals=1; plural=0;");
