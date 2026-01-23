@@ -48,9 +48,9 @@ SPDX-FileCopyrightText = "2022-2024 Jankari Tech Pvt. Ltd."
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = ["img/app.svg", "img/app-dark.svg"]
+path = ["img/app.svg", "img/app-dark.svg", "img/openproject-icon.svg"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2018-2024 Google LLC"
+SPDX-FileCopyrightText = "2018-2025 Google LLC"
 SPDX-License-Identifier = "LicenseRef-OpenProjectTrademarks"
 
 [[annotations]]
