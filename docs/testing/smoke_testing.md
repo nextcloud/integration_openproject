@@ -43,7 +43,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 ### A2. Connect Nextcloud with OpenProject
 
-- [ ] Complete step [Test No A1](#a1-oauth-configuration-without-project-folder-setupautomatically-managed-folders).
+- [ ] Complete step [Test No A1](#a1-oauth-configuration).
 - [ ] In `Nextcloud`, navigate to `Personal Settings > Openproject` and click on `Connect to OpenProject` button.
 - [ ] `Nextcloud` admin should be connected as an `OpenProject` admin.
 - [ ] Also, create a user in both `Nextcloud` as well as `OpenProject`.
@@ -57,7 +57,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] Add a file storage name `Nextcloud`( choose `No specific Folder` option ) for `Demo Project`.
 
 ### A4. Connect OpenProject with Nextcloud
-- [ ] Complete step [Test No A1](#a1-oauth-configuration-without-project-folder-setupautomatically-managed-folders).
+- [ ] Complete step [Test No A1](#a1-oauth-configuration).
 - [ ] Complete step [Test No A3](#A3-Add-File-storage-Nextcloud-to-an-OpenProject-project).
 - [ ] Navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, and login to `Nextcloud`.
@@ -68,12 +68,19 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] `OpenProject` user should be connected as a `Nextcloud` user.
 
 ### A5. Setup and check project folder in Nextcloud (with project folder setup)
-- [ ] Complete step [Test No A1](#a1-oauth-configuration-without-project-folder-setupautomatically-managed-folders).
+- [ ] Complete step [Test No A1](#a1-oauth-configuration).
 - [ ] Enable `groupfolders` application in `Nextcloud`.
 - [ ] Enable `Automatically managed folders` switch in admin setting and set project folder.
 - [ ] Application password should be generated.
-- [ ] `OpenProject` user and group are created such that user `OpenProject` is admin of the group.
+- [ ] Verify that `OpenProject` user and group are created with user `OpenProject` as sub-admin of the group.
+- [ ] Verify that `OpenProjectNoAutomaticProjectFolders` group is also created with user `OpenProject` as sub-admin.
 - [ ] Try deleting `OpenProject` user and group, those should not be deleted.
+- [ ] Try deleting `OpenProjectNoAutomaticProjectFolders` group, it should not be possible to delete.
+- [ ] Test group management (as user `OpenProject`):
+  - Login as `OpenProject` user
+  - Add a test user `user1` to the `OpenProject` group
+  - Remove `user1` from the `OpenProject` group
+  - Verify that `user1` is automatically moved to the `OpenProjectNoAutomaticProjectFolders` group
 
 ### A6. Complete the common smoke tests
 - [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
@@ -94,7 +101,7 @@ NC_ADMIN_PASSWORD=admin \
 OPENPROJECT_STORAGE_NAME=Nextcloud  \                         
 bash integration_setup.sh
 ```
-- [ ] Upon success, try step [Test No A2](#A2-Connect-Nextcloud-with-OpenProject-Without-project-folder-setup) (Skip first check).
+- [ ] Upon success, try step [Test No A2](#A2-Connect-Nextcloud-with-OpenProject) (Skip first check).
 - [ ] Upon success, try step [Test No A4](#a4-connect-openproject-with-nextcloud) (Skip first check).
 - [ ] Also, to set up the integration configuration with project folder setup, just set environment `SETUP_PROJECT_FOLDER=true` and run the script.
 - [ ] Re-run the script again after it is already setup (Should not give any error).
@@ -400,7 +407,7 @@ bash integration_oidc_setup.sh
 #### Existing OAuth 2.0 Setup
 
 - [ ] **Before upgrade**: Perform complete setup with OAuth2 method (Project folder enabled)
-- [ ] [Upgrade app](#upgrade-steps)
+- [ ] Perform [Upgrade steps](#upgrade-steps)
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
 #### Existing SSO Setup
@@ -408,7 +415,7 @@ bash integration_oidc_setup.sh
 ##### Nextcloud Hub as IDP
 
 - [ ] **Before upgrade**: Perform complete setup with sso method (Nextcloud Hub as IDP, Project folder enabled)
-- [ ] [Upgrade app](#upgrade-steps)
+- [ ] Perform [Upgrade steps](#upgrade-steps)
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
 #### External Provider (Keycloak)
@@ -416,11 +423,11 @@ bash integration_oidc_setup.sh
 ##### Token Exchange Disabled
 
 - [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange disable, Project folder enabled)
-- [ ] [Upgrade app](#upgrade-steps)
+- [ ] Perform [Upgrade steps](#upgrade-steps)
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved
 
 ##### Token Exchange Enabled
 
 - [ ] **Before upgrade**: Perform complete setup with sso method (Keycloak as IDP, Token exchange enable, Project folder enabled)
-- [ ] [Upgrade app](#upgrade-steps)
+- [ ] Perform [Upgrade steps](#upgrade-steps)
 - [ ] **After upgrade**: Check that the integration setup and other changes are preserved
