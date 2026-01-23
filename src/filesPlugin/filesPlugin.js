@@ -4,7 +4,7 @@
  */
 
 import '../bootstrap.js'
-import { registerFileAction, FileAction, Permission } from '@nextcloud/files'
+import { registerFileAction, FileAction, Permission, getSidebar } from '@nextcloud/files'
 import OpenProjectIcon from '../../img/app-dark.svg'
 import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
 import Vue from 'vue'
@@ -36,7 +36,7 @@ const compare = (files) => {
 
 // registering file action for single file selection
 const singleFileAction = new FileAction({
-	id: 'open-project-single',
+	id: 'integration_openproject-single',
 	displayName: () => t('integration_openproject', 'OpenProject'),
 	order: 0,
 	enabled({ nodes, view }) {
@@ -47,17 +47,28 @@ const singleFileAction = new FileAction({
 	},
 	iconSvgInline: () => OpenProjectIcon,
 	async exec({ nodes }) {
-		const node = nodes[0]
-		window.OCA.Files.Sidebar.setActiveTab('open-project')
-		await window.OCA.Files.Sidebar.open(node.path)
-		return null
+		const sidebar = getSidebar()
+		const [node] = nodes
+		try {
+			// If the sidebar is already open for the current file, do nothing
+			if (sidebar.node?.source === node.source) {
+				console.debug('Sidebar already open for this file', { node })
+				return null
+			}
+
+			sidebar.open(node, 'integration_openproject')
+			return null
+		} catch (error) {
+			console.error('Error while opening sidebar', { error })
+			return false
+		}
 	},
 })
 registerFileAction(singleFileAction)
 
 // registering file action for multiple file selection
 const multipleFileAction = new FileAction({
-	id: 'open-project-multiple',
+	id: 'integration_openproject-multiple',
 	displayName: () => t('integration_openproject', 'Link to work package'),
 	order: 0,
 	enabled({ nodes, view }) {
