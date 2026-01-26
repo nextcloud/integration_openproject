@@ -158,6 +158,7 @@ appstore: clean
 	--exclude=tests \
 	--exclude=ci \
 	--exclude=vendor/bin \
+	--exclude=dev \
 	$(project_dir) $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		sudo chown $(webserveruser) $(sign_dir)/$(app_name)/appinfo ;\
