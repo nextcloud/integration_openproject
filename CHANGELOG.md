@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Remove latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
+- Remove the latest stable OpenProject version from warning message [#891](https://github.com/nextcloud/integration_openproject/pull/891)
 - Replace internal method with public API for updating file metadata [#908](https://github.com/nextcloud/integration_openproject/pull/908)
 - Bump minimum supported version of oidc app to 1.14.1 [#939](https://github.com/nextcloud/integration_openproject/pull/939)
 
@@ -32,12 +32,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show meaningful error message when deleting group folders [#884](https://github.com/nextcloud/integration_openproject/pull/884)
 - Fix: Work package creation with a non-existent project [#923](https://github.com/nextcloud/integration_openproject/pull/923)
 - Fix: Project Value in the field could not be removed [#923](https://github.com/nextcloud/integration_openproject/pull/923)
-- Fix: Misleading mesesage in select field during wp creation [#924](https://github.com/nextcloud/integration_openproject/pull/924)
-- Fix: Subject field resizing on hover during wp creation [#929](https://github.com/nextcloud/integration_openproject/pull/929)
+- Fix: Misleading message in select field of work package creation modal [#924](https://github.com/nextcloud/integration_openproject/pull/924)
+- Fix: Subject field resizing on hover in work package creation modal [#929](https://github.com/nextcloud/integration_openproject/pull/929)
 
 ### Removed
 
-- Drop support for Nextcloud 28 and 29 [#925] (https://github.com/nextcloud/integration_openproject/pull/925)
+- Drop support for Nextcloud 28 and 29 [#925](https://github.com/nextcloud/integration_openproject/pull/925)
 
 ## 2.10.1 - 2025-11-05
 
