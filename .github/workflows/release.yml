@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup NodeJS
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: 20
 
@@ -33,7 +33,7 @@ jobs:
           tools: php-cs-fixer, phpunit
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Get current tag
         id: tag
@@ -79,7 +79,7 @@ jobs:
       - name: Create Release
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
         with:
           tag_name: ${{ steps.tag.outputs.currenttag }}
           name: ${{ steps.tag.outputs.currenttag }}
