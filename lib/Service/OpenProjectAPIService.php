@@ -262,10 +262,10 @@ class OpenProjectAPIService {
 	 */
 	public function searchWorkPackage(
 		string $userId,
-		string $query = null,
-		int $fileId = null,
+		?string $query = null,
+		?int $fileId = null,
 		bool $onlyLinkableWorkPackages = true,
-		int $workPackageId = null
+		?int $workPackageId = null
 	): array {
 		$filters = [];
 
@@ -1262,7 +1262,7 @@ class OpenProjectAPIService {
 	/**
 	 * @return bool
 	 */
-	public function isAllTermsOfServiceSignedForUserOpenProject($signatoryMapper = null): bool {
+	public function isAllTermsOfServiceSignedForUserOpenProject(?SignatoryMapper $signatoryMapper = null): bool {
 		if ($this->isTermsOfServiceAppEnabled() && $this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
 			if ($signatoryMapper === null) {
 				$signatoryMapper = new SignatoryMapper($this->db);
@@ -1503,7 +1503,7 @@ class OpenProjectAPIService {
 	 * @throws OpenprojectErrorException
 	 * @throws OpenprojectResponseException|PreConditionNotMetException|\JsonException
 	 */
-	public function getAvailableOpenProjectProjects(string $userId, string $searchQuery = null): array {
+	public function getAvailableOpenProjectProjects(string $userId, ?string $searchQuery = null): array {
 		$resultsById = [];
 		$filters = [];
 		if ($searchQuery) {
