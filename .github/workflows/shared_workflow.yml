@@ -25,19 +25,19 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v3
+        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4
         id: versions
         with:
           fallbackNode: '^20'
           fallbackNpm: '^10'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
           cache: 'npm'
@@ -57,7 +57,7 @@ jobs:
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
+        uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./coverage/jest/lcov.info
@@ -66,7 +66,7 @@ jobs:
 
       - name: JS coverage check
         if: ${{ github.event_name == 'pull_request' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
+        uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '59'
           path: './coverage/jest/lcov.info'
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
 
@@ -141,13 +141,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
 
       - name: Checkout server (for phpunit and psalm)
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           submodules: true
           repository: nextcloud/server
@@ -156,35 +156,35 @@ jobs:
 
       # activity app cannot be installed using occ command
       - name: Checkout (activity)
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nextcloud/activity
           ref: ${{ matrix.nextcloudVersion }}
           path: activity
 
       - name: Checkout (groupfolders)
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: nextcloud/groupfolders
           path: groupfolders
 
       - name: Checkout (user_oidc)
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: nextcloud/user_oidc
           path: user_oidc
 
       - name: Checkout (oidc)
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: h2CK/oidc
           path: oidc
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer, phpunit
@@ -196,7 +196,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('./composer.lock') }}
@@ -244,14 +244,14 @@ jobs:
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
+        uses: danielpalme/ReportGenerator-GitHub-Action@abaac9fef72e4116bfc69905d51062790bda0335
         with:
           reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
           targetdir: 'integration_openproject/server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
@@ -270,7 +270,7 @@ jobs:
 
       - name: PHP Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
-        uses: romeovs/lcov-reporter-action@v0.3.1
+        uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
@@ -279,7 +279,7 @@ jobs:
 
       - name: PHP coverage check
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
-        uses: VeryGoodOpenSource/very_good_coverage@v2
+        uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '56'
           path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
@@ -321,7 +321,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Notify nightly report to element
         env:
