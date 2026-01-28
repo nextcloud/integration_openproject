@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
+## 2.11.1 - 2026-01-28
+
+### Fixed
+ - Talk room guest access broken due to integration_openproject app [#959](https://github.com/nextcloud/integration_openproject/pull/959)
+
 ## 2.11.0 - 2026-01-22
 
 ### Changed
