@@ -109,7 +109,7 @@ class ConfigController extends Controller {
 	 * @param string|null $userId
 	 * @return void
 	 */
-	public function clearUserInfo(string $userId = null) {
+	public function clearUserInfo(?string $userId = null) {
 		if ($userId === null) {
 			$userId = $this->userId;
 		}
