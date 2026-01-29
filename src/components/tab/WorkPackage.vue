@@ -145,7 +145,7 @@ export default {
 				el = document.getElementById('workpackage-link-previews')
 			}
 			if (el === null) {
-				el = document.getElementById('tab-open-project')
+				el = document.getElementById('tab-integration_openproject')
 			}
 			return el
 		},

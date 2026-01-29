@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- [BREAKING] Support Nextcloud 33 [#952](https://github.com/nextcloud/integration_openproject/pull/952)
+
 ### Changed
 
 ### Removed

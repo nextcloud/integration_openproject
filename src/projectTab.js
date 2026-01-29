@@ -5,46 +5,33 @@
  */
 
 import Vue from 'vue'
+import vueCustomElement from 'vue-custom-element'
+import { registerSidebarTab } from '@nextcloud/files'
 
 import './bootstrap.js'
+import OpenProjectSvgIcon from '../img/openproject-icon.svg'
 import ProjectsTab from './views/ProjectsTab.vue'
 
-// Init OpenProject Tab Service
-if (!window.OCA.OpenProject) {
-	window.OCA.OpenProject = {}
-}
+Vue.use(vueCustomElement)
 
-const View = Vue.extend(ProjectsTab)
-let TabInstance = null
+const tagName = 'integration_openproject-files-sidebar-tab'
 
-const projectTab = new OCA.Files.Sidebar.Tab({
-	id: 'open-project',
-	name: t('integration_openproject', 'OpenProject'),
-	icon: 'icon-openproject',
-
-	async mount(el, fileInfo, context) {
-		if (TabInstance) {
-			TabInstance.$destroy()
+registerSidebarTab({
+	id: 'integration_openproject',
+	order: 50,
+	displayName: t('integration_openproject', 'OpenProject'),
+	iconSvgInline: OpenProjectSvgIcon,
+	enabled() {
+		return true
+	},
+	tagName,
+	onInit: () => {
+		if (window.customElements.get(tagName)) {
+			// element already defined
+			return
 		}
-		TabInstance = new View({
-			// Better integration with vue parent component
-			parent: context,
+		Vue.customElement(tagName, ProjectsTab, {
+			shadow: false,
 		})
-		// Only mount after we have all the info we need
-		await TabInstance.update(fileInfo)
-		TabInstance.$mount(el)
 	},
-	update(fileInfo) {
-		TabInstance.update(fileInfo)
-	},
-	destroy() {
-		TabInstance.$destroy()
-		TabInstance = null
-	},
-})
-
-window.addEventListener('DOMContentLoaded', function() {
-	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(projectTab)
-	}
 })

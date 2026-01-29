@@ -73,6 +73,12 @@ export default {
 		NcLoadingIcon,
 		LinkOffIcon,
 	},
+	props: {
+		node: {
+			type: Object,
+			required: true,
+		},
+	},
 	data: () => ({
 		error: '',
 		fileInfo: {},
@@ -103,7 +109,13 @@ export default {
 			})
 		},
 	},
+	watch: {
+		node() {
+			this.update()
+		},
+	},
 	mounted() {
+		this.update()
 		if (this.authMethod === AUTH_METHOD.OAUTH2) {
 			checkOauthConnectionResult(this.oauthConnectionResult, this.oauthConnectionErrorMessage)
 		}
@@ -111,11 +123,13 @@ export default {
 	methods: {
 		/**
 		 * updates current resource
-		 *
-		 * @param {object} fileInfo file information
 		 */
-		async update(fileInfo) {
-			this.fileInfo = fileInfo
+		async update() {
+			this.fileInfo = {
+				id: this.node.fileid,
+				name: this.node.basename,
+				dir: this.node.dirname,
+			}
 			this.workpackages = []
 			this.state = STATE.LOADING
 			if (this.isAdminConfigOk) {
