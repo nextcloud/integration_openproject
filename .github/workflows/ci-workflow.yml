@@ -15,8 +15,6 @@ on:
       - 'l10n/**'
       - 'img/**'
       - 'docker-compose*'
-  schedule:
-    - cron: '0 22 * * *' # run at 10 PM UTC
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
