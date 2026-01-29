@@ -15,7 +15,7 @@ on:
       php_versions:
         required: false
         type: string
-        default: "8.1 8.2 8.3"
+        default: "8.2 8.3"
 
 name: CI
 
