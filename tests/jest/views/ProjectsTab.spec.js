@@ -633,30 +633,3 @@ function mountWrapper({ data = {}, props = {} } = {}) {
 		}),
 	})
 }
-
-function shallowMountWrapper({ data = {}, props = {} } = {}) {
-	return shallowMount(ProjectsTab, {
-		localVue,
-		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
-		},
-		stubs: {
-			SearchInput: true,
-			NcAvatar: true,
-		},
-		propsData: {
-			node: fileOne,
-			...props,
-		},
-		data: () => ({
-			error: '',
-			state: STATE.OK,
-			fileInfo: {},
-			workpackages: [],
-			isAdminConfigOk: true,
-			authMethod: AUTH_METHOD.OAUTH2,
-			...data,
-		}),
-	})
-}
