@@ -8,11 +8,12 @@
 
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import util from 'util'
+import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import ProjectsTab from '../../../src/views/ProjectsTab.vue'
-import { STATE } from '../../../src/utils.js'
+import { STATE, AUTH_METHOD } from '../../../src/utils.js'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 
@@ -74,6 +75,9 @@ const typesUrl = generateOcsUrl('/apps/integration_openproject/api/v1/types/%s')
 const wpFileLinksUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages/%s/file-links')
 const fileLinksUrl = generateOcsUrl('/apps/integration_openproject/api/v1/file-links/%s')
 
+const fileOne = { fileid: 1, basename: 'lorem.txt', dirname: '/' }
+const fileTwo = { fileid: 2, basename: 'epsum.txt', dirname: '/' }
+
 describe('ProjectsTab.vue', () => {
 	let wrapper
 	const loadingIndicatorSelector = '.loading-spinner'
@@ -86,7 +90,16 @@ describe('ProjectsTab.vue', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers()
-		wrapper = shallowMount(ProjectsTab, { localVue })
+		wrapper = shallowMount(ProjectsTab, {
+			localVue,
+			propsData: {
+				node: fileOne,
+			},
+			data: () => ({
+				authMethod: AUTH_METHOD.OAUTH2,
+				isAdminConfigOk: false,
+			}),
+		})
 	})
 	describe('search input existence', () => {
 		it('should not exist if admin config is not ok', async () => {
@@ -118,36 +131,27 @@ describe('ProjectsTab.vue', () => {
 	describe('loading icon', () => {
 		it('shows the loading icon during "loading" state', async () => {
 			wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await flushPromises()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 		})
 		it('does not show the empty content message during "loading" state', async () => {
 			wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await flushPromises()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeFalsy()
 		})
 		it.each([STATE.OK, STATE.ERROR])('makes the loading icon disappear on state change', async (state) => {
 			wrapper.setData({ state: STATE.LOADING })
-			await localVue.nextTick()
+			await flushPromises()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeTruthy()
 			wrapper.setData({ state })
-			await localVue.nextTick()
+			await flushPromises()
 			expect(wrapper.find(loadingIndicatorSelector).exists()).toBeFalsy()
-		})
-		it('sets the state to "loading" on update', async () => {
-			const err = new Error()
-			err.response = { status: 404 }
-			axios.get.mockRejectedValueOnce(err)
-			wrapper.setData({ state: STATE.OK })
-			expect(wrapper.vm.state).toBe(STATE.OK)
-			wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe(STATE.LOADING)
 		})
 	})
 	describe('empty content', () => {
 		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
 			wrapper.setData({ state })
-			await localVue.nextTick()
+			await flushPromises()
 			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
 		})
 		it('should set projects as empty when the list of linked work packages are empty', () => {
@@ -166,12 +170,14 @@ describe('ProjectsTab.vue', () => {
 			{ HTTPStatus: 402, AppState: STATE.FAILED_FETCHING_WORKPACKAGES },
 			{ HTTPStatus: 404, AppState: STATE.CONNECTION_ERROR },
 			{ HTTPStatus: 500, AppState: STATE.ERROR },
-		])('sets states according to HTTP error codes', async (cases) => {
+		])('sets states according to HTTP error code: %s', async ({ HTTPStatus, AppState }) => {
 			const err = new Error()
-			err.response = { status: cases.HTTPStatus }
+			err.response = { status: HTTPStatus }
 			axios.get.mockRejectedValueOnce(err)
-			await wrapper.vm.update({ id: 123 })
-			expect(wrapper.vm.state).toBe(cases.AppState)
+			await wrapper.setData({ isAdminConfigOk: true })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
+			expect(wrapper.vm.state).toBe(AppState)
 		})
 		it.each([
 			null,
@@ -274,13 +280,17 @@ describe('ProjectsTab.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(testCase))
 				// mock for color requests, it should not fail because of the missing mock
 				.mockImplementation(() => sendOCSResponse([]))
-			await wrapper.vm.update({ id: 123 })
+			await wrapper.setData({ isAdminConfigOk: true })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
 			expect(wrapper.vm.state).toBe(STATE.FAILED_FETCHING_WORKPACKAGES)
 		})
 		it('sets the "ok" state on empty response', async () => {
 			axios.get
 				.mockImplementation(() => sendOCSResponse([]))
-			await wrapper.vm.update({ id: 123 })
+			await wrapper.setData({ isAdminConfigOk: true })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
 			expect(wrapper.vm.state).toBe(STATE.OK)
 		})
 		it('sets the "error" state if the admin config is not okay', async () => {
@@ -292,7 +302,8 @@ describe('ProjectsTab.vue', () => {
 			await wrapper.setData({
 				isAdminConfigOk: false,
 			})
-			await wrapper.vm.update({ id: 123 })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
 			expect(wrapper.vm.state).toBe(STATE.ERROR)
 			expect(wrapper).toMatchSnapshot()
 		})
@@ -300,7 +311,8 @@ describe('ProjectsTab.vue', () => {
 			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
 			{ statusColor: { }, typeColor: { } },
 		])('shows the linked workpackages', async (testCase) => {
-			wrapper = mountWrapper()
+			const wrapper = mountWrapper()
+			await flushPromises()
 			axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					id: 123,
@@ -345,9 +357,10 @@ describe('ProjectsTab.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(testCase.typeColor))
 				.mockImplementationOnce(() => sendOCSResponse(testCase.statusColor))
 				.mockImplementationOnce(() => sendOCSResponse(testCase.typeColor))
-			await wrapper.vm.update({ id: 789 })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
 			expect(axiosGetSpy).toBeCalledWith(
-				util.format(wpFileIdUrl, 789),
+				util.format(wpFileIdUrl, fileTwo.fileid),
 				{},
 			)
 			expect(axiosGetSpy).toBeCalledWith(
@@ -406,9 +419,10 @@ describe('ProjectsTab.vue', () => {
 					},
 				}]))
 				.mockImplementation(() => sendOCSResponse([]))
-			await wrapper.vm.update({ id: 2222 })
+			await wrapper.setProps({ node: fileTwo })
+			await flushPromises()
 			expect(axiosGetSpy).toBeCalledWith(
-				util.format(wpFileIdUrl, 2222),
+				util.format(wpFileIdUrl, fileTwo.fileid),
 				{},
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
@@ -416,7 +430,6 @@ describe('ProjectsTab.vue', () => {
 			expect(workPackages).toMatchSnapshot()
 		})
 		it('caches the results for status and type color', async () => {
-			wrapper = mountWrapper()
 			axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					id: 123,
@@ -457,7 +470,8 @@ describe('ProjectsTab.vue', () => {
 					},
 				}]))
 				.mockImplementation(() => sendOCSResponse({ color: '#FFFFFF' }))
-			await wrapper.vm.update({ id: 2222 })
+			wrapper = mountWrapper()
+			await flushPromises()
 
 			// there should be only 3 requests even there are 2 WP
 			// one request for the wp itself, one for status color one for type color
@@ -478,7 +492,7 @@ describe('ProjectsTab.vue', () => {
 			await wrapper.setData({
 				fileInfo: { id: 1234 },
 			})
-			await localVue.nextTick()
+			await flushPromises()
 			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
@@ -499,9 +513,9 @@ describe('ProjectsTab.vue', () => {
 				fileInfo: { id: 1234 },
 				openprojectUrl: 'http://openproject',
 			})
-			await localVue.nextTick()
+			await flushPromises()
 			await wrapper.find(linkedWorkpackageSelector).trigger('click')
-			await localVue.nextTick()
+			await flushPromises()
 			expect(window.open).toHaveBeenCalledTimes(1)
 			expect(window.open).toHaveBeenCalledWith(
 				'http://openproject/projects/15/work_packages/1',
@@ -515,10 +529,10 @@ describe('ProjectsTab.vue', () => {
 				workpackages: workPackagesSearchResponse,
 				fileInfo: { id: 1234 },
 			})
-			await localVue.nextTick()
+			await flushPromises()
 			await expect(wrapper.find(workPackageUnlinkSelector).exists()).toBeTruthy()
 			await wrapper.find(workPackageUnlinkSelector).trigger('click')
-			await localVue.nextTick()
+			await flushPromises()
 			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledTimes(1)
 			expect(OC.dialogs.confirmDestructive).toHaveBeenCalledWith(
 				'Are you sure you want to unlink the work package?',
@@ -531,6 +545,8 @@ describe('ProjectsTab.vue', () => {
 	})
 	describe('unlinkWorkPackage', () => {
 		it('should unlink the work package', async () => {
+			wrapper = mountWrapper()
+			await flushPromises()
 			const axiosGetSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					_type: 'FileLink',
@@ -554,8 +570,8 @@ describe('ProjectsTab.vue', () => {
 					},
 				}]))
 			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => sendOCSResponse({}))
-			wrapper = mountWrapper()
 			await wrapper.vm.unlinkWorkPackage(15, 6)
+			await flushPromises()
 			expect(axiosGetSpy).toBeCalledWith(util.format(wpFileLinksUrl, 15))
 			expect(axiosDeleteSpy).toBeCalledWith(util.format(fileLinksUrl, 66))
 			axiosGetSpy.mockRestore()
@@ -567,10 +583,11 @@ describe('ProjectsTab.vue', () => {
 			{ HTTPStatus: 404, state: 'error' },
 			{ HTTPStatus: 500, state: 'error' },
 		])('sets states according to HTTP error codes', async (cases) => {
+			wrapper = mountWrapper()
+			await flushPromises()
 			const err = new Error()
 			err.response = { status: cases.HTTPStatus }
 			axios.get.mockRejectedValueOnce(err)
-			wrapper = mountWrapper()
 
 			try {
 				await wrapper.vm.unlinkWorkPackage(15, 6)
@@ -590,7 +607,7 @@ function sendOCSResponse(data, status = 200) {
 	})
 }
 
-function mountWrapper() {
+function mountWrapper({ data = {}, props = {} } = {}) {
 	return mount(ProjectsTab, {
 		localVue,
 		attachTo: document.body,
@@ -601,12 +618,18 @@ function mountWrapper() {
 			SearchInput: true,
 			NcAvatar: true,
 		},
+		propsData: {
+			node: fileOne,
+			...props,
+		},
 		data: () => ({
 			error: '',
 			state: STATE.OK,
 			fileInfo: {},
 			workpackages: [],
 			isAdminConfigOk: true,
+			authMethod: AUTH_METHOD.OAUTH2,
+			...data,
 		}),
 	})
 }

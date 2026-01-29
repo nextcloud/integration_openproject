@@ -7,15 +7,14 @@ on:
       branch:
         required: true
         type: string
-        default: master
       nextcloud_versions:
         required: false
         type: string
-        default: "30 31 32 master"
+        default: "33 master"
       php_versions:
         required: false
         type: string
-        default: "8.1 8.2 8.3"
+        default: "8.2 8.3"
 
 name: CI
 
@@ -25,6 +24,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
@@ -75,6 +78,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
@@ -141,6 +148,12 @@ jobs:
 
     steps:
       - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          path: integration_openproject
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
@@ -243,14 +256,14 @@ jobs:
           make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.2' }}
         uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.2' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@abaac9fef72e4116bfc69905d51062790bda0335
         with:
           reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -269,7 +282,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.2' }}
         uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -278,7 +291,7 @@ jobs:
           title: "PHP Code Coverage"
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable32' && matrix.phpVersion == '8.2' }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.2' }}
         uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '56'
