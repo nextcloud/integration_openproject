@@ -7,7 +7,6 @@ on:
       branch:
         required: true
         type: string
-        default: master
       nextcloud_versions:
         required: false
         type: string
@@ -25,6 +24,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
@@ -75,6 +79,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ inputs.branch }}
@@ -141,6 +150,13 @@ jobs:
 
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          path: integration_openproject
+
+      - name: Checkout (Nightly)
+        if: github.event_name == 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
