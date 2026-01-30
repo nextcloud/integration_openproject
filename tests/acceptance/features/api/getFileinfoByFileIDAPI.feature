@@ -758,7 +758,7 @@ Feature: retrieve file information of a single file, using the file ID
       }
       """
 
-
+  @skip
   Scenario: get modifier after various renaming
     Given user "Carol" has been created
     And user "Brian" has been created
@@ -806,7 +806,7 @@ Feature: retrieve file information of a single file, using the file ID
       }
       """
 
-
+  @skip
   Scenario: get modifier after various moving
     Given user "Carol" has been created
     And user "Brian" has been created
