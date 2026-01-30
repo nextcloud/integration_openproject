@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Checkout (Nightly)
@@ -78,6 +79,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Checkout (Nightly)
@@ -148,6 +150,7 @@ jobs:
 
     steps:
       - name: Checkout
+        if: github.event_name != 'schedule'
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
