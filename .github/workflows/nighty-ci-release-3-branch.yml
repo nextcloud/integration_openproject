@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023-2025 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Nightly CI (Release branch)
+
+# workflow can be scheduled ONLY from DEFAULT branch
+# > This event will only trigger a workflow run if the workflow file is on the default branch.
+# See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
+on:
+  schedule:
+    - cron: '0 23 * * *' # run at 11 PM UTC
+
+jobs:
+  builds:
+    uses: ./.github/workflows/shared_workflow.yml
+    secrets: inherit
+    with:
+      branch: release/3.0
+      nextcloud_versions: "33"
