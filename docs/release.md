@@ -35,8 +35,8 @@ On the release branch:
 On the current release branch:
 
 1. Update the patch version in:
-   - [README.md](../README.md)
    - [appinfo/info.xml](../appinfo/info.xml)
+   - [package.json](../package.json)
 2. Update `CHANGELOG.md` with the changes and the version to be released.
 3. Update the minimum and maximum nexcloud version support in:
    - [appinfo/info.xml](../appinfo/info.xml)

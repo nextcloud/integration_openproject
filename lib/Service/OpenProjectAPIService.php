@@ -1717,11 +1717,15 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 *
 	 * @return string
 	 */
-	public function getAccessToken(string $userId): string {
+	public function getAccessToken(?string $userId): string {
+		if ($userId === null) {
+			$this->logger->debug('User ID is not provided, probably the user is a guest user.', ['app' => $this->appName]);
+			return '';
+		}
 		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
 		if ($token && !$this->isAccessTokenExpired($userId)) {
 			return $token;

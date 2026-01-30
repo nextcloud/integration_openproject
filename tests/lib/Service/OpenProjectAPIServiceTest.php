@@ -4746,19 +4746,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function getAccessTokenDataProvider(): array {
 		return [
-			'no token' => [
-				'token' => null,
-				'expired' => false,
-				'authMethod' => '',
-				'tokenRefreshFailed' => false,
-				'expected' => null,
-			],
-			'has oauth token' => [
+			'userId is null' => [
 				'token' => 'test_token',
 				'expired' => false,
 				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => false,
-				'expected' => 'test_token',
+				'expected' => '',
+				'userId' => null,
 			],
 			'has expired oauth token' => [
 				'token' => 'test_token',
@@ -4766,6 +4760,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => false,
 				'expected' => 'new_token',
+				'userId' => 'testUser',
 			],
 			'has expired oauth token and refresh fails' => [
 				'token' => 'test_token',
@@ -4773,6 +4768,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => true,
 				'expected' => null,
+				'userId' => 'testUser',
 			],
 			'has oidc token' => [
 				'token' => 'test_token',
@@ -4780,6 +4776,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
 				'tokenRefreshFailed' => false,
 				'expected' => 'test_token',
+				'userId' => 'testUser',
 			],
 			'has expired oidc token' => [
 				'token' => 'test_token',
@@ -4787,6 +4784,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
 				'tokenRefreshFailed' => false,
 				'expected' => 'new_token',
+				'userId' => 'testUser',
 			],
 		];
 	}
@@ -4797,6 +4795,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @param string $authMethod
 	 * @param bool $tokenRefreshFailed
 	 * @param string|null $expectedToken
+	 * @param string|null $userId
 	 *
 	 * @return void
 	 */
@@ -4806,6 +4805,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		string $authMethod,
 		bool $tokenRefreshFailed,
 		?string $expectedToken,
+		?string $userId,
 	): void {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getAppValue')
@@ -4827,7 +4827,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 		);
 		if ($token) {
-			$service->expects($this->once())
+			$service->expects($this->any())
 			->method('isAccessTokenExpired')
 			->with('testUser')
 			->willReturn($expired);
@@ -4838,7 +4838,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$service->expects($this->once())
 					->method('requestOAuthAccessToken')
 					->with(
-						'testUser',
+						$userId,
 						'http://test.local',
 						[
 							'client_id' => 'client-id',
@@ -4854,7 +4854,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				$service->expects($this->once())
 					->method('requestOAuthAccessToken')
 					->with(
-						'testUser',
+						$userId,
 						'http://test.local',
 						[
 							'client_id' => 'client-id',
@@ -4873,13 +4873,13 @@ class OpenProjectAPIServiceTest extends TestCase {
 		if ($authMethod === SettingsService::AUTH_METHOD_OIDC && $expired) {
 			$service->expects($this->once())
 				->method('getOIDCToken')
-				->with('testUser')
+				->with($userId)
 				->willReturn($expectedToken);
 		} else {
 			$service->expects($this->never())->method('getOIDCToken');
 		}
 
-		$result = $service->getAccessToken('testUser');
+		$result = $service->getAccessToken($userId);
 		$this->assertEquals($expectedToken, $result);
 	}
 
