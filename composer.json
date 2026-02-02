@@ -1,15 +1,15 @@
 {
 	"require-dev": {
-		"phpunit/phpunit": "^9.5",
+		"phpunit/phpunit": "^9.6.34",
 		"pact-foundation/pact-php": "^10.1.1",
-		"friendsofphp/php-cs-fixer": "^3.65.0",
+		"friendsofphp/php-cs-fixer": "^3.93.1",
 		"nextcloud/coding-standard": "^1.0",
-		"behat/behat": "^3.10",
-		"helmich/phpunit-json-assert": "^3.4",
-		"vimeo/psalm": "5.23.1",
-		"guzzlehttp/guzzle": "^7.9",
-		"behat/gherkin": "v4.12.0",
-		"php-mock/php-mock-phpunit": "^2.10"
+		"behat/behat": "^3.29.0",
+		"helmich/phpunit-json-assert": "^3.5.4",
+		"vimeo/psalm": "^6.15.0",
+		"guzzlehttp/guzzle": "^7.10.0",
+		"behat/gherkin": "v4.16.1",
+		"php-mock/php-mock-phpunit": "^2.14.0"
 	},
 	"scripts": {
 		"cs:fix": "php-cs-fixer fix",
