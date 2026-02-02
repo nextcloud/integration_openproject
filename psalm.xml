@@ -12,6 +12,7 @@
 	xsi:schemaLocation="https://getpsalm.org/schema/config"
 	findUnusedBaselineEntry="false"
 	findUnusedCode="false"
+	ensureOverrideAttribute="false"
 	findUnusedVariablesAndParams="true"
 	autoloader="bootstrap.php"
 >
@@ -65,26 +66,11 @@
 				<referencedClass name="OCA\AdminAudit\AuditLogger" />
 			</errorLevel>
 		</UndefinedClass>
-		<TooFewArguments>
-			<errorLevel type="suppress">
-				<!-- supress because constructor needs more arguments on nc version 27 > and the code has conditions to handel this for lower versions-->
-				<referencedFunction name="OCA\GroupFolders\Folder\FolderManager::__construct"/>
-				<referencedFunction name="OC\Http\Client\Client::__construct"/>
-				<referencedFunction name="OCA\DAV\Controller\DirectController::__construct"/>
-			</errorLevel>
-		</TooFewArguments>
 		<UndefinedDocblockClass>
 			<errorLevel type="suppress">
 				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
 			</errorLevel>
 		</UndefinedDocblockClass>
-		<InvalidArgument>
-			<errorLevel type="suppress">
-				<referencedFunction name="OC\Http\Client\Client::__construct"/>
-				<!-- setBody() expects iterable but we want to have raw data here and it seems to work fine-->
-				<referencedFunction name="PhpPact\Consumer\Model\ProviderResponse::setBody"/>
-			</errorLevel>
-		</InvalidArgument>
 		<NoValue>
 			<errorLevel type="suppress">
 				<!-- make psalm not complain if activity app does not exist -->

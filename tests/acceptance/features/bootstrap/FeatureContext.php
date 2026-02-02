@@ -1018,7 +1018,7 @@ class FeatureContext implements Context {
 		} else {
 			$url = \rtrim($url, "/");
 		}
-		$url = \preg_replace("/([^:]\/)\/+/", '$1', $url);
+		$url = (string)\preg_replace("/([^:]\/)\/+/", '$1', $url);
 		return $url;
 	}
 
