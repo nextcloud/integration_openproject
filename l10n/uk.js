@@ -86,7 +86,7 @@ OC.L10N.register(
     "Please read our guide on {htmlLink}." : "Будь ласка, прочитайте наш путівник на {htmlLink}.",
     "Switch Authentication Method" : "Метод автентифікації комутатора",
     "Yes, switch" : "Так, перемикач.",
-    "Authentication method" : "Спосіб авторизації",
+    "Authentication method" : "Спосіб автентифікації",
     "Need help setting this up?" : "Потрібна допомога з налаштуванням?",
     "Edit authentication method" : "Редагувати метод автентифікації",
     "URL is invalid" : "URL-адреса невірна",
