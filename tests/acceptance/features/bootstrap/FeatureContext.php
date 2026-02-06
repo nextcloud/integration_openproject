@@ -24,6 +24,8 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
+	use JsonAssertions;
+
 	/**
 	 * list of users that were created on the local server during test runs
 	 * key is the lowercase username, value is an array of user attributes
@@ -692,7 +694,7 @@ class FeatureContext implements Context {
 	): void {
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		$_responseAsJson = $responseAsJson->ocs->data;
-		JsonAssertions::assertJsonDocumentMatchesSchema(
+		self::assertJsonDocumentMatchesSchema(
 			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
@@ -708,7 +710,7 @@ class FeatureContext implements Context {
 		PyStringNode $schemaString
 	): void {
 		$_responseAsJson = json_decode($this->response->getBody()->getContents());
-		JsonAssertions::assertJsonDocumentMatchesSchema(
+		self::assertJsonDocumentMatchesSchema(
 			$_responseAsJson,
 			$this->getJSONSchema($schemaString)
 		);
@@ -790,7 +792,7 @@ class FeatureContext implements Context {
 
 		$input = str_replace(
 			"%last-created-direct-upload-token%",
-			$this->directUploadContext->getLastCreatedDirectUploadToken(),
+			(string)$this->directUploadContext->getLastCreatedDirectUploadToken(),
 			$input
 		);
 		return $input;
