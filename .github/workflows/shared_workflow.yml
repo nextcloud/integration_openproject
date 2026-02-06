@@ -128,10 +128,11 @@ jobs:
         volumes:
           - ${{ github.workspace }}:/var/www/html/apps-shared
 
-      database-postgres:
+      database-pgsql:
         image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: nextcloud
 
       database-mysql:
