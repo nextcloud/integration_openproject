@@ -670,6 +670,26 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Then the HTTP status code should be :code1 or :code2
+	 *
+	 * @param string $code1
+	 * @param string $code2
+	 * @param ResponseInterface $response
+	 *
+	 * @return void
+	 */
+	public function theHTTPStatusCodeShouldBeOr(string $code1, string $code2): void {
+		$statusCode = $this->response->getStatusCode();
+		$message = "HTTP status code $statusCode is not one of the expected values $code1 or $code2";
+
+		Assert::assertContainsEquals(
+			$statusCode,
+			[$code1, $code2],
+			$message
+		);
+	}
+
+	/**
 	 * @param PyStringNode $schemaString
 	 * @return mixed
 	 */

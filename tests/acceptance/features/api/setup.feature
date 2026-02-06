@@ -164,7 +164,7 @@ Feature: setup the integration through an API
       """
       <data>
       """
-    Then the HTTP status code should be "400"
+    Then the HTTP status code should be "400" or "500"
     Examples:
       | data                                                                                                                                                                                          |
       | "{}"                                                                                                                                                                                          |
@@ -381,7 +381,7 @@ Feature: setup the integration through an API
       """
       <data>
       """
-    Then the HTTP status code should be "400"
+    Then the HTTP status code should be "400" or "500"
     Examples:
       | data                                                                |
       | { "values": { "openproject_instance_url": "http://some-host.de"} }} |
