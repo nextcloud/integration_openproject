@@ -15,6 +15,7 @@ OC.L10N.register(
     "Authentication method" : "Način autentifikacije",
     "Documentation" : "Dokumentacija",
     "Copied!" : "Kopirano!",
+    "Copied to the clipboard" : "Kopirano u međuspremnik",
     "Details" : "Pojedinosti",
     "Start typing to search" : "Počnite unositi tekst za pretraživanje",
     "Select a user or group" : "Odaberite korisnika ili grupu",
