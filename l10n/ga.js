@@ -1,7 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
-    "OpenProject" : "OpenProject",
+    "OpenProject" : "TionscadalOscailte",
     "Error getting OAuth access token" : "Earráid agus comhartha rochtana OAuth á fháil",
     "Error getting OAuth refresh token" : "Earráid agus comhartha athnuachana OAuth á fháil",
     "Error during OAuth exchanges" : "Earráid le linn malartuithe OAuth",
