@@ -4,7 +4,7 @@
  */
 
 import '../bootstrap.js'
-import { registerFileAction, FileAction, Permission, getSidebar } from '@nextcloud/files'
+import { registerFileAction, Permission, getSidebar } from '@nextcloud/files'
 import OpenProjectIcon from '../../img/app-dark.svg'
 import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
 import Vue from 'vue'
@@ -35,7 +35,7 @@ const compare = (files) => {
 }
 
 // registering file action for single file selection
-const singleFileAction = new FileAction({
+const singleFileAction = {
 	id: 'integration_openproject-single',
 	displayName: () => t('integration_openproject', 'OpenProject'),
 	order: 0,
@@ -63,11 +63,11 @@ const singleFileAction = new FileAction({
 			return false
 		}
 	},
-})
+}
 registerFileAction(singleFileAction)
 
 // registering file action for multiple file selection
-const multipleFileAction = new FileAction({
+const multipleFileAction = {
 	id: 'integration_openproject-multiple',
 	displayName: () => t('integration_openproject', 'Link to work package'),
 	order: 0,
@@ -95,7 +95,7 @@ const multipleFileAction = new FileAction({
 		// to avoid the toast message
 		return nodes.map(n => null)
 	},
-})
+}
 registerFileAction(multipleFileAction)
 
 OC.Plugins.register('OCA.Files.FileList', OCA.OpenProject.FilesPlugin)
