@@ -59,7 +59,7 @@ jobs:
           sudo apt install make openssl -y
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable32 ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable33 ~/html/nextcloud
           cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/${APP_ID}
           php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"
           php ~/html/nextcloud/occ app:enable ${APP_ID}
