@@ -22,6 +22,7 @@ OC.L10N.register(
     "Description" : "Opis",
     "Create" : "Stvori",
     "Mark as read" : "Označi kao pročitano",
+    "Unlink" : "Odspoji",
     "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:",
     "Connected accounts" : "Povezani računi"
 },
