@@ -15,16 +15,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- [BREAKING] Support Nextcloud 33 [#952](https://github.com/nextcloud/integration_openproject/pull/952)
-
 ### Changed
 
 ### Removed
 
-## 2.11.1 - 2026-01-28
+## 3.0.0 - 2026-01-30
+
+### Added
+
+- [BREAKING] Support Nextcloud 33 [#952](https://github.com/nextcloud/integration_openproject/pull/952)
+
+## 2.11.1 - 2026-02-06
 
 ### Fixed
- - Talk room guest access broken due to integration_openproject app [#959](https://github.com/nextcloud/integration_openproject/pull/959)
+
+- Fix: Talk room guest access broken due to integration_openproject app [#959](https://github.com/nextcloud/integration_openproject/pull/959)
 
 ## 2.11.0 - 2026-01-22
 
