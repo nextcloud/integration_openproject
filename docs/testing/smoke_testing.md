@@ -119,7 +119,7 @@ bash integration_setup.sh
 - [ ] Go to `Administation > Security`
 - [ ] Add OIDC client ("OpenID Connect clients" section):
   - Add a client name (not an identifier)
-  - Add a redirect URL (<openproject_host>/auth/oidc-<idp-displayname-from-OP>/callback)
+  - Add a redirect URL : `<openproject_instance_url>/auth/oidc-<idp-displayname-from-OP>/callback`
   - After adding, choose `Access Token Type` as `JWT Access Token (RFC9068)`.
   - Set `Refresh Token Expire Time` to `Never`
   - Save
@@ -129,7 +129,7 @@ bash integration_setup.sh
 - [ ] In OpenProject, go to `Administration > Authentication > OpenID providers`
 - [ ] Add a new custom OpenID provider:
   - Display name: `nextcloud` (use this name as redirect URL in Nextcloud: <idp-displayname-from-OP>)
-  - Discovery URL: `<nextcloud-host>/index.php/.well-known/openid-configuration`
+  - Discovery URL: `<nextcloud_instance_url>/index.php/.well-known/openid-configuration`
   - Client ID: Client ID copied earlier from Nextcloud
   - Client secret: Client secret copied earlier from Nextcloud
 - [ ] Go to `Administration > Files`
@@ -179,7 +179,7 @@ bash integration_setup.sh
   - Identifier: `keycloak`
   - Client ID: nextcloud client id from keycloak
   - Client Secret: nextcloud client secret from keycloak
-  - Discovery endpoint: `<keycloak-hosts>/realms/<realm-name>/.well-known/openid-configuration`
+  - Discovery endpoint: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration`
   - Scope: `openid email profile api_v3`
   - submit
 - [ ] Login as keycloak-created user in `Nextcloud`.
@@ -190,7 +190,7 @@ bash integration_setup.sh
 - [ ] In **OpenProject**, go to `Administration > Authentication > OpenID providers`
 - [ ] Add a new custom OpenID provider:
   - Display name: `keycloak`
-  - Discovery URL: `<keycloak-host>/realms/<realm-name>/.well-known/openid-configuration`
+  - Discovery URL: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration`
   - Client ID: Client ID of openproject from keycloak
   - Client secret: Client secret of openproject from keycloak
 - [ ] Login as keycloak-created user in `Openproject`.
@@ -260,11 +260,11 @@ NC_ADMIN_USERNAME=admin \
 NC_ADMIN_PASSWORD=admin \
 NC_INTEGRATION_ENABLE_NAVIGATION=false \
 NC_INTEGRATION_ENABLE_SEARCH=false \
-NC_HOST=https://nextcloud.local \
+NC_HOST=<nextcloud_instance_url> \
 OP_ADMIN_USERNAME=admin \
 OP_ADMIN_PASSWORD=admin \
 OP_STORAGE_NAME=nextcloud \
-OP_HOST=https://openproject.local \
+OP_HOST=<openproject_instance_url> \
 OP_USE_LOGIN_TOKEN=true \
 bash integration_oidc_setup.sh
 ```
@@ -286,7 +286,7 @@ bash integration_oidc_setup.sh
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
 ```bash
-NC_HOST=https://nextcloud.local \
+NC_HOST=<nextcloud_instance_url> \
 NC_ADMIN_USERNAME=admin \
 NC_ADMIN_PASSWORD=admin \
 NC_INTEGRATION_PROVIDER_TYPE=external \
@@ -295,7 +295,7 @@ NC_INTEGRATION_OP_CLIENT_ID=openproject \
 NC_INTEGRATION_TOKEN_EXCHANGE=false \
 NC_INTEGRATION_ENABLE_NAVIGATION=false \
 NC_INTEGRATION_ENABLE_SEARCH=false \
-OP_HOST=https://openproject.local \
+OP_HOST=<openproject_instance_url> \
 OP_ADMIN_USERNAME=admin \
 OP_ADMIN_PASSWORD=admin \
 OP_STORAGE_NAME=nextcloud \
@@ -321,7 +321,7 @@ bash integration_oidc_setup.sh
 - [ ] Run the `integration_oidc_setup.sh` script to set up integration without project folder with the following command:
 
 ```bash
-NC_HOST=https://nextcloud.local \
+NC_HOST=<nextcloud_instance_url> \
 NC_ADMIN_USERNAME=admin \
 NC_ADMIN_PASSWORD=admin \
 NC_INTEGRATION_PROVIDER_TYPE=external \
@@ -330,7 +330,7 @@ NC_INTEGRATION_OP_CLIENT_ID=openproject \
 NC_INTEGRATION_TOKEN_EXCHANGE=true \
 NC_INTEGRATION_ENABLE_NAVIGATION=false \
 NC_INTEGRATION_ENABLE_SEARCH=false \
-OP_HOST=https://openproject.local \
+OP_HOST=<openproject_instance_url> \
 OP_ADMIN_USERNAME=admin \
 OP_ADMIN_PASSWORD=admin \
 OP_STORAGE_NAME=nextcloud \
