@@ -18,7 +18,6 @@
 					{{ t('integration_openproject', 'Project *') }}
 				</div>
 				<NcSelect ref="createWorkPackageProjectInput"
-					class="create-workpackage-form--select"
 					input-id="createWorkPackageInput"
 					data-test-id="available-projects"
 					:placeholder="t('integration_openproject', 'Select a project')"
@@ -69,7 +68,7 @@
 						<div class="create-workpackage-form--label">
 							{{ t('integration_openproject', 'Type *') }}
 						</div>
-						<NcSelect class="create-workpackage-form--select"
+						<NcSelect
 							data-test-id="available-types"
 							input-id="createWorkPackageTypeInput"
 							:options="allowedTypes"
@@ -100,7 +99,7 @@
 						<div class="create-workpackage-form--label">
 							{{ t('integration_openproject', 'Status *') }}
 						</div>
-						<NcSelect class="create-workpackage-form--select"
+						<NcSelect
 							data-test-id="available-statuses"
 							input-id="createWorkPackageStatusInput"
 							:options="allowedStatues"
@@ -127,7 +126,7 @@
 				<div class="create-workpackage-form--label">
 					{{ t('integration_openproject', 'Assignee') }}
 				</div>
-				<NcSelect class="create-workpackage-form--select"
+				<NcSelect
 					data-test-id="available-assignees"
 					input-id="createWorkPackageAssigneeInput"
 					:placeholder="t('integration_openproject', 'Select a user or group')"
@@ -765,12 +764,6 @@ export default {
 		text-align: left;
 		font-size: .875rem;
 		line-height: 1rem;
-	}
-	&--select {
-		margin: 15px 0;
-		width: 100%;
-		position: sticky;
-		position: -webkit-sticky; /* Safari */
 	}
 	&--subject {
 		width: 100%;
