@@ -29,3 +29,6 @@ compose.override.yaml
 !dev/.env
 dev/apps
 dev/certs
+
+# server files
+server/
