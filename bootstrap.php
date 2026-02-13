@@ -11,7 +11,10 @@ use Composer\Autoload\ClassLoader;
 include_once __DIR__.'/vendor/autoload.php';
 $serverPath = __DIR__ . '/server';
 
-if (!file_exists($serverPath)) {
+if (!file_exists($serverPath . '/lib/base.php')) {
+	$serverPath = __DIR__ . '/../..';
+}
+if (!file_exists($serverPath . '/lib/base.php')) {
 	throw new RuntimeException('Server path not found: ' . $serverPath);
 }
 
@@ -19,6 +22,7 @@ include_once $serverPath.'/3rdparty/autoload.php';
 require_once $serverPath. '/lib/base.php';
 
 $classLoader = new ClassLoader();
+$classLoader->addPsr4("OCA\\OpenProject\\", __DIR__ . '/lib', true);
 $classLoader->addPsr4("OCP\\", $serverPath . '/lib/public', true);
 $classLoader->addPsr4("OC\\", $serverPath . '/lib/private', true);
 $classLoader->addPsr4("OCA\\Files\\", $serverPath . '/apps/files/lib', true);
