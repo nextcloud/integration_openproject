@@ -229,7 +229,7 @@ jobs:
           make psalm
           make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
-      - name: Copy dependent apps
+      - name: Setup dependent apps
         run: |
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../activity
           cp -r ../activity server/apps
