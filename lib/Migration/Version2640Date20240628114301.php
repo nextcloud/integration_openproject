@@ -37,7 +37,7 @@ class Version2640Date20240628114301 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
-	 * @param Closure(): ISchemaWrapper $schemaClosure
+	 * @param Closure $schemaClosure
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 * @throws DoesNotExistException
