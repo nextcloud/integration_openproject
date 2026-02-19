@@ -118,7 +118,7 @@ OC.L10N.register(
     "Sign Terms of services" : "Підписати Умови надання послуг",
     "Copied!" : "Скопійовано!",
     "Copy value" : "Значення копіювання",
-    "Copied to the clipboard" : "Скопійовано в буфер обміну",
+    "Copied to the clipboard" : "Скопійовано до буфера обміну",
     "Details" : "Деталі",
     "setting up a Nextcloud file storage" : "налаштування файлового сховища Nextcloud",
     "Visit our documentation for in-depth information on {htmlLink} integration." : "Відвідайте нашу документацію для отримання детальної інформації про інтеграцію {htmlLink}.",
