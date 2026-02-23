@@ -16,6 +16,7 @@ OC.L10N.register(
     "Description" : "Тодорхойлолт",
     "Create" : "үүсгэх",
     "Mark as read" : "Уншсан гэж тэмдэглэх",
-    "Unlink" : "Холбоос устгах"
+    "Unlink" : "Холбоос устгах",
+    "Connected accounts" : "Холбогдсон бүртгэлүүд"
 },
 "nplurals=2; plural=(n != 1);");
