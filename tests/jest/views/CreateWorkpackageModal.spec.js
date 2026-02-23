@@ -82,16 +82,66 @@ describe('CreateWorkPackageModal.vue', () => {
 	})
 
 	describe('workpackage creation form', () => {
+		let axiosSpy
+		afterEach(() => {
+			axiosSpy.mockRestore()
+			jest.clearAllMocks()
+		})
+
 		it('should display available projects in the project dropdown', async () => {
-			const axiosSpy = jest.spyOn(axios, 'get')
+			axiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			wrapper = mountWrapper(true)
 			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
 			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
 			await wrapper.find(projectInputField).setValue(' ')
 			expect(wrapper.find(projectSelectSelector)).toMatchSnapshot()
-			axiosSpy.mockRestore()
-			jest.clearAllMocks()
+		})
+
+		it('should display projects even when parent project is unknown', async () => {
+			const projectsListSelector = 'transition-stub > ul > li'
+			const projectItemSelector = `${projectsListSelector}:nth-child(%s) > span`
+
+			axiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse({
+					4: {
+						name: 'Child Project',
+						id: 4,
+						identifier: 'child-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/4',
+								title: 'Child Project',
+							},
+							parent: {
+								href: 'urn:openproject-org:api:v3:undisclosed',
+								title: 'Undisclosed - The parent is invisible because of lacking permissions.',
+							},
+						},
+					},
+					5: {
+						name: 'Another Project',
+						id: 5,
+						identifier: 'another-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/5',
+								title: 'Another Project',
+							},
+							parent: {
+								href: '/api/v3/projects/1',
+								title: 'Parent Project',
+							},
+						},
+					},
+				}))
+			wrapper = mountWrapper(true)
+			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
+			await wrapper.find(projectInputField).setValue(' ')
+			expect(wrapper.find(projectsListSelector).exists()).toBe(true)
+			expect(wrapper.find(util.format(projectItemSelector, 1)).text()).toBe('Another Project')
+			expect(wrapper.find(util.format(projectItemSelector, 2)).text()).toBe('Child Project')
 		})
 
 		describe('search projects with query', () => {
