@@ -996,7 +996,7 @@ describe('SearchInput.vue', () => {
 	})
 
 	describe('create work package button at the footer of the NcSelect', () => {
-		wrapper = mountSearchInput()
+		const wrapper = mountSearchInput()
 		it('should open create work package modal when clicked', async () => {
 			await wrapper.setData({
 				isSmartPicker: false,
