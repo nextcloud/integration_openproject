@@ -13,15 +13,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Fixed
-
-- Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
-
 ### Added
+
+### Fixed
 
 ### Changed
 
 ### Removed
+
+## 2.11.2 - 2026-02-23
+
+### Fixed
+
+- Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
 
 ## 2.11.1 - 2026-02-06
 
