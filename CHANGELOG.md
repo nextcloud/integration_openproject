@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
+
 ### Added
 
 - [BREAKING] Support Nextcloud 33 [#952](https://github.com/nextcloud/integration_openproject/pull/952)

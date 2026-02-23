@@ -47,9 +47,8 @@
 			</NcButton>
 		</div>
 		<CreateWorkPackageModal
-			v-if="!isSmartPicker"
+			v-if="!isSmartPicker && isCreateWorkpackageModalVisible"
 			ref="testRef"
-			:show-modal="isCreateWorkpackageModalVisible"
 			data-test-id="create-workpackage-modal"
 			@create-work-package="onCreateWorkPackageEvent"
 			@close-create-work-package-modal="onCloseCreateWorkPackageModalEvent" />
