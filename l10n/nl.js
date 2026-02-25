@@ -37,6 +37,7 @@ OC.L10N.register(
     "Description" : "Omschrijving",
     "Create" : "Creëer",
     "Mark as read" : "Markeren als gelezen",
+    "Unlink" : "Ontkoppelen",
     "Existing relations:" : "Bestaande relaties:",
     "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
     "OpenProject notifications" : "OpenProject meldingen",
