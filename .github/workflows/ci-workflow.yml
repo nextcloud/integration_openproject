@@ -1,28 +1,28 @@
-# SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
-# SPDX-License-Identifier: AGPL-3.0-or-later
-name: CI
+# # SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+# # SPDX-License-Identifier: AGPL-3.0-or-later
+# name: CI
 
-on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '**.sh'
-      - 'dev/**'
-      - 'l10n/**'
-      - 'img/**'
-      - 'docker-compose*'
+# on:
+#   push:
+#     branches:
+#       - 'master'
+#   pull_request:
+#     paths-ignore:
+#       - '**.md'
+#       - '**.txt'
+#       - '**.sh'
+#       - 'dev/**'
+#       - 'l10n/**'
+#       - 'img/**'
+#       - 'docker-compose*'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
 
-jobs:
-  builds:
-    uses: ./.github/workflows/shared_workflow.yml
-    secrets: inherit
-    with:
-      branch: master
+# jobs:
+#   builds:
+#     uses: ./.github/workflows/shared_workflow.yml
+#     secrets: inherit
+#     with:
+#       branch: master
