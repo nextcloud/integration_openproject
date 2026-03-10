@@ -246,10 +246,25 @@ class OpenProjectAPIService {
 	}
 
 	/**
-	 * wrapper around IURLGenerator::getBaseUrl() to make it easier to mock in tests
+	 * @return string
 	 */
-	public function getBaseUrl(): string {
-		return $this->config->getSystemValueString('overwrite.cli.url');
+	public function getNCBaseUrl(): string {
+		$message = 'Invalid or missing "overwrite.cli.url" system configuration.';
+		$ncUrl = $this->config->getSystemValueString('overwrite.cli.url');
+		if (!$ncUrl) {
+			$this->logger->error($message, ['app' => $this->appName]);
+			return '';
+		}
+
+		$parsedUrl = parse_url($ncUrl);
+		if (!$parsedUrl || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
+			$this->logger->error($message, ['app' => $this->appName]);
+			return '';
+		}
+		if ($parsedUrl['scheme'] !== 'https') {
+			$ncUrl = str_replace('http://', 'https://', $ncUrl);
+		}
+		return $ncUrl;
 	}
 
 	/**
@@ -303,7 +318,7 @@ class OpenProjectAPIService {
 		if ($onlyLinkableWorkPackages) {
 			$filters[] = [
 				'linkable_to_storage_url' =>
-					['operator' => '=', 'values' => [urlencode($this->getBaseUrl())]]
+					['operator' => '=', 'values' => [urlencode($this->getNCBaseUrl())]]
 			];
 		}
 
@@ -766,7 +781,7 @@ class OpenProjectAPIService {
 				],
 				'_links' => [
 					'storageUrl' => [
-						'href' => $this->getBaseUrl()
+						'href' => $this->getNCBaseUrl()
 					]
 				]
 			];
@@ -1520,7 +1535,7 @@ class OpenProjectAPIService {
 		}
 		$filters[] = [
 			'storageUrl' =>
-				['operator' => '=', 'values' => [$this->getBaseUrl()]],
+				['operator' => '=', 'values' => [$this->getNCBaseUrl()]],
 			'userAction' =>
 				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
 		];
