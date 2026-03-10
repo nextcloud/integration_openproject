@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
 
+### Added
+
+- Include OpenProject API request as debug log [#991](https://github.com/nextcloud/integration_openproject/pull/991)
+
 ## 2.11.1 - 2026-02-06
 
 ### Fixed
