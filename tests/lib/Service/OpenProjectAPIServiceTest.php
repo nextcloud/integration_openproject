@@ -838,14 +838,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		array $mockMethods = ['request'],
 		array $constructParams = [],
 	): OpenProjectAPIService|MockObject {
-		$mockMethods[] = 'getBaseUrl';
+		$mockMethods[] = 'getNCBaseUrl';
 		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs($constructParams);
 
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs($constructArgs)
 			->onlyMethods($mockMethods)
 			->getMock();
-		$mock->method('getBaseUrl')->willReturn('https://nc.my-server.org');
+		$mock->method('getNCBaseUrl')->willReturn('https://nc.my-server.org');
 		return $mock;
 	}
 
