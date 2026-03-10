@@ -1880,7 +1880,7 @@ class OpenProjectAPIService {
 	/**
 	 * @param array $options
 	 *
-	 * @return array<mixed>
+	 * @return array
 	 */
 	public function sanitizeReqOptionsForLog(array $options): array {
 		$sanitizedOptions = [
@@ -1908,8 +1908,8 @@ class OpenProjectAPIService {
 					}
 				}
 				$sanitizedOptions['body'] = $body;
-			} catch (JsonException) {
-				return $sanitizedOptions;
+			} catch (\JsonException) {
+				$sanitizedOptions['body'] = '[DATA]';
 			}
 		}
 		return $sanitizedOptions;
