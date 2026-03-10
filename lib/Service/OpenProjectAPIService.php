@@ -439,6 +439,15 @@ class OpenProjectAPIService {
 			}
 		}
 
+		$sanitizedOptions = $this->sanitizeReqOptionsForLog($options);
+		$requestLog = json_encode([
+			'method' => $method,
+			'url' => $url,
+			'headers' => $sanitizedOptions['headers'],
+			'body' => $sanitizedOptions['body'],
+		]);
+		$this->logger->debug('OpenProject API request: ' . $requestLog, ['app' => $this->appName]);
+
 		if ($method === 'GET') {
 			$response = $this->client->get($url, $options);
 		} elseif ($method === 'POST') {
@@ -1866,5 +1875,43 @@ class OpenProjectAPIService {
 		}
 
 		return $appInfo['name'];
+	}
+
+	/**
+	 * @param array $options
+	 *
+	 * @return array<mixed>
+	 */
+	public function sanitizeReqOptionsForLog(array $options): array {
+		$sanitizedOptions = [
+			'headers' => [],
+			'body' => null,
+		];
+		$headers = ['authorization', 'cookie', 'set-cookie'];
+		if (isset($options['headers'])) {
+			foreach ($options['headers'] as $key => $value) {
+				if (in_array(strtolower($key), $headers)) {
+					$sanitizedOptions['headers'][$key] = '[REDACTED]';
+				} else {
+					$sanitizedOptions['headers'][$key] = $value;
+				}
+			}
+		}
+
+		if (isset($options['body'])) {
+			try {
+				$body = json_decode($options['body'], true, 512, JSON_THROW_ON_ERROR);
+				$fields = ['password', 'client_secret', 'refresh_token', 'access_token', 'token'];
+				foreach ($fields as $field) {
+					if (isset($body[$field])) {
+						$body[$field] = '[REDACTED]';
+					}
+				}
+				$sanitizedOptions['body'] = $body;
+			} catch (JsonException) {
+				return $sanitizedOptions;
+			}
+		}
+		return $sanitizedOptions;
 	}
 }
