@@ -803,10 +803,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$appManagerMock->method('isInstalled')->willReturn(true);
 		}
 
-		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->getMock();
-		$urlGeneratorMock
-			->method('getBaseUrl')
-			->willReturn($baseUrl);
 		$this->defaultConfigMock
 			->method('getSystemValueString')
 			->with($this->equalTo('overwrite.cli.url'))
@@ -817,7 +813,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'config' => $this->defaultConfigMock,
 			'clientService' => $clientService,
 			'rootFolder' => $storageMock,
-			'urlGenerator' => $urlGeneratorMock,
 			'appManager' => $appManagerMock,
 			'tokenEventFactory' => $exchangeTokenMock,
 		]);
@@ -831,21 +826,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 *
 	 * @param array<string> $mockMethods
 	 * @param array<string, object> $constructParams
+	 * @param bool $mockBaseUrl
 	 *
 	 * @return OpenProjectAPIService|MockObject
 	 */
 	private function getOpenProjectAPIServiceMock(
 		array $mockMethods = ['request'],
 		array $constructParams = [],
+		bool $mockBaseUrl = true
 	): OpenProjectAPIService|MockObject {
-		$mockMethods[] = 'getNCBaseUrl';
+		if ($mockBaseUrl) {
+			$mockMethods[] = 'getNCBaseUrl';
+		}
 		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs($constructParams);
 
 		$mock = $this->getMockBuilder(OpenProjectAPIService::class)
 			->setConstructorArgs($constructArgs)
 			->onlyMethods($mockMethods)
 			->getMock();
-		$mock->method('getNCBaseUrl')->willReturn('https://nc.my-server.org');
+		if ($mockBaseUrl) {
+			$mock->method('getNCBaseUrl')->willReturn('https://nc.my-server.org');
+		}
 		return $mock;
 	}
 
@@ -3906,14 +3907,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetAvailableOpenProjectProjectsQueryOnly() {
-		$iUrlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)->disableOriginalConstructor()->getMock();
-		$iUrlGeneratorMock->method('getBaseUrl')->willReturn('https%3A%2F%2Fnc.my-server.org');
-		$service = $this->getOpenProjectAPIServiceMock(
-			['request'],
-			[
-				'urlGenerator' => $iUrlGeneratorMock,
-			],
-		);
+		$service = $this->getOpenProjectAPIServiceMock(['request']);
 		$service->method('request')
 			->with(
 				'user', 'work_packages/available_projects',
@@ -5197,4 +5191,52 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
+	public function getNCBaseUrlDataProvider() {
+		return [
+			'HTTP url' => [
+				'url' => 'http://test.nc.local',
+				'expected' => 'https://test.nc.local',
+			],
+			'HTTPS url' => [
+				'url' => 'https://test.nc.local',
+				'expected' => 'https://test.nc.local',
+			],
+			'invalid url' => [
+				'url' => 'invalid_url',
+				'expected' => '',
+			],
+			'empty url' => [
+				'url' => '',
+				'expected' => '',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider getNCBaseUrlDataProvider
+	 * @param string $url
+	 * @param string $expected
+	 * @return void
+	 */
+	public function testGetNCBaseUrl(string $url, string $expected): void {
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getSystemValueString')
+			->with($this->equalTo('overwrite.cli.url'))
+			->willReturn($url);
+
+		$service = $this->getOpenProjectAPIServiceMock(
+			[],
+			[
+				'config' => $configMock,
+			],
+			false,
+		);
+
+		$baseUrl = $service->getNCBaseUrl();
+		$this->assertEquals($expected, $baseUrl);
+	}
 }

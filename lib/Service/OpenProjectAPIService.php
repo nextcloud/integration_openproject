@@ -249,8 +249,18 @@ class OpenProjectAPIService {
 	 * @return string
 	 */
 	public function getNCBaseUrl(): string {
+		$message = 'Invalid or missing "overwrite.cli.url" system configuration.';
 		$ncUrl = $this->config->getSystemValueString('overwrite.cli.url');
+		if (!$ncUrl) {
+			$this->logger->error($message, ['app' => $this->appName]);
+			return '';
+		}
+
 		$parsedUrl = parse_url($ncUrl);
+		if (!$parsedUrl || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
+			$this->logger->error($message, ['app' => $this->appName]);
+			return '';
+		}
 		if ($parsedUrl['scheme'] !== 'https') {
 			$ncUrl = str_replace('http://', 'https://', $ncUrl);
 		}
