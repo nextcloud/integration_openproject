@@ -14,7 +14,7 @@ on:
       php_versions:
         required: false
         type: string
-        default: "8.1 8.2 8.3"
+        default: "8.2 8.3 8.4"
 
 name: CI
 
@@ -116,13 +116,11 @@ jobs:
 
     services:
       nextcloud:
-        image: ghcr.io/juliusknorr/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:20231202-1
+        image: ghcr.io/juliusknorr/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:master
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: "Yes"
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud
-          VIRTUAL_HOST: "nextcloud"
           WITH_REDIS: "YES"
         ports:
           - 80:80
@@ -130,10 +128,11 @@ jobs:
         volumes:
           - ${{ github.workspace }}:/var/www/html/apps-shared
 
-      database-postgres:
+      database-pgsql:
         image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: nextcloud
 
       database-mysql:
