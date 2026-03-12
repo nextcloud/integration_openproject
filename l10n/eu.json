@@ -130,26 +130,6 @@
     "OpenProject settings" : "OpenProject ezarpenak",
     "Failed to link file to work package" : "Arazoa lan-paketea estekatzerakoan",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
-    "OpenProject notifications" : "OpenProject jakinarazpenak",
-    "OpenProject activity" : "OpenProject aktibitatea",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Jakinarazpen %s duzu {instance}-n"," %s jakinarazpen dituzu {instance}-n"],
-    "Connected accounts" : "Konektatutako kontuak",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Aplikazio honek arazorik gabeko integrazioa ahalbidetzen du kode irekiko  OpenProject proiektuen kudeaketa eta lankidetza softwarearekin.\n\nNextcloud muturrean, erabiltzaileek hurrengoa egin dezakete:\n\n* Lotu fitxategiak eta karpetak lan-paketeekin OpenProject-en\n* Aurkitu fitxategi edo karpeta bati lotuta dauden lan-pakete guztiak \n* Ikusi OpenProject-en jakinarazpenak panelaren bidez\n* Lan paketeak bilatu Nextcloud-en bilaketa-barra erabiliz\n\nOpenProject-en amaieran, erabiltzaileek hurrengoa egin dezakete:\n\n* Ikusi lan-pakete bati lotuta dauden Nextcloud fitxategi eta karpeta guztiak\n* Fitxategi estekatuak deskargatu edo Nextcloud-en ireki editatzeko\n\nOpenProject aplikazioa konfiguratu eta erabiltzeko moduari buruzko informazio gehiago nahi izanez gero, ikus [integrazio konfigurazio gida](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) administratzaileentzat eta [erabiltzaile-gida](https://www.openproject.org/docs/user-guide/nextcloud-integration/).",
-    "Please introduce a valid OpenProject host name" : "Mesedez sartu balozko OpenProject ostalari izen bat",
-    "Reset OpenProject integration" : "Berezarri OpenProject integrazioa",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "OpenProject URLa baliogabea da, hornitu \"https://openproject.org\" moduko URL bat",
-    "No OpenProject detected at the URL" : "Ez da OpenProject detektatu URLan",
-    "Please introduce your OpenProject host name" : "Mesedez sartu zure OpenProject ostalariaren izena",
-    "Enable notifications for activity in my work packages" : "Gaitu jardueren jakinarazpenak nire lan-paketeetan",
-    "OpenProject integration" : "OpenProject integrazioa",
-    "Work package linked successfully!" : "Lan-paketea ondo estekatu da!",
-    "No OpenProject notifications!" : "OpenProject jakinarazpenik ez!",
-    "Invalid key" : "Gako baliogabea",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Huts egin du erabiltzaile bat(zu)en OpenProject atzitzeko tokena(k) baliogabetzeak",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Ondo baliogabetu da/dira OpenProject atzitzeko erabiltzaile tokena(k).",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Ezin izan dira OpenProject erabiltzailea, taldea eta karpeta konfiguratu. Begiratu {htmlLink} hau egoera nola bideratu jakiteko.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Instalatu \"Group folders\" aplikazioa, automatikoki kudeaturiko karpetak erabili ahal izateko edo horiek desaktibatzeko.",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Automatikoki proiektu karpetak kudeatzeko, aplikazio honek talde-karpeta berezi bat konfiguratzea behar du, talde bati dagokiona eta erabiltzaile batek kudeatua, bien izena \"OpenProject\" izanik."
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

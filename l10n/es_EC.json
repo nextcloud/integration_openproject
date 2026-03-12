@@ -117,26 +117,6 @@
     "OpenProject settings" : "Configuración de OpenProject",
     "Failed to link file to work package" : "Error al vincular archivo con el paquete de trabajo",
     "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
-    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:",
-    "OpenProject notifications" : "Notificaciones de OpenProject",
-    "OpenProject activity" : "Actividad de OpenProject",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tienes %s nueva notificación en {instance}","Tienes %s nuevas notificaciones en {instance}","Tienes %s nuevas notificaciones en {instance}"],
-    "Connected accounts" : "Cuentas conectadas",
-    "This application enables seamless integration with open source project management and collaboration software OpenProject.\n\nOn the Nextcloud end, it allows users to:\n\n* Link files and folders with work packages in OpenProject\n* Find all work packages linked to a file or a folder\n* View OpenProject notifications via the dashboard\n* Search for work packages using Nextcloud's search bar\n\nOn the OpenProject end, users are able to:\n\n* View all Nextcloud files and folders linked to a work package\n* Download linked files or open them in Nextcloud to edit them\n\nFor more information on how to set up and use the OpenProject application, please refer to [integration setup guide](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) for administrators and [the user guide](https://www.openproject.org/docs/user-guide/nextcloud-integration/)." : "Esta aplicación permite una integración perfecta con el software de gestión de proyectos y colaboración de código abierto OpenProject.\n      \n      En el extremo de Nextcloud, permite a los usuarios:\n      \n      * Vincular archivos y carpetas con paquetes de trabajo en OpenProject\n      * Encontrar todos los paquetes de trabajo vinculados a un archivo o carpeta\n      * Ver las notificaciones de OpenProject a través del tablero\n      * Buscar paquetes de trabajo usando la barra de búsqueda de Nextcloud\n      \n      En el extremo de OpenProject, los usuarios pueden:\n      \n      * Ver todos los archivos y carpetas de Nextcloud vinculados a un paquete de trabajo\n      * Descargar archivos vinculados o abrirlos en Nextcloud para editarlos\n      \n      Para obtener más información sobre cómo configurar y usar la aplicación OpenProject, consulta la [guía de configuración de integración](https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/) para administradores y [la guía del usuario](https://www.openproject.org/docs/user-guide/nextcloud-integration/) .",
-    "Please introduce a valid OpenProject host name" : "Por favor, introduce un nombre de host válido para OpenProject",
-    "Reset OpenProject integration" : "Restablecer integración de OpenProject",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "La URL de OpenProject no es válida, proporciona una URL en la forma \"https://openproject.org\"",
-    "No OpenProject detected at the URL" : "No se detectó OpenProject en la URL",
-    "Please introduce your OpenProject host name" : "Por favor, introduce el nombre de host de OpenProject",
-    "Enable notifications for activity in my work packages" : "Habilitar notificaciones para la actividad en mis paquetes de trabajo",
-    "OpenProject integration" : "Integración de OpenProject",
-    "Work package linked successfully!" : "¡Paquete de trabajo vinculado con éxito!",
-    "No OpenProject notifications!" : "¡Sin notificaciones de OpenProject!",
-    "Invalid key" : "Clave no válida",
-    "Failed to revoke some user(s) OpenProject OAuth access token(s)" : "Error al revocar algunos tokens de acceso de OAuth del usuario de OpenProject",
-    "Successfully revoked user(s) OpenProject OAuth access token(s)" : "Tokens de acceso de OAuth del usuario de OpenProject revocados con éxito",
-    "Setting up the OpenProject user, group and group folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "No fue posible configurar el usuario, grupo y carpeta de OpenProject. Consulta {htmlLink} para resolver esta situación.",
-    "Please install the \"Group folders\" app to be able to use automatic managed folders or deactivate the automatically managed folders." : "Por favor, instala la aplicación \"Group folders\" para poder utilizar carpetas administradas automáticamente o desactiva las carpetas administradas automáticamente.",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para administrar automáticamente las carpetas de proyectos, esta aplicación necesita configurar una carpeta de grupo especial, asignada a un grupo y gestionada por un usuario, cada una llamada \"OpenProject\"."
+    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

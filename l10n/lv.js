@@ -18,8 +18,6 @@ OC.L10N.register(
     "Status is not set to one of the allowed values." : "Stāvoklis nav iestatīts ar vienu no atļautajām vērtībām.",
     "Select project status" : "Atlasīt projekta stāvokli",
     "Description" : "Apraksts",
-    "Download and enable it" : "Lejupielādēt un iespējot to",
-    "Connected accounts" : "Sasaistītie konti",
-    "Download and enable it here" : "Lejupielādēt un iespējot to šeit"
+    "Download and enable it" : "Lejupielādēt un iespējot to"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

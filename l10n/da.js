@@ -24,7 +24,6 @@ OC.L10N.register(
     "Mark as read" : "Marker som læst",
     "mentioned" : "omtalt",
     "Download and enable it" : "Download og aktiver det",
-    "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:",
-    "Connected accounts" : "Forbundne konti"
+    "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:"
 },
 "nplurals=2; plural=(n != 1);");
