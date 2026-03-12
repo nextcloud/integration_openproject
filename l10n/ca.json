@@ -72,19 +72,6 @@
     "Unlink Work Package" : "Desenllaça el paquet de treball",
     "Failed to link file to work package" : "No s'ha pogut enllaçar el fitxer amb el paquet de treball",
     "Successfully connected to OpenProject!" : "S'ha connectat correctament a OpenProject!",
-    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:",
-    "OpenProject notifications" : "Notificacions d'OpenProject",
-    "OpenProject activity" : "Activitat OpenProject",
-    "_You have %s new notification in {instance}_::_You have %s new notifications in {instance}_" : ["Tens %s notificació nova a {instance}","Tens %s notificacions noves a {instance}"],
-    "Connected accounts" : "Comptes connectats",
-    "Please introduce a valid OpenProject host name" : "Introduïu un nom d'amfitrió d'OpenProject vàlid",
-    "Reset OpenProject integration" : "Restableix la integració d'OpenProject",
-    "OpenProject URL is invalid, provide an URL in the form \"https://openproject.org\"" : "L'URL d'OpenProject no és vàlid. Proporcioneu un URL amb la forma \"https://openproject.org\"",
-    "No OpenProject detected at the URL" : "No s'ha detectat cap OpenProject a l'URL",
-    "Please introduce your OpenProject host name" : "Introduïu el vostre nom d'amfitrió d'OpenProject",
-    "Enable notifications for activity in my work packages" : "Activa les notificacions d'activitat als meus paquets de treball",
-    "OpenProject integration" : "Integració OpenProject",
-    "Work package linked successfully!" : "El paquet de treball s'ha enllaçat correctament!",
-    "No OpenProject notifications!" : "No hi ha notificacions d'OpenProject!"
+    "OAuth access token could not be obtained:" : "No s'ha pogut obtenir el testimoni d'accés oAuth:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

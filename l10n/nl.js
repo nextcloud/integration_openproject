@@ -39,10 +39,6 @@ OC.L10N.register(
     "Mark as read" : "Markeren als gelezen",
     "Unlink" : "Ontkoppelen",
     "Existing relations:" : "Bestaande relaties:",
-    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
-    "OpenProject notifications" : "OpenProject meldingen",
-    "OpenProject activity" : "OpenProject activiteit",
-    "Connected accounts" : "Verbonden accounts",
-    "OpenProject integration" : "OpenProject integratie"
+    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
 },
 "nplurals=2; plural=(n != 1);");

@@ -48,15 +48,6 @@
     "No matching assignee found" : "Ühtegi sobivat täitjat ei leidunud",
     "This feature requires version {version} (or higher) of \"{app}\" app. Please install or update the app." : "Eeldab, et kasutusel on „{app}“ rakenduse versioon {version} (või hilisem). Palun paigalda või uuenda rakendus.",
     "You can configure OIDC providers in the {settingsLink}" : "OIDC teenusepakkujaid saad seadistada siin: {settingsLink}",
-    "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:",
-    "Connected accounts" : "Ühendatud kasutajakontod",
-    "Requires OpenProject version {version} (or higher) and an active Corporate plan." : "Eeldab, et kasutusel on OpenProjecti versioon {version} (või hilisem) ning kehtiv leping ärikasutajatele (Corporate plan).",
-    "For automatically managing project folders, this app needs to setup a special group folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Projektikaustade automaatseks haldamiseks on vaja, et see rakendus on loonud spetsiaalse grupikausta, määranud talle grupi ja seda haldab vastav kasutaja ning nad kõik on nimega „OpenProject“.",
-    "This app is required to use the OIDC authentication method" : "See rakendus eeldab, et kasutusel on OIDC autentimise meetod",
-    "Requires OpenProject version 16.0 (or higher) and an active Corporate plan." : "Eeldab, et kasutusel on OpenProjecti versioon 16.0 (või hilisem) ning kehtiv leping ärikasutajatele (Corporate plan).",
-    "The \"{app}\" app is not installed" : "„{app}“ rakendus pole paigaldatud",
-    "The \"{app}\" app is not supported" : "„{app}“ rakendus pole toetatud",
-    "The \"{app}\" app is not enabled or supported" : "„{app}“ rakendus pole kasutusel või toetatud",
-    "Requires app version \"{minimumAppVersion}\" or later" : "Eeldab, et kasutusel on OpenProjecti versioon {minimumAppVersion} või hilisem"
+    "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

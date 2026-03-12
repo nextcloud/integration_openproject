@@ -58,7 +58,6 @@ OC.L10N.register(
     "watcher" : "观察者",
     "mentioned" : "提到的",
     "Unlink" : "取消关联",
-    "OAuth access token could not be obtained:" : "无法获取 OAuth 访问令牌：",
-    "Connected accounts" : "关联账号"
+    "OAuth access token could not be obtained:" : "无法获取 OAuth 访问令牌："
 },
 "nplurals=1; plural=0;");

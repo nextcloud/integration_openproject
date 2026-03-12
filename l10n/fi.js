@@ -21,7 +21,6 @@ OC.L10N.register(
     "Description" : "Kuvaus",
     "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
-    "Unlink" : "Poista linkitys",
-    "Connected accounts" : "Yhdistetyt tilit"
+    "Unlink" : "Poista linkitys"
 },
 "nplurals=2; plural=(n != 1);");

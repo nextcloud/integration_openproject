@@ -23,7 +23,6 @@ OC.L10N.register(
     "Create" : "Stvori",
     "Mark as read" : "Označi kao pročitano",
     "Unlink" : "Odspoji",
-    "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:",
-    "Connected accounts" : "Povezani računi"
+    "OAuth access token could not be obtained:" : "Nije moguće dohvatiti token za pristup OAuth:"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
