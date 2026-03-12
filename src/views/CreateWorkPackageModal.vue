@@ -4,7 +4,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<NcModal v-if="openModal"
+	<NcModal
 		class="create-workpackage-modal"
 		:can-close="true"
 		:out-transition="true"
@@ -233,12 +233,6 @@ export default {
 		NcModal,
 		NcTextField,
 	},
-	props: {
-		showModal: {
-			type: Boolean,
-			default: false,
-		},
-	},
 	data: () => ({
 		openProjectUrl: loadState('integration_openproject', 'openproject-url'),
 		availableProjects: [],
@@ -267,10 +261,6 @@ export default {
 		state: STATE.OK,
 	}),
 	computed: {
-		openModal() {
-			this.searchForProjects()
-			return this.showModal
-		},
 		getSelectedProject() {
 			return this.project.label
 		},
@@ -333,6 +323,9 @@ export default {
 			)
 			return dompurify.sanitize(message, { ADD_ATTR: ['target'] })
 		},
+	},
+	beforeMount() {
+		this.searchForProjects()
 	},
 	methods: {
 		mappedProjects() {
@@ -450,12 +443,17 @@ export default {
 				}
 			}
 			const url = generateOcsUrl('/apps/integration_openproject/api/v1/projects')
+			let projects = {}
 			try {
+				this.availableProjects = []
 				const response = await axios.get(url, req)
-				await this.processProjects(response.data.ocs.data)
+				projects = response.data.ocs.data
 			} catch (e) {
-				console.error('Couldn\'t fetch openproject projects')
+				console.error('Could not fetch OpenProject projects:', e.message)
 			}
+
+			this.availableProjects = this.processProjects(projects)
+
 			if (this.isFetchingProjectsFromOpenProjectWithQuery === false) {
 				this.initialAvailableProjects = this.availableProjects
 			}
@@ -463,37 +461,48 @@ export default {
 				this.state = STATE.OK
 			}
 		},
-		async processProjects(projects) {
-			this.availableProjects = []
-			for (const index in projects) {
-				const project = {}
-				project.label = projects[index].name
-				project.id = projects[index].id
-				project.identifier = projects[index].identifier
-				project.self = projects[index]._links.self
-				project.parent = projects[index]._links.parent
-				project.children = []
-				this.availableProjects[index] = project
+		processProjects(projects) {
+			const flatProjectsStore = []
+			for (const projectId in projects) {
+				const opProject = projects[projectId]
+				const project = {
+					label: opProject.name,
+					id: opProject.id,
+					identifier: opProject.identifier,
+					self: opProject._links.self,
+					parent: opProject._links.parent,
+					children: [],
+				}
+				flatProjectsStore[projectId] = project
 			}
-			this.buildNestedStructure()
-		},
-		buildNestedStructure() {
-			const childId = []
 
-			for (const projectId in this.availableProjects) {
-				const project = this.availableProjects[projectId]
-				if (project.parent.href !== null) {
-					const parentProjectId = project.parent.href.match(/\/(\d+)$/)[1]
-					if (project.children.length <= 0) {
-						this.availableProjects[parentProjectId].children.push(project)
-						childId.push(project.id)
+			return this.buildNestedProjects(projects, flatProjectsStore).filter(project => !!project)
+		},
+		buildNestedProjects(allProjects, flatProjectsStore) {
+			const parentProjects = []
+			for (const project of Object.values(allProjects)) {
+				const parentHref = project._links.parent.href
+				if (parentHref) {
+					const parentMatch = parentHref.match(/\/(\d+)$/)
+					if (parentMatch === null) {
+						// if parent project is undisclosed, we consider it as a top-level project
+						parentProjects.push(flatProjectsStore[project.id])
+						continue
 					}
+
+					const parentId = parentMatch[1]
+					if (!(parentId in flatProjectsStore)) {
+						// if parent project is not in the list of projects fetched, we consider it as a top-level project
+						parentProjects.push(flatProjectsStore[project.id])
+						continue
+					}
+
+					flatProjectsStore[parentId].children.push(flatProjectsStore[project.id])
+				} else {
+					parentProjects.push(flatProjectsStore[project.id])
 				}
 			}
-			for (let i = 0; i < childId.length; i++) {
-				delete this.availableProjects[childId[i]]
-			}
-			this.availableProjects = this.availableProjects.filter(item => item !== undefined)
+			return parentProjects
 		},
 		onSubjectChange(value) {
 			if (this.error.error) {
@@ -603,7 +612,7 @@ export default {
 					this.previousDescriptionTemplate = this.description.raw
 				}
 			} catch (e) {
-				console.error('Form validation failed')
+				console.error('Form validation failed:', e.message)
 			}
 		},
 		setAllowedValues(allowedValuesList) {
@@ -637,7 +646,7 @@ export default {
 			try {
 				response = await axios.get(url)
 			} catch (e) {
-				console.error('Cannot fetch available assignees')
+				console.error('Cannot fetch available assignees:', e.message)
 			}
 			const assignees = response.data.ocs.data
 			for (const index in assignees) {

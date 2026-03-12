@@ -82,16 +82,66 @@ describe('CreateWorkPackageModal.vue', () => {
 	})
 
 	describe('workpackage creation form', () => {
+		let axiosSpy
+		afterEach(() => {
+			axiosSpy.mockRestore()
+			jest.clearAllMocks()
+		})
+
 		it('should display available projects in the project dropdown', async () => {
-			const axiosSpy = jest.spyOn(axios, 'get')
+			axiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			wrapper = mountWrapper(true)
 			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
 			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
 			await wrapper.find(projectInputField).setValue(' ')
 			expect(wrapper.find(projectSelectSelector)).toMatchSnapshot()
-			axiosSpy.mockRestore()
-			jest.clearAllMocks()
+		})
+
+		it('should display projects even when parent project is unknown', async () => {
+			const projectsListSelector = 'transition-stub > ul > li'
+			const projectItemSelector = `${projectsListSelector}:nth-child(%s) > span`
+
+			axiosSpy = jest.spyOn(axios, 'get')
+				.mockImplementationOnce(() => sendOCSResponse({
+					4: {
+						name: 'Child Project',
+						id: 4,
+						identifier: 'child-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/4',
+								title: 'Child Project',
+							},
+							parent: {
+								href: 'urn:openproject-org:api:v3:undisclosed',
+								title: 'Undisclosed - The parent is invisible because of lacking permissions.',
+							},
+						},
+					},
+					5: {
+						name: 'Another Project',
+						id: 5,
+						identifier: 'another-project',
+						_links: {
+							self: {
+								href: '/api/v3/projects/5',
+								title: 'Another Project',
+							},
+							parent: {
+								href: '/api/v3/projects/1',
+								title: 'Parent Project',
+							},
+						},
+					},
+				}))
+			wrapper = mountWrapper(true)
+			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
+			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
+			await wrapper.find(projectInputField).setValue(' ')
+			expect(wrapper.find(projectsListSelector).exists()).toBe(true)
+			expect(wrapper.find(util.format(projectItemSelector, 1)).text()).toBe('Another Project')
+			expect(wrapper.find(util.format(projectItemSelector, 2)).text()).toBe('Child Project')
 		})
 
 		describe('search projects with query', () => {
@@ -242,7 +292,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationProjectSelected))
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				noDropAvailableProjectDropDown: false,
 			})
 			wrapper.vm.mappedProjects = jest.fn(() => {
@@ -377,7 +427,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			]
 			const axiosSpy = jest.spyOn(axios, 'post')
 				.mockImplementationOnce(() => sendOCSResponse(workpackageFormValidationTypeChanged))
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				allowedStatues: availableStatusBefore,
 				allowedTypes,
 				project: {
@@ -463,7 +513,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpy = jest.spyOn(axios, 'post')
 				.mockImplementationOnce(() => sendOCSResponse(expectedErrorDetails.data, 422))
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				status: {
 					label: 'New',
 				},
@@ -512,7 +562,7 @@ describe('CreateWorkPackageModal.vue', () => {
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 			const axiosSpy = jest.spyOn(axios, 'post')
 				.mockImplementationOnce(() => sendOCSResponse("{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:MultipleErrors\",\"message\":\"Multiple field constraints have been violated.\",\"_embedded\":{\"errors\":[{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Subject can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"subject\"}}},{\"_type\":\"Error\",\"errorIdentifier\":\"urn:openproject-org:api:v3:errors:PropertyConstraintViolation\",\"message\":\"Project can't be blank.\",\"_embedded\":{\"details\":{\"attribute\":\"project\"}}}]}}", 422))
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				status: {
 					label: 'New',
 				},
@@ -536,7 +586,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				project: {
 					self: {
 						href: '/api/v3/projects/4',
@@ -591,7 +641,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				project: {
 					self: {
 						href: '/api/v3/projects/4',
@@ -638,7 +688,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				project: {
 					self: {
 						href: '/api/v3/projects/4',
@@ -671,7 +721,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			const assigneeAxiosSpy = jest.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse(availableProjectAssignees))
 
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				project: {
 					self: {
 						href: '/api/v3/projects/4',
@@ -724,7 +774,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			},
 		])('should show $expectedMessage when project is set and there is no $fieldName found in search query', async ({ inputSelector, resultSelector, expectedMessage }) => {
 
-			wrapper = mountWrapper(true, {
+			wrapper = mountWrapper({
 				project: {
 					self: {
 						href: '/api/v3/projects/4',
@@ -777,7 +827,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 		const axiosSpy = jest.spyOn(axios, 'post')
 			.mockImplementationOnce(() => sendOCSResponse(workpackageCreatedResponse, 201))
-		wrapper = mountWrapper(true, {
+		wrapper = mountWrapper({
 			project: {
 				self: {
 					href: '/api/v3/projects/2',
@@ -855,7 +905,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		const axiosSpy = jest.spyOn(axios, 'post')
 			.mockImplementationOnce(() => sendOCSResponse(requiredTypeResponse))
 
-		wrapper = mountWrapper(true, {
+		wrapper = mountWrapper({
 			project: {
 				self: {
 					href: '/api/v3/projects/4',
@@ -903,7 +953,7 @@ describe('CreateWorkPackageModal.vue', () => {
 		jest.spyOn(axios, 'get')
 			.mockImplementationOnce(() => sendOCSResponse(availableProjectsResponse))
 
-		wrapper = mountWrapper(true, {
+		wrapper = mountWrapper({
 			project: {
 				self: {
 					href: '/api/v3/projects/4',
@@ -939,7 +989,7 @@ describe('CreateWorkPackageModal.vue', () => {
 	})
 
 	it('should be able to remove the selected project', async () => {
-		wrapper = mountWrapper(true, {
+		wrapper = mountWrapper({
 			project: {
 				self: {
 					href: '/api/v3/projects/2',
@@ -966,7 +1016,7 @@ function sendOCSResponse(data, status = 200) {
 	})
 }
 
-function mountWrapper(showModal, data) {
+function mountWrapper(data) {
 	return mount(CreateWorkPackageModal, {
 		localVue,
 		mocks: {
@@ -977,9 +1027,6 @@ function mountWrapper(showModal, data) {
 		}),
 		stubs: {
 			NcModal: true,
-		},
-		propsData: {
-			showModal,
 		},
 	})
 }
