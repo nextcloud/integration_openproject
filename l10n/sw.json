@@ -198,7 +198,6 @@
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
-    "Connected accounts" : "Akaunti zilizounganishwa"
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

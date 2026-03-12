@@ -15,7 +15,6 @@ OC.L10N.register(
     "Start typing to search" : "Comienza a escribir pa buscar",
     "Description" : "Descripción",
     "Create" : "Crear",
-    "Failed to get OpenProject notifications" : "Nun se puen consiguir los avisos d'OpenProject",
-    "Invalid key" : "La clave ye inválida"
+    "Failed to get OpenProject notifications" : "Nun se puen consiguir los avisos d'OpenProject"
 },
 "nplurals=2; plural=(n != 1);");

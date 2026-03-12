@@ -22,7 +22,6 @@ OC.L10N.register(
     "Description" : "Deskrisi",
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
-    "Unlink" : "Putuskan tautan",
-    "Connected accounts" : "Akun terhubung"
+    "Unlink" : "Putuskan tautan"
 },
 "nplurals=1; plural=0;");
