@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2023 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Upgrade Testing
+
+on:
+  push:
+    branches:
+      - 'master' 
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '**.sh'
+      - 'dev/**'
+      - 'l10n/**'
+      - 'img/**'
+      - 'docker-compose*'
+
+jobs:
+  builds:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout server (for phpunit and psalm)
+          uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+          with:
+            submodules: true
+            repository: nextcloud/server
+            path: server
+            ref: stable33
+
+        - name: Checkout integration_openproject app (initial version)
+          uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+          with:
+            repository: nextcloud/integration_openproject
+            path: server/apps/integration_openproject
+            ref: master   # or the initial branch/tag before upgrade
+
+        - name: Install server and enable integration_openproject app
+          run: |
+            cd server/apps/integration_openproject
+            make
+            php ../../occ maintenance:install --admin-pass=admin 
+            php ../../occ a:e integration_openproject
+
+        - name: Checkout integration_openproject app (release version for upgrade)
+          uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+          with:
+            repository: nextcloud/integration_openproject
+            path: server/apps/integration_openproject
+            ref: release/3.0   # the version to upgrade to
+
+        - name: Update integration_openproject app
+          working-directory: server/apps/integration_openproject
+          run: |
+            pwd
+            ls
+            php ../../occ upgrade
+            php ../../occ app:update --allow-unstable integration_openproject
