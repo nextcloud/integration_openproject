@@ -16,7 +16,6 @@ use OCP\DB\ISchemaWrapper;
 use OCP\IConfig;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use Override;
 
 class Version2900Date20250718065820 extends SimpleMigrationStep {
 	public function __construct(private IConfig $config) {
@@ -28,7 +27,6 @@ class Version2900Date20250718065820 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
-	#[Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// set 'authorization_method' to Oauth2 if authorization_method is not set
 		// and there is existing complete Oauth2 setup
