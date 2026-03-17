@@ -15,13 +15,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
-- Fix: Force HTTPS on Nextcloud base URL for OpenProject API requests [#992](https://github.com/nextcloud/integration_openproject/pull/992)
+### Added
+
+### Changed
+
+### Removed
+
+## 3.0.0 - 2026-03-17
 
 ### Added
 
 - [BREAKING] Support Nextcloud 33 [#952](https://github.com/nextcloud/integration_openproject/pull/952)
 - Include OpenProject API request as debug log [#991](https://github.com/nextcloud/integration_openproject/pull/991)
+
+### Fixed
+
+- Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
+- Fix: Force HTTPS on Nextcloud base URL for OpenProject API requests [#992](https://github.com/nextcloud/integration_openproject/pull/992)
 
 ### Changed
 
