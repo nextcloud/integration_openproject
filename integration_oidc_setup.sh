@@ -16,18 +16,25 @@ set -e
 
 INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
 
+auth_type_external_sso="external"
+auth_type_nextcloud_hub="nextcloud_hub"
+
 # helper functions
 help() {
   echo -e "Available environment variables:"
+  echo -e "General:"
+  echo -e "\t INTEGRATION_SETUP_DEBUG \t\t Enable debug mode (true/false). Default: false"
+  echo -e "\t ENABLE_SCIM \t\t Enable SCIM integration (true/false). Default: false"
+  echo -e ""
   echo -e "Nextcloud:"
   echo -e "\t NC_HOST \t\t\t\t Nextcloud host URL"
   echo -e "\t NC_ADMIN_USERNAME \t\t\t Nextcloud admin username"
   echo -e "\t NC_ADMIN_PASSWORD \t\t\t Nextcloud admin password"
-  echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('nextcloud_hub' or 'external')"
-  echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using 'nextcloud_hub' type)"
+  echo -e "\t NC_INTEGRATION_PROVIDER_TYPE \t\t Single Sign-On provider type ('$auth_type_nextcloud_hub' or '$auth_type_external_sso')"
+  echo -e "\t NC_INTEGRATION_PROVIDER_NAME \t\t SSO Provider name (Not required when using '$auth_type_nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_OP_CLIENT_ID \t\t OpenProject client ID"
   echo -e "\t NC_INTEGRATION_OP_CLIENT_SECRET \t OpenProject client secret"
-  echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using 'nextcloud_hub' type)"
+  echo -e "\t NC_INTEGRATION_TOKEN_EXCHANGE \t\t Enable token exchange (true/false) (Not required when using '$auth_type_nextcloud_hub' type)"
   echo -e "\t NC_INTEGRATION_ENABLE_NAVIGATION \t Enable navigate to OpenProject header (true/false)"
   echo -e "\t NC_INTEGRATION_ENABLE_SEARCH \t\t Enable unified search (true/false)"
   echo -e "\t SETUP_PROJECT_FOLDER \t\t\t Enable project folder setup (true/false). Default: false"
@@ -100,7 +107,7 @@ if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
   exit 1
 fi
 
-if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "$auth_type_nextcloud_hub" ]]; then
   if [[ -z $NC_INTEGRATION_OP_CLIENT_ID ]] || [[ -z $NC_INTEGRATION_OP_CLIENT_SECRET ]]; then
     log_info "You can provide the following environment variables to create the predefined OIDC client:\n  'NC_INTEGRATION_OP_CLIENT_ID'\n  'NC_INTEGRATION_OP_CLIENT_SECRET'"
   fi
@@ -113,6 +120,12 @@ if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
     log_error "'NC_INTEGRATION_OP_CLIENT_SECRET=$NC_INTEGRATION_OP_CLIENT_SECRET' is invalid.\nClient secret should be 32-64 alphanumeric characters."
     exit 1
   fi
+fi
+
+if [[ $ENABLE_SCIM == "true" && $NC_INTEGRATION_PROVIDER_TYPE != "$auth_type_nextcloud_hub" ]]; then
+  log_error "SCIM integration is supported only with '$auth_type_nextcloud_hub' provider type.
+  \nPlease review 'NC_INTEGRATION_PROVIDER_TYPE' value."
+  exit 1
 fi
 
 # Validate required configs for OpenProject setup
@@ -148,13 +161,18 @@ fi
 MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
 MIN_SUPPORTED_OIDC_APP_VERSION="1.14.1"
 MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
+MIN_SUPPORTED_SCIM_CLIENT_APP_VERSION="1.2.0"
 # These URLs are just to check if the Nextcloud instances have been started or not before running the script
 NC_HOST_STATUS=$(curl -s -X GET "${NC_HOST}/status.php")
 NC_HOST_INSTALLED=$(echo $NC_HOST_STATUS | jq -r ".installed")
 NC_HOST_MAINTENANCE=$(echo $NC_HOST_STATUS | jq -r ".maintenance")
 # Nextcloud app endpoints
+# oidc app
 NC_OIDC_BASE_URL=${NC_HOST}/index.php/apps/oidc
+# integration_openproject app
 NC_INTEGRATION_BASE_URL=${NC_HOST}/index.php/apps/integration_openproject
+# scim_client app
+NC_SCIM_BASE_URL=${NC_HOST}/index.php/apps/scim_client
 # OIDC client name used in Nextcloud for OpenProject
 NC_OIDC_OP_CLIENT_NAME="openproject"
 
@@ -256,6 +274,8 @@ ncCheckAppVersion() {
     app_min_version=$MIN_SUPPORTED_OIDC_APP_VERSION
   elif [ $app_name = 'integration_openproject' ]; then
     app_min_version=$MIN_SUPPORTED_INTEGRATION_APP_VERSION
+  elif [ $app_name = 'scim_client' ]; then
+    app_min_version=$MIN_SUPPORTED_SCIM_CLIENT_APP_VERSION
   else
     log_error "Minimum required version for the '$app_name' app is not set."
     exit 1
@@ -323,6 +343,51 @@ EOF
   NC_OIDC_OP_CLIENT_ID=$(echo $nc_oidc_client_response | jq -r '.id')
 }
 
+nc_add_scim_server() {
+  local scim_response status
+  local req_body="{
+  \"params\": {
+      \"name\": \"$NC_OIDC_OP_CLIENT_NAME\",
+      \"url\": \"$OP_HOST/scim_v2\",
+      \"api_key\": \"$OP_SCIM_CLIENT_TOKEN\"
+  }
+}"
+  scim_response=$(
+    curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_SCIM_BASE_URL}/servers" \
+      -H 'Content-Type: application/json' \
+      -H 'OCS-APIRequest: true' \
+      -d "$req_body"
+  )
+
+  status=$(echo "$scim_response" | jq -r '.success')
+  if ! [[ "$status" = "true" ]]; then
+    log_error "[scim_client]: Failed to add SCIM server."
+    exit 1
+  fi
+
+  NC_SCIM_SERVER_ID=$(echo "$scim_response" | jq -r '.server.id')
+}
+
+nc_delete_scim_server() {
+  local scim_response status
+
+  if [[ -z "$NC_SCIM_SERVER_ID" ]]; then
+    return
+  fi
+
+  scim_response=$(
+    curl -s -XDELETE -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_SCIM_BASE_URL}/servers/${NC_SCIM_SERVER_ID}" \
+      -H 'OCS-APIRequest: true'
+  )
+
+  status=$(echo "$scim_response" | jq -r '.success')
+  if ! [[ "$status" = "true" ]]; then
+    log_error "[scim_client]: Failed to delete SCIM server."
+    exit 1
+  fi
+  unset NC_SCIM_SERVER_ID
+}
+
 logUnhandledError() {
   log_error "Unhandled error while creating the file storage '${OP_STORAGE_NAME}'"
   log_error "OpenProject returned the following error: '${error_message}'"
@@ -340,8 +405,11 @@ logAlreadyCompletedIntegrationConfiguration() {
   exit 0
 }
 
-if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "$auth_type_nextcloud_hub" ]]; then
   ncCheckAppVersion "oidc"
+  if [[ $ENABLE_SCIM == "true" ]]; then
+    ncCheckAppVersion "scim_client"
+  fi
 fi
 ncCheckAppVersion "user_oidc"
 ncCheckAppVersion "integration_openproject"
@@ -469,9 +537,9 @@ log_success "Creating file storage name \"${OP_STORAGE_NAME}\" in OpenProject wa
 
 # If the OIDC provider is nextcloud_hub, create a new OIDC client.
 # Otherwise, use the OpenProject client ID provided via environment variable.
-if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE == "$auth_type_nextcloud_hub" ]]; then
   createOidcClient
-elif [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "external" ]] &&
+elif [[ "$NC_INTEGRATION_PROVIDER_TYPE" == "$auth_type_external_sso" ]] &&
   [[ -z $NC_INTEGRATION_PROVIDER_NAME || -z $NC_INTEGRATION_TOKEN_EXCHANGE ]]; then
   log_error "Following configs are required to setup integration with external provider:"
   log_error "\tNC_INTEGRATION_PROVIDER_NAME"
@@ -502,7 +570,7 @@ EOF
 # If the OIDC provider is Keycloak, update the Nextcloud OIDC setup request body.
 # Adds Keycloak-specific configuration including token exchange and sets the SSO provider type to "external".
 # If OIDC provider is keycloak, add provider-specific values to the JSON
-if [[ $NC_INTEGRATION_PROVIDER_TYPE != "nextcloud_hub" ]]; then
+if [[ $NC_INTEGRATION_PROVIDER_TYPE != "$auth_type_nextcloud_hub" ]]; then
   jq --arg nc_integration_provider_name "$NC_INTEGRATION_PROVIDER_NAME" \
     --argjson nc_integration_token_exchange "$NC_INTEGRATION_TOKEN_EXCHANGE" \
     '.values += {
@@ -533,8 +601,11 @@ if [[ "$nc_integration_setup_response" != *"nextcloud_oauth_client_name"* ]] &&
   if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nc_integration_setup_response" != *"openproject_user_app_password"* ]]; then
     log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
     log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
-  elif [[ $NC_INTEGRATION_PROVIDER_TYPE = "nextcloud_hub" ]]; then
+  elif [[ $NC_INTEGRATION_PROVIDER_TYPE == "$auth_type_nextcloud_hub" ]]; then
     deleteOidcClient "$NC_OIDC_OP_CLIENT_ID"
+    if [[ $ENABLE_SCIM == "true" ]]; then
+      nc_delete_scim_server
+    fi
   fi
   exit 1
 fi
@@ -576,6 +647,11 @@ EOF
     fi
     log_success "Saving 'OpenProject' user application password to OpenProject was successful."
   fi
+fi
+
+# setup OpenProject SCIM server in nextcloud
+if [[ $ENABLE_SCIM == "true" ]]; then
+  nc_add_scim_server
 fi
 
 logCompleteIntegrationConfiguration
