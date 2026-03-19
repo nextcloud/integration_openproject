@@ -39,8 +39,7 @@ jobs:
         - name: Install server and enable integration_openproject app
           run: |
             cd server/apps/integration_openproject
-            make
-            php ../../occ maintenance:install --admin-pass=admin 
+            php ../../occ maintenance:install --admin-pass=admin
             php ../../occ a:e integration_openproject
 
         - name: Checkout integration_openproject app (release version for upgrade)
@@ -57,3 +56,10 @@ jobs:
             ls
             php ../../occ upgrade
             php ../../occ app:update --allow-unstable integration_openproject
+
+        - name: API Tests
+          env:
+            NEXTCLOUD_BASE_URL: http://localhost
+          run: |
+            cd server/apps/integration_openproject
+            make api-test
