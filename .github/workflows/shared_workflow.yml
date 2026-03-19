@@ -221,8 +221,16 @@ jobs:
       - name: Prepare Nextcloud server (for phpunit and psalm)
         run: server/occ maintenance:install --admin-pass=admin
 
-      - name: Install PHP dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Install PHP dependencies and enable integration_openproject app (for phpunit and psalm)
+        run: |
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          cd server
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # enable app even if it is not compatible with the master branch
+            ./occ a:e -f integration_openproject
+          else
+            ./occ a:e integration_openproject
+          fi
 
       - name: PHP code analysis and linting
         run: |
