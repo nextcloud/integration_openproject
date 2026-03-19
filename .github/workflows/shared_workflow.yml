@@ -221,9 +221,12 @@ jobs:
       - name: Prepare Nextcloud server (for phpunit and psalm)
         run: server/occ maintenance:install --admin-pass=admin
 
-      - name: Install PHP dependencies and enable integration_openproject app (for phpunit and psalm)
+      - name: Install PHP dependencies
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Enable integration_openproject app (for phpunit and psalm)
+        run: |
           cd server
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
             # enable app even if it is not compatible with the master branch
@@ -231,6 +234,19 @@ jobs:
           else
             ./occ a:e integration_openproject
           fi
+
+      - name: Checkout integration_openproject app (release version for upgrade)
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          path: integration_openproject
+
+      - name: Update integration_openproject app
+        run: |
+          pwd
+          ls
+          cd server
+          ./occ upgrade
+          ./occ app:update --allow-unstable integration_openproject
 
       - name: PHP code analysis and linting
         run: |
