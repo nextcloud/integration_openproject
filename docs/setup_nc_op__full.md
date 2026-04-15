@@ -2,6 +2,7 @@
   - SPDX-FileCopyrightText: 2025 Jankari Tech Pvt. Ltd.
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
+
 # Nextcloud-OpenProject Full Setup
 
 ## Table of Contents
@@ -31,20 +32,21 @@
    cd dev
    ```
 
-3. _(Optional)_ To enable keycloak service, uncomment the following line in the `dev/.env` file:
-
-   ```yaml
-   # run keycloak
-   KEYCLOAK=:keycloak.yaml
-   ```
-
-4. Start the services
+3. Start the services
 
    ```bash
    docker compose up
    ```
 
-5. Once the services are up, add the certificates to the system and browser trust store
+   > [!NOTE]
+   >
+   > Use `compose.override.yaml` file to override the services.
+   >
+   > ```bash
+   > cp compose.override.yaml.example compose.override.yaml
+   > ```
+
+4. Once the services are up, add the certificates to the system and browser trust store
 
    ```bash
    bash ./ssl.sh
@@ -52,7 +54,7 @@
 
    **NOTE:** Restart the browser after adding the certificates to the trust store.
 
-6. Access the services:
+5. Access the services:
 
    Nextcloud: [nextcloud.local](https://nextcloud.local)
 
