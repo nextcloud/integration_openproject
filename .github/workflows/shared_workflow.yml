@@ -122,6 +122,7 @@ jobs:
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
           NEXTCLOUD_AUTOINSTALL: 'Yes'
           WITH_REDIS: 'YES'
+          PHP_EXCIMER_DISABLE: 'true'
         ports:
           - 80:80
         options: --name=nextcloud
