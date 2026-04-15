@@ -158,6 +158,64 @@ services:
       traefik.http.routers.openproject.rule: Host(`${OPENPROJECT_DEV_HOST:-openproject.local}`)
       traefik.http.routers.openproject.entrypoints: websecure
 
+  keycloak-db:
+    image: postgres:14
+    restart: unless-stopped
+    networks:
+      - nc-op
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+      PGUSER: keycloak
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready', '-d', 'db_prod']
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+  keycloak:
+    build:
+      context: ./keycloak
+      args:
+        IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
+        IMAGE_TAG: ${KC_IMAGE_TAG:-26.2}
+    restart: unless-stopped
+    command: ["--proxy-headers", "xforwarded", "--spi-connections-http-client-default-disable-trust-manager=true"]
+    environment:
+      KC_DB: postgres
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB_SCHEMA: public
+      KC_HOSTNAME: keycloak.local
+      KC_FEATURES: preview
+      KC_TRANSACTION_XA_ENABLED: false
+      KC_REALM_NAME: opnc
+      KC_NEXTCLOUD_CLIENT_ID: nextcloud
+      KC_NEXTCLOUD_CLIENT_SECRET: nextcloud-secret
+      KC_NEXTCLOUD_CLIENT_HOST: nextcloud.local
+      KC_OPENPROJECT_CLIENT_ID: openproject
+      KC_OPENPROJECT_CLIENT_SECRET: openproject-secret
+      KC_OPENPROJECT_CLIENT_HOST: openproject.local
+    networks:
+      - nc-op
+    volumes:
+      - step:/step:ro
+      - keycloakdata:/opt/keycloak/data/
+    labels:
+      traefik.enable: true
+      traefik.http.routers.keycloak.rule: Host(`keycloak.local`)
+      traefik.http.routers.keycloak.entrypoints: websecure
+    depends_on:
+      traefik:
+        condition: service_started
+      keycloak-db:
+        condition: service_healthy
+
 volumes:
   ncdb:
   ncdata:
@@ -165,6 +223,7 @@ volumes:
   opdb:
   opdata:
   step:
+  keycloakdata:
 
 networks:
   nc-op:
