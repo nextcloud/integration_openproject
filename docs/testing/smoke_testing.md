@@ -19,8 +19,9 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
   - [2. Link/Unlink a work package for a file/folder from OpenProject](#2-linkunlink-a-work-package-for-a-filefolder-from-openproject)  
   - [3. Direct upload file/folder from OpenProject to Nextcloud](#3-direct-upload-filefolder-from-openproject-to-nextcloud)  
   - [4. Create a WorkPackage from Nextcloud](#4-create-a-workpackage-from-nextcloud)  
-  - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)  
-  - [6. Check New folder with automatically managed permissions in OpenProject](#6-check-new-folder-with-automatically-managed-permissions-in-openproject)
+  - [5. Check notification in `OpenProject` widget in Nextcloud](#5-check-notification-in-openproject-widget-in-nextcloud)
+  - [6. Setup and check project folder in Nextcloud (with project folder setup)](#6-setup-and-check-project-folder-in-nextcloud-with-project-folder-setup)
+  - [7. Check New folder with automatically managed permissions in OpenProject](#7-check-new-folder-with-automatically-managed-permissions-in-openproject)
 
 - [App Upgrade Testing](#app-upgrade-testing)
   - [Upgrade Steps](#upgrade-steps)
@@ -67,23 +68,8 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] Try to connect the created `OpenProject` user as created `Nextcloud` user.
 - [ ] `OpenProject` user should be connected as a `Nextcloud` user.
 
-### A5. Setup and check project folder in Nextcloud (with project folder setup)
-- [ ] Complete step [Test No A1](#a1-oauth-configuration).
-- [ ] Enable `groupfolders` application in `Nextcloud`.
-- [ ] Enable `Automatically managed folders` switch in admin setting and set project folder.
-- [ ] Application password should be generated.
-- [ ] Verify that `OpenProject` user and group are created with user `OpenProject` as sub-admin of the group.
-- [ ] Verify that `OpenProjectNoAutomaticProjectFolders` group is also created with user `OpenProject` as sub-admin.
-- [ ] Try deleting `OpenProject` user and group, those should not be deleted.
-- [ ] Try deleting `OpenProjectNoAutomaticProjectFolders` group, it should not be possible to delete.
-- [ ] Test group management (as user `OpenProject`):
-  - Login as `OpenProject` user
-  - Add a test user `user1` to the `OpenProject` group
-  - Remove `user1` from the `OpenProject` group
-  - Verify that `user1` is automatically moved to the `OpenProjectNoAutomaticProjectFolders` group
-
-### A6. Complete the common smoke tests
-- [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
+### A5. Complete the common smoke tests
+- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
 ### A7. Check the integration script for oauth set up
 
@@ -116,25 +102,35 @@ bash integration_setup.sh
 - [ ] Run following command:
   - `php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation`
 - [ ]  Go to `Administration > OpenID Connect` and enable `store login tokens` option.
-- [ ] Go to `Administation > Security`
-- [ ] Add OIDC client ("OpenID Connect clients" section):
-  - Add a client name (not an identifier)
-  - Add a redirect URL : `<openproject_instance_url>/auth/oidc-<idp-displayname-from-OP>/callback`
-  - After adding, choose `Access Token Type` as `JWT Access Token (RFC9068)`.
-  - Set `Refresh Token Expire Time` to `Never`
+- [ ] Go to `Administation > OpenID Connect Provider`
+  - Click the button `+ Add client`:
+  - Add a client name (not an identifier) such as `openproject`
+  - Add a redirect URL (<openproject_host>/auth/oidc-<idp-displayname-from-OP>/callback)
+  - Choose Signing Algorithm option as `RS246`.
+  - Choose Client Type as `Confidential` and click on `Add` button.
+  - After clicking `add` button, click on recently created client. 
+  - Choose `Access Token Type` as `JWT Access Token (RFC9068)` and click on `save` button.
+  - Go to `settings` section.
+  - Set `Refresh Token Expire Time` to `Never`.
   - Save
-  - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject)
+  - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject).
 
-####  B.1.2. Add Nextcloud IDP in OpenProject
+####  B.1.2. Add Nextcloud IDP in OpenProject (Without project folder setup)
 - [ ] In OpenProject, go to `Administration > Authentication > OpenID providers`
 - [ ] Add a new custom OpenID provider:
   - Display name: `nextcloud` (use this name as redirect URL in Nextcloud: <idp-displayname-from-OP>)
   - Discovery URL: `<nextcloud_instance_url>/index.php/.well-known/openid-configuration`
   - Client ID: Client ID copied earlier from Nextcloud
   - Client secret: Client secret copied earlier from Nextcloud
-- [ ] Go to `Administration > Files`
-- [ ] Select the file storage type called Nextcloud (created earlier in previous test)
-- [ ] Under `OAuth configuration`, select `Use access token obtained during user log in`
+  - Choose other option by default and click on `save`
+- [ ] Then, go to `Administration > Files`
+- [ ] Create a file storage type `Nextcloud` by clicking the button `+ Storage` and choosing `Nextcloud`
+- [ ] Add name it as `Nextcloud`.
+- [ ] Add Host as `<nextcloud-host>`
+- [ ] Choose authentication Method option as `Single-Sign-On through OpenID Connect Identity Provider`.
+- [ ] Then, select the option `Use access token obtained during user log in`.
+- [ ] Uncheck project folder (automatically managed folder).
+- [ ] Click on button `Finish setup`.
 
 #### B.1.3. Setup integration (Without project folder setup)
 - [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
@@ -164,7 +160,7 @@ bash integration_setup.sh
 - [ ] Should show user is connected as an OpenProject user.
 
 #### B.1.6. Complete the common smoke tests
-- [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
+- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
 ### B.2: External Provider
 > Here, keycloak is an External Provider
@@ -213,7 +209,7 @@ bash integration_setup.sh
 - [ ] Should show user is connected as an OpenProject user.
 
 #### B.2.6. Complete the common smoke tests
-- [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
+- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
 #### B.2.7.Setup integration (token exchange enabled)
 - [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
@@ -235,7 +231,7 @@ bash integration_setup.sh
 - [ ] Should show user is connected as an OpenProject user.
 
 #### B.2.9. Complete the common smoke tests
-- [ ] Complete [smoke tests 1-6](#common-smoke-test-steps).
+- [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
 ### Check the integration script for sso setup (Nextcloud Hub)
 
@@ -381,12 +377,25 @@ bash integration_oidc_setup.sh
 - [ ] Now as an `OpenProject` admin, assign any of the `Demo Project` work packages to the created `OpenProject` user.
 - [ ] The `Nextcloud` user should receive a notification regarding the assignment.
 
-### 6. Check New folder with automatically managed permissions in OpenProject
+#### 6. Setup and check project folder in Nextcloud (with project folder setup)
+- [ ] Enable `groupfolders` application in `Nextcloud`.
+- [ ] Enable `Automatically managed folders` switch in admin setting and set project folder.
+- [ ] Application password should be generated.
+- [ ] Verify that `OpenProject` user and group are created with user `OpenProject` as sub-admin of the group.
+- [ ] Verify that `OpenProjectNoAutomaticProjectFolders` group is also created with user `OpenProject` as sub-admin.
+- [ ] Try deleting `OpenProject` user and group, those should not be deleted.
+- [ ] Try deleting `OpenProjectNoAutomaticProjectFolders` group, it should not be possible to delete.
+- [ ] Test group management (as user `OpenProject`):
+  - Login as `OpenProject` user
+  - Add a test user `user1` to the `OpenProject` group
+  - Remove `user1` from the `OpenProject` group
+  - Verify that `user1` is automatically moved to the `OpenProjectNoAutomaticProjectFolders` group
+
+### 7. Check New folder with automatically managed permissions in OpenProject
 - [ ] Navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, click `link existing files`.
 - [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
-- [ ] Try to delete `OpenProject` or `OpenProject > Demo project(1)`. They should not be deleted.
 
 ## App Upgrade Testing
 
