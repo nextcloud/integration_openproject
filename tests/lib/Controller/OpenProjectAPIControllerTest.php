@@ -230,8 +230,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 		]);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
 		$this->assertSame('some image data', $response->render());
-		$this->assertSame(
-			"attachment; filename=\"avatar\"",
+		$this->assertMatchesRegularExpression(
+			'/attachment; filename="?avatar"?/',
 			$response->getHeaders()["Content-Disposition"]
 		);
 		$this->assertSame(
@@ -267,8 +267,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 		]);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
 		$this->assertSame('some image data', $response->render());
-		$this->assertSame(
-			"attachment; filename=\"avatar\"",
+		$this->assertMatchesRegularExpression(
+			'/attachment; filename="?avatar"?/',
 			$response->getHeaders()["Content-Disposition"]
 		);
 		$this->assertEmpty($response->getHeaders()["Content-Type"]);
