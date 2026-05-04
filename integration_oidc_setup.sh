@@ -294,7 +294,7 @@ createOidcClient() {
 {
   "flowType": "code",
   "name": "$NC_OIDC_OP_CLIENT_NAME",
-  "redirectUri": "$OP_HOST/auth/oidc-nextcloud/callback",
+  "redirectUri": "$OP_HOST/*",
   "signingAlg": "RS256",
   "tokenType": "jwt",
   "type": "confidential",
