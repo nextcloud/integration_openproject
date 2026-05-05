@@ -301,8 +301,6 @@ jobs:
 
       - name: Configure Nextcloud server
         run: |
-          # Disable share rate limit protection
-          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
           # Enable apps
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
             # enable app even if it is not compatible with the master branch
