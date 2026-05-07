@@ -20,6 +20,7 @@ use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\DavUtil;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -185,7 +186,7 @@ class FilesController extends OCSController {
 			// full path is in format `<user-name>/files/a/b/`
 			// since we don't want to send it with username, only get the `files/a/b` and send it
 			$path = explode('/', $fullpath, 3);
-			$davPermission = $this->getDavPermissions($file);
+			$davPermission = $this->getDavPermissions($file, $file->getParent());
 			if ($file->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
 				$mimeType = 'application/x-op-directory';
 				$path = $path[2] . '/';
@@ -289,7 +290,7 @@ class FilesController extends OCSController {
 
 	// `davUtils->getDavPermissions` method is static so it cannot be mocked to
 	// creating similar function here for testing purposes
-	public function getDavPermissions(FileInfo $info): string {
-		return $this->davUtils->getDavPermissions($info);
+	public function getDavPermissions(FileInfo $info, Node $parent): string {
+		return $this->davUtils->getDavPermissions($info, $parent);
 	}
 }
