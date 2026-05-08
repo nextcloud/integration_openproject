@@ -783,18 +783,14 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$tokenExpiryTime = $oAuth2OrOidcToken === 'expired' ? 0 : time() + 7200;
 		$this->defaultConfigMock
 			->method('getUserValue')
-			->withConsecutive(
-				[$userId, 'integration_openproject', 'token'],
-				[$userId, 'integration_openproject', 'token_expires_at'],
-				[$userId, 'integration_openproject', 'refresh_token'],
-				[$userId, 'integration_openproject', 'token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				$oAuth2OrOidcToken,
-				$tokenExpiryTime,
-				'oAuthRefreshToken',
-				'new-Token'
-			);
+			->willReturnMap([
+				[$userId, 'integration_openproject', 'token', $oAuth2OrOidcToken],
+				[$userId, 'integration_openproject', 'token_expires_at', $tokenExpiryTime],
+				[$userId, 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
+				[$userId, 'integration_openproject', 'token', 'new-Token'],
+				[$userId, 'integration_openproject', 'user_id', 'some-user-id'],
+				[$userId, 'integration_openproject', 'user_name', 'some-user-name'],
+			]);
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
 			$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
@@ -4587,7 +4583,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$eventMock->method('getToken')->willReturn($tokenMock);
 		$tokenMock->method('getAccessToken')->willReturn('exchanged-access-token');
 		$service = $this->getOpenProjectAPIServiceMock(
-			['initUserInfo'],
+			[],
 			[
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
@@ -4595,7 +4591,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$service->expects($this->once())->method('initUserInfo')->with('testUser');
 		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
 		$expectedCalls = [
