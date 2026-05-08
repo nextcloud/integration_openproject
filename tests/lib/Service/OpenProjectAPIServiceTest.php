@@ -781,20 +781,25 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]));
 
 		$tokenExpiryTime = $oAuth2OrOidcToken === 'expired' ? 0 : time() + 7200;
-		$this->defaultConfigMock
-			->method('getUserValue')
-			->withConsecutive(
-				[$userId, 'integration_openproject', 'token'],
-				[$userId, 'integration_openproject', 'token_expires_at'],
-				[$userId, 'integration_openproject', 'refresh_token'],
-				[$userId, 'integration_openproject', 'token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				$oAuth2OrOidcToken,
-				$tokenExpiryTime,
-				'oAuthRefreshToken',
-				'new-Token'
-			);
+		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+			$this->defaultConfigMock
+				->method('getUserValue')
+				->willReturnMap([
+					[$userId, 'integration_openproject', 'token', $oAuth2OrOidcToken],
+					[$userId, 'integration_openproject', 'token_expires_at', $tokenExpiryTime],
+					[$userId, 'integration_openproject', 'user_id', 'some-user-id'],
+					[$userId, 'integration_openproject', 'user_name', 'some-user-name'],
+				]);
+		} else {
+			$this->defaultConfigMock
+				->method('getUserValue')
+				->willReturnMap([
+					[$userId, 'integration_openproject', 'token', $oAuth2OrOidcToken],
+					[$userId, 'integration_openproject', 'token_expires_at', $tokenExpiryTime],
+					[$userId, 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
+					[$userId, 'integration_openproject', 'token','new-Token'],
+				]);
+		}
 		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
 			$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
@@ -4565,12 +4570,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturnMap($this->getAppValues([
 				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
 			]));
-		$configMock
-			->method('getUserValue')
-			->willReturnMap([
-				['testUser', Application::APP_ID, 'user_id', null],
-				['testUser', Application::APP_ID, 'user_name', null],
-			]);
 		$calls = [];
 		$configMock
 			->method('setUserValue')
@@ -4587,7 +4586,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$eventMock->method('getToken')->willReturn($tokenMock);
 		$tokenMock->method('getAccessToken')->willReturn('exchanged-access-token');
 		$service = $this->getOpenProjectAPIServiceMock(
-			['initUserInfo'],
+			[],
 			[
 				'appManager' => $iAppManagerMock,
 				'config' => $configMock,
@@ -4595,7 +4594,6 @@ class OpenProjectAPIServiceTest extends TestCase {
 				'tokenEventFactory' => $exchangeTokenEvent,
 			],
 		);
-		$service->expects($this->once())->method('initUserInfo')->with('testUser');
 		$result = $service->getOIDCToken('testUser');
 		$this->assertEquals('exchanged-access-token', $result);
 		$expectedCalls = [
@@ -4815,7 +4813,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 				['testUser', Application::APP_ID, 'refresh_token', '', 'refresh-token'],
 			]);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['isAccessTokenExpired', 'getOIDCToken', 'requestOAuthAccessToken'],
+			['isAccessTokenExpired', 'getOIDCToken', 'requestOAuthAccessToken', 'initUserInfo'],
 			[
 				'config' => $configMock,
 			],
@@ -4825,6 +4823,27 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->method('isAccessTokenExpired')
 			->with('testUser')
 			->willReturn($expired);
+		}
+
+		if ($token && $expired && $authMethod === SettingsService::AUTH_METHOD_OIDC) {
+			$configMock
+				->expects($this->exactly(2))
+				->method("deleteUserValue")
+				->willReturnMap([
+					['testUser', 'integration_openproject', 'user_name', ''],
+					['testUser', 'integration_openproject', 'user_id', ''],
+				]);
+		} else {
+			$configMock->expects($this->never())->method("deleteUserValue");
+		}
+
+		if ($token && $authMethod === SettingsService::AUTH_METHOD_OIDC && (!$expired || $expectedToken)) {
+			$expectedTokenForInitUserInfo = $expired ? $expectedToken : $token;
+			$service->expects($this->once())
+				->method('initUserInfo')
+				->with('testUser', $expectedTokenForInitUserInfo);
+		} else {
+			$service->expects($this->never())->method('initUserInfo');
 		}
 
 		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $expired) {
@@ -5238,5 +5257,113 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 		$baseUrl = $service->getNCBaseUrl();
 		$this->assertEquals($expected, $baseUrl);
+	}
+
+	/**
+	 * Data provider for testInitUserInfo
+	 */
+	public function initUserInfoDataProvider(): array {
+		return [
+			'user info already saved' => [
+				'savedUserId' => 'testUserID',
+				'savedUsername' => 'test User',
+				'expectedResult' => ['user_name' => 'test User'],
+				'expectRawRequestCalled' => false,
+				'apiResponse' => null,
+				'expectedException' => null
+			],
+			'user info missing and API succeeds' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['user_name' => 'test User'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => [
+					'id' => 'testUserID',
+					'firstName' => 'test',
+					'lastName' => 'User',
+				],
+				'expectedException' => null
+			],
+			'user info missing and API throws exception' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['error' => 'OpenProject error'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => null,
+				'expectedException' => new \Exception('OpenProject error')
+			],
+			'user info missing and API returns incomplete data' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['id' => 'testUserID', 'error' => 'Failed to get user profile'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => [
+					'id' => 'testUserID',
+				],
+				'expectedException' => null
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider initUserInfoDataProvider
+	 * @param string $savedUserId
+	 * @param string $savedUsername
+	 * @param array $expectedResult
+	 * @param bool $expectRawRequestCalled
+	 * @param array|null $apiResponse
+	 * @param \Exception|null $expectedException
+	 * @return void
+	 */
+	public function testInitUserInfo(
+		string $savedUserId,
+		string $savedUsername,
+		array $expectedResult,
+		bool $expectRawRequestCalled,
+		?array $apiResponse,
+		?\Exception $expectedException,
+	): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://test.local',
+			]));
+		$configMock
+			->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'user_id', '', $savedUserId],
+				['testUser', Application::APP_ID, 'user_name','', $savedUsername]
+			]);
+
+		$calls = [];
+		$configMock
+			->method('setUserValue')
+			->willReturnCallback(function ($uid, $app, $key, $value) use (&$calls) {
+				$calls[] = [$uid, $app, $key, $value];
+			});
+
+		$service = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+
+		if (!$expectRawRequestCalled) {
+			$service->expects($this->never())->method('rawRequest');
+		} elseif ($expectedException !== null) {
+			$service->expects($this->once())->method('rawRequest')->willThrowException($expectedException);
+		} else {
+			$mockResponse = $this->createMock(Response::class);
+			$mockResponse->method('getBody')->willReturn(json_encode($apiResponse));
+			$service->expects($this->once())->method('rawRequest')->willReturn(
+				$mockResponse
+			);
+		}
+
+		$result = $service->initUserInfo('testUser', 'token');
+		$this->assertSame($expectedResult, $result);
+
+		if (isset($expectedResult['user_name']) && $expectRawRequestCalled) {
+			$this->assertContains(['testUser', Application::APP_ID, 'user_id', 'testUserID'], $calls);
+			$this->assertContains(['testUser', Application::APP_ID, 'user_name', 'test User'], $calls);
+		} else {
+			$this->assertEmpty($calls);
+		}
 	}
 }
