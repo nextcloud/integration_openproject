@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix: Handle projects whose parent project is unknown [#985](https://github.com/nextcloud/integration_openproject/pull/985)
 - Fix: Force HTTPS on Nextcloud base URL for OpenProject API requests [#992](https://github.com/nextcloud/integration_openproject/pull/992)
+- Fix: Wrong message "Unauthorized to connect to OpenProject" shown with valid SSO connection [#1018](https://github.com/nextcloud/integration_openproject/pull/1018)
 
 ### Added
 
