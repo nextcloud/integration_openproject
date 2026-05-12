@@ -300,6 +300,7 @@ class FilesController extends OCSController {
 			/** @psalm-suppress TooManyArguments */
 			return $this->davUtils->getDavPermissions($file, $file->getParent());
 		}
+		/** @psalm-suppress TooFewArguments */
 		return $this->davUtils->getDavPermissions($file);
 	}
 }
