@@ -13,6 +13,7 @@ OC.L10N.register(
     "Authentication method" : "Начин на автентификација",
     "Documentation" : "Документација",
     "Copied!" : "Копирано!",
+    "Copied to the clipboard" : "Копирано во клипборд",
     "Details" : "Детали",
     "Start typing to search" : "Напишете нешто за пребарување",
     "Select a user or group" : "Избери корисник или група",
