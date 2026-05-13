@@ -1,0 +1,201 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+
+# SPDX-FileCopyrightText: 2022 Free Software Foundation Europe e.V. <https://fsfe.org>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Upgrade Testing
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: nextcloudappstore.settings.development
+    services:
+
+      database-mysql:
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        env:
+          MYSQL_ROOT_PASSWORD: 'nextcloud'
+          MYSQL_PASSWORD: 'nextcloud'
+          MYSQL_USER: 'nextcloud'
+          MYSQL_DATABASE: 'nextcloud'
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          path: integration_openproject
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+        with:
+          node-version: 20
+
+      - name: Setup npm
+        run: npm i -g npm
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, mysql, gd
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
+
+      - name: Build nextcloud project
+        # if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
+        # id: build_release
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          echo "###### installing nextcloud"
+          mkdir ~/html
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable29 ~/html/nextcloud
+          cd ~/html/nextcloud
+          git submodule update --init
+          mkdir -p data
+          # chown -R www-data:www-data config data apps
+          php occ maintenance:install \
+            --database mysql \
+            --database-name nextcloud \
+            --database-host 127.0.0.1 \
+            --database-user nextcloud \
+            --database-pass nextcloud \
+            --admin-user admin \
+            --admin-pass admin
+          php occ maintenance:mode --off
+          sudo php -S localhost:80 -t ~/html/nextcloud &
+
+      - name: Wait for Nextcloud server to be ready
+        run: |
+          if ! timeout 5m bash -c '
+            until curl -s -f http://localhost/status.php | grep '"'"'"installed":true'"'"'; do
+              echo "[INFO] Waiting for server to be ready..."
+              sleep 10
+            done
+          '; then
+            echo "[ERROR] Server not ready within 5 minutes."
+            exit 1
+          fi
+
+
+      - name: Setup System dependencies for appstore
+        run: |
+          sudo apt install -y \
+            python3-venv \
+            python3-wheel \
+            libxslt-dev \
+            libxml2-dev \
+            libz-dev \
+            libpq-dev \
+            build-essential \
+            python3-dev \
+            python3-setuptools \
+            gettext \
+            libssl-dev \
+            libffi-dev \
+            nodejs \
+            yarn
+        
+      - name: Checkout appstore
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          repository: nextcloud/appstore
+          path: appstore
+
+      - name: Install Appstore
+        run: |
+          cd appstore
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install poetry==1.8.2
+          make dev-setup
+          python manage.py runserver &
+      
+      - name: Check for Appstore
+        run: |
+          cd appstore
+          status=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000)
+          if [ "$status" -eq 200 ]; then
+            echo "OK"
+          else
+            echo "FAILED (status: $status)"
+          fi
+        
+      - name: Register and publish integration_openproject apps
+        env:
+          APP_ID: integration_openproject
+          APP_VERSION: 2.9.2
+          SIGNATURE: signature1
+        run: |
+          cd integration_openproject
+          bash ./.github/scripts/self-hosted-app-store.sh
+
+      - name: Register and publish groupfolders apps
+        env:
+          APP_ID: groupfolders
+          APP_VERSION: 17.0.15
+          SIGNATURE: signature1
+        run: |
+          cd integration_openproject
+          bash ./.github/scripts/self-hosted-app-store.sh
+
+      - name: Configure Nextcloud for testing
+        run: |
+          # making the signature verification always pass for testing
+          # by making the $verified variable true in Installer.php
+          sed -i.bak 's/$verified = .*/$verified = true;/' /home/runner/html/nextcloud/lib/private/Installer.php || {
+          echo "::error::Failed to patch Installer.php with sed"
+          exit 1
+          }
+          cd ~/html/nextcloud
+          php occ config:system:set appstoreurl --value http://localhost:8000/api/v1
+          php occ config:system:set allow_local_remote_servers --value true
+          php occ app:install integration_openproject
+          php occ app:install groupfolders
+
+      - name: Register and publish next release of the app
+        env:
+          APP_ID: integration_openproject
+          APP_VERSION: 2.10.0
+          SIGNATURE: signature2
+        run: |
+          cd integration_openproject
+          bash ./.github/scripts/self-hosted-app-store.sh
+
+      - name: upgrade apps
+        run: |
+          cd ~/html/nextcloud
+          # latest data didn't get fetched properly, so we need to clear the appstore cache
+          echo "" > ~/html/nextcloud/data/appdata_*/appstore/apps.json
+          php occ app:update --allow-unstable integration_openproject
+
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://localhost
+        run: |
+          cd integration_openproject
+          # build apps
+          make
+          # Run API tests
+          make api-test
+          # make api-test FEATURE_PATH=tests/acceptance/features/api/capabilities.feature
+
+      # - name: Setup Debug Session
+      #   uses: csexton/debugger-action@master
+
+      # - name: Configure Nextcloud for testing
+      #   run: |
+      #     ls -l
+
+      #     cd ~/html/nextcloud
+      #     ls -l
+      #     php occ app:install integration_openproject
