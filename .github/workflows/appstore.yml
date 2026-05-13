@@ -33,6 +33,8 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
+          fetch-tags: true
+          ref: v2.9.2
 
       - name: Setup NodeJS
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
@@ -52,8 +54,6 @@ jobs:
           tools: php-cs-fixer, phpunit
 
       - name: Build nextcloud project
-        # if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
-        # id: build_release
         run: |
           export DEBIAN_FRONTEND=noninteractive
           echo "###### installing nextcloud"
@@ -136,8 +136,8 @@ jobs:
           APP_VERSION: 2.9.2
           SIGNATURE: signature1
         run: |
-          cd integration_openproject
-          bash ./.github/scripts/self-hosted-app-store.sh
+          wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/self-hosted-app-store.sh
+          bash ./self-hosted-app-store.sh
 
       - name: Register and publish groupfolders apps
         env:
@@ -145,8 +145,7 @@ jobs:
           APP_VERSION: 17.0.15
           SIGNATURE: signature1
         run: |
-          cd integration_openproject
-          bash ./.github/scripts/self-hosted-app-store.sh
+          bash ./self-hosted-app-store.sh
 
       - name: Configure Nextcloud for testing
         run: |
@@ -157,6 +156,7 @@ jobs:
           exit 1
           }
           cd ~/html/nextcloud
+          php occ config:system:set ratelimit.protection.enabled --value false --type bool
           php occ config:system:set appstoreurl --value http://localhost:8000/api/v1
           php occ config:system:set allow_local_remote_servers --value true
           php occ app:install integration_openproject
@@ -168,8 +168,7 @@ jobs:
           APP_VERSION: 2.10.0
           SIGNATURE: signature2
         run: |
-          cd integration_openproject
-          bash ./.github/scripts/self-hosted-app-store.sh
+          bash ./self-hosted-app-store.sh
 
       - name: upgrade apps
         run: |
