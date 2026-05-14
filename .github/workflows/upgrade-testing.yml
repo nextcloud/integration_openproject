@@ -93,7 +93,6 @@ jobs:
           cd ~/html/nextcloud
           git submodule update --init
           mkdir -p data
-          # chown -R www-data:www-data config data apps
           php occ maintenance:install \
             --database mysql \
             --database-name nextcloud \
