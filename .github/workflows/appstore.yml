@@ -163,9 +163,7 @@ jobs:
         
       - name: Register and publish integration_openproject apps
         env:
-          APP_ID: integration_openproject
           APP_VERSION: ${{ env.PREVIOUS_APP_VERSION }}
-          SIGNATURE: signature1
         run: |
           wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/self-hosted-app-store.sh
           bash ./self-hosted-app-store.sh
@@ -194,9 +192,7 @@ jobs:
 
       - name: Register and publish next release of the app
         env:
-          APP_ID: integration_openproject
           APP_VERSION: ${{ env.UPGRADE_APP_VERSION }}
-          SIGNATURE: signature2
         run: |
           bash ./self-hosted-app-store.sh
 
