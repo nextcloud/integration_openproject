@@ -9,26 +9,7 @@
 
 name: Upgrade Testing
 
-on:
-  pull_request:
-  # workflow_call:
-  #   inputs:
-  #     nextcloud_versions:
-  #       required: false
-  #       type: string
-  #       default: "31 32"
-  #     php_versions:
-  #       required: false
-  #       type: string
-  #       default: "8.2 8.3"
-  #     previous_app_version:
-  #       required: false
-  #       type: string
-  #       default: "2.9.2"
-  #     upgrade_app_version:
-  #       required: false
-  #       type: string
-  #       default: "2.10.0"
+on: [pull_request]
 
 jobs:
   create-matrix:
@@ -40,8 +21,8 @@ jobs:
       - name: Create matrix
         id: create-matrix
         env:
-          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
-          PHP_VERSIONS: ${{ inputs.php_versions }}
+          NEXTCLOUD_VERSIONS: "29 30"
+          PHP_VERSIONS: "8.2 8.3"
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
@@ -58,6 +39,8 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: nextcloudappstore.settings.development
+      PREVIOUS_APP_VERSION: 2.9.2
+      UPGRADE_APP_VERSION: 2.10.0
     services:
       database-mysql:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
@@ -75,13 +58,13 @@ jobs:
         with:
           path: integration_openproject
           fetch-tags: true
-          ref: v${{ inputs.upgrade_app_version }}
+          ref: v${{ env.UPGRADE_APP_VERSION }}
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nextcloud/activity
-          ref: stable${{ matrix.nextcloud_version }}
+          ref: ${{ matrix.nextcloudVersion }}
           path: activity
           
       - name: Setup NodeJS
@@ -95,7 +78,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
-          php-version: ${{ matrix.php_version }}
+          php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           extensions: mbstring, intl, mysql, gd
           ini-values: post_max_size=256M, max_execution_time=180
           coverage: xdebug
@@ -106,7 +89,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable${{ matrix.nextcloud_version }} ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloudVersion }} ~/html/nextcloud
           cd ~/html/nextcloud
           git submodule update --init
           mkdir -p data
@@ -181,7 +164,7 @@ jobs:
       - name: Register and publish integration_openproject apps
         env:
           APP_ID: integration_openproject
-          APP_VERSION: ${{ inputs.previous_app_version }}
+          APP_VERSION: ${{ env.PREVIOUS_APP_VERSION }}
           SIGNATURE: signature1
         run: |
           wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/self-hosted-app-store.sh
@@ -212,7 +195,7 @@ jobs:
       - name: Register and publish next release of the app
         env:
           APP_ID: integration_openproject
-          APP_VERSION: ${{ inputs.upgrade_app_version }}
+          APP_VERSION: ${{ env.UPGRADE_APP_VERSION }}
           SIGNATURE: signature2
         run: |
           bash ./self-hosted-app-store.sh
