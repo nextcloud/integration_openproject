@@ -34,8 +34,15 @@ jobs:
         with:
           path: integration_openproject
           fetch-tags: true
-          ref: v2.9.2
+          ref: v2.10.0
 
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          repository: nextcloud/activity
+          ref: stable29
+          path: activity
+          
       - name: Setup NodeJS
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
@@ -139,15 +146,24 @@ jobs:
           wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/self-hosted-app-store.sh
           bash ./self-hosted-app-store.sh
 
-      - name: Register and publish groupfolders apps
-        env:
-          APP_ID: groupfolders
-          APP_VERSION: 17.0.15
-          SIGNATURE: signature1
-        run: |
-          bash ./self-hosted-app-store.sh
+      # - name: Register and publish groupfolders apps
+      #   env:
+      #     APP_ID: groupfolders
+      #     APP_VERSION: 17.0.15
+      #     SIGNATURE: signature1
+      #   run: |
+      #     bash ./self-hosted-app-store.sh
 
-      - name: Configure Nextcloud for testing
+      # - name: Setup Debug Session
+      #   uses: csexton/debugger-action@master
+
+      - name: Enable other apps from official app store
+        run: |
+          cp -R activity ~/html/nextcloud/apps
+          cd ~/html/nextcloud
+          php occ app:enable oidc user_oidc groupfolders activity
+
+      - name: Enable integration_openproject app from self-hosted app store
         run: |
           # making the signature verification always pass for testing
           # by making the $verified variable true in Installer.php
@@ -155,12 +171,13 @@ jobs:
           echo "::error::Failed to patch Installer.php with sed"
           exit 1
           }
+          # latest data didn't get fetched properly, so we need to clear the appstore cache
+          echo "" > ~/html/nextcloud/data/appdata_*/appstore/apps.json
           cd ~/html/nextcloud
           php occ config:system:set ratelimit.protection.enabled --value false --type bool
           php occ config:system:set appstoreurl --value http://localhost:8000/api/v1
           php occ config:system:set allow_local_remote_servers --value true
           php occ app:install integration_openproject
-          php occ app:install groupfolders
 
       - name: Register and publish next release of the app
         env:
