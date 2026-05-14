@@ -9,15 +9,56 @@
 
 name: Upgrade Testing
 
-on: [pull_request]
+on:
+  pull_request:
+  # workflow_call:
+  #   inputs:
+  #     nextcloud_versions:
+  #       required: false
+  #       type: string
+  #       default: "31 32"
+  #     php_versions:
+  #       required: false
+  #       type: string
+  #       default: "8.2 8.3"
+  #     previous_app_version:
+  #       required: false
+  #       type: string
+  #       default: "2.9.2"
+  #     upgrade_app_version:
+  #       required: false
+  #       type: string
+  #       default: "2.10.0"
 
 jobs:
-  build:
+  create-matrix:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Create matrix
+        id: create-matrix
+        env:
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
+        run: |
+          MATRIX=$(./.github/scripts/generate-matrix.sh)
+          echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
+
+  upgrade-test:
+    name: Upgrade Testing
+    needs: create-matrix
+    if: ${{ success() }}
+    strategy:
+      matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
+
     env:
       DJANGO_SETTINGS_MODULE: nextcloudappstore.settings.development
     services:
-
       database-mysql:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
         env:
@@ -34,13 +75,13 @@ jobs:
         with:
           path: integration_openproject
           fetch-tags: true
-          ref: v2.10.0
+          ref: v${{ inputs.upgrade_app_version }}
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nextcloud/activity
-          ref: stable29
+          ref: stable${{ matrix.nextcloud_version }}
           path: activity
           
       - name: Setup NodeJS
@@ -54,7 +95,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php_version }}
           extensions: mbstring, intl, mysql, gd
           ini-values: post_max_size=256M, max_execution_time=180
           coverage: xdebug
@@ -65,7 +106,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable29 ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable${{ matrix.nextcloud_version }} ~/html/nextcloud
           cd ~/html/nextcloud
           git submodule update --init
           mkdir -p data
@@ -140,22 +181,11 @@ jobs:
       - name: Register and publish integration_openproject apps
         env:
           APP_ID: integration_openproject
-          APP_VERSION: 2.9.2
+          APP_VERSION: ${{ inputs.previous_app_version }}
           SIGNATURE: signature1
         run: |
           wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/self-hosted-app-store.sh
           bash ./self-hosted-app-store.sh
-
-      # - name: Register and publish groupfolders apps
-      #   env:
-      #     APP_ID: groupfolders
-      #     APP_VERSION: 17.0.15
-      #     SIGNATURE: signature1
-      #   run: |
-      #     bash ./self-hosted-app-store.sh
-
-      # - name: Setup Debug Session
-      #   uses: csexton/debugger-action@master
 
       - name: Enable other apps from official app store
         run: |
@@ -182,7 +212,7 @@ jobs:
       - name: Register and publish next release of the app
         env:
           APP_ID: integration_openproject
-          APP_VERSION: 2.10.0
+          APP_VERSION: ${{ inputs.upgrade_app_version }}
           SIGNATURE: signature2
         run: |
           bash ./self-hosted-app-store.sh
@@ -203,15 +233,3 @@ jobs:
           make
           # Run API tests
           make api-test
-          # make api-test FEATURE_PATH=tests/acceptance/features/api/capabilities.feature
-
-      # - name: Setup Debug Session
-      #   uses: csexton/debugger-action@master
-
-      # - name: Configure Nextcloud for testing
-      #   run: |
-      #     ls -l
-
-      #     cd ~/html/nextcloud
-      #     ls -l
-      #     php occ app:install integration_openproject
