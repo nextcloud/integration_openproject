@@ -11,6 +11,7 @@ namespace OCA\OpenProject\Controller;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelperDisabled;
 use OCA\Activity\UserSettings;
+use OCA\OpenProject\ServerVersion;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -20,6 +21,7 @@ use OCP\Files\Config\IMountProviderCollection;
 use OCP\Files\DavUtil;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -86,7 +88,8 @@ class FilesController extends OCSController {
 		IDBConnection $connection,
 		LoggerInterface $logger,
 		IUserManager $userManager,
-		DavUtil $davUtils
+		DavUtil $davUtils,
+		private ServerVersion $serverVersion,
 	) {
 		parent::__construct($appName, $request);
 		$this->user = $userSession->getUser();
@@ -289,7 +292,15 @@ class FilesController extends OCSController {
 
 	// `davUtils->getDavPermissions` method is static so it cannot be mocked to
 	// creating similar function here for testing purposes
-	public function getDavPermissions(FileInfo $info): string {
-		return $this->davUtils->getDavPermissions($info);
+	public function getDavPermissions(Node $file): string {
+		// BREAKING CHANGE (Nextcloud 34):
+		// "getDavPermissions()" expects parent node as second parameter.
+		// See: https://github.com/nextcloud/server/pull/57374#issuecomment-4394748935
+		if ($this->serverVersion->getMajorVersion() >= 34) {
+			/** @psalm-suppress TooManyArguments */
+			return $this->davUtils->getDavPermissions($file, $file->getParent());
+		}
+		/** @psalm-suppress TooFewArguments */
+		return $this->davUtils->getDavPermissions($file);
 	}
 }

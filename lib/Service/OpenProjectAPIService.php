@@ -1889,7 +1889,7 @@ class OpenProjectAPIService {
 			return Application::getDefaultAppName($appId);
 		}
 
-		return $appInfo['name'];
+		return (string) $appInfo['name'];
 	}
 
 	/**

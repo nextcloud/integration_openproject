@@ -299,18 +299,6 @@ jobs:
           min_coverage: '56'
           path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
 
-      - name: Configure Nextcloud server
-        run: |
-          # Disable share rate limit protection
-          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
-          # Enable apps
-          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
-            # enable app even if it is not compatible with the master branch
-            docker exec nextcloud /bin/bash -c 'occ a:e -f activity oidc user_oidc groupfolders integration_openproject'
-          else
-            docker exec nextcloud /bin/bash -c 'occ a:e activity oidc user_oidc groupfolders integration_openproject'
-          fi
-
       - name: Wait for Nextcloud server to be ready
         run: |
           if ! timeout 5m bash -c '
@@ -321,6 +309,18 @@ jobs:
           '; then
             echo "[ERROR] Server not ready within 5 minutes."
             exit 1
+          fi
+
+      - name: Configure Nextcloud server
+        run: |
+          # Disable share rate limit protection
+          docker exec nextcloud /bin/bash -c 'occ config:system:set ratelimit.protection.enabled --value false --type bool'
+          # Enable apps
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # enable app even if it is not compatible with the master branch
+            docker exec nextcloud /bin/bash -c 'occ a:e -f activity oidc user_oidc groupfolders integration_openproject'
+          else
+            docker exec nextcloud /bin/bash -c 'occ a:e activity oidc user_oidc groupfolders integration_openproject'
           fi
 
       - name: API Tests

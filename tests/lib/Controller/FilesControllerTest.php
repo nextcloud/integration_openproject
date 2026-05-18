@@ -8,6 +8,7 @@
 
 namespace OCA\OpenProject\Controller;
 
+use OCA\OpenProject\ServerVersion;
 use OCP\Activity\IManager;
 use OCP\Files\Config\ICachedMountFileInfo;
 use OCP\Files\Config\IUserMountCache;
@@ -900,6 +901,7 @@ class FilesControllerTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(DavUtil::class),
+			$this->createMock(ServerVersion::class),
 		);
 		return $controller;
 	}
@@ -950,7 +952,8 @@ class FilesControllerTest extends TestCase {
 					$this->createMock(IDBConnection::class),
 					$this->createMock(LoggerInterface::class),
 					$this->createMock(IUserManager::class),
-					$davUtilsMock
+					$davUtilsMock,
+					$this->createMock(ServerVersion::class),
 				])
 			->onlyMethods($onlyMethods)
 			->getMock();

@@ -1203,11 +1203,11 @@ Feature: retrieve file information of a single file, using the file ID
     Examples:
       | share-permission   | requester-dav-permissions | owner-dav-permissions |
       | all                | SRGNVW                    | RGDNVW                |
-      | read               | SG                        | RGDNVW                |
-      | read+share         | SRG                       | RGDNVW                |
+      | read               | SGN?                      | RGDNVW                |
+      | read+share         | SRGN?                     | RGDNVW                |
       | read+update        | SGNVW                     | RGDNVW                |
       | read+update+share  | SRGNVW                    | RGDNVW                |
-      | read+delete        | SG                        | RGDNVW                |
+      | read+delete        | SGN?                      | RGDNVW                |
       | read+delete+update | SGNVW                     | RGDNVW                |
 
 
@@ -1294,16 +1294,16 @@ Feature: retrieve file information of a single file, using the file ID
     Examples:
       | share-permission          | requester-dav-permissions | owner-dav-permissions |
       | all                       | SRGDNVCK                  | RGDNVCK               |
-      | read                      | SG                        | RGDNVCK               |
-      | read+share                | SRG                       | RGDNVCK               |
+      | read                      | SGN?                      | RGDNVCK               |
+      | read+share                | SRGN?                     | RGDNVCK               |
       | read+update               | SGNV                      | RGDNVCK               |
       | read+update+share         | SRGNV                     | RGDNVCK               |
-      | read+delete               | SGD                       | RGDNVCK               |
+      | read+delete               | SGDN?                     | RGDNVCK               |
       | read+delete+update        | SGDNV                     | RGDNVCK               |
-      | read+create               | SGCK                      | RGDNVCK               |
+      | read+create               | SGN?CK                    | RGDNVCK               |
       | read+create+update        | SGNVCK                    | RGDNVCK               |
-      | read+create+share         | SRGCK                     | RGDNVCK               |
-      | read+create+share+delete  | SRGDCK                    | RGDNVCK               |
+      | read+create+share         | SRGN?CK                   | RGDNVCK               |
+      | read+create+share+delete  | SRGDN?CK                  | RGDNVCK               |
       | read+create+update+delete | SGDNVCK                   | RGDNVCK               |
       | read+create+update+share  | SRGNVCK                   | RGDNVCK               |
 
