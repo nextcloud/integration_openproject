@@ -5,6 +5,9 @@ name: Upgrade Testing
 
 on: [pull_request]
 
+env:
+  TAG: 2.11.3
+
 jobs:
   create-matrix:
     runs-on: ubuntu-22.04
@@ -15,7 +18,7 @@ jobs:
       - name: Create matrix
         id: create-matrix
         env:
-          NEXTCLOUD_VERSIONS: "29 30"
+          NEXTCLOUD_VERSIONS: "31 32"
           PHP_VERSIONS: "8.2 8.3"
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
@@ -30,12 +33,6 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
-
-    env:
-      DJANGO_SETTINGS_MODULE: nextcloudappstore.settings.development
-      PREVIOUS_APP_VERSION: 2.9.2
-      UPGRADE_APP_VERSION: 2.10.0
-      APPSTORE_BASE_URL: http://localhost:8000
     services:
       database-mysql:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
@@ -52,8 +49,6 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           path: integration_openproject
-          fetch-tags: true
-          ref: v${{ env.UPGRADE_APP_VERSION }}
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
@@ -109,98 +104,41 @@ jobs:
             exit 1
           fi
 
-
-      - name: Setup System dependencies for appstore
-        run: |
-          sudo apt install -y \
-            python3-venv \
-            python3-wheel \
-            libxslt-dev \
-            libxml2-dev \
-            libz-dev \
-            libpq-dev \
-            build-essential \
-            python3-dev \
-            python3-setuptools \
-            gettext \
-            libssl-dev \
-            libffi-dev \
-            nodejs \
-            yarn
-        
-      - name: Checkout appstore
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-        with:
-          repository: nextcloud/appstore
-          path: appstore
-
-      - name: Install Appstore
-        run: |
-          cd appstore
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install poetry==1.8.2
-          make dev-setup
-          python manage.py runserver &
-      
-      - name: Check for Appstore
-        run: |
-          cd appstore
-          status=$(curl -o /dev/null -s -w "%{http_code}" "$APPSTORE_BASE_URL")
-          if [ "$status" -eq 200 ]; then
-            echo "OK"
-          else
-            echo "FAILED (status: $status)"
-          fi
-        
-      - name: Register and publish integration_openproject apps
-        env:
-          APP_VERSION: ${{ env.PREVIOUS_APP_VERSION }}
-        run: |
-          wget https://raw.githubusercontent.com/nextcloud/integration_openproject/${{github.head_ref}}/.github/scripts/register-and-publish-app-to-self-hosted-appstore.sh
-          bash ./register-and-publish-app-to-self-hosted-appstore.sh
-
       - name: Enable other apps from official app store
         run: |
           cp -R activity ~/html/nextcloud/apps
           cd ~/html/nextcloud
-          php occ app:enable oidc user_oidc groupfolders activity
+          php occ app:enable oidc user_oidc groupfolders activity integration_openproject
 
-      - name: Enable integration_openproject app from self-hosted app store
+      - name: Build integration_openproject app for upgrade testing
+        env:
+          APP_ID: integration_openproject
+          NEXCLOUD_PATH: /home/runner/html/nextcloud
+          WORKING_DIRECTORY: ${{ github.workspace }}
         run: |
-          # making the signature verification always pass for testing
-          # by making the $verified variable true in Installer.php
-          sed -i.bak 's/$verified = .*/$verified = true;/' /home/runner/html/nextcloud/lib/private/Installer.php || {
-          echo "::error::Failed to patch Installer.php with sed"
-          exit 1
-          }
+          cd integration_openproject
+          bash .github/scripts/build-and-release-app-for-upgrade-testing.sh
+
+      - name: Update integration_openproject app
+        run: |
           # latest data didn't get fetched properly, so we need to clear the appstore cache
           echo "" > ~/html/nextcloud/data/appdata_*/appstore/apps.json
           cd ~/html/nextcloud
           php occ config:system:set ratelimit.protection.enabled --value false --type bool
-          php occ config:system:set appstoreurl --value "$APPSTORE_BASE_URL/api/v1"
+          php occ config:system:set appstoreurl --value "http://localhost"
           php occ config:system:set allow_local_remote_servers --value true
-          php occ app:install integration_openproject
-
-      - name: Register and publish next release of the app
-        env:
-          APP_VERSION: ${{ env.UPGRADE_APP_VERSION }}
-        run: |
-          bash ./register-and-publish-app-to-self-hosted-appstore.sh
-
-      - name: upgrade apps
-        run: |
-          cd ~/html/nextcloud
-          # latest data didn't get fetched properly, so we need to clear the appstore cache
-          echo "" > ~/html/nextcloud/data/appdata_*/appstore/apps.json
           php occ app:update --allow-unstable integration_openproject
+          if php occ app:list | grep -q "integration_openproject.*$TAG"; then
+            echo "App updated successfully to version $TAG"
+          else
+            echo "App not updated to version $TAG"
+            exit 1
+          fi
 
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://localhost
         run: |
           cd integration_openproject
-          # build apps
-          make
           # Run API tests
           make api-test
