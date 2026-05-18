@@ -106,9 +106,15 @@ jobs:
 
       - name: Enable other apps from official app store
         run: |
+          cd ~/html/nextcloud
+          php occ app:enable oidc user_oidc groupfolders integration_openproject
+
+      # activity app cannot be installed using occ command
+      - name:  Setup and enable dependent apps
+        run: |
           cp -R activity ~/html/nextcloud/apps
           cd ~/html/nextcloud
-          php occ app:enable oidc user_oidc groupfolders activity integration_openproject
+          php occ app:enable activity
 
       - name: Build integration_openproject app for upgrade testing
         env:
