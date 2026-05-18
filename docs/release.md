@@ -82,4 +82,4 @@ On the current release branch:
 
 1. Add the release notes to the newly created [GitHub release](https://github.com/nextcloud/integration_openproject/releases).
 2. Merge the necessary commits from the release branch into the `master` branch.
-3. In the `master` branch, bump the app version to the next version (e.g.: `X.(Y+1).0-alpha.1`).
+3. In the `master` branch, bump the app version to the next version (e.g.: `(X+1).0.0-dev`).
