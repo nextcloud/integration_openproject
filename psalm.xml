@@ -19,7 +19,7 @@
 	<projectFiles>
 		<directory name="lib" />
 		<directory name="tests" />
-		<ignoreFiles>
+		<ignoreFiles allowMissingFiles="true">
 			<directory name="vendor" />
 			<directory name="server/lib" />
 		</ignoreFiles>
@@ -72,12 +72,6 @@
 				<referencedClass name="OC\Http\Client\LocalAddressChecker" />
 			</errorLevel>
 		</UndefinedDocblockClass>
-		<NoValue>
-			<errorLevel type="suppress">
-				<!-- make psalm not complain if activity app does not exist -->
-				<file name="lib/Controller/FilesController.php"/>
-			</errorLevel>
-		</NoValue>
 		<UndefinedDocblockClass>
 			<errorLevel type="suppress">
 				<!-- make psalm not complain if groupfolders app does not exist -->

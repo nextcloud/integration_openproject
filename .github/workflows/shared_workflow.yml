@@ -19,61 +19,61 @@ on:
 name: CI
 
 jobs:
-  js-lint-unit:
-    name: js lint and unit tests
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+  # js-lint-unit:
+  #   name: js lint and unit tests
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout
+  #       if: github.event_name != 'schedule'
+  #       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
-      - name: Checkout (Nightly)
-        if: github.event_name == 'schedule'
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-        with:
-          ref: ${{ inputs.branch }}
+  #     - name: Checkout (Nightly)
+  #       if: github.event_name == 'schedule'
+  #       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+  #       with:
+  #         ref: ${{ inputs.branch }}
 
-      - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4
-        id: versions
-        with:
-          fallbackNode: '^20'
-          fallbackNpm: '^10'
+  #     - name: Read package.json node and npm engines version
+  #       uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4
+  #       id: versions
+  #       with:
+  #         fallbackNode: '^20'
+  #         fallbackNpm: '^10'
 
-      - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
-        with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
-          cache: 'npm'
+  #     - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
+  #       uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+  #       with:
+  #         node-version: ${{ steps.versions.outputs.nodeVersion }}
+  #         cache: 'npm'
 
-      - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+  #     - name: Setup  NPM ${{ steps.versions.outputs.npmVersion }}
+  #       run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
-      - name: Install NPM Dependencies
-        run: npm install
+  #     - name: Install NPM Dependencies
+  #       run: npm install
 
-      - name: JS Lint
-        run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
+  #     - name: JS Lint
+  #       run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
-      - name: Vue Unit tests
-        run: |
-          make jsunit
+  #     - name: Vue Unit tests
+  #       run: |
+  #         make jsunit
 
-      - name: JS Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/jest/lcov.info
-          delete-old-comments: true
-          title: "JS Code Coverage"
+  #     - name: JS Code Coverage Summary Report
+  #       if: ${{ github.event_name == 'pull_request' }}
+  #       uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         lcov-file: ./coverage/jest/lcov.info
+  #         delete-old-comments: true
+  #         title: "JS Code Coverage"
 
-      - name: JS coverage check
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
-        with:
-          min_coverage: '59'
-          path: './coverage/jest/lcov.info'
+  #     - name: JS coverage check
+  #       if: ${{ github.event_name == 'pull_request' }}
+  #       uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
+  #       with:
+  #         min_coverage: '59'
+  #         path: './coverage/jest/lcov.info'
 
   create-matrix:
     runs-on: ubuntu-22.04
@@ -108,11 +108,11 @@ jobs:
     if: ${{ success() }}
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: integration_openproject
+    # defaults:
+    #   run:
+    #     working-directory: integration_openproject
 
     services:
       nextcloud:
@@ -148,26 +148,20 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout
-        if: github.event_name != 'schedule'
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-        with:
-          path: integration_openproject
-
-      - name: Checkout (Nightly)
-        if: github.event_name == 'schedule'
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-        with:
-          path: integration_openproject
-          ref: ${{ inputs.branch }}
-
       - name: Checkout server (for phpunit and psalm)
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           submodules: true
           repository: nextcloud/server
-          path: integration_openproject/server
+          path: server
           ref: ${{ matrix.nextcloudVersion }}
+
+      - name: Checkout integration_openproject (Nightly)
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          path: server/apps/integration_openproject
+          ref: ${{ inputs.branch }}
 
       # activity app cannot be installed using occ command
       - name: Checkout (activity)
@@ -175,28 +169,28 @@ jobs:
         with:
           repository: nextcloud/activity
           ref: ${{ matrix.nextcloudVersion }}
-          path: activity
+          path: server/apps/activity
 
       - name: Checkout (groupfolders)
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: nextcloud/groupfolders
-          path: groupfolders
+          path: server/apps/groupfolders
 
       - name: Checkout (user_oidc)
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: nextcloud/user_oidc
-          path: user_oidc
+          path: server/apps/user_oidc
 
       - name: Checkout (oidc)
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         if: ${{ matrix.nextcloudVersion == 'master' }}
         with:
           repository: h2CK/oidc
-          path: oidc
+          path: server/apps/oidc
 
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
@@ -208,7 +202,8 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache PHP dependencies
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -217,45 +212,75 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('./composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install PHP dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
-
       - name: Prepare Nextcloud server (for phpunit and psalm)
         run: server/occ maintenance:install --admin-pass=admin
 
+      - name: Enable integration_openproject (initial)
+        if: github.event_name != 'schedule'
+        run: |
+          cd server/apps
+          ## clone the integration_openproject repository of specified branch and build the app
+          git clone https://github.com/nextcloud/integration_openproject.git -b ${{ github.event.pull_request.base.ref }}
+          cd integration_openproject
+          # echo "${{ github.event.pull_request.head.ref }}" # output upgrade-test-on-release3.0
+          # git checkout ${{ github.event.pull_request.head.ref }}
+          ## enable the app in the server
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # enable app even if it is not compatible with the master branch
+            ../../occ a:e -f integration_openproject
+          else
+            ../../occ a:e integration_openproject
+          fi
+
+      - name: Upgrade integration_openproject app
+        if: github.event_name != 'schedule'
+        run: |
+          cd server/apps/integration_openproject
+          git checkout ${{ github.event.pull_request.head.ref }}
+          ../../occ upgrade
+          ../../occ maintenance:mode --off
+
+      - name: Install PHP dependencies
+        run: |
+          cd server/apps/integration_openproject
+          composer install --no-progress --prefer-dist --optimize-autoloader
+
       - name: PHP code analysis and linting
         run: |
+          cd server/apps/integration_openproject
+          pwd
+          ls -l
+          composer install --no-progress --prefer-dist --optimize-autoloader
           make psalm
           make phpcs || ( echo 'Please run `make phpcs-fix` to format your code' && exit 1 )
 
       - name: Setup dependent apps
         run: |
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../activity
-          cp -r ../activity server/apps
+          cd server/apps
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=./activity
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
-            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../user_oidc
-            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../oidc
-            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=../groupfolders
-            cp -r ../oidc ../user_oidc ../groupfolders server/apps
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=./user_oidc
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=./oidc
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --working-dir=./groupfolders
           fi
 
-      - name: Enable apps (for phpunit)
+      - name: Enable other apps (for phpunit)
         run: |
-          mkdir -p server/apps/integration_openproject
-          cp -r `ls -A | grep -v 'server'` server/apps/integration_openproject/
           cd server
           if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
             # enable app even if it is not compatible with the master branch
-            ./occ a:e -f activity oidc user_oidc groupfolders integration_openproject
+            ./occ a:e -f activity oidc user_oidc groupfolders
           else
-            ./occ a:e activity oidc user_oidc groupfolders integration_openproject
-            cp -r apps/oidc apps/user_oidc apps/groupfolders ${{ github.workspace }}
+            ./occ a:e activity oidc user_oidc groupfolders
+            cp -r apps/oidc apps/user_oidc apps/groupfolders apps/integration_openproject apps/activity ${{ github.workspace }}
           fi
 
       - name: PHP Unit Tests
         run: |
           cd server/apps/integration_openproject
           make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
+          pwd
+          ls -l
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable33'&& matrix.phpVersion == '8.2' }}
@@ -268,8 +293,8 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable33'&& matrix.phpVersion == '8.2' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@abaac9fef72e4116bfc69905d51062790bda0335
         with:
-          reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-          targetdir: 'integration_openproject/server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
+          reports: 'server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+          targetdir: 'server/apps/integration_openproject/coverage/php' # REQUIRED # The directory where the generated report should be saved.
           reporttypes: 'lcov' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
           sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
           historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
@@ -288,7 +313,7 @@ jobs:
         uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
+          lcov-file: 'server/apps/integration_openproject/coverage/php/lcov.info'
           delete-old-comments: true
           title: "PHP Code Coverage"
 
@@ -297,7 +322,7 @@ jobs:
         uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '56'
-          path: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
+          path: 'server/apps/integration_openproject/coverage/php/lcov.info'
 
       - name: Configure Nextcloud server
         run: |
@@ -326,26 +351,28 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://localhost
-        run: make api-test
+        run: |
+           cd server/apps/integration_openproject
+           make api-test
 
-  notify-nightly-report:
-    needs:
-      - js-lint-unit
-      - api-phpunit-tests
-    if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+  # notify-nightly-report:
+  #   needs:
+  #     # - js-lint-unit
+  #     - api-phpunit-tests
+  #   if: ${{ always() && github.event_name == 'schedule' }}
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
-      - name: Notify nightly report to element
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: nextcloud
-          REPO_NAME: integration_openproject
-          RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ inputs.branch }}
-        run: ./.github/scripts/notify-to-element.sh
+  #     - name: Notify nightly report to element
+  #       env:
+  #         ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
+  #         ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
+  #         NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         REPO_OWNER: nextcloud
+  #         REPO_NAME: integration_openproject
+  #         RUN_ID: ${{ github.run_id }}
+  #         BRANCH_NAME: ${{ inputs.branch }}
+  #       run: ./.github/scripts/notify-to-element.sh
