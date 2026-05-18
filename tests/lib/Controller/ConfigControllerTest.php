@@ -513,7 +513,7 @@ class ConfigControllerTest extends TestCase {
 	 * @dataProvider setAdminConfigStatusDataProviderForOauth2
 	 */
 	public function testSetAdminConfigForDifferentAdminConfigStatusForOauth2($credsToUpdate, $adminConfigStatus) {
-		$userManager = \OC::$server->getUserManager();
+		$userManager = \OC::$server->get(IUserManager::class);
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -610,7 +610,7 @@ class ConfigControllerTest extends TestCase {
 	 * @dataProvider setAdminConfigStatusDataProviderForOIDC
 	 */
 	public function testSetAdminConfigForDifferentAdminConfigStatusForOIDC($credsToUpdate, $adminConfigStatus) {
-		$userManager = \OC::$server->getUserManager();
+		$userManager = \OC::$server->get(IUserManager::class);
 
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
@@ -875,7 +875,7 @@ class ConfigControllerTest extends TestCase {
 		$apiService = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$userManager = \OC::$server->getUserManager();
+		$userManager = \OC::$server->get(IUserManager::class);
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$oauthServiceMock = $this->createMock(OauthService::class);
 
@@ -905,7 +905,7 @@ class ConfigControllerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function checkForUsersCountBeforeTest($expectedCount = 1): IUserManager {
-		$userManager = \OC::$server->getUserManager();
+		$userManager = \OC::$server->get(IUserManager::class);
 
 		$actualCount = 0;
 		$function = function () use (&$actualCount) {
