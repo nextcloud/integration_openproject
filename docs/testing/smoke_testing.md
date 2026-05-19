@@ -36,11 +36,11 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 ### A1. Oauth configuration
 - [ ] Keep two browser tabs open: one for `OpenProject` and one for `Nextcloud`.
-- [ ] In `OpenProject`, navigate to `Administration > Files` and add a new `Nextcloud` storage:
-  - Add name to `Nextcloud` and host to `<openproject_host>`.
+- [ ] In `OpenProject`, as an `admin` navigate to `Administration > Files` and add a new `Nextcloud` storage:
+  - Add name to `Nextcloud` and host to `<nextcloud_host>`.
   - Select `Two-way OAuth 2.0 authorization code flow` as the authentication method.
   - Click `Save and Continue` — note the generated `OpenProject OAuth Client ID` and `Client Secret`.
-- [ ] In `Nextcloud`, navigate to `Administration Settings > OpenProject`:
+- [ ] In `Nextcloud`, as an `admin` navigate to `Administration Settings > OpenProject`:
   - Set `OpenProject server` to `<openproject_host>`.
   - Select `Two-way OAuth 2.0 authorization code flow` as the authentication method.
   - Enter the `OpenProject OAuth Client ID` and `Client Secret` copied from the previous step.
@@ -73,6 +73,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] Navigate to `Files` tab, and login to `Nextcloud`.
 - [ ] `OpenProject` admin is connected to `Nextcloud` as a `Nextcloud` admin.
 - [ ] Add the created `OpenProject` user as the member of `Demo Project` project (admin can add members to a project).
+- [ ] Login as created user in both openproject and nextcloud
 - [ ] Try to connect the created `OpenProject` user as created `Nextcloud` user.
 - [ ] `OpenProject` user should be connected as a `Nextcloud` user.
 
@@ -107,17 +108,19 @@ bash integration_setup.sh
 ### B.1: Nextcloud Hub as IDP
 
 #### B.1.1. Configure Nextcloud
-- [ ] In Nextcloud, install and enable `OIDC Identity Provider`(`oidc`) and `OpenID Connect user backend`(`user_oidc`) apps.
+- [ ] In Nextcloud, login as admin.
+- [ ] Install and enable `OIDC Identity Provider`(`oidc`) and `OpenID Connect user backend`(`user_oidc`) apps.
 - [ ] Create a new user( with username, display name, password, and email)
-- [ ] Run following command:
-  - `php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation`
-  - Note: This enables bearer token validation for `user_oidc`. Without it, login or connection may fail. This may also be missing during local setups.
+- [ ] Check whether `oidc_provider_bearer_validation` exists and is set to `true` by running `php occ config:list`.
+  > **Note:** This requires the OIDC Identity Provider app >= v1.4.0 . Access tokens and JWT tokens can be validated.
+  - [ ] If the setting does not exist or is set to `false`, run:
+    - `php occ config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation`
 - [ ]  Go to `Administration > OpenID Connect` and enable `store login tokens` option.
 - [ ] Go to `Administation > OpenID Connect Provider`
   - Click the button `+ Add client`:
   - Add a client name (not an identifier) such as `openproject`
-  - Add a redirect URL (<openproject_host>/auth/oidc-<idp-displayname-from-openproject>/callback)
-  - Choose Signing Algorithm option as `RS246`.
+  - Add a redirect URL : `<openproject_host>/auth/oidc-<idp_displayname_from_openproject>/callback`
+  - Choose Signing Algorithm option as `RS256`.
   - Choose Client Type as `Confidential` and click on `Add` button.
   - After clicking `add` button, click on recently created client. 
   - Choose `Access Token Type` as `JWT Access Token (RFC9068)` and click on `save` button.
@@ -127,7 +130,8 @@ bash integration_setup.sh
   - Copy the Client ID and Client secret (you will need these later in OpenProject and integration_openproject).
 
 ####  B.1.2. Add Nextcloud IDP in OpenProject (Without project folder setup)
-- [ ] In OpenProject, go to `Administration > Authentication > OpenID providers`
+- [ ] In OpenProject, login as admin. 
+- [ ] Go to `Administration > Authentication > OpenID providers`
 - [ ] Add a new custom OpenID provider:
   - Display name: `nextcloud` (use this name as redirect URL in Nextcloud: <idp-displayname-from-openproject>)
   - Discovery URL: `<nextcloud_instance_url>/index.php/.well-known/openid-configuration`
@@ -146,7 +150,8 @@ bash integration_setup.sh
 #### B.1.3. Setup integration (Without project folder setup)
 - [ ] Complete step [Test No B.1.1](#B11-Configure-Nextcloud).
 - [ ] Complete step [Test No B.1.2](#B12-Add-Nextcloud-Idp-in-OpenProject).
-- [ ] In nextcloud, go to `Administration > OpenProject`.
+- [ ] In nextcloud, as admin go to `Administration > OpenProject`.
+- [ ] Add openproject host.
 - [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
 - [ ] In `Authentication settings`, select `provider Type` as `Nextcloud Hub`.
 - [ ] Set Openproject `client ID` by Client ID copied earlier in **Test No B1**.
@@ -195,16 +200,26 @@ bash integration_setup.sh
 - [ ] Logout
 
 #### B.2.3. Add Keycloak IDP in OpenProject
-- [ ] As an user `admin`, go to `Administration > Authentication > OpenID providers`
+- [ ] In openproject as an user `admin`, go to `Administration > Authentication > OpenID providers`
 - [ ] Add a new custom OpenID provider:
   - Display name: `keycloak`
   - Discovery URL: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration`
-  - Client ID: Client ID of openproject from keycloak
+  - Client ID: Client ID of openproject provided by keycloak in the <realm-name> realm.
   - Client secret: Client secret of openproject from keycloak
+- [ ] go to Administration > Files
+  - [ ] Create a file storage type Nextcloud by clicking the button `+ Storage` and choosing Nextcloud
+  - [ ] Add name as Nextcloud.
+  - [ ] Add Host as `<nextcloud-host>`
+  - [ ] Choose authentication Method option as Single-Sign-On through OpenID Connect Identity Provider.
+  - [ ] Then, select the option `Use access token obtained during user log in`.
+  - [ ] Uncheck project folder (automatically managed folder).
+  - [ ] Click on button `Finish setup`.
 - [ ] Navigate to `Project settings > Files` of a project (for example, `Demo Project`) and add `Nextcloud` as a file storage.
-- [ ] Login as keycloak-created user in `Openproject`.
-- [ ] Log out, then Login as admin in `Openproject`.
-- [ ] As an `OpenProject` admin, add keycloak-created user as a member in one of the project.
+- [ ] In Keycloak, go to the user management section. For example, if your realm name is `opnc`, navigate to: `opnc > Users`
+- [ ] Then create a user.
+- [ ] In `Openproject`, login as keycloak-created user .
+- [ ] In `Openproject`, log out, then Login as admin .
+- [ ] As an `OpenProject` admin, add keycloak-created user as a member in one of the project (for example, `Demo Project`).
 
 #### B.2.4. Setup integration (token exchange disabled) in Nexcloud
 - [ ] As an `admin` user, go to `Administration > OpenProject`.
@@ -229,7 +244,7 @@ bash integration_setup.sh
 - [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`
 - [ ] In `Authentication settings`, select `provider Type` as `Keycloak`
 - [ ] Enable `token exchange`
-- [ ] Set `OpenProject client ID *` as `Openproject`
+- [ ] Set `OpenProject client ID *` as `openproject`
 
 #### B.2.8. Verify Connection in nextcloud
 - [ ] Complete step [Test No B.2.1](#b21-Configure-Keycloak).
