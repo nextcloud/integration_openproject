@@ -2,19 +2,19 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 name: CI
 
-on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '**.sh'
-      - 'dev/**'
-      - 'l10n/**'
-      - 'img/**'
-      - 'docker-compose*'
+# on:
+#   push:
+#     branches:
+#       - 'master'
+#   pull_request:
+#     paths-ignore:
+#       - '**.md'
+#       - '**.txt'
+#       - '**.sh'
+#       - 'dev/**'
+#       - 'l10n/**'
+#       - 'img/**'
+#       - 'docker-compose*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
