@@ -248,7 +248,7 @@ jobs:
             # enable app even if it is not compatible with the master branch
             ./occ a:e -f activity oidc user_oidc groupfolders integration_openproject
           else
-            ./occ a:e activity oidc user_oidc groupfolders integration_openproject
+            ./occ a:e -f activity oidc user_oidc groupfolders integration_openproject
             cp -r apps/oidc apps/user_oidc apps/groupfolders ${{ github.workspace }}
           fi
 
@@ -320,7 +320,7 @@ jobs:
             # enable app even if it is not compatible with the master branch
             docker exec nextcloud /bin/bash -c 'occ a:e -f activity oidc user_oidc groupfolders integration_openproject'
           else
-            docker exec nextcloud /bin/bash -c 'occ a:e activity oidc user_oidc groupfolders integration_openproject'
+            docker exec nextcloud /bin/bash -c 'occ a:e -f activity oidc user_oidc groupfolders integration_openproject'
           fi
 
       - name: API Tests
