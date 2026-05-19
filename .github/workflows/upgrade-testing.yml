@@ -26,7 +26,6 @@ jobs:
   upgrade-test:
     name: Upgrade Testing
     needs: create-matrix
-    if: ${{ success() }}
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
