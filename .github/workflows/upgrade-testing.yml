@@ -58,9 +58,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup npm
-        run: npm i -g npm
-
       - name: Setup PHP
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
