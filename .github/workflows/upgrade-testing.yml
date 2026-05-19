@@ -5,9 +5,6 @@ name: Upgrade Testing
 
 on: [pull_request]
 
-env:
-  TAG: 2.11.3
-
 jobs:
   create-matrix:
     runs-on: ubuntu-22.04
@@ -123,7 +120,7 @@ jobs:
           WORKING_DIRECTORY: ${{ github.workspace }}
         run: |
           cd integration_openproject
-          bash .github/scripts/build-and-release-app-for-upgrade-testing.sh
+          source .github/scripts/build-and-release-app-for-upgrade-testing.sh
 
       - name: Update integration_openproject app
         run: |
@@ -134,10 +131,10 @@ jobs:
           php occ config:system:set appstoreurl --value "http://localhost"
           php occ config:system:set allow_local_remote_servers --value true
           php occ app:update --allow-unstable integration_openproject
-          if php occ app:list | grep -q "integration_openproject.*$TAG"; then
-            echo "App updated successfully to version $TAG"
+          if php occ app:list | grep -q "integration_openproject.*$NEW_TAG"; then
+            echo "App updated successfully to version $NEW_TAG"
           else
-            echo "App not updated to version $TAG"
+            echo "App not updated to version $NEW_TAG"
             exit 1
           fi
 

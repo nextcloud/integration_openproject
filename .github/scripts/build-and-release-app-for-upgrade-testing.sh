@@ -24,11 +24,10 @@ log_success() {
 
 # env required
 # NEXCLOUD_PATH=/home/nabin/www/stable29  # path to nextcloud
-# $TAG=2.11.3 # tag that we want to publish
 # WORKING_DIRECTORY=/home/nabin/www/fork-integrationOpenproject # current working directory simply done by pwd command
 
-if [[ -z "$TAG" ]] || [[ -z "$NEXCLOUD_PATH" ]] || [[ -z "$WORKING_DIRECTORY" ]]; then
-  log_error "Environment variables TAG, NEXCLOUD_PATH, or WORKING_DIRECTORY are missing."
+if [[ -z "$NEXCLOUD_PATH" ]] || [[ -z "$WORKING_DIRECTORY" ]]; then
+  log_error "Environment variables NEXCLOUD_PATH or WORKING_DIRECTORY are missing."
   exit 1
 fi
 
@@ -87,8 +86,16 @@ integration_openproject publish/
 
 cd publish
 
+# get current version of integration_openproject and update to new version
+current_version=$(php ${NEXCLOUD_PATH}/occ app:list --output=json | jq -r '.enabled.integration_openproject') || { log_error "Failed to get current version of integration_openproject app."; exit 1; }
+IFS=. read -r a b c <<< "$current_version"
+NEW_TAG="$((a+1)).$b.$c"
+
+# export NEW_TAG to be used in CI to check if the app version has been updated successfully
+export NEW_TAG
+
 # update version in info.xml
-sed -i "s|<version>.*</version>|<version>$TAG</version>|" "integration_openproject/appinfo/info.xml" 
+sed -i "s|<version>.*</version>|<version>$NEW_TAG</version>|" "integration_openproject/appinfo/info.xml" 
 
 # https://nextcloudappstore.readthedocs.io/en/latest/developer.html#obtaining-a-certificate
 log_info "Generating app.key and app.crt..."
@@ -134,15 +141,15 @@ php ${NEXCLOUD_PATH}/occ integrity:sign-app \
 #   --path=/home/runner/work/integration_openproject/integration_openproject/publish/integration_openproject
 
 # Archive the app
-tar -czf $APP_ID-$TAG.tar.gz $APP_ID
-if [[ ! -f $APP_ID-$TAG.tar.gz ]]; then
-  log_error "Failed to archive the app. Archive file $APP_ID-$TAG.tar.gz not found."
+tar -czf $APP_ID-$NEW_TAG.tar.gz $APP_ID
+if [[ ! -f $APP_ID-$NEW_TAG.tar.gz ]]; then
+  log_error "Failed to archive the app. Archive file $APP_ID-$NEW_TAG.tar.gz not found."
   exit 1
 fi
-log_success "Archived the app into $APP_ID-$TAG.tar.gz."
+log_success "Archived the app into $APP_ID-$NEW_TAG.tar.gz."
 
 # Sign the archive
-sudo openssl dgst -sha512 -sign app.key $APP_ID-$TAG.tar.gz | openssl base64 | tee ${WORKING_DIRECTORY}/publish/sign.txt || { log_error "Failed to sign the archive."; exit 1; }
+sudo openssl dgst -sha512 -sign app.key $APP_ID-$NEW_TAG.tar.gz | openssl base64 | tee ${WORKING_DIRECTORY}/publish/sign.txt || { log_error "Failed to sign the archive."; exit 1; }
 if [[ ! -s ${WORKING_DIRECTORY}/publish/sign.txt ]]; then
   log_error "Failed to sign the archive. Signature file sign.txt is empty or not found."
   exit 1
@@ -153,8 +160,8 @@ fi
 log_success "App build and release process has been completed successfully."
 
 ## copy archieve in nextcloud directory to download
-cp $APP_ID-$TAG.tar.gz ${NEXCLOUD_PATH}/$APP_ID-$TAG.tar.gz
-if [[ -f ${NEXCLOUD_PATH}/$APP_ID-$TAG.tar.gz ]]; then
+cp $APP_ID-$NEW_TAG.tar.gz ${NEXCLOUD_PATH}/$APP_ID-$NEW_TAG.tar.gz
+if [[ -f ${NEXCLOUD_PATH}/$APP_ID-$NEW_TAG.tar.gz ]]; then
   log_success "App archive has been copied successfully."
 else
   log_error "Failed to copy app archive to ${NEXCLOUD_PATH}."
@@ -177,9 +184,9 @@ cat > apps.json <<EOF
     "id": "$APP_ID",
     "releases": [
       {
-        "version": "$TAG",
+        "version": "$NEW_TAG",
         "minIntSize": 32,
-        "download": "http://localhost/$APP_ID-$TAG.tar.gz",
+        "download": "http://localhost/$APP_ID-$NEW_TAG.tar.gz",
         "licenses": [
           "agpl"
         ],
