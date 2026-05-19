@@ -1,6 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
-# SPDX-FileCopyrightText: 2023 Bundesministerium des Innern und für Heimat, PG ZenDiS "Projektgruppe für Aufbau ZenDiS"
-# SPDX-FileCopyrightText: 2023 Nextcloud GmbH
+# SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-only
 #!/usr/bin/env bash
 
@@ -36,13 +34,13 @@ if [[ ! -d "$WORKING_DIRECTORY/integration_openproject" ]]; then
   exit 1
 fi
 
-# build the apps
+# build the app
 cd $WORKING_DIRECTORY
 make -C integration_openproject
 
 mkdir -p publish
 
-# remove unnecessary app files
+# copy app files to a separate folder
 log_info "Copying necessary app files to publish directory..."
 rsync -a \
 --exclude=server \
@@ -97,6 +95,9 @@ export NEW_TAG
 # update version in info.xml
 sed -i "s|<version>.*</version>|<version>$NEW_TAG</version>|" "integration_openproject/appinfo/info.xml" 
 
+#####################
+# Signing the app   #
+#####################
 # https://nextcloudappstore.readthedocs.io/en/latest/developer.html#obtaining-a-certificate
 log_info "Generating app.key and app.crt..."
 sudo openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
