@@ -113,14 +113,14 @@ jobs:
           cd ~/html/nextcloud
           php occ app:enable activity
 
-      - name: Build integration_openproject app for upgrade testing
+      - name: Build upgradable integration_openproject app
         env:
           APP_ID: integration_openproject
           NEXCLOUD_PATH: /home/runner/html/nextcloud
           WORKING_DIRECTORY: ${{ github.workspace }}
         run: |
           cd integration_openproject
-          source .github/scripts/build-and-release-app-for-upgrade-testing.sh
+          source .github/scripts/build-upgradable-app.sh
 
       - name: Update integration_openproject app
         run: |
