@@ -2,8 +2,15 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #!/usr/bin/env bash
 
-# This bash script is to register and publish the apps in self-hosted appstore.
-# To run this script the self-hosted appstore instances must be up and running
+# This script is used to build the integration_openproject app for upgrade testing. It performs the following steps:
+# 1. Build the app.
+# 2. Copy necessary app files to a separate folder named publish.
+# 3. Get the current version of the app and update it to a new version by incrementing the major version number.
+# 4. Sign the app using openssl and occ integrity:sign-app command.
+# 5. Archive the app into a tar.gz file.
+# 6. Sign the archive using openssl dgst command.
+# 7. Copy the archive to the directory for download.
+# Note: Before running this script, ensure that the nextcloud instance is running.
 
 set -e
 
@@ -20,22 +27,23 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-# env required
-# NEXCLOUD_PATH=/home/nabin/www/stable29  # path to nextcloud
-# WORKING_DIRECTORY=/home/nabin/www/fork-integrationOpenproject # current working directory simply done by pwd command
+# Env required
+# NEXCLOUD_PATH # Path to nextcloud where occ command is available.
+# WORKING_DIRECTORY # Directory or path where the integration_openproject repo is located.
 
 if [[ -z "$NEXCLOUD_PATH" ]] || [[ -z "$WORKING_DIRECTORY" ]]; then
   log_error "Environment variables NEXCLOUD_PATH or WORKING_DIRECTORY are missing."
   exit 1
 fi
 
+cd $WORKING_DIRECTORY
+
 if [[ ! -d "$WORKING_DIRECTORY/integration_openproject" ]]; then
-  log_error "integration_openproject directory does not exist."
+  log_error "integration_openproject directory not found on path $WORKING_DIRECTORY"
   exit 1
 fi
 
-# build the app
-cd $WORKING_DIRECTORY
+# build the integration_openproject app
 make -C integration_openproject
 
 mkdir -p publish
