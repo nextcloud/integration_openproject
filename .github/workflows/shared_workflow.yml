@@ -326,6 +326,7 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://localhost
+          BEHAT_FILTER_TAGS: '~@skip-${{ matrix.nextcloudVersion }}'
         run: make api-test
 
   notify-nightly-report:
