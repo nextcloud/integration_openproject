@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Create matrix
         id: create-matrix
@@ -42,24 +42,24 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: integration_openproject
 
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: nextcloud/activity
           ref: ${{ matrix.nextcloudVersion }}
           path: activity
           
       - name: Setup NodeJS
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 20
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           extensions: mbstring, intl, mysql, gd
@@ -103,7 +103,7 @@ jobs:
           php occ app:enable oidc user_oidc groupfolders integration_openproject
 
       # activity app cannot be installed using occ command
-      - name:  Setup and enable dependent apps
+      - name:  Enable other apps
         run: |
           cp -R activity ~/html/nextcloud/apps
           cd ~/html/nextcloud
