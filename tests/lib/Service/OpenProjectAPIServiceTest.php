@@ -5247,4 +5247,103 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$baseUrl = $service->getNCBaseUrl();
 		$this->assertEquals($expected, $baseUrl);
 	}
+
+	/**
+	 * Data provider for testInitUserInfo
+	 */
+	public function initUserInfoDataProvider(): array {
+		return [
+			'user info already saved' => [
+				'savedUserId' => 'testUserID',
+				'savedUsername' => 'test User',
+				'expectedResult' => ['user_name' => 'test User'],
+				'expectRawRequestCalled' => false,
+				'apiResponse' => null,
+				'expectedExpection' => null
+			],
+			'user info missing and API succeeds' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['user_name' => 'test User'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => [
+					'id' => 'testUserID',
+					'firstName' => 'test',
+					'lastName' => 'User',
+				],
+				'expectedExpection' => null
+			],
+			'user info missing and API throws exception' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['error' => 'OpenProject error'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => null,
+				'expectedExpection' => new \Exception('OpenProject error')
+			],
+			'user info missing and API returns incomplete data' => [
+				'savedUserId' => '',
+				'savedUsername' => '',
+				'expectedResult' => ['id' => 'testUserID', 'error' => 'Failed to get user profile'],
+				'expectRawRequestCalled' => true,
+				'apiResponse' => [
+					'id' => 'testUserID',
+				],
+				'expectedExpection' => null
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider initUserInfoDataProvider
+	 * @param string $savedUserId
+	 * @param string $savedUsername
+	 * @param array $expectedResult
+	 * @param bool $expectRawRequestCalled
+	 * @param array|null $apiResponse
+	 * @param \Exception|null $expectedExpection
+	 * @return void
+	 */
+	public function testInitUserInfo(string $savedUserId, string $savedUsername, array $expectedResult, bool $expectRawRequestCalled, ?array $apiResponse, ?\Exception $expectedExpection): void {
+		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
+		$configMock->method('getAppValue')
+			->willReturnMap($this->getAppValues([
+				'openproject_instance_url' => 'http://test.local',
+			]));
+		$configMock
+			->method('getUserValue')
+			->willReturnMap([
+				['testUser', Application::APP_ID, 'user_id', '', $savedUserId],
+				['testUser', Application::APP_ID, 'user_name','', $savedUsername]
+			]);
+
+		$calls = [];
+		$configMock
+			->method('setUserValue')
+			->willReturnCallback(function ($uid, $app, $key, $value) use (&$calls) {
+				$calls[] = [$uid, $app, $key, $value];
+			});
+
+		$service = $this->getOpenProjectAPIServiceMock(['rawRequest'], [ 'config' => $configMock ]);
+
+		if (!$expectRawRequestCalled) {
+			$service->expects($this->never())->method('rawRequest');
+		} elseif ($expectedExpection !== null) {
+			$service->expects($this->once())->method('rawRequest')->willThrowException($expectedExpection);
+		} else {
+			$mockResponse = $this->createMock(Response::class);
+			$mockResponse->method('getBody')->willReturn(json_encode($apiResponse));
+			$service->expects($this->once())->method('rawRequest')->willReturn(
+				$mockResponse
+			);
+		}
+
+		$result = $service->initUserInfo('testUser', 'token');
+		$this->assertSame($expectedResult, $result);
+
+		if ($expectedResult === ['user_name' => 'test User'] && $expectRawRequestCalled) {
+			$this->assertContains(['testUser', Application::APP_ID, 'user_id', 'testUserID'], $calls);
+			$this->assertContains(['testUser', Application::APP_ID, 'user_name', 'test User'], $calls);
+		}
+	}
 }
