@@ -9,8 +9,11 @@
 # 4. Sign the app using openssl and occ integrity:sign-app command.
 # 5. Archive the app into a tar.gz file.
 # 6. Sign the archive using openssl dgst command.
-# 7. Copy the archive to the directory for download.
-# Note: Before running this script, ensure that the nextcloud instance is running.
+# Note: Before running this script, ensure that the nextcloud instance is running and integration_openproject apps need to be build.
+
+# Required environment variables:
+# 1. NEXTCLOUD_PATH (Absolute path to nextcloud where occ command is available, e.g. /var/www/html/build-app-shared)
+# 2. INTEGRATION_OPENPROJECT_DIR (Absolute path to the directory containing the integration_openproject repository, e.g. /home/user)
 
 set -e
 
@@ -27,24 +30,18 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-# Env required
-# NEXCLOUD_PATH # Path to nextcloud where occ command is available.
-# WORKING_DIRECTORY # Directory or path where the integration_openproject repo is located.
-
-if [[ -z "$NEXCLOUD_PATH" ]] || [[ -z "$WORKING_DIRECTORY" ]]; then
-  log_error "Environment variables NEXCLOUD_PATH or WORKING_DIRECTORY are missing."
+if [[ -z "$NEXTCLOUD_PATH" ]] || [[ -z "$INTEGRATION_OPENPROJECT_DIR" ]]; then
+  log_error "Environment variables NEXTCLOUD_PATH or INTEGRATION_OPENPROJECT_DIR are missing."
   exit 1
 fi
 
-cd $WORKING_DIRECTORY
+APP_ID=integration_openproject
+cd "$INTEGRATION_OPENPROJECT_DIR"
 
-if [[ ! -d "$WORKING_DIRECTORY/integration_openproject" ]]; then
-  log_error "integration_openproject directory not found on path $WORKING_DIRECTORY"
+if [[ ! -d "$INTEGRATION_OPENPROJECT_DIR/$APP_ID" ]]; then
+  log_error "$APP_ID directory not found on path $INTEGRATION_OPENPROJECT_DIR"
   exit 1
 fi
-
-# build the integration_openproject app
-make -C integration_openproject
 
 mkdir -p publish
 
@@ -93,12 +90,12 @@ integration_openproject publish/
 cd publish
 
 # get current version of integration_openproject and update to new version
-current_version=$(php ${NEXCLOUD_PATH}/occ app:list --output=json | jq -r '.enabled.integration_openproject') || { log_error "Failed to get current version of integration_openproject app."; exit 1; }
+current_version=$(php ${NEXTCLOUD_PATH}/occ app:list --output=json | jq -r '.enabled.integration_openproject') || { log_error "Failed to get current version of integration_openproject app."; exit 1; }
 IFS=. read -r a b c <<< "$current_version"
 NEW_TAG="$((a+1)).$b.$c"
 
-# export NEW_TAG to be used in CI to check if the app version has been updated successfully
-export NEW_TAG
+# Save the new tag to a file for later use in the workflow
+echo "$NEW_TAG" > integration_openproject_new_tag.txt
 
 # update version in info.xml
 sed -i "s|<version>.*</version>|<version>$NEW_TAG</version>|" "integration_openproject/appinfo/info.xml" 
@@ -108,7 +105,7 @@ sed -i "s|<version>.*</version>|<version>$NEW_TAG</version>|" "integration_openp
 #####################
 # https://nextcloudappstore.readthedocs.io/en/latest/developer.html#obtaining-a-certificate
 log_info "Generating app.key and app.crt..."
-sudo openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
+openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
   -keyout app.key \
   -out app.crt \
   -days 3650 \
@@ -123,7 +120,7 @@ if [[ ! -s app.key || ! -s app.crt ]]; then
 fi
 
 log_info "Adding the generated certificate to nextcloud's root.crt..."
-nextcloud_root_crt="${NEXCLOUD_PATH}/resources/codesigning/root.crt"
+nextcloud_root_crt="${NEXTCLOUD_PATH}/resources/codesigning/root.crt"
 if [[ -f ${nextcloud_root_crt} ]]; then
   echo "" >> ${nextcloud_root_crt}
   cat app.crt >> ${nextcloud_root_crt}
@@ -132,22 +129,18 @@ else
   exit 1
 fi
 
-# fix permisions for signing
-sudo chown $USER: app.key
-sudo chown -R $USER: $APP_ID
+# fix permissions for signing
+chown www-data app.key
+chown www-data app.crt
+chown -R www-data integration_openproject
 
 # Sign the app
 # need full path for signing
 log_info "Signing the app using occ integrity:sign-app command..."
-php ${NEXCLOUD_PATH}/occ integrity:sign-app \
-  --privateKey=${WORKING_DIRECTORY}/publish/app.key \
-  --certificate=${WORKING_DIRECTORY}/publish/app.crt \
-  --path=${WORKING_DIRECTORY}/publish/$APP_ID || { log_error "Failed to sign app."; exit 1; }
-
-# php /home/runner/html/nextcloud/occ integrity:sign-app \
-#   --privateKey=/home/runner/work/integration_openproject/integration_openproject/publish/app.key \
-#   --certificate=/home/runner/work/integration_openproject/integration_openproject/publish/app.crt \
-#   --path=/home/runner/work/integration_openproject/integration_openproject/publish/integration_openproject
+php ${NEXTCLOUD_PATH}/occ integrity:sign-app \
+  --privateKey=${INTEGRATION_OPENPROJECT_DIR}/publish/app.key \
+  --certificate=${INTEGRATION_OPENPROJECT_DIR}/publish/app.crt \
+  --path=${INTEGRATION_OPENPROJECT_DIR}/publish/$APP_ID || { log_error "Failed to sign app."; exit 1; }
 
 # Archive the app
 tar -czf $APP_ID-$NEW_TAG.tar.gz $APP_ID
@@ -157,9 +150,25 @@ if [[ ! -f $APP_ID-$NEW_TAG.tar.gz ]]; then
 fi
 log_success "Archived the app into $APP_ID-$NEW_TAG.tar.gz."
 
-# Sign the archive
-sudo openssl dgst -sha512 -sign app.key $APP_ID-$NEW_TAG.tar.gz | openssl base64 | tee ${WORKING_DIRECTORY}/publish/sign.txt || { log_error "Failed to sign the archive."; exit 1; }
-if [[ ! -s ${WORKING_DIRECTORY}/publish/sign.txt ]]; then
+#####################
+# Sign the archive  #
+#####################
+# Check if openssl exists, otherwise install it
+if ! command -v openssl >/dev/null 2>&1; then
+    echo "OpenSSL not found. Installing..."
+    apt update && apt install -y openssl || {
+        echo "Failed to install OpenSSL."
+        exit 1
+    }
+fi
+
+# Sign the archive using openssl dgst command
+log_info "Signing the archive using openssl dgst command..."
+openssl dgst -sha512 -sign app.key $APP_ID-$NEW_TAG.tar.gz \
+  | openssl base64 \
+  | tee ${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt
+
+if [[ ! -s ${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt ]]; then
   log_error "Failed to sign the archive. Signature file sign.txt is empty or not found."
   exit 1
 else
@@ -167,54 +176,3 @@ else
 fi
 
 log_success "App build and release process has been completed successfully."
-
-## copy archieve in nextcloud directory to download
-cp $APP_ID-$NEW_TAG.tar.gz ${NEXCLOUD_PATH}/$APP_ID-$NEW_TAG.tar.gz
-if [[ -f ${NEXCLOUD_PATH}/$APP_ID-$NEW_TAG.tar.gz ]]; then
-  log_success "App archive has been copied successfully."
-else
-  log_error "Failed to copy app archive to ${NEXCLOUD_PATH}."
-  exit 1
-fi
-
-## Prepare apps.json file
-if [[ ! -f ${WORKING_DIRECTORY}/publish/integration_openproject/appinfo/signature.json ]]; then
-  log_error "Signature file not found at ${WORKING_DIRECTORY}/publish/integration_openproject/appinfo/signature.json."
-  exit 1
-fi
-
-# Convert sign.txt content to one line by removing newlines
-signature=$(tr -d '\n' < "${WORKING_DIRECTORY}/publish/sign.txt")
-certificate=$(jq '.certificate' ${WORKING_DIRECTORY}/publish/integration_openproject/appinfo/signature.json)
-
-cat > apps.json <<EOF
-[
-  {
-    "id": "$APP_ID",
-    "releases": [
-      {
-        "version": "$NEW_TAG",
-        "minIntSize": 32,
-        "download": "http://localhost/$APP_ID-$NEW_TAG.tar.gz",
-        "licenses": [
-          "agpl"
-        ],
-        "isNightly": false,
-        "rawPlatformVersionSpec": "\u003E=28 \u003C=31",
-        "signature": "$signature",
-        "signatureDigest": "sha512"
-      }
-    ],
-    "certificate": $certificate
-  }
-]
-EOF
-
-cp apps.json ${NEXCLOUD_PATH}
-
-if [[ -f ${NEXCLOUD_PATH}/apps.json ]]; then
-  log_success "apps.json file has been copied successfully."
-else
-  log_error "Failed to copy apps.json to ${NEXCLOUD_PATH}."
-  exit 1
-fi

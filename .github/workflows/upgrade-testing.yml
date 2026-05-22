@@ -7,7 +7,7 @@ on: [pull_request]
 
 jobs:
   create-matrix:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -17,6 +17,9 @@ jobs:
         env:
           NEXTCLOUD_VERSIONS: "31 32"
           PHP_VERSIONS: "8.2 8.3"
+          DEFAULT_PHP_VERSION: "8.3"
+          DEFAULT_DATABASE: "mysql"
+          EXTRA_DATABASES: "pgsql"
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
@@ -26,10 +29,34 @@ jobs:
   upgrade-test:
     name: Upgrade Testing
     needs: create-matrix
+    runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
-    runs-on: ubuntu-latest
+
     services:
+      nextcloud:
+        image: ghcr.io/juliusknorr/nextcloud-dev-php${{ format('{0}{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}:master
+        env:
+          SQL: ${{ matrix.database }}
+          SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
+          NEXTCLOUD_AUTOINSTALL: "Yes"
+          NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc integration_openproject
+          NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
+          WITH_REDIS: "YES"
+        ports:
+          - 80:80
+        options: --name=nextcloud
+        volumes:
+          - ${{ github.workspace }}/extra-apps:/var/www/html/apps-shared
+          - ${{ github.workspace }}/build-app:/var/www/html/build-app-shared
+
+      database-pgsql:
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: nextcloud
+
       database-mysql:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
         env:
@@ -37,54 +64,24 @@ jobs:
           MYSQL_PASSWORD: 'nextcloud'
           MYSQL_USER: 'nextcloud'
           MYSQL_DATABASE: 'nextcloud'
-        ports:
-          - 3306:3306
+
+      redis:
+        image: ghcr.io/nextcloud/continuous-integration-redis:latest
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: integration_openproject
-
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          repository: nextcloud/activity
-          ref: ${{ matrix.nextcloudVersion }}
-          path: activity
-          
-      - name: Setup NodeJS
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
-        with:
-          node-version: 20
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
+      
+      - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
-          extensions: mbstring, intl, mysql, gd
-          ini-values: post_max_size=256M, max_execution_time=180
-
-      - name: Build nextcloud project
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          echo "###### installing nextcloud"
-          mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloudVersion }} ~/html/nextcloud
-          cd ~/html/nextcloud
-          git submodule update --init
-          mkdir -p data
-          php occ maintenance:install \
-            --database mysql \
-            --database-name nextcloud \
-            --database-host 127.0.0.1 \
-            --database-user nextcloud \
-            --database-pass nextcloud \
-            --admin-user admin \
-            --admin-pass admin
-          php occ maintenance:mode --off
-          sudo php -S localhost:80 -t ~/html/nextcloud &
-
+          tools: composer, phpunit
+          extensions: intl, gd, sqlite3
+      
       - name: Wait for Nextcloud server to be ready
         run: |
           if ! timeout 5m bash -c '
@@ -97,37 +94,93 @@ jobs:
             exit 1
           fi
 
-      - name: Enable other apps from official app store
-        run: |
-          cd ~/html/nextcloud
-          php occ app:enable oidc user_oidc groupfolders integration_openproject
-
       # activity app cannot be installed using occ command
-      - name:  Enable other apps
+      - name: Setup activity app
         run: |
-          cp -R activity ~/html/nextcloud/apps
-          cd ~/html/nextcloud
-          php occ app:enable activity
+          # fix permissions for folder extra-apps
+          sudo chown $USER:$USER extra-apps
+          cd extra-apps
+          git clone https://github.com/nextcloud/activity.git --depth 1 --branch ${{ matrix.nextcloudVersion }}
+          # Enable activity apps
+          if [ "${{matrix.nextcloudVersion}}" == "master" ]; then
+            # enable app even if it is not compatible with the master branch
+            docker exec nextcloud /bin/bash -c 'occ a:e -f activity'
+          else
+            docker exec nextcloud /bin/bash -c 'occ a:e activity'
+          fi
 
       - name: Build upgradable integration_openproject app
+        run: |
+          make -C integration_openproject
+          # fix permissions for build-app folder
+          sudo chown -R $USER:$USER build-app
+          cp -R integration_openproject build-app
+          # run the build script inside the nextcloud container
+          docker exec nextcloud /bin/bash -c "\
+            cd build-app-shared && \
+            INTEGRATION_OPENPROJECT_DIR=/var/www/html/build-app-shared \
+            NEXTCLOUD_PATH=/var/www/html \
+            source integration_openproject/.github/scripts/build-upgradable-app.sh"
+          cd build-app/publish
+          echo "NEW_TAG=$(cat integration_openproject_new_tag.txt)" >> $GITHUB_ENV
+
+      - name: Prepare apps.json file
+        working-directory: build-app
         env:
           APP_ID: integration_openproject
-          NEXCLOUD_PATH: /home/runner/html/nextcloud
-          WORKING_DIRECTORY: ${{ github.workspace }}
         run: |
-          cd integration_openproject
-          source .github/scripts/build-upgradable-app.sh
+          if [[ ! -f publish/${APP_ID}/appinfo/signature.json ]]; then
+            echo "Signature file not found at publish/${APP_ID}/appinfo/signature.json."
+            exit 1
+          fi
+          certificate=$(jq '.certificate' "publish/${APP_ID}/appinfo/signature.json")
+          signature=$(tr -d '\n' < "publish/sign.txt")
+
+          # Create apps.json with the required structure
+          cat > apps.json <<EOF
+          [
+            {
+              "id": "$APP_ID",
+              "releases": [
+                {
+                  "version": "$NEW_TAG",
+                  "minIntSize": 32,
+                  "download": "http://localhost:8080/${APP_ID}-${NEW_TAG}.tar.gz",
+                  "licenses": [
+                    "agpl"
+                  ],
+                  "isNightly": false,
+                  "rawPlatformVersionSpec": "\u003E=28 \u003C=31",
+                  "signature": "$signature",
+                  "signatureDigest": "sha512"
+                }
+              ],
+              "certificate": $certificate
+            }
+          ]
+          EOF
+          sudo mv apps.json publish/
 
       - name: Update integration_openproject app
         run: |
-          # latest data didn't get fetched properly, so we need to clear the appstore cache
-          echo "" > ~/html/nextcloud/data/appdata_*/appstore/apps.json
-          cd ~/html/nextcloud
-          php occ config:system:set ratelimit.protection.enabled --value false --type bool
-          php occ config:system:set appstoreurl --value "http://localhost"
-          php occ config:system:set allow_local_remote_servers --value true
-          php occ app:update --allow-unstable integration_openproject
-          if php occ app:list | grep -q "integration_openproject.*$NEW_TAG"; then
+          # Start PHP server in Nextcloud container to serve files from publish directory
+          docker exec nextcloud /bin/bash -c "cd build-app-shared && php -S localhost:8080 -t publish &"
+
+          # Clear appstore cache (force fresh fetch)
+          docker exec nextcloud /bin/bash -c "echo '' > /var/www/html/data/appdata_*/appstore/apps.json"
+          
+          # Disable share rate limit protection
+          docker exec nextcloud /bin/bash -c "php occ config:system:set ratelimit.protection.enabled --value false --type bool"
+
+          # Configure Nextcloud to allow updates from our custom server and update the app
+          docker exec nextcloud /bin/bash -c "php occ config:system:set appstoreurl --value 'http://localhost:8080'"
+          docker exec nextcloud /bin/bash -c "php occ config:system:set allow_local_remote_servers --value true"
+          
+          # Update app
+          docker exec nextcloud /bin/bash -c "php occ app:update --allow-unstable integration_openproject"
+          
+          # Verify update
+          if docker exec nextcloud /bin/bash -c "php occ app:list | grep -q 'integration_openproject.*$NEW_TAG'"; then
             echo "App updated successfully to version $NEW_TAG"
           else
             echo "App not updated to version $NEW_TAG"
@@ -135,9 +188,8 @@ jobs:
           fi
 
       - name: API Tests
+        working-directory: integration_openproject
         env:
           NEXTCLOUD_BASE_URL: http://localhost
         run: |
-          cd integration_openproject
-          # Run API tests
           make api-test
