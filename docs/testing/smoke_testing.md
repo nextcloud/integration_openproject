@@ -215,9 +215,10 @@ bash integration_setup.sh
   - [ ] Uncheck project folder (automatically managed folder).
   - [ ] Click on button `Finish setup`.
 - [ ] Navigate to `Project settings > Files` of a project (for example, `Demo Project`) and add `Nextcloud` as a file storage.
+- [ ] If you are using [Docker setup](../../dev/), default `Keycloak` users already exist (`alice` and `brian`, password: `1234`), so you can skip the user-creation steps below and go directly to step [B.2.4](#b24-setup-integration-token-exchange-disabled-in-nexcloud).
 - [ ] In Keycloak, go to the user management section. For example, if your realm name is `opnc`, navigate to: `opnc > Users`.
 - [ ] Then create a user.
-- [ ] In `Openproject`, login as keycloak-created user .
+- [ ] In `Openproject`, login as keycloak-created user.
 - [ ] In `OpenProject`, log out, then log in as a user `admin`.
 - [ ] As an `OpenProject` admin, add keycloak-created user as a member in one of the project (for example, `Demo Project`).
 
