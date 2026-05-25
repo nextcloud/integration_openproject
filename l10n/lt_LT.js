@@ -11,8 +11,11 @@ OC.L10N.register(
     "Yes, replace" : "Taip, pakeisti",
     "Cancel" : "Atsisakyti",
     "Yes, reset" : "Taip, atstatyti",
+    "Failed to revoke some users' OpenProject OAuth access tokens" : "Nepavyko atšaukti kai kurių vartotojų „OpenProject OAuth“ prieigos raktų",
+    "Successfully revoked users' OpenProject OAuth access tokens" : "Sėkmingai atšaukti naudotojų „OpenProject OAuth“ prieigos raktai",
     "Save" : "Įrašyti",
     "Reset" : "Atstatyti",
+    "Incorrect access token" : "Neteisingas prieigos raktas",
     "Invalid token" : "Neteisingas prieigos raktas",
     "Connected as {user}" : "Prisijungta kaip {user}",
     "Authentication method" : "Tapatybės nustatymo metodas",
@@ -27,6 +30,8 @@ OC.L10N.register(
     "Description" : "Aprašas",
     "Create" : "Sukurti",
     "Mark as read" : "Žymėti kaip skaitytą",
-    "Unlink" : "Atsieti"
+    "Unlink" : "Atsieti",
+    "When enabled, the app will try to obtain a token for the given audience from the identity provider. If disabled, it will use the access token obtained during the login process." : "Kai įjungta, programa bandys gauti prieigos raktą nurodytai auditorijai iš tapatybės teikėjo. Jei išjungta, bus naudojamas prisijungimo metu gautas prieigos raktas.",
+    "OAuth access token could not be obtained:" : "Nepavyko gauti „OAuth“ prieigos rakto:"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
