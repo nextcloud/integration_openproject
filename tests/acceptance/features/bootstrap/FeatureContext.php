@@ -273,7 +273,7 @@ class FeatureContext implements Context {
 		
 		// Skip if Nextcloud Docker container does not exist
 		exec("docker ps --format \"{{.Names}}\"", $output);
-		if(!in_array('nextcloud', $output)) {
+		if (!in_array('nextcloud', $output)) {
 			return;
 		}
 

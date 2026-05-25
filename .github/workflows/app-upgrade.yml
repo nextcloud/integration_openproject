@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: Upgrade Testing
+name: App Upgrade
 
 on: [pull_request]
 
@@ -16,10 +16,9 @@ jobs:
         id: create-matrix
         env:
           NEXTCLOUD_VERSIONS: "31 32"
-          PHP_VERSIONS: "8.2 8.3"
+          PHP_VERSIONS: "8.3"
           DEFAULT_PHP_VERSION: "8.3"
           DEFAULT_DATABASE: "mysql"
-          EXTRA_DATABASES: "pgsql"
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
@@ -49,13 +48,6 @@ jobs:
         volumes:
           - ${{ github.workspace }}/extra-apps:/var/www/html/apps-shared
           - ${{ github.workspace }}/build-app:/var/www/html/build-app-shared
-
-      database-pgsql:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: nextcloud
 
       database-mysql:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest

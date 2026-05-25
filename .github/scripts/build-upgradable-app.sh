@@ -3,12 +3,11 @@
 #!/usr/bin/env bash
 
 # This script is used to build the integration_openproject app for upgrade testing. It performs the following steps:
-# 1. Build the app.
-# 2. Copy necessary app files to a separate folder named publish.
-# 3. Get the current version of the app and update it to a new version by incrementing the major version number.
-# 4. Sign the app using openssl and occ integrity:sign-app command.
-# 5. Archive the app into a tar.gz file.
-# 6. Sign the archive using openssl dgst command.
+# 1. Copy the build files to a separate folder named publish, excluding unnecessary files and directories.
+# 2. Get the current version of the app and update it to a new version by incrementing the major version number.
+# 3. Sign the app using openssl and occ integrity:sign-app command.
+# 4. Archive the app into a tar.gz file.
+# 5. Sign the archive using openssl dgst command.
 # Note: Before running this script, ensure that the nextcloud instance is running and integration_openproject apps need to be build.
 
 # Required environment variables:
