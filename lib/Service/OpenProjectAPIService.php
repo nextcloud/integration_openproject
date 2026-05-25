@@ -419,7 +419,7 @@ class OpenProjectAPIService {
 		string $method = 'GET',
 		array $options = []
 	) {
-		$url = $openprojectUrl . '/api/v3/' . ltrim($endPoint, '/');
+		$url = rtrim($openprojectUrl, '/') . '/api/v3/' . ltrim($endPoint, '/');
 		if (!isset($options['headers']['Authorization'])) {
 			$options['headers']['Authorization'] = 'Bearer ' . $accessToken;
 		}
@@ -1756,8 +1756,10 @@ class OpenProjectAPIService {
 		if ($token) {
 			$this->logger->debug('Token has expired.', ['app' => $this->appName]);
 			$this->logger->debug('Refreshing access token.', ['app' => $this->appName]);
-			$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
-			$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+			if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
+				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+			}
 		}
 
 		// For OAuth2 setup, only try to refresh the expired token.
@@ -1795,9 +1797,9 @@ class OpenProjectAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param string $accessToken
 	 *
 	 * @return array<mixed>
-	 * @throws PreConditionNotMetException
 	 */
 	public function initUserInfo(string $userId, string $accessToken): array {
 		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
@@ -1807,6 +1809,9 @@ class OpenProjectAPIService {
 		}
 		try {
 			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
+				return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
+			}
 			$response = $this->rawRequest($accessToken, $openprojectUrl, '/users/me');
 			$info = json_decode($response->getBody(), true);
 		} catch (Exception $e) {
