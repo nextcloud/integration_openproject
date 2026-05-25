@@ -1,6 +1,6 @@
+#!/bin/bash
 # SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
-# SPDX-License-Identifier: AGPL-3.0-only
-#!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # This script is used to build the integration_openproject app for upgrade testing. It performs the following steps:
 # 1. Copy the build files to a separate folder named publish, excluding unnecessary files and directories.
@@ -196,7 +196,7 @@ cat > apps.json <<EOF
           "agpl"
         ],
         "isNightly": false,
-        "rawPlatformVersionSpec": "\u003E=28 \u003C=31",
+        "rawPlatformVersionSpec": "\u003E=28 \u003C=32",
         "signature": "$signature",
         "signatureDigest": "sha512"
       }
