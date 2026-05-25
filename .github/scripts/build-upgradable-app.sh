@@ -38,7 +38,7 @@ APP_ID=integration_openproject
 cd "$INTEGRATION_OPENPROJECT_DIR"
 
 if [[ ! -d "$INTEGRATION_OPENPROJECT_DIR/$APP_ID" ]]; then
-  log_error "$APP_ID directory not found on path $INTEGRATION_OPENPROJECT_DIR"
+  log_error "Folder does not exist: $INTEGRATION_OPENPROJECT_DIR/$APP_ID"
   exit 1
 fi
 
@@ -84,25 +84,33 @@ rsync -a \
 --exclude=tests \
 --exclude=ci \
 --exclude=vendor/bin \
-integration_openproject publish/
+$APP_ID publish/
 
 cd publish
 
 # get current version of integration_openproject and update to new version
-current_version=$(php ${NEXTCLOUD_PATH}/occ app:list --output=json | jq -r '.enabled.integration_openproject') || { log_error "Failed to get current version of integration_openproject app."; exit 1; }
+current_version=$(php ${NEXTCLOUD_PATH}/occ app:list --output=json | jq -r ".enabled.$APP_ID") || { log_error "Failed to get current version of $APP_ID app."; exit 1; }
 IFS=. read -r a b c <<< "$current_version"
-NEW_TAG="$((a+1)).$b.$c"
+NEXT_APP_VERSION="$((a+1)).$b.$c"
 
 # Save the new tag to a file for later use in the workflow
-echo "$NEW_TAG" > integration_openproject_new_tag.txt
+echo "$NEXT_APP_VERSION" > "${APP_ID}_new_version.txt"
 
 # update version in info.xml
-sed -i "s|<version>.*</version>|<version>$NEW_TAG</version>|" "integration_openproject/appinfo/info.xml" 
+sed -i "s|<version>.*</version>|<version>$NEXT_APP_VERSION</version>|" "integration_openproject/appinfo/info.xml" 
 
 #####################
 # Signing the app   #
 #####################
 # https://nextcloudappstore.readthedocs.io/en/latest/developer.html#obtaining-a-certificate
+# Check if openssl exists, otherwise install it
+if ! command -v openssl >/dev/null 2>&1; then
+    echo "OpenSSL not found. Installing..."
+    apt update && apt install -y openssl || {
+        echo "Failed to install OpenSSL."
+        exit 1
+    }
+fi
 log_info "Generating app.key and app.crt..."
 openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
   -keyout app.key \
@@ -131,7 +139,7 @@ fi
 # fix permissions for signing
 chown www-data app.key
 chown www-data app.crt
-chown -R www-data integration_openproject
+chown -R www-data $APP_ID
 
 # Sign the app
 # need full path for signing
@@ -142,28 +150,18 @@ php ${NEXTCLOUD_PATH}/occ integrity:sign-app \
   --path=${INTEGRATION_OPENPROJECT_DIR}/publish/$APP_ID || { log_error "Failed to sign app."; exit 1; }
 
 # Archive the app
-tar -czf $APP_ID-$NEW_TAG.tar.gz $APP_ID
-if [[ ! -f $APP_ID-$NEW_TAG.tar.gz ]]; then
-  log_error "Failed to archive the app. Archive file $APP_ID-$NEW_TAG.tar.gz not found."
+tar -czf $APP_ID-$NEXT_APP_VERSION.tar.gz $APP_ID
+if [[ ! -f $APP_ID-$NEXT_APP_VERSION.tar.gz ]]; then
+  log_error "Failed to archive the app. Archive file $APP_ID-$NEXT_APP_VERSION.tar.gz not found."
   exit 1
 fi
-log_success "Archived the app into $APP_ID-$NEW_TAG.tar.gz."
+log_success "Archived the app into $APP_ID-$NEXT_APP_VERSION.tar.gz."
 
 #####################
 # Sign the archive  #
 #####################
-# Check if openssl exists, otherwise install it
-if ! command -v openssl >/dev/null 2>&1; then
-    echo "OpenSSL not found. Installing..."
-    apt update && apt install -y openssl || {
-        echo "Failed to install OpenSSL."
-        exit 1
-    }
-fi
-
-# Sign the archive using openssl dgst command
 log_info "Signing the archive using openssl dgst command..."
-openssl dgst -sha512 -sign app.key $APP_ID-$NEW_TAG.tar.gz \
+openssl dgst -sha512 -sign app.key $APP_ID-$NEXT_APP_VERSION.tar.gz \
   | openssl base64 \
   | tee ${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt
 
@@ -175,3 +173,35 @@ else
 fi
 
 log_success "App build and release process has been completed successfully."
+
+# prepare apps.json file
+if [[ ! -f ${INTEGRATION_OPENPROJECT_DIR}/publish/${APP_ID}/appinfo/signature.json ]]; then
+  echo "Signature file not found at ${INTEGRATION_OPENPROJECT_DIR}/publish/${APP_ID}/appinfo/signature.json."
+  exit 1
+fi
+certificate=$(jq '.certificate' "${INTEGRATION_OPENPROJECT_DIR}/publish/${APP_ID}/appinfo/signature.json")
+signature=$(tr -d '\n' < "${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt")
+
+# Create apps.json with the required structure
+cat > apps.json <<EOF
+[
+  {
+    "id": "$APP_ID",
+    "releases": [
+      {
+        "version": "$NEXT_APP_VERSION",
+        "minIntSize": 32,
+        "download": "http://localhost:8080/${APP_ID}-${NEXT_APP_VERSION}.tar.gz",
+        "licenses": [
+          "agpl"
+        ],
+        "isNightly": false,
+        "rawPlatformVersionSpec": "\u003E=28 \u003C=31",
+        "signature": "$signature",
+        "signatureDigest": "sha512"
+      }
+    ],
+    "certificate": $certificate
+  }
+]
+EOF

@@ -114,57 +114,20 @@ jobs:
             NEXTCLOUD_PATH=/var/www/html \
             source integration_openproject/.github/scripts/build-upgradable-app.sh"
           cd build-app/publish
-          echo "NEW_TAG=$(cat integration_openproject_new_tag.txt)" >> $GITHUB_ENV
-
-      - name: Prepare apps.json file
-        working-directory: build-app
-        env:
-          APP_ID: integration_openproject
-        run: |
-          if [[ ! -f publish/${APP_ID}/appinfo/signature.json ]]; then
-            echo "Signature file not found at publish/${APP_ID}/appinfo/signature.json."
-            exit 1
-          fi
-          certificate=$(jq '.certificate' "publish/${APP_ID}/appinfo/signature.json")
-          signature=$(tr -d '\n' < "publish/sign.txt")
-
-          # Create apps.json with the required structure
-          cat > apps.json <<EOF
-          [
-            {
-              "id": "$APP_ID",
-              "releases": [
-                {
-                  "version": "$NEW_TAG",
-                  "minIntSize": 32,
-                  "download": "http://localhost:8080/${APP_ID}-${NEW_TAG}.tar.gz",
-                  "licenses": [
-                    "agpl"
-                  ],
-                  "isNightly": false,
-                  "rawPlatformVersionSpec": "\u003E=28 \u003C=31",
-                  "signature": "$signature",
-                  "signatureDigest": "sha512"
-                }
-              ],
-              "certificate": $certificate
-            }
-          ]
-          EOF
-          sudo mv apps.json publish/
+          echo "NEXT_APP_VERSION=$(cat integration_openproject_new_version.txt)" >> $GITHUB_ENV
 
       - name: Update integration_openproject app
         run: |
-          # Start PHP server in Nextcloud container to serve files from publish directory
+          # Start local appstore server
           docker exec nextcloud /bin/bash -c "cd build-app-shared && php -S localhost:8080 -t publish &"
 
-          # Clear appstore cache (force fresh fetch)
+          # Clear appstore cache (force re-fetch)
           docker exec nextcloud /bin/bash -c "echo '' > /var/www/html/data/appdata_*/appstore/apps.json"
           
           # Disable share rate limit protection
           docker exec nextcloud /bin/bash -c "php occ config:system:set ratelimit.protection.enabled --value false --type bool"
 
-          # Configure Nextcloud to allow updates from our custom server and update the app
+          # Configure local appstore server
           docker exec nextcloud /bin/bash -c "php occ config:system:set appstoreurl --value 'http://localhost:8080'"
           docker exec nextcloud /bin/bash -c "php occ config:system:set allow_local_remote_servers --value true"
           
@@ -172,10 +135,10 @@ jobs:
           docker exec nextcloud /bin/bash -c "php occ app:update --allow-unstable integration_openproject"
           
           # Verify update
-          if docker exec nextcloud /bin/bash -c "php occ app:list | grep -q 'integration_openproject.*$NEW_TAG'"; then
-            echo "App updated successfully to version $NEW_TAG"
+          if docker exec nextcloud /bin/bash -c "php occ app:list | grep -q 'integration_openproject.*$NEXT_APP_VERSION'"; then
+            echo "App updated successfully to version $NEXT_APP_VERSION"
           else
-            echo "App not updated to version $NEW_TAG"
+            echo "App not updated to version $NEXT_APP_VERSION"
             exit 1
           fi
 
