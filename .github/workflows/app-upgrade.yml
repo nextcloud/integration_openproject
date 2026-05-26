@@ -121,6 +121,18 @@ jobs:
           # Start local appstore server
           docker exec nextcloud /bin/bash -c "cd build-app-shared && php -S localhost:8080 -t publish &"
 
+          # Wait for local appstore server to be ready
+          docker exec nextcloud /bin/bash -c '
+            for i in $(seq 1 5); do
+              if curl -fsS http://localhost:8080/ > /dev/null; then
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "Local appstore server did not become ready on localhost:8080"
+            exit 1
+          '
+
           # Clear appstore cache (force re-fetch)
           docker exec nextcloud /bin/bash -c "echo '' > /var/www/html/data/appdata_*/appstore/apps.json"
           
