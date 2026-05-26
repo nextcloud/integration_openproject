@@ -419,7 +419,7 @@ class OpenProjectAPIService {
 		string $method = 'GET',
 		array $options = []
 	) {
-		$url = $openprojectUrl . '/api/v3/' . $endPoint;
+		$url = rtrim($openprojectUrl, '/') . '/api/v3/' . ltrim($endPoint, '/');
 		if (!isset($options['headers']['Authorization'])) {
 			$options['headers']['Authorization'] = 'Bearer ' . $accessToken;
 		}
@@ -1716,13 +1716,6 @@ class OpenProjectAPIService {
 		$this->config->setUserValue($userId, Application::APP_ID, 'token', $token->getAccessToken());
 		$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $tokenExpiresAt);
 
-		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
-		$savedUsername = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
-		if (!$savedUserId || !$savedUsername) {
-			// get user info
-			$this->initUserInfo($userId);
-		}
-
 		return $token->getAccessToken();
 	}
 
@@ -1751,16 +1744,24 @@ class OpenProjectAPIService {
 			return '';
 		}
 		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token', '');
+		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
+
 		if ($token && !$this->isAccessTokenExpired($userId)) {
+			if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+				$this->initUserInfo($userId, $token);
+			}
 			return $token;
 		}
 
 		if ($token) {
 			$this->logger->debug('Token has expired.', ['app' => $this->appName]);
 			$this->logger->debug('Refreshing access token.', ['app' => $this->appName]);
+			if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
+				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
+			}
 		}
 
-		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
 		// For OAuth2 setup, only try to refresh the expired token.
 		// Token exchange needs to be initiated from the UI.
 		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $token) {
@@ -1784,7 +1785,11 @@ class OpenProjectAPIService {
 			}
 			return $result['access_token'];
 		} elseif ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
-			return $this->getOIDCToken($userId);
+			$token = $this->getOIDCToken($userId);
+			if ($token) {
+				$this->initUserInfo($userId, $token);
+			}
+			return $token;
 		}
 
 		return '';
@@ -1792,12 +1797,27 @@ class OpenProjectAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param string $accessToken
 	 *
 	 * @return array<mixed>
-	 * @throws PreConditionNotMetException
 	 */
-	public function initUserInfo(string $userId): array {
-		$info = $this->request($userId, '/users/me');
+	public function initUserInfo(string $userId, string $accessToken): array {
+		$savedUserId = $this->config->getUserValue($userId, Application::APP_ID, 'user_id');
+		$savedUsername = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		if ($savedUserId && $savedUsername) {
+			return ['user_name' => $savedUsername];
+		}
+		try {
+			$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url');
+			if (!$openprojectUrl || !OpenProjectAPIService::validateURL($openprojectUrl)) {
+				return ['error' => 'OpenProject URL is invalid', 'statusCode' => 500];
+			}
+			$response = $this->rawRequest($accessToken, $openprojectUrl, '/users/me');
+			$info = json_decode($response->getBody(), true);
+		} catch (Exception $e) {
+			$this->logger->error('OpenProject error : ' . $e->getMessage(), ['app' => $this->appName]);
+			return ['error' => $e->getMessage()];
+		}
 		if (isset($info['lastName'], $info['firstName'], $info['id'])) {
 			$fullName = $info['firstName'] . ' ' . $info['lastName'];
 			$this->config->setUserValue($userId, Application::APP_ID, 'user_id', $info['id']);
