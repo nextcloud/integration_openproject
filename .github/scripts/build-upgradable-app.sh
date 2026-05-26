@@ -14,7 +14,7 @@
 # 1. NEXTCLOUD_PATH (Absolute path to nextcloud where occ command is available, e.g. /var/www/html/build-app-shared)
 # 2. INTEGRATION_OPENPROJECT_DIR (Absolute path to the directory containing the integration_openproject repository, e.g. /home/user)
 
-set -e
+set -e -o pipefail
 
 # helper functions
 log_error() {

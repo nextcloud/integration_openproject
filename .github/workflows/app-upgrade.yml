@@ -124,7 +124,7 @@ jobs:
           # Wait for local appstore server to be ready
           docker exec nextcloud /bin/bash -c '
             for i in $(seq 1 5); do
-              if curl -fsS http://localhost:8080/ > /dev/null; then
+              if curl -sS http://localhost:8080 > /dev/null; then
                 exit 0
               fi
               sleep 2
