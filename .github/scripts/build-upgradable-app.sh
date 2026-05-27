@@ -2,17 +2,17 @@
 # SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# This script is used to build the integration_openproject app for upgrade testing. It performs the following steps:
+# This script is used to build the upgradable integration_openproject app. It performs the following steps:
 # 1. Copy the build files to a separate folder named publish, excluding unnecessary files and directories.
 # 2. Get the current version of the app and update it to a new version by incrementing the major version number.
-# 3. Sign the app using openssl and occ integrity:sign-app command.
-# 4. Archive the app into a tar.gz file.
-# 5. Sign the archive using openssl dgst command.
-# Note: Before running this script, ensure that the nextcloud instance is running and integration_openproject apps need to be build.
+# 3. Sign the app files using self-signed certificate.
+# 4. Archive the app into a .tar.gz file.
+# 5. Sign the archive.
+# NOTE: Before running this script, ensure that the Nextcloud instance is running and integration_openproject app is built.
 
 # Required environment variables:
-# 1. NEXTCLOUD_PATH (Absolute path to nextcloud where occ command is available, e.g. /var/www/html/build-app-shared)
-# 2. INTEGRATION_OPENPROJECT_DIR (Absolute path to the directory containing the integration_openproject repository, e.g. /home/user)
+# 1. NEXTCLOUD_PATH (Absolute path to Nextcloud where occ command is available, e.g. /var/www/html)
+# 2. INTEGRATION_OPENPROJECT_DIR (Absolute path to the directory containing the integration_openproject repository, e.g. /var/www/html/build-app-shared)
 
 set -e -o pipefail
 
@@ -30,7 +30,7 @@ log_success() {
 }
 
 if [[ -z "$NEXTCLOUD_PATH" ]] || [[ -z "$INTEGRATION_OPENPROJECT_DIR" ]]; then
-  log_error "Environment variables NEXTCLOUD_PATH or INTEGRATION_OPENPROJECT_DIR are missing."
+  log_error "Missing required environment variables: NEXTCLOUD_PATH, INTEGRATION_OPENPROJECT_DIR"
   exit 1
 fi
 
@@ -122,11 +122,11 @@ openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
   -addext "extendedKeyUsage=codeSigning"
 
 if [[ ! -s app.key || ! -s app.crt ]]; then
-  log_error "Failed to generate app signing certificate and key. app.key or app.crt not found."
+  log_error "Failed to generate app signing certificate and key: app.key or app.crt not found."
   exit 1
 fi
 
-log_info "Adding the generated certificate to nextcloud's root.crt..."
+log_info "Adding the generated certificate to Nextcloud's root.crt..."
 nextcloud_root_crt="${NEXTCLOUD_PATH}/resources/codesigning/root.crt"
 if [[ -f ${nextcloud_root_crt} ]]; then
   echo "" >> ${nextcloud_root_crt}
@@ -143,7 +143,7 @@ chown -R www-data $APP_ID
 
 # Sign the app
 # need full path for signing
-log_info "Signing the app using occ integrity:sign-app command..."
+log_info "Signing the app files..."
 php ${NEXTCLOUD_PATH}/occ integrity:sign-app \
   --privateKey=${INTEGRATION_OPENPROJECT_DIR}/publish/app.key \
   --certificate=${INTEGRATION_OPENPROJECT_DIR}/publish/app.crt \
@@ -155,24 +155,24 @@ if [[ ! -f $APP_ID-$NEXT_APP_VERSION.tar.gz ]]; then
   log_error "Failed to archive the app. Archive file $APP_ID-$NEXT_APP_VERSION.tar.gz not found."
   exit 1
 fi
-log_success "Archived the app into $APP_ID-$NEXT_APP_VERSION.tar.gz."
+log_success "App archived into $APP_ID-$NEXT_APP_VERSION.tar.gz."
 
 #####################
 # Sign the archive  #
 #####################
-log_info "Signing the archive using openssl dgst command..."
+log_info "Signing the app archive..."
 openssl dgst -sha512 -sign app.key $APP_ID-$NEXT_APP_VERSION.tar.gz \
   | openssl base64 \
   | tee ${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt
 
 if [[ ! -s ${INTEGRATION_OPENPROJECT_DIR}/publish/sign.txt ]]; then
-  log_error "Failed to sign the archive. Signature file sign.txt is empty or not found."
+  log_error "Failed to sign the app archive. Signature file sign.txt is empty or not found."
   exit 1
 else
-  log_success "Signed the app archive successfully."
+  log_success "App archive signed successfully."
 fi
 
-log_success "App build and release process has been completed successfully."
+log_success "Upgradable app built successfully."
 
 # prepare apps.json file
 if [[ ! -f ${INTEGRATION_OPENPROJECT_DIR}/publish/${APP_ID}/appinfo/signature.json ]]; then
@@ -196,7 +196,7 @@ cat > apps.json <<EOF
           "agpl"
         ],
         "isNightly": false,
-        "rawPlatformVersionSpec": "\u003E=28 \u003C=32",
+        "rawPlatformVersionSpec": "\u003E=28",
         "signature": "$signature",
         "signatureDigest": "sha512"
       }

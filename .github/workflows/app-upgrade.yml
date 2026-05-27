@@ -129,7 +129,7 @@ jobs:
               fi
               sleep 2
             done
-            echo "Local appstore server did not become ready on localhost:8080"
+            echo "Failed to run local appstore at localhost:8080"
             exit 1
           '
 
