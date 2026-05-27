@@ -15,3 +15,8 @@ jobs:
     secrets: inherit
     with:
       branch: master
+
+  upgrade-test:
+    uses: ./.github/workflows/app-upgrade.yml
+    with:
+      branch: master

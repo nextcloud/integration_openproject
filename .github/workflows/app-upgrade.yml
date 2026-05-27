@@ -3,7 +3,20 @@
 
 name: App Upgrade
 
-on: [pull_request]
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      nextcloud_versions:
+        required: false
+        type: string
+        default: "31 32"
+      php_versions:
+        required: false
+        type: string
+        default: "8.3"
 
 jobs:
   create-matrix:
@@ -15,8 +28,8 @@ jobs:
       - name: Create matrix
         id: create-matrix
         env:
-          NEXTCLOUD_VERSIONS: "31 32"
-          PHP_VERSIONS: "8.3"
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
           DEFAULT_PHP_VERSION: "8.3"
           DEFAULT_DATABASE: "mysql"
         run: |

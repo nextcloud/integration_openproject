@@ -15,4 +15,8 @@ jobs:
     secrets: inherit
     with:
       branch: release/2.11
-      nextcloud_versions: "31 32"
+
+  upgrade-test:
+    uses: ./.github/workflows/app-upgrade.yml
+    with:
+      branch: release/2.11
