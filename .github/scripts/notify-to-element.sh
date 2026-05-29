@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: 2023-2024 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+set -e
+
 # helper functions
 log_error() {
   echo -e "\e[31m$1\e[0m"
@@ -15,42 +17,67 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
-log_info "Fetching all workflow jobs....."
+required_vars=(
+	ELEMENT_CHAT_URL
+	ELEMENT_ROOM_ID
+	NIGHTLY_CI_USER_TOKEN
+	REPO_OWNER
+	REPO_NAME
+	RUN_ID
+	BRANCH_NAME
+	NEEDS_JSON
+)
 
-response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID/jobs?per_page=50")
+for var in "${required_vars[@]}"; do
+  if [[ -z "${!var}" ]]; then
+    log_error "❌ Missing required environment variable: $var"
+    log_info ""
+    log_info "Available environment variables:"
+    log_info "- ELEMENT_CHAT_URL       : URL of the Element chat (e.g. https://matrix.element.io)"
+    log_info "- ELEMENT_ROOM_ID        : Matrix room ID (e.g. abcdefg:matrix.element.io)"
+    log_info "- NIGHTLY_CI_USER_TOKEN  : Access token for sending messages (e.g. "sometoken")"
+    log_info "- REPO_OWNER             : Repository owner (e.g. nextcloud)"
+    log_info "- REPO_NAME              : Repository name (e.g. server)"
+    log_info "- RUN_ID                 : GitHub Actions run ID (e.g. 26520692643)"
+    log_info "- BRANCH_NAME            : Branch name (e.g. master)"
+    log_info "- NEEDS_JSON             : JSON string containing job results"
+    log_info ""
+    exit 1
+  fi
+done
 
-log_info "Fetching jobs informations succeeded!
-"
-if [[ "$response" != *"jobs"* ]]; then
-  log_error "No jobs found in the below response!"
-  log_info "$response"
+jobs=$(echo "$NEEDS_JSON" | jq -r 'keys[]' 2>/dev/null)
+if [[ -z "$jobs" ]]; then
+  log_error "❌ No jobs found in below JSON:"
+  log_info "$NEEDS_JSON"
   exit 1
 fi
 
-jobs_informations=$(echo "$response" | jq '.jobs[:-1]')
-jobs_conclusions=$(echo "$jobs_informations" | jq -r '.[].conclusion')
+results=$(echo "$NEEDS_JSON" | jq -r '.[].result' 2>/dev/null)
 
-workflow_status="Success"
-if [[ " ${jobs_conclusions[*]} " == *"failure"* ]]; then
-  workflow_status="Failure"
-elif [[ " ${jobs_conclusions[*]} " == *"cancelled"* ]]; then
-  workflow_status="Cancelled"
-elif [[ " ${jobs_conclusions[*]} " == *"skipped"* ]]; then
-  workflow_status="Skipped"
+workflow_status="✅ Success"
+if [[ "${results[*]}" == *"failure"* ]]; then
+  workflow_status="❌ Failure"
+elif [[ "${results[*]}" == *"cancelled"* ]]; then
+  workflow_status="⚠️ Cancelled"
+elif [[ "${results[*]}" == *"skipped"* ]]; then
+  workflow_status="⚠️ Skipped"
 fi
 
 log_info "Sending report to the element chat...."
 
+payload=$(cat <<EOF
+{
+  "msgtype": "m.text",
+  "body": "",
+  "format": "org.matrix.custom.html",
+  "formatted_body": "<a href=\"https://github.com/${REPO_OWNER}/${REPO_NAME}/actions/runs/${RUN_ID}\">NC-Nightly-${BRANCH_NAME}</a><br></br><b>Status: ${workflow_status}</b>"
+}
+EOF
+)
+
 send_message_to_room_response=$(curl -s -XPOST "$ELEMENT_CHAT_URL/_matrix/client/r0/rooms/%21$ELEMENT_ROOM_ID/send/m.room.message?access_token=$NIGHTLY_CI_USER_TOKEN" \
-                                      -d '
-                                          {
-                                            "msgtype": "m.text",
-                                            "body": "",
-                                            "format": "org.matrix.custom.html",
-                                            "formatted_body": "<a href=\"https://github.com/'$REPO_OWNER'/'$REPO_NAME'/actions/runs/'$RUN_ID'\">NC-Nightly-'$BRANCH_NAME'</a><br></br><b><i>Status: '$workflow_status'</i></b>"
-                                          }
-                                        '
+                                      -d "$payload"
                                       )
 
 if [[ "$send_message_to_room_response" != *"event_id"* ]]; then
