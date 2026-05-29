@@ -15,28 +15,4 @@ jobs:
     secrets: inherit
     with:
       branch: release/2.11
-
-  app-upgrade-test:
-    uses: ./.github/workflows/app-upgrade.yml
-    with:
-      branch: release/2.11
-  notify-nightly-report:
-    needs: [builds, app-upgrade-test]
-    if: ${{ always() }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-      
-      - name: Notify Element (nightly builds)
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          REPO_OWNER: nextcloud
-          REPO_NAME: integration_openproject
-          RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: release/2.11
-          NEEDS_JSON: ${{ toJson(needs) }}
-        run: |
-          ./.github/scripts/notify-to-element.sh
+      nextcloud_versions: "31 32"
