@@ -167,9 +167,9 @@ jobs:
             exit 1
           fi
 
-      # - name: API Tests
-      #   working-directory: integration_openproject
-      #   env:
-      #     NEXTCLOUD_BASE_URL: http://localhost
-      #   run: |
-      #     make api-test
+      - name: API Tests
+        working-directory: integration_openproject
+        env:
+          NEXTCLOUD_BASE_URL: http://localhost
+        run: |
+          make api-test

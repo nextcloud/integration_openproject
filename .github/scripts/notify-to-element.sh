@@ -46,48 +46,36 @@ for var in "${required_vars[@]}"; do
   fi
 done
 
-needs_json=$NEEDS_JSON
-
-jobs=$(echo "$needs_json" | jq -r 'keys[]' 2>/dev/null)
+jobs=$(echo "$NEEDS_JSON" | jq -r 'keys[]' 2>/dev/null)
 if [[ -z "$jobs" ]]; then
-  log_error "❌ No jobs found in NEEDS_JSON. Please provide a valid JSON string with job results."
+  log_error "❌ No jobs found in below JSON:"
+  log_info "$NEEDS_JSON"
   exit 1
 fi
 
-for job in $jobs; do
-  WORKFLOW_STATUS=$(echo "$needs_json" | jq -r --arg job "$job" '.[$job].result')
+results=$(echo "$NEEDS_JSON" | jq -r '.[].result' 2>/dev/null)
 
-  if [[ "$WORKFLOW_STATUS" == "success" ]]; then
-  WORKFLOW_STATUS="✅ Success"
-  elif [[ "$WORKFLOW_STATUS" == "failure" ]]; then
-    WORKFLOW_STATUS="❌ Failure"
-  else
-    WORKFLOW_STATUS="⚠️ $WORKFLOW_STATUS"
-  fi
+workflow_status="✅ Success"
+if [[ "${results[*]}" == *"failure"* ]]; then
+  workflow_status="❌ Failure"
+elif [[ "${results[*]}" == *"cancelled"* ]]; then
+  workflow_status="⚠️ Cancelled"
+elif [[ "${results[*]}" == *"skipped"* ]]; then
+  workflow_status="⚠️ Skipped"
+fi
 
-  if [[ "$job" == "builds" ]]; then
-    NIGHTLY_NAME="NC-Nightly"
-  elif [[ "$job" == "upgrade-test" ]]; then
-    NIGHTLY_NAME="NC-Upgrade-Test-Nightly"
-  else
-    log_error "Unknown job name: $job. Expected 'builds' or 'upgrade-test'."
-    exit 1
-  fi
-
-  message+="<a href=\\\"https://github.com/$REPO_OWNER/$REPO_NAME/actions/runs/$RUN_ID\\\">$NIGHTLY_NAME-$BRANCH_NAME</a> <b>$WORKFLOW_STATUS</b><br>"
-done
+log_info "Sending report to the element chat...."
 
 payload=$(cat <<EOF
 {
   "msgtype": "m.text",
   "body": "",
   "format": "org.matrix.custom.html",
-  "formatted_body": "$message"
+  "formatted_body": "<a href=\"https://github.com/${REPO_OWNER}/${REPO_NAME}/actions/runs/${RUN_ID}\">NC-Nightly-${BRANCH_NAME}</a><br></br><b>Status: ${workflow_status}</b>"
 }
 EOF
 )
 
-log_info "Sending report of $NIGHTLY_NAME-$BRANCH_NAME to the element chat...."
 send_message_to_room_response=$(curl -s -XPOST "$ELEMENT_CHAT_URL/_matrix/client/r0/rooms/%21$ELEMENT_ROOM_ID/send/m.room.message?access_token=$NIGHTLY_CI_USER_TOKEN" \
                                       -d "$payload"
                                       )

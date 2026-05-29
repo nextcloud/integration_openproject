@@ -5,7 +5,9 @@ name: Nightly CI (Release branch)
 # workflow can be scheduled ONLY from DEFAULT branch
 # > This event will only trigger a workflow run if the workflow file is on the default branch.
 # See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
-on: [ pull_request ]
+on:
+  schedule:
+    - cron: '0 23 * * *' # run at 11 PM UTC
 
 jobs:
   builds:
@@ -14,13 +16,12 @@ jobs:
     with:
       branch: release/2.11
 
-  upgrade-test:
+  app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml
     with:
       branch: release/2.11
-
   notify-nightly-report:
-    needs: [builds, upgrade-test]
+    needs: [builds, app-upgrade-test]
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     steps:
@@ -35,7 +36,7 @@ jobs:
           REPO_OWNER: nextcloud
           REPO_NAME: integration_openproject
           RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ inputs.branch }}
+          BRANCH_NAME: release/2.11
           NEEDS_JSON: ${{ toJson(needs) }}
         run: |
           ./.github/scripts/notify-to-element.sh

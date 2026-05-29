@@ -323,7 +323,7 @@ jobs:
             exit 1
           fi
 
-      # - name: API Tests
-      #   env:
-      #     NEXTCLOUD_BASE_URL: http://localhost
-      #   run: make api-test
+      - name: API Tests
+        env:
+          NEXTCLOUD_BASE_URL: http://localhost
+        run: make api-test
