@@ -8,7 +8,6 @@
 namespace OCA\OpenProject;
 
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent as ExchangedTokenEvent;
 use OCA\UserOIDC\Event\ExternalTokenRequestedEvent as ExternalTokenEvent;
 use OCA\UserOIDC\Event\InternalTokenRequestedEvent as InternalTokenEvent;

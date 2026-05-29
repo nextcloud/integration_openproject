@@ -9,6 +9,7 @@ namespace OCA\OpenProject\Controller;
 
 use Exception;
 use InvalidArgumentException;
+use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Exception\OpenprojectResponseException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
