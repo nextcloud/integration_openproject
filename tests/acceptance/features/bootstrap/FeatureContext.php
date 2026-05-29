@@ -272,6 +272,11 @@ class FeatureContext implements Context {
 			echo "'docker' command not found. Skipping user data deletion.\n";
 			return;
 		}
+		// Skip if Nextcloud Docker container does not exist
+		exec("docker ps --format \"{{.Names}}\"", $containers);
+		if (!in_array('nextcloud', $containers)) {
+			return;
+		}
 
 		$firstChar = substr($user, 0, 1);
 		$restChars = substr($user, 1);
