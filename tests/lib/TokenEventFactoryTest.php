@@ -22,7 +22,7 @@ class TokenEventFactoryTest extends TestCase {
 	public function settingsProvider(): array {
 		return [
 			"Nextcloud Hub setup" => [
-				"providerType" => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				"providerType" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => false,
 				"class" => InternalTokenRequestedEvent::class,
 			],
@@ -37,7 +37,7 @@ class TokenEventFactoryTest extends TestCase {
 				"class" => ExchangedTokenRequestedEvent::class,
 			],
 			"Nextcloud Hub with token exchange enabled" => [
-				"providerType" => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				"providerType" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => true,
 				"class" => InternalTokenRequestedEvent::class,
 			],

@@ -38,8 +38,8 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 */
 	public function getAuthorizationMethodDataProvider() {
 		return [
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC]
+			[Application::AUTH_METHOD_OAUTH],
+			[Application::AUTH_METHOD_OIDC]
 		];
 	}
 
@@ -51,7 +51,7 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 * @return IConfig
 	 */
 	public function getConfigMock(string $authorizationMethod = '', $authToken = null, $opUrl = null): IConfig {
-		if ($authorizationMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+		if ($authorizationMethod === Application::AUTH_METHOD_OAUTH) {
 			$token = $authToken ?? '123';
 		} else {
 			$token = '';
@@ -279,12 +279,12 @@ class OpenProjectAPIControllerTest extends TestCase {
 	 */
 	public function searchWorkPackagesDataProvider() {
 		return [
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
+			[Application::AUTH_METHOD_OAUTH, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[Application::AUTH_METHOD_OAUTH, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[Application::AUTH_METHOD_OAUTH, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[Application::AUTH_METHOD_OIDC, 'test', null, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[Application::AUTH_METHOD_OIDC, 'test', 9090,  [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]],
+			[Application::AUTH_METHOD_OIDC, null, 9090, [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]]]
 		];
 	}
 
@@ -1081,37 +1081,37 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function exceptionDataProvider(): array {
 		return [
 			[
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				new OpenprojectErrorException('Precondition failed', 412),
 				412,
 				'Precondition failed'
 			],
 			[
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				new OpenprojectResponseException('Malformed response'),
 				500,
 				'Malformed response'
 			],
 			[
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				new Exception("Internal server error"),
 				500,
 				'Internal server error'
 			],
 			[
-				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				Application::AUTH_METHOD_OIDC,
 				new OpenprojectErrorException('Precondition failed', 412),
 				412,
 				'Precondition failed'
 			],
 			[
-				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				Application::AUTH_METHOD_OIDC,
 				new OpenprojectResponseException('Malformed response'),
 				500,
 				'Malformed response'
 			],
 			[
-				OpenProjectAPIService::AUTH_METHOD_OIDC,
+				Application::AUTH_METHOD_OIDC,
 				new Exception("Internal server error"),
 				500,
 				'Internal server error'

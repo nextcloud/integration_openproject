@@ -582,7 +582,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function getAppValues(array $withValues = []): array {
 		$defaultValues = [
-			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => $this->clientId,
 			'openproject_client_secret' => $this->clientSecret,
 			'openproject_instance_url' => $this->pactMockServerConfig->getBaseUri()->__toString(),
@@ -777,11 +777,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$this->defaultConfigMock
 			->method('getAppValue')
 			->willReturnMap($this->getAppValues([
-				'authorization_method' => $authMethod ?? OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'authorization_method' => $authMethod ?? Application::AUTH_METHOD_OAUTH,
 			]));
 
 		$tokenExpiryTime = $oAuth2OrOidcToken === 'expired' ? 0 : time() + 7200;
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+		if ($authMethod === Application::AUTH_METHOD_OIDC) {
 			$this->defaultConfigMock
 				->method('getUserValue')
 				->willReturnMap([
@@ -800,7 +800,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					[$userId, 'integration_openproject', 'token','new-Token'],
 				]);
 		}
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+		if ($authMethod === Application::AUTH_METHOD_OIDC) {
 			$tokenMock = $this->getMockBuilder(Token::class)->disableOriginalConstructor()->getMock();
 			$exchangeTokenMock->method('getEvent')->willReturn($exchangedTokenRequestedEventMock);
 			$exchangedTokenRequestedEventMock->method('getToken')->willReturn($tokenMock);
@@ -1025,8 +1025,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function getAuthorizationMethodDataProvider() {
 		return [
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH],
-			[OpenProjectAPIService::AUTH_METHOD_OIDC]
+			[Application::AUTH_METHOD_OAUTH],
+			[Application::AUTH_METHOD_OIDC]
 		];
 	}
 
@@ -1167,7 +1167,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 */
 	public function getAuthorizationMethodForOauth2DataProvider() {
 		return [
-			[OpenProjectAPIService::AUTH_METHOD_OAUTH]
+			[Application::AUTH_METHOD_OAUTH]
 		];
 	}
 
@@ -1877,7 +1877,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$storageMock = $this->getMockBuilder('\OCP\Files\IRootFolder')->getMock();
 		$storageMock->method('getUserFolder')->willReturn($folderMock);
 		// here authorization method is of no use, just putting 'oauth2' since its the default
-		$service = $this->getOpenProjectAPIService(OpenProjectAPIService::AUTH_METHOD_OAUTH, $storageMock);
+		$service = $this->getOpenProjectAPIService(Application::AUTH_METHOD_OAUTH, $storageMock);
 		$this->expectException(NotFoundException::class);
 		$service->getNode('me', 1234);
 	}
@@ -1900,7 +1900,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function testGetNode($nodeClassName) {
 		$storageMock = $this->getStorageMock($nodeClassName);
 		// here authorization method is of no use, just putting 'oauth2' since its the default
-		$service = $this->getOpenProjectAPIService(OpenProjectAPIService::AUTH_METHOD_OAUTH, $storageMock);
+		$service = $this->getOpenProjectAPIService(Application::AUTH_METHOD_OAUTH, $storageMock);
 		$result = $service->getNode('me', 1234);
 		$this->assertTrue($result instanceof \OCP\Files\Node);
 	}
@@ -3298,7 +3298,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'openproject_client_id' => 'clientID',
 					'openproject_client_secret' => 'clientSecret',
 					'fresh_project_folder_setup', true,
@@ -3316,7 +3316,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'clientID',
 					'openproject_client_secret' => 'clientSecret',
 					'fresh_project_folder_setup', false,
@@ -3361,7 +3361,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'config' => [
 					'openproject_instance_url' => '',
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => '',
 					'sso_provider_type' => '',
@@ -3372,7 +3372,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'Keycloak',
 					'targeted_audience_client_id' => '',
 					'sso_provider_type' => '',
@@ -3383,7 +3383,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => 'targetClientID',
 					'sso_provider_type' => 'external',
@@ -3394,7 +3394,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'oidc_provider' => 'Keycloak',
 					'targeted_audience_client_id' => 'targetClientID',
 					'sso_provider_type' => 'external',
@@ -3405,7 +3405,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidcProvider',
 					'targeted_audience_client_id' => '',
 					'sso_provider_type' => 'external',
@@ -3416,7 +3416,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidcProvider',
 					'targeted_audience_client_id' => 'targetClientID',
 					'sso_provider_type' => '',
@@ -3428,7 +3428,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'config' => [
 					'openproject_instance_url' => '',
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidcProvider',
 					'targeted_audience_client_id' => 'targetClientID',
 					'sso_provider_type' => '',
@@ -3439,7 +3439,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidcProvider',
 					'targeted_audience_client_id' => 'targetClientID',
 					'sso_provider_type' => 'external',
@@ -3450,7 +3450,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidcProvider',
 					'targeted_audience_client_id' => '',
 					'sso_provider_type' => 'external',
@@ -3461,7 +3461,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				'config' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'NC Provider',
 					'targeted_audience_client_id' => 'test-client',
 					'sso_provider_type' => 'nextcloud_hub',
@@ -3497,7 +3497,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'config' => [
 					'openproject_instance_url' => 'http://op.local',
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'clientID',
 					'openproject_client_secret' => 'clientSecret',
 					'fresh_project_folder_setup' => false,
@@ -3508,8 +3508,8 @@ class OpenProjectAPIServiceTest extends TestCase {
 			[
 				'config' => [
 					'openproject_instance_url' => 'http://op.local',
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'oidc_provider' => 'Nextcloud',
 					'targeted_audience_client_id' => 'openproject',
 					'fresh_project_folder_setup' => false,
@@ -4568,7 +4568,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->willReturnMap($this->getAppValues([
-				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC
+				'authorization_method' => Application::AUTH_METHOD_OIDC
 			]));
 		$calls = [];
 		$configMock
@@ -4608,7 +4608,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->willReturnMap($this->getAppValues([
-				'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH
+				'authorization_method' => Application::AUTH_METHOD_OAUTH
 			]));
 		$service = $this->getOpenProjectAPIServiceMock(
 			[],
@@ -4702,7 +4702,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock->method('getAppValue')
 			->willReturnMap($this->getAppValues([
 				'targeted_audience_client_id' => 'testclient',
-				'sso_provider_type' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 			]));
 		$iManagerMock = $this->getMockBuilder(IManager::class)->getMock();
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
@@ -4741,7 +4741,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'userId is null' => [
 				'token' => 'test_token',
 				'expired' => false,
-				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'authMethod' => Application::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => false,
 				'expected' => '',
 				'userId' => null,
@@ -4749,7 +4749,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has expired oauth token' => [
 				'token' => 'test_token',
 				'expired' => true,
-				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'authMethod' => Application::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => false,
 				'expected' => 'new_token',
 				'userId' => 'testUser',
@@ -4757,7 +4757,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has expired oauth token and refresh fails' => [
 				'token' => 'test_token',
 				'expired' => true,
-				'authMethod' => SettingsService::AUTH_METHOD_OAUTH,
+				'authMethod' => Application::AUTH_METHOD_OAUTH,
 				'tokenRefreshFailed' => true,
 				'expected' => null,
 				'userId' => 'testUser',
@@ -4765,7 +4765,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has oidc token' => [
 				'token' => 'test_token',
 				'expired' => false,
-				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
+				'authMethod' => Application::AUTH_METHOD_OIDC,
 				'tokenRefreshFailed' => false,
 				'expected' => 'test_token',
 				'userId' => 'testUser',
@@ -4773,7 +4773,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'has expired oidc token' => [
 				'token' => 'test_token',
 				'expired' => true,
-				'authMethod' => SettingsService::AUTH_METHOD_OIDC,
+				'authMethod' => Application::AUTH_METHOD_OIDC,
 				'tokenRefreshFailed' => false,
 				'expected' => 'new_token',
 				'userId' => 'testUser',
@@ -4825,7 +4825,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->willReturn($expired);
 		}
 
-		if ($token && $expired && $authMethod === SettingsService::AUTH_METHOD_OIDC) {
+		if ($token && $expired && $authMethod === Application::AUTH_METHOD_OIDC) {
 			$configMock
 				->expects($this->exactly(2))
 				->method("deleteUserValue")
@@ -4837,7 +4837,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$configMock->expects($this->never())->method("deleteUserValue");
 		}
 
-		if ($token && $authMethod === SettingsService::AUTH_METHOD_OIDC && (!$expired || $expectedToken)) {
+		if ($token && $authMethod === Application::AUTH_METHOD_OIDC && (!$expired || $expectedToken)) {
 			$expectedTokenForInitUserInfo = $expired ? $expectedToken : $token;
 			$service->expects($this->once())
 				->method('initUserInfo')
@@ -4846,7 +4846,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			$service->expects($this->never())->method('initUserInfo');
 		}
 
-		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $expired) {
+		if ($authMethod === Application::AUTH_METHOD_OAUTH && $expired) {
 			if ($tokenRefreshFailed) {
 				$service->expects($this->once())
 					->method('requestOAuthAccessToken')
@@ -4883,7 +4883,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		} else {
 			$service->expects($this->never())->method('requestOAuthAccessToken');
 		}
-		if ($authMethod === SettingsService::AUTH_METHOD_OIDC && $expired) {
+		if ($authMethod === Application::AUTH_METHOD_OIDC && $expired) {
 			$service->expects($this->once())
 				->method('getOIDCToken')
 				->with($userId)
@@ -4920,7 +4920,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			'configure with Nextcloud Hub' => [
 				'hasOIDCBackend' => true,
 				'userBackend' => new \stdClass(),
-				'SSOProviderType' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				'SSOProviderType' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				'expected' => true,
 			],
 		];
@@ -4935,7 +4935,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock->method('getAppValue')->willReturn($SSOProviderType);
 
-		if ($SSOProviderType !== OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType !== Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			$this->classExistsMock->expects($this->once())->willReturn($hasOIDCBackend);
 		}
 
@@ -4972,7 +4972,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * Data provider for testIsUserOIDCAppSupported
 	 */
 	public function dataProviderForIsUserOIDCAppSupported(): array {
-		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION;
+		$supportedVersion = Application::MIN_SUPPORTED_USER_OIDC_APP_VERSION;
 		return [
 			'has installed supported user_oidc apps and all classes exist' => [
 				'appInstalledAndEnabled' => true,
@@ -5037,7 +5037,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 	 * Data provider for testIsOIDCAppSupported
 	 */
 	public function dataProviderForIsOIDCAppSupported(): array {
-		$supportedVersion = OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION;
+		$supportedVersion = Application::MIN_SUPPORTED_OIDC_APP_VERSION;
 		return [
 			'supported app enabled' => [
 				'appEnabled' => true,

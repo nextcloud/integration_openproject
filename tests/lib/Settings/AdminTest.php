@@ -66,7 +66,7 @@ class AdminTest extends TestCase {
 			"complete oauth2 admin config with correct authorization_method" => [
 				"config" => [
 					"openproject_instance_url" => "http://op.local.test",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"openproject_client_id" => "openproject",
 					"openproject_client_secret" => "op-secret",
 				],
@@ -75,7 +75,7 @@ class AdminTest extends TestCase {
 			"complete oidc admin config" => [
 				"config" => [
 					"openproject_instance_url" => "http://op.local.test",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 				],
 				"setupWithOauth" => false,
 			],
@@ -101,7 +101,7 @@ class AdminTest extends TestCase {
 		if (!$config['authorization_method'] && $setupWithOauth) {
 			$this->config->expects($this->once())
 				->method('setAppValue')
-				->with(Application::APP_ID, 'authorization_method', SettingsService::AUTH_METHOD_OAUTH);
+				->with(Application::APP_ID, 'authorization_method', Application::AUTH_METHOD_OAUTH);
 		} else {
 			$this->config->expects($this->never())->method('setAppValue');
 		}

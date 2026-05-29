@@ -33,7 +33,7 @@ class TokenEventFactory {
 
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)
-		if ($SSOProviderType === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			return new InternalTokenEvent($targetAudience, Application::OPENPROJECT_API_SCOPES, $targetAudience);
 		}
 
