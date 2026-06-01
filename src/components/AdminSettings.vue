@@ -28,125 +28,16 @@
 			:sso-providers="state.oidc_providers"
 			:apps="state.apps"
 			@formcomplete="markFormComplete" />
-		<div v-if="showOAuthSettings" class="openproject-oauth-values">
-			<FormHeading index="3"
-				:title="t('integration_openproject', 'OpenProject OAuth settings')"
-				:is-complete="isOPOAuthFormComplete"
-				:is-disabled="isOPOAuthFormInDisableMode"
-				:is-dark-theme="isDarkTheme" />
-			<div v-if="form.authenticationMethod.complete">
-				<FieldValue v-if="isOPOAuthFormInView"
-					is-required
-					:value="state.openproject_client_id"
-					title="OpenProject OAuth client ID" />
-				<TextInput v-else
-					id="openproject-oauth-client-id"
-					v-model="state.openproject_client_id"
-					class="py-1"
-					is-required
-					label="OpenProject OAuth client ID"
-					:hint-text="openProjectClientHint" />
-				<FieldValue v-if="isOPOAuthFormInView"
-					is-required
-					class="pb-1"
-					encrypt-value
-					title="OpenProject OAuth client secret"
-					:value="state.openproject_client_secret" />
-				<TextInput v-else
-					id="openproject-oauth-client-secret"
-					v-model="state.openproject_client_secret"
-					is-required
-					class="py-1"
-					label="OpenProject OAuth client secret"
-					:hint-text="openProjectClientHint" />
-				<div class="form-actions">
-					<NcButton v-if="isOPOAuthFormComplete && isOPOAuthFormInView"
-						data-test-id="reset-op-oauth-btn"
-						@click="resetOPOAuthClientValues">
-						<template #icon>
-							<AutoRenewIcon :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Replace OpenProject OAuth values') }}
-					</NcButton>
-					<NcButton v-else
-						data-test-id="submit-op-oauth-btn"
-						type="primary"
-						:disabled="!state.openproject_client_id || !state.openproject_client_secret"
-						@click="saveOPOAuthClientValues">
-						<template #icon>
-							<NcLoadingIcon v-if="loadingOPOauthForm" class="loading-spinner" :size="20" />
-							<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Save') }}
-					</NcButton>
-				</div>
-			</div>
-		</div>
-		<div v-if="showOAuthSettings" class="nextcloud-oauth-values">
-			<FormHeading index="4"
-				:title="t('integration_openproject', 'Nextcloud OAuth client')"
-				:is-complete="isNcOAuthFormComplete"
-				:is-disabled="isNcOAuthFormInDisableMode"
-				:is-dark-theme="isDarkTheme" />
-			<div v-if="state.nc_oauth_client">
-				<TextInput v-if="isNcOAuthFormInEdit"
-					id="nextcloud-oauth-client-id"
-					v-model="state.nc_oauth_client.nextcloud_client_id"
-					class="py-1"
-					read-only
-					is-required
-					with-copy-btn
-					label="Nextcloud OAuth client ID"
-					:hint-text="nextcloudClientHint" />
-				<FieldValue v-else
-					title="Nextcloud OAuth client ID"
-					:value="state.nc_oauth_client.nextcloud_client_id"
-					is-required />
-				<TextInput v-if="isNcOAuthFormInEdit"
-					id="nextcloud-oauth-client-secret"
-					v-model="state.nc_oauth_client.nextcloud_client_secret"
-					class="py-1"
-					read-only
-					is-required
-					with-copy-btn
-					label="Nextcloud OAuth client secret"
-					:hint-text="nextcloudClientHint" />
-				<FieldValue v-else
-					title="Nextcloud OAuth client secret"
-					is-required
-					encrypt-value
-					:value="ncClientSecret" />
-				<div class="form-actions">
-					<NcButton v-if="isNcOAuthFormInEdit"
-						type="primary"
-						:disabled="!ncClientId"
-						data-test-id="submit-nc-oauth-values-form-btn"
-						@click="setNCOAuthFormToViewMode">
-						<template #icon>
-							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Yes, I have copied these values') }}
-					</NcButton>
-					<NcButton v-else
-						data-test-id="reset-nc-oauth-btn"
-						@click="resetNcOauthValues">
-						<template #icon>
-							<AutoRenewIcon :size="20" />
-						</template>
-						{{ t('integration_openproject', 'Replace Nextcloud OAuth values') }}
-					</NcButton>
-				</div>
-			</div>
-			<div v-if="!state.nc_oauth_client && isOPOAuthFormComplete && isOPOAuthFormInView && showDefaultManagedProjectFolders">
-				<NcButton data-test-id="reset-nc-oauth-btn"
-					@click="resetNcOauthValues">
-					<template #icon>
-						<AutoRenewIcon :size="20" />
-					</template>
-					{{ t('integration_openproject', 'Create Nextcloud OAuth values') }}
-				</NcButton>
-			</div>
-		</div>
+		<FormOAuthSettings
+			v-if="isOAuthMethod"
+			:is-dark-theme="isDarkTheme"
+			:form-state="form"
+			:oauth-settings="{
+				openproject_client_id: state.openproject_client_id,
+				openproject_client_secret: state.openproject_client_secret,
+				nc_oauth_client: state.nc_oauth_client
+			}"
+			@formcomplete="markFormComplete" />
 		<div class="project-folder-setup">
 			<FormHeading :index="isOidcMethod ? '4' : '5'"
 				:is-project-folder-setup-heading="true"
@@ -301,7 +192,7 @@
 			</template>
 			{{ t('integration_openproject', 'Reset') }}
 		</NcButton>
-		<div v-if="isIntegrationCompleteWithOauth2 || isIntegrationCompleteWithOIDC" class="default-prefs">
+		<div v-if="isSetupComplete" class="default-prefs">
 			<h2>{{ t('integration_openproject', 'Default user settings') }}</h2>
 			<p>
 				{{ t('integration_openproject', 'A new user will receive these defaults and they will be applied to the integration app till the user changes them.') }}
@@ -357,6 +248,7 @@ import { appLinks } from '../constants/links.js'
 import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
 import FormAuthMethod from './admin/FormAuthMethod.vue'
 import FormSSOSettings from './admin/FormSSOSettings.vue'
+import FormOAuthSettings from './admin/FormOAuthSettings.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -379,6 +271,7 @@ export default {
 		FormOpenProjectHost,
 		FormAuthMethod,
 		FormSSOSettings,
+		FormOAuthSettings,
 	},
 	data() {
 		return {
@@ -386,13 +279,11 @@ export default {
 			formMode: {
 				// server host form is never disabled.
 				// it's either editable or view only
-				opOauth: F_MODES.DISABLE,
-				ncOauth: F_MODES.DISABLE,
 				opUserAppPassword: F_MODES.DISABLE,
 				projectFolderSetUp: F_MODES.DISABLE,
 			},
 			isFormCompleted: {
-				opOauth: false, ncOauth: false, opUserAppPassword: false, projectFolderSetUp: false,
+				opUserAppPassword: false, projectFolderSetUp: false,
 			},
 			buttonTextLabel: {
 				keepCurrentChange: t('integration_openproject', 'Keep current setup'),
@@ -401,10 +292,8 @@ export default {
 				retrySetupWithProjectFolder: t('integration_openproject', 'Retry setup OpenProject user, group and folder'),
 			},
 			loadingProjectFolderSetup: false,
-			loadingOPOauthForm: false,
 			state: loadState('integration_openproject', 'admin-settings-config'),
 			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
-			oPOAuthTokenRevokeStatus: null,
 			oPUserAppPassword: null,
 			isProjectFolderSwitchEnabled: null,
 			projectFolderSetupError: null,
@@ -437,13 +326,6 @@ export default {
 				|| this.state.openproject_client_secret
 			return formAdded || hasPreSEtup
 		},
-		ncClientId() {
-			return this.state.nc_oauth_client?.nextcloud_client_id
-		},
-		ncClientSecret() {
-			return '*******'
-
-		},
 		opUserAppPassword() {
 			return this.state.app_password_set
 		},
@@ -457,28 +339,13 @@ export default {
 			return this.form.authenticationMethod.complete
 		},
 		isAuthorizationSettingFormComplete() {
-			return this.form.ssoSettings.complete
-		},
-		isOPOAuthFormComplete() {
-			return this.isFormCompleted.opOauth
+			return (this.form.openprojectOauth.complete && this.form.nextcloudOauth.complete) || this.form.ssoSettings.complete
 		},
 		isManagedGroupFolderSetUpComplete() {
 			return this.isFormCompleted.projectFolderSetUp
 		},
 		isOPUserAppPasswordFormComplete() {
 			return this.isFormCompleted.opUserAppPassword
-		},
-		isNcOAuthFormComplete() {
-			return this.isFormCompleted.ncOauth
-		},
-		isOPOAuthFormInView() {
-			return this.formMode.opOauth === F_MODES.VIEW
-		},
-		isNcOAuthFormInEdit() {
-			return this.formMode.ncOauth === F_MODES.EDIT
-		},
-		isOPOAuthFormInDisableMode() {
-			return this.formMode.opOauth === F_MODES.DISABLE
 		},
 		isOPUserAppPasswordFormInEdit() {
 			return this.formMode.opUserAppPassword === F_MODES.EDIT
@@ -488,9 +355,6 @@ export default {
 		},
 		isProjectFolderFormInDisableMode() {
 			return this.formMode.projectFolderSetUp === F_MODES.DISABLE
-		},
-		isNcOAuthFormInDisableMode() {
-			return this.formMode.ncOauth === F_MODES.DISABLE
 		},
 		isOPUserAppPasswordInDisableMode() {
 			return this.formMode.opUserAppPassword === F_MODES.DISABLE
@@ -510,23 +374,10 @@ export default {
 		isOidcMethod() {
 			return this.getCurrentAuthMethod === AUTH_METHOD.OIDC
 		},
-		showOAuthSettings() {
-			return this.isOAuthMethod || !this.form.authenticationMethod.complete
-		},
 		adminFileStorageHref() {
 			const path = '%s/admin/settings/storages'
 			const host = this.form.serverHost.value
 			return util.format(path, host)
-		},
-		openProjectClientHint() {
-			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.', { htmlLink }, null, { escape: false, sanitize: false })
-		},
-		nextcloudClientHint() {
-			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
-			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		userAppPasswordHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
@@ -552,21 +403,12 @@ export default {
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		isIntegrationCompleteWithOauth2() {
+		isSetupComplete() {
 			return (this.isServerHostFormComplete
 				&& this.isAuthorizationMethodFormComplete
-				 && this.isOPOAuthFormComplete
-				 && this.isNcOAuthFormComplete
+				 && this.isAuthorizationSettingFormComplete
 				 && this.isManagedGroupFolderSetUpComplete
 				 && !this.isOPUserAppPasswordFormInEdit
-			)
-		},
-		isIntegrationCompleteWithOIDC() {
-			return (this.isServerHostFormComplete
-				&& this.isAuthorizationMethodFormComplete
-				&& this.isAuthorizationSettingFormComplete
-				&& this.isManagedGroupFolderSetUpComplete
-				&& !this.isOPUserAppPasswordFormInEdit
 			)
 		},
 		isSetupCompleteWithoutProjectFolders() {
@@ -603,7 +445,15 @@ export default {
 	},
 	watch: {
 		'form.ssoSettings.complete'() {
-			if (this.form.ssoSettings.complete && (!this.state.authorization_settings.sso_provider_type || this.formMode.projectFolderSetUp === F_MODES.DISABLE)) {
+			if (this.form.ssoSettings.complete && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
+				this.formMode.projectFolderSetUp = F_MODES.EDIT
+				this.showDefaultManagedProjectFolders = true
+				this.isProjectFolderSwitchEnabled = true
+				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
+			}
+		},
+		'form.nextcloudOauth.complete'() {
+			if (this.form.nextcloudOauth.complete && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
 				this.formMode.projectFolderSetUp = F_MODES.EDIT
 				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
@@ -636,30 +486,13 @@ export default {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
 				// for oauth2 authorization
-				if (this.state.openproject_instance_url
-					&& this.state.openproject_client_id
-					&& this.state.openproject_client_secret
-					&& this.state.nc_oauth_client
-				) {
+				if (this.state.openproject_instance_url && this.isAuthorizationSettingFormComplete) {
 					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.state.fresh_project_folder_setup === false) {
 					this.showDefaultManagedProjectFolders = true
 				}
-				if (!!this.state.openproject_client_id && !!this.state.openproject_client_secret) {
-					this.formMode.opOauth = F_MODES.VIEW
-					this.isFormCompleted.opOauth = true
-				}
-				if (this.state.authorization_method) {
-					if (!this.state.openproject_client_id && !this.state.openproject_client_secret) {
-						this.formMode.opOauth = F_MODES.EDIT
-					}
-				}
 
-				if (this.state.nc_oauth_client) {
-					this.formMode.ncOauth = F_MODES.VIEW
-					this.isFormCompleted.ncOauth = true
-				}
 				if (!this.state.nc_oauth_client
 					&& this.state.openproject_instance_url
 					&& this.state.openproject_client_id
@@ -668,9 +501,6 @@ export default {
 					this.showDefaultManagedProjectFolders = true
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.projectFolderSetUp = true
-				}
-				if (this.formMode.ncOauth === F_MODES.VIEW || this.form.ssoSettings.complete) {
-					this.showDefaultManagedProjectFolders = true
 				}
 				if (this.showDefaultManagedProjectFolders) {
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
@@ -700,16 +530,6 @@ export default {
 			this.isFormCompleted.projectFolderSetUp = true
 			this.formMode.projectFolderSetUp = F_MODES.VIEW
 			this.isProjectFolderSetupCorrect = true
-		},
-		async setNCOAuthFormToViewMode() {
-			this.formMode.ncOauth = F_MODES.VIEW
-			this.isFormCompleted.ncOauth = true
-			if (!this.isIntegrationCompleteWithOauth2 && this.formMode.projectFolderSetUp !== F_MODES.EDIT && this.formMode.opUserAppPassword !== F_MODES.EDIT) {
-				this.formMode.projectFolderSetUp = F_MODES.EDIT
-				this.showDefaultManagedProjectFolders = true
-				this.isProjectFolderSwitchEnabled = true
-				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
-			}
 		},
 		setOPUserAppPasswordToViewMode() {
 			this.formMode.opUserAppPassword = F_MODES.VIEW
@@ -762,48 +582,6 @@ export default {
 				this.projectFolderSetupError = null
 			}
 		},
-		async saveOPOAuthClientValues() {
-			this.isFormStep = FORM.OP_OAUTH
-			if (await this.saveOPOptions()) {
-				this.formMode.opOauth = F_MODES.VIEW
-				this.isFormCompleted.opOauth = true
-
-				// if we do not have Nextcloud OAuth client yet, a new client is created
-				if (!this.state.nc_oauth_client) {
-					this.createNCOAuthClient()
-				}
-			}
-		},
-		resetOPOAuthClientValues() {
-			OC.dialogs.confirmDestructive(
-				t('integration_openproject', 'If you proceed you will need to update these settings with the new OpenProject OAuth credentials. Also, all users will need to reauthorize access to their OpenProject account.'),
-				t('integration_openproject', 'Replace OpenProject OAuth values'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('integration_openproject', 'Yes, replace'),
-					confirmClasses: 'error',
-					cancel: t('integration_openproject', 'Cancel'),
-				},
-				async (result) => {
-					if (result) {
-						await this.clearOPOAuthClientValues()
-					}
-				},
-				true,
-			)
-		},
-		async clearOPOAuthClientValues() {
-			this.isFormStep = FORM.OP_OAUTH
-			this.formMode.opOauth = F_MODES.EDIT
-			this.isFormCompleted.opOauth = false
-			this.state.openproject_client_id = null
-			this.state.openproject_client_secret = null
-			const saved = await this.saveOPOptions()
-			if (!saved) {
-				this.formMode.opOauth = F_MODES.VIEW
-				this.isFormCompleted.opOauth = true
-			}
-		},
 		resetAllAppValuesConfirmation() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
@@ -828,9 +606,6 @@ export default {
 			// also, form completeness should be set to false
 
 			// reset form states to default
-			this.isFormCompleted.opOauth = false
-			this.formMode.opOauth = F_MODES.EDIT
-
 			this.state.default_enable_navigation = false
 			this.state.default_enable_unified_search = false
 			this.oPUserAppPassword = null
@@ -901,13 +676,11 @@ export default {
 					this.state.app_password_set = true
 					this.oPUserAppPassword = response?.data?.oPUserAppPassword
 				}
-				this.oPOAuthTokenRevokeStatus = response?.data?.oPOAuthTokenRevokeStatus
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 				success = true
 			} catch (error) {
 				console.error()
 				this.isAdminConfigOk = null
-				this.oPOAuthTokenRevokeStatus = null
 				if (error.response.data.error) {
 					this.projectFolderSetupError = error.response.data.error
 				}
@@ -915,7 +688,6 @@ export default {
 					t('integration_openproject', 'Failed to save OpenProject admin options'),
 				)
 			}
-			this.notifyAboutOPOAuthTokenRevoke()
 			return success
 		},
 		async checkIfProjectFolderIsAlreadyReadyForSetup() {
@@ -928,46 +700,6 @@ export default {
 				console.error(error)
 			}
 			return success
-		},
-		notifyAboutOPOAuthTokenRevoke() {
-			switch (this.oPOAuthTokenRevokeStatus) {
-			case 'connection_error':
-				showError(
-					t('integration_openproject', 'Failed to perform revoke request due to connection error with the OpenProject server'),
-				)
-				break
-			case 'other_error':
-				showError(
-					t('integration_openproject', 'Failed to revoke some users\' OpenProject OAuth access tokens'),
-				)
-				break
-			case 'success':
-				showSuccess(
-					t('integration_openproject', 'Successfully revoked users\' OpenProject OAuth access tokens'),
-				)
-				break
-			default:
-				break
-			}
-		},
-		resetNcOauthValues() {
-			OC.dialogs.confirmDestructive(
-				t('integration_openproject', 'If you proceed you will need to update the settings in your OpenProject with the new Nextcloud OAuth credentials. Also, all users in OpenProject will need to reauthorize access to their Nextcloud account.'),
-				t('integration_openproject', 'Replace Nextcloud OAuth values'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('integration_openproject', 'Yes, replace'),
-					confirmClasses: 'error',
-					cancel: t('integration_openproject', 'Cancel'),
-				},
-				async (result) => {
-					if (result) {
-						this.state.nc_oauth_client = null
-						this.createNCOAuthClient()
-					}
-				},
-				true,
-			)
 		},
 		async completeIntegrationWithoutProjectFolderSetUp() {
 			this.isFormStep = FORM.GROUP_FOLDER
@@ -1012,21 +744,6 @@ export default {
 			this.formMode.opUserAppPassword = F_MODES.EDIT
 			this.isFormCompleted.opUserAppPassword = false
 			await this.saveOPOptions()
-		},
-		createNCOAuthClient() {
-			const url = generateUrl('/apps/integration_openproject/nc-oauth')
-			axios.post(url).then((response) => {
-				this.state.nc_oauth_client = response.data
-				// generate part is complete but still the NC OAuth form is set to
-				// edit mode and not completed state so that copy buttons will be available for the user
-				this.formMode.ncOauth = F_MODES.EDIT
-				this.isFormCompleted.ncOauth = false
-			}).catch((error) => {
-				showError(
-					t('integration_openproject', 'Failed to create Nextcloud OAuth client')
-					+ ': ' + error.response.request.responseText,
-				)
-			})
 		},
 		setDefaultConfig() {
 			const url = generateUrl('/apps/integration_openproject/admin-config')
