@@ -485,24 +485,16 @@ export default {
 				} else {
 					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
 				}
-				// for oauth2 authorization
 				if (this.state.openproject_instance_url && this.isAuthorizationSettingFormComplete) {
 					this.showDefaultManagedProjectFolders = true
+					this.formMode.projectFolderSetUp = F_MODES.EDIT
 				}
 				if (this.state.fresh_project_folder_setup === false) {
 					this.showDefaultManagedProjectFolders = true
 				}
 
-				if (!this.state.nc_oauth_client
-					&& this.state.openproject_instance_url
-					&& this.state.openproject_client_id
-					&& this.state.openproject_client_secret
-				    && this.textLabelProjectFolderSetupButton === 'Keep current setup') {
+				if (this.textLabelProjectFolderSetupButton === 'Keep current setup') {
 					this.showDefaultManagedProjectFolders = true
-					this.formMode.projectFolderSetUp = F_MODES.VIEW
-					this.isFormCompleted.projectFolderSetUp = true
-				}
-				if (this.showDefaultManagedProjectFolders) {
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.projectFolderSetUp = true
 				}
