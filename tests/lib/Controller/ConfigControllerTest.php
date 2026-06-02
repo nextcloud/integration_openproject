@@ -273,16 +273,49 @@ class ConfigControllerTest extends TestCase {
 		$configMock = $this->getConfigMock(
 			str_repeat("A", 128), str_repeat("S", 50)
 		);
+
+		$calls = [
+			['testUser', 'integration_openproject', 'oauth_connection_result', 'error', null],
+			['testUser', 'integration_openproject', 'oauth_connection_error_message', 'Error during OAuth exchanges', null],
+		];
+
 		$configMock
-			->expects($this->exactly(2))
+			->expects($this->exactly(count($calls)))
 			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-				[
-					'testUser', 'integration_openproject', 'oauth_connection_error_message',
-					'Error during OAuth exchanges'
-				],
-			);
+			->willReturnCallback(function (...$args) use (&$calls) {
+				$expected = array_shift($calls);
+				$this->assertSame($expected, $args);
+			});
+
+
+		// $matcher = $this->exactly(count($this->parts));
+        // $calls = [
+        //     [
+        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[0]->getContentType(), $this->parts[0]->getPath(), $this->parts[0]->getName(), $this->boundary],
+        //         'return' => new Result(true, ''),
+        //     ],
+        //     [
+        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[1]->getContentType(), $this->parts[1]->getPath(), $this->parts[1]->getName(), $this->boundary],
+        //         'return' => new Result(true, ''),
+        //     ],
+        //     [
+        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[2]->getContentType(), $this->parts[2]->getPath(), $this->parts[2]->getName(), $this->boundary],
+        //         'return' => new Result($success, $success ? '' : $this->message),
+        //     ]
+        // ];
+        // $this->client
+        //     ->expects($matcher)
+        //     ->method('withMultipartFileV2')
+        //     ->willReturnCallback(
+        //         function (...$args) use ($calls, $matcher) {
+        //             $index = $matcher->numberOfInvocations() - 1;
+        //             $call = $calls[$index];
+        //             $this->assertSame($call['args'], $args);
+
+        //             return $call['return'];
+        //         }
+        //     );
+
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
