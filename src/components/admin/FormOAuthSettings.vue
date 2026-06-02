@@ -226,9 +226,13 @@ export default {
 		disableOpenProjectFormSave() {
 			return !this.currentOpenProjectForm.clientId || !this.currentOpenProjectForm.clientSecret
 		},
+		openprojectAdminFileStoragesURL() {
+			const host = (this.formState.serverHost.value || '').replace(/\/$/, '')
+			return host + '/admin/settings/storages'
+		},
 		openProjectClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="${this.openprojectAdminFileStoragesURL}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t(
 				'integration_openproject',
 				'Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here.',
@@ -254,7 +258,7 @@ export default {
 		},
 		nextcloudClientHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="${this.openprojectAdminFileStoragesURL}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Copy the following values back into the OpenProject {htmlLink} as an Administrator.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 	},
@@ -339,6 +343,7 @@ export default {
 			}
 		},
 		async saveOpenProjectClient() {
+			this.loading = true
 			try {
 				const response = await saveAdminConfig({
 					openproject_client_id: this.currentOpenProjectForm.clientId,
@@ -361,6 +366,7 @@ export default {
 				showError(message + ': ' + errorMessage)
 			}
 			this.notifyOpenProjectTokenRevoke()
+			this.loading = false
 		},
 		resetOpenProjectClient() {
 			OC.dialogs.confirmDestructive(
