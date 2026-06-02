@@ -10,11 +10,11 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "33 master"
+        default: '33 34 master'
       php_versions:
         required: false
         type: string
-        default: "8.2 8.3 8.4"
+        default: '8.2 8.3 8.4'
 
 name: CI
 
@@ -66,7 +66,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./coverage/jest/lcov.info
           delete-old-comments: true
-          title: "JS Code Coverage"
+          title: 'JS Code Coverage'
 
       - name: JS coverage check
         if: ${{ github.event_name == 'pull_request' }}
@@ -93,9 +93,9 @@ jobs:
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
           PHP_VERSIONS: ${{ inputs.php_versions }}
-          DEFAULT_PHP_VERSION: "8.3"
-          DEFAULT_DATABASE: "mysql"
-          EXTRA_DATABASES: "pgsql"
+          DEFAULT_PHP_VERSION: '8.3'
+          DEFAULT_DATABASE: 'mysql'
+          EXTRA_DATABASES: 'pgsql'
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
@@ -120,8 +120,8 @@ jobs:
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "Yes"
-          WITH_REDIS: "YES"
+          NEXTCLOUD_AUTOINSTALL: 'Yes'
+          WITH_REDIS: 'YES'
         ports:
           - 80:80
         options: --name=nextcloud
@@ -290,7 +290,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: 'integration_openproject/server/apps/integration_openproject/coverage/php/lcov.info'
           delete-old-comments: true
-          title: "PHP Code Coverage"
+          title: 'PHP Code Coverage'
 
       - name: PHP coverage check
         if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'master' && matrix.phpVersion == '8.2' }}
@@ -326,4 +326,5 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://localhost
+          BEHAT_FILTER_TAGS: '~@skip-${{ matrix.nextcloudVersion }}'
         run: make api-test
