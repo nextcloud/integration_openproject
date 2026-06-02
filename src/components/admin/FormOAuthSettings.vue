@@ -12,7 +12,7 @@
 				:is-complete="isOpenProjectFormComplete"
 				:is-disabled="!showOpenProjectForm"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="showOpenProjectForm">
+			<div v-if="showOpenProjectForm" class="oauth-settings--openproject">
 				<FieldValue
 					v-if="isOpenProjectFormInViewMode"
 					is-required
@@ -73,14 +73,14 @@
 				:is-complete="isNextcloudFormComplete"
 				:is-disabled="!showNextcloudForm"
 				:is-dark-theme="isDarkTheme" />
-			<div v-if="showNextcloudForm">
+			<div v-if="showNextcloudForm" class="oauth-settings--nextcloud">
 				<FieldValue
 					v-if="isNextcloudFormInViewMode"
 					title="Nextcloud OAuth client ID"
 					:value="savedNextcloudForm.clientId"
 					is-required />
 				<TextInput
-					v-else
+					v-else-if="isNextcloudFormComplete"
 					id="nextcloud-oauth-client-id"
 					v-model="savedNextcloudForm.clientId"
 					class="py-1"
@@ -96,7 +96,7 @@
 					encrypt-value
 					value="***" />
 				<TextInput
-					v-else
+					v-else-if="isNextcloudFormComplete"
 					id="nextcloud-oauth-client-secret"
 					v-model="savedNextcloudForm.clientSecret"
 					class="py-1"
@@ -110,7 +110,9 @@
 						v-if="
 							!isNextcloudFormComplete
 								&& isOpenProjectFormComplete
-								&& isOpenProjectFormInViewMode">
+								&& isOpenProjectFormInViewMode"
+						data-test-id="create-nc-oauth-btn"
+						@click="createNextcloudClient">
 						<template #icon>
 							<AutoRenewIcon :size="20" />
 						</template>
@@ -129,7 +131,7 @@
 						v-else
 						type="primary"
 						:disabled="disableNextcloudFormSave"
-						data-test-id="submit-nc-oauth-values-form-btn"
+						data-test-id="submit-nc-oauth-btn"
 						@click="setNextcloudFromToViewMode">
 						<template #icon>
 							<CheckBoldIcon fill-color="#FFFFFF" :size="20" />
@@ -150,7 +152,7 @@ import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import FieldValue from './FieldValue.vue'
 import FormHeading from './FormHeading.vue'
 import TextInput from './TextInput.vue'
-import { F_MODES, ADMIN_SETTINGS_FORM } from '../../utils.js'
+import { F_MODES, ADMIN_SETTINGS_FORM, AUTH_METHOD } from '../../utils.js'
 import { saveAdminConfig, createNextcloudOAuthClient } from '../../api/settings.js'
 import { messages, messagesFmt } from '../../constants/messages.js'
 
@@ -219,6 +221,7 @@ export default {
 		},
 		showOpenProjectForm() {
 			return this.formState.authenticationMethod.complete
+				&& this.formState.authenticationMethod.value === AUTH_METHOD.OAUTH2
 		},
 		disableOpenProjectFormSave() {
 			return !this.currentOpenProjectForm.clientId || !this.currentOpenProjectForm.clientSecret
