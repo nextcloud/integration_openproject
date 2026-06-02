@@ -14,6 +14,6 @@ export function saveAdminConfig(configs) {
 	return axios.put(endpoints.adminConfig, { values: configs })
 }
 
-export function createNextcloudOAuthClient(configs) {
+export function createNextcloudOAuthClient() {
 	return axios.post(endpoints.nextcloudOAuth)
 }
