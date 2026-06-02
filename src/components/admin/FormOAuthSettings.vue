@@ -335,7 +335,7 @@ export default {
 				this.setNextcloudFormToEditMode()
 			} catch (error) {
 				const errorMessage = t('integration_openproject', 'Failed to create Nextcloud OAuth client')
-				showError(errorMessage + ': ' + error?.response?.request?.responseText)
+				showError(errorMessage + ': ' + error?.response?.statusText)
 			}
 		},
 		async saveOpenProjectClient() {
@@ -357,8 +357,8 @@ export default {
 			} catch (error) {
 				this.openprojectTokenRevokeStatus = null
 				const errorMessage = error?.response?.data?.error || error?.message
-				console.error(errorMessage)
-				showError(t('integration_openproject', 'Failed to save OpenProject admin options'))
+				const message = t('integration_openproject', 'Failed to save OpenProject admin options')
+				showError(message + ': ' + errorMessage)
 			}
 			this.notifyOpenProjectTokenRevoke()
 		},
