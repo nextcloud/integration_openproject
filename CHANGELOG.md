@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix: Wrong message "Unauthorized to connect to OpenProject" shown with valid SSO connection [#1018](https://github.com/nextcloud/integration_openproject/pull/1018)
-
 ### Added
 
 ### Changed

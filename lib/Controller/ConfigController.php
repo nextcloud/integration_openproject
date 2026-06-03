@@ -155,7 +155,7 @@ class ConfigController extends Controller {
 
 		if (isset($values['token'])) {
 			if ($values['token']) {
-				$result = $this->openprojectAPIService->initUserInfo($this->userId, $values['token']);
+				$result = $this->openprojectAPIService->initUserInfo($this->userId);
 			} else {
 				$this->clearUserInfo();
 				$result = [
@@ -536,7 +536,7 @@ class ConfigController extends Controller {
 			);
 			if (isset($result['access_token']) && isset($result['refresh_token'])) {
 				// set user info
-				$userInfo = $this->openprojectAPIService->initUserInfo($this->userId, $result['access_token']);
+				$userInfo = $this->openprojectAPIService->initUserInfo($this->userId);
 				if (isset($userInfo['user_name'])) {
 					$this->config->setUserValue(
 						$this->userId, Application::APP_ID, 'oauth_connection_result', 'success'
