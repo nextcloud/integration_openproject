@@ -36,8 +36,7 @@ jobs:
           ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
           ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
           BRANCH_NAME: release/2.11
           NEEDS_JSON: ${{ toJson(needs) }}

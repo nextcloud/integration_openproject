@@ -14,13 +14,13 @@ jobs:
     uses: ./.github/workflows/shared_workflow.yml
     secrets: inherit
     with:
-      branch: release/3.0
+      branch: release/3.1
       nextcloud_versions: "33"
 
   app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml
     with:
-      branch: release/3.0
+      branch: release/3.1
       nextcloud_versions: "33"
 
   notify-nightly-report:
@@ -36,10 +36,9 @@ jobs:
           ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
           ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: release/3.0
+          BRANCH_NAME: release/3.1
           NEEDS_JSON: ${{ toJson(needs) }}
         run: |
           ./.github/scripts/notify-to-element.sh

@@ -21,8 +21,7 @@ required_vars=(
 	ELEMENT_CHAT_URL
 	ELEMENT_ROOM_ID
 	NIGHTLY_CI_USER_TOKEN
-	REPO_OWNER
-	REPO_NAME
+  GITHUB_REPOSITORY
 	RUN_ID
 	BRANCH_NAME
 	NEEDS_JSON
@@ -36,8 +35,7 @@ for var in "${required_vars[@]}"; do
     log_info "- ELEMENT_CHAT_URL       : URL of the Element chat (e.g. https://matrix.element.io)"
     log_info "- ELEMENT_ROOM_ID        : Matrix room ID (e.g. abcdefg:matrix.element.io)"
     log_info "- NIGHTLY_CI_USER_TOKEN  : Access token for sending messages (e.g. "sometoken")"
-    log_info "- REPO_OWNER             : Repository owner (e.g. nextcloud)"
-    log_info "- REPO_NAME              : Repository name (e.g. server)"
+    log_info "- GITHUB_REPOSITORY      : GitHub repository (e.g. nextcloud/server)"
     log_info "- RUN_ID                 : GitHub Actions run ID (e.g. 26520692643)"
     log_info "- BRANCH_NAME            : Branch name (e.g. master)"
     log_info "- NEEDS_JSON             : JSON string containing job results"
@@ -71,7 +69,7 @@ payload=$(cat <<EOF
   "msgtype": "m.text",
   "body": "",
   "format": "org.matrix.custom.html",
-  "formatted_body": "<a href=\"https://github.com/${REPO_OWNER}/${REPO_NAME}/actions/runs/${RUN_ID}\">NC-Nightly-${BRANCH_NAME}</a><br></br><b>Status: ${workflow_status}</b>"
+  "formatted_body": "<a href=\"https://github.com/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}\">NC-Nightly-${BRANCH_NAME}</a><br></br><b>Status: ${workflow_status}</b>"
 }
 EOF
 )
