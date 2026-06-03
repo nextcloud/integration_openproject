@@ -67,7 +67,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 ### A3. Add File storage (Nextcloud) to an OpenProject project
 
 - [ ] Complete step [Test No A1](#a1-oauth-configuration).
-- [ ] As a user `admin`, select any `OpenProject` Project (for example, `Demo Project`) in `OpenProject`.
+- [ ] In `Openproject`, as a user `admin`, select any `OpenProject` Project (for example, `Demo Project`) in `OpenProject`.
 - [ ] Navigate to `Project settings > Files` of `Demo Project`.
 - [ ] Add a file storage name `Nextcloud`( choose `No specific Folder` option ) for `Demo Project`.
 
@@ -75,7 +75,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 
 - [ ] Complete step [Test No A1](#a1-oauth-configuration).
 - [ ] Complete step [Test No A3](#a3-add-file-storage-nextcloud-to-an-openproject-project).
-- [ ] As a user `admin`, navigate to `Demo Project > Work Packages` and open any work package by clicking its ID.
+- [ ] In `Openproject`, as a user `admin`, navigate to `Demo Project > Work Packages` and open any work package by clicking its ID.
 - [ ] Navigate to `Files` tab, and login to `Nextcloud`.
 - [ ] `OpenProject` admin is connected to `Nextcloud` as a `Nextcloud` admin.
 - [ ] Add the created `OpenProject` user as the member of `Demo Project` project (admin can add members to a project).
@@ -396,6 +396,7 @@ bash integration_oidc_setup.sh
 - [ ] Run the script again after it is already setup (Should not give any error).
 
 ## Common Smoke Test Steps
+> **Note**: For SSO setup, run smoke tests 1-5 as a connected user.
 
 ### 1. Link/Unlink a work package for a file/folder in nextcloud
 - [ ] Select a file, navigate to sidebar `OpenProject` tab.
@@ -408,15 +409,14 @@ bash integration_oidc_setup.sh
 - [ ] Unlink a work package and it should be deleted from the `OpenProject` Tab with a successful message.
 
 ### 2. Link/Unlink a work package for a file/folder from OpenProject
-
-- [ ] In OpenProject, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
+- [ ] In `OpenProject`, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, click `link existing files`, select available files (for example, welcome.txt) from Nextcloud and link it to the work package.
 - [ ] Selected file is linked to the work package in `OpenProject`.
 - [ ] Also Navigate to nextcloud and see in the `OpenProject` tab for file (welcome.txt), the work package should be linked.
 
 ### 3. Direct upload file/folder from OpenProject to Nextcloud
 
-- [ ] In OpenProject, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
+- [ ] In `OpenProject`, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, click `Upload files`, select available files from your local system (for example, local.txt) and upload choosing the upload location.
 - [ ] Uploaded file is linked to the work package in `OpenProject`.
 - [ ] Also Navigate to `Nextcloud` and see in the `OpenProject` tab for file (local.txt), the work package should be linked.
@@ -431,10 +431,8 @@ bash integration_oidc_setup.sh
 ### 5. Check notification in `OpenProject` widget in Nextcloud
 
 > Make sure your `OpenProject` is running along with `worker` instance
-> Note: To see notifications on the Nextcloud dashboard, open `Customize` and enable `integration_openproject`.
 
-- [ ] Create a separate user in both `Nextcloud` as well as `OpenProject`.
-- [ ] Connect `Nextcloud` user to `OpenProject` user and vice-versa (`OpenProject` user to `Nextcloud` user).
+- [ ] In `Nextcloud` dashboard, open `Customize` and enable `integration_openproject` to view notifications.
 - [ ] Now as an `OpenProject` admin, assign any of the `Demo Project` work packages to the created `OpenProject` user.
 - [ ] The `Nextcloud` user should receive a notification regarding the assignment.
 
