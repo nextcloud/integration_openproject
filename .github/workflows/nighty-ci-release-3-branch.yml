@@ -15,4 +15,4 @@ jobs:
     secrets: inherit
     with:
       branch: release/3.0
-      nextcloud_versions: '33 34'
+      nextcloud_versions: "33"
