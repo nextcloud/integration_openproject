@@ -34,7 +34,7 @@ jobs:
           ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
           ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          BRANCH_NAME: ${{ github.base_ref }}
+          BRANCH_NAME: master
           NEEDS_JSON: ${{ toJson(needs) }}
         run: |
           ./.github/scripts/notify-to-element.sh
