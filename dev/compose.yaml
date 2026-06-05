@@ -164,7 +164,7 @@ services:
       traefik.http.routers.openproject.entrypoints: websecure
 
   keycloak-db:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
     networks:
       - nc-op
@@ -185,7 +185,7 @@ services:
       context: ./keycloak
       args:
         IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
-        IMAGE_TAG: ${KC_IMAGE_TAG:-26.2}
+        IMAGE_TAG: ${KC_IMAGE_TAG:-26}
     restart: unless-stopped
     command: ['--proxy-headers', 'xforwarded', '--spi-connections-http-client-default-disable-trust-manager=true']
     environment:
