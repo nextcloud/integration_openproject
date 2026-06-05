@@ -69,13 +69,14 @@ services:
   # DO NOT RENAME THIS SERVICE
   # The service name 'database-pgsql' is used by the nextcloud container internally
   database-pgsql:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
     environment:
       POSTGRES_DB: nextcloud
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGUSER: postgres
+      PGDATA: /var/lib/postgresql/data
     volumes:
       - ncdb:/var/lib/postgresql/data
     networks:
@@ -96,10 +97,10 @@ services:
       SQL: pgsql
       PROTOCOL: https
       VIRTUAL_HOST: nextcloud.local
-      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
+      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable32}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
-      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders user_oidc
+      NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc ${NEXTCLOUD_AUTOINSTALL_APPS:-}
       NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
