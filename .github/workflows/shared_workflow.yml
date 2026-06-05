@@ -328,25 +328,3 @@ jobs:
           NEXTCLOUD_BASE_URL: http://localhost
           BEHAT_FILTER_TAGS: '~@skip-${{ matrix.nextcloudVersion }}'
         run: make api-test
-
-  notify-nightly-report:
-    needs:
-      - js-lint-unit
-      - api-phpunit-tests
-    if: ${{ always() && github.event_name == 'schedule' }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-
-      - name: Notify nightly report to element
-        env:
-          ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
-          ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
-          NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: nextcloud
-          REPO_NAME: integration_openproject
-          RUN_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ inputs.branch }}
-        run: ./.github/scripts/notify-to-element.sh
