@@ -129,7 +129,7 @@ services:
       traefik.http.routers.nextcloud.entrypoints: websecure
 
   openproject:
-    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-16}
+    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-17}
     restart: unless-stopped
     entrypoint: bash
     command: /openproject.sh
@@ -144,6 +144,10 @@ services:
       OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: true
       OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
       OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
+      OPENPROJECT_DISABLE__SECRET_KEY_BASE__CHECK: true
+      OPENPROJECT_SSRF_PROTECTION_IP_ALLOWLIST: '0.0.0.0/0,::0/0'
+      OPENPROJECT_DEFAULT__LANGUAGE: en
+      OPENPROJECT_ONBOARDING__ENABLED: false
     volumes:
       - ./openproject.sh:/openproject.sh
       - opdata:/var/openproject/assets
@@ -182,7 +186,7 @@ services:
         IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
         IMAGE_TAG: ${KC_IMAGE_TAG:-26.2}
     restart: unless-stopped
-    command: ["--proxy-headers", "xforwarded", "--spi-connections-http-client-default-disable-trust-manager=true"]
+    command: ['--proxy-headers', 'xforwarded', '--spi-connections-http-client-default-disable-trust-manager=true']
     environment:
       KC_DB: postgres
       KC_DB_USERNAME: keycloak
