@@ -74,31 +74,39 @@ if [ -n "$LATEST_STABLE_NC_VERSION" ]; then
     latestStableNCVersion="$LATEST_STABLE_NC_VERSION"
     # add stable branch prefix for stable versions
     # e.g. 30 -> stable30
-    if [[ "$latestStableNCVersion" =~ ^[0-9]+$ ]]; then
+    if [[ "$latestStableNCVersion" =~ ^[0-9]{1,3}$ ]]; then
         latestStableNCVersion="stable$latestStableNCVersion"
     fi
 else
-    # determine latest stable version from the list
-    # this only takes into account the major version number and stable branches
-    # e.g. 30, stable30
-    for ncVersion in $nextcloudVersions; do
-        # parse the major version number from stable branch
-        # e.g. stable30 -> 30
-        if [[ "$ncVersion" =~ ^stable[0-9]+$ ]]; then
-            ncVersion=${ncVersion//stable/}
+    if [ $(echo "$nextcloudVersions" | wc -w) -eq 1 ]; then
+        latestStableNCVersion="$nextcloudVersions"
+        if [[ "$latestStableNCVersion" =~ ^[0-9]{1,3}$ ]]; then
+            # 33 -> stable33 (actual branch name)
+            latestStableNCVersion="stable$latestStableNCVersion"
         fi
-        if ! [[ "$ncVersion" =~ ^[0-9]+$ ]]; then
-            continue
-        fi
-        if [ -z "$latestStableNCVersion" ]; then
-            latestStableNCVersion=$ncVersion
-            continue
-        fi
-        if [ "$ncVersion" -gt "$latestStableNCVersion" ]; then
-            latestStableNCVersion=$ncVersion
-        fi
-    done
-    latestStableNCVersion="stable$latestStableNCVersion"
+    else
+        # determine latest stable version from the list
+        # this only takes into account the major version number and stable branches
+        # e.g. 30, stable30
+        for ncVersion in $nextcloudVersions; do
+            # parse the major version number from stable branch
+            # e.g. stable30 -> 30
+            if [[ "$ncVersion" =~ ^stable[0-9]+$ ]]; then
+                ncVersion=${ncVersion//stable/}
+            fi
+            if ! [[ "$ncVersion" =~ ^[0-9]{1,3}$ ]]; then
+                continue
+            fi
+            if [ -z "$latestStableNCVersion" ]; then
+                latestStableNCVersion=$ncVersion
+                continue
+            fi
+            if [ "$ncVersion" -gt "$latestStableNCVersion" ]; then
+                latestStableNCVersion=$ncVersion
+            fi
+        done
+        latestStableNCVersion="stable$latestStableNCVersion"
+    fi
 fi
 
 MATRIX=""
