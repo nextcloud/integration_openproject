@@ -32,7 +32,13 @@
    cd dev
    ```
 
-3. Start the services
+3. Copy the `.env` file from the example and add the configuration values
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Start the services
 
    ```bash
    docker compose up
@@ -46,7 +52,7 @@
    > cp compose.override.yaml.example compose.override.yaml
    > ```
 
-4. Once the services are up, add the certificates to the system and browser trust store
+5. Once the services are up, add the certificates to the system and browser trust store
 
    ```bash
    bash ./ssl.sh
@@ -54,7 +60,7 @@
 
    **NOTE:** Restart the browser after adding the certificates to the trust store.
 
-5. Access the services:
+6. Access the services:
 
    Nextcloud: [nextcloud.local](https://nextcloud.local)
 
