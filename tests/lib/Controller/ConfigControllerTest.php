@@ -45,6 +45,44 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
+	 * @param MockObject $mock The mock object on which the method is expected to be called
+	 * @param string $method The method name for which the expectations are set
+	 * @param array $calls An array of expected argument arrays for each call
+	 */
+	private function expectMethodCalls(
+		$mock,
+		string $method,
+		array $calls
+	): void {
+		$mock->expects($this->exactly(count($calls)))
+			->method($method)
+			->willReturnCallback(function (...$args) use (&$calls) {
+				$expected = array_shift($calls);
+				$this->assertSame($expected, $args);
+			});
+	}
+
+
+	/**
+	 * Helper function to set expectations for multiple calls to methods with different arguments
+	 * @param MockObject $mock The mock object on which the method is expected to be called
+	 * @param string $method The method name for which the expectations are set
+	 * @param array $calls An array of expected argument arrays for each call
+	 */
+	private function expectMethodReturn(
+		$mock,
+		string $method,
+		array $calls
+	): void {
+		$mock->method($method)
+			->willReturnCallback(function (...$args) use (&$calls) {
+				[$expectedArgs, $returnValue] = array_shift($calls);
+				$this->assertSame($expectedArgs, $args);
+				return $returnValue;
+			});
+	}
+
+	/**
 	 * @param string $codeVerifier The string that should be used as code_verifier
 	 * @param string $clientSecret The string that should be used as openproject_client_secret
 	 * @param string $startingPage JSON encoded string that defines the start of the OAuth journey
@@ -54,17 +92,25 @@ class ConfigControllerTest extends TestCase {
 		$codeVerifier, $clientSecret, $startingPage = '{ page: "files" }'
 	) {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
-		$configMock
-			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'openproject_client_id'],
-				['integration_openproject', 'openproject_client_secret'],
-			)->willReturnOnConsecutiveCalls(
-				'clientID', $clientSecret, 'http://openproject.org', 'clientID', 'clientSecret',
-			);
+		// $configMock
+		// 	->method('getAppValue')
+		// 	->withConsecutive(
+		// 		['integration_openproject', 'openproject_client_id'],
+		// 		['integration_openproject', 'openproject_client_secret'],
+		// 		['integration_openproject', 'openproject_instance_url'],
+		// 		['integration_openproject', 'openproject_client_id'],
+		// 		['integration_openproject', 'openproject_client_secret'],
+		// 	)->willReturnOnConsecutiveCalls(
+		// 		'clientID', $clientSecret, 'http://openproject.org', 'clientID', 'clientSecret',
+		// 	);
+		$this->expectMethodReturn($configMock, 'getAppValue', [
+			[['integration_openproject', 'openproject_client_id', ''], 'clientID'],
+			[['integration_openproject', 'openproject_client_secret', ''], $clientSecret],
+			[['integration_openproject', 'openproject_instance_url', ''], 'http://openproject.org'],
+			[['integration_openproject', 'authorization_method', ''], OpenProjectAPIService::AUTH_METHOD_OAUTH],
+			[['integration_openproject', 'openproject_client_id', ''], 'clientID'],
+			[['integration_openproject', 'openproject_client_secret', ''], 'clientSecret'],
+		]);
 		$configMock
 			->method('getUserValue')
 			->withConsecutive(
@@ -79,6 +125,12 @@ class ConfigControllerTest extends TestCase {
 				$startingPage,
 				'oAuthRefreshToken',
 			);
+		// $this->expectMethodReturn($configMock, 'getUserValue', [
+		// 	[['testUser', 'integration_openproject', 'oauth_state'], 'randomString'],
+		// 	[['testUser', 'integration_openproject', 'code_verifier'], $codeVerifier],
+		// 	[['testUser', 'integration_openproject', 'oauth_journey_starting_page'], $startingPage],
+		// 	[['testUser', 'integration_openproject', 'refresh_token'], 'oAuthRefreshToken'],
+		// ]);
 		return $configMock;
 	}
 
@@ -166,13 +218,10 @@ class ConfigControllerTest extends TestCase {
 			str_repeat("A", 128), str_repeat("S", 50));
 		$configMock
 			->method('setUserValue')
-			->withConsecutive(
-				['testUser', 'integration_openproject', 'token', 'oAuthAccessToken'],
-				['testUser', 'integration_openproject', 'refresh_token', 'oAuthRefreshToken'],
-				['testUser', 'integration_openproject', 'user_id', 1],
-				['testUser', 'integration_openproject', 'user_name', 'Tripathi Himal'],
-				['testUser', 'integration_openproject', 'oauth_connection_result', 'success'],
+			->with(
+				'testUser', 'integration_openproject', 'oauth_connection_result', 'success'
 			);
+
 		$urlGeneratorMock = $this->getMockBuilder(IURLGenerator::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -185,12 +234,12 @@ class ConfigControllerTest extends TestCase {
 			->getMock();
 
 		$apiServiceMock
-			->method('request')
+			->method('initUserInfo')
 			->with(
 				'testUser',
-				'users/me'
+				'oAuthAccessToken'
 			)
-			->willReturn(['lastName' => 'Himal', 'firstName' => 'Tripathi', 'id' => 1]);
+			->willReturn(['user_name' => 'Tripathi Himal']);
 
 		$apiServiceMock
 			->method('requestOAuthAccessToken')
@@ -274,48 +323,10 @@ class ConfigControllerTest extends TestCase {
 			str_repeat("A", 128), str_repeat("S", 50)
 		);
 
-		$calls = [
+		$this->expectMethodCalls($configMock, 'setUserValue', [
 			['testUser', 'integration_openproject', 'oauth_connection_result', 'error', null],
 			['testUser', 'integration_openproject', 'oauth_connection_error_message', 'Error during OAuth exchanges', null],
-		];
-
-		$configMock
-			->expects($this->exactly(count($calls)))
-			->method('setUserValue')
-			->willReturnCallback(function (...$args) use (&$calls) {
-				$expected = array_shift($calls);
-				$this->assertSame($expected, $args);
-			});
-
-
-		// $matcher = $this->exactly(count($this->parts));
-        // $calls = [
-        //     [
-        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[0]->getContentType(), $this->parts[0]->getPath(), $this->parts[0]->getName(), $this->boundary],
-        //         'return' => new Result(true, ''),
-        //     ],
-        //     [
-        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[1]->getContentType(), $this->parts[1]->getPath(), $this->parts[1]->getName(), $this->boundary],
-        //         'return' => new Result(true, ''),
-        //     ],
-        //     [
-        //         'args' => [$this->interactionHandle, $this->requestPartId, $this->parts[2]->getContentType(), $this->parts[2]->getPath(), $this->parts[2]->getName(), $this->boundary],
-        //         'return' => new Result($success, $success ? '' : $this->message),
-        //     ]
-        // ];
-        // $this->client
-        //     ->expects($matcher)
-        //     ->method('withMultipartFileV2')
-        //     ->willReturnCallback(
-        //         function (...$args) use ($calls, $matcher) {
-        //             $index = $matcher->numberOfInvocations() - 1;
-        //             $call = $calls[$index];
-        //             $this->assertSame($call['args'], $args);
-
-        //             return $call['return'];
-        //         }
-        //     );
-
+		]);
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
 			'config' => $configMock,
@@ -415,27 +426,32 @@ class ConfigControllerTest extends TestCase {
 			$loggerMock->expects($this->never())
 				->method('error');
 			// even the secret is valid, we get an error because the token request is not mocked
+			$calls = [
+				['testUser', 'integration_openproject', 'oauth_connection_result', 'error', null],
+				['testUser', 'integration_openproject', 'oauth_connection_error_message', 'Error getting OAuth access token', null],
+			];
 			$configMock->expects($this->exactly(2))
 				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error getting OAuth access token'
-					],
-				);
+				->willReturnCallback(function (...$args) use (&$calls) {
+					$expected = array_shift($calls);
+					$this->assertSame($expected, $args);
+				});
 		} else {
 			$loggerMock->expects($this->once())
 				->method('error');
+			$calls = [
+				['testUser', 'integration_openproject', 'oauth_connection_result', 'error', null],
+				[
+					'testUser', 'integration_openproject', 'oauth_connection_error_message',
+					'Error during OAuth exchanges', null
+				],
+			];
 			$configMock->expects($this->exactly(2))
 				->method('setUserValue')
-				->withConsecutive(
-					['testUser', 'integration_openproject', 'oauth_connection_result', 'error'],
-					[
-						'testUser', 'integration_openproject', 'oauth_connection_error_message',
-						'Error during OAuth exchanges'
-					],
-				);
+				->willReturnCallback(function (...$args) use (&$calls) {
+					$expected = array_shift($calls);
+					$this->assertSame($expected, $args);
+				});
 		}
 
 		$constructArgs = $this->getConfigControllerConstructArgs([
