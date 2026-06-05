@@ -30,6 +30,7 @@ compose.override.yaml
 dev/apps
 dev/certs
 dev/compose.override.yaml
+dev/.env
 
 # server files
 server/
