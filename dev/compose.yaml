@@ -69,13 +69,14 @@ services:
   # DO NOT RENAME THIS SERVICE
   # The service name 'database-pgsql' is used by the nextcloud container internally
   database-pgsql:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
     environment:
       POSTGRES_DB: nextcloud
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGUSER: postgres
+      PGDATA: /var/lib/postgresql/data
     volumes:
       - ncdb:/var/lib/postgresql/data
     networks:
@@ -96,10 +97,10 @@ services:
       SQL: pgsql
       PROTOCOL: https
       VIRTUAL_HOST: nextcloud.local
-      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
+      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable33}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
-      NEXTCLOUD_AUTOINSTALL_APPS: viewer oidc groupfolders user_oidc
+      NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc ${NEXTCLOUD_AUTOINSTALL_APPS:-}
       NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
@@ -129,7 +130,7 @@ services:
       traefik.http.routers.nextcloud.entrypoints: websecure
 
   openproject:
-    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-16}
+    image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-17}
     restart: unless-stopped
     entrypoint: bash
     command: /openproject.sh
@@ -144,6 +145,10 @@ services:
       OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: true
       OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
       OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
+      OPENPROJECT_DISABLE__SECRET_KEY_BASE__CHECK: true
+      OPENPROJECT_SSRF_PROTECTION_IP_ALLOWLIST: '0.0.0.0/0,::0/0'
+      OPENPROJECT_DEFAULT__LANGUAGE: en
+      OPENPROJECT_ONBOARDING__ENABLED: false
     volumes:
       - ./openproject.sh:/openproject.sh
       - opdata:/var/openproject/assets
@@ -159,7 +164,7 @@ services:
       traefik.http.routers.openproject.entrypoints: websecure
 
   keycloak-db:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
     networks:
       - nc-op
@@ -180,9 +185,9 @@ services:
       context: ./keycloak
       args:
         IMAGE_REPO: ${KC_IMAGE_REPO:-quay.io/keycloak/keycloak}
-        IMAGE_TAG: ${KC_IMAGE_TAG:-26.2}
+        IMAGE_TAG: ${KC_IMAGE_TAG:-26}
     restart: unless-stopped
-    command: ["--proxy-headers", "xforwarded", "--spi-connections-http-client-default-disable-trust-manager=true"]
+    command: ['--proxy-headers', 'xforwarded', '--spi-connections-http-client-default-disable-trust-manager=true']
     environment:
       KC_DB: postgres
       KC_DB_USERNAME: keycloak
