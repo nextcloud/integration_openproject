@@ -100,6 +100,7 @@ OC.L10N.register(
     "Start typing to search" : "Start typing to search",
     "Search for work packages" : "Search for work packages",
     "Search for a work package to create a relation" : "Search for a work package to create a relation",
+    "Assignee" : "مسئول",
     "Select a user or group" : "گزینش یک کاربر یا گروه",
     "Description" : "شرح",
     "Create" : "ایجاد",
