@@ -92,13 +92,13 @@ jobs:
       
       - name: Wait for Nextcloud server to be ready
         run: |
-          if ! timeout 8m bash -c '
+          if ! timeout 5m bash -c '
             until curl -s -f http://localhost/status.php | grep '"'"'"installed":true'"'"'; do
               echo "[INFO] Waiting for server to be ready..."
-              sleep 15
+              sleep 10
             done
           '; then
-            echo "[ERROR] Server not ready within 8 minutes."
+            echo "[ERROR] Server not ready within 5 minutes."
             exit 1
           fi
 
