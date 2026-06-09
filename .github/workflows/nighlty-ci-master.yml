@@ -16,8 +16,13 @@ jobs:
     with:
       branch: master
 
+  app-upgrade-test:
+    uses: ./.github/workflows/app-upgrade.yml
+    with:
+      branch: '33'
+
   notify-nightly-report:
-    needs: [builds]
+    needs: [builds, app-upgrade-test]
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     steps:
