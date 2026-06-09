@@ -8,9 +8,11 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Testwork\Tester\Result\TestResult;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\GuzzleException;
@@ -96,6 +98,23 @@ class FeatureContext implements Context {
 	 */
 	public function setResponse(?ResponseInterface $response): void {
 		$this->response = $response;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getServerVersion(): string {
+		$version = getenv('NEXTCLOUD_VERSION');
+		if ($version === false) {
+			$version = "";
+		}
+		// extract version number
+		$versionNumber = preg_replace('/\D/', '', $version);
+		if ($versionNumber === "") {
+			// if version number not found, return the provided version string.
+			return strtolower($version);
+		}
+		return "nc$versionNumber";
 	}
 
 	public function __construct(
@@ -1366,5 +1385,60 @@ class FeatureContext implements Context {
 			$this->theAdministratorDeletesTheGroup($groups);
 		}
 		$this->createdAppPasswords = [];
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @param AfterScenarioScope $scope
+	 *
+	 * @return void
+	 */
+	public function checkExpectedFailure(AfterScenarioScope $scope): void {
+		$reportDir = dirname(dirname(__DIR__)) . "/reports";
+		if (!is_dir($reportDir)) {
+			mkdir($reportDir, 0777, true);
+		}
+
+		$serverVersion = $this->getServerVersion();
+		$tag = "expect-fail-on-$serverVersion";
+		$scenario = $scope->getScenario();
+		$feature = $scope->getFeature();
+		$result = $scope->getTestResult();
+
+		$featurePath = $feature->getFile();
+		$featurePath = "tests/" . explode("/tests/", $featurePath)[1];
+		$title = $scenario->getTitle();
+		$keyword = $scenario->getKeyword();
+		$lineNumber = $scenario->getLine();
+		$scenarioLine = "  - $keyword: $title ($featurePath:$lineNumber)";
+
+		$hasExpectFailTag = array_find($scenario->getTags(), function ($t) use ($tag) {
+			return str_starts_with($t, $tag);
+		});
+
+		if ($hasExpectFailTag && !$serverVersion) {
+			echo "[ERROR] Scenario has tag '$hasExpectFailTag' but could not determine server version. Use 'NEXTCLOUD_VERSION' env";
+		}
+
+		if ($scenario->hasTag($tag) || $scenario->hasTag("expect-fail")) {
+			if ($result->getResultCode() === TestResult::FAILED) {
+				$expectedFailureFile = "$reportDir/expected-failures.txt";
+				file_put_contents($expectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+				return;
+			} elseif ($result->isPassed()) {
+				$unexpectedPassedFile = "$reportDir/unexpected-passed.txt";
+				file_put_contents($unexpectedPassedFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+				return;
+			} else {
+				$unexpectedFailureFile = "$reportDir/failures.txt";
+				file_put_contents($unexpectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+			}
+
+			echo "[ERROR] Scenario was expected to fail on server version '$serverVersion' but it did not.";
+		} elseif (!$result->isPassed()) {
+			$unexpectedFailureFile = "$reportDir/failures.txt";
+			file_put_contents($unexpectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+		}
 	}
 }
