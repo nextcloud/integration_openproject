@@ -19,7 +19,7 @@ jobs:
   app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml
     with:
-      branch: master
+      branch: '33'
 
   notify-nightly-report:
     needs: [builds, app-upgrade-test]
