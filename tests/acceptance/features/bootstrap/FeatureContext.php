@@ -1427,7 +1427,7 @@ class FeatureContext implements Context {
 				file_put_contents($expectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
 				return;
 			} elseif ($result->isPassed()) {
-				$unexpectedPassedFile = "$reportDir/unexpected-passed.txt";
+				$unexpectedPassedFile = "$reportDir/unexpected-passes.txt";
 				file_put_contents($unexpectedPassedFile, $scenarioLine . PHP_EOL, FILE_APPEND);
 				return;
 			} else {

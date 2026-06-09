@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 SCRIPT_DIR="$(dirname "$0")"
 BEHAT_CONFIG="${SCRIPT_DIR}/config/behat.yml"
 REPORTS_DIR="${SCRIPT_DIR}/reports"
@@ -20,11 +23,7 @@ run_test
 
 exit_code=$?
 
-if [ $exit_code -ne 0 ]; then
-  echo "### [ TEST REPORTS ] ###"
-fi
-
-if [ ! -f "$REPORTS_DIR/failures.txt" ] && [ ! -f "$REPORTS_DIR/unexpected-passed.txt" ]; then
+if [ ! -f "$REPORTS_DIR/failures.txt" ] && [ ! -f "$REPORTS_DIR/unexpected-passes.txt" ]; then
   # pass the test execution if the exit code is non-zero
   # but there are expected failures defined.
   if [ $exit_code -ne 0 ] && [ -s "$REPORTS_DIR/expected-failures.txt" ]; then
@@ -32,20 +31,23 @@ if [ ! -f "$REPORTS_DIR/failures.txt" ] && [ ! -f "$REPORTS_DIR/unexpected-passe
   fi
 else
   if [ -s "$REPORTS_DIR/failures.txt" ]; then
+    echo ""
     echo "[ERROR] Failed scenarios:"
     cat "$REPORTS_DIR/failures.txt"
-    echo ""
   fi
-  if [ -s "$REPORTS_DIR/unexpected-passed.txt" ]; then
-    echo "[ERROR] Unexpected passed scenarios:"
-    cat "$REPORTS_DIR/unexpected-passed.txt"
+  if [ -s "$REPORTS_DIR/unexpected-passes.txt" ]; then
     echo ""
+    echo "[ERROR] Unexpected passed scenarios:"
+    cat "$REPORTS_DIR/unexpected-passes.txt"
+    exit_code=1
   fi
 fi
 
 if [ -s "$REPORTS_DIR/expected-failures.txt" ]; then
+  echo ""
   echo "[INFO] Expected failed scenarios:"
   cat "$REPORTS_DIR/expected-failures.txt"
 fi
 
+echo ""
 exit $exit_code
