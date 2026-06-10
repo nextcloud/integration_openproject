@@ -105,12 +105,12 @@ class FeatureContext implements Context {
 	 */
 	public function getServerVersion(): string {
 		$version = getenv('NEXTCLOUD_VERSION');
-		if ($version === false) {
+		if (!$version) {
 			return "";
 		}
 		$version = preg_replace("/^stable/", "", $version);
 		$version = explode(".", $version)[0];
-		return "nc$version";
+		return "nc{$version}";
 	}
 
 	public function __construct(
@@ -1392,8 +1392,8 @@ class FeatureContext implements Context {
 	 */
 	public function checkExpectedFailure(AfterScenarioScope $scope): void {
 		$reportDir = dirname(dirname(__DIR__)) . "/reports";
-		if (!is_dir($reportDir)) {
-			mkdir($reportDir, 0777, true);
+		if (!is_dir($reportDir) && !mkdir($reportDir, 0755, true)) {
+			throw new \RuntimeException("Failed to create report directory: {$reportDir}");
 		}
 
 		$serverVersion = $this->getServerVersion();
@@ -1417,28 +1417,29 @@ class FeatureContext implements Context {
 			}
 		}
 
+		$reportFile = null;
 		if ($hasExpectFailTag && !$serverVersion) {
-			echo "[ERROR] Scenario has tag '$hasExpectFailTag' but could not determine server version. Use 'NEXTCLOUD_VERSION' env";
+			echo "[ERROR] Scenario has tag '$hasExpectFailTag' but could not determine server version. Set 'NEXTCLOUD_VERSION' env";
+			if ($result->isPassed()) {
+				$reportFile = "$reportDir/unexpected-passes.txt";
+			}
 		}
 
 		if ($scenario->hasTag($tag) || $scenario->hasTag("expect-fail")) {
 			if ($result->getResultCode() === TestResult::FAILED) {
-				$expectedFailureFile = "$reportDir/expected-failures.txt";
-				file_put_contents($expectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
-				return;
+				$reportFile = "$reportDir/expected-failures.txt";
 			} elseif ($result->isPassed()) {
-				$unexpectedPassedFile = "$reportDir/unexpected-passes.txt";
-				file_put_contents($unexpectedPassedFile, $scenarioLine . PHP_EOL, FILE_APPEND);
-				return;
+				$reportFile = "$reportDir/unexpected-passes.txt";
+				echo "[ERROR] Scenario was expected to fail but it did not.";
 			} else {
-				$unexpectedFailureFile = "$reportDir/failures.txt";
-				file_put_contents($unexpectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+				$reportFile = "$reportDir/failures.txt";
 			}
-
-			echo "[ERROR] Scenario was expected to fail on server version '$serverVersion' but it did not.";
 		} elseif (!$result->isPassed()) {
-			$unexpectedFailureFile = "$reportDir/failures.txt";
-			file_put_contents($unexpectedFailureFile, $scenarioLine . PHP_EOL, FILE_APPEND);
+			$reportFile = "$reportDir/failures.txt";
+		}
+
+		if ($reportFile) {
+			file_put_contents($reportFile, $scenarioLine . PHP_EOL, FILE_APPEND);
 		}
 	}
 }

@@ -32,3 +32,11 @@ We can mark a scenario as expected to fail for all Nextcloud versions or for spe
 
 > **_NOTE:_**
 > We MUST provide `NEXTCLOUD_VERSION` environment variable while running the tests that are tagged `@expect-fail-on-nc<major-version>`.
+>
+> Possible values for `NEXTCLOUD_VERSION`: `stable33` (any major version number), `33` (any major version number) and `master`
+>
+> ```shell
+> NEXTCLOUD_BASE_URL=http://<nextcloud_host> \
+> NEXTCLOUD_VERSION=33 \
+> make api-test
+> ```
