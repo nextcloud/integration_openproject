@@ -212,6 +212,9 @@ bash integration_setup.sh
   - Discovery endpoint: `<keycloak_instance_url>/realms/<realm-name>/.well-known/openid-configuration` (for example realm name can be `opnc`)
   - Scope: `openid profile email api_v3`
   - submit
+- [ ] If you are using [Docker setup](../../dev/), default `Keycloak` users already exist (`alice` and `brian`, password: `1234`), so you can skip the user-creation steps below and go directly to step [B.2.3](#b23-add-keycloak-idp-in-openproject).
+- [ ] In Keycloak, go to the user management section. For example, if your realm name is `opnc`, navigate to: `opnc > Users`.
+- [ ] Then create a user.
 - [ ] Login as keycloak-created user in `Nextcloud`.
 - [ ] Login should be successful.
 - [ ] Logout.
@@ -233,9 +236,6 @@ bash integration_setup.sh
   - [ ] Uncheck project folder (automatically managed folder).
   - [ ] Click on button `Finish setup`.
 - [ ] Navigate to `Project settings > Files` of a project (for example, `Demo Project`) and add `Nextcloud` as a file storage.
-- [ ] If you are using [Docker setup](../../dev/), default `Keycloak` users already exist (`alice` and `brian`, password: `1234`), so you can skip the user-creation steps below and go directly to step [B.2.4](#b24-setup-integration-token-exchange-disabled-in-nextcloud).
-- [ ] In Keycloak, go to the user management section. For example, if your realm name is `opnc`, navigate to: `opnc > Users`.
-- [ ] Then create a user.
 - [ ] In `OpenProject`, login as keycloak-created user.
 - [ ] In `OpenProject`, log out, then log in as a user `admin`.
 - [ ] As an `OpenProject` admin, add keycloak-created user as a member in one of the project (for example, `Demo Project`).
@@ -396,7 +396,7 @@ bash integration_oidc_setup.sh
 - [ ] Run the script again after it is already setup (Should not give any error).
 
 ## Common Smoke Test Steps
-> **Note**: For SSO setup, run smoke tests 1-5 as a connected user.
+> **Note**: For SSO setup, run smoke tests 1-5 and the portions of smoke test 6 that involve user interaction should be performed as a connected user.
 
 ### 1. Link/Unlink a work package for a file/folder in nextcloud
 - [ ] Select a file, navigate to sidebar `OpenProject` tab.
