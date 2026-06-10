@@ -1397,7 +1397,7 @@ class FeatureContext implements Context {
 		}
 
 		$serverVersion = $this->getServerVersion();
-		$tag = "expect-fail-on-$serverVersion";
+		$tag = "expect-fail-on-{$serverVersion}";
 		$scenario = $scope->getScenario();
 		$feature = $scope->getFeature();
 		$result = $scope->getTestResult();
