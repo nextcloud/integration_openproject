@@ -463,6 +463,7 @@ Feature: setup the integration with OAuth method
       {
         "values" : {
           "openproject_instance_url": "http://some-host.de",
+          "authorization_method": "oauth2",
           "openproject_client_id": "the-client-id",
           "openproject_client_secret": "the-client-secret",
           "default_enable_navigation": false,
