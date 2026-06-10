@@ -651,29 +651,38 @@ class ConfigController extends Controller {
 			// check all required settings
 			$this->settingsService->validateAdminSettingsForm($values, true);
 
-			$status = $this->setIntegrationConfig($values);
-			$result = $this->recreateOauthClientInformation();
-			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			$setup = $this->setIntegrationConfig($values);
+			$response = ['status' => $setup['status']];
+
+			if ($values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+				$response = \array_merge($response, $this->recreateOauthClientInformation());
 			}
-			if ($status['oPUserAppPassword'] !== null) {
-				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
+
+			if ($setup['oPOAuthTokenRevokeStatus']) {
+				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
 			}
-			return new DataResponse($result);
+			if ($setup['oPUserAppPassword']) {
+				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
+			}
+			return new DataResponse($response);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
+				'status' => false,
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
 		} catch (NoUserException $e) {
 			return new DataResponse([
+				'status' => false,
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
+				'status' => false,
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			return new DataResponse([
+				'status' => false,
 				"error" => $e->getMessage()
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
