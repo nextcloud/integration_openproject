@@ -106,15 +106,11 @@ class FeatureContext implements Context {
 	public function getServerVersion(): string {
 		$version = getenv('NEXTCLOUD_VERSION');
 		if ($version === false) {
-			$version = "";
+			return "";
 		}
-		// extract version number
-		$versionNumber = preg_replace('/\D/', '', $version);
-		if ($versionNumber === "") {
-			// if version number not found, return the provided version string.
-			return strtolower($version);
-		}
-		return "nc$versionNumber";
+		$version = preg_replace("/^stable/", "", $version);
+		$version = explode(".", $version)[0];
+		return "nc$version";
 	}
 
 	public function __construct(
@@ -1413,9 +1409,13 @@ class FeatureContext implements Context {
 		$lineNumber = $scenario->getLine();
 		$scenarioLine = "  - $keyword: $title ($featurePath:$lineNumber)";
 
-		$hasExpectFailTag = array_find($scenario->getTags(), function ($t) use ($tag) {
-			return str_starts_with($t, $tag);
-		});
+		$hasExpectFailTag = false;
+		foreach ($scenario->getTags() as $t) {
+			if (str_starts_with($t, $tag)) {
+				$hasExpectFailTag = true;
+				break;
+			}
+		}
 
 		if ($hasExpectFailTag && !$serverVersion) {
 			echo "[ERROR] Scenario has tag '$hasExpectFailTag' but could not determine server version. Use 'NEXTCLOUD_VERSION' env";

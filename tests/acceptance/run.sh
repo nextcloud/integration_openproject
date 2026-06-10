@@ -16,7 +16,7 @@ function run_test() {
 }
 
 # cleanup reports directory
-rm -rf $REPORTS_DIR
+rm -rf "$REPORTS_DIR"
 
 # run the tests
 run_test
