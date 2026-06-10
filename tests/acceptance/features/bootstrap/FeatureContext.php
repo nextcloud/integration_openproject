@@ -1409,10 +1409,10 @@ class FeatureContext implements Context {
 		$lineNumber = $scenario->getLine();
 		$scenarioLine = "  - $keyword: $title ($featurePath:$lineNumber)";
 
-		$hasExpectFailTag = false;
+		$hasExpectFailTag = "";
 		foreach ($scenario->getTags() as $t) {
 			if (str_starts_with($t, $tag)) {
-				$hasExpectFailTag = true;
+				$hasExpectFailTag = $t;
 				break;
 			}
 		}

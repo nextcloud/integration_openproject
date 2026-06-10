@@ -16,7 +16,7 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"psalm": "psalm",
 		"test:unit": "phpunit",
-		"test:api": "behat -c tests/acceptance/config/behat.yml"
+		"test:api": "behat"
 	},
 	"config": {
 		"allow-plugins": {

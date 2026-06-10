@@ -7,12 +7,15 @@ SCRIPT_DIR="$(dirname "$0")"
 BEHAT_CONFIG="${SCRIPT_DIR}/config/behat.yml"
 REPORTS_DIR="${SCRIPT_DIR}/reports"
 
-if [ -z "$BEHAT_FILTER_TAGS" ]; then
-  BEHAT_FILTER_TAGS=""
+# options for behat command
+BEHAT_OPTIONS="-c $BEHAT_CONFIG -f pretty"
+
+if [ -n "$BEHAT_FILTER_TAGS" ]; then
+  BEHAT_OPTIONS="$BEHAT_OPTIONS --tags $BEHAT_FILTER_TAGS"
 fi
 
 function run_test() {
-  composer run test:api -- -c $BEHAT_CONFIG -f pretty --tags $BEHAT_FILTER_TAGS $BEHAT_FEATURE_PATH
+  composer run test:api -- $BEHAT_OPTIONS $BEHAT_FEATURE_PATH
 }
 
 # cleanup reports directory
