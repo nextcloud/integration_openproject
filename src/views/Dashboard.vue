@@ -64,7 +64,6 @@ export default {
 			authMethod: loadState('integration_openproject', 'authorization_method'),
 			oidc_user: loadState('integration_openproject', 'oidc_user'),
 			settingsUrl: generateUrl('/settings/user/openproject'),
-			themingColor: OCA.Theming ? OCA.Theming.color.replace('#', '') : '0082C9',
 			windowVisibility: true,
 			itemMenu: {
 				markAsRead: {
