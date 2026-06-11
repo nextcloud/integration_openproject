@@ -957,6 +957,7 @@ class FeatureContext implements Context {
 		if ($user !== null && $password !== null) {
 			$options['auth'] = [$user, $password];
 		}
+		$options['verify'] = false;
 		$client = new Client($options);
 		if ($headers === null) {
 			$headers = [];

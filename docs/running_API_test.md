@@ -12,6 +12,7 @@ To run the whole of the acceptance tests locally run the command below:
 
 ```shell
 NEXTCLOUD_BASE_URL=http://<nextcloud_host> \
+BEHAT_FILTER_TAGS="~@skip" \
 make api-test
 ```
 

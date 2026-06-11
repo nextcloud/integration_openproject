@@ -5,6 +5,9 @@
 
 SCRIPT_DIR="$(dirname "$0")"
 REPORTS_DIR="${SCRIPT_DIR}/reports"
+EXPECTED_FAILURES_FILE="$REPORTS_DIR/expected-failures.txt"
+FAILURES_FILE="$REPORTS_DIR/failures.txt"
+UNEXPECTED_PASSES_FILE="$REPORTS_DIR/unexpected-passes.txt"
 
 # options for behat command
 BEHAT_OPTIONS=(-f pretty)
@@ -29,31 +32,31 @@ run_test
 
 exit_code=$?
 
-if [ ! -f "$REPORTS_DIR/failures.txt" ] && [ ! -f "$REPORTS_DIR/unexpected-passes.txt" ]; then
-  # pass the test execution if the exit code is non-zero
+if [ ! -f "$FAILURES_FILE" ] && [ ! -f "$UNEXPECTED_PASSES_FILE" ]; then
+  # pass the test execution if the exit code is 1
   # but there are expected failures defined.
-  if [ $exit_code -eq 1 ] && [ -s "$REPORTS_DIR/expected-failures.txt" ]; then
+  if [ $exit_code -eq 1 ] && [ -s "$EXPECTED_FAILURES_FILE" ]; then
     exit_code=0
   fi
 else
-  if [ -s "$REPORTS_DIR/failures.txt" ]; then
+  if [ -s "$FAILURES_FILE" ]; then
     echo ""
     echo "[ERROR] Failed scenarios:"
-    cat "$REPORTS_DIR/failures.txt"
+    cat "$FAILURES_FILE"
     exit_code=1
   fi
-  if [ -s "$REPORTS_DIR/unexpected-passes.txt" ]; then
+  if [ -s "$UNEXPECTED_PASSES_FILE" ]; then
     echo ""
     echo "[ERROR] Unexpected passed scenarios:"
-    cat "$REPORTS_DIR/unexpected-passes.txt"
+    cat "$UNEXPECTED_PASSES_FILE"
     exit_code=1
   fi
 fi
 
-if [ -s "$REPORTS_DIR/expected-failures.txt" ]; then
+if [ -s "$EXPECTED_FAILURES_FILE" ]; then
   echo ""
   echo "[INFO] Expected failed scenarios:"
-  cat "$REPORTS_DIR/expected-failures.txt"
+  cat "$EXPECTED_FAILURES_FILE"
 fi
 
 echo ""
