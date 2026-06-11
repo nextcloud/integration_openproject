@@ -14,12 +14,6 @@ build_tools_directory=$(CURDIR)/build/tools
 npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
 
-#check for BEHAT_FILTER_TAGS env is set any
-FILTER_TAGS := ~@skip
-ifdef BEHAT_FILTER_TAGS
-	FILTER_TAGS:=$(FILTER_TAGS)&&${BEHAT_FILTER_TAGS}
-endif
-
 all: build
 
 .PHONY: build
@@ -108,7 +102,7 @@ jsunit:
 
 .PHONY: api-test
 api-test:
-	composer run test:api -- --tags '${FILTER_TAGS}' ${FEATURE_PATH}
+	bash tests/acceptance/run.sh
 
 .PHONY: test
 test: phpunit jsunit api-test

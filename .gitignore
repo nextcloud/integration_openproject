@@ -17,6 +17,7 @@ log/
 vendor/
 .php-cs-fixer.cache
 tests/pact/
+tests/acceptance/reports
 docker-compose.override.yml
 compose.override.yaml
 .env
