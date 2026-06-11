@@ -621,6 +621,34 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given the administrator has set up the integration with the following settings:
+	 *
+	 * @param PyStringNode $data
+	 * @return void
+	 */
+	public function administratorHasSetupIntegrationWithFollowingSettings(PyStringNode $data): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, "POST", "/setup", $data
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"200",
+			"Failed to set up the integration."
+		);
+
+		$response = json_decode($this->response->getBody()->getContents(), true);
+		Assert::assertArrayHasKey(
+			"status",
+			$response,
+			"Response does not contain 'status' property"
+		);
+		Assert::assertTrue(
+			$response["status"] === true,
+			"Incomplete integration setup. Response: " . json_encode($response)
+		);
+		$this->setResponse(null);
+	}
+
+	/**
 	 * @When user :user gets the information of last created file
 	 */
 	public function userGetsTheInformationOfLastCreatedFile(string $user): void {
