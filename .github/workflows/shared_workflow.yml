@@ -326,5 +326,6 @@ jobs:
       - name: API Tests
         env:
           NEXTCLOUD_BASE_URL: http://localhost
-          BEHAT_FILTER_TAGS: '~@skip-${{ matrix.nextcloudVersion }}'
+          NEXTCLOUD_VERSION: ${{ matrix.nextcloudVersion }}
+          BEHAT_FILTER_TAGS: '~@skip'
         run: make api-test
