@@ -21,6 +21,9 @@
 		<directory name="tests" />
 		<ignoreFiles>
 			<directory name="vendor" />
+			<directory name="tests/stub" />
+		</ignoreFiles>
+		<ignoreFiles allowMissingFiles="true">
 			<directory name="server/lib" />
 		</ignoreFiles>
 	</projectFiles>
