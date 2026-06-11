@@ -1941,14 +1941,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			"with team folder" => [
 				"authMethod" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
-				'settings' => [
-					...$defaultSettings,
+				'settings' => array_merge($defaultSettings, [
 					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
 					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 					'setup_project_folder' => true,
 					'setup_app_password' => true,
-				],
+				]),
 				'response' => [
 					'status',
 					'openproject_user_app_password',
@@ -1992,7 +1991,7 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $openprojectAPIServiceMock,
 			'userManager' => $userManagerMock,
 		];
-		$configController = $this->getConfigControllerMock([], $constructArgs);
+		$configController = $this->getConfigControllerMock(['setUpIntegration'], $constructArgs);
 
 		$response = $configController->setUpIntegration($settings);
 		$data = $response->getData();
