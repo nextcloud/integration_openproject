@@ -1874,8 +1874,8 @@ class ConfigControllerTest extends TestCase {
 	}
 
 	/**
-	 * @param array<string> $settings
-	 * @param array<string> $expectedSettings
+	 * @param array<string, bool|string> $settings
+	 * @param array<string, bool|string> $expectedSettings
 	 * @return void
 	 * @dataProvider integrationDefaultSettingsProvider
 	 */
@@ -1912,14 +1912,14 @@ class ConfigControllerTest extends TestCase {
 		];
 		return [
 			"complete oauth2 setup" => [
-				"authMethod" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				"authMethod" => Application::AUTH_METHOD_OAUTH,
 				'settings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'test',
 					'openproject_client_secret' => 'test',
 				],
-				'response' => [
+				'responseProps' => [
 					'status',
 					'nextcloud_oauth_client_name',
 					'nextcloud_client_id',
@@ -1928,27 +1928,27 @@ class ConfigControllerTest extends TestCase {
 				],
 			],
 			"complete oidc setup" => [
-				"authMethod" => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				"authMethod" => Application::AUTH_METHOD_OIDC,
 				'settings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 				],
-				'response' => [
+				'responseProps' => [
 					'status',
 				],
 			],
 			"with team folder" => [
-				"authMethod" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				"authMethod" => Application::AUTH_METHOD_OIDC,
 				'settings' => array_merge($defaultSettings, [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 					'setup_project_folder' => true,
 					'setup_app_password' => true,
 				]),
-				'response' => [
+				'responseProps' => [
 					'status',
 					'openproject_user_app_password',
 				],
@@ -1958,7 +1958,7 @@ class ConfigControllerTest extends TestCase {
 
 	/**
 	 * @param string $authMethod
-	 * @param array<string> $settings
+	 * @param array<string, bool|string> $settings
 	 * @param array<string> $responseProps
 	 * @return void
 	 * @dataProvider setUpIntegrationSuccessProvider
@@ -1967,19 +1967,29 @@ class ConfigControllerTest extends TestCase {
 		$userManagerMock = $this->createMock(IUserManager::class);
 		$userManagerMock->method('userExists')->willReturn(true);
 		$oauthMock = $this->createMock(OauthService::class);
-		$oauthMock->method('createNcOauthClient')->willReturn([
-			'id' => '1234',
-			'nextcloud_oauth_client_name' => 'Openproject Client',
-			'openproject_redirect_uri' => 'http://openproject.test/oauth/callback',
-			'nextcloud_client_id' => 'client_id',
-			'nextcloud_client_secret' => 'client_secret',
-		]);
+
+		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
+			$oauthMock->expects($this->once())
+				->method('createNcOauthClient')->willReturn([
+					'id' => '1234',
+					'nextcloud_oauth_client_name' => 'Openproject Client',
+					'openproject_redirect_uri' => 'http://openproject.test/oauth/callback',
+					'nextcloud_client_id' => 'client_id',
+					'nextcloud_client_secret' => 'client_secret',
+				]);
+		} else {
+			$oauthMock->expects($this->never())
+				->method('createNcOauthClient');
+		}
 
 		$openprojectAPIServiceMock = $this->createMock(OpenProjectAPIService::class);
-		if ($settings['setup_project_folder']) {
+		if ($settings['setup_app_password']) {
 			$openprojectAPIServiceMock->expects($this->once())
 				->method('generateAppPasswordTokenForUser')
 				->willReturn('app_pass');
+		} else {
+			$openprojectAPIServiceMock->expects($this->never())
+				->method('generateAppPasswordTokenForUser');
 		}
 		$settingsServiceMock = $this->createMock(SettingsService::class);
 		$settingsServiceMock->expects($this->once())
@@ -1991,7 +2001,8 @@ class ConfigControllerTest extends TestCase {
 			'openprojectAPIService' => $openprojectAPIServiceMock,
 			'userManager' => $userManagerMock,
 		];
-		$configController = $this->getConfigControllerMock(['setUpIntegration'], $constructArgs);
+		$constructArgs = $this->getConfigControllerConstructArgs($constructArgs);
+		$configController = new ConfigController(...$constructArgs);
 
 		$response = $configController->setUpIntegration($settings);
 		$data = $response->getData();
@@ -2002,7 +2013,7 @@ class ConfigControllerTest extends TestCase {
 		foreach ($responseProps as $prop) {
 			$this->assertArrayHasKey($prop, $data);
 		}
-		if ($authMethod === OpenProjectAPIService::AUTH_METHOD_OIDC) {
+		if ($authMethod === Application::AUTH_METHOD_OIDC) {
 			$this->assertArrayNotHasKey('nextcloud_oauth_client_name', $data);
 			$this->assertArrayNotHasKey('nextcloud_client_id', $data);
 			$this->assertArrayNotHasKey('nextcloud_client_secret', $data);

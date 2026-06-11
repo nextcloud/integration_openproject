@@ -654,7 +654,7 @@ class ConfigController extends Controller {
 			$setup = $this->setIntegrationConfig($values);
 			$response = ['status' => $setup['status']];
 
-			if ($values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH) {
+			if ($values['authorization_method'] === Application::AUTH_METHOD_OAUTH) {
 				$response = \array_merge($response, $this->recreateOauthClientInformation());
 			}
 
