@@ -290,6 +290,7 @@ class FeatureContext implements Context {
 		// Skip if Nextcloud Docker container does not exist
 		exec("docker ps --format \"{{.Names}}\"", $containers);
 		if (!in_array('nextcloud', $containers)) {
+			echo "Docker container 'nextcloud' not found. Skipping user data deletion.\n";
 			return;
 		}
 
@@ -304,7 +305,7 @@ class FeatureContext implements Context {
 		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]'";
 		exec($checkCmd, $checkOutput, $checkCode);
 		if ($checkCode === 1) {
-			echo "User data directory doesn't exist, skipping deletion.\n";
+			echo "User '$user' data directory doesn't exist, skipping deletion.\n";
 			if (count($checkOutput) > 0) {
 				echo "Command output: " . implode("\n", $checkOutput);
 			}
