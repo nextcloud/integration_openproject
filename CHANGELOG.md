@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+- Fix: OpenProject avatar remains stale [#1058](https://github.com/nextcloud/integration_openproject/pull/1058)
+
 ### Changed
 
 ### Removed
