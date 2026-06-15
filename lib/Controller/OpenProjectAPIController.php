@@ -16,9 +16,9 @@ use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
-use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\OCSController;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -70,7 +70,7 @@ class OpenProjectAPIController extends OCSController {
 	 *
 	 * @param string $userId
 	 * @param string $userName
-	 * @return DataDisplayResponse|DataDownloadResponse
+	 * @return DataDownloadResponse|Response
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
@@ -81,11 +81,20 @@ class OpenProjectAPIController extends OCSController {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
 			$userId, $userName, $this->userId
 		);
-		$response = new DataDownloadResponse(
-			$result['avatar'], 'avatar', $result['type'] ?? ''
+
+		$etag = '"' . $result['etag'] . '"';
+		$headers = [
+			'Cache-Control' => 'no-cache',
+			'ETag' => $etag,
+		];
+		$ifNoneMatch = $this->request->getHeader('If-None-Match');
+		if ($ifNoneMatch && $ifNoneMatch === $etag) {
+			return new Response(Http::STATUS_NOT_MODIFIED, $headers);
+		}
+
+		return new DataDownloadResponse(
+			$result['avatar'], 'avatar', $result['type'], Http::STATUS_OK, $headers
 		);
-		$response->cacheFor(60 * 60 * 24);
-		return $response;
 	}
 
 	/**
