@@ -70,6 +70,7 @@ The need for this smoke testing (manual) is that we do not have e2e test setup t
 - [ ] In `Openproject`, as a user `admin`, select any `OpenProject` Project (for example, `Demo Project`) in `OpenProject`.
 - [ ] Navigate to `Project settings > Files` of `Demo Project`.
 - [ ] Add a file storage name `Nextcloud`( choose `No specific Folder` option ) for `Demo Project`.
+- [ ] Add the nextcloud-created user as the member of Demo Project project.
 
 ### A4. Connect OpenProject with Nextcloud
 
@@ -129,7 +130,8 @@ bash integration_setup.sh
 - [ ] Go to `Administration > OpenID Connect Provider`.
   - Click the button `+ Add client`.
   - Add a client name (not an identifier) such as `openproject`.
-  - Add a redirect URL: `<openproject_host>/auth/oidc-<idp_displayname_from_openproject>/callback`. Use the same value as the OpenProject `Display name` from `B.1.2` (for example, `nextcloud`).
+  - Add a redirect URL: `<openproject_host>/auth/oidc-<idp_displayname_from_openproject>/callback`.
+   > **Note:** Use the same value as the custom OpenID provider `Display name` in OpenProject from `B.1.2` (for example, `nextcloud`) for `<idp_displayname_from_openproject>`.
   - Choose Signing Algorithm option as `RS256`.
   - Choose Client Type as `Confidential` and click on `Add` button.
   - After clicking `add` button, click on the recently created client.
@@ -189,7 +191,13 @@ bash integration_setup.sh
 - [ ] Navigate to `Settings > OpenProject`.
 - [ ] Should show user is connected as an OpenProject user.
 
-#### B.1.6. Complete the common smoke tests
+#### B.1.6. Add File storage (Nextcloud) to an OpenProject project
+- [ ] In Openproject, as a user admin, select any OpenProject Project (for example, Demo Project) in OpenProject.
+- [ ] Navigate to Project settings > Files of Demo Project.
+- [ ] Add a file storage name Nextcloud( choose No specific Folder option ) for Demo Project.
+- [ ] Add the nextcloud-created user as the member of Demo Project project.
+
+#### B.1.7. Complete the common smoke tests
 
 - [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
@@ -259,7 +267,7 @@ bash integration_setup.sh
 
 - [ ] Complete [smoke tests 1-7](#common-smoke-test-steps).
 
-#### B.2.7. Setup integration (token exchange enabled)
+#### B.2.7. Setup integration (token exchange enabled) in Nextcloud
 
 - [ ] Complete step [Test No B.2.1](#b21-configure-keycloak).
 - [ ] Complete step [Test No B.2.2](#b22-configure-nextcloud).
@@ -268,7 +276,7 @@ bash integration_setup.sh
 - [ ] Under `Authentication Method`, select `Single-Sign-On through OpenID Connect Identity Provider`.
 - [ ] In `Authentication settings`, select `provider Type` as `Keycloak`.
 - [ ] Enable `token exchange`.
-- [ ] Set `OpenProject client ID *` as `openproject`.
+- [ ] Set `OpenProject client ID *` to `openproject`.
 
 #### B.2.8. Verify Connection in nextcloud
 
@@ -439,7 +447,7 @@ bash integration_oidc_setup.sh
 ### 6. Setup and check project folder in Nextcloud (with project folder setup)
 
 - [ ] As a user `admin` enable the Nextcloud `groupfolders` app (`Team folders`) in `Nextcloud`.
-- [ ] Enable `Automatically managed folders` switch in admin setting and set project folder.
+- [ ] Enable `Automatically managed folders` switch in `Administration settings -> OpenProject -> Edit project folders` and set project folder.
 - [ ] Application password should be generated (copy this password as this will be needed in the next step).
 - [ ] Verify that `OpenProject` user and `OpenProject` group are created with user `OpenProject` as sub-admin of the group.
 - [ ] Verify that `OpenProjectNoAutomaticProjectFolders` group is also created with user `OpenProject` as sub-admin.
@@ -461,7 +469,7 @@ bash integration_oidc_setup.sh
 - [ ] Enter the application password generated from `Nextcloud` and click on `Finish setup`.
 - [ ] Navigate to `Demo Project > Project settings > Files`.
 - [ ] Edit the `Nextcloud` storage, choose `New folder with automatically managed permissions`, and click `Save`.
-- [ ] Navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
+- [ ] As a created user, navigate to `Demo Project > Work Packages` and double click any one of the work packages available.
 - [ ] Navigate to `Files` tab, click `link existing files`.
 - [ ] In a modal, `Nextcloud > OpenProject > Demo project(1)` should be visible.
 - [ ] Also Navigate to `Nextcloud` and in Files `OpenProject > Demo project(1)` folder is created.
