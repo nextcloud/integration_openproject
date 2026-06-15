@@ -174,5 +174,7 @@ jobs:
         working-directory: integration_openproject
         env:
           NEXTCLOUD_BASE_URL: http://localhost
+          NEXTCLOUD_VERSION: ${{ matrix.nextcloudVersion }}
+          BEHAT_FILTER_TAGS: '~@skip'
         run: |
           make api-test
