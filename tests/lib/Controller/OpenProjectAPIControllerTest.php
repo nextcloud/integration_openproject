@@ -204,50 +204,67 @@ class OpenProjectAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 *
-	 * @param string $authorizationMethod
-	 * @return void
-	 *
-	 * @dataProvider getAuthorizationMethodDataProvider
+	 * Data provider for testGetOpenProjectAvatar
 	 */
-	public function testGetOpenProjectAvatar(string $authorizationMethod) {
-		$service = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->onlyMethods(['getOpenProjectAvatar', 'getAccessToken'])
-			->getMock();
-		$service
-			->method('getAccessToken')
-			->willReturn('123');
-		$service->expects($this->once())
-			->method('getOpenProjectAvatar')
-			->with(
-				'id', 'name'
-			)
-			->willReturn(['avatar' => 'some image data', 'type' => 'image/png']);
-		$controller = $this->getOpenProjectAPIControllerMock([
-			'openProjectAPIService' => $service,
-			'config' => $this->getConfigMock($authorizationMethod),
-		]);
-		$response = $controller->getOpenProjectAvatar('id', 'name');
-		$this->assertSame('some image data', $response->render());
-		$this->assertMatchesRegularExpression(
-			'/attachment; filename="?avatar"?/',
-			$response->getHeaders()["Content-Disposition"]
-		);
-		$this->assertSame(
-			"image/png",
-			$response->getHeaders()["Content-Type"]
-		);
+	public function getOpenProjectAvatarDataProvider(): array {
+		return [
+			'OAuth: returns 200 OK when If-None-Match differs from ETag' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '"different etag"',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_OK,
+			],
+			'OAuth: returns 200 OK if If-None-Match is empty' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_OK
+			],
+			'OAuth: returns 304 Not Modified when If-None-Match matches ETag' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '"some etag"',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_NOT_MODIFIED,
+			],
+			'OIDC: returns 200 OK when If-None-Match differs from ETag' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '"different etag"',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_OK,
+			],
+			'OIDC: returns 200 OK if If-None-Match is empty' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_OK
+			],
+			'OIDC: returns 304 Not Modified when If-None-Match matches ETag' => [
+				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'etag' => 'some etag',
+				'ifNoneMatch' => '"some etag"',
+				'contentType' => 'image/jpeg',
+				'expectedStatusCode' => Http::STATUS_NOT_MODIFIED,
+			]
+		];
 	}
 
 	/**
 	 *
+	 * @dataProvider getOpenProjectAvatarDataProvider
 	 * @param string $authorizationMethod
+	 * @param string $etag
+	 * @param string $ifNoneMatch
+	 * @param string $contentType
+	 * @param int $expectedStatusCode
 	 * @return void
 	 *
-	 * @dataProvider getAuthorizationMethodDataProvider
 	 */
-	public function testGetOpenProjectAvatarNoType(string $authorizationMethod) {
+	public function testGetOpenProjectAvatar(string $authorizationMethod, string $etag, string $ifNoneMatch, string $contentType, int $expectedStatusCode): void {
 		$service = $this->getMockBuilder(OpenProjectAPIService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['getOpenProjectAvatar', 'getAccessToken'])
@@ -260,18 +277,44 @@ class OpenProjectAPIControllerTest extends TestCase {
 			->with(
 				'id', 'name'
 			)
-			->willReturn(['avatar' => 'some image data']);
+			->willReturn(['avatar' => 'some image data', 'type' => $contentType, 'etag' => $etag]);
+		$request = $this->createMock(IRequest::class);
+		$request->expects($this->once())->method('getHeader')->with('If-None-Match')->willReturn($ifNoneMatch);
 		$controller = $this->getOpenProjectAPIControllerMock([
 			'openProjectAPIService' => $service,
 			'config' => $this->getConfigMock($authorizationMethod),
+			'request' => $request,
 		]);
 		$response = $controller->getOpenProjectAvatar('id', 'name');
-		$this->assertSame('some image data', $response->render());
-		$this->assertMatchesRegularExpression(
-			'/attachment; filename="?avatar"?/',
-			$response->getHeaders()["Content-Disposition"]
+		$etag = '"' . $etag . '"';
+		$headers = $response->getHeaders();
+		$this->assertSame(
+			"no-cache",
+			$headers["Cache-Control"]
 		);
-		$this->assertEmpty($response->getHeaders()["Content-Type"]);
+		$this->assertSame(
+			$etag,
+			$headers["ETag"]
+		);
+		$this->assertSame(
+			$expectedStatusCode,
+			$response->getStatus()
+		);
+		if ($etag === $ifNoneMatch) {
+			$this->assertEmpty($response->render());
+			$this->assertArrayNotHasKey("Content-Disposition", $headers);
+			$this->assertArrayNotHasKey("Content-Type", $headers);
+		} else {
+			$this->assertSame('some image data', $response->render());
+			$this->assertMatchesRegularExpression(
+				'/attachment; filename="?avatar"?/',
+				$headers["Content-Disposition"]
+			);
+			$this->assertSame(
+				$contentType,
+				$headers["Content-Type"]
+			);
+		}
 	}
 
 	/**
