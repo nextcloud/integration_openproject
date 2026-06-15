@@ -56,6 +56,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Log\ILogFactory;
 use OCP\Security\ISecureRandom;
+use OCP\UserInterface;
 use phpmock\phpunit\PHPMock;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Model\Body\Binary;
@@ -4898,6 +4899,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 
 	public function dataProviderForIsOIDCUser(): array {
 		$backendMock = $this->getMockBuilder(OIDCBackend::class)->disableOriginalConstructor()->getMock();
+		$nonOidcBackend = $this->createMock(UserInterface::class);
 		return [
 			'has OIDCBackend class and OIDC user' => [
 				'hasOIDCBackend' => true,
@@ -4907,7 +4909,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			'has OIDCBackend class but not OIDC user' => [
 				'hasOIDCBackend' => true,
-				'userBackend' => new \stdClass(),
+				'userBackend' => $nonOidcBackend,
 				'SSOProviderType' => 'external',
 				'expected' => false,
 			],
@@ -4919,7 +4921,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			'configure with Nextcloud Hub' => [
 				'hasOIDCBackend' => true,
-				'userBackend' => new \stdClass(),
+				'userBackend' => $nonOidcBackend,
 				'SSOProviderType' => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
 				'expected' => true,
 			],
