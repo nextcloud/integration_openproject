@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Fixed
+- Fix: Unnecessary 404 requests when searching OpenProject work packages [#1061](https://github.com/nextcloud/integration_openproject/pull/1061)
 
 ### Changed
 
