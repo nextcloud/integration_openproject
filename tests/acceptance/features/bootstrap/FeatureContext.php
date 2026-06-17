@@ -144,7 +144,7 @@ class FeatureContext implements Context {
 	/**
 	 * @Given user :user has been created
 	 */
-	public function userHasBeenCreated(string $user, string $displayName = null):void {
+	public function userHasBeenCreated(string $user, ?string $displayName = null):void {
 		$userAttributes['userid'] = $user;
 		$userAttributes['password'] = $this->getRegularUserPassword();
 		if ($displayName !== null) {
@@ -281,13 +281,26 @@ class FeatureContext implements Context {
 	private function deleteUserDataFromDocker(string $user): void {
 		$dataDir = "data";
 		// check if docker exists
-		if (!exec("docker --version")) {
-			echo "'docker' command not found. Skipping user data deletion.\n";
+		exec("docker --version 2>&1", $dockerVersionOutput, $dockerVersionCode);
+		if ($dockerVersionCode !== 0) {
+			echo "'docker' command not found or not executable. Skipping user data deletion.\n";
+			if (count($dockerVersionOutput) > 0) {
+				echo "Command output: " . implode("\n", $dockerVersionOutput) . "\n";
+			}
 			return;
 		}
+
 		// Skip if Nextcloud Docker container does not exist
-		exec("docker ps --format \"{{.Names}}\"", $containers);
+		exec("docker ps --format \"{{.Names}}\" 2>&1", $containers, $dockerPsCode);
+		if ($dockerPsCode !== 0) {
+			echo "Failed to list Docker containers. Skipping user data deletion.\n";
+			if (count($containers) > 0) {
+				echo "Command output: " . implode("\n", $containers) . "\n";
+			}
+			return;
+		}
 		if (!in_array('nextcloud', $containers)) {
+			echo "Docker container 'nextcloud' not found. Skipping user data deletion.\n";
 			return;
 		}
 
@@ -299,21 +312,32 @@ class FeatureContext implements Context {
 		$folder2 = "$dataDir/" . strtoupper($firstChar) . $restChars;
 
 		// check data folders
-		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]'";
+		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]' 2>&1";
 		exec($checkCmd, $checkOutput, $checkCode);
-		if ($checkCode === 1) {
-			echo "User data directory doesn't exist, skipping deletion.\n";
+		if ($checkCode !== 0) {
+			if ($checkCode === 1) {
+				echo "User '$user' data directory doesn't exist, skipping deletion.\n";
+			} else {
+				echo "Failed to check user data directory for '$user'.\n";
+				echo "Command: $checkCmd\n";
+				echo "Exit code: $checkCode\n";
+			}
 			if (count($checkOutput) > 0) {
-				echo "Command output: " . implode("\n", $checkOutput);
+				echo "Command output: " . implode("\n", $checkOutput) . "\n";
 			}
 			return;
 		}
+
 		// delete user data directory
-		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern'";
+		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern' 2>&1";
 		exec($rmCmd, $output, $rmCode);
 		if ($rmCode !== 0) {
 			echo "Failed to delete data directory of user '$user'.\n";
-			echo "Command output: " . implode("\n", $output);
+			echo "Command: $rmCmd\n";
+			echo "Exit code: $rmCode\n";
+			if (count($output) > 0) {
+				echo "Command output: " . implode("\n", $output) . "\n";
+			}
 		}
 	}
 
