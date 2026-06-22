@@ -29,4 +29,15 @@ describe('WorkPackage.vue', () => {
 		expect(workPackages).toMatchSnapshot()
 
 	})
+
+	it('passes displayName, size and url props to NcAvatar but does not pass the user props', () => {
+		const avatar = wrapper.findComponent({ name: 'NcAvatar' })
+		expect(avatar.exists()).toBe(true)
+		expect(avatar.props()).toMatchObject({
+			displayName: 'test',
+			size: expect.any(Number),
+			url: '/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System',
+		})
+		expect(avatar.props('user')).toBeUndefined()
+	})
 })
