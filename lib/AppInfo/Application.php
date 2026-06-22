@@ -62,9 +62,9 @@ class Application extends App implements IBootstrap {
 
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE = "nextcloud_hub";
-	public const NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL = "Nextcloud Hub";
-	public const EXTERNAL_OIDC_PROVIDER_TYPE = "external";
+	public const NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE = 'nextcloud_hub';
+	public const NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL = 'Nextcloud Hub';
+	public const EXTERNAL_OIDC_PROVIDER_TYPE = 'external';
 
 	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.2.0';
 	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.14.1';

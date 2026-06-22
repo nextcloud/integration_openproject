@@ -26,12 +26,12 @@ class TokenEventFactoryTest extends TestCase {
 				"class" => InternalTokenRequestedEvent::class,
 			],
 			"External IDP without token exchange" => [
-				"providerType" => "external",
+				"providerType" => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => false,
 				"class" => ExternalTokenRequestedEvent::class,
 			],
 			"External IDP with token exchange" => [
-				"providerType" => "external",
+				"providerType" => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => true,
 				"class" => ExchangedTokenRequestedEvent::class,
 			],
