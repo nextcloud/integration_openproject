@@ -10,9 +10,8 @@
 			:index="formOrder"
 			:title="t('integration_openproject', 'OpenProject server')"
 			:is-complete="isFormComplete"
-			:is-disabled="!showSettings"
 			:is-dark-theme="isDarkTheme" />
-		<div v-if="showSettings" class="openproject-host">
+		<div class="openproject-host">
 			<FieldValue v-if="isViewMode"
 				is-required
 				class="pb-1"
@@ -83,10 +82,6 @@ export default {
 		PencilIcon,
 	},
 	props: {
-		currentSetting: {
-			type: String,
-			required: true,
-		},
 		isDarkTheme: {
 			type: Boolean,
 			default: false,
@@ -112,9 +107,6 @@ export default {
 		}
 	},
 	computed: {
-		showSettings() {
-			return this.currentSetting === this.formId || !!this.isFormComplete
-		},
 		isFormComplete() {
 			return !!this.savedOpenprojectUrl
 		},

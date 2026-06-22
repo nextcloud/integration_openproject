@@ -129,15 +129,9 @@ export const ADMIN_SETTINGS_FORM = {
 		complete: false,
 		value: {},
 	},
+	// order: 4 or 5 depending on auth method
 	projectFolder: {
 		id: 'project-folder',
 		complete: false,
 	},
-}
-
-export function * settingsFlowGenerator() {
-	const settings = Object.values(ADMIN_SETTINGS_FORM).map(({ id }) => id)
-	for (const setting of settings) {
-		yield setting
-	}
 }
