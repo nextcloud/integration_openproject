@@ -29,7 +29,7 @@
 			:apps="state.apps"
 			@formcomplete="markFormComplete" />
 		<FormOAuthSettings
-			v-if="isOAuthMethod"
+			v-if="isOAuthMethod || !form.authenticationMethod.complete"
 			:is-dark-theme="isDarkTheme"
 			:form-state="form"
 			:oauth-settings="{
@@ -452,8 +452,8 @@ export default {
 				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
 			}
 		},
-		'form.nextcloudOauth.complete'() {
-			if (this.form.nextcloudOauth.complete && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
+		'isAuthorizationSettingFormComplete'() {
+			if (this.form.openprojectOauth.complete && this.form.nextcloudOauth.complete && this.formMode.projectFolderSetUp === F_MODES.DISABLE) {
 				this.formMode.projectFolderSetUp = F_MODES.EDIT
 				this.showDefaultManagedProjectFolders = true
 				this.isProjectFolderSwitchEnabled = true
@@ -493,7 +493,7 @@ export default {
 					this.showDefaultManagedProjectFolders = true
 				}
 
-				if (this.textLabelProjectFolderSetupButton === 'Keep current setup') {
+				if (this.textLabelProjectFolderSetupButton === this.buttonTextLabel.keepCurrentChange) {
 					this.showDefaultManagedProjectFolders = true
 					this.formMode.projectFolderSetUp = F_MODES.VIEW
 					this.isFormCompleted.projectFolderSetUp = true

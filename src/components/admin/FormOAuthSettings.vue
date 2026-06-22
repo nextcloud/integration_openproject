@@ -154,7 +154,6 @@ import FormHeading from './FormHeading.vue'
 import TextInput from './TextInput.vue'
 import { F_MODES, ADMIN_SETTINGS_FORM, AUTH_METHOD } from '../../utils.js'
 import { saveAdminConfig, createNextcloudOAuthClient } from '../../api/settings.js'
-import { messages, messagesFmt } from '../../constants/messages.js'
 
 export default {
 	name: 'FormOAuthSettings',
@@ -189,8 +188,6 @@ export default {
 			nextcloudFormId: ADMIN_SETTINGS_FORM.nextcloudOauth.id,
 			openprojectFormOrder: ADMIN_SETTINGS_FORM.openprojectOauth.order.toString(),
 			nextcloudFormOrder: ADMIN_SETTINGS_FORM.nextcloudOauth.order.toString(),
-			messages,
-			messagesFmt,
 			loading: false,
 			openprojectTokenRevokeStatus: null,
 			// state that holds the current changed form values
@@ -273,7 +270,6 @@ export default {
 
 		if (this.isNextcloudFormComplete) {
 			this.setNextcloudFromToViewMode()
-			this.$emit('formcomplete', this.markNextcloudFormComplete)
 		}
 	},
 	methods: {
