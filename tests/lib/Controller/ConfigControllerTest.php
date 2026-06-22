@@ -486,7 +486,7 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '$client_id',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -495,7 +495,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => '',
 					'openproject_client_secret' => '$client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -529,7 +529,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->willReturnMap([
 				[Application::APP_ID, 'openproject_instance_url', '', $credsToUpdate['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'authorization_method', '', Application::AUTH_METHOD_OAUTH],
 				[Application::APP_ID, 'openproject_client_id', '', $credsToUpdate['openproject_client_id']],
 				[Application::APP_ID, 'openproject_client_secret', '', $credsToUpdate['openproject_client_secret']],
 				[Application::APP_ID, 'nc_oauth_client_id', '', '123'],
@@ -565,7 +565,7 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'test-oidc-provider',
 					'targeted_audience_client_id' => 'test-client',
 					'openproject_instance_url' => 'http://openproject.com'
@@ -574,7 +574,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => 'test-client',
 					'openproject_instance_url' => 'http://openproject.com'
@@ -583,7 +583,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => '',
 					'openproject_instance_url' => 'http://openproject.com'
@@ -592,7 +592,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'test-oidc-provider',
 					'targeted_audience_client_id' => '',
 					'openproject_instance_url' => 'http://openproject.com'
@@ -626,9 +626,9 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->willReturnMap([
 				[Application::APP_ID, 'openproject_instance_url', '', $credsToUpdate['openproject_instance_url']],
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OIDC],
+				[Application::APP_ID, 'authorization_method', '', Application::AUTH_METHOD_OIDC],
 				[Application::APP_ID, 'oidc_provider', '', $credsToUpdate['oidc_provider']],
-				[Application::APP_ID, 'sso_provider_type', '', SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE],
+				[Application::APP_ID, 'sso_provider_type', '', Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE],
 				[Application::APP_ID, 'targeted_audience_client_id', '', $credsToUpdate['targeted_audience_client_id']],
 				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
 			]);
@@ -663,13 +663,13 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // everything changes so delete user values and change the oAuth Client
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -679,13 +679,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // only client id changes so delete user values but don't change the oAuth Client
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -695,13 +695,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // only client secret changes so delete user values but don't change the oAuth Client
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -711,13 +711,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //only the openproject_instance_url changes so don't delete the user values but change the oAuth Client
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -727,7 +727,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //everything cleared
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -743,7 +743,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ //everything cleared with empty strings
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'openproject_client_id',
 					'openproject_client_secret' => 'openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -928,7 +928,7 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[
 				'oldConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'op_client',
 					'openproject_client_secret' => 'op_client_secret',
 					'nc_oauth_client_id' => 'nc_client',
@@ -946,13 +946,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				'oldConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'op_client',
 					'openproject_client_secret' => 'op_client_secret',
 					'nc_oauth_client_id' => 'nc_client',
 				],
 				'newConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'client_id_changed',
 					'openproject_client_secret' => 'client_secret_changed',
 					'openproject_instance_url' => 'http://localhost:3000',
@@ -1113,7 +1113,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeErrors($errorCode, $exception, $errMessage) {
 		$oldAdminConfig = [
-			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -1160,7 +1160,7 @@ class ConfigControllerTest extends TestCase {
 				$oldAdminConfig['openproject_client_secret'],
 				'',
 				$errorCode,
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				$newAdminConfig['openproject_instance_url'],
 				false,
 				$newAdminConfig['openproject_client_id'],
@@ -1247,7 +1247,7 @@ class ConfigControllerTest extends TestCase {
 	 */
 	public function testOPOAuthTokenRevokeDoesNotOccurIfNoOPOAuthClientHasChanged() {
 		$oldAdminConfig = [
-			'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+			'authorization_method' => Application::AUTH_METHOD_OAUTH,
 			'openproject_client_id' => 'some_old_client_id',
 			'openproject_client_secret' => 'some_old_client_secret',
 			'openproject_instance_url' => 'http://localhost:3000',
@@ -1330,7 +1330,7 @@ class ConfigControllerTest extends TestCase {
 			->method('getAppValue')
 			->willReturnMap([
 				[Application::APP_ID, 'openproject_instance_url', '', 'http://localhost:3000'],
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'authorization_method', '', Application::AUTH_METHOD_OAUTH],
 				[Application::APP_ID, 'openproject_client_id', '', 'some_cilent_id'],
 				[Application::APP_ID, 'openproject_client_secret', '', 'some_cilent_secret'],
 			]);
@@ -1361,7 +1361,7 @@ class ConfigControllerTest extends TestCase {
 		$configController = new ConfigController(...$constructArgs);
 
 		$result = $configController->setAdminConfig([
-			"authorization_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+			"authorization_method" => Application::AUTH_METHOD_OAUTH,
 			"setup_project_folder" => true,
 			"setup_app_password" => true
 		]);
@@ -1428,13 +1428,13 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // set info if the authorization settings are changed
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'oidc_provider',
 					'targeted_audience_client_id' => 'targeted_audience_client_id',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -1444,13 +1444,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // set info even if only 'targeted_audience_client_id' authorization settings are changed
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old_oidc_provider',
 					'targeted_audience_client_id' => 'new_targeted_audience_client_id',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -1460,13 +1460,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // setinfo even if only 'oidc_provider' authorization settings are changed
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'new_oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -1474,13 +1474,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // set if authorization settings are empty string
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => '',
 					'openproject_instance_url' => 'http://openproject.com',
@@ -1488,13 +1488,13 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // set if authorization settings are null
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => null,
 					'targeted_audience_client_id' => null,
 					'openproject_instance_url' => 'http://openproject.com',
@@ -1541,7 +1541,7 @@ class ConfigControllerTest extends TestCase {
 				$oldCreds['targeted_audience_client_id'],
 				'123',
 				'',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				$credsToUpdate['oidc_provider'],
 				$credsToUpdate['targeted_audience_client_id'],
 				$credsToUpdate['openproject_instance_url']
@@ -1572,13 +1572,13 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // when switching from oauth2 to oidc, userdata gets deleted along with the nc client information
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'openproject_client_id' => '',
 					'openproject_client_secret' => '',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -1586,7 +1586,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[ // when resetting with OAUTH2 already configured, userdata gets deleted along with the nc client information
 				[
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'openproject_client_id' => 'old-openproject_client_id',
 					'openproject_client_secret' => 'old-openproject_client_secret',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -1640,7 +1640,7 @@ class ConfigControllerTest extends TestCase {
 				'123',
 				'123',
 				'',
-				OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				Application::AUTH_METHOD_OAUTH,
 				$credsToUpdate['openproject_client_id'],
 				$credsToUpdate['openproject_client_secret'],
 				$credsToUpdate['openproject_instance_url']
@@ -1692,13 +1692,13 @@ class ConfigControllerTest extends TestCase {
 		return [
 			[ // when switching from oidc to oauth2, just the user information get deleted
 				'oldConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
 				],
 				'newConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 					'oidc_provider' => '',
 					'targeted_audience_client_id' => '',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -1706,7 +1706,7 @@ class ConfigControllerTest extends TestCase {
 			],
 			[
 				'oldConfig' => [
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
 					'oidc_provider' => 'old-oidc_provider',
 					'targeted_audience_client_id' => 'old-targeted_audience_client_id',
 					'openproject_instance_url' => 'http://old-openproject.com',
@@ -1821,52 +1821,52 @@ class ConfigControllerTest extends TestCase {
 					...$defaultSettings,
 					'openproject_client_id' => 'test',
 					'openproject_client_secret' => 'test',
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
 				],
 			],
 			"complete oidc: NC Hub without 'oidc_provider'" => [
 				'settings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 				],
 				'expectedSettings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
-					'oidc_provider' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL,
+					'oidc_provider' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL,
 				],
 			],
 			"complete oidc: NC Hub with empty 'oidc_provider'" => [
 				'settings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 					'oidc_provider' => '',
 				],
 				'expectedSettings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
-					'oidc_provider' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL,
+					'oidc_provider' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL,
 				],
 			],
 			"complete oidc: NC Hub with 'oidc_provider'" => [
 				'settings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 					'oidc_provider' => 'test',
 				],
 				'expectedSettings' => [
 					...$defaultSettings,
-					'authorization_method' => OpenProjectAPIService::AUTH_METHOD_OIDC,
-					'sso_provider_type' => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					'targeted_audience_client_id' => 'test',
 					'oidc_provider' => 'test',
 				],
