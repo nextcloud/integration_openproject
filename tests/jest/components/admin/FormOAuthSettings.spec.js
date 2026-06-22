@@ -71,8 +71,8 @@ const defaultProps = {
 describe('Component: FormOAuthSettings', () => {
 	afterEach(() => {
 		jest.clearAllMocks()
-		saveAdminConfig.mockRestore()
-		createNextcloudOAuthClient.mockRestore()
+		saveAdminConfig.mockReset()
+		createNextcloudOAuthClient.mockReset()
 	})
 
 	describe('form states', () => {
@@ -272,6 +272,10 @@ describe('Component: FormOAuthSettings', () => {
 				})
 			})
 
+			it('should mark form complete', async () => {
+				expect(wrapper.emitted().formcomplete.length).toBe(2)
+				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
+			})
 			it('should trigger confirm dialog on click', async () => {
 				const spyConfirmDialog = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 				const resetButton = wrapper.find(selectors.opResetButton)
@@ -481,7 +485,13 @@ describe('Component: FormOAuthSettings', () => {
 				})
 			})
 
+			it('should mark form complete', async () => {
+				expect(wrapper.emitted().formcomplete.length).toBe(2)
+				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
+			})
 			it('should trigger confirm dialog on click', async () => {
+				expect(wrapper.emitted().formcomplete.length).toBe(2)
+				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 				const spyConfirmDialog = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 				const resetButton = wrapper.find(selectors.ncResetButton)
 				resetButton.vm.$emit('click')
@@ -566,6 +576,9 @@ describe('Component: FormOAuthSettings', () => {
 				expect(wrapper.vm.savedNextcloudForm.clientId).toBe('nc-client-id')
 				expect(wrapper.vm.savedNextcloudForm.clientSecret).toBe('nc-client-secret')
 				expect(wrapper.vm.nextcloudFormMode).toBe(F_MODES.EDIT)
+
+				expect(wrapper.emitted().formcomplete.length).toBe(1)
+				expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 
 				const ncFormContainer = wrapper.find(selectors.ncFormContainer)
 				expect(ncFormContainer.exists()).toBe(true)
