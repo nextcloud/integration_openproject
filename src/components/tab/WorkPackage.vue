@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			<div class="row__workpackage">
-				#{{ workpackage.id }} - {{ workpackage.project }}
+				{{ getWPDisplayID() }} - {{ workpackage.project }}
 			</div>
 		</div>
 		<div class="row">
@@ -99,6 +99,14 @@ export default {
 			} catch (e) {
 				// something went  wrong, leave the values as they are
 			}
+		},
+		getWPDisplayID() {
+			const id = this.workpackage.displayId
+			const isNumericId = /^\d+$/.test(id)
+			if (isNumericId) {
+				return '#' + id
+			}
+			return id
 		},
 		setWPStatusBorder() {
 			try {
