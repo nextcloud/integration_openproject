@@ -1,10 +1,167 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkPackage.vue shows work packages information 1`] = `
-VueWrapper {
-  "_emitted": {},
-  "_emittedByOrder": [],
-  "isFunctionalComponent": undefined,
-  "selector": ".workpackage",
-}
+exports[`WorkPackage.vue new work package id shows work packages information 1`] = `
+<div
+  class="workpackage"
+>
+  <div
+    class="row"
+  >
+    <div
+      class="row__status"
+      style="background-color: blue; border: 0px;"
+    >
+      <div
+        class="row__status__title"
+        style="color: rgb(255, 255, 255);"
+      >
+        
+				in-progress
+			
+      </div>
+    </div>
+     
+    <div
+      class="row__workpackage"
+    >
+      
+			WP-1 - test
+		
+    </div>
+  </div>
+   
+  <div
+    class="row"
+  >
+    <div
+      class="row__subject"
+    >
+      <span
+        class="row__subject__type"
+        style="color: red;"
+      >
+        
+				task
+			
+      </span>
+      
+			Organize work-packages
+		
+    </div>
+  </div>
+   
+  <div
+    class="row"
+  >
+    <div
+      class="row__assignee"
+    >
+      <div
+        class="row__assignee__avatar"
+      >
+        <ncavatar-stub
+          allowplaceholder="true"
+          class="item-avatar"
+          displayname="test"
+          menucontainer="body"
+          showuserstatus="true"
+          showuserstatuscompact="true"
+          size="23"
+          url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+        />
+      </div>
+       
+      <div
+        class="row__assignee__assignee"
+      >
+        
+				test
+			
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`WorkPackage.vue old work package id shows work packages information 1`] = `
+<div
+  class="workpackage"
+>
+  <div
+    class="row"
+  >
+    <div
+      class="row__status"
+      style="background-color: blue; border: 0px;"
+    >
+      <div
+        class="row__status__title"
+        style="color: rgb(255, 255, 255);"
+      >
+        
+				in-progress
+			
+      </div>
+    </div>
+     
+    <div
+      class="row__workpackage"
+    >
+      
+			#1 - test
+		
+    </div>
+  </div>
+   
+  <div
+    class="row"
+  >
+    <div
+      class="row__subject"
+    >
+      <span
+        class="row__subject__type"
+        style="color: red;"
+      >
+        
+				task
+			
+      </span>
+      
+			Organize work-packages
+		
+    </div>
+  </div>
+   
+  <div
+    class="row"
+  >
+    <div
+      class="row__assignee"
+    >
+      <div
+        class="row__assignee__avatar"
+      >
+        <ncavatar-stub
+          allowplaceholder="true"
+          class="item-avatar"
+          displayname="test"
+          menucontainer="body"
+          showuserstatus="true"
+          showuserstatuscompact="true"
+          size="23"
+          url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+        />
+      </div>
+       
+      <div
+        class="row__assignee__assignee"
+      >
+        
+				test
+			
+      </div>
+    </div>
+  </div>
+</div>
 `;
