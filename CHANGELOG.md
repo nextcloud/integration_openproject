@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix: OpenProject avatar remains stale [#1058](https://github.com/nextcloud/integration_openproject/pull/1058)
+- Fix: Unnecessary 404 requests when searching OpenProject work packages [#1070](https://github.com/nextcloud/integration_openproject/pull/1070)
+- Fix: OpenProject avatar remains stale [#1069](https://github.com/nextcloud/integration_openproject/pull/1069)
 
 ### Changed
 
