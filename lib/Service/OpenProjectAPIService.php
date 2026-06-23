@@ -338,7 +338,7 @@ class OpenProjectAPIService {
 	 * @param string $openprojectUserId
 	 * @param string $openprojectUserName
 	 * @param string $nextcloudUserId
-	 * @return array{avatar: string, type?: string}
+	 * @return array{avatar: string, type: string, etag: string}
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
@@ -387,12 +387,18 @@ class OpenProjectAPIService {
 			return [
 				'avatar' => $imageData,
 				'type' => $imageMimeType ,
+				'etag' => md5($imageData),
 			];
 		} catch (ServerException | ClientException | ConnectException | OpenprojectAvatarErrorException | Exception $e) {
 			$this->logger->debug('Error while getting OpenProject avatar for user ' . $openprojectUserId . ': ' . $e->getMessage(), ['app' => $this->appName]);
 			$avatar = $this->avatarManager->getGuestAvatar($openprojectUserName);
-			$avatarContent = $avatar->getFile(64)->getContent();
-			return ['avatar' => $avatarContent];
+			$avatarFile = $avatar->getFile(64);
+			$avatarContent = $avatarFile->getContent();
+			return [
+				'avatar' => $avatarContent,
+				'type' => $avatarFile->getMimeType(),
+				'etag' => md5($avatarContent),
+			];
 		}
 	}
 
