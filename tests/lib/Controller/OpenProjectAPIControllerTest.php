@@ -210,42 +210,42 @@ class OpenProjectAPIControllerTest extends TestCase {
 	public function getOpenProjectAvatarDataProvider(): array {
 		return [
 			'OAuth: returns 200 OK when If-None-Match differs from ETag' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '"different etag"',
 				'contentType' => 'image/jpeg',
 				'expectedStatusCode' => Http::STATUS_OK,
 			],
 			'OAuth: returns 200 OK if If-None-Match is empty' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '',
 				'contentType' => 'image/jpeg',
 				'expectedStatusCode' => Http::STATUS_OK
 			],
 			'OAuth: returns 304 Not Modified when If-None-Match matches ETag' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'authorizationMethod' => Application::AUTH_METHOD_OAUTH,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '"some etag"',
 				'contentType' => 'image/jpeg',
 				'expectedStatusCode' => Http::STATUS_NOT_MODIFIED,
 			],
 			'OIDC: returns 200 OK when If-None-Match differs from ETag' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'authorizationMethod' => Application::AUTH_METHOD_OIDC,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '"different etag"',
 				'contentType' => 'image/jpeg',
 				'expectedStatusCode' => Http::STATUS_OK,
 			],
 			'OIDC: returns 200 OK if If-None-Match is empty' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'authorizationMethod' => Application::AUTH_METHOD_OIDC,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '',
 				'contentType' => 'image/jpeg',
 				'expectedStatusCode' => Http::STATUS_OK
 			],
 			'OIDC: returns 304 Not Modified when If-None-Match matches ETag' => [
-				'authorizationMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'authorizationMethod' => Application::AUTH_METHOD_OIDC,
 				'etag' => 'some etag',
 				'ifNoneMatch' => '"some etag"',
 				'contentType' => 'image/jpeg',
