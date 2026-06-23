@@ -16,10 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Fixed
+
 - Fix: Unnecessary 404 requests when searching OpenProject work packages [#1061](https://github.com/nextcloud/integration_openproject/pull/1061)
 - Fix: OpenProject avatar remains stale [#1058](https://github.com/nextcloud/integration_openproject/pull/1058)
-
 - Fix: App logo not seen in the App store section of Nextcloud [#1042](https://github.com/nextcloud/integration_openproject/pull/1042)
+- Fix: Do not create OAuth client when setting up with OIDC auth method [#1073](https://github.com/nextcloud/integration_openproject/pull/1073)
 
 ### Changed
 
