@@ -74,7 +74,7 @@ class PersonalTest extends TestCase {
 				'username' => 'testUser',
 				"config" => [
 					"openproject_instance_url" => 'http://some.url',
-					"authentication_method" => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+					"authentication_method" => Application::AUTH_METHOD_OAUTH,
 					"openproject_client_id" => 'some-client-id',
 					"openproject_client_secret" => 'some-client-secret',
 					"nc_oauth_client_id" => 'nc-client',
@@ -95,7 +95,7 @@ class PersonalTest extends TestCase {
 				'username' => 'testUser',
 				"config" => [
 					"openproject_instance_url" => 'http://some.url',
-					"authentication_method" => OpenProjectAPIService::AUTH_METHOD_OIDC,
+					"authentication_method" => Application::AUTH_METHOD_OIDC,
 					"openproject_client_id" => '',
 					"openproject_client_secret" => '',
 					"nc_oauth_client_id" => '',

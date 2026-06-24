@@ -8,7 +8,6 @@
 namespace OCA\OpenProject;
 
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent as ExchangedTokenEvent;
 use OCA\UserOIDC\Event\ExternalTokenRequestedEvent as ExternalTokenEvent;
 use OCA\UserOIDC\Event\InternalTokenRequestedEvent as InternalTokenEvent;
@@ -33,7 +32,7 @@ class TokenEventFactory {
 
 		// If the SSO provider is Nextcloud Hub,
 		// get token from internal IDP (oidc)
-		if ($SSOProviderType === OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			return new InternalTokenEvent($targetAudience, Application::OPENPROJECT_API_SCOPES, $targetAudience);
 		}
 

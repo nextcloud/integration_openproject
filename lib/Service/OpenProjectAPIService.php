@@ -65,13 +65,6 @@ use Psr\Log\LoggerInterface;
 define('CACHE_TTL', 3600);
 
 class OpenProjectAPIService {
-	public const AUTH_METHOD_OAUTH = 'oauth2';
-	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.2.0';
-	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.14.1';
-	public const MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION = '1.0.0';
-	public const NEXTCLOUD_HUB_PROVIDER = "nextcloud_hub";
-
 	// 1 hour expiration
 	public const DEFAULT_ACCESS_TOKEN_EXPIRATION = 3600;
 
@@ -931,7 +924,7 @@ class OpenProjectAPIService {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 		// NOTE: For backwards compability, check the auth method only if provided
 		// version: 2.8 -> 2.9
-		if ($authMethod && $authMethod !== self::AUTH_METHOD_OAUTH) {
+		if ($authMethod && $authMethod !== Application::AUTH_METHOD_OAUTH) {
 			return false;
 		}
 
@@ -953,7 +946,7 @@ class OpenProjectAPIService {
 		}
 
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
-		if ($authMethod !== self::AUTH_METHOD_OIDC) {
+		if ($authMethod !== Application::AUTH_METHOD_OIDC) {
 			return false;
 		}
 
@@ -967,17 +960,17 @@ class OpenProjectAPIService {
 		}
 
 		// check for nextcloud_hub sso
-		if ($ssoProviderType === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+		if ($ssoProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			return !empty($targetAudienceClientId);
 		}
 
 		// check for external sso without token exchange
-		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === false) {
+		if ($ssoProviderType === Application::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === false) {
 			return true;
 		}
 
 		// check for external sso with token exchange
-		if ($ssoProviderType === SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === true) {
+		if ($ssoProviderType === Application::EXTERNAL_OIDC_PROVIDER_TYPE && $tokenExchange === true) {
 			return !empty($targetAudienceClientId);
 		}
 
@@ -992,11 +985,11 @@ class OpenProjectAPIService {
 	public static function isAdminConfigOk(IConfig $config): bool {
 		$authMethod = $config->getAppValue(Application::APP_ID, 'authorization_method');
 
-		if ($authMethod === self::AUTH_METHOD_OAUTH) {
+		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
 			return self::isAdminConfigOkForOauth2($config);
 		}
 
-		if ($authMethod === self::AUTH_METHOD_OIDC) {
+		if ($authMethod === Application::AUTH_METHOD_OIDC) {
 			return self::isAdminConfigOkForOIDCAuth($config);
 		}
 
@@ -1212,7 +1205,7 @@ class OpenProjectAPIService {
 		$appVersion = $this->appManager->getAppVersion('groupfolders');
 		return (
 			$this->isGroupfoldersAppEnabled() &&
-			version_compare($appVersion, self::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION) >= 0
+			version_compare($appVersion, Application::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION) >= 0
 		);
 	}
 
@@ -1670,7 +1663,7 @@ class OpenProjectAPIService {
 	 */
 	public function getOIDCToken(string $userId): string {
 		$authorizationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
-		if ($authorizationMethod !== SettingsService::AUTH_METHOD_OIDC) {
+		if ($authorizationMethod !== Application::AUTH_METHOD_OIDC) {
 			return '';
 		}
 		if (!$this->isUserOIDCAppInstalledAndEnabled()) {
@@ -1695,7 +1688,7 @@ class OpenProjectAPIService {
 		}
 
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			$oidcClientId = $this->config->getAppValue(Application::APP_ID, 'targeted_audience_client_id');
 			$clientTokenType = '';
 			try {
@@ -1753,7 +1746,7 @@ class OpenProjectAPIService {
 		$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method');
 
 		if ($token && !$this->isAccessTokenExpired($userId)) {
-			if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+			if ($authMethod === Application::AUTH_METHOD_OIDC) {
 				$this->initUserInfo($userId, $token);
 			}
 			return $token;
@@ -1762,7 +1755,7 @@ class OpenProjectAPIService {
 		if ($token) {
 			$this->logger->debug('Token has expired.', ['app' => $this->appName]);
 			$this->logger->debug('Refreshing access token.', ['app' => $this->appName]);
-			if ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+			if ($authMethod === Application::AUTH_METHOD_OIDC) {
 				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_name');
 				$this->config->deleteUserValue($userId, Application::APP_ID, 'user_id');
 			}
@@ -1770,7 +1763,7 @@ class OpenProjectAPIService {
 
 		// For OAuth2 setup, only try to refresh the expired token.
 		// Token exchange needs to be initiated from the UI.
-		if ($authMethod === SettingsService::AUTH_METHOD_OAUTH && $token) {
+		if ($authMethod === Application::AUTH_METHOD_OAUTH && $token) {
 			$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
 			$clientID = $this->config->getAppValue(Application::APP_ID, 'openproject_client_id');
 			$clientSecret = $this->config->getAppValue(Application::APP_ID, 'openproject_client_secret');
@@ -1790,7 +1783,7 @@ class OpenProjectAPIService {
 				return '';
 			}
 			return $result['access_token'];
-		} elseif ($authMethod === SettingsService::AUTH_METHOD_OIDC) {
+		} elseif ($authMethod === Application::AUTH_METHOD_OIDC) {
 			$token = $this->getOIDCToken($userId);
 			if ($token) {
 				$this->initUserInfo($userId, $token);
@@ -1861,7 +1854,7 @@ class OpenProjectAPIService {
 			class_exists('\OCA\UserOIDC\Event\ExternalTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\Event\InternalTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\User\Backend') &&
-			version_compare($userOidcVersion, self::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
+			version_compare($userOidcVersion, Application::MIN_SUPPORTED_USER_OIDC_APP_VERSION) >= 0
 		);
 	}
 
@@ -1873,7 +1866,7 @@ class OpenProjectAPIService {
 		$appVersion = $this->appManager->getAppVersion('oidc');
 		return (
 			$this->isOIDCAppEnabled() &&
-			version_compare($appVersion, self::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
+			version_compare($appVersion, Application::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
 		);
 	}
 
@@ -1882,7 +1875,7 @@ class OpenProjectAPIService {
 	 */
 	public function isOIDCUser(): bool {
 		$SSOProviderType = $this->config->getAppValue(Application::APP_ID, 'sso_provider_type');
-		if ($SSOProviderType === self::NEXTCLOUD_HUB_PROVIDER) {
+		if ($SSOProviderType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 			return true;
 		}
 
