@@ -285,7 +285,7 @@ class OpenProjectControllerTest extends TestCase {
 		$configMock
 			->method('getAppValue')
 			->willReturnMap([
-				[Application::APP_ID, 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OAUTH],
+				[Application::APP_ID, 'authorization_method', '', Application::AUTH_METHOD_OAUTH],
 				[Application::APP_ID, 'openproject_instance_url', '', 'http://openproject.org'],
 				[Application::APP_ID, 'openproject_client_id', '', 'myClientID'],
 				[Application::APP_ID, 'openproject_client_secret', '', 'myClientSecret'],
