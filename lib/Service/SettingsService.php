@@ -183,11 +183,8 @@ class SettingsService {
 	private function validateSettingsDataType(array $settings): void {
 		$settingsSchema = $this->getAllSettingsSchema();
 		foreach ($settings as $key => $value) {
-			if (!$this->hasValidDataType($value, $settingsSchema[$key])) {
+			if (!$this->hasValidDataType($value, $settingsSchema[$key]) || $value === '') {
 				throw new InvalidArgumentException('Invalid value for setting: ' . $key);
-			}
-			if ($value === '') {
-				throw new InvalidArgumentException('Empty value for setting: ' . $key);
 			}
 			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
 				throw new InvalidArgumentException('Invalid OpenProject URL: ' . $value);
