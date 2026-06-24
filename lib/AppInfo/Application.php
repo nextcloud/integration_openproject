@@ -58,7 +58,17 @@ class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_openproject';
 	public const OPEN_PROJECT_ENTITIES_NAME = 'OpenProject';
 	public const OPENPROJECT_ALL_GROUP_NAME = 'OpenProjectNoAutomaticProjectFolders';
-	public const  OPENPROJECT_API_SCOPES = ['api_v3'];
+	public const OPENPROJECT_API_SCOPES = ['api_v3'];
+
+	public const AUTH_METHOD_OAUTH = 'oauth2';
+	public const AUTH_METHOD_OIDC = 'oidc';
+	public const NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE = 'nextcloud_hub';
+	public const NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL = 'Nextcloud Hub';
+	public const EXTERNAL_OIDC_PROVIDER_TYPE = 'external';
+
+	public const MIN_SUPPORTED_USER_OIDC_APP_VERSION = '7.2.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = '1.14.1';
+	public const MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION = '1.0.0';
 
 	// default app name
 	private const DEFAULT_APP_NAMES = [
@@ -154,8 +164,8 @@ class Application extends App implements IBootstrap {
 				$userId,
 				self::APP_ID,
 				'navigation_enabled',
-				$this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0')) === '1') {
-				$openprojectUrl = $this->config->getAppValue(Application::APP_ID, 'openproject_instance_url', '');
+				$this->config->getAppValue(self::APP_ID, 'default_enable_navigation', '0')) === '1') {
+				$openprojectUrl = $this->config->getAppValue(self::APP_ID, 'openproject_instance_url', '');
 				if ($openprojectUrl !== '') {
 					$container->get(INavigationManager::class)->add(function () use ($container, $openprojectUrl) {
 						$urlGenerator = $container->get(IURLGenerator::class);
