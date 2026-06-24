@@ -39,7 +39,7 @@ class Version2900Date20250718065820 extends SimpleMigrationStep {
 			!(empty($opClientId) || empty($opClientSecret) || empty($ncClientId));
 
 		if (!$authenticationMethod && $hasCompleteOAuthSetup) {
-			$this->config->setAppValue(Application::APP_ID, 'authorization_method', OpenProjectAPIService::AUTH_METHOD_OAUTH);
+			$this->config->setAppValue(Application::APP_ID, 'authorization_method', Application::AUTH_METHOD_OAUTH);
 		}
 
 		return null;
