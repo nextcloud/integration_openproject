@@ -47,11 +47,11 @@ class LoadSidebarScriptTest extends TestCase {
 	public function dataTestHandle(): array {
 		return [
 			[
-				'authMethod' => OpenProjectAPIService::AUTH_METHOD_OAUTH,
+				'authMethod' => Application::AUTH_METHOD_OAUTH,
 				'openprojectUrl' => 'http://local.test',
 			],
 			[
-				'authMethod' => OpenProjectAPIService::AUTH_METHOD_OIDC,
+				'authMethod' => Application::AUTH_METHOD_OIDC,
 				'openprojectUrl' => 'http://local.test',
 			],
 			[

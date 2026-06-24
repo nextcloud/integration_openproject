@@ -15,16 +15,11 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class SettingsService {
-	public const AUTH_METHOD_OAUTH = 'oauth2';
-	public const AUTH_METHOD_OIDC = 'oidc';
-	public const NEXTCLOUDHUB_OIDC_PROVIDER_TYPE = "nextcloud_hub";
-	public const EXTERNAL_OIDC_PROVIDER_TYPE = "external";
-	public const NEXTCLOUDHUB_OIDC_PROVIDER_LABEL = "Nextcloud Hub";
 	// <setting_name> => <data_type>
 	private const GENERAL_ADMIN_SETTINGS = [
 		// general settings
 		'openproject_instance_url' => 'string',
-		'authorization_method' => [self::AUTH_METHOD_OAUTH, self::AUTH_METHOD_OIDC],
+		'authorization_method' => [Application::AUTH_METHOD_OAUTH, Application::AUTH_METHOD_OIDC],
 		'default_enable_navigation' => 'boolean',
 		'default_enable_unified_search' => 'boolean',
 		// groupfolders settings
@@ -36,7 +31,7 @@ class SettingsService {
 		'openproject_client_secret' => 'string',
 	];
 	private const OIDC_ADMIN_SETTINGS = [
-		'sso_provider_type' => [self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE, self::EXTERNAL_OIDC_PROVIDER_TYPE],
+		'sso_provider_type' => [Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE, Application::EXTERNAL_OIDC_PROVIDER_TYPE],
 		'oidc_provider' => 'string',
 		'targeted_audience_client_id' => 'string',
 		'token_exchange' => 'boolean',
@@ -111,26 +106,26 @@ class SettingsService {
 				throw new InvalidArgumentException("'authorization_method' setting is missing");
 			}
 			$authMethod = $values['authorization_method'];
-			if (!\in_array($authMethod, [self::AUTH_METHOD_OAUTH, self::AUTH_METHOD_OIDC])) {
+			if (!\in_array($authMethod, [Application::AUTH_METHOD_OAUTH, Application::AUTH_METHOD_OIDC])) {
 				throw new InvalidArgumentException('Invalid authorization method');
 			}
-			if ($authMethod === self::AUTH_METHOD_OAUTH) {
+			if ($authMethod === Application::AUTH_METHOD_OAUTH) {
 				$settings = $this->getCompleteOAuthSettings();
 			} else {
 				$settings = $this->getCompleteOIDCSettings();
 				if (!\array_key_exists('sso_provider_type', $values)) {
 					throw new InvalidArgumentException(
 						"Incomplete settings: 'sso_provider_type' is required with '"
-						. self::AUTH_METHOD_OIDC
+						. Application::AUTH_METHOD_OIDC
 						. "' method"
 					);
 				}
-				if ($values['sso_provider_type'] === self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+				if ($values['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 					// for 'nextcloud_hub' type
 					// 'oidc_provider' and 'token_exchange' settings are not required
 					$settingsToSkip[] = 'oidc_provider';
 					$settingsToSkip[] = 'token_exchange';
-				} elseif ($values['sso_provider_type'] === self::EXTERNAL_OIDC_PROVIDER_TYPE) {
+				} elseif ($values['sso_provider_type'] === Application::EXTERNAL_OIDC_PROVIDER_TYPE) {
 					if (!\array_key_exists('token_exchange', $values)) {
 						throw new InvalidArgumentException(
 							"Incomplete settings: 'token_exchange' is required with external provider"

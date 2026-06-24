@@ -70,7 +70,7 @@ class SettingsServiceTest extends TestCase {
 		return [
 			"Random missing settings" => [
 				"configs" => [
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 				],
 				"completeSetup" => true,
 				"message" => "invalid key",
@@ -93,7 +93,7 @@ class SettingsServiceTest extends TestCase {
 			"incomplete settings: oauth2" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -106,7 +106,7 @@ class SettingsServiceTest extends TestCase {
 			"incomplete settings(oidc): missing 'sso_provider_type'" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					"oidc_provider" => "Nextcloud Hub",
@@ -121,10 +121,10 @@ class SettingsServiceTest extends TestCase {
 			"incomplete settings (oidc): missing 'token_exchange' with external provider" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
-					'sso_provider_type' => SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE,
+					'sso_provider_type' => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
 					"setup_project_folder" => false,
 					"setup_app_password" => false,
@@ -135,7 +135,7 @@ class SettingsServiceTest extends TestCase {
 			"invalid oidc provider type" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'sso_provider_type' => 'test', // invalid provider type
@@ -151,7 +151,7 @@ class SettingsServiceTest extends TestCase {
 			"invalid groupfolder settings: true & false" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -165,7 +165,7 @@ class SettingsServiceTest extends TestCase {
 			"invalid groupfolder settings: false & true" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -179,7 +179,7 @@ class SettingsServiceTest extends TestCase {
 			"invalid settings value: incorrect data type" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => 'false', // string instead of boolean
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -193,7 +193,7 @@ class SettingsServiceTest extends TestCase {
 			"invalid settings value: empty string" => [
 				"configs" => [
 					"openproject_instance_url" => "", // empty string
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -207,7 +207,7 @@ class SettingsServiceTest extends TestCase {
 			"unknown settings" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					'openproject_client_id' => 'test',
@@ -242,7 +242,7 @@ class SettingsServiceTest extends TestCase {
 			"complete settings: oauth2" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OAUTH,
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
 					"openproject_client_id" => "test",
@@ -255,10 +255,10 @@ class SettingsServiceTest extends TestCase {
 			"complete settings: oidc" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
-					"sso_provider_type" => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					"sso_provider_type" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
 					"token_exchange" => false,
 					"targeted_audience_client_id" => "test",
@@ -270,10 +270,10 @@ class SettingsServiceTest extends TestCase {
 			"complete settings (oidc): missing 'token_exchange' with NC Hub" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
-					"sso_provider_type" => SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE,
+					"sso_provider_type" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
 					"targeted_audience_client_id" => "test",
 					"setup_project_folder" => true,
@@ -284,10 +284,10 @@ class SettingsServiceTest extends TestCase {
 			"complete settings (oidc): missing 'targeted_audience_client_id' with external and disabled token exchange" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
-					"authorization_method" => SettingsService::AUTH_METHOD_OIDC,
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
 					"default_enable_navigation" => false,
 					"default_enable_unified_search" => false,
-					"sso_provider_type" => SettingsService::EXTERNAL_OIDC_PROVIDER_TYPE,
+					"sso_provider_type" => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 					"oidc_provider" => "Nextcloud Hub",
 					"token_exchange" => false,
 					"setup_project_folder" => true,

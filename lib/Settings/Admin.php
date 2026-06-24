@@ -72,7 +72,7 @@ class Admin implements ISettings {
 		// and there is existing complete Oauth2 setup
 		$authenticationMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
 		if (!$authenticationMethod && OpenProjectAPIService::isAdminConfigOkForOauth2($this->config)) {
-			$authenticationMethod = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+			$authenticationMethod = Application::AUTH_METHOD_OAUTH;
 			$this->config->setAppValue(Application::APP_ID, 'authorization_method', $authenticationMethod);
 		}
 
@@ -111,25 +111,25 @@ class Admin implements ISettings {
 			'oidc_providers' => $this->openProjectAPIService->getRegisteredOidcProviders(),
 			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
 			'user_oidc_supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
-			'user_oidc_minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
+			'user_oidc_minimum_version' => Application::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 			'apps' => [
 				'oidc' => [
 					'name' => $this->openProjectAPIService->getAppsName('oidc'),
 					'enabled' => $this->openProjectAPIService->isOIDCAppEnabled(),
 					'supported' => $this->openProjectAPIService->isOIDCAppSupported(),
-					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_OIDC_APP_VERSION,
+					'minimum_version' => Application::MIN_SUPPORTED_OIDC_APP_VERSION,
 				],
 				'user_oidc' => [
 					'name' => $this->openProjectAPIService->getAppsName('user_oidc'),
 					'enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
 					'supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
-					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
+					'minimum_version' => Application::MIN_SUPPORTED_USER_OIDC_APP_VERSION,
 				],
 				'groupfolders' => [
 					'name' => $this->openProjectAPIService->getAppsName('groupfolders'),
 					'enabled' => $this->openProjectAPIService->isGroupfoldersAppEnabled(),
 					'supported' => $this->openProjectAPIService->isGroupfoldersAppSupported(),
-					'minimum_version' => OpenProjectAPIService::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION,
+					'minimum_version' => Application::MIN_SUPPORTED_GROUPFOLDERS_APP_VERSION,
 				],
 			],
 		];
