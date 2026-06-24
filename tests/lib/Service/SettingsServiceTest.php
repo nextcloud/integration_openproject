@@ -82,10 +82,18 @@ class SettingsServiceTest extends TestCase {
 				"completeSetup" => true,
 				"message" => "'authorization_method' setting is missing",
 			],
-			"invalid 'authorization_method' value" => [
+			"invalid 'authorization_method' value - random string" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
 					"authorization_method" => "test",
+				],
+				"completeSetup" => true,
+				"message" => "Invalid authorization method",
+			],
+			"invalid 'authorization_method' value - boolean true" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => true,
 				],
 				"completeSetup" => true,
 				"message" => "Invalid authorization method",
