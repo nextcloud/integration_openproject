@@ -106,7 +106,8 @@ class SettingsService {
 				throw new InvalidArgumentException("'authorization_method' setting is missing");
 			}
 			$authMethod = $values['authorization_method'];
-			if (!\in_array($authMethod, [Application::AUTH_METHOD_OAUTH, Application::AUTH_METHOD_OIDC])) {
+			// do strict comparison
+			if (!\in_array($authMethod, self::GENERAL_ADMIN_SETTINGS['authorization_method'], true)) {
 				throw new InvalidArgumentException('Invalid authorization method');
 			}
 			if ($authMethod === Application::AUTH_METHOD_OAUTH) {
@@ -141,10 +142,10 @@ class SettingsService {
 
 			// check if all required settings are present
 			foreach ($settings as $key) {
-				if (\in_array($key, $settingsToSkip)) {
+				if (\in_array($key, $settingsToSkip, true)) {
 					continue;
 				}
-				if (!\in_array($key, $settingsToCheck)) {
+				if (!\in_array($key, $settingsToCheck, true)) {
 					// throw new InvalidArgumentException('Incomplete settings');
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -152,7 +153,7 @@ class SettingsService {
 			}
 			// check if there are no unknown settings
 			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings)) {
+				if (!in_array($key, $settings, true)) {
 					// throw new InvalidArgumentException("Unknown setting: $key");
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -169,7 +170,7 @@ class SettingsService {
 		} else {
 			$settings = $this->getAllSettings();
 			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings)) {
+				if (!in_array($key, $settings, true)) {
 					// throw new InvalidArgumentException("Unknown setting: $key");
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -206,7 +207,7 @@ class SettingsService {
 	 */
 	private function hasValidType(mixed $value, string|array $type): bool {
 		if (\is_array($type)) {
-			return \in_array($value, $type);
+			return \in_array($value, $type, true);
 		}
 		return $type === \gettype($value);
 	}
