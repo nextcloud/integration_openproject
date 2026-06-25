@@ -22,8 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Do not create OAuth client while setting up with OIDC auth method [#1049](https://github.com/nextcloud/integration_openproject/pull/1049)
 - Fix: Do not create OAuth client while updating OIDC setup [#1075](https://github.com/nextcloud/integration_openproject/pull/1075)
 - Fix: Handle invalid boolean auth-method value [#1074](https://github.com/nextcloud/integration_openproject/pull/1074)
-
-- Fix: App logo not seen in the App store section of Nextcloud [#1042](https://github.com/nextcloud/integration_openproject/pull/1042)
+- Fix: Update OpenProject icon [#1078](https://github.com/nextcloud/integration_openproject/pull/1078)
 
 ### Changed
 
