@@ -667,22 +667,18 @@ class ConfigController extends Controller {
 			return new DataResponse($response);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
-				'status' => false,
 				'error' => $this->l->t($e->getMessage()),
 			], Http::STATUS_CONFLICT);
 		} catch (NoUserException $e) {
 			return new DataResponse([
-				'status' => false,
 				'error' => $this->l->t($e->getMessage())
 			], Http::STATUS_NOT_FOUND);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse([
-				'status' => false,
 				"error" => $e->getMessage()
 			], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			return new DataResponse([
-				'status' => false,
 				"error" => $e->getMessage()
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
@@ -702,23 +698,28 @@ class ConfigController extends Controller {
 		try {
 			// individual settings can be updated
 			$this->settingsService->validateAdminSettingsForm($values);
-			$status = $this->setIntegrationConfig($values);
-			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
-			$result = [];
-			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			$setup = $this->setIntegrationConfig($values);
+			$response = ['status' => $setup['status']];
+			$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+
+			if ($authMethod === Application::AUTH_METHOD_OIDC) {
+				return new DataResponse($response);
 			}
-			if ($status['oPUserAppPassword'] !== null) {
-				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
-			}
-			if ($oauthClientInternalId !== '') {
-				$id = (int)$oauthClientInternalId;
-				$result = array_merge($this->oauthService->getClientInfo($id), $result);
+
+			$oauthDbId = (int)$this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			if ($oauthDbId) {
+				$response = \array_merge($response, $this->oauthService->getClientInfo($oauthDbId));
 			} else {
-				// we will recreate new oauth when admin has reset it
-				$result = array_merge($this->recreateOauthClientInformation(), $result);
+				$response = \array_merge($response, $this->recreateOauthClientInformation());
 			}
-			return new DataResponse($result);
+
+			if ($setup['oPOAuthTokenRevokeStatus']) {
+				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
+			}
+			if ($setup['oPUserAppPassword']) {
+				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
+			}
+			return new DataResponse($response);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
