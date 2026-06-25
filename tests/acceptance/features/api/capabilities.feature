@@ -31,7 +31,7 @@ Feature: get capabilities of the app
               "properties": {
                 "app_version": {
                   "type": "string",
-                  "pattern": "^\\d+\\.\\d+\\.\\d+(-\\w+.\\d+)?$"
+                  "pattern": "^\\d+\\.\\d+\\.\\d+(-\\w+\\.\\d+|-\\w+)?(-\\w+)?$"
                 },
                 "groupfolder_version": {
                   "type": "string",
