@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+### Changed
+
+### Removed
+
+## 3.1.1 - 2026-07-13
+
+### Fixed
+
 - Fix: App logo not seen in the App store section of Nextcloud [#1042](https://github.com/nextcloud/integration_openproject/pull/1042)
 - Fix: Unnecessary 404 requests when searching OpenProject work packages [#1061](https://github.com/nextcloud/integration_openproject/pull/1061)
 - Fix: OpenProject avatar remains stale [#1058](https://github.com/nextcloud/integration_openproject/pull/1058)
@@ -25,10 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Handle invalid boolean auth-method value [#1079](https://github.com/nextcloud/integration_openproject/pull/1079)
 - Fix: False integration setup status even after complete oauth setup [#1088](https://github.com/nextcloud/integration_openproject/pull/1088)
 - Fix: Incompatible AMPF with the latest Nextcloud patch releases [#1098](https://github.com/nextcloud/integration_openproject/pull/1098)
-
-### Changed
-
-### Removed
 
 ## 3.1.0 - 2026-06-18
 
