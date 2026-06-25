@@ -17,16 +17,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+### Changed
+
+### Removed
+
+## 3.1.1-20260625-nightly
+
+### Fixed
+
 - Fix: App logo not seen in the App store section of Nextcloud [#1042](https://github.com/nextcloud/integration_openproject/pull/1042)
 - Fix: Unnecessary 404 requests when searching OpenProject work packages [#1061](https://github.com/nextcloud/integration_openproject/pull/1061)
 - Fix: OpenProject avatar remains stale [#1058](https://github.com/nextcloud/integration_openproject/pull/1058)
 - Fix: Do not create OAuth client while setting up with OIDC auth method [#1073](https://github.com/nextcloud/integration_openproject/pull/1073)
 - Fix: Do not create OAuth client while updating OIDC setup [#1077](https://github.com/nextcloud/integration_openproject/pull/1077)
 - Fix: Handle invalid boolean auth-method value [#1079](https://github.com/nextcloud/integration_openproject/pull/1079)
-
-### Changed
-
-### Removed
 
 ## 3.1.0 - 2026-06-18
 
