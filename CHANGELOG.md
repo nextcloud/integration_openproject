@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix: Unnecessary 404 requests when searching OpenProject work packages [#1070](https://github.com/nextcloud/integration_openproject/pull/1070)
 - Fix: OpenProject avatar remains stale [#1069](https://github.com/nextcloud/integration_openproject/pull/1069)
-- Fix: Do not create OAuth client when setting up with OIDC auth method [#1049](https://github.com/nextcloud/integration_openproject/pull/1049)
+- Fix: Do not create OAuth client while setting up with OIDC auth method [#1049](https://github.com/nextcloud/integration_openproject/pull/1049)
+- Fix: Do not create OAuth client while updating OIDC setup [#1075](https://github.com/nextcloud/integration_openproject/pull/1075)
 
 ### Changed
 
