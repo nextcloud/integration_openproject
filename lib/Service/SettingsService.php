@@ -102,7 +102,7 @@ class SettingsService {
 		$settingsToSkip = [];
 
 		if ($completeSetup) {
-			if (!\in_array('authorization_method', $settingsToCheck)) {
+			if (!\in_array('authorization_method', $settingsToCheck, true)) {
 				throw new InvalidArgumentException("'authorization_method' setting is missing");
 			}
 			$authMethod = $values['authorization_method'];
