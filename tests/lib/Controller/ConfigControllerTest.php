@@ -2018,9 +2018,179 @@ class ConfigControllerTest extends TestCase {
 			$this->assertArrayNotHasKey('nextcloud_client_id', $data);
 			$this->assertArrayNotHasKey('nextcloud_client_secret', $data);
 			$this->assertArrayNotHasKey('openproject_redirect_uri', $data);
+		} else {
+			$this->assertArrayHasKey('nextcloud_oauth_client_name', $data);
+			$this->assertArrayHasKey('nextcloud_client_id', $data);
+			$this->assertArrayHasKey('nextcloud_client_secret', $data);
+			$this->assertArrayHasKey('openproject_redirect_uri', $data);
 		}
 		if (!$settings['setup_app_password']) {
 			$this->assertArrayNotHasKey('openproject_user_app_password', $data);
+		}
+	}
+
+	/**
+	 * @return array<mixed>
+	 */
+	public function updateIntegrationSuccessProvider(): array {
+		return [
+			"oauth2: OpenProject url and existing Nextcloud client" => [
+				"authMethod" => Application::AUTH_METHOD_OAUTH,
+				"oauthClientId" => 1,
+				'settings' => [
+					'openproject_instance_url' => 'https://new.test',
+				],
+				'responseProps' => [
+					'status',
+					'nextcloud_oauth_client_name',
+					'nextcloud_client_id',
+					'nextcloud_client_secret',
+					'openproject_redirect_uri',
+				],
+			],
+			"oauth2: OpenProject client and non-existing Nextcloud client" => [
+				"authMethod" => Application::AUTH_METHOD_OAUTH,
+				"oauthClientId" => 0,
+				'settings' => [
+					'openproject_client_id' => 'test-new',
+					'openproject_client_secret' => 'test-new',
+				],
+				'responseProps' => [
+					'status',
+					'nextcloud_oauth_client_name',
+					'nextcloud_client_id',
+					'nextcloud_client_secret',
+					'openproject_redirect_uri',
+				],
+			],
+			"oidc: provider type" => [
+				"authMethod" => Application::AUTH_METHOD_OIDC,
+				"oauthClientId" => 0,
+				'settings' => [
+					'sso_provider_type' => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
+				],
+				'responseProps' => [
+					'status',
+				],
+			],
+			"oauth to oidc" => [
+				"authMethod" => Application::AUTH_METHOD_OAUTH,
+				"oauthClientId" => 0,
+				'settings' => [
+					'authorization_method' => Application::AUTH_METHOD_OIDC,
+				],
+				'responseProps' => [
+					'status',
+				],
+			],
+			"oidc to oauth" => [
+				"authMethod" => Application::AUTH_METHOD_OIDC,
+				"oauthClientId" => 0,
+				'settings' => [
+					'authorization_method' => Application::AUTH_METHOD_OAUTH,
+				],
+				'responseProps' => [
+					'status',
+					'nextcloud_oauth_client_name',
+					'nextcloud_client_id',
+					'nextcloud_client_secret',
+					'openproject_redirect_uri',
+				],
+			],
+		];
+	}
+
+	/**
+	 * @param string $authMethod
+	 * @param int $oauthClientId
+	 * @param array<string, bool|string> $settings
+	 * @param array<string> $responseProps
+	 * @return void
+	 * @dataProvider updateIntegrationSuccessProvider
+	 */
+	public function testUpdateIntegrationSuccess(string $authMethod, int $oauthClientId, array $settings, array $responseProps): void {
+		$userManagerMock = $this->createMock(IUserManager::class);
+		$userManagerMock->method('userExists')->willReturn(true);
+		$oauthMock = $this->createMock(OauthService::class);
+
+		// change in authorization method
+		if (isset($settings['authorization_method'])) {
+			$authMethod = $settings['authorization_method'];
+		}
+
+		$configMock = $this->createMock(IConfig::class);
+		$configMock
+			->method('getAppValue')
+			->willReturnMap([
+				[Application::APP_ID, 'authorization_method', '', $authMethod],
+				[Application::APP_ID, 'nc_oauth_client_id', '', $oauthClientId],
+			]);
+
+		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
+			if ($oauthClientId) {
+				$oauthMock->expects($this->never())
+					->method('createNcOauthClient');
+				$oauthMock->expects($this->once())
+					->method('getClientInfo')->willReturn([
+						'id' => $oauthClientId,
+						'nextcloud_oauth_client_name' => 'Openproject Client',
+						'openproject_redirect_uri' => 'https://openproject.test/oauth/callback',
+						'nextcloud_client_id' => 'client_id_existing',
+						'nextcloud_client_secret' => 'client_secret_existing',
+					]);
+			} else {
+				$oauthMock->expects($this->never())
+					->method('getClientInfo');
+				$oauthMock->expects($this->once())
+					->method('createNcOauthClient')->willReturn([
+						'id' => '2',
+						'nextcloud_oauth_client_name' => 'Openproject Client',
+						'openproject_redirect_uri' => 'https://openproject.test/oauth/callback',
+						'nextcloud_client_id' => 'client_id',
+						'nextcloud_client_secret' => 'client_secret',
+					]);
+			}
+		} else {
+			$oauthMock->expects($this->never())
+				->method('createNcOauthClient');
+			$oauthMock->expects($this->never())
+				->method('getClientInfo');
+		}
+
+		$openprojectAPIServiceMock = $this->createMock(OpenProjectAPIService::class);
+		$settingsServiceMock = $this->createMock(SettingsService::class);
+		$settingsServiceMock->expects($this->once())
+			->method('validateAdminSettingsForm');
+
+		$constructArgs = [
+			'config' => $configMock,
+			'oauthService' => $oauthMock,
+			'settingsService' => $settingsServiceMock,
+			'openprojectAPIService' => $openprojectAPIServiceMock,
+			'userManager' => $userManagerMock,
+		];
+		$constructArgs = $this->getConfigControllerConstructArgs($constructArgs);
+		$configController = new ConfigController(...$constructArgs);
+
+		$response = $configController->updateIntegration($settings);
+		$data = $response->getData();
+
+		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
+		$this->assertArrayHasKey('status', $data);
+
+		foreach ($responseProps as $prop) {
+			$this->assertArrayHasKey($prop, $data);
+		}
+		if ($authMethod === Application::AUTH_METHOD_OIDC) {
+			$this->assertArrayNotHasKey('nextcloud_oauth_client_name', $data);
+			$this->assertArrayNotHasKey('nextcloud_client_id', $data);
+			$this->assertArrayNotHasKey('nextcloud_client_secret', $data);
+			$this->assertArrayNotHasKey('openproject_redirect_uri', $data);
+		} else {
+			$this->assertArrayHasKey('nextcloud_oauth_client_name', $data);
+			$this->assertArrayHasKey('nextcloud_client_id', $data);
+			$this->assertArrayHasKey('nextcloud_client_secret', $data);
+			$this->assertArrayHasKey('openproject_redirect_uri', $data);
 		}
 	}
 }
