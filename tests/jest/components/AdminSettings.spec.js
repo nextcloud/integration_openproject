@@ -152,657 +152,18 @@ describe('AdminSettings.vue', () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
 	})
-	const confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 
-	describe('form mode and completed status without project folder setup for OAUTH2 authorization config', () => {
-		it.each([
-			[
-				'with empty state',
-				{
-					openproject_instance_url: null,
-					authorization_method: null,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: null,
-				},
-				{
-					opOauth: F_MODES.DISABLE,
-					ncOauth: F_MODES.DISABLE,
-					projectFolderSetUp: F_MODES.DISABLE,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: false,
-					opOauth: false,
-					ncOauth: false,
-					projectFolderSetUp: false,
-					opUserAppPassword: false,
-				},
-			],
-			[
-				'with incomplete OpenProject Authorization Method',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: null,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: null,
-				},
-				{
-					authorizationMethod: F_MODES.EDIT,
-					opOauth: F_MODES.DISABLE,
-					ncOauth: F_MODES.DISABLE,
-					projectFolderSetUp: F_MODES.DISABLE,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: false,
-					opOauth: false,
-					ncOauth: false,
-					projectFolderSetUp: false,
-					opUserAppPassword: false,
-				},
-			],
-			[
-				'with incomplete OpenProject OAuth values',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: null,
-				},
-				{
-					authorizationMethod: F_MODES.VIEW,
-					opOauth: F_MODES.EDIT,
-					ncOauth: F_MODES.DISABLE,
-					projectFolderSetUp: F_MODES.DISABLE,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: true,
-					opOauth: false,
-					ncOauth: false,
-					projectFolderSetUp: false,
-					opUserAppPassword: false,
-				},
-			],
-			[
-				'with complete OpenProject OAuth values',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'abcd',
-					openproject_client_secret: 'abcdefgh',
-					nc_oauth_client: null,
-					fresh_project_folder_setup: true,
-				},
-				{
-					authorizationMethod: F_MODES.VIEW,
-					opOauth: F_MODES.VIEW,
-					ncOauth: F_MODES.DISABLE,
-					projectFolderSetUp: F_MODES.DISABLE,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: true,
-					opOauth: true,
-					ncOauth: false,
-					projectFolderSetUp: false,
-					opUserAppPassword: false,
-				},
-			],
-			[
-				'with everything but empty OpenProject OAuth values',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: null,
-					openproject_client_secret: null,
-					nc_oauth_client: {
-						nextcloud_client_id: 'some-client-id-here',
-						nextcloud_client_secret: 'some-client-secret-here',
-					},
-				},
-				{
-					authorizationMethod: F_MODES.VIEW,
-					opOauth: F_MODES.EDIT,
-					ncOauth: F_MODES.VIEW,
-					projectFolderSetUp: F_MODES.VIEW,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: true,
-					opOauth: false,
-					ncOauth: true,
-					projectFolderSetUp: true,
-					opUserAppPassword: false,
-				},
-			],
-			[
-				'with a complete admin settings',
-				{
-					openproject_instance_url: 'https://openproject.example.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'client-id-here',
-					openproject_client_secret: 'client-id-here',
-					nc_oauth_client: {
-						nextcloud_client_id: 'nc-client-id-here',
-						nextcloud_client_secret: 'nc-client-secret-here',
-					},
-				},
-				{
-					authorizationMethod: F_MODES.VIEW,
-					opOauth: F_MODES.VIEW,
-					ncOauth: F_MODES.VIEW,
-					projectFolderSetUp: F_MODES.VIEW,
-					opUserAppPassword: F_MODES.DISABLE,
-				},
-				{
-					authorizationMethod: true,
-					opOauth: true,
-					ncOauth: true,
-					projectFolderSetUp: true,
-					opUserAppPassword: false,
-				},
-			],
-		])('when the form is loaded %s', (name, state, expectedFormMode, expectedFormState) => {
-			const wrapper = getWrapper({ state })
-			expect(wrapper.vm.formMode.opOauth).toBe(expectedFormMode.opOauth)
-			expect(wrapper.vm.formMode.ncOauth).toBe(expectedFormMode.ncOauth)
-			expect(wrapper.vm.formMode.projectFolderSetUp).toBe(expectedFormMode.projectFolderSetUp)
-			expect(wrapper.vm.formMode.opUserAppPassword).toBe(expectedFormMode.opUserAppPassword)
-
-			expect(wrapper.vm.isFormCompleted.opOauth).toBe(expectedFormState.opOauth)
-			expect(wrapper.vm.isFormCompleted.ncOauth).toBe(expectedFormState.ncOauth)
-			expect(wrapper.vm.isFormCompleted.projectFolderSetUp).toBe(expectedFormState.projectFolderSetUp)
-			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(expectedFormState.opUserAppPassword)
-		})
-	})
-
-	describe('OpenProject OAuth values form', () => {
-		describe('view mode and completed state', () => {
-			let wrapper, opOAuthForm, resetButton
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: 'openproject-client-id',
-						openproject_client_secret: 'openproject-client-secret',
-						nc_oauth_client: null,
-					},
-					form: {
-						serverHost: {
-							complete: true,
-							value: 'http://openproject.com',
-						},
-						authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-					},
-				})
-				opOAuthForm = wrapper.find(selectors.opOauthForm)
-				resetButton = opOAuthForm.find(selectors.resetOPOAuthFormButton)
-			})
-			it('should show field values and hide the form if server host form is complete', () => {
-				expect(opOAuthForm).toMatchSnapshot()
-			})
-			describe('reset button', () => {
-				it('should trigger confirm dialog on click', async () => {
-					await resetButton.trigger('click')
-					expect(confirmSpy).toBeCalledTimes(1)
-
-					const expectedDialogMessage = 'If you proceed you will need to update these settings with the new'
-						+ ' OpenProject OAuth credentials. Also, all users will need to reauthorize'
-						+ ' access to their OpenProject account.'
-					const expectedDialogTitle = 'Replace OpenProject OAuth values'
-					const expectedDialogOpts = {
-						cancel: 'Cancel',
-						confirm: 'Yes, replace',
-						confirmClasses: 'error',
-						type: 70,
-					}
-					expect(confirmSpy).toHaveBeenCalledWith(
-						expectedDialogMessage,
-						expectedDialogTitle,
-						expectedDialogOpts,
-						expect.any(Function),
-						true,
-					)
-					jest.clearAllMocks()
-					wrapper.destroy()
-				})
-				it('should clear values on confirm', async () => {
-					jest.clearAllMocks()
-					await wrapper.vm.clearOPOAuthClientValues()
-
-					expect(saveOPOptionsSpy).toBeCalledTimes(1)
-					expect(wrapper.vm.state.openproject_client_id).toBe(null)
-				})
-			})
-		})
-		describe('edit mode', () => {
-			let wrapper
-			beforeEach(() => {
-				jest.spyOn(axios, 'put')
-					.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
-				jest.spyOn(axios, 'post')
-					.mockImplementationOnce(() => Promise.resolve({
-						data: {
-							clientId: 'nc-client-id101',
-							clientSecret: 'nc-client-secret101',
-						},
-					}))
-				wrapper = getWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: '',
-						openproject_client_secret: '',
-						nc_oauth_client: null,
-					},
-					form: {
-						serverHost: {
-							complete: true,
-							value: 'http://openproject.com',
-						},
-						authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-					},
-				})
-			})
-			afterEach(() => {
-				axios.post.mockReset()
-				axios.put.mockReset()
-				jest.clearAllMocks()
-				wrapper.destroy()
-			})
-			it('should show the form and hide the field values', () => {
-				expect(wrapper.find(selectors.opOauthForm)).toMatchSnapshot()
-			})
-			describe('submit button', () => {
-				it('should be enabled with complete client values', async () => {
-					let submitButton
-					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.attributes().disabled).toBe('true')
-					await wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
-					await wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
-
-					submitButton = wrapper.find(selectors.submitOPOAuthFormButton)
-					expect(submitButton.attributes().disabled).toBe(undefined)
-				})
-				describe('when clicked', () => {
-					describe('when the save is successful', () => {
-						beforeEach(async () => {
-							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(true)
-							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
-						})
-						it('should set the form to view mode', async () => {
-							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.VIEW)
-						})
-						it('should set the isFormCompleted to true', async () => {
-							expect(wrapper.vm.isFormCompleted.opOauth).toBe(true)
-						})
-
-						it('should not create Nextcloud OAuth client if already present', async () => {
-							jest.spyOn(axios, 'put')
-								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
-							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
-								.mockImplementationOnce(() => jest.fn())
-							const wrapper = getMountedWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: '',
-									openproject_client_secret: '',
-									nc_oauth_client: {
-										nextcloud_client_id: 'abcdefg',
-										nextcloud_client_secret: 'slkjdlkjlkd',
-									},
-								},
-								form: {
-									serverHost: {
-										complete: true,
-										value: 'http://openproject.com',
-									},
-									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-								},
-							})
-							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
-							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
-							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
-						})
-
-						it('should create Nextcloud OAuth client if not already present', async () => {
-							jest.spyOn(axios, 'post')
-								.mockImplementationOnce(() => Promise.resolve({ data: { status: false } }))
-							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
-								.mockImplementationOnce(() => jest.fn())
-							const wrapper = getMountedWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: '',
-									openproject_client_secret: '',
-									nc_oauth_client: '',
-								},
-								form: {
-									serverHost: {
-										complete: true,
-										value: 'http://openproject.com',
-									},
-									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-								},
-							})
-							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
-							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
-
-							expect(createNCOAuthClientSpy).toBeCalledTimes(1)
-						})
-					})
-
-					describe('when the save fails', () => {
-						beforeEach(async () => {
-							jest.spyOn(wrapper.vm, 'saveOPOptions').mockReturnValue(false)
-							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
-						})
-						it('should set the form to view mode', async () => {
-							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.EDIT)
-						})
-						it('should set the isFormCompleted to true', async () => {
-							expect(wrapper.vm.isFormCompleted.opOauth).toBe(false)
-						})
-
-						it('should not create Nextcloud OAuth client', async () => {
-							jest.spyOn(axios, 'put')
-								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
-							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
-								.mockImplementationOnce(() => jest.fn())
-							const wrapper = getMountedWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: '',
-									openproject_client_secret: '',
-									nc_oauth_client: {
-										nextcloud_client_id: 'abcdefg',
-										nextcloud_client_secret: 'slkjdlkjlkd',
-									},
-								},
-								form: {
-									serverHost: {
-										complete: true,
-										value: 'http://openproject.com',
-									},
-									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-								},
-							})
-							await wrapper.find(`${selectors.opOauthClientIdInput} input`).setValue('qwerty')
-							await wrapper.find(`${selectors.opOauthClientSecretInput} input`).setValue('qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).trigger('click')
-							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
-						})
-					})
-
-					describe('when the admin config is ok on save options', () => {
-						beforeEach(async () => {
-							await wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
-							await wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
-							await wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
-							await flushPromises()
-						})
-						it('should set the form to view mode', () => {
-							expect(wrapper.vm.formMode.opOauth).toBe(F_MODES.VIEW)
-						})
-						it('should set the adminConfigStatus as "true"', () => {
-							expect(wrapper.vm.isAdminConfigOk).toBe(true)
-						})
-						it('should create Nextcloud OAuth client if not already present', () => {
-							expect(wrapper.vm.state.nc_oauth_client).toMatchObject({
-								clientId: 'nc-client-id101',
-								clientSecret: 'nc-client-secret101',
-							})
-						})
-						it('should not create Nextcloud OAuth client if already present', async () => {
-							jest.spyOn(axios, 'put')
-								.mockImplementationOnce(() => Promise.resolve({ data: { status: true } }))
-							const createNCOAuthClientSpy = jest.spyOn(AdminSettings.methods, 'createNCOAuthClient')
-								.mockImplementationOnce(() => jest.fn())
-							const wrapper = getWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: '',
-									openproject_client_secret: '',
-									nc_oauth_client: {
-										nextcloud_client_id: 'abcdefg',
-										nextcloud_client_secret: 'slkjdlkjlkd',
-									},
-								},
-								form: {
-									serverHost: {
-										complete: true,
-										value: 'http://openproject.com',
-									},
-									authenticationMethod: { complete: true, value: AUTH_METHOD.OAUTH2 },
-								},
-							})
-							wrapper.find(selectors.opOauthClientIdInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.opOauthClientSecretInput).vm.$emit('input', 'qwerty')
-							wrapper.find(selectors.submitOPOAuthFormButton).vm.$emit('click')
-							await flushPromises()
-							expect(createNCOAuthClientSpy).not.toHaveBeenCalled()
-						})
-
-						it('should not create new user app password if already present', async () => {
-							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-								.mockImplementationOnce(() => Promise.resolve({ data: { oPUserAppPassword: null } }))
-							const wrapper = getMountedWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: '',
-									openproject_client_secret: '',
-									nc_oauth_client: {
-										nextcloud_client_id: 'abcdefg',
-										nextcloud_client_secret: 'slkjdlkjlkd',
-									},
-									fresh_project_folder_setup: false,
-									project_folder_info: {
-										status: true,
-									},
-									app_password_set: false,
-								},
-								oPUserAppPassword: 'opUserPassword',
-							})
-							expect(saveOPOptionsSpy).toBeCalledWith(
-								'http://localhost/apps/integration_openproject/admin-config',
-								{
-									values: {
-										openproject_client_id: 'qwerty',
-										openproject_client_secret: 'qwerty',
-									},
-								},
-							)
-							expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
-						})
-					})
-				})
-			})
-		})
-	})
-
-	describe('Nextcloud OAuth values form', () => {
-		describe('view mode with complete values', () => {
-			it('should show the field values and hide the form', () => {
-				const wrapper = getWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: 'some-client-id-here',
-						openproject_client_secret: 'some-client-secret-here',
-						nc_oauth_client: {
-							nextcloud_client_id: 'some-nc-client-id-here',
-							nextcloud_client_secret: 'some-nc-client-secret-here',
-						},
-					},
-				})
-				expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
-			})
-			describe('reset button', () => {
-				afterEach(() => {
-					jest.clearAllMocks()
-				})
-				it('should trigger the confirm dialog', async () => {
-					const wrapper = getWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-							authorization_method: AUTH_METHOD.OAUTH2,
-							openproject_client_id: 'op-client-id',
-							openproject_client_secret: 'op-client-secret',
-							nc_oauth_client: {
-								nextcloud_client_id: 'nc-clientid',
-								nextcloud_client_secret: 'nc-clientsecret',
-							},
-						},
-					})
-
-					const expectedConfirmText = 'If you proceed you will need to update the settings in your OpenProject '
-						+ 'with the new Nextcloud OAuth credentials. Also, all users in OpenProject '
-						+ 'will need to reauthorize access to their Nextcloud account.'
-					const expectedConfirmOpts = {
-						cancel: 'Cancel',
-						confirm: 'Yes, replace',
-						confirmClasses: 'error',
-						type: 70,
-					}
-					const expectedConfirmTitle = 'Replace Nextcloud OAuth values'
-
-					const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
-					resetButton.vm.$emit('click')
-					await flushPromises()
-
-					expect(confirmSpy).toBeCalledTimes(1)
-					expect(confirmSpy).toBeCalledWith(
-						expectedConfirmText,
-						expectedConfirmTitle,
-						expectedConfirmOpts,
-						expect.any(Function),
-						true,
-					)
-					wrapper.destroy()
-				})
-				it('should create new client on confirm', async () => {
-					jest.spyOn(axios, 'post')
-						.mockImplementationOnce(() => Promise.resolve({
-							data: {
-								clientId: 'new-client-id77',
-								clientSecret: 'new-client-secret77',
-							},
-						}))
-					const wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-							authorization_method: AUTH_METHOD.OAUTH2,
-							openproject_client_id: 'op-client-id',
-							openproject_client_secret: 'op-client-secret',
-							nc_oauth_client: {
-								nextcloud_client_id: 'nc-client-id',
-								nextcloud_client_secret: 'nc-client-secret',
-							},
-						},
-					})
-					await wrapper.vm.createNCOAuthClient()
-					expect(wrapper.vm.state.nc_oauth_client).toMatchObject({
-						clientId: 'new-client-id77',
-						clientSecret: 'new-client-secret77',
-					})
-					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.EDIT)
-					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(false)
-					wrapper.destroy()
-				})
-			})
-		})
-		describe('recreate button', () => {
-			it('should be displayed if nextcloud oauth credentials is empty and everything is set', async () => {
-				const wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: 'op-client-id',
-						openproject_client_secret: 'op-client-secret',
-						nc_oauth_client: null,
-					},
-					formMode: {
-						projectFolderSetUp: F_MODES.VIEW,
-					},
-					showDefaultManagedProjectFolders: true,
-					isFormCompleted: {
-						projectFolderSetUp: true,
-					},
-
-				})
-				const resetButton = wrapper.find(selectors.resetNcOAuthFormButton)
-				expect(resetButton.isVisible()).toBe(true)
-				expect(resetButton.text()).toBe('Create Nextcloud OAuth values')
-				wrapper.destroy()
-			})
-		})
-		describe('edit mode', () => {
-			it('should show the form and hide the field values', async () => {
-				const wrapper = getWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: 'op-client-id',
-						openproject_client_secret: 'op-client-secret',
-						nc_oauth_client: {
-							nextcloud_client_id: 'nc-client-id',
-							nextcloud_client_secret: 'nc-client-secret',
-						},
-					},
-				})
-				await wrapper.setData({
-					formMode: {
-						ncOauth: F_MODES.EDIT,
-					},
-				})
-				expect(wrapper.find(selectors.ncOauthForm)).toMatchSnapshot()
-			})
-			describe('done button', () => {
-				it('should set the form to view mode if the oauth values are complete', async () => {
-					const wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-							authorization_method: AUTH_METHOD.OAUTH2,
-							openproject_client_id: 'some-client-id-for-op',
-							openproject_client_secret: 'some-client-secret-for-op',
-							nc_oauth_client: {
-								nextcloud_client_id: 'something',
-								nextcloud_client_secret: 'something-else',
-							},
-						},
-					})
-					await wrapper.setData({
-						formMode: {
-							ncOauth: F_MODES.EDIT,
-						},
-					})
-					await wrapper.find(selectors.ncOauthForm)
-						.find(selectors.submitNcOAuthFormButton)
-						.trigger('click')
-					expect(wrapper.vm.formMode.ncOauth).toBe(F_MODES.VIEW)
-					expect(wrapper.vm.isFormCompleted.ncOauth).toBe(true)
-				})
-			})
-		})
-	})
+	const commonState = {
+		form: {
+			serverHost: { complete: true },
+			authenticationMethod: {
+				value: AUTH_METHOD.OAUTH2,
+				complete: true,
+			},
+			openprojectOauth: { complete: true },
+			nextcloudOauth: { complete: true },
+		},
+	}
 
 	describe('Project folders form (Project Folder Setup)', () => {
 		describe('Disable mode', () => {
@@ -862,14 +223,15 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_id: 'some-nc-client-id-here',
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
-							fresh_project_folder_setup: true,
-							// project folder is already not set up
+							fresh_project_folder_setup: false,
+							// project folder is already set up
 							project_folder_info: {
-								status: false,
+								status: true,
 							},
 							app_password_set: false,
 							...appState,
 						},
+						...commonState,
 					})
 					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
 					const actualProjectFolderStatusValue = projectFolderStatus.text()
@@ -904,6 +266,7 @@ describe('AdminSettings.vue', () => {
 						formMode: {
 							projectFolderSetUp: F_MODES.VIEW,
 						},
+						...commonState,
 					})
 					const formHeading = wrapper.find(selectors.projectFolderFormHeading)
 					const errorNote = wrapper.find(selectors.projectFolderErrorNote)
@@ -979,15 +342,15 @@ describe('AdminSettings.vue', () => {
 								nextcloud_client_secret: 'some-nc-client-secret-here',
 							},
 							fresh_project_folder_setup: true,
-							// project folder is already not set up
+							// project folder is not set up
 							project_folder_info: {
 								status: false,
 							},
 							app_password_set: false,
 							...appState,
 						},
+						...commonState,
 					})
-					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
 					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
 					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
@@ -1012,8 +375,8 @@ describe('AdminSettings.vue', () => {
 							app_password_set: false,
 							...appState,
 						},
+						...commonState,
 					})
-					await wrapper.vm.setNCOAuthFormToViewMode()
 					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
 					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupButtonStub)
 					projectFolderSetupSwitchButton.vm.$emit('update:checked', false)
@@ -1054,6 +417,7 @@ describe('AdminSettings.vue', () => {
 								},
 								app_password_set: false,
 							},
+							...commonState,
 						})
 						await wrapper.setData({
 							formMode: {
@@ -1147,6 +511,7 @@ describe('AdminSettings.vue', () => {
 									projectFolderSetupError: null,
 									...appState,
 								},
+								...commonState,
 							})
 
 							await wrapper.setData({
@@ -1213,6 +578,7 @@ describe('AdminSettings.vue', () => {
 									},
 								},
 								isGroupFolderAlreadySetup: null,
+								...commonState,
 							})
 							await wrapper.setData({
 								formMode: {
@@ -1963,10 +1329,7 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_secret: 'something-else',
 					},
 				},
-				form: {
-					serverHost: { complete: true },
-					authenticationMethod: { complete: true },
-				},
+				...commonState,
 			})
 
 			const $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
@@ -2008,10 +1371,7 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_secret: 'something-else',
 					},
 				},
-				form: {
-					serverHost: { complete: true },
-					authenticationMethod: { complete: true },
-				},
+				...commonState,
 			})
 			const $defaultEnableNavigation = wrapper.find(selectors.defaultEnableNavigation)
 			await $defaultEnableNavigation.trigger('click')
@@ -2019,60 +1379,6 @@ describe('AdminSettings.vue', () => {
 
 			expect(dialogs.showError).toBeCalledTimes(1)
 			expect(dialogs.showError).toBeCalledWith('Failed to save default user configuration: Some message')
-
-		})
-	})
-
-	describe('revoke OpenProject OAuth token', () => {
-		beforeEach(() => {
-			axios.put.mockReset()
-			dialogs.showSuccess.mockReset()
-			dialogs.showError.mockReset()
-		})
-		it('should show success when revoke status is success', async () => {
-			dialogs.showSuccess
-				.mockImplementationOnce()
-				.mockImplementationOnce()
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(
-					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: 'success' } }),
-				)
-			const wrapper = getMountedWrapper({
-				state: completeOAUTH2IntegrationState,
-			})
-			await wrapper.vm.saveOPOptions()
-
-			await localVue.nextTick()
-
-			expect(saveOPOptionsSpy).toBeCalledTimes(1)
-			expect(dialogs.showSuccess).toBeCalledTimes(2)
-			expect(dialogs.showSuccess).toBeCalledWith('OpenProject admin options saved')
-			expect(dialogs.showSuccess).toBeCalledWith('Successfully revoked users\' OpenProject OAuth access tokens')
-
-		})
-		it.each([
-			['connection_error', 'Failed to perform revoke request due to connection error with the OpenProject server'],
-			['other_error', 'Failed to revoke some users\' OpenProject OAuth access tokens'],
-		])('should show error message on various failure', async (errorCode, errorMessage) => {
-			dialogs.showSuccess
-				.mockImplementationOnce()
-				.mockImplementationOnce()
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(
-					() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: errorCode } }),
-				)
-			const wrapper = getMountedWrapper({
-				state: completeOAUTH2IntegrationState,
-			})
-			await wrapper.vm.saveOPOptions()
-
-			await localVue.nextTick()
-
-			expect(saveOPOptionsSpy).toBeCalledTimes(1)
-			expect(dialogs.showSuccess).toBeCalledTimes(1)
-			expect(dialogs.showError).toBeCalledTimes(1)
-			expect(dialogs.showSuccess).toBeCalledWith('OpenProject admin options saved')
-			expect(dialogs.showError).toBeCalledWith(errorMessage)
 
 		})
 	})
