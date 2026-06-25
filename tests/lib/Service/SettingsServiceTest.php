@@ -82,10 +82,18 @@ class SettingsServiceTest extends TestCase {
 				"completeSetup" => true,
 				"message" => "'authorization_method' setting is missing",
 			],
-			"invalid 'authorization_method' value" => [
+			"invalid 'authorization_method' value - random string" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
 					"authorization_method" => "test",
+				],
+				"completeSetup" => true,
+				"message" => "Invalid authorization method",
+			],
+			"invalid 'authorization_method' value - boolean true" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => true,
 				],
 				"completeSetup" => true,
 				"message" => "Invalid authorization method",
@@ -219,6 +227,21 @@ class SettingsServiceTest extends TestCase {
 				"completeSetup" => true,
 				"message" => "invalid key",
 			],
+			"unknown settings - boolean key" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => Application::AUTH_METHOD_OAUTH,
+					"default_enable_navigation" => false,
+					"default_enable_unified_search" => false,
+					'openproject_client_id' => 'test',
+					'openproject_client_secret' => 'test',
+					"setup_project_folder" => false,
+					"setup_app_password" => false,
+					true => 'test', // unknown setting
+				],
+				"completeSetup" => true,
+				"message" => "invalid key",
+			],
 			"update action - unknown settings" => [
 				"configs" => [
 					"default_enable_navigation" => true,
@@ -230,6 +253,13 @@ class SettingsServiceTest extends TestCase {
 			"update action - invalid url" => [
 				"configs" => [
 					"openproject_instance_url" => "test", // invalid URL
+				],
+				"completeSetup" => false,
+				"message" => "invalid data",
+			],
+			"update action - invalid 'authorization_method' value - boolean true" => [
+				"configs" => [
+					"authorization_method" => true,
 				],
 				"completeSetup" => false,
 				"message" => "invalid data",
