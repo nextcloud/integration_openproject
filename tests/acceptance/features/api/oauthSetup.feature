@@ -75,19 +75,12 @@ Feature: setup the integration with OAuth method
       | null                  | "id"                  | "secret"                  | false             | false                 | false                | false              |
       | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false                | false              |
       | "http://some-host.de" | "id"                  | null                      | false             | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | null              | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | null                  | ""                   | ""                 |
-      | ""                    | ""                    | ""                        | ""                | ""                    | false                | false              |
       | ""                    | "id"                  | "secret"                  | false             | false                 | false                | false              |
       | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false                | false              |
       | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | ""                | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | "secret"                  | true              | ""                    | false                | false              |
       | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"           | "a string"         |
       | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false                | false              |
       | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false                | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | "a string"        | false                 | false                | false              |
-      | "http://somehost.de"  | "the-id"              | "secret"                  | false             | "a string"            | false                | false              |
 
 
   Scenario: try to setup with invalid keys
@@ -152,13 +145,12 @@ Feature: setup the integration with OAuth method
       """
     Then the HTTP status code should be "400" or "500"
     Examples:
-      | data                                                                                                                                                                                          |
-      | "{}"                                                                                                                                                                                          |
-      | {"values": {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false,}} |
-      | {"values": {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}   |
-      | {"values":                                                                                                                                                                                    |
-      | "values"                                                                                                                                                                                      |
-      | ""                                                                                                                                                                                            |
+      | data       |
+      | "{}"       |
+      | null       |
+      | {"values": |
+      | "values"   |
+      | ""         |
 
   Scenario: non-admin user tries to setup without team folder
     Given user "Carol" has been created
@@ -197,12 +189,26 @@ Feature: setup the integration with OAuth method
       }
       """
 
-  Scenario Outline: update a setting
+  Scenario Outline: update settings
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": false,
+          "setup_app_password": false
+        }
+      }
+      """
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
-          "<key>": <value>
+          <settings>
         }
       }
       """
@@ -227,58 +233,32 @@ Feature: setup the integration with OAuth method
       }
       """
     Examples:
-      | key                           | value                 |
-      | openproject_instance_url      | "http://some-host.de" |
-      | openproject_client_id         | "client-value"        |
-      | openproject_client_secret     | "secret-value"        |
-      | default_enable_navigation     | false                 |
-      | default_enable_unified_search | true                  |
-
-
-  Scenario Outline: update multiple settings at once
-    When the administrator sends a PATCH request to the "setup" endpoint with this data:
-      """
-      {
-        "values": {
-          "<key1>": <value1>,
-          "<key2>": <value2>
-        }
-      }
-      """
-    Then the HTTP status code should be "200"
-    And the data of the response should match
-      """
-      {
-        "type": "object",
-        "required": [
-          "nextcloud_oauth_client_name",
-          "openproject_redirect_uri",
-          "nextcloud_client_id"
-        ],
-        "properties": {
-          "nextcloud_oauth_client_name": {"const": "OpenProject client"},
-          "openproject_redirect_uri": {"pattern": "^http:\/\/.*\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
-          "nextcloud_client_id": {"pattern": "[A-Za-z0-9]+"}
-        },
-        "not": {
-          "required": ["openproject_revocation_status"]
-        }
-      }
-      """
-    Examples:
-      | key1                      | value1                | key2                          | value2         |
-      | openproject_instance_url  | "http://some-host.de" | openproject_client_id         | "client-value" |
-      | openproject_client_secret | "secret-value"        | openproject_client_id         | "client-value" |
-      | openproject_client_secret | "secret-value"        | default_enable_navigation     | false          |
-      | default_enable_navigation | false                 | default_enable_unified_search | false          |
+      | settings                                                                        |
+      | "openproject_instance_url":"http://some-new-host.de"                            |
+      | "openproject_client_id":"new-client","openproject_client_secret":"secret-value" |
+      | "default_enable_navigation":false,"default_enable_unified_search":true          |
 
 
   Scenario Outline: try to update a setting with invalid data
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": false,
+          "setup_app_password": false
+        }
+      }
+      """
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       {
         "values": {
-          "<key>": <value>
+          <settings>
         }
       }
       """
@@ -297,73 +277,40 @@ Feature: setup the integration with OAuth method
       }
       """
     Examples:
-      | key                           | value          | error-message |
-      | openproject_instance_url      | null           | invalid data  |
-      | openproject_instance_url      | ""             | invalid data  |
-      | openproject_instance_url      | false          | invalid data  |
-      | openproject_client_id         | null           | invalid data  |
-      | openproject_client_id         | ""             | invalid data  |
-      | openproject_client_id         | false          | invalid data  |
-      | openproject_client_secret     | null           | invalid data  |
-      | openproject_client_secret     | ""             | invalid data  |
-      | openproject_client_secret     | false          | invalid data  |
-      | default_enable_navigation     | null           | invalid data  |
-      | default_enable_navigation     | ""             | invalid data  |
-      | default_enable_navigation     | "string"       | invalid data  |
-      | default_enable_unified_search | null           | invalid data  |
-      | default_enable_unified_search | ""             | invalid data  |
-      | default_enable_unified_search | "string"       | invalid data  |
-      | instance_url                  | "http://op.de" | invalid key   |
-
-
-  Scenario Outline: try to update multiple settings where at least one is invalid
-    When the administrator sends a PATCH request to the "setup" endpoint with this data:
-      """
-      {
-        "values": {
-          "<key1>": <value1>,
-          "<key2>": <value2>
-        }
-      }
-      """
-    Then the HTTP status code should be "400"
-    And the data of the response should match
-      """
-      {
-        "type": "object",
-        "required": ["error"],
-        "properties": {
-          "error": {"const": "invalid data"}
-        },
-        "not": {
-          "required": ["openproject_revocation_status"]
-        }
-      }
-      """
-    Examples:
-      | key1                      | value1                | key2                          | value2         |
-      | openproject_instance_url  | "http://some-host.de" | openproject_client_id         | null           |
-      | openproject_instance_url  | "ftp://some-host.de"  | openproject_client_id         | "some id"      |
-      | openproject_client_secret | ""                    | openproject_client_id         | "client-value" |
-      | openproject_client_secret | "secret"              | openproject_client_id         | false          |
-      | openproject_client_secret | "secret-value"        | default_enable_navigation     | "string"       |
-      | default_enable_navigation | null                  | default_enable_unified_search | false          |
+      | settings                                                                 | error-message |
+      | "openproject_instance_url":false                                         | invalid data  |
+      | "openproject_client_id":"clientid","default_enable_navigation": "string" | invalid data  |
+      | "openproject_client_secret":""                                           | invalid data  |
+      | "default_enable_navigation":false,"default_enable_unified_search":null   | invalid data  |
+      | "instance_url":"http://op.de"                                            | invalid key   |
 
 
   Scenario Outline: try to update settings with invalid json data
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": false,
+          "setup_app_password": false
+        }
+      }
+      """
     When the administrator sends a PATCH request to the "setup" endpoint with this data:
       """
       <data>
       """
     Then the HTTP status code should be "400" or "500"
     Examples:
-      | data                                                                |
-      | { "values": { "openproject_instance_url": "http://some-host.de"} }} |
-      | { "values": { "openproject_instance_url": "http://some-host.de"}    |
-      | "values": { "openproject_instance_url": "http://some-host.de"} }    |
-      | { "values":                                                         |
-      | "{}"                                                                |
-      | ""                                                                  |
+      | data        |
+      | null        |
+      | { "values": |
+      | "{}"        |
+      | ""          |
 
 
   Scenario: non-admin user tries to update the settings
@@ -399,6 +346,20 @@ Feature: setup the integration with OAuth method
 
 
   Scenario: reset the integration setup
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "openproject_client_id": "client-id",
+          "openproject_client_secret": "client-secret",
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": false,
+          "setup_app_password": false
+        }
+      }
+      """
     When the administrator sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "200"
     And the data of the response should match
@@ -456,7 +417,6 @@ Feature: setup the integration with OAuth method
       | false                | true               |
 
 
-  # this test wil not pass locally if your system already has a `OpenProject` user/group setup and 'OpenProjectNoAutomaticProjectFolders' group setup
   Scenario: Set up whole integration with project folder and user app password
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
