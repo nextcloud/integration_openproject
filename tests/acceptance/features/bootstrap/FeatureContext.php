@@ -26,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
+	const APP_ID = "integration_openproject";
 	/**
 	 * list of users that were created on the local server during test runs
 	 * key is the lowercase username, value is an array of user attributes
@@ -711,7 +712,7 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function theHTTPStatusCodeShouldBe(
-		$expectedStatusCode, ?string $message = "", $response = null
+		mixed $expectedStatusCode, ?string $message = "", $response = null
 	): void {
 		if ($response === null) {
 			$response = $this->response;
@@ -739,6 +740,30 @@ class FeatureContext implements Context {
 				$message
 			);
 		}
+	}
+
+	/**
+	 * @param string $expectedStatus
+	 * @param ResponseInterface $response
+	 *
+	 * @return void
+	 */
+	public function theOCSStatusShouldBe(
+		mixed $expectedStatus,
+		ResponseInterface $response = null
+	): void {
+		if ($response === null) {
+			$response = $this->response;
+		}
+		$ocsData = json_decode($response->getBody()->getContents());
+		Assert::assertNotNull($ocsData, 'The OCS response data is null');
+		$actualStatus = $ocsData->ocs->meta->status;
+		Assert::assertEquals(
+			$expectedStatus,
+			$actualStatus,
+			"Expected OCS status '$expectedStatus' but got '$actualStatus'",
+		);
+		$response->getBody()->rewind();
 	}
 
 	/**
@@ -977,10 +1002,8 @@ class FeatureContext implements Context {
 			$password = $this->getRegularUserPassword();
 		}
 		$fullUrl = $this->getBaseUrl();
-		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
+		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path . "?format=json";
 		$headers['OCS-APIRequest'] = 'true';
-		$headers['Accept'] = 'application/json';
-		$headers['Content-Type'] = 'application/json';
 		return $this->sendHttpRequest(
 			$fullUrl, $user, $password, $method, $headers, $body
 		);
@@ -1379,6 +1402,106 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @param string $appId
+	 * @param bool $enable
+	 *
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function enableDisableNextcloudApp(string $appId, bool $enable): void {
+		$method = $enable ? "POST" : "DELETE";
+		$action = $enable ? "enable" : "disable";
+		$response = $this->sendOCSRequest(
+			"/cloud/apps/{$appId}",
+			$method,
+			$this->getAdminUsername(),
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to {$action} app: " . $appId, $response);
+		$this->theOCSStatusShouldBe("ok", $response);
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to {$action} app: " . $appId . ". Response: " . json_encode($body)
+		);
+	}
+
+	/**
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function deleteOpenProjectTeamFolder(): void {
+		$groupfoldersUrl = $this->getBaseUrl() . "index.php/apps/groupfolders/folders";
+		$headers['OCS-APIRequest'] = 'true';
+		$response = $this->sendHttpRequest(
+			$groupfoldersUrl . "?format=json",
+			$this->getAdminUsername(),
+			$this->getAdminPassword(),
+			"GET",
+			$headers,
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to list team folders.", $response);
+		$this->theOCSStatusShouldBe("ok", $response);
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to list team folders. Response: " . json_encode($body)
+		);
+
+		$folderId = 0;
+		foreach ($body->ocs->data as $folder) {
+			if ($folder->mount_point === "OpenProject") {
+				$folderId = $folder->id;
+				break;
+			}
+		}
+
+		// team folder "OpenProject" does not exist, nothing to delete
+		if (!$folderId) {
+			return;
+		}
+
+		$response = $this->sendHttpRequest(
+			$groupfoldersUrl . "/" . $folderId . "?format=json",
+			$this->getAdminUsername(),
+			$this->getAdminPassword(),
+			"DELETE",
+			$headers,
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to delete team folder: OpenProject", $response);
+		$this->theOCSStatusShouldBe("ok", $response);
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to delete team folder: OpenProject. Response: " . json_encode($body)
+		);
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @return void
+	 */
+	public function teardownOpenProjectTeamFolder(): void {
+		$openprojectGroups = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
+
+		$this->enableDisableNextcloudApp(self::APP_ID, false);
+		$this->deleteOpenProjectTeamFolder();
+
+		$this->theAdministratorDeletesTheUser("OpenProject");
+		$this->theHTTPStatusCodeShouldBe([200, 404]);
+		$this->setResponse(null);
+
+		foreach ($openprojectGroups as $group) {
+			$this->theAdministratorDeletesTheGroup($group);
+			// with v2.php, the group deletion may return 200 or 400 if the group does not exist
+			$this->theHTTPStatusCodeShouldBe([200, 400]);
+			$this->setResponse(null);
+		}
+
+		$this->enableDisableNextcloudApp(self::APP_ID, true);
+	}
+
+	/**
 	 * This will run before EVERY scenario.
 	 * It will set the properties for this object.
 	 *
@@ -1432,6 +1555,8 @@ class FeatureContext implements Context {
 		// Clean up groups
 		foreach ($this->createdgroups as $groups) {
 			$this->theAdministratorDeletesTheGroup($groups);
+			$this->theHTTPStatusCodeShouldBe(["200"]);
+			$this->setResponse(null);
 		}
 		$this->createdAppPasswords = [];
 	}
