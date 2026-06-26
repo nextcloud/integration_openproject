@@ -1533,6 +1533,12 @@ class FeatureContext implements Context {
 		$featurePath = "tests/" . explode("/tests/", $featurePath)[1];
 		$title = $scenario->getTitle();
 		$keyword = $scenario->getKeyword();
+		if ($keyword === "Example") {
+			/**
+			 * @psalm-suppress UndefinedInterfaceMethod
+			 */
+			$title = $scenario->getOutlineTitle();
+		}
 		$lineNumber = $scenario->getLine();
 		$scenarioLine = "  - $keyword: $title ($featurePath:$lineNumber)";
 
