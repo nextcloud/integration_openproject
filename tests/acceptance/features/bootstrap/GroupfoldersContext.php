@@ -12,9 +12,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
 
 class GroupfoldersContext implements Context {
-	const OPENPROJECT_USER = "OpenProject";
-	const OPENPROJECT_TEAM_FOLDER = "OpenProject";
-	const OPENPROJECT_GROUPS = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
+	public const OPENPROJECT_USER = "OpenProject";
+	public const OPENPROJECT_TEAM_FOLDER = "OpenProject";
+	public const OPENPROJECT_GROUPS = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
 
 	/**
 	 * @var FeatureContext
