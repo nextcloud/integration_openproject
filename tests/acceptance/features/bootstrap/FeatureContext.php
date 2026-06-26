@@ -26,6 +26,11 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
+	public const APP_ID = "integration_openproject";
+	public const OPENPROJECT_USER = "OpenProject";
+	public const OPENPROJECT_TEAM_FOLDER = "OpenProject";
+	public const OPENPROJECT_GROUPS = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
+
 	/**
 	 * list of users that were created on the local server during test runs
 	 * key is the lowercase username, value is an array of user attributes
@@ -128,6 +133,18 @@ class FeatureContext implements Context {
 		$this->adminPassword = $adminPassword;
 		$this->regularUserPassword = $regularUserPassword;
 		$this->cookieJar = new CookieJar();
+	}
+
+	/**
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	public function prefixJsonFormat(string $url): string {
+		if (str_contains($url, "?")) {
+			return $url . "&format=json";
+		}
+		return $url . "?format=json";
 	}
 
 	/**
@@ -621,6 +638,34 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @Given the administrator has set up the integration with the following settings:
+	 *
+	 * @param PyStringNode $data
+	 * @return void
+	 */
+	public function administratorHasSetupIntegrationWithFollowingSettings(PyStringNode $data): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, "POST", "/setup", $data
+		);
+		$this->theHTTPStatusCodeShouldBe(
+			"200",
+			"Failed to set up the integration."
+		);
+
+		$response = json_decode($this->response->getBody()->getContents(), true);
+		Assert::assertArrayHasKey(
+			"status",
+			$response,
+			"Response does not contain 'status' property"
+		);
+		Assert::assertTrue(
+			$response["status"] === true,
+			"Incomplete integration setup. Response: " . json_encode($response)
+		);
+		$this->setResponse(null);
+	}
+
+	/**
 	 * @When user :user gets the information of last created file
 	 */
 	public function userGetsTheInformationOfLastCreatedFile(string $user): void {
@@ -683,7 +728,7 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function theHTTPStatusCodeShouldBe(
-		$expectedStatusCode, ?string $message = "", $response = null
+		mixed $expectedStatusCode, ?string $message = "", $response = null
 	): void {
 		if ($response === null) {
 			$response = $this->response;
@@ -711,6 +756,30 @@ class FeatureContext implements Context {
 				$message
 			);
 		}
+	}
+
+	/**
+	 * @param string $expectedStatus
+	 * @param ResponseInterface $response
+	 *
+	 * @return void
+	 */
+	public function theOCSStatusShouldBe(
+		mixed $expectedStatus,
+		ResponseInterface $response = null
+	): void {
+		if ($response === null) {
+			$response = $this->response;
+		}
+		$response->getBody()->rewind();
+		$ocsData = json_decode($response->getBody()->getContents());
+		Assert::assertNotNull($ocsData, 'The OCS response data is null');
+		$actualStatus = $ocsData->ocs->meta->status;
+		Assert::assertEquals(
+			$expectedStatus,
+			$actualStatus,
+			"Expected OCS status '$expectedStatus' but got '$actualStatus'",
+		);
 	}
 
 	/**
@@ -754,6 +823,7 @@ class FeatureContext implements Context {
 	public function theDataOfTheOCSResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
+		$this->response->getBody()->rewind();
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		$_responseAsJson = $responseAsJson->ocs->data;
 		JsonAssertions::assertJsonDocumentMatchesSchema(
@@ -771,6 +841,7 @@ class FeatureContext implements Context {
 	public function theDataOfTheResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
+		$this->response->getBody()->rewind();
 		$_responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
 			$_responseAsJson,
@@ -951,10 +1022,11 @@ class FeatureContext implements Context {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
 		$headers['OCS-APIRequest'] = 'true';
-		$headers['Accept'] = 'application/json';
-		$headers['Content-Type'] = 'application/json';
+		if ($body) {
+			$headers['Content-Type'] = 'application/json';
+		}
 		return $this->sendHttpRequest(
-			$fullUrl, $user, $password, $method, $headers, $body
+			$this->prefixJsonFormat($fullUrl), $user, $password, $method, $headers, $body
 		);
 	}
 
@@ -1351,6 +1423,31 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @param string $appId
+	 * @param bool $enable
+	 *
+	 * @return void
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function enableDisableNextcloudApp(string $appId, bool $enable): void {
+		$method = $enable ? "POST" : "DELETE";
+		$action = $enable ? "enable" : "disable";
+		$response = $this->sendOCSRequest(
+			"/cloud/apps/{$appId}",
+			$method,
+			$this->getAdminUsername(),
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to {$action} app: " . $appId, $response);
+		$this->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to {$action} app: " . $appId . ". Response: " . json_encode($body)
+		);
+	}
+
+	/**
 	 * This will run before EVERY scenario.
 	 * It will set the properties for this object.
 	 *
@@ -1371,6 +1468,20 @@ class FeatureContext implements Context {
 			$this->sharingContext = $environment->getContext('SharingContext');
 			$this->directUploadContext = $environment->getContext('DirectUploadContext');
 		}
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @return void
+	 */
+	public function teardownIntegrationSetup(): void {
+		$this->enableDisableNextcloudApp(self::APP_ID, true);
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, "DELETE", "setup"
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to reset the integration setup");
+		$this->setResponse(null);
 	}
 
 	/**
@@ -1403,7 +1514,11 @@ class FeatureContext implements Context {
 
 		// Clean up groups
 		foreach ($this->createdgroups as $groups) {
-			$this->theAdministratorDeletesTheGroup($groups);
+			if (!\in_array($groups, self::OPENPROJECT_GROUPS, true)) {
+				$this->theAdministratorDeletesTheGroup($groups);
+				$this->theHTTPStatusCodeShouldBe(200);
+				$this->setResponse(null);
+			}
 		}
 		$this->createdAppPasswords = [];
 	}
@@ -1431,6 +1546,12 @@ class FeatureContext implements Context {
 		$featurePath = "tests/" . explode("/tests/", $featurePath)[1];
 		$title = $scenario->getTitle();
 		$keyword = $scenario->getKeyword();
+		if ($keyword === "Example") {
+			/**
+			 * @psalm-suppress UndefinedInterfaceMethod
+			 */
+			$title = $scenario->getOutlineTitle();
+		}
 		$lineNumber = $scenario->getLine();
 		$scenarioLine = "  - $keyword: $title ($featurePath:$lineNumber)";
 
