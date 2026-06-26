@@ -2,6 +2,23 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 Feature: setup the integration through an API
 
+  Background:
+    Given the administrator has set up the integration with the following settings:
+      """
+      {
+        "values": {
+          "openproject_instance_url": "http://some-host.de",
+          "authorization_method": "oidc",
+          "sso_provider_type": "nextcloud_hub",
+          "targeted_audience_client_id": "openproject",
+          "setup_project_folder": true,
+          "setup_app_password": true,
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false
+        }
+      }
+      """
+
 
   Scenario: check version of uploaded file inside a team folder
     Given user "Carol" has been created

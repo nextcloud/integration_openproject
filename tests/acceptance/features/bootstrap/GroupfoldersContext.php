@@ -12,10 +12,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
 
 class GroupfoldersContext implements Context {
-	public const OPENPROJECT_USER = "OpenProject";
-	public const OPENPROJECT_TEAM_FOLDER = "OpenProject";
-	public const OPENPROJECT_GROUPS = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
-
 	/**
 	 * @var FeatureContext
 	 */
@@ -167,6 +163,7 @@ class GroupfoldersContext implements Context {
 		);
 		$this->featureContext->theHTTPStatusCodeShouldBe(200, "Failed to list team folders.", $response);
 		$this->featureContext->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
 		$body = json_decode($response->getBody()->getContents());
 		Assert::assertTrue(
 			$body->ocs->meta->status === "ok",
@@ -227,6 +224,7 @@ class GroupfoldersContext implements Context {
 		);
 		$this->featureContext->theHTTPStatusCodeShouldBe(200, "Failed to delete team folder", $response);
 		$this->featureContext->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
 		$body = json_decode($response->getBody()->getContents());
 		Assert::assertTrue(
 			$body->ocs->meta->status === "ok",
@@ -259,13 +257,13 @@ class GroupfoldersContext implements Context {
 	 */
 	public function teardownOpenProjectTeamFolder(): void {
 		$this->featureContext->enableDisableNextcloudApp(FeatureContext::APP_ID, false);
-		$this->deleteTeamFolder($this->getTeamFolderId(self::OPENPROJECT_TEAM_FOLDER));
+		$this->deleteTeamFolder($this->getTeamFolderId(FeatureContext::OPENPROJECT_TEAM_FOLDER));
 
-		$this->featureContext->theAdministratorDeletesTheUser(self::OPENPROJECT_USER);
+		$this->featureContext->theAdministratorDeletesTheUser(FeatureContext::OPENPROJECT_USER);
 		$this->featureContext->theHTTPStatusCodeShouldBe([200, 404]);
 		$this->featureContext->setResponse(null);
 
-		foreach (self::OPENPROJECT_GROUPS as $group) {
+		foreach (FeatureContext::OPENPROJECT_GROUPS as $group) {
 			$this->featureContext->theAdministratorDeletesTheGroup($group);
 			// with v2.php, the group deletion may return 200 or 400 if the group does not exist
 			$this->featureContext->theHTTPStatusCodeShouldBe([200, 400]);

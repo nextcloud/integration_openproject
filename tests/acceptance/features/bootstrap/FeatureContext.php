@@ -27,6 +27,10 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FeatureContext implements Context {
 	public const APP_ID = "integration_openproject";
+	public const OPENPROJECT_USER = "OpenProject";
+	public const OPENPROJECT_TEAM_FOLDER = "OpenProject";
+	public const OPENPROJECT_GROUPS = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
+
 	/**
 	 * list of users that were created on the local server during test runs
 	 * key is the lowercase username, value is an array of user attributes
@@ -767,6 +771,7 @@ class FeatureContext implements Context {
 		if ($response === null) {
 			$response = $this->response;
 		}
+		$response->getBody()->rewind();
 		$ocsData = json_decode($response->getBody()->getContents());
 		Assert::assertNotNull($ocsData, 'The OCS response data is null');
 		$actualStatus = $ocsData->ocs->meta->status;
@@ -775,7 +780,6 @@ class FeatureContext implements Context {
 			$actualStatus,
 			"Expected OCS status '$expectedStatus' but got '$actualStatus'",
 		);
-		$response->getBody()->rewind();
 	}
 
 	/**
@@ -819,6 +823,7 @@ class FeatureContext implements Context {
 	public function theDataOfTheOCSResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
+		$this->response->getBody()->rewind();
 		$responseAsJson = json_decode($this->response->getBody()->getContents());
 		$_responseAsJson = $responseAsJson->ocs->data;
 		JsonAssertions::assertJsonDocumentMatchesSchema(
@@ -836,6 +841,7 @@ class FeatureContext implements Context {
 	public function theDataOfTheResponseShouldMatch(
 		PyStringNode $schemaString
 	): void {
+		$this->response->getBody()->rewind();
 		$_responseAsJson = json_decode($this->response->getBody()->getContents());
 		JsonAssertions::assertJsonDocumentMatchesSchema(
 			$_responseAsJson,
@@ -1016,6 +1022,9 @@ class FeatureContext implements Context {
 		$fullUrl = $this->getBaseUrl();
 		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
 		$headers['OCS-APIRequest'] = 'true';
+		if ($body) {
+			$headers['Content-Type'] = 'application/json';
+		}
 		return $this->sendHttpRequest(
 			$this->prefixJsonFormat($fullUrl), $user, $password, $method, $headers, $body
 		);
@@ -1430,6 +1439,7 @@ class FeatureContext implements Context {
 		);
 		$this->theHTTPStatusCodeShouldBe(200, "Failed to {$action} app: " . $appId, $response);
 		$this->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
 		$body = json_decode($response->getBody()->getContents());
 		Assert::assertTrue(
 			$body->ocs->meta->status === "ok",
@@ -1466,6 +1476,7 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function teardownIntegrationSetup(): void {
+		$this->enableDisableNextcloudApp(self::APP_ID, true);
 		$this->sendRequestsToAppEndpoint(
 			$this->adminUsername, $this->adminPassword, "DELETE", "setup"
 		);
@@ -1503,9 +1514,11 @@ class FeatureContext implements Context {
 
 		// Clean up groups
 		foreach ($this->createdgroups as $groups) {
-			$this->theAdministratorDeletesTheGroup($groups);
-			$this->theHTTPStatusCodeShouldBe(["200"]);
-			$this->setResponse(null);
+			if (!\in_array($groups, self::OPENPROJECT_GROUPS, true)) {
+				$this->theAdministratorDeletesTheGroup($groups);
+				$this->theHTTPStatusCodeShouldBe(200);
+				$this->setResponse(null);
+			}
 		}
 		$this->createdAppPasswords = [];
 	}
