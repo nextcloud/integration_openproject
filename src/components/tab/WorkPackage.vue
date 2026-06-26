@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			<div class="row__workpackage">
-				#{{ workpackage.id }} - {{ workpackage.project }}
+				{{ getWPDisplayID }} - {{ workpackage.project }}
 			</div>
 		</div>
 		<div class="row">
@@ -70,6 +70,16 @@ export default {
 		wpStatusFontColor: '#FFFFFF',
 		wpStatusBorder: '0',
 	}),
+	computed: {
+		getWPDisplayID() {
+			const id = this.workpackage.displayId
+			const isNumericId = /^\d+$/.test(id)
+			if (isNumericId) {
+				return '#' + id
+			}
+			return id
+		},
+	},
 	created() {
 		this.setWPTypeTextStroke()
 		this.setWPStatusFontColor()
