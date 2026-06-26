@@ -1438,14 +1438,6 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @AfterScenario
-	 *
-	 * @return void
-	 */
-	public function resetIntegrationSetup(): void {
-	}
-
-	/**
 	 * This will run before EVERY scenario.
 	 * It will set the properties for this object.
 	 *
@@ -1466,6 +1458,19 @@ class FeatureContext implements Context {
 			$this->sharingContext = $environment->getContext('SharingContext');
 			$this->directUploadContext = $environment->getContext('DirectUploadContext');
 		}
+	}
+
+	/**
+	 * @AfterScenario
+	 *
+	 * @return void
+	 */
+	public function teardownIntegrationSetup(): void {
+		$this->sendRequestsToAppEndpoint(
+			$this->adminUsername, $this->adminPassword, "DELETE", "setup"
+		);
+		$this->theHTTPStatusCodeShouldBe(200, "Failed to reset the integration setup");
+		$this->setResponse(null);
 	}
 
 	/**
