@@ -254,7 +254,7 @@ Feature: setup the integration with OIDC method
       }
       """
 
-  Scenario Outline: update a setting
+  Scenario Outline: update settings
     Given the administrator has set up the integration with the following settings:
       """
       {
