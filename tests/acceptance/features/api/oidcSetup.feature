@@ -123,9 +123,8 @@ Feature: setup the integration with OIDC method
       """
       {
         "type": "object",
-        "required": ["status","error"],
+        "required": ["error"],
         "properties": {
-          "status": {"const": false},
           "error": {"const": "<error>"}
         },
         "not": {
@@ -169,9 +168,8 @@ Feature: setup the integration with OIDC method
       """
       {
         "type": "object",
-        "required": ["status","error"],
+        "required": ["error"],
         "properties": {
-          "status": {"const": false},
           "error": {"const": "invalid key"}
         },
         "not": {
@@ -201,9 +199,8 @@ Feature: setup the integration with OIDC method
       """
       {
         "type": "object",
-        "required": ["status","error"],
+        "required": ["error"],
         "properties": {
-          "status": {"const": false},
           "error": {"const": "<error>"}
         },
         "not": {
@@ -288,7 +285,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["status"],
         "properties": {
-          "status": {"const": <status>}
+          "status": {"const": true}
         },
         "not": {
           "required": ["nextcloud_oauth_client_name"]
@@ -296,10 +293,10 @@ Feature: setup the integration with OIDC method
       }
       """
     Examples:
-      | settings                                                                                       | status |
-      | "targeted_audience_client_id":"new-id"                                                         | true   |
-      | "sso_provider_type":"external","oidc_provider":"keycloak","token_exchange":false               | true   |
-      | "sso_provider_type":"external","token_exchange":true,"targeted_audience_client_id":"client-id" | true   |
+      | settings                                                                                       |
+      | "targeted_audience_client_id":"new-id"                                                         |
+      | "sso_provider_type":"external","oidc_provider":"keycloak","token_exchange":false               |
+      | "sso_provider_type":"external","token_exchange":true,"targeted_audience_client_id":"client-id" |
 
 
   Scenario Outline: try to update a setting with invalid data
@@ -514,8 +511,6 @@ Feature: setup the integration with OIDC method
       | false                | true               |
 
 
-  # this test wil not pass locally if your system already has `OpenProject` user/group
-  # and 'OpenProjectNoAutomaticProjectFolders' group
   Scenario: setup with team folder
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
@@ -538,21 +533,18 @@ Feature: setup the integration with OIDC method
       {
         "type": "object",
         "required": [
-          "nextcloud_oauth_client_name",
-          "openproject_redirect_uri",
-          "nextcloud_client_id",
-          "nextcloud_client_secret",
+          "status",
           "openproject_user_app_password"
         ],
         "properties": {
-          "nextcloud_oauth_client_name": {"const": "OpenProject client"},
+          "status": {"const": true},
           "openproject_redirect_uri": {"pattern": "^http:\/\/some-host.de\/oauth_clients\/[A-Za-z0-9]+\/callback$"},
           "nextcloud_client_id": {"pattern": "[A-Za-z0-9]+"},
           "nextcloud_client_secret": {"pattern": "[A-Za-z0-9]+"},
           "openproject_user_app_password": {"pattern": "[A-Za-z0-9]+"}
         },
         "not": {
-          "required": ["openproject_revocation_status"]
+          "required": ["nextcloud_client_id","openproject_redirect_uri"]
         }
       }
       """
@@ -561,6 +553,7 @@ Feature: setup the integration with OIDC method
     And groupfolder "OpenProject" should be assigned to the group "OpenProject" with all permissions
     And groupfolder "OpenProject" should have advance permissions enabled
     And groupfolder "OpenProject" should be managed by the user "OpenProject"
+
 
   Scenario: try to setup and update twice with team folder
     Given the administrator has set up the integration with the following settings:
@@ -571,10 +564,10 @@ Feature: setup the integration with OIDC method
           "authorization_method": "oidc",
           "sso_provider_type": "nextcloud_hub",
           "targeted_audience_client_id": "openproject",
-          "setup_project_folder": false,
-          "setup_app_password": false,
-          "default_enable_navigation": true,
-          "default_enable_unified_search": true
+          "default_enable_navigation": false,
+          "default_enable_unified_search": false,
+          "setup_project_folder": true,
+          "setup_app_password": true
         }
       }
       """
