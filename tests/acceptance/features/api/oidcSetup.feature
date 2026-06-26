@@ -254,6 +254,7 @@ Feature: setup the integration with OIDC method
       }
       """
 
+
   Scenario Outline: update settings
     Given the administrator has set up the integration with the following settings:
       """
@@ -474,6 +475,7 @@ Feature: setup the integration with OIDC method
     And user "Carol" has been created
     When the user "Carol" sends a DELETE request to the "setup" endpoint
     Then the HTTP status code should be "403"
+
 
   Scenario Outline: try to setup with incomplete team folder
     When the administrator sends a POST request to the "setup" endpoint with this data:

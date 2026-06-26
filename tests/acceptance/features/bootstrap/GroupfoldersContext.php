@@ -99,7 +99,7 @@ class GroupfoldersContext implements Context {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
 		Assert::assertEquals(
 			[ $folderName => 31 ],
-			$folder['groups'],
+			(array)$folder->groups,
 			'The group assignment of folder "' . $folderName .
 			'" is not correct' .
 			"\n" . print_r($folder, true)
@@ -112,7 +112,7 @@ class GroupfoldersContext implements Context {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
 		Assert::assertEquals(
 			1,
-			$folder['acl'],
+			$folder->acl,
 			'Folder "' . $folderName .
 			'" has no ACLs enabled' .
 			"\n" . print_r($folder, true)
@@ -124,16 +124,21 @@ class GroupfoldersContext implements Context {
 	 */
 	public function groupfolderShouldBeManagedByTheUser(string $folderName, string $user): void {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
+		$manage = ($folder->manage)[0];
 		Assert::assertEquals(
-			[
-				[
-					"type" => "user",
-					"id" => $user,
-					"displayname" => $user
-				]
-			],
-			$folder['manage'],
-			'manager of folder "' . $folderName . '" is not set correctly'
+			"user",
+			$manage->type,
+			'Folder manager misconfigured: type'
+		);
+		Assert::assertEquals(
+			$user,
+			$manage->id,
+			'Folder manager misconfigured: id'
+		);
+		Assert::assertEquals(
+			$user,
+			$manage->displayname,
+			'Folder manager misconfigured: displayname'
 		);
 	}
 
@@ -172,17 +177,17 @@ class GroupfoldersContext implements Context {
 
 	/**
 	 * @param string $mountpoint
-	 * @return array<mixed>
+	 * @return object
 	 */
-	private function getGroupfolderByMountpoint(string $mountpoint): array {
+	private function getGroupfolderByMountpoint(string $mountpoint): object {
 		$folders = $this->getAllGroupfolders();
 		foreach ($folders as $groupfolder) {
 			if ($groupfolder->mount_point === $mountpoint) {
-				return (array)$groupfolder;
+				return $groupfolder;
 			}
 		}
 		throw new \Exception('could not find "' . $mountpoint . '" in the list of groupfolders' .
-			"\n" . print_r((array)$folders, true)
+			"\n" . print_r($folders, true)
 		);
 	}
 
