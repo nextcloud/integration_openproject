@@ -132,6 +132,18 @@ class FeatureContext implements Context {
 	}
 
 	/**
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	public function prefixJsonFormat(string $url): string {
+		if (str_contains($url, "?")) {
+			return $url . "&format=json";
+		}
+		return $url . "?format=json";
+	}
+
+	/**
 	 * @param string $user
 	 * @param array<mixed> $userAttributes
 	 *
@@ -1002,10 +1014,10 @@ class FeatureContext implements Context {
 			$password = $this->getRegularUserPassword();
 		}
 		$fullUrl = $this->getBaseUrl();
-		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path . "?format=json";
+		$fullUrl .= "ocs/v{$ocsApiVersion}.php" . $path;
 		$headers['OCS-APIRequest'] = 'true';
 		return $this->sendHttpRequest(
-			$fullUrl, $user, $password, $method, $headers, $body
+			$this->prefixJsonFormat($fullUrl), $user, $password, $method, $headers, $body
 		);
 	}
 
@@ -1426,79 +1438,11 @@ class FeatureContext implements Context {
 	}
 
 	/**
-	 * @return void
-	 * @throws \GuzzleHttp\Exception\GuzzleException
-	 */
-	public function deleteOpenProjectTeamFolder(): void {
-		$groupfoldersUrl = $this->getBaseUrl() . "index.php/apps/groupfolders/folders";
-		$headers['OCS-APIRequest'] = 'true';
-		$response = $this->sendHttpRequest(
-			$groupfoldersUrl . "?format=json",
-			$this->getAdminUsername(),
-			$this->getAdminPassword(),
-			"GET",
-			$headers,
-		);
-		$this->theHTTPStatusCodeShouldBe(200, "Failed to list team folders.", $response);
-		$this->theOCSStatusShouldBe("ok", $response);
-		$body = json_decode($response->getBody()->getContents());
-		Assert::assertTrue(
-			$body->ocs->meta->status === "ok",
-			"Failed to list team folders. Response: " . json_encode($body)
-		);
-
-		$folderId = 0;
-		foreach ($body->ocs->data as $folder) {
-			if ($folder->mount_point === "OpenProject") {
-				$folderId = $folder->id;
-				break;
-			}
-		}
-
-		// team folder "OpenProject" does not exist, nothing to delete
-		if (!$folderId) {
-			return;
-		}
-
-		$response = $this->sendHttpRequest(
-			$groupfoldersUrl . "/" . $folderId . "?format=json",
-			$this->getAdminUsername(),
-			$this->getAdminPassword(),
-			"DELETE",
-			$headers,
-		);
-		$this->theHTTPStatusCodeShouldBe(200, "Failed to delete team folder: OpenProject", $response);
-		$this->theOCSStatusShouldBe("ok", $response);
-		$body = json_decode($response->getBody()->getContents());
-		Assert::assertTrue(
-			$body->ocs->meta->status === "ok",
-			"Failed to delete team folder: OpenProject. Response: " . json_encode($body)
-		);
-	}
-
-	/**
 	 * @AfterScenario
 	 *
 	 * @return void
 	 */
-	public function teardownOpenProjectTeamFolder(): void {
-		$openprojectGroups = ["OpenProject", "OpenProjectNoAutomaticProjectFolders"];
-
-		$this->enableDisableNextcloudApp(self::APP_ID, false);
-		$this->deleteOpenProjectTeamFolder();
-
-		$this->theAdministratorDeletesTheUser("OpenProject");
-		$this->theHTTPStatusCodeShouldBe([200, 404]);
-		$this->setResponse(null);
-
-		foreach ($openprojectGroups as $group) {
-			$this->theAdministratorDeletesTheGroup($group);
-			// with v2.php, the group deletion may return 200 or 400 if the group does not exist
-			$this->theHTTPStatusCodeShouldBe([200, 400]);
-			$this->setResponse(null);
-		}
-
-		$this->enableDisableNextcloudApp(self::APP_ID, true);
+	public function resetIntegrationSetup(): void {
 	}
 
 	/**
