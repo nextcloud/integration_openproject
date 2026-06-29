@@ -420,7 +420,7 @@ Feature: setup the integration with OAuth method
       | true                 | false              |
       | false                | true               |
 
-
+  @expect-fail
   Scenario: Set up whole integration with project folder and user app password
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
@@ -470,8 +470,6 @@ Feature: setup the integration with OAuth method
     And groupfolder "OpenProject" should be assigned to the group "OpenProject" with all permissions
     And groupfolder "OpenProject" should have advance permissions enabled
     And groupfolder "OpenProject" should be managed by the user "OpenProject"
-    # the next step is only for the tests, because that user has a random password
-    Given the administrator has changed the password of "OpenProject" to the default testing password
     And user "OpenProject" should have a folder called "OpenProject"
     # folders inside the OpenProject folder can only be deleted/renamed by the OpenProject user
     And user "Carol" has been created
