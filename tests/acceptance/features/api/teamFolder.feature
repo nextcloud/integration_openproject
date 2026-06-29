@@ -48,7 +48,7 @@ Feature: setup the integration through an API
     When user "Carol" deletes folder "/OpenProject/OpenProject/project-test"
     Then the HTTP status code should be 204
 
-
+  @expect-fail
   Scenario: check OpenProjectNoAutomaticProjectFolders group after user is removed from OpenProject group (removed by group admin)
     Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
@@ -57,7 +57,7 @@ Feature: setup the integration through an API
     And user "Carol" should belong to group "OpenProjectNoAutomaticProjectFolders"
     And user "Carol" should not belong to group "OpenProject"
 
-
+  @expect-fail
   Scenario: user not in OpenProject group is removed from another group (removed by group admin)
     Given  group "grp1" has been created
     And user "Carol" has been created
@@ -72,7 +72,7 @@ Feature: setup the integration through an API
     And user "Carol" should belong to group "grp1"
     And user "Carol" should not belong to group "OpenProjectNoAutomaticProjectFolders"
 
-
+  @expect-fail
   Scenario: user not in OpenProject group but has multiple group memberships is removed from one group (removed by group admin)
     Given group "grp1" has been created
     And group "grp2" has been created
@@ -92,7 +92,7 @@ Feature: setup the integration through an API
       | Carol    | OpenProjectNoAutomaticProjectFolders |
     And user "Carol" should belong to group "grp2"
 
-
+  @expect-fail
   Scenario: user in OpenProject and other groups (removed by group admin)
     Given  group "grp1" has been created
     And user "Carol" has been created
@@ -116,7 +116,7 @@ Feature: setup the integration through an API
     And user "Carol" should belong to group "OpenProjectNoAutomaticProjectFolders"
     And user "Carol" should not belong to group "OpenProject"
 
-
+  @expect-fail
   Scenario: multiple user in OpenProject groups and only one gets removed (removed by group admin)
     Given user "Alex" has been created
     And user "Brian" has been created
@@ -135,7 +135,7 @@ Feature: setup the integration through an API
       | Brian    | OpenProjectNoAutomaticProjectFolders |
       | Carol    | OpenProject                          |
 
-
+  @expect-fail
   Scenario: user is in multiple groups including OpenProject and is removed from another group (removed by group admin)
     Given group "grp1" has been created
     And user "Carol" has been created

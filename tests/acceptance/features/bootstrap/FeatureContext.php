@@ -662,6 +662,11 @@ class FeatureContext implements Context {
 			$response["status"] === true,
 			"Incomplete integration setup. Response: " . json_encode($response)
 		);
+
+		// save the created app password
+		if (isset($response["openproject_user_app_password"])) {
+			$this->createdAppPasswords[] = $response["openproject_user_app_password"];
+		}
 		$this->setResponse(null);
 	}
 
@@ -1051,6 +1056,11 @@ class FeatureContext implements Context {
 		?array $options = []
 	): ResponseInterface {
 		if ($user !== null && $password !== null) {
+			// use the latest app password for OpenProject user.
+			if ($user === self::OPENPROJECT_USER) {
+				$password = end($this->createdAppPasswords);
+			}
+
 			$options['auth'] = [$user, $password];
 		}
 		$options['verify'] = false;
