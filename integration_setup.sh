@@ -96,12 +96,12 @@ deleteOPStorageAndPrintErrorResponse() {
 
 
 # These URLs are just to check if the Nextcloud and OpenProject instances have been started or not before running the script
-if ! NEXTCLOUD_HOST_response="$(curl -s -X GET "${NEXTCLOUD_HOST}")"; then
+if ! curl -fsS "${NEXTCLOUD_HOST}"  >/dev/null; then
     log_error "Cannot reach Nextcloud at ${NEXTCLOUD_HOST} (check URL, instance, SSL)"
     exit 1
 fi
 
-if ! openproject_host_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}); then
+if ! curl -fsS -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} "${OPENPROJECT_HOST}"  >/dev/null; then
     log_error "Cannot reach OpenProject at ${OPENPROJECT_HOST} (check URL, instance, SSL)"
     exit 1
 fi
@@ -240,16 +240,15 @@ else
   setup_method=POST
 fi
 
-if [[ $INTEGRATION_SETUP_TEMP_DIR == ""  ]]; then
-  log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
-  INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
-  mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
+if [[ -z "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  INTEGRATION_SETUP_TEMP_DIR="$INTEGRATION_SETUP_DEFAULT_TEMP_DIR"
+  mkdir -p "$INTEGRATION_SETUP_TEMP_DIR"
+  log_info "Using default temp dir: $INTEGRATION_SETUP_TEMP_DIR"
+elif [[ ! -d "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  log_error "Temporary directory '$INTEGRATION_SETUP_TEMP_DIR' does not exist"
+  exit 1
 else
-  log_info "Using ${INTEGRATION_SETUP_TEMP_DIR} as non-default temporary directory"
-  if [ ! -d "${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}" ]; then
-    log_error "Temporary directory does not exist"
-    exit 1
-  fi
+  log_info "Using temp dir: $INTEGRATION_SETUP_TEMP_DIR"
 fi
 
 # API call to get openproject_client_id and openproject_client_secret
