@@ -284,6 +284,9 @@ class GroupfoldersContext implements Context {
 			$this->deleteTeamFolder((int)$groupFolder);
 		}
 		$this->createdGroupFolders = [];
-		$this->teardownOpenProjectTeamFolder();
+
+		if ($this->featureContext->getTeardownTeamFolder()) {
+			$this->teardownOpenProjectTeamFolder();
+		}
 	}
 }
