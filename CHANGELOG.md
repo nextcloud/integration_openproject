@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Do not create OAuth client while setting up with OIDC auth method [#1073](https://github.com/nextcloud/integration_openproject/pull/1073)
 - Fix: Do not create OAuth client while updating OIDC setup [#1077](https://github.com/nextcloud/integration_openproject/pull/1077)
 - Fix: Handle invalid boolean auth-method value [#1079](https://github.com/nextcloud/integration_openproject/pull/1079)
+- Fix: False integration setup status even after complete oauth setup [#1088](https://github.com/nextcloud/integration_openproject/pull/1088)
 
 ## 3.1.0 - 2026-06-18
 
