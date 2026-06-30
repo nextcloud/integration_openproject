@@ -13,3 +13,7 @@ export function validateOPInstance(url) {
 export function saveAdminConfig(configs) {
 	return axios.put(endpoints.adminConfig, { values: configs })
 }
+
+export function createNextcloudOAuthClient() {
+	return axios.post(endpoints.nextcloudOAuth)
+}

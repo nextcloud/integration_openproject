@@ -1,29 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Nextcloud OAuth values form edit mode should show the form and hide the field values 1`] = `
-Wrapper {
-  "selector": ".nextcloud-oauth-values",
-}
-`;
-
-exports[`AdminSettings.vue Nextcloud OAuth values form view mode with complete values should show the field values and hide the form 1`] = `
-Wrapper {
-  "selector": ".nextcloud-oauth-values",
-}
-`;
-
-exports[`AdminSettings.vue OpenProject OAuth values form edit mode should show the form and hide the field values 1`] = `
-Wrapper {
-  "selector": ".openproject-oauth-values",
-}
-`;
-
-exports[`AdminSettings.vue OpenProject OAuth values form view mode and completed state should show field values and hide the form if server host form is complete 1`] = `
-Wrapper {
-  "selector": ".openproject-oauth-values",
-}
-`;
-
 exports[`AdminSettings.vue Project folders form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
 Wrapper {
   "selector": ".project-folder-setup",

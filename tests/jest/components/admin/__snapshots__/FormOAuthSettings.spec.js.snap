@@ -1,0 +1,382 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component: FormOAuthSettings form states form state: complete OpenProject and Nextcloud oauth values 1`] = `
+<section>
+  <div
+    class="openproject-oauth"
+  >
+    <formheading-stub
+      index="3"
+      iscomplete="true"
+      title="OpenProject OAuth settings"
+    />
+     
+    <div
+      class="oauth-settings--openproject"
+    >
+      <fieldvalue-stub
+        isrequired="true"
+        title="OpenProject OAuth client ID"
+        value="op-client"
+      />
+       
+      <fieldvalue-stub
+        class="pb-1"
+        encryptvalue="true"
+        isrequired="true"
+        title="OpenProject OAuth client secret"
+        value="op-client-secret"
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="reset-op-oauth-btn"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="secondary"
+          variant="secondary"
+        >
+          
+					Replace OpenProject OAuth values
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="nextcloud-oauth"
+  >
+    <formheading-stub
+      index="4"
+      iscomplete="true"
+      title="Nextcloud OAuth client"
+    />
+     
+    <div
+      class="oauth-settings--nextcloud"
+    >
+      <fieldvalue-stub
+        isrequired="true"
+        title="Nextcloud OAuth client ID"
+        value="nc-client-id"
+      />
+       
+      <fieldvalue-stub
+        encryptvalue="true"
+        isrequired="true"
+        title="Nextcloud OAuth client secret"
+        value="***"
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="reset-nc-oauth-btn"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="secondary"
+          variant="secondary"
+        >
+          
+					Replace Nextcloud OAuth values
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Component: FormOAuthSettings form states form state: complete authorization method and complete Nextcloud form but not OpenProject 1`] = `
+<section>
+  <div
+    class="openproject-oauth"
+  >
+    <formheading-stub
+      index="3"
+      title="OpenProject OAuth settings"
+    />
+     
+    <div
+      class="oauth-settings--openproject"
+    >
+      <textinput-stub
+        class="py-1"
+        hinttext="Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here."
+        id="openproject-oauth-client-id"
+        isrequired="true"
+        label="OpenProject OAuth client ID"
+        placeholder=""
+        type="text"
+        value=""
+      />
+       
+      <textinput-stub
+        class="py-1"
+        hinttext="Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here."
+        id="openproject-oauth-client-secret"
+        isrequired="true"
+        label="OpenProject OAuth client secret"
+        placeholder=""
+        type="text"
+        value=""
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="submit-op-oauth-btn"
+          disabled="true"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="primary"
+          variant="secondary"
+        >
+          
+					Save
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="nextcloud-oauth"
+  >
+    <formheading-stub
+      index="4"
+      iscomplete="true"
+      title="Nextcloud OAuth client"
+    />
+     
+    <div
+      class="oauth-settings--nextcloud"
+    >
+      <fieldvalue-stub
+        isrequired="true"
+        title="Nextcloud OAuth client ID"
+        value="nc-client-id"
+      />
+       
+      <fieldvalue-stub
+        encryptvalue="true"
+        isrequired="true"
+        title="Nextcloud OAuth client secret"
+        value="***"
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="reset-nc-oauth-btn"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="secondary"
+          variant="secondary"
+        >
+          
+					Replace Nextcloud OAuth values
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Component: FormOAuthSettings form states form state: complete authorization method and complete OpenProject form but not Nextcloud 1`] = `
+<section>
+  <div
+    class="openproject-oauth"
+  >
+    <formheading-stub
+      index="3"
+      iscomplete="true"
+      title="OpenProject OAuth settings"
+    />
+     
+    <div
+      class="oauth-settings--openproject"
+    >
+      <fieldvalue-stub
+        isrequired="true"
+        title="OpenProject OAuth client ID"
+        value="op-client"
+      />
+       
+      <fieldvalue-stub
+        class="pb-1"
+        encryptvalue="true"
+        isrequired="true"
+        title="OpenProject OAuth client secret"
+        value="op-client-secret"
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="reset-op-oauth-btn"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="secondary"
+          variant="secondary"
+        >
+          
+					Replace OpenProject OAuth values
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="nextcloud-oauth"
+  >
+    <formheading-stub
+      index="4"
+      title="Nextcloud OAuth client"
+    />
+     
+    <div
+      class="oauth-settings--nextcloud"
+    >
+      <!---->
+       
+      <!---->
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="create-nc-oauth-btn"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="secondary"
+          variant="secondary"
+        >
+          
+					Create Nextcloud OAuth values
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Component: FormOAuthSettings form states form state: complete authorization method but incomplete oauth settings 1`] = `
+<section>
+  <div
+    class="openproject-oauth"
+  >
+    <formheading-stub
+      index="3"
+      title="OpenProject OAuth settings"
+    />
+     
+    <div
+      class="oauth-settings--openproject"
+    >
+      <textinput-stub
+        class="py-1"
+        hinttext="Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here."
+        id="openproject-oauth-client-id"
+        isrequired="true"
+        label="OpenProject OAuth client ID"
+        placeholder=""
+        type="text"
+        value=""
+      />
+       
+      <textinput-stub
+        class="py-1"
+        hinttext="Go to your OpenProject {htmlLink} as an Administrator and start the setup and copy the values here."
+        id="openproject-oauth-client-secret"
+        isrequired="true"
+        label="OpenProject OAuth client secret"
+        placeholder=""
+        type="text"
+        value=""
+      />
+       
+      <div
+        class="form-actions"
+      >
+        <ncbutton-stub
+          alignment="center"
+          data-test-id="submit-op-oauth-btn"
+          disabled="true"
+          nativetype="button"
+          size="normal"
+          target="_self"
+          type="primary"
+          variant="secondary"
+        >
+          
+					Save
+				
+        </ncbutton-stub>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="nextcloud-oauth"
+  >
+    <formheading-stub
+      index="4"
+      isdisabled="true"
+      title="Nextcloud OAuth client"
+    />
+     
+    <!---->
+  </div>
+</section>
+`;
+
+exports[`Component: FormOAuthSettings form states form state: incomplete authorization method 1`] = `
+<section>
+  <div
+    class="openproject-oauth"
+  >
+    <formheading-stub
+      index="3"
+      isdisabled="true"
+      title="OpenProject OAuth settings"
+    />
+     
+    <!---->
+  </div>
+   
+  <div
+    class="nextcloud-oauth"
+  >
+    <formheading-stub
+      index="4"
+      isdisabled="true"
+      title="Nextcloud OAuth client"
+    />
+     
+    <!---->
+  </div>
+</section>
+`;
