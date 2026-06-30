@@ -33,7 +33,6 @@
 					<NcAvatar class="item-avatar"
 						:size="23"
 						:url="workpackage.picture"
-						:user="workpackage.assignee"
 						:display-name="workpackage.assignee" />
 				</div>
 				<div class="row__assignee__assignee">

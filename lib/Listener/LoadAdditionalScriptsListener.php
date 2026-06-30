@@ -43,7 +43,7 @@ class LoadAdditionalScriptsListener implements IEventListener {
 		// then we need to hide the oidc based connection for the user
 		// so this check is required
 		if (
-			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === OpenProjectAPIService::AUTH_METHOD_OIDC &&
+			$this->config->getAppValue(Application::APP_ID, 'authorization_method', '') === Application::AUTH_METHOD_OIDC &&
 			!$this->openProjectAPIService->getAccessToken($this->userId)
 		) {
 			return;

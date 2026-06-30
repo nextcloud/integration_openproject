@@ -15,16 +15,11 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class SettingsService {
-	public const AUTH_METHOD_OAUTH = 'oauth2';
-	public const AUTH_METHOD_OIDC = 'oidc';
-	public const NEXTCLOUDHUB_OIDC_PROVIDER_TYPE = "nextcloud_hub";
-	public const EXTERNAL_OIDC_PROVIDER_TYPE = "external";
-	public const NEXTCLOUDHUB_OIDC_PROVIDER_LABEL = "Nextcloud Hub";
 	// <setting_name> => <data_type>
 	private const GENERAL_ADMIN_SETTINGS = [
 		// general settings
 		'openproject_instance_url' => 'string',
-		'authorization_method' => [self::AUTH_METHOD_OAUTH, self::AUTH_METHOD_OIDC],
+		'authorization_method' => [Application::AUTH_METHOD_OAUTH, Application::AUTH_METHOD_OIDC],
 		'default_enable_navigation' => 'boolean',
 		'default_enable_unified_search' => 'boolean',
 		// groupfolders settings
@@ -36,7 +31,7 @@ class SettingsService {
 		'openproject_client_secret' => 'string',
 	];
 	private const OIDC_ADMIN_SETTINGS = [
-		'sso_provider_type' => [self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE, self::EXTERNAL_OIDC_PROVIDER_TYPE],
+		'sso_provider_type' => [Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE, Application::EXTERNAL_OIDC_PROVIDER_TYPE],
 		'oidc_provider' => 'string',
 		'targeted_audience_client_id' => 'string',
 		'token_exchange' => 'boolean',
@@ -107,30 +102,31 @@ class SettingsService {
 		$settingsToSkip = [];
 
 		if ($completeSetup) {
-			if (!\in_array('authorization_method', $settingsToCheck)) {
+			if (!\in_array('authorization_method', $settingsToCheck, true)) {
 				throw new InvalidArgumentException("'authorization_method' setting is missing");
 			}
 			$authMethod = $values['authorization_method'];
-			if (!\in_array($authMethod, [self::AUTH_METHOD_OAUTH, self::AUTH_METHOD_OIDC])) {
+			// do strict comparison
+			if (!\in_array($authMethod, self::GENERAL_ADMIN_SETTINGS['authorization_method'], true)) {
 				throw new InvalidArgumentException('Invalid authorization method');
 			}
-			if ($authMethod === self::AUTH_METHOD_OAUTH) {
+			if ($authMethod === Application::AUTH_METHOD_OAUTH) {
 				$settings = $this->getCompleteOAuthSettings();
 			} else {
 				$settings = $this->getCompleteOIDCSettings();
 				if (!\array_key_exists('sso_provider_type', $values)) {
 					throw new InvalidArgumentException(
 						"Incomplete settings: 'sso_provider_type' is required with '"
-						. self::AUTH_METHOD_OIDC
+						. Application::AUTH_METHOD_OIDC
 						. "' method"
 					);
 				}
-				if ($values['sso_provider_type'] === self::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE) {
+				if ($values['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
 					// for 'nextcloud_hub' type
 					// 'oidc_provider' and 'token_exchange' settings are not required
 					$settingsToSkip[] = 'oidc_provider';
 					$settingsToSkip[] = 'token_exchange';
-				} elseif ($values['sso_provider_type'] === self::EXTERNAL_OIDC_PROVIDER_TYPE) {
+				} elseif ($values['sso_provider_type'] === Application::EXTERNAL_OIDC_PROVIDER_TYPE) {
 					if (!\array_key_exists('token_exchange', $values)) {
 						throw new InvalidArgumentException(
 							"Incomplete settings: 'token_exchange' is required with external provider"
@@ -146,10 +142,10 @@ class SettingsService {
 
 			// check if all required settings are present
 			foreach ($settings as $key) {
-				if (\in_array($key, $settingsToSkip)) {
+				if (\in_array($key, $settingsToSkip, true)) {
 					continue;
 				}
-				if (!\in_array($key, $settingsToCheck)) {
+				if (!\in_array($key, $settingsToCheck, true)) {
 					// throw new InvalidArgumentException('Incomplete settings');
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -157,7 +153,7 @@ class SettingsService {
 			}
 			// check if there are no unknown settings
 			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings)) {
+				if (!in_array($key, $settings, true)) {
 					// throw new InvalidArgumentException("Unknown setting: $key");
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -174,7 +170,7 @@ class SettingsService {
 		} else {
 			$settings = $this->getAllSettings();
 			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings)) {
+				if (!in_array($key, $settings, true)) {
 					// throw new InvalidArgumentException("Unknown setting: $key");
 					// for error message compatibility
 					throw new InvalidArgumentException('invalid key');
@@ -211,7 +207,7 @@ class SettingsService {
 	 */
 	private function hasValidType(mixed $value, string|array $type): bool {
 		if (\is_array($type)) {
-			return \in_array($value, $type);
+			return \in_array($value, $type, true);
 		}
 		return $type === \gettype($value);
 	}

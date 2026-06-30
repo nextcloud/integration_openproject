@@ -8,7 +8,6 @@
 namespace OCA\OpenProject;
 
 use OCA\OpenProject\AppInfo\Application;
-use OCA\OpenProject\Service\OpenProjectAPIService;
 use OCA\UserOIDC\Event\ExchangedTokenRequestedEvent;
 use OCA\UserOIDC\Event\ExternalTokenRequestedEvent;
 use OCA\UserOIDC\Event\InternalTokenRequestedEvent;
@@ -22,22 +21,22 @@ class TokenEventFactoryTest extends TestCase {
 	public function settingsProvider(): array {
 		return [
 			"Nextcloud Hub setup" => [
-				"providerType" => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				"providerType" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => false,
 				"class" => InternalTokenRequestedEvent::class,
 			],
 			"External IDP without token exchange" => [
-				"providerType" => "external",
+				"providerType" => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => false,
 				"class" => ExternalTokenRequestedEvent::class,
 			],
 			"External IDP with token exchange" => [
-				"providerType" => "external",
+				"providerType" => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => true,
 				"class" => ExchangedTokenRequestedEvent::class,
 			],
 			"Nextcloud Hub with token exchange enabled" => [
-				"providerType" => OpenProjectAPIService::NEXTCLOUD_HUB_PROVIDER,
+				"providerType" => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				"tokenExchange" => true,
 				"class" => InternalTokenRequestedEvent::class,
 			],

@@ -221,13 +221,13 @@ class ConfigController extends Controller {
 		// determine if the full reset is done when configuration is already with "oauth2"
 		$runningFullResetWithOAuth2Auth = (
 			$runningFullReset &&
-			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OAUTH
+			$oldAuthMethod === Application::AUTH_METHOD_OAUTH
 		);
 
 		// determine if the full reset is done when configuration is already with "oidc"
 		$runningFullResetWithOIDCAuth = (
 			$runningFullReset &&
-			$oldAuthMethod === OpenProjectAPIService::AUTH_METHOD_OIDC
+			$oldAuthMethod === Application::AUTH_METHOD_OIDC
 		);
 		if (
 			(key_exists('openproject_client_id', $values) && key_exists('openproject_client_secret', $values))
@@ -379,13 +379,13 @@ class ConfigController extends Controller {
 
 		// when switching from "oauth2" to "oidc" authorization method
 		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC && $runningOauth2Reset) {
+			$values['authorization_method'] === Application::AUTH_METHOD_OIDC && $runningOauth2Reset) {
 			$this->resetOauth2Configs();
 		}
 
 		// when switching from "oidc" to "oauth2" authorization method
 		if (key_exists('authorization_method', $values) &&
-			$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OAUTH && $runningOIDCReset) {
+			$values['authorization_method'] === Application::AUTH_METHOD_OAUTH && $runningOIDCReset) {
 			$this->resetOIDCConfigs();
 		}
 
@@ -637,29 +637,34 @@ class ConfigController extends Controller {
 			// NOTE: this is for compatibility with older versions of the app
 			// when the authorization_method is not provided, set default to "oauth2"
 			if (\is_array($values) && !\array_key_exists('authorization_method', $values)) {
-				$values['authorization_method'] = OpenProjectAPIService::AUTH_METHOD_OAUTH;
+				$values['authorization_method'] = Application::AUTH_METHOD_OAUTH;
 			}
 			// For nextcloud_hub setup, set OIDC provider to Nextcloud Hub if not provided
 			if (
-				$values['authorization_method'] === OpenProjectAPIService::AUTH_METHOD_OIDC
-				&& $values['sso_provider_type'] === SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_TYPE
+				$values['authorization_method'] === Application::AUTH_METHOD_OIDC
+				&& $values['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE
 				&& (!\array_key_exists('oidc_provider', $values) || !$values['oidc_provider'])
 			) {
-				$values['oidc_provider'] = SettingsService::NEXTCLOUDHUB_OIDC_PROVIDER_LABEL;
+				$values['oidc_provider'] = Application::NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL;
 			}
 
 			// check all required settings
 			$this->settingsService->validateAdminSettingsForm($values, true);
 
-			$status = $this->setIntegrationConfig($values);
-			$result = $this->recreateOauthClientInformation();
-			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			$setup = $this->setIntegrationConfig($values);
+			$response = ['status' => $setup['status']];
+
+			if ($values['authorization_method'] === Application::AUTH_METHOD_OAUTH) {
+				$response = \array_merge($response, $this->recreateOauthClientInformation());
 			}
-			if ($status['oPUserAppPassword'] !== null) {
-				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
+
+			if ($setup['oPOAuthTokenRevokeStatus']) {
+				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
 			}
-			return new DataResponse($result);
+			if ($setup['oPUserAppPassword']) {
+				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
+			}
+			return new DataResponse($response);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
@@ -693,23 +698,28 @@ class ConfigController extends Controller {
 		try {
 			// individual settings can be updated
 			$this->settingsService->validateAdminSettingsForm($values);
-			$status = $this->setIntegrationConfig($values);
-			$oauthClientInternalId = $this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
-			$result = [];
-			if ($status['oPOAuthTokenRevokeStatus'] !== '') {
-				$result['openproject_revocation_status'] = $status['oPOAuthTokenRevokeStatus'];
+			$setup = $this->setIntegrationConfig($values);
+			$response = ['status' => $setup['status']];
+			$authMethod = $this->config->getAppValue(Application::APP_ID, 'authorization_method', '');
+
+			if ($authMethod === Application::AUTH_METHOD_OIDC) {
+				return new DataResponse($response);
 			}
-			if ($status['oPUserAppPassword'] !== null) {
-				$result['openproject_user_app_password'] = $status['oPUserAppPassword'];
-			}
-			if ($oauthClientInternalId !== '') {
-				$id = (int)$oauthClientInternalId;
-				$result = array_merge($this->oauthService->getClientInfo($id), $result);
+
+			$oauthDbId = (int)$this->config->getAppValue(Application::APP_ID, 'nc_oauth_client_id', '');
+			if ($oauthDbId) {
+				$response = \array_merge($response, $this->oauthService->getClientInfo($oauthDbId));
 			} else {
-				// we will recreate new oauth when admin has reset it
-				$result = array_merge($this->recreateOauthClientInformation(), $result);
+				$response = \array_merge($response, $this->recreateOauthClientInformation());
 			}
-			return new DataResponse($result);
+
+			if ($setup['oPOAuthTokenRevokeStatus']) {
+				$response['openproject_revocation_status'] = $setup['oPOAuthTokenRevokeStatus'];
+			}
+			if ($setup['oPUserAppPassword']) {
+				$response['openproject_user_app_password'] = $setup['oPUserAppPassword'];
+			}
+			return new DataResponse($response);
 		} catch (OpenprojectGroupfolderSetupConflictException $e) {
 			return new DataResponse([
 				'error' => $this->l->t($e->getMessage()),
