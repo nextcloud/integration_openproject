@@ -46,6 +46,8 @@ class FeatureContext implements Context {
 	public int $lastUpLoadTime;
 	private SharingContext $sharingContext;
 	private DirectUploadContext $directUploadContext;
+	public bool $teardownSetup = false;
+	public bool $teardownTeamFolder = false;
 	/**
 	 * @var array<string|null>
 	 */
@@ -103,6 +105,38 @@ class FeatureContext implements Context {
 	 */
 	public function setResponse(?ResponseInterface $response): void {
 		$this->response = $response;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getTeardownSetup(): bool {
+		return $this->teardownSetup;
+	}
+
+	/**
+	 * @param bool $teardownSetup
+	 *
+	 * @return void
+	 */
+	public function setTeardownSetup(bool $teardownSetup): void {
+		$this->teardownSetup = $teardownSetup;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getTeardownTeamFolder(): bool {
+		return $this->teardownTeamFolder;
+	}
+
+	/**
+	 * @param bool $teardownTeamFolder
+	 *
+	 * @return void
+	 */
+	public function setTeardownTeamFolder(bool $teardownTeamFolder): void {
+		$this->teardownTeamFolder = $teardownTeamFolder;
 	}
 
 	/**
@@ -1394,6 +1428,16 @@ class FeatureContext implements Context {
 		$this->response = $this->sendHttpRequest(
 			$fullUrl, $username, $password, $method, $headers, $data, $options
 		);
+
+		$endpoint = trim($endpoint, '/');
+		if ($endpoint === 'setup' && in_array($method, ['POST', 'PATCH'], true) && $this->response->getStatusCode() < 400) {
+			$this->setTeardownSetup(true);
+			$jsonResponse = json_decode($this->response->getBody()->getContents());
+			if (isset($jsonResponse->openproject_user_app_password)) {
+				$this->setTeardownTeamFolder(true);
+			}
+			$this->response->getBody()->rewind();
+		}
 	}
 
 	/**
@@ -1486,6 +1530,9 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function teardownIntegrationSetup(): void {
+		if (!$this->getTeardownSetup()) {
+			return;
+		}
 		$this->enableDisableNextcloudApp(self::APP_ID, true);
 		$this->sendRequestsToAppEndpoint(
 			$this->adminUsername, $this->adminPassword, "DELETE", "setup"
