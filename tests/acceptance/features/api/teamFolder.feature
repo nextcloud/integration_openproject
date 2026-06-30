@@ -67,7 +67,7 @@ Feature: setup the integration through an API
       | OpenProject | grp1      |
     And user "OpenProject" has been assigned the role group admin of group "grp1"
     # group admin cannot remove a user from their last remaining group
-      When the group admin "OpenProject" removes the user "Carol" from group "grp1"
+    When the group admin "OpenProject" removes the user "Carol" from group "grp1"
     Then the HTTP status code should be 400
     And user "Carol" should belong to group "grp1"
     And user "Carol" should not belong to group "OpenProjectNoAutomaticProjectFolders"
