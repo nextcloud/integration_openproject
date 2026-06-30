@@ -24,6 +24,7 @@
     "Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions." : "Permita que o OpenProject crie pastas para cada projeto automaticamente. Isto irá garantir que todos os membros da equipa têm sempre as permissões de acesso corretas.",
     "For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called \"OpenProject\"." : "Para gerir pastas de projetos automaticamente, esta aplicação necessita de configurar uma pasta de equipa especial, atribuída a um grupo e gerida por um utilizador, cada uma denominada \"OpenProject\".",
     "Reset" : "Reiniciar",
+    "Enable navigation link" : "Ativar link de navegação",
     "Some OpenProject Integration application settings are not working. Configure the OpenProject Integration in: {htmlLink}" : "Algumas configurações do aplicativo de integração do OpenProject não estão funcionando. Configure a Integração do OpenProject em: {htmlLink}",
     "Invalid token" : "token inválido",
     "If you proceed with this method, you will have an {selectedAuthMethod} based authentication configuration which will delete all the configuration setting for current {savedAuthMethod} based authentication. You can switch back to it anytime." : "Se você continuar com este método, você terá uma configuração de autenticação baseada em {selectedAuthMethod} que excluirá todas as configurações da autenticação atual baseada em {savedAuthMethod}. Você pode trocar para o método anterior a qualquer momento.",
@@ -65,6 +66,7 @@
     "No matching type found" : "Não foi encontrado um tipo correspondente",
     "Link to work package" : "Link para pacote de trabalho",
     "Successfully connected to OpenProject!" : "Conectado com sucesso ao OpenProject!",
+    "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Permite que você pesquise pacotes de trabalho OpenProject por meio da barra de pesquisa universal no Nextcloud."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
