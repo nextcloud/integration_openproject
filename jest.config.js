@@ -5,6 +5,8 @@
 
 module.exports = {
 	testMatch: ['**/tests/**/*.spec.{js,ts}'],
+	testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/server/'],
+	modulePathIgnorePatterns: ['<rootDir>/server/', '<rootDir>/dev/'],
 	moduleNameMapper: {
 		'\\.(scss)$': '<rootDir>/tests/jest/stubs/empty.js',
 		'@nextcloud/l10n/gettext': '<rootDir>/tests/jest/__mocks__/@nextcloud/l10n.js',
