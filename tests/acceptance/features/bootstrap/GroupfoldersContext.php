@@ -253,6 +253,8 @@ class GroupfoldersContext implements Context {
 	}
 
 	/**
+	 * @AfterScenario @integration-setup
+	 *
 	 * @return void
 	 */
 	public function teardownOpenProjectTeamFolder(): void {
@@ -284,9 +286,5 @@ class GroupfoldersContext implements Context {
 			$this->deleteTeamFolder((int)$groupFolder);
 		}
 		$this->createdGroupFolders = [];
-
-		if ($this->featureContext->getTeardownTeamFolder()) {
-			$this->teardownOpenProjectTeamFolder();
-		}
 	}
 }

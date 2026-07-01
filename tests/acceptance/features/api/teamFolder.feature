@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
+
+@integration-setup
 Feature: setup the integration through an API
 
   Background:
