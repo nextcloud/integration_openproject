@@ -310,6 +310,9 @@ class FeatureContext implements Context {
 		$restChars = substr($user, 1);
 		// Example: Carol -> [cC]arol
 		$userPattern = sprintf('[%s%s]%s', strtolower($firstChar), strtoupper($firstChar), $restChars);
+
+		echo "docker exec nextcloud /bin/bash -c 'rm -r $dataDir/$userPattern' 2>&1";
+
 		$folder1 = "$dataDir/" . strtolower($firstChar) . $restChars;
 		$folder2 = "$dataDir/" . strtoupper($firstChar) . $restChars;
 
@@ -340,6 +343,17 @@ class FeatureContext implements Context {
 		exec($rmCmd, $output, $rmCode);
 		if ($rmCode === 0) {
 			echo "Successfully deleted data directory of user '$user'.\n";
+			# list the folder
+			echo "listing $dataDir directory after deletion:\n";
+			exec("docker exec nextcloud /bin/bash -c 'ls -la $dataDir'", $listOutput, $listCode);
+			if ($listCode === 0) {
+				echo "Contents of $dataDir after deletion:\n" . implode("\n", $listOutput) . "\n";
+			} else {
+				echo "Failed to list $dataDir directory after deletion.\n";
+				if ($listOutput) {
+					echo "Command output:\n" . implode("\n", $listOutput) . "\n";
+				}
+			}
 		} else {
 			echo "Failed to delete data directory of user '$user'.\n";
 			echo "Command: $rmCmd\n";
@@ -1405,9 +1419,9 @@ class FeatureContext implements Context {
 			}
 
 			// In CI, delete user's data directory if it exists.
-			if (getenv('CI')) {
-				$this->deleteUserDataFromDocker($user);
-			}
+			// if (getenv('CI')) {
+			$this->deleteUserDataFromDocker($user);
+			// }
 		}
 
 		// Clean up groups
