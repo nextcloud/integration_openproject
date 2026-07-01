@@ -96,6 +96,7 @@ class Admin implements ISettings {
 			// project folder form configs
 			'fresh_project_folder_setup' => $this->config->getAppValue(Application::APP_ID, 'fresh_project_folder_setup', '0') === '1',
 			'project_folder_info' => $projectFolderStatusInformation,
+			'project_folder_enabled' => \boolval($this->config->getAppValue(Application::APP_ID, 'setup_project_folder', true)),
 			'app_password_set' => $this->openProjectAPIService->hasAppPassword(),
 			// general form configs
 			'default_enable_navigation' => $this->config->getAppValue(Application::APP_ID, 'default_enable_navigation', '0') === '1',
