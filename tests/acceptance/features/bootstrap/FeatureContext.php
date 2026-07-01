@@ -316,28 +316,35 @@ class FeatureContext implements Context {
 		// check data folders
 		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]' 2>&1";
 		exec($checkCmd, $checkOutput, $checkCode);
-		if ($checkCode !== 0) {
-			if ($checkCode === 1) {
+		switch ($checkCode) {
+			case 0:
+				echo "User '$user' data directory exists, proceeding with deletion.\n";
+				break;
+
+			case 1:
 				echo "User '$user' data directory doesn't exist, skipping deletion.\n";
-			} else {
+				return;
+
+			default:
 				echo "Failed to check user data directory for '$user'.\n";
 				echo "Command: $checkCmd\n";
 				echo "Exit code: $checkCode\n";
-			}
-			if (count($checkOutput) > 0) {
-				echo "Command output: " . implode("\n", $checkOutput) . "\n";
-			}
-			return;
+				if ($checkOutput) {
+					echo "Command output:\n" . implode("\n", $checkOutput) . "\n";
+				}
+				return;
 		}
 
 		// delete user data directory
-		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern' 2>&1";
+		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -r $dataDir/$userPattern' 2>&1";
 		exec($rmCmd, $output, $rmCode);
-		if ($rmCode !== 0) {
+		if ($rmCode === 0) {
+			echo "Successfully deleted data directory of user '$user'.\n";
+		} else {
 			echo "Failed to delete data directory of user '$user'.\n";
 			echo "Command: $rmCmd\n";
 			echo "Exit code: $rmCode\n";
-			if (count($output) > 0) {
+			if ($output) {
 				echo "Command output: " . implode("\n", $output) . "\n";
 			}
 		}
