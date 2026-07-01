@@ -13,7 +13,6 @@ use PHPUnit\Framework\Assert;
 
 class GroupfoldersContext implements Context {
 	/**
-	 *
 	 * @var FeatureContext
 	 */
 	private $featureContext;
@@ -21,14 +20,17 @@ class GroupfoldersContext implements Context {
 	/** @var array<mixed> */
 	private array $createdGroupFolders = [];
 
+	/**
+	 * @return string
+	 */
+	public function getTeamFolderUrl(): string {
+		return $this->featureContext->getBaseUrl() . "index.php/apps/groupfolders/folders";
+	}
 
 	/**
 	 * @Given team folder :folderName has been created
 	 */
 	public function groupFolderHasBeenCreated(string $folderName): void {
-		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders";
-
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
 			'multipart' => [
@@ -38,7 +40,7 @@ class GroupfoldersContext implements Context {
 				]
 			]];
 		$response = $this->featureContext->sendHttpRequest(
-			$fullUrl,
+			$this->getTeamFolderUrl(),
 			$this->featureContext->getAdminUsername(),
 			$this->featureContext->getAdminPassword(),
 			'POST',
@@ -58,8 +60,7 @@ class GroupfoldersContext implements Context {
 	 */
 	public function groupHasBeenAddedToGroupFolder(string $group, string $groupfolder):void {
 		$groupfolderId = $this->createdGroupFolders[$groupfolder];
-		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders/".$groupfolderId. "/groups";
+		$fullUrl = $this->getTeamFolderUrl() . "/" . $groupfolderId . "/groups";
 		$headers['OCS-APIRequest'] = 'true';
 		$options = [
 			'multipart' => [
@@ -94,7 +95,7 @@ class GroupfoldersContext implements Context {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
 		Assert::assertEquals(
 			[ $folderName => 31 ],
-			$folder['groups'],
+			(array)$folder->groups,
 			'The group assignment of folder "' . $folderName .
 			'" is not correct' .
 			"\n" . print_r($folder, true)
@@ -107,7 +108,7 @@ class GroupfoldersContext implements Context {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
 		Assert::assertEquals(
 			1,
-			$folder['acl'],
+			$folder->acl,
 			'Folder "' . $folderName .
 			'" has no ACLs enabled' .
 			"\n" . print_r($folder, true)
@@ -119,16 +120,21 @@ class GroupfoldersContext implements Context {
 	 */
 	public function groupfolderShouldBeManagedByTheUser(string $folderName, string $user): void {
 		$folder = $this->getGroupfolderByMountpoint($folderName);
+		$manage = ($folder->manage)[0];
 		Assert::assertEquals(
-			[
-				[
-					"type" => "user",
-					"id" => $user,
-					"displayname" => $user
-				]
-			],
-			$folder['manage'],
-			'manager of folder "' . $folderName . '" is not set correctly'
+			"user",
+			$manage->type,
+			'Folder manager misconfigured: type'
+		);
+		Assert::assertEquals(
+			$user,
+			$manage->id,
+			'Folder manager misconfigured: id'
+		);
+		Assert::assertEquals(
+			$user,
+			$manage->displayname,
+			'Folder manager misconfigured: displayname'
 		);
 	}
 
@@ -143,54 +149,86 @@ class GroupfoldersContext implements Context {
 	}
 
 	/**
-	 * @param string $mountpoint
-	 * @return array<mixed>
-	 */
-	private function getGroupfolderByMountpoint(string $mountpoint): array {
-		$body = $this->getAllGroupfolders();
-		foreach ($body['ocs']['data'] as $groupfolder) {
-			if ($groupfolder['mount_point'] === $mountpoint) {
-				return $groupfolder;
-			}
-		}
-		throw new \Exception('could not find "' . $mountpoint . '" in the list of groupfolders' .
-			"\n" . print_r($body, true)
-		);
-	}
-	/**
 	 * @return array<mixed>
 	 * @throws GuzzleException
 	 */
 	private function getAllGroupfolders() {
-		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders?format=json";
-
-		$headers['Content-Type'] = 'application/json';
 		$headers['OCS-APIRequest'] = 'true';
-
 		$response = $this->featureContext->sendHttpRequest(
-			$fullUrl,
+			$this->featureContext->prefixJsonFormat($this->getTeamFolderUrl()),
 			$this->featureContext->getAdminUsername(),
 			$this->featureContext->getAdminPassword(),
 			'GET',
 			$headers
 		);
-
-		$body = json_decode($response->getBody()->getContents(), true);
-		Assert::assertNotNull($body, 'could not decode body');
-		return $body;
+		$this->featureContext->theHTTPStatusCodeShouldBe(200, "Failed to list team folders.", $response);
+		$this->featureContext->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to list team folders. Response: " . json_encode($body)
+		);
+		return $body->ocs->data;
 	}
 
-	private function adminDeletesGroupfolder(int $id): void {
-		$fullUrl = $this->featureContext->getBaseUrl() .
-			"index.php/apps/groupfolders/folders/" . $id;
+	/**
+	 * @param string $mountpoint
+	 * @return object
+	 */
+	private function getGroupfolderByMountpoint(string $mountpoint): object {
+		$folders = $this->getAllGroupfolders();
+		foreach ($folders as $groupfolder) {
+			if ($groupfolder->mount_point === $mountpoint) {
+				return $groupfolder;
+			}
+		}
+		throw new \Exception('could not find "' . $mountpoint . '" in the list of groupfolders' .
+			"\n" . print_r($folders, true)
+		);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTeamFolderId(string $teamFolder): int {
+		$folderId = 0;
+		$folders = $this->getAllGroupfolders();
+		foreach ($folders as $folder) {
+			if ($folder->mount_point === $teamFolder) {
+				$folderId = $folder->id;
+				break;
+			}
+		}
+		return $folderId;
+	}
+
+	/**
+	 * @param int $folderId
+	 *
+	 * @return void
+	 */
+	private function deleteTeamFolder(int $folderId): void {
+		if (!$folderId) {
+			return;
+		}
+
+		$fullUrl = $this->getTeamFolderUrl() . "/" . $folderId;
 		$headers['OCS-APIRequest'] = 'true';
-		$this->featureContext->sendHttpRequest(
-			$fullUrl,
+		$response = $this->featureContext->sendHttpRequest(
+			$this->featureContext->prefixJsonFormat($fullUrl),
 			$this->featureContext->getAdminUsername(),
 			$this->featureContext->getAdminPassword(),
-			'DELETE',
-			$headers
+			"DELETE",
+			$headers,
+		);
+		$this->featureContext->theHTTPStatusCodeShouldBe(200, "Failed to delete team folder", $response);
+		$this->featureContext->theOCSStatusShouldBe("ok", $response);
+		$response->getBody()->rewind();
+		$body = json_decode($response->getBody()->getContents());
+		Assert::assertTrue(
+			$body->ocs->meta->status === "ok",
+			"Failed to delete team folder. Response: " . json_encode($body)
 		);
 	}
 
@@ -215,6 +253,29 @@ class GroupfoldersContext implements Context {
 	}
 
 	/**
+	 * @AfterScenario @integration-setup
+	 *
+	 * @return void
+	 */
+	public function teardownOpenProjectTeamFolder(): void {
+		$this->featureContext->enableDisableNextcloudApp(FeatureContext::APP_ID, false);
+		$this->deleteTeamFolder($this->getTeamFolderId(FeatureContext::OPENPROJECT_TEAM_FOLDER));
+
+		$this->featureContext->theAdministratorDeletesTheUser(FeatureContext::OPENPROJECT_USER);
+		$this->featureContext->theHTTPStatusCodeShouldBe([200, 404]);
+		$this->featureContext->setResponse(null);
+
+		foreach (FeatureContext::OPENPROJECT_GROUPS as $group) {
+			$this->featureContext->theAdministratorDeletesTheGroup($group);
+			// with v2.php, the group deletion may return 200 or 400 if the group does not exist
+			$this->featureContext->theHTTPStatusCodeShouldBe([200, 400]);
+			$this->featureContext->setResponse(null);
+		}
+
+		$this->featureContext->enableDisableNextcloudApp(FeatureContext::APP_ID, true);
+	}
+
+	/**
 	 * @AfterScenario
 	 *
 	 * @return void
@@ -222,7 +283,8 @@ class GroupfoldersContext implements Context {
 	 */
 	public function after():void {
 		foreach ($this->createdGroupFolders as $groupFolder) {
-			$this->adminDeletesGroupfolder((int)$groupFolder);
+			$this->deleteTeamFolder((int)$groupFolder);
 		}
+		$this->createdGroupFolders = [];
 	}
 }
