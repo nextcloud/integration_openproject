@@ -194,7 +194,7 @@ Feature: setup the integration with OAuth method
       }
       """
 
-  @expect-fail
+
   Scenario Outline: update settings
     Given the administrator has set up the integration with the following settings:
       """
@@ -244,7 +244,7 @@ Feature: setup the integration with OAuth method
       | "openproject_client_id":"new-client","openproject_client_secret":"secret-value" |
       | "default_enable_navigation":false,"default_enable_unified_search":true          |
 
-  @expect-fail
+
   Scenario Outline: try to update a setting with invalid data
     Given the administrator has set up the integration with the following settings:
       """
@@ -290,7 +290,7 @@ Feature: setup the integration with OAuth method
       | "default_enable_navigation":false,"default_enable_unified_search":null   | invalid data  |
       | "instance_url":"http://op.de"                                            | invalid key   |
 
-  @expect-fail
+
   Scenario Outline: try to update settings with invalid json data
     Given the administrator has set up the integration with the following settings:
       """
@@ -350,7 +350,7 @@ Feature: setup the integration with OAuth method
       }
       """
 
-  @expect-fail
+
   Scenario: reset the integration setup
     Given the administrator has set up the integration with the following settings:
       """
@@ -422,7 +422,7 @@ Feature: setup the integration with OAuth method
       | true                 | false              |
       | false                | true               |
 
-  @expect-fail
+
   Scenario: Set up whole integration with project folder and user app password
     When the administrator sends a POST request to the "setup" endpoint with this data:
       """
