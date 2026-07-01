@@ -35,9 +35,22 @@
 			:oauth-settings="{
 				openproject_client_id: state.openproject_client_id,
 				openproject_client_secret: state.openproject_client_secret,
-				nc_oauth_client: state.nc_oauth_client
+				nc_oauth_client: state.nc_oauth_client,
 			}"
 			@formcomplete="markFormComplete" />
+		<FormProjectFolder
+			:is-dark-theme="isDarkTheme"
+			:form-order="projectFolderFormOrder"
+			:form-state="form"
+			:project-folder-info="{
+				projectFolderEnabled: state.project_folder_enabled,
+				hasAppPassword: state.app_password_set,
+				app: state.apps.groupfolders,
+				folderStatus: state.project_folder_info,
+				encryption: state.encryption_info,
+			}"
+			@formcomplete="markFormComplete" />
+		<!--
 		<div class="project-folder-setup">
 			<FormHeading :index="isOidcMethod ? '4' : '5'"
 				:is-project-folder-setup-heading="true"
@@ -58,13 +71,13 @@
 					<b v-if="isThereErrorAfterProjectFolderAndAppPasswordSetup">{{ state.project_folder_info.errorMessage }}</b>
 					<b v-else>{{ projectFolderSetupError }}</b>
 				</p>
-				<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
+				<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" />
 			</NcNoteCard>
 			<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
 				<p class="note-card--title">
 					<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
 				</p>
-				<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
+				<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" />
 			</NcNoteCard>
 			<div v-if="showDefaultManagedProjectFolders">
 				<div v-if="isProjectFolderSetupFormInEdit">
@@ -183,10 +196,11 @@
 				</div>
 			</div>
 		</div>
+	-->
 		<NcButton id="reset-all-app-settings-btn"
 			type="error"
 			:disabled="!resettableForm"
-			@click="resetAllAppValuesConfirmation">
+			@click="resetIntegrationSetup">
 			<template #icon>
 				<RestoreIcon :size="20" />
 			</template>
@@ -224,23 +238,23 @@ import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
-import PencilIcon from 'vue-material-design-icons/Pencil.vue'
+// import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
+// import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import {
-	NcLoadingIcon,
-	NcCheckboxRadioSwitch,
+	// NcLoadingIcon,
+	// NcCheckboxRadioSwitch,
 	NcButton,
 	NcNoteCard,
 } from '@nextcloud/vue'
 import RestoreIcon from 'vue-material-design-icons/Restore.vue'
-import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
-import TextInput from './admin/TextInput.vue'
-import FieldValue from './admin/FieldValue.vue'
-import FormHeading from './admin/FormHeading.vue'
+// import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
+// import TextInput from './admin/TextInput.vue'
+// import FieldValue from './admin/FieldValue.vue'
+// import FormHeading from './admin/FormHeading.vue'
+// import ErrorNote from './settings/ErrorNote.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
-import ErrorNote from './settings/ErrorNote.vue'
-import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM } from '../utils.js'
+import { F_MODES, USER_SETTINGS, AUTH_METHOD, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL, ADMIN_SETTINGS_FORM } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
 import { messages, messagesFmt } from '../constants/messages.js'
@@ -249,29 +263,32 @@ import FormOpenProjectHost from './admin/FormOpenProjectHost.vue'
 import FormAuthMethod from './admin/FormAuthMethod.vue'
 import FormSSOSettings from './admin/FormSSOSettings.vue'
 import FormOAuthSettings from './admin/FormOAuthSettings.vue'
+import FormProjectFolder from './admin/FormProjectFolder.vue'
+import { saveAdminConfig } from '../api/settings.js'
 
 export default {
 	name: 'AdminSettings',
 	components: {
 		NcButton,
-		FieldValue,
-		FormHeading,
-		TextInput,
+		// FieldValue,
+		// FormHeading,
+		// TextInput,
 		SettingsTitle,
-		CheckBoldIcon,
-		PencilIcon,
-		NcLoadingIcon,
-		AutoRenewIcon,
+		// CheckBoldIcon,
+		// PencilIcon,
+		// NcLoadingIcon,
+		// AutoRenewIcon,
 		RestoreIcon,
 		CheckBox,
-		NcCheckboxRadioSwitch,
+		// NcCheckboxRadioSwitch,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
-		ErrorNote,
+		// ErrorNote,
 		FormOpenProjectHost,
 		FormAuthMethod,
 		FormSSOSettings,
 		FormOAuthSettings,
+		FormProjectFolder,
 	},
 	data() {
 		return {
@@ -411,15 +428,6 @@ export default {
 				 && !this.isOPUserAppPasswordFormInEdit
 			)
 		},
-		isSetupCompleteWithoutProjectFolders() {
-			if (this.isProjectFolderSetupFormInEdit) {
-				return false
-			}
-			if (this.isFormCompleted.projectFolderSetUp === false && !this.opUserAppPassword) {
-				return false
-			}
-			return !this.opUserAppPassword
-		},
 		showEncryptionWarningForGroupFolders() {
 			if (!this.isProjectFolderAlreadySetup || !this.state.app_password_set || this.isProjectFolderSetupFormInEdit) {
 				return false
@@ -441,6 +449,14 @@ export default {
 		},
 		showGroupfoldersAppError() {
 			return this.isProjectFolderSwitchEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
+		},
+		projectFolderFormOrder() {
+			let formOrder = this.form.projectFolder.order
+			if (this.getCurrentAuthMethod) {
+				console.info(this.form.projectFolder, this.getCurrentAuthMethod)
+				formOrder = this.form.projectFolder[this.getCurrentAuthMethod].order
+			}
+			return formOrder.toString()
 		},
 	},
 	watch: {
@@ -508,73 +524,11 @@ export default {
 				this.isProjectFolderSwitchEnabled = this.currentProjectFolderState === true
 			}
 		},
+		// for child components to mark the respective form as complete
 		markFormComplete(formFn) {
 			formFn(this.form)
 		},
-		setProjectFolderSetUpToEditMode() {
-			this.formMode.projectFolderSetUp = F_MODES.EDIT
-			this.isFormCompleted.projectFolderSetUp = false
-			this.isProjectFolderSwitchEnabled = this.currentProjectFolderState
-		},
-		setProjectFolderSetupToViewMode() {
-			this.currentProjectFolderState = true
-			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			this.isFormCompleted.projectFolderSetUp = true
-			this.formMode.projectFolderSetUp = F_MODES.VIEW
-			this.isProjectFolderSetupCorrect = true
-		},
-		setOPUserAppPasswordToViewMode() {
-			this.formMode.opUserAppPassword = F_MODES.VIEW
-			this.isFormCompleted.opUserAppPassword = true
-		},
-		changeProjectFolderSetUpState() {
-			if (this.opUserAppPassword === false) {
-				if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === true) {
-					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
-				} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === false) {
-					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithoutProjectFolderSetup
-				} else if (this.currentProjectFolderState === false && this.isProjectFolderSwitchEnabled === false) {
-					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-				} else if (this.currentProjectFolderState === false && this.isProjectFolderSwitchEnabled === true) {
-					this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithProjectFolderSetup
-				}
-			} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === true) {
-				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			} else if (this.currentProjectFolderState === true && this.isProjectFolderSwitchEnabled === false) {
-				this.textLabelProjectFolderSetupButton = this.buttonTextLabel.completeWithoutProjectFolderSetup
-			}
-		},
-		async setUpProjectGroupFolders() {
-			this.isFormStep = FORM.GROUP_FOLDER
-			this.loadingProjectFolderSetup = true
-			this.isProjectFolderAlreadySetup = await this.checkIfProjectFolderIsAlreadyReadyForSetup()
-			if (this.isProjectFolderAlreadySetup) {
-				if (!this.opUserAppPassword) {
-					const success = await this.saveOPOptions()
-					if (success) {
-						this.formMode.opUserAppPassword = F_MODES.EDIT
-						this.setProjectFolderSetupToViewMode()
-					}
-				} else {
-					this.setProjectFolderSetupToViewMode()
-				}
-			} else {
-				// we will check for the error making the setup_project_folder === true
-				const success = await this.saveOPOptions()
-				if (success) {
-					this.setProjectFolderSetupToViewMode()
-					this.isProjectFolderAlreadySetup = true
-					if ((this.formMode.opUserAppPassword === F_MODES.DISABLE && !this.opUserAppPassword) || this.formMode.opUserAppPassword === F_MODES.DISABLE) {
-						this.formMode.opUserAppPassword = F_MODES.EDIT
-					}
-				}
-			}
-			this.loadingProjectFolderSetup = false
-			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
-				this.projectFolderSetupError = null
-			}
-		},
-		resetAllAppValuesConfirmation() {
+		resetIntegrationSetup() {
 			OC.dialogs.confirmDestructive(
 				t('integration_openproject', 'Are you sure that you want to reset this app and delete all settings and all connections of all Nextcloud users to OpenProject?'),
 				t('integration_openproject', 'Reset OpenProject Integration'),
@@ -586,13 +540,13 @@ export default {
 				},
 				async (result) => {
 					if (result) {
-						await this.resetAllAppValues(this.getCurrentAuthMethod)
+						await this.confirmResetIntegrationSetup(this.getCurrentAuthMethod)
 					}
 				},
 				true,
 			)
 		},
-		async resetAllAppValues(authMethod) {
+		async confirmResetIntegrationSetup(authMethod) {
 			// to avoid general console errors, we need to set the form to
 			// editor mode so that we can update the form fields with null values
 			// also, form completeness should be set to false
@@ -609,59 +563,26 @@ export default {
 			if (authMethod === AUTH_METHOD.OIDC) {
 				this.state.authorization_settings.targeted_audience_client_id = null
 			}
-			await this.saveOPOptions()
-			window.location.reload()
-		},
-		getPayloadForSavingOPOptions() {
-			let values = {
-				openproject_client_id: this.state.openproject_client_id,
-				openproject_client_secret: this.state.openproject_client_secret,
-				default_enable_navigation: this.state.default_enable_navigation,
-				default_enable_unified_search: this.state.default_enable_unified_search,
+			const data = {
+				// oauth settings
+				openproject_client_id: null,
+				openproject_client_secret: null,
+				// oidc settings
+				oidc_provider: null,
+				targeted_audience_client_id: null,
+				sso_provider_type: null,
+				token_exchange: null,
+				// general settings
+				openproject_instance_url: null,
+				authorization_method: null,
+				setup_project_folder: null,
+				setup_app_password: false,
+				default_enable_navigation: false,
+				default_enable_unified_search: false,
 			}
-			if (this.state.openproject_instance_url === null) {
-				values.openproject_instance_url = null
-			}
-			// by default, it will be an oauth2 reset
-			if (this.state.authorization_method === null) {
-				values = {
-					...values,
-					authorization_method: null,
-					setup_project_folder: false,
-					setup_app_password: false,
-					oidc_provider: null,
-					targeted_audience_client_id: null,
-					sso_provider_type: null,
-					token_exchange: null,
 
-				}
-			} else if (this.isFormStep === FORM.GROUP_FOLDER) {
-				if (!this.isProjectFolderSwitchEnabled) {
-					values = {
-						setup_project_folder: false,
-						setup_app_password: false,
-					}
-				} else if (this.isProjectFolderSwitchEnabled === true) {
-					values = {
-						setup_project_folder: !this.isProjectFolderAlreadySetup,
-						setup_app_password: this.opUserAppPassword !== true,
-					}
-				}
-			} else if (this.isFormStep === FORM.APP_PASSWORD) {
-				values = {
-					setup_app_password: true,
-				}
-			}
-			return values
-		},
-		async saveOPOptions() {
-			let success = false
-			const url = generateUrl('/apps/integration_openproject/admin-config')
-			const req = {
-				values: this.getPayloadForSavingOPOptions(),
-			}
 			try {
-				const response = await axios.put(url, req)
+				const response = await saveAdminConfig(data)
 				// after successfully saving the admin credentials, the admin config status needs to be updated
 				this.isAdminConfigOk = response?.data?.status === true
 				if (response?.data?.oPUserAppPassword) {
@@ -669,73 +590,18 @@ export default {
 					this.oPUserAppPassword = response?.data?.oPUserAppPassword
 				}
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
-				success = true
 			} catch (error) {
 				console.error()
 				this.isAdminConfigOk = null
-				if (error.response.data.error) {
+				if (error.response?.data?.error) {
 					this.projectFolderSetupError = error.response.data.error
 				}
 				showError(
 					t('integration_openproject', 'Failed to save OpenProject admin options'),
 				)
 			}
-			return success
-		},
-		async checkIfProjectFolderIsAlreadyReadyForSetup() {
-			let success = false
-			try {
-				const url = generateUrl('/apps/integration_openproject/project-folder-status')
-				const response = await axios.get(url)
-				success = response?.data?.result
-			} catch (error) {
-				console.error(error)
-			}
-			return success
-		},
-		async completeIntegrationWithoutProjectFolderSetUp() {
-			this.isFormStep = FORM.GROUP_FOLDER
-			this.textLabelProjectFolderSetupButton = this.buttonTextLabel.keepCurrentChange
-			const success = await this.saveOPOptions()
-			if (success) {
-				// also make password form disable and complete as false
-				if (this.opUserAppPassword) {
-					this.isFormCompleted.opUserAppPassword = false
-					this.formMode.opUserAppPassword = F_MODES.DISABLE
-				}
-				this.state.app_password_set = false
-				this.currentProjectFolderState = this.isProjectFolderSwitchEnabled
-				this.isFormCompleted.projectFolderSetUp = true
-				this.formMode.projectFolderSetUp = F_MODES.VIEW
-			}
-			// we want to show the error only when project folder form is in edit mode
-			if (this.formMode.projectFolderSetUp === F_MODES.VIEW) {
-				this.projectFolderSetupError = null
-			}
-		},
-		resetOPUserAppPassword() {
-			OC.dialogs.confirmDestructive(
-				t('integration_openproject', 'If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.'),
-				t('integration_openproject', 'Replace user app password'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('integration_openproject', 'Yes, replace'),
-					confirmClasses: 'error',
-					cancel: t('integration_openproject', 'Cancel'),
-				},
-				async (result) => {
-					if (result) {
-						await this.createNewAppPassword()
-					}
-				},
-				true,
-			)
-		},
-		async createNewAppPassword() {
-			this.isFormStep = FORM.APP_PASSWORD
-			this.formMode.opUserAppPassword = F_MODES.EDIT
-			this.isFormCompleted.opUserAppPassword = false
-			await this.saveOPOptions()
+			// reload the web page
+			window.location.reload()
 		},
 		setDefaultConfig() {
 			const url = generateUrl('/apps/integration_openproject/admin-config')

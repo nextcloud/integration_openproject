@@ -271,7 +271,13 @@ class ConfigController extends Controller {
 		}
 
 		foreach ($values as $key => $value) {
-			if ($key === 'setup_project_folder' || $key === 'setup_app_password') {
+			if ($key === 'setup_app_password') {
+				continue;
+			}
+			if ($key === 'setup_project_folder') {
+				// default value
+				$setupProjectFolder = $value ?? true;
+				$this->config->setAppValue(Application::APP_ID, $key, $setupProjectFolder);
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim((string)$value));
