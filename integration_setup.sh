@@ -21,8 +21,6 @@
 
 set -e
 
-INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
-
 # helper functions
 log_error() {
   echo -e "\e[31m$1\e[0m"
@@ -36,23 +34,47 @@ log_success() {
   echo -e "\e[32m$1\e[0m"
 }
 
+
+required_vars=(
+  NEXTCLOUD_HOST
+  OPENPROJECT_HOST
+  OP_ADMIN_USERNAME
+  OP_ADMIN_PASSWORD
+  NC_ADMIN_USERNAME
+  NC_ADMIN_PASSWORD
+  OPENPROJECT_STORAGE_NAME
+  SETUP_PROJECT_FOLDER
+)
+
+for var in "${required_vars[@]}"; do
+  if [[ -z "${!var}" ]]; then
+    log_error "❌ Missing required environment variable: $var"
+    log_info ""
+    log_info "Required environment variables"
+    log_info "- NEXTCLOUD_HOST             : URL of the Nextcloud instance (e.g. https://nextcloud.example.com)"
+    log_info "- OPENPROJECT_HOST           : URL of the OpenProject instance (e.g. https://openproject.example.com)"
+    log_info "- OP_ADMIN_USERNAME          : Username of the OpenProject admin user"
+    log_info "- OP_ADMIN_PASSWORD          : Password of the OpenProject admin user"
+    log_info "- NC_ADMIN_USERNAME          : Username of the Nextcloud admin user"
+    log_info "- NC_ADMIN_PASSWORD          : Password of the Nextcloud admin user"
+    log_info "- OPENPROJECT_STORAGE_NAME   : Name of the file storage in OpenProject for OAuth configuration"
+    log_info "- SETUP_PROJECT_FOLDER       : Whether to set up a project folder in Nextcloud (true/false)"
+    log_info ""
+    log_info "Optional environment variables"
+    log_info "- INTEGRATION_SETUP_DEBUG    : If true, enables debug mode with verbose output"
+    log_info "- INTEGRATION_SETUP_TEMP_DIR : Directory for temporary files (default: ./temp)"
+    log_info ""
+    exit 1
+  fi
+done
+
+INTEGRATION_SETUP_DEFAULT_TEMP_DIR=./temp
+
 # Support for "Debug mode"
 if [[ $INTEGRATION_SETUP_DEBUG == "true"  ]]; then
   log_info "Debug mode is enabled"
   set -x
   set -v
-fi
-
-if [[ $INTEGRATION_SETUP_TEMP_DIR == ""  ]]; then
-  log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
-  INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
-  mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
-else
-  log_info "Using ${INTEGRATION_SETUP_TEMP_DIR} as non-default temporary directory"
-  if [ ! -d "${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}" ]; then
-    log_error "Temporary directory does not exist"
-    exit 1
-  fi
 fi
 
 # if something goes wrong or an error occurs during the setup of the whole integration
@@ -74,12 +96,23 @@ deleteOPStorageAndPrintErrorResponse() {
 
 
 # These URLs are just to check if the Nextcloud and OpenProject instances have been started or not before running the script
+if ! curl -fsS "${NEXTCLOUD_HOST}"  >/dev/null; then
+    log_error "Cannot reach Nextcloud at ${NEXTCLOUD_HOST} (check URL, instance, SSL)"
+    exit 1
+fi
+
+if ! curl -fsS -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} "${OPENPROJECT_HOST}"  >/dev/null; then
+    log_error "Cannot reach OpenProject at ${OPENPROJECT_HOST} (check URL, instance, SSL)"
+    exit 1
+fi
+
 NEXTCLOUD_HOST_STATE=$(curl -s -X GET ${NEXTCLOUD_HOST}/status.php)
 NEXTCLOUD_HOST_INSTALLED_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".installed")
 NEXTCLOUD_HOST_MAINTENANCE_STATE=$(echo $NEXTCLOUD_HOST_STATE | jq -r ".maintenance")
 OPENPROJECT_BASEURL_FOR_STORAGE=${OPENPROJECT_HOST}/api/v3/storages
 NC_INTEGRATION_BASE_URL=${NEXTCLOUD_HOST}/index.php/apps/integration_openproject
 openproject_host_state_response=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} ${OPENPROJECT_HOST}/api/v3/configuration)
+
 # These two data are set to "false" when the integration is done without project folder setup
 setup_project_folder=false
 setup_app_password=false
@@ -205,6 +238,17 @@ if [[ ${SETUP_PROJECT_FOLDER} == "true" ]]; then
   fi
 else
   setup_method=POST
+fi
+
+if [[ -z "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  INTEGRATION_SETUP_TEMP_DIR="$INTEGRATION_SETUP_DEFAULT_TEMP_DIR"
+  mkdir -p "$INTEGRATION_SETUP_TEMP_DIR"
+  log_info "Using default temp dir: $INTEGRATION_SETUP_TEMP_DIR"
+elif [[ ! -d "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  log_error "Temporary directory '$INTEGRATION_SETUP_TEMP_DIR' does not exist"
+  exit 1
+else
+  log_info "Using temp dir: $INTEGRATION_SETUP_TEMP_DIR"
 fi
 
 # API call to get openproject_client_id and openproject_client_secret
