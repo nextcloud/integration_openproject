@@ -656,6 +656,7 @@ class ConfigController extends Controller {
 
 			if ($values['authorization_method'] === Application::AUTH_METHOD_OAUTH) {
 				$response = \array_merge($response, $this->recreateOauthClientInformation());
+				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
 			}
 
 			if ($setup['oPOAuthTokenRevokeStatus']) {
@@ -711,6 +712,7 @@ class ConfigController extends Controller {
 				$response = \array_merge($response, $this->oauthService->getClientInfo($oauthDbId));
 			} else {
 				$response = \array_merge($response, $this->recreateOauthClientInformation());
+				$response['status'] = OpenProjectAPIService::isAdminConfigOk($this->config);
 			}
 
 			if ($setup['oPOAuthTokenRevokeStatus']) {
