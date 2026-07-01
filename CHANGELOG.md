@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-## 3.1.1-20260625-nightly
+## 3.1.1-20260701-nightly
 
 ### Fixed
 
