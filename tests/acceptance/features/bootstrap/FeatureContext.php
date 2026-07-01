@@ -310,34 +310,65 @@ class FeatureContext implements Context {
 		$restChars = substr($user, 1);
 		// Example: Carol -> [cC]arol
 		$userPattern = sprintf('[%s%s]%s', strtolower($firstChar), strtoupper($firstChar), $restChars);
+
+		echo "docker exec nextcloud /bin/bash -c 'rm -r $dataDir/$userPattern' 2>&1";
+
 		$folder1 = "$dataDir/" . strtolower($firstChar) . $restChars;
 		$folder2 = "$dataDir/" . strtoupper($firstChar) . $restChars;
 
 		// check data folders
 		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]' 2>&1";
 		exec($checkCmd, $checkOutput, $checkCode);
-		if ($checkCode !== 0) {
-			if ($checkCode === 1) {
+		switch ($checkCode) {
+			case 0:
+				echo "User '$user' data directory exists, proceeding with deletion.\n";
+				$treeCmd = "docker exec nextcloud /bin/bash -c 'sudo apt update && sudo apt install tree -y && tree $dataDir' 2>&1";
+				exec($treeCmd, $treeOutput, $treeCode);
+				if ($treeCode === 0) {
+					echo "Contents of $dataDir before deletion:\n" . implode("\n", $treeOutput) . "\n";
+				} else {
+					echo "Failed to list $dataDir directory before deletion.\n";
+					if ($treeOutput) {
+						echo "Command output:\n" . implode("\n", $treeOutput) . "\n";
+					}
+				}
+				break;
+
+			case 1:
 				echo "User '$user' data directory doesn't exist, skipping deletion.\n";
-			} else {
+				return;
+
+			default:
 				echo "Failed to check user data directory for '$user'.\n";
 				echo "Command: $checkCmd\n";
 				echo "Exit code: $checkCode\n";
-			}
-			if (count($checkOutput) > 0) {
-				echo "Command output: " . implode("\n", $checkOutput) . "\n";
-			}
-			return;
+				if ($checkOutput) {
+					echo "Command output:\n" . implode("\n", $checkOutput) . "\n";
+				}
+				return;
 		}
 
 		// delete user data directory
-		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern' 2>&1";
+		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -r $dataDir/$userPattern' 2>&1";
 		exec($rmCmd, $output, $rmCode);
-		if ($rmCode !== 0) {
+		if ($rmCode === 0) {
+			echo "Successfully deleted data directory of user '$user'.\n";
+			# list the folder
+			echo "listing $dataDir directory after deletion:\n";
+			exec("docker exec nextcloud /bin/bash -c 'ls -la $dataDir'", $listOutput, $listCode);
+			if ($listCode === 0) {
+				echo "Contents of $dataDir after deletion:\n" . implode("\n", $listOutput) . "\n";
+			} else {
+				echo "Failed to list $dataDir directory after deletion.\n";
+				if ($listOutput) {
+					echo "Command output:\n" . implode("\n", $listOutput) . "\n";
+				}
+			}
+		} else {
 			echo "Failed to delete data directory of user '$user'.\n";
 			echo "Command: $rmCmd\n";
 			echo "Exit code: $rmCode\n";
-			if (count($output) > 0) {
+			if ($output) {
 				echo "Command output: " . implode("\n", $output) . "\n";
 			}
 		}
@@ -1398,9 +1429,9 @@ class FeatureContext implements Context {
 			}
 
 			// In CI, delete user's data directory if it exists.
-			if (getenv('CI')) {
-				$this->deleteUserDataFromDocker($user);
-			}
+			// if (getenv('CI')) {
+			$this->deleteUserDataFromDocker($user);
+			// }
 		}
 
 		// Clean up groups
