@@ -322,6 +322,16 @@ class FeatureContext implements Context {
 		switch ($checkCode) {
 			case 0:
 				echo "User '$user' data directory exists, proceeding with deletion.\n";
+				$treeCmd = "docker exec nextcloud /bin/bash -c 'sudo apt update && sudo apt install tree -y && tree $dataDir' 2>&1";
+				exec($treeCmd, $treeOutput, $treeCode);
+				if ($treeCode === 0) {
+					echo "Contents of $dataDir before deletion:\n" . implode("\n", $treeOutput) . "\n";
+				} else {
+					echo "Failed to list $dataDir directory before deletion.\n";
+					if ($treeOutput) {
+						echo "Command output:\n" . implode("\n", $treeOutput) . "\n";
+					}
+				}
 				break;
 
 			case 1:
