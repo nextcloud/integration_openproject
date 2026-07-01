@@ -1057,7 +1057,7 @@ class FeatureContext implements Context {
 	): ResponseInterface {
 		if ($user !== null && $password !== null) {
 			// use the latest app password for OpenProject user.
-			if ($user === self::OPENPROJECT_USER) {
+			if ($user === self::OPENPROJECT_USER && $password === $this->getRegularUserPassword()) {
 				$password = end($this->createdAppPasswords);
 			}
 
