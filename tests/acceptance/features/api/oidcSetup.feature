@@ -333,7 +333,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "<error>"}
+          "error": {"const": "invalid data"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -341,10 +341,10 @@ Feature: setup the integration with OIDC method
       }
       """
     Examples:
-      | settings                                                                                         | error        |
-      | "sso_provider_type":"unknown"                                                                    | invalid data |
-      | "sso_provider_type":"external","oidc_provider":false,"token_exchange":false                      | invalid data |
-      | "sso_provider_type":"external","token_exchange":"true","targeted_audience_client_id":"client-id" | invalid data |
+      | settings                                                                                         |
+      | "sso_provider_type":"unknown"                                                                    |
+      | "sso_provider_type":"external","oidc_provider":false,"token_exchange":false                      |
+      | "sso_provider_type":"external","token_exchange":"true","targeted_audience_client_id":"client-id" |
 
 
   Scenario Outline: try to update settings with invalid json data

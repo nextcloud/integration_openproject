@@ -474,7 +474,7 @@ Feature: setup the integration with OAuth method
     And groupfolder "OpenProject" should be managed by the user "OpenProject"
     And user "OpenProject" should have a folder called "OpenProject"
     # folders inside the OpenProject folder can only be deleted/renamed by the OpenProject user
-    And user "Carol" has been created
+    Given user "Carol" has been created
     And user "Carol" has been added to the group "OpenProject"
     And user "OpenProject" has created folder "/OpenProject/project-abc"
     Then user "Carol" should have a folder called "OpenProject/project-abc"

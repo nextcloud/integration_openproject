@@ -728,12 +728,12 @@ class FeatureContext implements Context {
 	 *
 	 * @param int|int[]|string|string[] $expectedStatusCode
 	 * @param string|null $message
-	 * @param ResponseInterface $response
+	 * @param ResponseInterface|null $response
 	 *
 	 * @return void
 	 */
 	public function theHTTPStatusCodeShouldBe(
-		mixed $expectedStatusCode, ?string $message = "", $response = null
+		mixed $expectedStatusCode, ?string $message = "", ?ResponseInterface $response = null
 	): void {
 		if ($response === null) {
 			$response = $this->response;
@@ -765,13 +765,13 @@ class FeatureContext implements Context {
 
 	/**
 	 * @param string $expectedStatus
-	 * @param ResponseInterface $response
+	 * @param ResponseInterface|null $response
 	 *
 	 * @return void
 	 */
 	public function theOCSStatusShouldBe(
 		mixed $expectedStatus,
-		ResponseInterface $response = null
+		?ResponseInterface $response = null
 	): void {
 		if ($response === null) {
 			$response = $this->response;
@@ -792,7 +792,6 @@ class FeatureContext implements Context {
 	 *
 	 * @param string $code1
 	 * @param string $code2
-	 * @param ResponseInterface $response
 	 *
 	 * @return void
 	 */
