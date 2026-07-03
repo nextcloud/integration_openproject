@@ -1,0 +1,316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component: FormProjectFolder Project folder setup disable mode should not show form fields 1`] = `
+<section>
+  <div
+    class="project-folder-setup"
+  >
+    <formheading-stub
+      index="5"
+      isdisabled="true"
+      isprojectfoldersetupheading="true"
+      title="Project folders (recommended)"
+    />
+     
+    <!---->
+     
+    <!---->
+  </div>
+   
+  <!---->
+</section>
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode disabled groupfolders app should not show error message if project folder is disabled 1`] = `
+<section>
+  <div
+    class="project-folder-setup"
+  >
+    <formheading-stub
+      index="5"
+      isprojectfoldersetupheading="true"
+      issetupcompletewithoutprojectfolders="true"
+      title="Project folders (recommended)"
+    />
+     
+    <!---->
+     
+    <div
+      class="project-folder-form-container"
+    >
+      <div
+        class="project-folder-status"
+      >
+        <div
+          class="project-folder-status-value"
+        >
+          <b>
+            Automatically managed folders:
+          </b>
+           Inactive
+				
+        </div>
+         
+        <div
+          class="form-actions"
+        >
+          <ncbutton-stub
+            alignment="center"
+            data-test-id="edit-project-folder-setup"
+            nativetype="button"
+            size="normal"
+            target="_self"
+            type="secondary"
+            variant="secondary"
+          >
+            
+						Edit project folders
+					
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</section>
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode disabled groupfolders app should show error message if project folder is enabled 1`] = `
+<section>
+  <div
+    class="project-folder-setup"
+  >
+    <formheading-stub
+      haserror="true"
+      index="5"
+      iscomplete="true"
+      isprojectfoldersetupheading="true"
+      title="Project folders (recommended)"
+    />
+     
+    <errornote-stub
+      errorlink="http://localhost/settings/apps/files/groupfolders"
+      errorlinklabel="Install latest version now"
+      errormessage=""
+      errortitle="This feature requires version {version} (or higher) of "{app}" app. Please install or update the app."
+    />
+     
+    <div
+      class="project-folder-form-container"
+    >
+      <div
+        class="project-folder-status"
+      >
+        <div
+          class="project-folder-status-value"
+        >
+          <b>
+            Automatically managed folders:
+          </b>
+           Active
+				
+        </div>
+         
+        <div
+          class="form-actions"
+        >
+          <ncbutton-stub
+            alignment="center"
+            data-test-id="edit-project-folder-setup"
+            nativetype="button"
+            size="normal"
+            target="_self"
+            type="secondary"
+            variant="secondary"
+          >
+            
+						Edit project folders
+					
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="app-password-form-container"
+  >
+    <formheading-stub
+      index="6"
+      iscomplete="true"
+      title="Project folders application connection"
+    />
+     
+    <fieldvalue-stub
+      hidevalue="true"
+      isrequired="true"
+      title="Application Password"
+      value=""
+      withinspection="true"
+    />
+     
+    <div
+      class="form-actions"
+    >
+      <ncbutton-stub
+        alignment="center"
+        data-test-id="reset-user-app-password"
+        nativetype="button"
+        size="normal"
+        target="_self"
+        type="secondary"
+        variant="secondary"
+      >
+        
+				Replace application password
+			
+      </ncbutton-stub>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode project folder setup status should show active if the project folder is enabled 1`] = `
+<section>
+  <div
+    class="project-folder-setup"
+  >
+    <formheading-stub
+      index="5"
+      iscomplete="true"
+      isprojectfoldersetupheading="true"
+      title="Project folders (recommended)"
+    />
+     
+    <!---->
+     
+    <div
+      class="project-folder-form-container"
+    >
+      <div
+        class="project-folder-status"
+      >
+        <div
+          class="project-folder-status-value"
+        >
+          <b>
+            Automatically managed folders:
+          </b>
+           Active
+				
+        </div>
+         
+        <div
+          class="form-actions"
+        >
+          <ncbutton-stub
+            alignment="center"
+            data-test-id="edit-project-folder-setup"
+            nativetype="button"
+            size="normal"
+            target="_self"
+            type="secondary"
+            variant="secondary"
+          >
+            
+						Edit project folders
+					
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="app-password-form-container"
+  >
+    <formheading-stub
+      index="6"
+      iscomplete="true"
+      title="Project folders application connection"
+    />
+     
+    <fieldvalue-stub
+      hidevalue="true"
+      isrequired="true"
+      title="Application Password"
+      value=""
+      withinspection="true"
+    />
+     
+    <div
+      class="form-actions"
+    >
+      <ncbutton-stub
+        alignment="center"
+        data-test-id="reset-user-app-password"
+        nativetype="button"
+        size="normal"
+        target="_self"
+        type="secondary"
+        variant="secondary"
+      >
+        
+				Replace application password
+			
+      </ncbutton-stub>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode project folder setup status should show inactive if the project folder is disabled 1`] = `
+<section>
+  <div
+    class="project-folder-setup"
+  >
+    <formheading-stub
+      index="5"
+      isprojectfoldersetupheading="true"
+      issetupcompletewithoutprojectfolders="true"
+      title="Project folders (recommended)"
+    />
+     
+    <!---->
+     
+    <div
+      class="project-folder-form-container"
+    >
+      <div
+        class="project-folder-status"
+      >
+        <div
+          class="project-folder-status-value"
+        >
+          <b>
+            Automatically managed folders:
+          </b>
+           Inactive
+				
+        </div>
+         
+        <div
+          class="form-actions"
+        >
+          <ncbutton-stub
+            alignment="center"
+            data-test-id="edit-project-folder-setup"
+            nativetype="button"
+            size="normal"
+            target="_self"
+            type="secondary"
+            variant="secondary"
+          >
+            
+						Edit project folders
+					
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</section>
+`;
