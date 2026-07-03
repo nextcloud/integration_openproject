@@ -2,10 +2,10 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Cancel" : "ยกเลิก",
-    "Save" : "บันทึก",
     "Reset" : "รีเซ็ต",
     "Connected as {user}" : "เชื่อมต่อเป็น {user} แล้ว",
     "Authentication method" : "วิธีการตรวจสอบความถูกต้อง",
+    "Save" : "บันทึก",
     "Documentation" : "เอกสารประกอบ",
     "Copied!" : "คัดลอกแล้ว!",
     "Details" : "รายละเอียด",
