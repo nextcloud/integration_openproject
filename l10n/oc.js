@@ -2,10 +2,10 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Cancel" : "Anullar",
-    "Save" : "Enregistrar",
     "Reset" : "Reïnicializar",
     "Invalid token" : "Geton invalid",
     "Connected as {user}" : "Connectat coma {user}",
+    "Save" : "Enregistrar",
     "Documentation" : "Documentacion",
     "Copied!" : "Copiat !",
     "Details" : "Detalhs",

@@ -2,9 +2,9 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Cancel" : "Sefsex",
-    "Save" : "Sekles",
     "Reset" : "Ɛiwed-d s wadda",
     "Connected as {user}" : "D uqqin am {user}",
+    "Save" : "Sekles",
     "Documentation" : "Tasemlit",
     "Copied!" : "Yenɣel!",
     "Details" : "Talqayt",

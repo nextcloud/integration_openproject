@@ -3,10 +3,10 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
     "Cancel" : "Hủy",
-    "Save" : "Lưu",
     "Reset" : "Đặt lại",
     "Connected as {user}" : "Kết nối bởi {user}",
     "Authentication method" : "Phương thức xác thực",
+    "Save" : "Lưu",
     "Documentation" : "Tài liệu",
     "Copied!" : "Đã sao chép!",
     "Details" : "Chi tiết",
