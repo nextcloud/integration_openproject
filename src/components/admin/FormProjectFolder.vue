@@ -12,7 +12,7 @@
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolder"
 				:has-error="hasErrorAfterProjectFolderSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarning"
-				:is-complete="isProjectFolderFormComplete && enableProjectFolder"
+				:is-complete="isProjectFolderFormComplete && isProjectFolderEnabled"
 				:is-disabled="isProjectFolderFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
@@ -53,7 +53,7 @@
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="enableProjectFolder" @update:checked="changeProjectFolderState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
-					<div v-if="!enableProjectFolder" class="complete-without-groupfolders">
+					<div v-if="isProjectFolderDisabled" class="complete-without-groupfolders">
 						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.')
@@ -165,7 +165,7 @@ import ErrorNote from '../settings/ErrorNote.vue'
 import { appLinks } from '../../constants/links.js'
 import { messages, messagesFmt } from '../../constants/messages.js'
 import { F_MODES } from '../../utils.js'
-import { saveAdminConfig, getProjectFolderStatus } from '../../api/settings.js'
+import { saveAdminConfig } from '../../api/settings.js'
 
 export default {
 	name: 'FormProjectFolder',
@@ -240,7 +240,7 @@ export default {
 			return this.folderFormMode === F_MODES.EDIT
 		},
 		projectFolderStatusLabel() {
-			if (this.enableProjectFolder) {
+			if (this.isProjectFolderEnabled) {
 				return t('integration_openproject', 'Active')
 			}
 			return t('integration_openproject', 'Inactive')
@@ -252,7 +252,7 @@ export default {
 		showAppPasswordForm() {
 			return this.isProjectFolderFormComplete
 				&& this.isProjectFolderFormInViewMode
-				&& this.enableProjectFolder
+				&& this.isProjectFolderEnabled
 		},
 		hasAppPassword() {
 			return !!this.projectFolderInfo.hasAppPassword || !!this.appPassword
@@ -266,18 +266,24 @@ export default {
 		isAppPasswordFormInEditMode() {
 			return this.passwordFormMode === F_MODES.EDIT
 		},
+		isProjectFolderEnabled() {
+			return this.enableProjectFolder === true
+		},
+		isProjectFolderDisabled() {
+			return this.enableProjectFolder !== true
+		},
 		isSetupCompleteWithoutProjectFolder() {
 			if (this.isProjectFolderFormInEditMode || !this.isProjectFolderFormComplete) {
 				return false
 			}
 			return (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
-				|| (!this.enableProjectFolder && !this.appPassword)
+				|| (this.isProjectFolderDisabled && !this.appPassword)
 		},
 		hasErrorAfterProjectFolderSetup() {
 			return (!!this.appPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
 		},
 		showGroupfoldersAppError() {
-			return this.enableProjectFolder && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
+			return this.isProjectFolderEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
 		},
 		getSetupErrorMessage() {
 			return this.projectFolderInfo.folderStatus?.errorMessage
@@ -331,6 +337,10 @@ export default {
 		if (this.projectFolderInfo.hasAppPassword) {
 			this.setAppPasswordFormToViewMode()
 		}
+
+		if (this.isAuthorizationSettingFormComplete && !this.isProjectFolderFormComplete) {
+			this.setProjectFolderFormToEditMode()
+		}
 	},
 	methods: {
 		markFormComplete(formState) {
@@ -357,25 +367,16 @@ export default {
 			if (this.isProjectFolderFormComplete) {
 			 if (this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled) {
 					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
-			 } else if (this.enableProjectFolder) {
+			 } else if (this.isProjectFolderEnabled) {
 					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
 			 } else {
 					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
 			 }
-			} else if (this.enableProjectFolder) {
+			} else if (this.isProjectFolderEnabled) {
 				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
 			} else {
 				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
 			}
-		},
-		async hasExistingProjectFolder() {
-			try {
-				const response = await getProjectFolderStatus()
-				return response.data?.result
-			} catch (error) {
-				console.error(error)
-			}
-			return false
 		},
 		async saveProjectFolder(recreateAppPassword = false) {
 			if (this.unchangedProjectFolderForm) {
@@ -384,16 +385,16 @@ export default {
 			}
 
 			const data = {
-				setup_project_folder: this.enableProjectFolder,
-				setup_app_password: this.enableProjectFolder,
+				setup_project_folder: this.isProjectFolderEnabled,
+				setup_app_password: this.isProjectFolderEnabled,
 			}
 
 			// only send setup_app_password if recreating app password
 			if (recreateAppPassword) {
 				delete data.setup_project_folder
 				data.setup_app_password = true
-			} else if (this.enableProjectFolder) {
-				const projectFolderExists = await this.hasExistingProjectFolder()
+			} else if (this.isProjectFolderEnabled) {
+				const projectFolderExists = this.projectFolderInfo.folderStatus.status
 				// keep the current setup if found
 				if (projectFolderExists && this.hasAppPassword) {
 					this.setProjectFolderFormToViewMode()
@@ -408,7 +409,7 @@ export default {
 			try {
 				const response = await saveAdminConfig(data)
 
-				if (this.enableProjectFolder) {
+				if (this.isProjectFolderEnabled) {
 					this.appPassword = response.data.oPUserAppPassword
 					this.setAppPasswordFormToEditMode()
 				}
