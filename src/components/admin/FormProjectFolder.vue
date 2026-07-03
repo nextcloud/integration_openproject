@@ -6,12 +6,12 @@
 <template>
 	<section>
 		<div class="project-folder-setup">
-			<FormHeading :index="formOrder"
+			<FormHeading :index="projectFolderFormIndex"
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolder"
-				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup || showGroupfoldersAppError"
-				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
+				:has-error="hasErrorAfterProjectFolderSetup || showGroupfoldersAppError"
+				:show-encryption-warning-for-group-folders="showEncryptionWarning"
 				:is-complete="isProjectFolderFormComplete && enableProjectFolder"
 				:is-disabled="isProjectFolderFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
@@ -20,20 +20,20 @@
 				:error-title="messagesFmt.appNotEnabledOrUnsupported(getTeamFolderAppName, getMinSupportedTeamFolderAppVersion)"
 				:error-link="appLinks.groupfolders.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
-			<NcNoteCard v-else-if="projectFolderSetupError || isThereErrorAfterProjectFolderAndAppPasswordSetup" class="note-card" type="error">
+			<NcNoteCard v-else-if="projectFolderSetupError || hasErrorAfterProjectFolderSetup" class="note-card" type="error">
 				<p class="note-card--title">
-					<b v-if="isThereErrorAfterProjectFolderAndAppPasswordSetup">{{ getSetupErrorMessage }}</b>
+					<b v-if="hasErrorAfterProjectFolderSetup">{{ getSetupErrorMessage }}</b>
 					<b v-else>{{ projectFolderSetupError }}</b>
 				</p>
-				<p class="note-card--error-description" v-html="projectFolderSetUpErrorMessageDescription" /> <!-- eslint-disable-line vue/no-v-html -->
+				<p class="note-card--error-description" v-html="getProjectFolderSetupErrorDescription" /> <!-- eslint-disable-line vue/no-v-html -->
 			</NcNoteCard>
-			<NcNoteCard v-else-if="showEncryptionWarningForGroupFolders" class="note-card" type="warning">
+			<NcNoteCard v-else-if="showEncryptionWarning" class="note-card" type="warning">
 				<p class="note-card--title">
 					<b>{{ t('integration_openproject', 'Encryption for the Team Folders App is not enabled.') }}</b>
 				</p>
-				<p class="note-card--warning-description" v-html="getGroupFoldersEncryptionWarningHint" /> <!-- eslint-disable-line vue/no-v-html -->
+				<p class="note-card--warning-description" v-html="getProjectFolderEncryptionWarning" /> <!-- eslint-disable-line vue/no-v-html -->
 			</NcNoteCard>
-			<div v-if="showProjectFolderForm">
+			<div v-if="showProjectFolderForm" class="project-folder-form-container">
 				<div v-if="isProjectFolderFormInViewMode" class="project-folder-status">
 					<div class="project-folder-status-value">
 						<b>{{ t('integration_openproject','Automatically managed folders:') }}</b> {{ projectFolderStatusLabel }}
@@ -49,7 +49,7 @@
 						</NcButton>
 					</div>
 				</div>
-				<div v-else>
+				<div v-else class="project-folder-form">
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="enableProjectFolder" @update:checked="changeProjectFolderState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
@@ -106,8 +106,8 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="showAppPasswordForm">
-			<FormHeading index="6"
+		<div v-if="showAppPasswordForm" class="app-password-form-container">
+			<FormHeading :index="appPasswordFormIndex"
 				:title="t('integration_openproject', 'Project folders application connection')"
 				:is-complete="hasAppPassword"
 				:is-disabled="isAppPasswordFormInDisableMode"
@@ -120,7 +120,7 @@
 				is-required
 				with-copy-btn
 				:label="t('integration_openproject', 'Application Password')"
-				:hint-text="userAppPasswordHint" />
+				:hint-text="getAppPasswordHint" />
 			<FieldValue v-else
 				:title="t('integration_openproject', 'Application Password')"
 				is-required
@@ -152,7 +152,8 @@
 </template>
 
 <script>
-import { NcLoadingIcon, NcButton, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import util from 'util'
+import { NcLoadingIcon, NcButton, NcCheckboxRadioSwitch, NcNoteCard } from '@nextcloud/vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
@@ -166,19 +167,13 @@ import { messages, messagesFmt } from '../../constants/messages.js'
 import { F_MODES } from '../../utils.js'
 import { saveAdminConfig, getProjectFolderStatus } from '../../api/settings.js'
 
-const FOLDER_SETUP_BUTTON_LABEL = {
-	keepCurrentChange: t('integration_openproject', 'Keep current setup'),
-	completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
-	completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
-	retrySetupWithProjectFolder: t('integration_openproject', 'Retry setup OpenProject user, group and folder'),
-}
-
 export default {
 	name: 'FormProjectFolder',
 	components: {
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
 		NcButton,
+		NcNoteCard,
 		AutoRenewIcon,
 		CheckBoldIcon,
 		PencilIcon,
@@ -197,7 +192,7 @@ export default {
 			required: true,
 		},
 		formOrder: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 		projectFolderInfo: {
@@ -212,7 +207,7 @@ export default {
 			passwordFormMode: F_MODES.DISABLE,
 			projectFolderSetupError: null,
 			enableProjectFolder: true,
-			folderSetupButtonLabel: FOLDER_SETUP_BUTTON_LABEL.completeWithProjectFolderSetup,
+			folderSetupButtonLabel: messages.projectFolderSetup.completeWithProjectFolderSetup,
 			appPassword: null,
 			messages,
 			messagesFmt,
@@ -220,6 +215,12 @@ export default {
 		}
 	},
 	computed: {
+		projectFolderFormIndex() {
+			return this.formOrder.toString()
+		},
+		appPasswordFormIndex() {
+			return (this.formOrder + 1).toString()
+		},
 		showProjectFolderForm() {
 			return this.isAuthorizationSettingFormComplete || this.isProjectFolderFormComplete
 		},
@@ -246,7 +247,7 @@ export default {
 		},
 		unchangedProjectFolderForm() {
 			return this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled
-				&& this.folderSetupButtonLabel === FOLDER_SETUP_BUTTON_LABEL.keepCurrentChange
+				&& this.folderSetupButtonLabel === messages.projectFolderSetup.keepCurrentChange
 		},
 		showAppPasswordForm() {
 			return this.isProjectFolderFormComplete
@@ -272,8 +273,8 @@ export default {
 			return (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
 				|| (!this.enableProjectFolder && !this.appPassword)
 		},
-		isThereErrorAfterProjectFolderAndAppPasswordSetup() {
-			return (this.appPassword && !this.isProjectFolderFormInEditMode && this.isProjectFolderSetupCorrect === false)
+		hasErrorAfterProjectFolderSetup() {
+			return (!!this.appPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
 		},
 		showGroupfoldersAppError() {
 			return this.enableProjectFolder && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
@@ -281,8 +282,8 @@ export default {
 		getSetupErrorMessage() {
 			return this.projectFolderInfo.folderStatus?.errorMessage
 		},
-		showEncryptionWarningForGroupFolders() {
-			if (!this.isProjectFolderAlreadySetup || !this.projectFolderInfo.hasAppPassword || this.isProjectFolderFormInEditMode) {
+		showEncryptionWarning() {
+			if (!this.projectFolderInfo.folderStatus.status || !this.projectFolderInfo.hasAppPassword || this.isProjectFolderFormInEditMode) {
 				return false
 			}
 			return this.projectFolderInfo.encryption.server_side_encryption_enabled
@@ -297,24 +298,28 @@ export default {
 		getMinSupportedTeamFolderAppVersion() {
 			return this.projectFolderInfo.app.minimum_version
 		},
-		projectFolderSetUpErrorMessageDescription() {
+		openprojectFileStorageUrl() {
+			const path = '%s/admin/settings/storages'
+			const host = this.formState.serverHost.value
+			return util.format(path, host)
+		},
+		getProjectFolderSetupErrorDescription() {
 			const linkText = t('integration_openproject', 'troubleshooting guide')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		getGroupFoldersEncryptionWarningHint() {
+		getProjectFolderEncryptionWarning() {
 			const linkText = t('integration_openproject', 'documentation')
 			const htmlLink = `<a class="link" href="https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#files-are-not-encrypted-when-using-nextcloud-server-side-encryption" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		userAppPasswordHint() {
+		getAppPasswordHint() {
 			const linkText = t('integration_openproject', 'Administration > File storages')
-			const htmlLink = `<a class="link" href="${this.adminFileStorageHref}" target="_blank" title="${linkText}">${linkText}</a>`
+			const htmlLink = `<a class="link" href="${this.openprojectFileStorageUrl}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 	},
 	created() {
-		console.info(this.projectFolderInfo)
 		this.enableProjectFolder = this.projectFolderInfo.projectFolderEnabled
 		if ((this.projectFolderInfo.projectFolderEnabled && this.projectFolderInfo.hasAppPassword)
 			|| (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
@@ -346,21 +351,21 @@ export default {
 		},
 		editProjectFolder() {
 			this.setProjectFolderFormToEditMode()
-			this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.keepCurrentChange
+			this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
 		},
 		changeProjectFolderState() {
 			if (this.isProjectFolderFormComplete) {
 			 if (this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled) {
-					this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.keepCurrentChange
+					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
 			 } else if (this.enableProjectFolder) {
-					this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.completeWithProjectFolderSetup
+					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
 			 } else {
-					this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.completeWithoutProjectFolderSetup
+					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
 			 }
 			} else if (this.enableProjectFolder) {
-				this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.completeWithProjectFolderSetup
+				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
 			} else {
-				this.folderSetupButtonLabel = FOLDER_SETUP_BUTTON_LABEL.completeWithoutProjectFolderSetup
+				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
 			}
 		},
 		async hasExistingProjectFolder() {
@@ -452,6 +457,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.project-folder-description {
+	font-weight: 400;
+}
+
+.project-folder-status-value {
+	padding: 6px 0;
+
+}
+
 .py-1 {
 	padding: 0.3rem 0;
 }
