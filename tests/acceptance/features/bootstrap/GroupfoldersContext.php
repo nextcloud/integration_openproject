@@ -258,7 +258,7 @@ class GroupfoldersContext implements Context {
 	 * @return void
 	 */
 	public function teardownOpenProjectTeamFolder(): void {
-		$this->featureContext->enableDisableNextcloudApp(FeatureContext::APP_ID, false);
+		$this->featureContext->enableOrDisableNextcloudApp(FeatureContext::APP_ID, false);
 		$this->deleteTeamFolder($this->getTeamFolderId(FeatureContext::OPENPROJECT_TEAM_FOLDER));
 
 		$this->featureContext->theAdministratorDeletesTheUser(FeatureContext::OPENPROJECT_USER);
@@ -272,7 +272,7 @@ class GroupfoldersContext implements Context {
 			$this->featureContext->setResponse(null);
 		}
 
-		$this->featureContext->enableDisableNextcloudApp(FeatureContext::APP_ID, true);
+		$this->featureContext->enableOrDisableNextcloudApp(FeatureContext::APP_ID, true);
 	}
 
 	/**

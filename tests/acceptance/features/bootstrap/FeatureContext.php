@@ -1438,7 +1438,7 @@ class FeatureContext implements Context {
 	 * @return void
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function enableDisableNextcloudApp(string $appId, bool $enable): void {
+	public function enableOrDisableNextcloudApp(string $appId, bool $enable): void {
 		$method = $enable ? "POST" : "DELETE";
 		$action = $enable ? "enable" : "disable";
 		$response = $this->sendOCSRequest(
@@ -1485,7 +1485,7 @@ class FeatureContext implements Context {
 	 * @return void
 	 */
 	public function teardownIntegrationSetup(): void {
-		$this->enableDisableNextcloudApp(self::APP_ID, true);
+		$this->enableOrDisableNextcloudApp(self::APP_ID, true);
 		$this->sendRequestsToAppEndpoint(
 			$this->adminUsername, $this->adminPassword, "DELETE", "setup"
 		);
@@ -1522,9 +1522,9 @@ class FeatureContext implements Context {
 		}
 
 		// Clean up groups
-		foreach ($this->createdgroups as $groups) {
-			if (!\in_array($groups, self::OPENPROJECT_GROUPS, true)) {
-				$this->theAdministratorDeletesTheGroup($groups);
+		foreach ($this->createdgroups as $group) {
+			if (!\in_array($group, self::OPENPROJECT_GROUPS, true)) {
+				$this->theAdministratorDeletesTheGroup($group);
 				$this->theHTTPStatusCodeShouldBe(200);
 				$this->setResponse(null);
 			}
