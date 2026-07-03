@@ -2,10 +2,10 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Cancel" : "Encaboxar",
-    "Save" : "Guardar",
     "Reset" : "Reafitar",
     "Invalid token" : "El pase ye inválidu",
     "Failed to save OpenProject options" : "Nun se puen guardar les opciones d'OpenProject",
+    "Save" : "Guardar",
     "URL is invalid" : "La URL ye inválida",
     "Response:" : "Rempuesta:",
     "Documentation" : "Documentación",
