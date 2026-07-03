@@ -35,6 +35,7 @@ use OCA\UserOIDC\Db\ProviderMapper;
 use OCA\UserOIDC\User\Backend as OIDCBackend;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Authentication\Token\IToken;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\InvalidPathException;
@@ -1389,7 +1390,9 @@ class OpenProjectAPIService {
 			$userID,
 			null,
 			Application::OPEN_PROJECT_ENTITIES_NAME,
-			1 // type 0 => Temporary app password token where as type 1 => Permanent app password token
+			1, // type 0 => Temporary app password token where as type 1 => Permanent app password token
+			IToken::DO_NOT_REMEMBER,
+			[IToken::SCOPE_SKIP_PASSWORD_VALIDATION => true, IToken::SCOPE_FILESYSTEM => true]
 		);
 		$this->eventDispatcher->dispatchTyped(
 			new AppPasswordCreatedEvent($generatedToken)
