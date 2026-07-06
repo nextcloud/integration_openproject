@@ -726,29 +726,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$clientConfigMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$clientConfigMock
 			->method('getSystemValueBool')
-			->withConsecutive(
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false],
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false],
-				['allow_local_remote_servers', false],
-				['installed', false],
-				['allow_local_remote_servers', false]
-			)
-			->willReturnOnConsecutiveCalls(
-				true,
-				true,
-				true,
-				true,
-				true,
-				true,
-				true,
-				true,
-				true
+			->willReturnMap([
+				['allow_local_remote_servers', false, true],
+				['installed', false, true],
+				['allow_local_remote_servers', false, true],
+				['allow_local_remote_servers', false, true],
+				['installed', false, true],
+				['allow_local_remote_servers', false, true],
+				['allow_local_remote_servers', false, true],
+				['installed', false, true],
+				['allow_local_remote_servers', false, true]
+			]
 			);
-
 		$clientService = $this->getMockBuilder(IClientService::class)->getMock();
 		$clientService->method('newClient')->willReturn($this->createMock(Client::class));
 
@@ -963,9 +952,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 	public function testSearchWorkPackageByFileIdOnlyFileId() {
 		$service = $this->getOpenProjectAPIServiceMock();
 		$service->method('request')
-			->withConsecutive(
+			->willReturnMap([
 				[
-					'user', 'work_packages',
+					'user',
+					'work_packages',
 					[
 						'filters' => '[' .
 							'{"file_link_origin_id":{"operator":"=","values":["123"]}},'.
@@ -973,12 +963,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 								'{"operator":"=","values":["https%3A%2F%2Fnc.my-server.org"]}}'.
 							']',
 						'sortBy' => '[["updatedAt","desc"]]',
-					]
-				],
-			)
-			->willReturnOnConsecutiveCalls(
-				["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]
+					],
+					'GET',
+					["_embedded" => ["elements" => [['id' => 1], ['id' => 2], ['id' => 3]]]]
+				]]
 			);
+
 		$result = $service->searchWorkPackage('user', null, 123);
 		$this->assertSame([['id' => 1], ['id' => 2], ['id' => 3]], $result);
 	}
@@ -2218,14 +2208,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]));
 		$configMock
 			->method('getUserValue')
-			->withConsecutive(
-				['','integration_openproject', 'token'],
-				['','integration_openproject', 'token_expires_at'],
-				['','integration_openproject', 'refresh_token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'',
-				'',
+			->willReturnMap(
+				[
+					['','integration_openproject', 'token', '', ''],
+					['','integration_openproject', 'token_expires_at', '', ''],
+					['','integration_openproject', 'refresh_token', '', ''],
+				]
 			);
 
 		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
@@ -2268,13 +2256,11 @@ class OpenProjectAPIServiceTest extends TestCase {
 			]));
 		$configMock
 			->method('getUserValue')
-			->withConsecutive(
-				['','integration_openproject', 'token'],
-				['','integration_openproject', 'refresh_token'],
-			)
-			->willReturnOnConsecutiveCalls(
-				'',
-				'',
+			->willReturnMap(
+				[
+					['','integration_openproject', 'token', '', ''],
+					['','integration_openproject', 'refresh_token', '', ''],
+				]
 			);
 
 		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
@@ -2557,9 +2543,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$userManagerMock
+			->expects($this->exactly(2))
 			->method('userExists')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
-			->willReturnOnConsecutiveCalls(false, false);
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(false);
 		$userManagerMock
 			->method('get')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
@@ -2568,9 +2555,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
 			->getMock();
 		$groupManagerMock
+			->expects($this->exactly(1))
 			->method('groupExists')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
-			->willReturnOnConsecutiveCalls(false, false);
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(false);
 		$appManagerMock = $this->getMockBuilder(IAppManager::class)
 			->getMock();
 		$appManagerMock
@@ -2578,21 +2566,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn(true);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['isOpenProjectGroupfolderCreated'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
 				'appManager' => $appManagerMock,
 			],
 		);
-		$folderManagerMock = $this->getFolderManagerMock('', false, [ 0 => [
-			'folder_id' => 123,
-			'mount_point' => '',
-			'permissions' => 31,
-			'acl' => true
-		]]);
-		$service->method('getGroupFolderManager')
-			->willReturn($folderManagerMock);
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(false);
 		$result = $service->isSystemReadyForProjectFolderSetUp();
 		$this->assertTrue($result);
 	}
@@ -2837,7 +2819,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('hasAppPassword')->willReturn(true);
 		$tokenProviderMock->expects($this->exactly(2))
 			->method('invalidateTokenById')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME, 4], [Application::OPEN_PROJECT_ENTITIES_NAME, 5]);
+			->willReturnMap(
+				[
+					[Application::OPEN_PROJECT_ENTITIES_NAME, 4, null],
+					[Application::OPEN_PROJECT_ENTITIES_NAME, 5, null],
+				]
+			);
 		$service->deleteAppPassword();
 	}
 
@@ -4450,11 +4437,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$configMock
 			->method('getSystemValue')
-			->withConsecutive(
-				['loglevel'],
-				['logfile_audit'],
-				['log.condition']
-			)->willReturnOnConsecutiveCalls($logLevel, $pathToAuditLog, $logCondition);
+			->willReturnMap([
+				['loglevel', '', $logLevel],
+				['logfile_audit', '', $pathToAuditLog],
+				['log.condition', '', $logCondition]
+			]
+			);
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$iAppManagerMock->method('isInstalled')->with('admin_audit')
