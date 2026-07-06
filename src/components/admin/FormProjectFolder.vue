@@ -206,7 +206,7 @@ export default {
 			folderFormMode: F_MODES.DISABLE,
 			passwordFormMode: F_MODES.DISABLE,
 			projectFolderSetupError: null,
-			enableProjectFolder: true,
+			enableProjectFolder: this.projectFolderInfo.projectFolderEnabled,
 			folderSetupButtonLabel: messages.projectFolderSetup.completeWithProjectFolderSetup,
 			appPassword: null,
 			messages,
@@ -280,7 +280,7 @@ export default {
 				|| (this.isProjectFolderDisabled && !this.appPassword)
 		},
 		hasErrorAfterProjectFolderSetup() {
-			return (!!this.appPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
+			return (!!this.projectFolderInfo.hasAppPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
 		},
 		showGroupfoldersAppError() {
 			return this.isProjectFolderEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
@@ -326,7 +326,6 @@ export default {
 		},
 	},
 	created() {
-		this.enableProjectFolder = this.projectFolderInfo.projectFolderEnabled
 		if ((this.projectFolderInfo.projectFolderEnabled && this.projectFolderInfo.hasAppPassword)
 			|| (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
 		) {
