@@ -2543,9 +2543,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->getMock();
 		$userManagerMock
+			->expects($this->exactly(2))
 			->method('userExists')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
-			->willReturnOnConsecutiveCalls(false, false);
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(false);
 		$userManagerMock
 			->method('get')
 			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
@@ -2554,9 +2555,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$groupManagerMock = $this->getMockBuilder(IGroupManager::class)
 			->getMock();
 		$groupManagerMock
+			->expects($this->exactly(1))
 			->method('groupExists')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME], [Application::OPEN_PROJECT_ENTITIES_NAME])
-			->willReturnOnConsecutiveCalls(false, false);
+			->with(Application::OPEN_PROJECT_ENTITIES_NAME)
+			->willReturn(false);
 		$appManagerMock = $this->getMockBuilder(IAppManager::class)
 			->getMock();
 		$appManagerMock
@@ -2564,21 +2566,15 @@ class OpenProjectAPIServiceTest extends TestCase {
 			->with('groupfolders', $userMock)
 			->willReturn(true);
 		$service = $this->getOpenProjectAPIServiceMock(
-			['getGroupFolderManager'],
+			['isOpenProjectGroupfolderCreated'],
 			[
 				'userManager' => $userManagerMock,
 				'groupManager' => $groupManagerMock,
 				'appManager' => $appManagerMock,
 			],
 		);
-		$folderManagerMock = $this->getFolderManagerMock('', false, [ 0 => [
-			'folder_id' => 123,
-			'mount_point' => '',
-			'permissions' => 31,
-			'acl' => true
-		]]);
-		$service->method('getGroupFolderManager')
-			->willReturn($folderManagerMock);
+		$service->method('isOpenProjectGroupfolderCreated')
+			->willReturn(false);
 		$result = $service->isSystemReadyForProjectFolderSetUp();
 		$this->assertTrue($result);
 	}
@@ -2823,7 +2819,12 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$service->method('hasAppPassword')->willReturn(true);
 		$tokenProviderMock->expects($this->exactly(2))
 			->method('invalidateTokenById')
-			->withConsecutive([Application::OPEN_PROJECT_ENTITIES_NAME, 4], [Application::OPEN_PROJECT_ENTITIES_NAME, 5]);
+			->willReturnMap(
+				[
+					[Application::OPEN_PROJECT_ENTITIES_NAME, 4, null],
+					[Application::OPEN_PROJECT_ENTITIES_NAME, 5, null],
+				]
+			);
 		$service->deleteAppPassword();
 	}
 
