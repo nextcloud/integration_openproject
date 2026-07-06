@@ -10,9 +10,9 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolder"
-				:has-error="hasErrorAfterProjectFolderSetup || showGroupfoldersAppError"
+				:has-error="!!projectFolderSetupError || hasErrorAfterProjectFolderSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarning"
-				:is-complete="isProjectFolderFormComplete && isProjectFolderEnabled"
+				:is-complete="isProjectFolderFormComplete && enableProjectFolder"
 				:is-disabled="isProjectFolderFormInDisableMode"
 				:is-dark-theme="isDarkTheme" />
 			<ErrorNote
@@ -53,7 +53,7 @@
 					<NcCheckboxRadioSwitch type="switch" :checked.sync="enableProjectFolder" @update:checked="changeProjectFolderState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
-					<div v-if="isProjectFolderDisabled" class="complete-without-groupfolders">
+					<div v-if="!enableProjectFolder" class="complete-without-groupfolders">
 						<p class="project-folder-description">
 							{{
 								t('integration_openproject', 'We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.')
@@ -240,7 +240,7 @@ export default {
 			return this.folderFormMode === F_MODES.EDIT
 		},
 		projectFolderStatusLabel() {
-			if (this.isProjectFolderEnabled) {
+			if (this.enableProjectFolder) {
 				return t('integration_openproject', 'Active')
 			}
 			return t('integration_openproject', 'Inactive')
@@ -251,8 +251,7 @@ export default {
 		},
 		showAppPasswordForm() {
 			return this.isProjectFolderFormComplete
-				&& this.isProjectFolderFormInViewMode
-				&& this.isProjectFolderEnabled
+				&& this.isSetupCompleteWithProjectFolder
 		},
 		hasAppPassword() {
 			return !!this.projectFolderInfo.hasAppPassword || !!this.appPassword
@@ -266,24 +265,20 @@ export default {
 		isAppPasswordFormInEditMode() {
 			return this.passwordFormMode === F_MODES.EDIT
 		},
-		isProjectFolderEnabled() {
-			return this.enableProjectFolder === true
-		},
-		isProjectFolderDisabled() {
-			return this.enableProjectFolder !== true
-		},
 		isSetupCompleteWithoutProjectFolder() {
 			if (this.isProjectFolderFormInEditMode || !this.isProjectFolderFormComplete) {
 				return false
 			}
-			return (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
-				|| (this.isProjectFolderDisabled && !this.appPassword)
+			return !this.enableProjectFolder && (!this.appPassword || !this.projectFolderInfo.hasAppPassword)
+		},
+		isSetupCompleteWithProjectFolder() {
+			return this.enableProjectFolder && (this.appPassword || this.projectFolderInfo.hasAppPassword)
 		},
 		hasErrorAfterProjectFolderSetup() {
 			return (!!this.projectFolderInfo.hasAppPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
 		},
 		showGroupfoldersAppError() {
-			return this.isProjectFolderEnabled && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
+			return this.enableProjectFolder && !this.hasEnabledSupportedGroupfoldersApp && !this.isProjectFolderFormInDisableMode
 		},
 		getSetupErrorMessage() {
 			return this.projectFolderInfo.folderStatus?.errorMessage
@@ -340,6 +335,8 @@ export default {
 		if (this.isAuthorizationSettingFormComplete && !this.isProjectFolderFormComplete) {
 			this.setProjectFolderFormToEditMode()
 		}
+
+		this.updateProjectFolderButtonLabel()
 	},
 	methods: {
 		markFormComplete(formState) {
@@ -362,19 +359,22 @@ export default {
 			this.setProjectFolderFormToEditMode()
 			this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
 		},
-		changeProjectFolderState() {
-			if (this.isProjectFolderFormComplete) {
-			 if (this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled) {
-					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
-			 } else if (this.isProjectFolderEnabled) {
-					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
-			 } else {
-					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
-			 }
-			} else if (this.isProjectFolderEnabled) {
+		updateProjectFolderButtonLabel() {
+			if (this.enableProjectFolder) {
 				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
 			} else {
 				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
+			}
+		},
+		changeProjectFolderState() {
+			if (this.isProjectFolderFormComplete) {
+				if (this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled) {
+					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
+				} else {
+					this.updateProjectFolderButtonLabel()
+				}
+			} else {
+				this.updateProjectFolderButtonLabel()
 			}
 		},
 		async saveProjectFolder(recreateAppPassword = false) {
@@ -384,15 +384,15 @@ export default {
 			}
 
 			const data = {
-				setup_project_folder: this.isProjectFolderEnabled,
-				setup_app_password: this.isProjectFolderEnabled,
+				setup_project_folder: this.enableProjectFolder,
+				setup_app_password: this.enableProjectFolder,
 			}
 
 			// only send setup_app_password if recreating app password
 			if (recreateAppPassword) {
 				delete data.setup_project_folder
 				data.setup_app_password = true
-			} else if (this.isProjectFolderEnabled) {
+			} else if (this.enableProjectFolder) {
 				const projectFolderExists = this.projectFolderInfo.folderStatus.status
 				// keep the current setup if found
 				if (projectFolderExists && this.hasAppPassword) {
@@ -408,7 +408,7 @@ export default {
 			try {
 				const response = await saveAdminConfig(data)
 
-				if (this.isProjectFolderEnabled) {
+				if (this.enableProjectFolder) {
 					this.appPassword = response.data.oPUserAppPassword
 					this.setAppPasswordFormToEditMode()
 				}
