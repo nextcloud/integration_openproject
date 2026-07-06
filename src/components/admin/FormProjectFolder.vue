@@ -431,7 +431,6 @@ export default {
 			}
 		},
 		async recreateAppPassword() {
-			this.setAppPasswordFormToEditMode()
 			await this.saveProjectFolder(true)
 		},
 		resetAppPassword() {
