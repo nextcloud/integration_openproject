@@ -1,13 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminSettings.vue Project folders form (Project Folder Setup) view mode without project folder setup should show status as "Inactive" 1`] = `
-Wrapper {
-  "selector": ".project-folder-setup",
-}
-`;
-
 exports[`AdminSettings.vue default user configurations form should be visible when the integration is complete 1`] = `
-ErrorWrapper {
-  "selector": ".default-prefs",
-}
+<div
+  class="default-prefs"
+>
+  <h2>
+    Default user settings
+  </h2>
+   
+  <p>
+    
+			A new user will receive these defaults and they will be applied to the integration app till the user changes them.
+		
+  </p>
+   
+  <br />
+   
+  <div
+    class="form-check-input"
+  >
+    <input
+      class="checkbox"
+      id="default-prefs--link"
+      type="checkbox"
+      value="false"
+    />
+     
+    <label
+      for="default-prefs--link"
+    >
+      
+		Enable navigation link
+	
+    </label>
+     
+    <p
+      class="user-setting-description"
+    >
+      Displays a link to your OpenProject instance in the Nextcloud header.
+    </p>
+  </div>
+   
+  <div
+    class="form-check-input"
+  >
+    <input
+      class="checkbox"
+      id="default-prefs--u-search"
+      type="checkbox"
+      value="false"
+    />
+     
+    <label
+      for="default-prefs--u-search"
+    >
+      
+		Enable unified search for tickets
+	
+    </label>
+     
+    <p
+      class="user-setting-description"
+    >
+      Allows you to search OpenProject work packages via the universal search bar in Nextcloud.
+    </p>
+  </div>
+</div>
 `;
