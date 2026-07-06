@@ -47,7 +47,7 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @param MockObject $mock The mock object on which the method is expected to be called
 	 * @param string $method The method name for which the expectations are set
-	 * @param list{list<mixed>, mixed}[]  $calls An array of expected argument arrays for each call
+	 * @param list<array{list<mixed>, mixed}>  $calls An array of [expected args, return value] tuples for each call
 	 */
 	private function expectMethodCalls(
 		$mock,
@@ -64,7 +64,6 @@ class ConfigControllerTest extends TestCase {
 			->expects($expectedCallsCount)
 			->method($method)
 			->willReturnCallback(function (...$args) use (&$calls) {
-				// if not $returnValue = array_pop($calls);
 				[$expectedArgs, $returnValue] = array_shift($calls);
 				$this->assertSame($expectedArgs, $args);
 				return $returnValue;
@@ -90,12 +89,6 @@ class ConfigControllerTest extends TestCase {
 			[['integration_openproject', 'openproject_client_secret', ''], 'clientSecret'],
 		]);
 
-		// $this->expectMethodCalls($configMock, 'getUserValue', [
-		// 	[['testUser', 'integration_openproject', 'oauth_state', ''], 'randomString'],
-		// 	[['testUser', 'integration_openproject', 'code_verifier', false], $codeVerifier],
-		// 	[['testUser', 'integration_openproject', 'oauth_journey_starting_page', ''], $startingPage],
-		// 	[['testUser', 'integration_openproject', 'refresh_token', false], 'oAuthRefreshToken'],
-		// ]);
 		$configMock
 			->method('getUserValue')
 			->willReturnMap([
@@ -1247,17 +1240,6 @@ class ConfigControllerTest extends TestCase {
 				[Application::APP_ID, 'openproject_client_secret', '', $oldAdminConfig['openproject_client_secret']],
 				[Application::APP_ID, 'oPOAuthTokenRevokeStatus', '', ''],
 			]);
-		// $configMock
-		// 	->expects($this->exactly(2))
-		// 	->method('deleteAppValue')
-		// 	->withConsecutive(
-		// 		['integration_openproject', 'oPOAuthTokenRevokeStatus'],
-		// 		['integration_openproject', 'oPOAuthTokenRevokeStatus']
-		// 	);
-		// $this->expectMethodCalls($configMock, 'deleteAppValue', [
-		// 	[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-		// 	[[Application::APP_ID, 'oPOAuthTokenRevokeStatus'], null],
-		// ], true);
 
 		$configMock
 			->expects($this->exactly(2))
@@ -1695,30 +1677,7 @@ class ConfigControllerTest extends TestCase {
 		$oauthSettingsControllerMock = $this->getMockBuilder(SettingsController::class)
 			->disableOriginalConstructor()
 			->getMock();
-		// $configMock
-		// 	->method('getAppValue')
-		// 	->withConsecutive(
-		// 		['integration_openproject', 'openproject_instance_url', ''],
-		// 		['integration_openproject', 'authorization_method', ''],
-		// 		['integration_openproject', 'oidc_provider'],
-		// 		['integration_openproject', 'targeted_audience_client_id'],
-		// 		['integration_openproject', 'oPOAuthTokenRevokeStatus', ''],
-		// 		['integration_openproject', 'authorization_method', ''],
-		// 		['integration_openproject', 'oidc_provider'],
-		// 		['integration_openproject', 'targeted_audience_client_id'],
-		// 		['integration_openproject', 'openproject_instance_url'],
-		// 	)
-		// 	->willReturnOnConsecutiveCalls(
-		// 		$oldConfig['openproject_instance_url'],
-		// 		$oldConfig['authorization_method'],
-		// 		$oldConfig['oidc_provider'],
-		// 		$oldConfig['targeted_audience_client_id'],
-		// 		'',
-		// 		$newConfig['authorization_method'],
-		// 		$newConfig['oidc_provider'],
-		// 		$newConfig['targeted_audience_client_id'],
-		// 		$newConfig['openproject_instance_url']
-		// 	);
+
 		$this->expectMethodCalls($configMock, 'getAppValue', [
 			[['integration_openproject', 'openproject_instance_url', ''], $oldConfig['openproject_instance_url']],
 			[['integration_openproject', 'authorization_method', ''], $oldConfig['authorization_method']],
@@ -1730,41 +1689,6 @@ class ConfigControllerTest extends TestCase {
 			[['integration_openproject', 'targeted_audience_client_id', ''], $newConfig['targeted_audience_client_id']],
 			[['integration_openproject', 'openproject_instance_url', ''], $newConfig['openproject_instance_url']],
 		]);
-		// $configMock
-		// 	->expects($this->exactly(12))
-		// 	->method('deleteUserValue')
-		// 	->withConsecutive(
-		// 		['admin', 'integration_openproject', 'token'],
-		// 		['admin', 'integration_openproject', 'login'],
-		// 		['admin', 'integration_openproject', 'user_id'],
-		// 		['admin', 'integration_openproject', 'user_name'],
-		// 		['admin', 'integration_openproject', 'refresh_token'],
-		// 		['admin', 'integration_openproject', 'token_expires_at'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'token'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'login'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'user_id'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'user_name'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'refresh_token'],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'token_expires_at'],
-		// 	);
-
-		// $configMock
-		// 	->expects($this->exactly(12))
-		// 	->method('deleteUserValue')
-		// 	->willReturnMap([
-		// 		['admin', 'integration_openproject', 'token', null],
-		// 		['admin', 'integration_openproject', 'login', null],
-		// 		['admin', 'integration_openproject', 'user_id', null],
-		// 		['admin', 'integration_openproject', 'user_name', null],
-		// 		['admin', 'integration_openproject', 'refresh_token', null],
-		// 		['admin', 'integration_openproject', 'token_expires_at', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'token', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'login', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'user_id', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'user_name', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'refresh_token', null],
-		// 		[$this->user1->getUID(), 'integration_openproject', 'token_expires_at', null],
-		// 	]);
 
 		$this->expectMethodCalls($configMock, 'deleteUserValue', [
 			[['admin', 'integration_openproject', 'token'], null],
