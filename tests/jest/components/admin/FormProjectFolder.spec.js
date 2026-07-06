@@ -423,6 +423,9 @@ describe('Component: FormProjectFolder', () => {
 							expect(wrapper.find(selectors.appPasswordInput).attributes().value).toBe(appPassword)
 							expect(wrapper.find(selectors.appPasswordResetButton).exists()).toBe(false)
 							expect(wrapper.find(selectors.appPasswordSubmitButton).text()).toBe('Done, complete setup')
+
+							expect(wrapper.find(selectors.noteCard).exists()).toBe(false)
+							expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 						})
 						it('should set app password form to view mode on "Done" action', async () => {
 							const appPassword = '12345678'
