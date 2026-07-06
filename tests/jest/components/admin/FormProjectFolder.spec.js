@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
@@ -45,6 +44,7 @@ const localVue = createLocalVue()
 const selectors = {
 	errorNote: 'errornote-stub',
 	noteCard: 'ncnotecard-stub',
+	noteCardWarning: 'ncnotecard-stub .note-card--warning-description',
 	noteCardTitle: 'ncnotecard-stub .note-card--title',
 	noteCardDescription: 'ncnotecard-stub .note-card--error-description',
 	projectFolderFormHeading: '.project-folder-setup formheading-stub',
@@ -837,62 +837,53 @@ describe('Component: FormProjectFolder', () => {
 		})
 	})
 
-	describe.skip('Encryption warning after project folder setup', () => {
-		beforeEach(async () => {
-			axios.put.mockReset()
-			axios.get.mockReset()
-		})
-
+	describe.only('Encryption warning after project folder setup', () => {
 		it.each([
 			[
 				'should show warning when server side encryption is enabled but encryption for groupfolders is not enabled',
 				{
-					server_side_encryption_enabled: true,
-					encryption_enabled_for_groupfolders: false,
+					serverSideEnabled: true,
+					teamFoldersEnabled: false,
 				},
 				true,
 			],
 			[
 				'should not show warning when server side encryption and groupfolders encryption is enabled',
 				{
-					server_side_encryption_enabled: true,
-					encryption_enabled_for_groupfolders: true,
+					serverSideEnabled: true,
+					teamFoldersEnabled: true,
 				},
 				false,
 			],
 			[
 				'should not show warning when server side encryption not enabled but groupfolders encryption is enabled',
 				{
-					server_side_encryption_enabled: false,
-					encryption_enabled_for_groupfolders: true,
+					serverSideEnabled: false,
+					teamFoldersEnabled: true,
 				},
 				false,
 			],
-		])('%s', (name, encryptionInfoState, expectedResult) => {
-			const wrapper = getWrapper({
-				state: {
-					openproject_instance_url: 'http://openproject.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'some-client-id-here',
-					openproject_client_secret: 'some-client-secret-here',
-					default_enable_unified_search: false,
-					default_enable_navigation: false,
-					nc_oauth_client: {
-						nextcloud_client_id: 'some-nc-client-id-here',
-						nextcloud_client_secret: 'some-nc-client-secret-here',
-					},
-					project_folder_info: {
-						status: true,
-					},
-					app_password_set: true,
-					encryption_info: encryptionInfoState,
+		])('%s', (name, encryption, showWarning) => {
+			const props = structuredClone(defaultProps)
+			props.formState.projectFolder.complete = true
+			props.projectFolderInfo = {
+				...defaultProps.projectFolderInfo,
+				projectFolderEnabled: true,
+				hasAppPassword: true,
+				folderStatus: {
+					status: true,
 				},
-			})
-			const encryptionWarningNoteCard = wrapper.find(selectors.encryptionNoteCardWarningSelector)
-			expect(encryptionWarningNoteCard.exists()).toBe(expectedResult)
-			if (expectedResult) {
-				expect(encryptionWarningNoteCard.attributes().type).toBe('warning')
-				expect(encryptionWarningNoteCard.find('p.note-card--title').text()).toBe('Encryption for the Team Folders App is not enabled.')
+				encryption: {
+					server_side_encryption_enabled: encryption.serverSideEnabled,
+					encryption_enabled_for_groupfolders: encryption.teamFoldersEnabled,
+				},
+			}
+			const wrapper = getWrapper({ props })
+
+			expect(wrapper.find(selectors.noteCardWarning).exists()).toBe(showWarning)
+			if (showWarning) {
+				expect(wrapper.find(selectors.noteCard).attributes().type).toBe('warning')
+				expect(wrapper.find(selectors.noteCardTitle).text()).toBe('Encryption for the Team Folders App is not enabled.')
 			}
 		})
 	})
