@@ -47,7 +47,7 @@ class ConfigControllerTest extends TestCase {
 	/**
 	 * @param MockObject $mock The mock object on which the method is expected to be called
 	 * @param string $method The method name for which the expectations are set
-	 * @param array $calls An array of expected argument arrays for each call
+	 * @param list{list<mixed>, mixed}[]  $calls An array of expected argument arrays for each call
 	 */
 	private function expectMethodCalls(
 		$mock,
@@ -901,14 +901,6 @@ class ConfigControllerTest extends TestCase {
 	public function checkForUsersCountBeforeTest($expectedCount = 1): IUserManager {
 		$userManager = \OC::$server->getUserManager();
 
-		// Keep tests isolated by removing users created by previous runs.
-		$userManager->callForAllUsers(function (IUser $user) {
-			if ($user->getUID() !== 'admin') {
-				$user->delete();
-			}
-			return null;
-		});
-
 		$actualCount = 0;
 		$function = function () use (&$actualCount) {
 			$actualCount++;
@@ -1171,7 +1163,10 @@ class ConfigControllerTest extends TestCase {
 
 		$loggerInterfaceMock
 			->method("error")
-			->willReturn($errMessage);
+			->with(
+				$errMessage[0],
+				$errMessage[1]
+			);
 
 		$apiService
 			->expects($this->exactly(1))
@@ -1511,7 +1506,7 @@ class ConfigControllerTest extends TestCase {
 				['integration_openproject', 'targeted_audience_client_id', '', $oldCreds['targeted_audience_client_id']],
 				['integration_openproject', 'nc_oauth_client_id', '', '123'],
 				['integration_openproject', 'oPOAuthTokenRevokeStatus', '', ''],
-				['integration_openproject', 'authorization_method', '', OpenProjectAPIService::AUTH_METHOD_OIDC],
+				['integration_openproject', 'authorization_method', '', Application::AUTH_METHOD_OIDC],
 				['integration_openproject', 'oidc_provider', '', $credsToUpdate['oidc_provider']],
 				['integration_openproject', 'targeted_audience_client_id', '', $credsToUpdate['targeted_audience_client_id']],
 				['integration_openproject', 'openproject_instance_url', '', $credsToUpdate['openproject_instance_url']],
