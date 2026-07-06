@@ -7,9 +7,10 @@
  */
 
 import axios from '@nextcloud/axios'
-import { showSuccess } from '@nextcloud/dialogs'
+import { showSuccess, showError } from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
+import { toMatchSerializedSnapshot } from '../../utils.js'
 import FormProjectFolder from '../../../../src/components/admin/FormProjectFolder.vue'
 import { F_MODES, AUTH_METHOD, ADMIN_SETTINGS_FORM } from '../../../../src/utils.js'
 import { appLinks } from '../../../../src/constants/links.js'
@@ -44,6 +45,8 @@ const localVue = createLocalVue()
 const selectors = {
 	errorNote: 'errornote-stub',
 	noteCard: 'ncnotecard-stub',
+	noteCardTitle: 'ncnotecard-stub .note-card--title',
+	noteCardDescription: 'ncnotecard-stub .note-card--error-description',
 	projectFolderFormHeading: '.project-folder-setup formheading-stub',
 	projectFolderFormContainer: '.project-folder-form-container',
 	projectFolderFormStatus: '.project-folder-status',
@@ -114,7 +117,7 @@ describe('Component: FormProjectFolder', () => {
 				expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 				expect(wrapper.find(selectors.noteCard).exists()).toBe(false)
 				expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
-				expect(wrapper.element).toMatchSnapshot()
+				toMatchSerializedSnapshot(wrapper.html())
 			})
 		})
 		describe('view mode', () => {
@@ -131,7 +134,6 @@ describe('Component: FormProjectFolder', () => {
 						},
 					}
 					const wrapper = getWrapper({ props })
-					console.log(wrapper.html())
 
 					expect(wrapper.vm.folderFormMode).toBe(F_MODES.VIEW)
 					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.VIEW)
@@ -163,7 +165,7 @@ describe('Component: FormProjectFolder', () => {
 					expect(wrapper.find(selectors.appPasswordSubmitButton).exists()).toBe(false)
 					expect(wrapper.find(selectors.appPasswordResetButton).text()).toBe('Replace application password')
 
-					expect(wrapper.element).toMatchSnapshot()
+					toMatchSerializedSnapshot(wrapper.html())
 				})
 				it('should show inactive if the project folder is disabled', () => {
 					const props = structuredClone(defaultProps)
@@ -196,7 +198,7 @@ describe('Component: FormProjectFolder', () => {
 					expect(wrapper.find(selectors.projectFolderForm).exists()).toBe(false)
 					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 
-					expect(wrapper.element).toMatchSnapshot()
+					toMatchSerializedSnapshot(wrapper.html())
 				})
 				it('should show completed form even if the auth settings are incomplete', () => {
 					const props = structuredClone(defaultProps)
@@ -229,7 +231,7 @@ describe('Component: FormProjectFolder', () => {
 				})
 			})
 
-			describe('disabled groupfolders app', function() {
+			describe('teamfolders app error', function() {
 				it('should not show error message if project folder is disabled', async () => {
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
@@ -260,9 +262,8 @@ describe('Component: FormProjectFolder', () => {
 					expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
 					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 
-					expect(wrapper.element).toMatchSnapshot()
+					toMatchSerializedSnapshot(wrapper.html())
 				})
-
 				it('should show error message if project folder is enabled', async () => {
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
@@ -299,7 +300,7 @@ describe('Component: FormProjectFolder', () => {
 					expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
 					expect(wrapper.find(selectors.projectFolderActionButton).attributes().disabled).toBe(undefined)
 
-					expect(wrapper.element).toMatchSnapshot()
+					toMatchSerializedSnapshot(wrapper.html())
 				})
 			})
 		})
@@ -337,10 +338,10 @@ describe('Component: FormProjectFolder', () => {
 				})
 				it('should show disabled form fields if project folder is disabled', async () => {
 					const projectFolderSetupSwitch = wrapper.find(selectors.projectFolderSetupSwitch)
-					projectFolderSetupSwitch.vm.$emit('update:checked', 'false')
+					projectFolderSetupSwitch.vm.$emit('update:checked', false)
 					await flushPromises()
 
-					expect(projectFolderSetupSwitch.attributes().checked).toBe('false')
+					expect(projectFolderSetupSwitch.attributes().checked).toBe(undefined)
 					const projectFolderActionButton = wrapper.find(selectors.projectFolderActionButton)
 					expect(wrapper.find(selectors.projectFolderDisabledDescription).text()).toContain('We recommend using this functionality but it is not mandatory')
 					expect(projectFolderActionButton.text()).toBe(messages.projectFolderSetup.completeWithoutProjectFolderSetup)
@@ -352,7 +353,7 @@ describe('Component: FormProjectFolder', () => {
 					it('should set status "Inactive"', async () => {
 						const spySetAppPasswordFormToEditMode = jest.spyOn(wrapper.vm, 'setAppPasswordFormToEditMode')
 						const projectFolderSetupSwitch = wrapper.find(selectors.projectFolderSetupSwitch)
-						projectFolderSetupSwitch.vm.$emit('update:checked', 'false')
+						projectFolderSetupSwitch.vm.$emit('update:checked', false)
 						await wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
 						await flushPromises()
 
@@ -367,12 +368,14 @@ describe('Component: FormProjectFolder', () => {
 						expect(wrapper.emitted().formcomplete.length).toBe(1)
 						expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 						expect(showSuccess).toHaveBeenCalledTimes(1)
+						expect(showSuccess).toHaveBeenCalledWith('OpenProject admin options saved')
 
 						expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
 						expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
 						expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Inactive')
 						expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
 						expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+						toMatchSerializedSnapshot(wrapper.html())
 					})
 				})
 
@@ -409,6 +412,7 @@ describe('Component: FormProjectFolder', () => {
 							expect(wrapper.emitted().formcomplete.length).toBe(1)
 							expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
 							expect(showSuccess).toHaveBeenCalledTimes(1)
+							expect(showSuccess).toHaveBeenCalledWith('OpenProject admin options saved')
 
 							expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
 							expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe('true')
@@ -426,6 +430,7 @@ describe('Component: FormProjectFolder', () => {
 
 							expect(wrapper.find(selectors.noteCard).exists()).toBe(false)
 							expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
+							toMatchSerializedSnapshot(wrapper.html())
 						})
 						it('should set app password form to view mode on "Done" action', async () => {
 							const appPassword = '12345678'
@@ -449,495 +454,386 @@ describe('Component: FormProjectFolder', () => {
 							expect(wrapper.vm.passwordFormMode).toBe(F_MODES.VIEW)
 							expect(wrapper.find(selectors.appPasswordFormLabel).exists()).toBe(true)
 							expect(appPasswordSubmitButton.text()).toBe('Replace application password')
+							toMatchSerializedSnapshot(wrapper.html())
 						})
 					})
 
-					describe.skip('upon failure', () => {
+					describe('upon failure', () => {
 						it.each([
 							[
 								'should set the user already exists error message and error details when user already exists',
 								{
 									error: 'The user "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
+									errorDescription: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the team folder name already exists error message and error details when team folder already exists',
 								{
 									error: 'The team folder name "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
+									errorDescription: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
 							[
 								'should set the group already exists error message and error details when group already exists',
 								{
 									error: 'The group "OpenProject" already exists',
-									expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
+									errorDescription: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
 								},
 							],
+						])('%s', async (name, expected) => {
+							const props = structuredClone(defaultProps)
+							const wrapper = getWrapper({ props })
 
-						])('%s', async (name, expectedErrorDetails) => {
-							const wrapper = getWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: 'some-client-id-here',
-									openproject_client_secret: 'some-client-secret-here',
-									default_enable_unified_search: false,
-									default_enable_navigation: false,
-									nc_oauth_client: {
-										nextcloud_client_id: 'some-nc-client-id-here',
-										nextcloud_client_secret: 'some-nc-client-secret-here',
-									},
-									fresh_project_folder_setup: true,
-									project_folder_info: {
-										status: false,
-									},
-									app_password_set: false,
-									projectFolderSetupError: null,
-									...appState,
-								},
-								...commonState,
-							})
+							const errResponse = new Error('Request failed')
+							errResponse.response = {}
+							errResponse.response.data = {}
+							errResponse.response.data.error = expected.error
+							saveAdminConfig.mockImplementationOnce(() => Promise.reject(errResponse))
 
-							await wrapper.setData({
-								formMode: {
-									projectFolderSetUp: F_MODES.EDIT,
-								},
-							})
-							const getgroupfolderStatus = jest.spyOn(axios, 'get').mockImplementationOnce(() => Promise.resolve({
-								data: {
-									result: false,
-								},
-							}))
-
-							// creating an error since the put request is not resolved
-							const err = new Error()
-							err.response = {}
-							err.response.data = {}
-							err.response.data.error = expectedErrorDetails.error
-
-							const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-								.mockImplementationOnce(() => Promise.reject(err))
-							const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-							completeProjectFolderSetupWithGroupFolderButton.vm.$emit('click')
+							const spySetAppPasswordFormToEditMode = jest.spyOn(wrapper.vm, 'setAppPasswordFormToEditMode')
+							const spySetProjectFolderFormToViewMode = jest.spyOn(wrapper.vm, 'setProjectFolderFormToViewMode')
+							expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
+							expect(wrapper.vm.passwordFormMode).toBe(F_MODES.DISABLE)
+							wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
 							await flushPromises()
-							expect(getgroupfolderStatus).toBeCalledTimes(1)
-							expect(saveOPOptionsSpy).toBeCalledWith(
-								'http://localhost/apps/integration_openproject/admin-config',
-								{
-									values: {
-										setup_app_password: true,
-										setup_project_folder: true,
-									},
-								},
-							)
-							const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
-							const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
-							expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-							expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
-						})
-					})
-				})
-			})
 
-			describe.skip('deactivate', function() {
-				describe('after complete setup', () => {
-					let wrapper = {}
-					let saveOPOptionsSpy
-					beforeEach(async () => {
-						wrapper = getMountedWrapper({
-							state: {
-								openproject_instance_url: 'http://openproject.com',
-								authorization_method: AUTH_METHOD.OAUTH2,
-								openproject_client_id: 'some-client-id-here',
-								openproject_client_secret: 'some-client-secret-here',
-								nc_oauth_client: {
-									nextcloud_client_id: 'some-nc-client-id-here',
-									nextcloud_client_secret: 'some-nc-client-secret-here',
-								},
-								fresh_project_folder_setup: false,
-								project_folder_info: {
-									status: true,
-								},
-								app_password_set: true,
-								encryption_info: {
-									server_side_encryption_enabled: false,
-									encryption_enabled_for_groupfolders: false,
-								},
-							},
-						})
-						await wrapper.setData({
-							formMode: {
-								projectFolderSetUp: F_MODES.EDIT,
-							},
-							oPUserAppPassword: 'userAppPassword',
-						})
-						saveOPOptionsSpy = jest.spyOn(axios, 'put')
-							.mockImplementationOnce(() => Promise.resolve({
-								data: {
-									oPUserAppPassword: null,
-								},
-							}))
-						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
-						await projectFolderSetupSwitchButton.trigger('click')
-						await wrapper.vm.$nextTick()
-						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						await completeWithoutProjectFolderSetupButton.trigger('click')
-						await wrapper.vm.$nextTick()
-					})
-
-					it('should delete user app password', async () => {
-						expect(saveOPOptionsSpy).toBeCalledWith(
-							'http://localhost/apps/integration_openproject/admin-config',
-							{
-								values: {
-									setup_app_password: false,
-									setup_project_folder: false,
-								},
-							},
-						)
-						expect(wrapper.vm.state.app_password_set).toBe(false)
-						expect(wrapper.vm.state.oPUserAppPassword).not.toBe('userAppPassword')
-						expect(wrapper.vm.state.oPUserAppPassword).not.toBe(null)
-					})
-
-					it('should set project folder status to "Inactive"', async () => {
-						expect(saveOPOptionsSpy).toBeCalledWith(
-							'http://localhost/apps/integration_openproject/admin-config',
-							{
-								values: {
-									setup_app_password: false,
-									setup_project_folder: false,
-								},
-							},
-						)
-						const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
-						const actualProjectFolderStatusValue = projectFolderStatus.text()
-						expect(actualProjectFolderStatusValue).toContain(': Inactive')
-					})
-				})
-			})
-
-			describe.skip('default deactivate state', function() {
-				let wrapper = {}
-				beforeEach(async () => {
-					wrapper = getMountedWrapper({
-						state: {
-							openproject_instance_url: 'http://openproject.com',
-							authorization_method: AUTH_METHOD.OAUTH2,
-							openproject_client_id: 'some-client-id-here',
-							openproject_client_secret: 'some-client-secret-here',
-							nc_oauth_client: {
-								nextcloud_client_id: 'some-nc-client-id-here',
-								nextcloud_client_secret: 'some-nc-client-secret-here',
-							},
-							fresh_project_folder_setup: false,
-							// team folder is already not set up
-							project_folder_info: {
-								status: false,
-							},
-							app_password_set: false,
-						},
-					})
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.EDIT,
-						},
-					})
-				})
-
-				it('should show project folder status as "Inactive"', async () => {
-					await wrapper.setData({
-						formMode: {
-							projectFolderSetUp: F_MODES.VIEW,
-						},
-					})
-					const projectFolderStatus = wrapper.find(selectors.projectFolderStatus)
-					const actualProjectFolderStatusValue = projectFolderStatus.text()
-					expect(actualProjectFolderStatusValue).toContain(': Inactive')
-				})
-
-				it('should set the button label to "keep current change"', async () => {
-					const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-					expect(completeWithoutProjectFolderSetupButton.text()).toBe('Keep current setup')
-				})
-
-				it('should show button label to "Setup OpenProject user, group and folder" when switch is "On"', async () => {
-					const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
-					await projectFolderSetupSwitchButton.trigger('click')
-					await wrapper.vm.$nextTick()
-					expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-					expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Setup OpenProject user, group and folder')
-				})
-			})
-
-			describe.skip('complete setup (project folder and app password)', function() {
-				describe('edit mode', function() {
-					let wrapper = {}
-					let getgroupfolderStatusSpy
-					beforeEach(async () => {
-						axios.put.mockReset()
-						axios.get.mockReset()
-						wrapper = getMountedWrapper({
-							state: {
-								openproject_instance_url: 'http://openproject.com',
-								authorization_method: AUTH_METHOD.OAUTH2,
-								openproject_client_id: 'some-client-id-here',
-								openproject_client_secret: 'some-client-secret-here',
-								nc_oauth_client: {
-									nextcloud_client_id: 'some-nc-client-id-here',
-									nextcloud_client_secret: 'some-nc-client-secret-here',
-								},
-								fresh_project_folder_setup: false,
-								project_folder_info: {
-									status: true,
-								},
-								app_password_set: true,
-								encryption_info: {
-									server_side_encryption_enabled: false,
-									encryption_enabled_for_groupfolders: false,
-								},
-							},
-							isGroupFolderAlreadySetup: null,
-						})
-						await wrapper.setData({
-							formMode: {
-								projectFolderSetUp: F_MODES.EDIT,
-							},
-							oPUserAppPassword: 'opUserPassword',
-						})
-						getgroupfolderStatusSpy = jest.spyOn(axios, 'get').mockImplementationOnce(() => Promise.resolve({
-							data: {
-								result: true,
-							},
-						}))
-					})
-
-					it('should show button label to "keep current"', async () => {
-						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current setup')
-					})
-
-					it('should not create new user app password on trigger "Keep on current change"', async () => {
-						const completeProjectFolderSetupWithGroupFolderButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-						expect(completeProjectFolderSetupWithGroupFolderButton.text()).toBe('Keep current setup')
-						completeProjectFolderSetupWithGroupFolderButton.trigger('click')
-						expect(getgroupfolderStatusSpy).toBeCalledTimes(1)
-						expect(wrapper.vm.oPUserAppPassword).toBe('opUserPassword')
-					})
-
-					it('should show button label as "Complete without team folder setup" when switch is "off" ', async () => {
-						const projectFolderSetupSwitchButton = wrapper.find(selectors.projectFolderSetupSwitch)
-						await projectFolderSetupSwitchButton.trigger('click')
-						const completeWithoutProjectFolderSetupButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-						expect(completeWithoutProjectFolderSetupButton.text()).toBe('Complete without project folders')
-					})
-
-					it('should set switch as "on" again (same as fresh set up) when completely reset', async () => {
-						const wrapper = getMountedWrapper({
-							state: {
-								openproject_instance_url: null,
-								authorization_method: null,
-								openproject_client_id: null,
-								openproject_client_secret: null,
-								nc_oauth_client: null,
-								fresh_project_folder_setup: true,
-								project_folder_info: {
-									status: true,
-								},
-								app_password_set: false,
-							},
-						})
-						expect(wrapper.vm.isProjectFolderSwitchEnabled).toBe(true)
-					})
-
-					describe('disabled groupfolders app', function() {
-						beforeEach(async () => {
-							wrapper = getWrapper({
-								state: {
-									openproject_instance_url: 'http://openproject.com',
-									authorization_method: AUTH_METHOD.OAUTH2,
-									openproject_client_id: 'some-client-id-here',
-									openproject_client_secret: 'some-client-secret-here',
-									nc_oauth_client: {
-										nextcloud_client_id: 'some-nc-client-id-here',
-										nextcloud_client_secret: 'some-nc-client-secret-here',
-									},
-									fresh_project_folder_setup: false,
-									project_folder_info: {
-										status: true,
-									},
-									app_password_set: true,
-									encryption_info: {
-										server_side_encryption_enabled: false,
-										encryption_enabled_for_groupfolders: false,
-									},
-									apps: {
-										...appState.apps,
-										groupfolders: {
-											enabled: false,
-											supported: false,
-										},
-									},
-								},
-								isGroupFolderAlreadySetup: null,
+							expect(saveAdminConfig).toHaveBeenCalledTimes(1)
+							expect(saveAdminConfig).toHaveBeenCalledWith({
+								setup_app_password: true,
+								setup_project_folder: true,
 							})
-							await wrapper.find(selectors.editProjectFolderSetup).vm.$emit('click')
-						})
-						it('should show error message', async () => {
-							const formHeading = wrapper.find(selectors.projectFolderFormHeading)
-							const errorNote = wrapper.find(selectors.projectFolderErrorNote)
-							const saveButton = wrapper.find(selectors.completeProjectFolderSetupWithGroupFolderButton)
-							expect(formHeading.exists()).toBe(true)
-							expect(formHeading.attributes().haserror).toBe('true')
-							expect(errorNote.exists()).toBe(true)
-							expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
-							expect(errorNote.attributes().errorlink).toBe(appLinks.groupfolders.installLink)
-							expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
-							expect(saveButton.attributes().disabled).toBe('true')
-							expect(saveButton.text()).toBe('Keep current setup')
-						})
-						it('should be able to disable the project folder setup and no error card', async () => {
-							const toggleButton = wrapper.find(selectors.projectFolderSetupButtonStub)
-							expect(toggleButton.attributes().checked).toBe('true')
 
-							await toggleButton.vm.$emit('update:checked', false)
+							expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
+							expect(wrapper.vm.passwordFormMode).toBe(F_MODES.DISABLE)
+							expect(spySetAppPasswordFormToEditMode).toHaveBeenCalledTimes(0)
+							expect(spySetProjectFolderFormToViewMode).toHaveBeenCalledTimes(0)
+							expect(wrapper.emitted().formcomplete).toBe(undefined)
+							expect(showSuccess).toHaveBeenCalledTimes(0)
 
-							const saveButton = wrapper.find(selectors.completeWithoutProjectFolderSetupButton)
-							expect(toggleButton.attributes().checked).toBe(undefined)
-							expect(saveButton.text()).toBe('Complete without project folders')
+							expect(wrapper.vm.projectFolderSetupError).toBe(expected.error)
+							expect(showError).toHaveBeenCalledTimes(1)
+							expect(showError).toHaveBeenCalledWith(`Failed to save OpenProject admin options: ${expected.error}`)
 
-							const formHeading = wrapper.find(selectors.projectFolderFormHeading)
-							const errorNote = wrapper.find(selectors.projectFolderErrorNote)
-							expect(formHeading.attributes().haserror).toBe(undefined)
-							expect(errorNote.exists()).toBe(false)
+							expect(wrapper.find(selectors.projectFolderFormHeading).attributes().haserror).toBe('true')
+							expect(wrapper.find(selectors.noteCardTitle).text()).toBe(expected.error)
+							expect(wrapper.find(selectors.noteCardDescription).text()).toBe(expected.errorDescription)
+
+							expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+							expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
+							expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe('true')
+							expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.completeWithProjectFolderSetup)
+							expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+							toMatchSerializedSnapshot(wrapper.html())
 						})
 					})
 				})
-			})
-		})
-	})
 
-	describe.skip('user app password reset', () => {
-		let confirmSpy
-		let wrapper
-		beforeEach(async () => {
-			axios.put.mockReset()
-			confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
-			wrapper = getMountedWrapper({
-				state: {
-					openproject_instance_url: 'http://openproject.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'some-client-id-here',
-					openproject_client_secret: 'some-client-secret-here',
-					nc_oauth_client: {
-						nextcloud_client_id: 'some-nc-client-id-here',
-						nextcloud_client_secret: 'some-nc-client-secret-here',
-					},
-					app_password_set: true,
-				},
-			})
-			await wrapper.setData({
-				oPUserAppPassword: 'oldUserAppPassword',
-			})
-		})
-		afterEach(() => {
-			jest.clearAllMocks()
-		})
-		it('should trigger a confirm dialog', async () => {
-			const expectedConfirmText = 'If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.'
-			const expectedConfirmOpts = {
-				cancel: 'Cancel',
-				confirm: 'Yes, replace',
-				confirmClasses: 'error',
-				type: 70,
-			}
-			const expectedConfirmTitle = 'Replace user app password'
-			const resetUserAppPassword = wrapper.find(selectors.userAppPasswordButton)
-			await resetUserAppPassword.trigger('click')
-			await wrapper.vm.$nextTick()
-			expect(confirmSpy).toBeCalledTimes(1)
-			expect(confirmSpy).toBeCalledWith(
-				expectedConfirmText,
-				expectedConfirmTitle,
-				expectedConfirmOpts,
-				expect.any(Function),
-				true,
-			)
-			wrapper.destroy()
-		})
+				describe('teamfolders app error', function() {
+					let wrapper
+					beforeEach(async () => {
+						const props = structuredClone(defaultProps)
+						props.projectFolderInfo = {
+							...defaultProps.projectFolderInfo,
+							app: {
+								enabled: false,
+							},
+						}
+						wrapper = getWrapper({ props })
+					})
 
-		it('should replace old password with new password on confirm', async () => {
-			const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-				.mockImplementationOnce(() => Promise.resolve({
+					it('should show error message if project folder is enabled', async () => {
+						expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
+						expect(wrapper.vm.passwordFormMode).toBe(F_MODES.DISABLE)
+
+						const projectFolderFormHeading = wrapper.find(selectors.projectFolderFormHeading)
+						expect(projectFolderFormHeading.attributes().issetupcompletewithoutprojectfolders).toBe(undefined)
+						expect(projectFolderFormHeading.attributes().iscomplete).toBe(undefined)
+						expect(projectFolderFormHeading.attributes().isdisabled).toBe(undefined)
+						expect(projectFolderFormHeading.attributes().haserror).toBe('true')
+
+						expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+						expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+
+						expect(wrapper.find(selectors.noteCard).exists()).toBe(false)
+						const errorNote = wrapper.find(selectors.errorNote)
+						expect(errorNote.exists()).toBe(true)
+						expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotEnabledOrUnsupported())
+						expect(errorNote.attributes().errorlink).toBe(appLinks.groupfolders.installLink)
+						expect(errorNote.attributes().errorlinklabel).toBe(messages.installLatestVersionNow)
+						expect(wrapper.find(selectors.projectFolderActionButton).attributes().disabled).toBe('true')
+
+						toMatchSerializedSnapshot(wrapper.html())
+					})
+					it('should not show error message if project folder is disabled', async () => {
+						wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', false)
+						await flushPromises()
+
+						expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+						expect(wrapper.find(selectors.projectFolderDisabledDescription).exists()).toBe(true)
+						expect(wrapper.find(selectors.projectFolderActionButton).attributes().disabled).toBe(undefined)
+
+						expect(wrapper.find(selectors.noteCard).exists()).toBe(false)
+						expect(wrapper.find(selectors.errorNote).exists()).toBe(false)
+						expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+
+						toMatchSerializedSnapshot(wrapper.html())
+					})
+
+				})
+			})
+
+			describe('disable project folder after complete setup', function() {
+				let wrapper
+				beforeEach(async () => {
+					const props = structuredClone(defaultProps)
+					props.formState.projectFolder.complete = true
+					props.projectFolderInfo.projectFolderEnabled = true
+					props.projectFolderInfo.hasAppPassword = true
+					props.projectFolderInfo.folderStatus.status = true
+					wrapper = getWrapper({ props })
+				})
+
+				it('should not call server on keep current', async () => {
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormHeading).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormLabel).exists()).toBe(true)
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+					expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
+					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.VIEW)
+
+					expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe('true')
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe('true')
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.keepCurrentChange)
+					expect(wrapper.find(selectors.appPasswordFormHeading).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormLabel).exists()).toBe(true)
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', false)
+					await flushPromises()
+
+					expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.completeWithoutProjectFolderSetup)
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', true)
+					await flushPromises()
+
+					expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe('true')
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe('true')
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.keepCurrentChange)
+					expect(wrapper.find(selectors.appPasswordFormHeading).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormLabel).exists()).toBe(true)
+
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+					expect(wrapper.vm.folderFormMode).toBe(F_MODES.VIEW)
+					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.VIEW)
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormLabel).exists()).toBe(true)
+					expect(saveAdminConfig).toHaveBeenCalledTimes(0)
+					expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Active')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
+				})
+				it('should hide app password form', async () => {
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', false)
+					await flushPromises()
+
+					expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.completeWithoutProjectFolderSetup)
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+				})
+				it('should set project folder status to "Inactive" on save', async () => {
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', false)
+					await flushPromises()
+
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+
+					expect(saveAdminConfig).toHaveBeenCalledTimes(1)
+					expect(saveAdminConfig).toHaveBeenCalledWith({
+						setup_app_password: false,
+						setup_project_folder: false,
+					})
+					expect(wrapper.vm.folderFormMode).toBe(F_MODES.VIEW)
+					expect(wrapper.emitted().formcomplete.length).toBe(2)
+					expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
+					expect(showSuccess).toHaveBeenCalledTimes(1)
+
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
+					expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Inactive')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+				})
+			})
+
+			describe('enable project folder after complete setup', function() {
+				let wrapper
+				const appPassword = '12345678'
+				saveAdminConfig.mockImplementationOnce(() => Promise.resolve({
 					data: {
-						oPUserAppPassword: 'newUserAppPassword',
+						oPUserAppPassword: appPassword,
 					},
 				}))
-			await wrapper.vm.createNewAppPassword()
-			expect(saveOPOptionsSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/admin-config',
-				{
-					values: {
-						setup_app_password: true,
-					},
-				},
-			)
-			expect(wrapper.vm.oPUserAppPassword).toBe('newUserAppPassword')
-			expect(wrapper.vm.oPUserAppPassword).not.toBe('oldUserAppPassword')
-			expect(wrapper.vm.formMode.opUserAppPassword).toBe(F_MODES.EDIT)
-			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(false)
-		})
-	})
 
-	describe.skip('error after project folder is already setup', () => {
-		beforeEach(async () => {
-			axios.put.mockReset()
-			axios.get.mockReset()
-		})
-		it.each([
-			[
-				'should set the user already exists error message and error details when user already exists',
-				{
-					error: 'The user "OpenProject" already exists',
-					expectedErrorDetailsMessage: 'Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.',
-				},
-			],
-		])('%s', async (name, expectedErrorDetails) => {
-			const wrapper = getWrapper({
-				state: {
-					openproject_instance_url: 'http://openproject.com',
-					authorization_method: AUTH_METHOD.OAUTH2,
-					openproject_client_id: 'some-client-id-here',
-					openproject_client_secret: 'some-client-secret-here',
-					default_enable_unified_search: false,
-					default_enable_navigation: false,
-					nc_oauth_client: {
-						nextcloud_client_id: 'some-nc-client-id-here',
-						nextcloud_client_secret: 'some-nc-client-secret-here',
-					},
-					// status is false
-					// with error message when something went wrong after project folder is already setup
-					project_folder_info: {
-						errorMessage: expectedErrorDetails.error,
-						status: false,
-					},
-					app_password_set: true,
-				},
+				beforeEach(async () => {
+					const props = structuredClone(defaultProps)
+					props.formState.projectFolder.complete = true
+					props.projectFolderInfo.projectFolderEnabled = false
+					props.projectFolderInfo.hasAppPassword = false
+					props.projectFolderInfo.folderStatus.status = false
+					wrapper = getWrapper({ props })
+				})
+
+				it('should not call server on keep current', async () => {
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+					expect(wrapper.vm.folderFormMode).toBe(F_MODES.EDIT)
+
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+					expect(wrapper.find(selectors.projectFolderDescription).text()).toContain('We recommend using this functionality but it is not mandatory')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.keepCurrentChange)
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', true)
+					await flushPromises()
+
+					expect(wrapper.find(selectors.projectFolderDescription).text()).toContain('Let OpenProject create folders per project automatically')
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe('true')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.completeWithProjectFolderSetup)
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', false)
+					await flushPromises()
+
+					expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe(undefined)
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
+					expect(wrapper.find(selectors.projectFolderDescription).text()).toContain('We recommend using this functionality but it is not mandatory')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.keepCurrentChange)
+
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+
+					expect(saveAdminConfig).toHaveBeenCalledTimes(0)
+					expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Inactive')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
+					expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
+				})
+				it('should show project folder status as "Inactive"', async () => {
+					const appPassword = '12345678'
+					saveAdminConfig.mockImplementationOnce(() => Promise.resolve({
+						data: {
+							oPUserAppPassword: appPassword,
+						},
+					}))
+
+					const props = structuredClone(defaultProps)
+					props.formState.projectFolder.complete = true
+					props.projectFolderInfo.projectFolderEnabled = false
+					props.projectFolderInfo.hasAppPassword = false
+					props.projectFolderInfo.folderStatus.status = false
+					const wrapper = getWrapper({ props })
+
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+
+					wrapper.find(selectors.projectFolderSetupSwitch).vm.$emit('update:checked', true)
+					await flushPromises()
+
+					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
+					await flushPromises()
+
+					expect(saveAdminConfig).toHaveBeenCalledTimes(1)
+					expect(saveAdminConfig).toHaveBeenCalledWith({
+						setup_app_password: true,
+						setup_project_folder: true,
+					})
+					expect(wrapper.vm.folderFormMode).toBe(F_MODES.VIEW)
+					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.EDIT)
+					expect(wrapper.emitted().formcomplete.length).toBe(2)
+					expect(wrapper.emitted().formcomplete[0][0]).toBeInstanceOf(Function)
+					expect(wrapper.vm.appPassword).toBe(appPassword)
+					expect(showSuccess).toHaveBeenCalledTimes(1)
+
+					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
+					expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Active')
+					expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
+					expect(wrapper.find(selectors.appPasswordInput).exists()).toBe(true)
+					expect(wrapper.find(selectors.appPasswordSubmitButton).exists()).toBe(true)
+				})
 			})
-			await wrapper.setData({
-				formMode: {
-					projectFolderSetUp: F_MODES.EDIT,
-				},
-				projectFolderSetupError: expectedErrorDetails.error,
+
+			describe('reset app password', () => {
+				let wrapper
+				beforeEach(async () => {
+					const props = structuredClone(defaultProps)
+					props.formState.projectFolder.complete = true
+					props.projectFolderInfo = {
+						...defaultProps.projectFolderInfo,
+						projectFolderEnabled: true,
+						hasAppPassword: true,
+						folderStatus: {
+							status: true,
+						},
+					}
+					wrapper = getWrapper({ props })
+				})
+
+				it('should trigger a confirm dialog', async () => {
+					const spyConfirmDialog = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
+
+					const expectedConfirmText = 'If you proceed, your old application password for the OpenProject user will be deleted and you will receive a new OpenProject user password.'
+					const expectedConfirmOpts = {
+						cancel: 'Cancel',
+						confirm: 'Yes, replace',
+						confirmClasses: 'error',
+						type: 70,
+					}
+					const expectedConfirmTitle = 'Replace user app password'
+
+					wrapper.find(selectors.appPasswordResetButton).vm.$emit('click')
+					await flushPromises()
+
+					expect(spyConfirmDialog).toBeCalledTimes(1)
+					expect(spyConfirmDialog).toBeCalledWith(
+						expectedConfirmText,
+						expectedConfirmTitle,
+						expectedConfirmOpts,
+						expect.any(Function),
+						true,
+					)
+				})
+				it('should replace old password with new one on confirm', async () => {
+					const appPassword = '12345678'
+					const spySetAppPasswordFormToEditMode = jest.spyOn(wrapper.vm, 'setAppPasswordFormToEditMode')
+					saveAdminConfig.mockImplementationOnce(() => Promise.resolve({
+						data: {
+							oPUserAppPassword: appPassword,
+						},
+					}))
+					await wrapper.vm.recreateAppPassword()
+					await flushPromises()
+
+					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.EDIT)
+					expect(saveAdminConfig).toHaveBeenCalledTimes(1)
+					expect(saveAdminConfig).toHaveBeenCalledWith({
+						setup_app_password: true,
+					})
+					expect(spySetAppPasswordFormToEditMode).toHaveBeenCalledTimes(1)
+					expect(wrapper.vm.appPassword).toBe('12345678')
+				})
 			})
-			expect(wrapper.vm.isFormCompleted.opUserAppPassword).toBe(true)
-			const projectFolderErrorMessage = wrapper.find(selectors.projectFolderErrorMessage)
-			const projectFolderErrorMessageDetails = wrapper.find(selectors.projectFolderErrorMessageDetails)
-			expect(projectFolderErrorMessage.text()).toBe(expectedErrorDetails.error)
-			expect(projectFolderErrorMessageDetails.text()).toBe(expectedErrorDetails.expectedErrorDetailsMessage)
 		})
 	})
 
