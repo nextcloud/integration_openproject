@@ -295,20 +295,10 @@ class OpenProjectControllerTest extends TestCase {
 		$configMock
 			->expects($this->exactly(2))
 			->method('setUserValue')
-			->withConsecutive(
-				[
-					'test',
-					'integration_openproject',
-					'oauth_state',
-					$this->matchesRegularExpression('/[a-z0-9]{10}/')
-				],
-				[
-					'test',
-					'integration_openproject',
-					'code_verifier',
-					$this->matchesRegularExpression('/[A-Za-z0-9\-._~]{128}/')
-				],
-			);
+			->willReturnMap([
+				['test', 'integration_openproject', 'oauth_state', $this->matchesRegularExpression('/[a-z0-9]{10}/'), null, null],
+				['test', 'integration_openproject', 'code_verifier', $this->matchesRegularExpression('/[A-Za-z0-9\-._~]{128}/'), null, null],
+			]);
 
 		$controller = $this->getOpenProjectControllerMock([
 			'openProjectAPIService' => $service,

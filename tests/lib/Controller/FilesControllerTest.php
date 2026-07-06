@@ -188,20 +188,20 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoFourIdsRequestedOneExistsOneInTrashOneNotExisitingOneForbidden(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([123], [759], [365], [956])
-			->willReturnOnConsecutiveCalls(
+			->willReturnMap(
 				[
-					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
-				],
-				[],
-				[]
+					[123, [$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')]],
+					[759, []],
+					[365, []],
+					[956, []]
+				]
 			);
 
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			ICachedMountFileInfo::class
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				'files/logo.png',
 				'files_trashbin/files/welcome.txt.d1648724302',
 				'/anotherUser/files/logo.png'
@@ -214,19 +214,20 @@ class FilesControllerTest extends TestCase {
 
 		$mountCacheMock = $this->getMockBuilder(IUserMountCache::class)->getMock();
 		$mountCacheMock->method('getMountsForFileId')
-			->withConsecutive([123], [759], [365], [956])
-			->willReturnOnConsecutiveCalls(
-				[$cachedMountFileInfoMock],
-				[$cachedMountFileInfoMock],
-				[], // not found
-				[$cachedMountFileInfoMock],
+			->willReturnMap(
+				[
+					[123, null, [$cachedMountFileInfoMock]],
+					[759, null, [$cachedMountFileInfoMock]],
+					[365, null, []],
+					[956, null, [$cachedMountFileInfoMock]]
+				]
 			);
 
 		$filesController = $this->getFilesControllerMock(
 			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
-			->willReturnOnConsecutiveCalls('RGDNVW', 'RGDNVW');
+			->willReturn('RGDNVW', 'RGDNVW');
 
 		$result = $filesController->getFilesInfo([123, 759, 365, 956]);
 		assertSame(
@@ -269,13 +270,12 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoThreeIdsRequestedOneFileExistsReturnsOneResult(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([123], [256], [365])
-			->willReturnOnConsecutiveCalls(
+			->willReturnMap(
 				[
-					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
-				],
-				[],
-				[]
+					[123, [$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')]],
+					[256, []],
+					[365, []]
+				]
 			);
 
 		$cachedMountFileInfoMock = $this->getMockBuilder(
@@ -290,7 +290,7 @@ class FilesControllerTest extends TestCase {
 		$mountCacheMock = $this->getMockBuilder(IUserMountCache::class)
 			->getMock();
 		$mountCacheMock->method('getMountsForFileId')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				[$cachedMountFileInfoMock], [], []
 			);
 
@@ -314,20 +314,18 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsOneResult(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([123], [365])
-			->willReturnOnConsecutiveCalls(
+			->willReturnMap(
 				[
-					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')
-				],
-				[
-					$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png'),
+					[123, [$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')]],
+					[365, [$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png')]]
 				]
 			);
+
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			ICachedMountFileInfo::class
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				'files/logo.png',
 				'files/inFolder/image.png',
 			);
@@ -345,7 +343,7 @@ class FilesControllerTest extends TestCase {
 			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
-			->willReturnOnConsecutiveCalls('RGDNVW', 'RGDNVW');
+			->willReturn('RGDNVW');
 		$result = $filesController->getFilesInfo([123,365]);
 		assertSame(
 			[
@@ -360,13 +358,10 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoTwoIdsRequestedAllFilesExistsEachReturnsMultipleResults(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([123], [365])
-			->willReturnOnConsecutiveCalls(
+			->willReturnMap(
 				[
-					$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png'),
-				],
-				[
-					$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png'),
+					[123, [$this->getNodeMock('image/png', 123, 'file', '/testUser/files/logo.png')]],
+					[365, [$this->getNodeMock('image/png', 365, 'file', '/testUser/files/inFolder/image.png')]]
 				]
 			);
 
@@ -374,7 +369,7 @@ class FilesControllerTest extends TestCase {
 			ICachedMountFileInfo::class
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				'files/logo.png',
 				'files/inFolder/image.png',
 			);
@@ -392,7 +387,7 @@ class FilesControllerTest extends TestCase {
 			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
-			->willReturnOnConsecutiveCalls('RGDNVW', 'RGDNVW');
+			->willReturn('RGDNVW');
 
 		$result = $filesController->getFilesInfo([123,365]);
 		assertSame(
@@ -408,31 +403,36 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoTwoIdsRequestedEachReturnsOneFolder(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([2], [3])
-			->willReturnOnConsecutiveCalls(
+			->willReturnMap([
 				[
-					$this->getNodeMock(
-						'httpd/unix-directory',
-						2,
-						'dir',
-						'/testUser/files/myFolder/a-sub-folder'
-					)
+					2,
+					[
+						$this->getNodeMock(
+							'httpd/unix-directory',
+							2,
+							'dir',
+							'/testUser/files/myFolder/a-sub-folder'
+						)
+					]
 				],
 				[
-					$this->getNodeMock(
-						'httpd/unix-directory',
-						3,
-						'dir',
-						'/testUser/files'
-					)
-				]
-			);
+					3,
+					[
+						$this->getNodeMock(
+							'httpd/unix-directory',
+							3,
+							'dir',
+							'/testUser/files'
+						)
+					]
+				],
+			]);
 
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			ICachedMountFileInfo::class
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				'files/myFolder/a-sub-folder',
 				'files'
 			);
@@ -450,7 +450,7 @@ class FilesControllerTest extends TestCase {
 			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
-			->willReturnOnConsecutiveCalls('RGDNVCK', 'RGDNVCK');
+			->willReturn('RGDNVCK', 'RGDNVCK');
 
 		$result = $filesController->getFilesInfo([2,3]);
 		assertSame(
@@ -508,31 +508,32 @@ class FilesControllerTest extends TestCase {
 	public function testGetFilesInfoSendStringIds(): void {
 		$folderMock = $this->getMockBuilder(Folder::class)->getMock();
 		$folderMock->method('getById')
-			->withConsecutive([2], [3])
-			->willReturnOnConsecutiveCalls(
-				[
-					$this->getNodeMock(
+			->willReturnMap([
+				[	2,
+					[$this->getNodeMock(
 						'httpd/unix-directory',
 						2,
 						'dir',
 						'/testUser/files/myFolder/a-sub-folder'
-					)
+					)]
 				],
-				[
-					$this->getNodeMock(
-						'httpd/unix-directory',
-						3,
-						'dir',
-						'/testUser/files/testFolder'
-					)
+				[  3,
+					[
+						$this->getNodeMock(
+							'httpd/unix-directory',
+							3,
+							'dir',
+							'/testUser/files/testFolder'
+						)
+					]
 				]
-			);
+			]);
 
 		$cachedMountFileInfoMock = $this->getMockBuilder(
 			ICachedMountFileInfo::class
 		)->getMock();
 		$cachedMountFileInfoMock->method('getInternalPath')
-			->willReturnOnConsecutiveCalls(
+			->willReturn(
 				'files/myFolder/a-sub-folder',
 				''
 			);
@@ -550,7 +551,7 @@ class FilesControllerTest extends TestCase {
 			['getDavPermissions'], $folderMock, $mountCacheMock
 		);
 		$filesController->method('getDavPermissions')
-			->willReturnOnConsecutiveCalls('RGDNVCK', 'RGDNVCK');
+			->willReturn('RGDNVCK', 'RGDNVCK');
 
 		$result = $filesController->getFilesInfo(["2","3"]);
 		assertSame(
