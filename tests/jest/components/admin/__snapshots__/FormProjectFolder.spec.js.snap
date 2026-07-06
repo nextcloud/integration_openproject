@@ -1,316 +1,341 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Component: FormProjectFolder Project folder setup disable mode should not show form fields 1`] = `
-<section>
-  <div
-    class="project-folder-setup"
-  >
-    <formheading-stub
-      index="5"
-      isdisabled="true"
-      isprojectfoldersetupheading="true"
-      title="Project folders (recommended)"
-    />
-     
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isdisabled="true" isprojectfoldersetupheading="true"></formheading-stub>
     <!---->
-     
     <!---->
   </div>
-   
   <!---->
-</section>
+</section>"
 `;
 
-exports[`Component: FormProjectFolder Project folder setup view mode disabled groupfolders app should not show error message if project folder is disabled 1`] = `
-<section>
-  <div
-    class="project-folder-setup"
-  >
-    <formheading-stub
-      index="5"
-      isprojectfoldersetupheading="true"
-      issetupcompletewithoutprojectfolders="true"
-      title="Project folders (recommended)"
-    />
-     
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: disabled project folder should set status "Inactive" 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true"></formheading-stub>
     <!---->
-     
-    <div
-      class="project-folder-form-container"
-    >
-      <div
-        class="project-folder-status"
-      >
-        <div
-          class="project-folder-status-value"
-        >
-          <b>
-            Automatically managed folders:
-          </b>
-           Inactive
-				
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Inactive
         </div>
-         
-        <div
-          class="form-actions"
-        >
-          <ncbutton-stub
-            alignment="center"
-            data-test-id="edit-project-folder-setup"
-            nativetype="button"
-            size="normal"
-            target="_self"
-            type="secondary"
-            variant="secondary"
-          >
-            
-						Edit project folders
-					
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
           </ncbutton-stub>
         </div>
       </div>
     </div>
   </div>
-   
   <!---->
-</section>
+</section>"
 `;
 
-exports[`Component: FormProjectFolder Project folder setup view mode disabled groupfolders app should show error message if project folder is enabled 1`] = `
-<section>
-  <div
-    class="project-folder-setup"
-  >
-    <formheading-stub
-      haserror="true"
-      index="5"
-      iscomplete="true"
-      isprojectfoldersetupheading="true"
-      title="Project folders (recommended)"
-    />
-     
-    <errornote-stub
-      errorlink="http://localhost/settings/apps/files/groupfolders"
-      errorlinklabel="Install latest version now"
-      errormessage=""
-      errortitle="This feature requires version {version} (or higher) of "{app}" app. Please install or update the app."
-    />
-     
-    <div
-      class="project-folder-form-container"
-    >
-      <div
-        class="project-folder-status"
-      >
-        <div
-          class="project-folder-status-value"
-        >
-          <b>
-            Automatically managed folders:
-          </b>
-           Active
-				
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon failure should set the group already exists error message and error details when group already exists 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" haserror="true"></formheading-stub>
+    <ncnotecard-stub type="error" heading="" text="" class="note-card">
+      <p class="note-card--title"><b>The group "OpenProject" already exists</b></p>
+      <p class="note-card--error-description">Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.</p>
+    </ncnotecard-stub>
+    <div class="project-folder-form-container">
+      <div class="project-folder-form">
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Automatically managed folders</b></nccheckboxradioswitch-stub>
+        <div>
+          <p class="project-folder-description">
+            Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.
+          </p> <br> <b>OpenProject user, group and folder</b>
+          <p class="project-folder-description">
+            For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br>
+            The app will never delete files or folders, even if you deactivate this later.
+          </p>
+          <div class="form-actions">
+            <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
+              Setup OpenProject user, group and folder
+            </ncbutton-stub>
+          </div>
         </div>
-         
-        <div
-          class="form-actions"
-        >
-          <ncbutton-stub
-            alignment="center"
-            data-test-id="edit-project-folder-setup"
-            nativetype="button"
-            size="normal"
-            target="_self"
-            type="secondary"
-            variant="secondary"
-          >
-            
-						Edit project folders
-					
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon failure should set the team folder name already exists error message and error details when team folder already exists 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" haserror="true"></formheading-stub>
+    <ncnotecard-stub type="error" heading="" text="" class="note-card">
+      <p class="note-card--title"><b>The team folder name "OpenProject" already exists</b></p>
+      <p class="note-card--error-description">Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.</p>
+    </ncnotecard-stub>
+    <div class="project-folder-form-container">
+      <div class="project-folder-form">
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Automatically managed folders</b></nccheckboxradioswitch-stub>
+        <div>
+          <p class="project-folder-description">
+            Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.
+          </p> <br> <b>OpenProject user, group and folder</b>
+          <p class="project-folder-description">
+            For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br>
+            The app will never delete files or folders, even if you deactivate this later.
+          </p>
+          <div class="form-actions">
+            <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
+              Setup OpenProject user, group and folder
+            </ncbutton-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon failure should set the user already exists error message and error details when user already exists 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" haserror="true"></formheading-stub>
+    <ncnotecard-stub type="error" heading="" text="" class="note-card">
+      <p class="note-card--title"><b>The user "OpenProject" already exists</b></p>
+      <p class="note-card--error-description">Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation.</p>
+    </ncnotecard-stub>
+    <div class="project-folder-form-container">
+      <div class="project-folder-form">
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Automatically managed folders</b></nccheckboxradioswitch-stub>
+        <div>
+          <p class="project-folder-description">
+            Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.
+          </p> <br> <b>OpenProject user, group and folder</b>
+          <p class="project-folder-description">
+            For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br>
+            The app will never delete files or folders, even if you deactivate this later.
+          </p>
+          <div class="form-actions">
+            <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
+              Setup OpenProject user, group and folder
+            </ncbutton-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon success should set app password form to view mode on "Done" action 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true"></formheading-stub>
+    <!---->
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Active
+        </div>
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
           </ncbutton-stub>
         </div>
       </div>
     </div>
   </div>
-   
-  <div
-    class="app-password-form-container"
-  >
-    <formheading-stub
-      index="6"
-      iscomplete="true"
-      title="Project folders application connection"
-    />
-     
-    <fieldvalue-stub
-      hidevalue="true"
-      isrequired="true"
-      title="Application Password"
-      value=""
-      withinspection="true"
-    />
-     
-    <div
-      class="form-actions"
-    >
-      <ncbutton-stub
-        alignment="center"
-        data-test-id="reset-user-app-password"
-        nativetype="button"
-        size="normal"
-        target="_self"
-        type="secondary"
-        variant="secondary"
-      >
-        
-				Replace application password
-			
+  <div class="app-password-form-container">
+    <formheading-stub index="6" title="Project folders application connection" iscomplete="true"></formheading-stub>
+    <fieldvalue-stub title="Application Password" value="" hidevalue="true" isrequired="true" withinspection="true"></fieldvalue-stub>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="reset-user-app-password">
+        Replace application password
       </ncbutton-stub>
     </div>
   </div>
-</section>
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon success should set status as "Active" 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true"></formheading-stub>
+    <!---->
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Active
+        </div>
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="app-password-form-container">
+    <formheading-stub index="6" title="Project folders application connection" iscomplete="true"></formheading-stub>
+    <textinput-stub value="12345678" type="text" placeholder="" label="Application Password" hinttext="This value will only be accessible once. Now, as an administrator copy this password to OpenProject {htmlLink}." isrequired="true" withcopybtn="true" readonly="true" id="__ID__" class="py-1"></textinput-stub>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="submit-op-system-password-form-btn">
+        Done, complete setup
+      </ncbutton-stub>
+    </div>
+  </div>
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup teamfolders app error should not show error message if project folder is disabled 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true"></formheading-stub>
+    <!---->
+    <div class="project-folder-form-container">
+      <div class="project-folder-form">
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no"><b>Automatically managed folders</b></nccheckboxradioswitch-stub>
+        <div class="complete-without-groupfolders">
+          <p class="project-folder-description">
+            We recommend using this functionality but it is not mandatory. Please activate it in case you want to use the automatic creation and management of project folders.
+          </p>
+          <div class="form-actions">
+            <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-without-project-folder-form-btn">
+              Complete without project folders
+            </ncbutton-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup teamfolders app error should show error message if project folder is enabled 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" haserror="true"></formheading-stub>
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/groupfolders" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="project-folder-form-container">
+      <div class="project-folder-form">
+        <nccheckboxradioswitch-stub id="__ID__" arialabel="" type="switch" buttonvariantgrouped="no" checked="true"><b>Automatically managed folders</b></nccheckboxradioswitch-stub>
+        <div>
+          <p class="project-folder-description">
+            Let OpenProject create folders per project automatically. It will ensure that every team member has always the correct access permissions.
+          </p> <br> <b>OpenProject user, group and folder</b>
+          <p class="project-folder-description">
+            For automatically managing project folders, this app needs to setup a special team folder, assigned to a group and managed by a user, each called "OpenProject". <br>
+            The app will never delete files or folders, even if you deactivate this later.
+          </p>
+          <div class="form-actions">
+            <ncbutton-stub alignment="center" disabled="true" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
+              Setup OpenProject user, group and folder
+            </ncbutton-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
 `;
 
 exports[`Component: FormProjectFolder Project folder setup view mode project folder setup status should show active if the project folder is enabled 1`] = `
-<section>
-  <div
-    class="project-folder-setup"
-  >
-    <formheading-stub
-      index="5"
-      iscomplete="true"
-      isprojectfoldersetupheading="true"
-      title="Project folders (recommended)"
-    />
-     
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true"></formheading-stub>
     <!---->
-     
-    <div
-      class="project-folder-form-container"
-    >
-      <div
-        class="project-folder-status"
-      >
-        <div
-          class="project-folder-status-value"
-        >
-          <b>
-            Automatically managed folders:
-          </b>
-           Active
-				
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Active
         </div>
-         
-        <div
-          class="form-actions"
-        >
-          <ncbutton-stub
-            alignment="center"
-            data-test-id="edit-project-folder-setup"
-            nativetype="button"
-            size="normal"
-            target="_self"
-            type="secondary"
-            variant="secondary"
-          >
-            
-						Edit project folders
-					
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
           </ncbutton-stub>
         </div>
       </div>
     </div>
   </div>
-   
-  <div
-    class="app-password-form-container"
-  >
-    <formheading-stub
-      index="6"
-      iscomplete="true"
-      title="Project folders application connection"
-    />
-     
-    <fieldvalue-stub
-      hidevalue="true"
-      isrequired="true"
-      title="Application Password"
-      value=""
-      withinspection="true"
-    />
-     
-    <div
-      class="form-actions"
-    >
-      <ncbutton-stub
-        alignment="center"
-        data-test-id="reset-user-app-password"
-        nativetype="button"
-        size="normal"
-        target="_self"
-        type="secondary"
-        variant="secondary"
-      >
-        
-				Replace application password
-			
+  <div class="app-password-form-container">
+    <formheading-stub index="6" title="Project folders application connection" iscomplete="true"></formheading-stub>
+    <fieldvalue-stub title="Application Password" value="" hidevalue="true" isrequired="true" withinspection="true"></fieldvalue-stub>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="reset-user-app-password">
+        Replace application password
       </ncbutton-stub>
     </div>
   </div>
-</section>
+</section>"
 `;
 
 exports[`Component: FormProjectFolder Project folder setup view mode project folder setup status should show inactive if the project folder is disabled 1`] = `
-<section>
-  <div
-    class="project-folder-setup"
-  >
-    <formheading-stub
-      index="5"
-      isprojectfoldersetupheading="true"
-      issetupcompletewithoutprojectfolders="true"
-      title="Project folders (recommended)"
-    />
-     
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
     <!---->
-     
-    <div
-      class="project-folder-form-container"
-    >
-      <div
-        class="project-folder-status"
-      >
-        <div
-          class="project-folder-status-value"
-        >
-          <b>
-            Automatically managed folders:
-          </b>
-           Inactive
-				
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Inactive
         </div>
-         
-        <div
-          class="form-actions"
-        >
-          <ncbutton-stub
-            alignment="center"
-            data-test-id="edit-project-folder-setup"
-            nativetype="button"
-            size="normal"
-            target="_self"
-            type="secondary"
-            variant="secondary"
-          >
-            
-						Edit project folders
-					
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
           </ncbutton-stub>
         </div>
       </div>
     </div>
   </div>
-   
   <!---->
-</section>
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode teamfolders app error should not show error message if project folder is disabled 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" issetupcompletewithoutprojectfolders="true" isprojectfoldersetupheading="true"></formheading-stub>
+    <!---->
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Inactive
+        </div>
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</section>"
+`;
+
+exports[`Component: FormProjectFolder Project folder setup view mode teamfolders app error should show error message if project folder is enabled 1`] = `
+"<section>
+  <div class="project-folder-setup">
+    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true" haserror="true"></formheading-stub>
+    <errornote-stub errortitle="This feature requires version {version} (or higher) of &quot;{app}&quot; app. Please install or update the app." errormessage="" errorlink="http://localhost/settings/apps/files/groupfolders" errorlinklabel="Install latest version now"></errornote-stub>
+    <div class="project-folder-form-container">
+      <div class="project-folder-status">
+        <div class="project-folder-status-value"><b>Automatically managed folders:</b> Active
+        </div>
+        <div class="form-actions">
+          <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="edit-project-folder-setup">
+            Edit project folders
+          </ncbutton-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="app-password-form-container">
+    <formheading-stub index="6" title="Project folders application connection" iscomplete="true"></formheading-stub>
+    <fieldvalue-stub title="Application Password" value="" hidevalue="true" isrequired="true" withinspection="true"></fieldvalue-stub>
+    <div class="form-actions">
+      <ncbutton-stub alignment="center" size="normal" type="secondary" nativetype="button" target="_self" variant="secondary" data-test-id="reset-user-app-password">
+        Replace application password
+      </ncbutton-stub>
+    </div>
+  </div>
+</section>"
 `;
