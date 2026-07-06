@@ -67,48 +67,10 @@ Object.assign(global.navigator, {
 })
 
 const selectors = {
-	opOauthForm: '.openproject-oauth-values',
-	authorizationMethod: '.authorization-method',
-	authorizationSettings: '.authorization-settings',
-	authorizationMethodSaveButton: '[data-test-id="submit-auth-method-values-btn"]',
-	authorizationSettingsSaveButton: '[data-test-id="submit-oidc-auth-settings-values-btn"]',
-	providerInput: '#provider-search-input',
-	oidcDropDownFirstElement: 'ul [title="keycloak"]',
-	authorizationMethodResetButton: '[data-test-id="reset-authorization-method-btn"]',
-	authorizationCancelResetButton: '[data-test-id="cancel-edit-auth-method-btn"]',
-	authorizationSettingsResetButton: '[data-test-id="reset-auth-settings-btn"]',
-	authorizationSettingsCancelButton: '[data-test-id="cancel-edit-auth-setting-btn"]',
-	openIdIdentityRadio: '[value="oidc"]',
-	oauth2Radio: '[value="oauth2"]',
-	openIdIdentityDisabled: 'input[type="radio"][value="oidc"][disabled="disabled"]',
-	authSettingTargetAudClient: '#authorization-method-target-client-id input',
-	ncOauthForm: '.nextcloud-oauth-values',
-	projectFolderSetupForm: '.project-folder-setup',
-	resetServerHostButton: '[data-test-id="reset-server-host-btn"]',
-	textInputWrapper: '.text-input',
-	resetOPOAuthFormButton: '[data-test-id="reset-op-oauth-btn"]',
-	resetNcOAuthFormButton: '[data-test-id="reset-nc-oauth-btn"]',
-	submitOPOAuthFormButton: '[data-test-id="submit-op-oauth-btn"]',
-	opOauthClientIdInput: '#openproject-oauth-client-id',
-	opOauthClientSecretInput: '#openproject-oauth-client-secret',
-	submitNcOAuthFormButton: '[data-test-id="submit-nc-oauth-values-form-btn"]',
 	resetAllAppSettingsButton: '#reset-all-app-settings-btn',
 	defaultUserConfigurationsForm: '.default-prefs',
 	defaultEnableNavigation: '#default-prefs--link',
-	projectFolderFormHeading: '.project-folder-setup formheading-stub',
-	projectFolderSetupSwitch: '[type="checkbox"]',
-	projectFolderSetupButtonStub: 'nccheckboxradioswitch-stub[type="switch"]',
-	completeProjectFolderSetupWithGroupFolderButton: '[data-test-id="complete-with-project-folders-form-btn"]',
-	completeWithoutProjectFolderSetupButton: '[data-test-id="complete-without-project-folder-form-btn"]',
-	editProjectFolderSetup: '[data-test-id="edit-project-folder-setup"]',
-	projectFolderStatus: '.project-folder-status-value',
-	projectFolderErrorMessage: '.note-card--title',
-	projectFolderErrorMessageDetails: '.note-card--error-description',
-	projectFolderErrorNote: '.project-folder-setup errornote-stub',
-	userAppPasswordButton: '[data-test-id="reset-user-app-password"]',
-	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 	adminAuditNoteCardInfoSelector: '[type="info"]',
-	encryptionNoteCardWarningSelector: '.project-folder-setup ncnotecard-stub',
 }
 
 const completeOAUTH2IntegrationState = {
@@ -119,6 +81,15 @@ const completeOAUTH2IntegrationState = {
 	nc_oauth_client: {
 		nextcloud_client_id: 'something',
 		nextcloud_client_secret: 'something-else',
+	},
+	project_folder_enabled: true,
+	app_password_set: true,
+	project_folder_info: {
+		status: true,
+	},
+	encryption_info: {
+		server_side_encryption_enabled: false,
+		encryption_enabled_for_groupfolders: false,
 	},
 }
 
@@ -159,6 +130,7 @@ describe('AdminSettings.vue', () => {
 			},
 			openprojectOauth: { complete: true },
 			nextcloudOauth: { complete: true },
+			projectFolder: { complete: true },
 		},
 	}
 
@@ -252,13 +224,24 @@ describe('AdminSettings.vue', () => {
 							nextcloud_client_id: 'something',
 							nextcloud_client_secret: 'something-else',
 						},
+						project_folder_enabled: true,
+						app_password_set: true,
+						project_folder_info: {
+							status: true,
+						},
+						encryption_info: {
+							server_side_encryption_enabled: false,
+							encryption_enabled_for_groupfolders: false,
+						},
 					},
 				})
 				confirmSpy = jest.spyOn(global.OC.dialogs, 'confirmDestructive')
 			})
+
 			afterEach(() => {
 				jest.clearAllMocks()
 			})
+
 			it('should trigger confirm dialog on click', async () => {
 				const resetButton = wrapper.find(selectors.resetAllAppSettingsButton)
 				await resetButton.trigger('click')
@@ -284,7 +267,7 @@ describe('AdminSettings.vue', () => {
 			it('should reset all settings on confirm when project folder is not setup', async () => {
 				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
 					.mockImplementationOnce(() => Promise.resolve({ data: true }))
-				await wrapper.vm.resetAllAppValues()
+				await wrapper.vm.confirmResetIntegrationSetup()
 
 				expect(saveOPOptionsSpy).toBeCalledWith(
 					'http://localhost/apps/integration_openproject/admin-config',
@@ -296,7 +279,7 @@ describe('AdminSettings.vue', () => {
 							authorization_method: null,
 							default_enable_navigation: false,
 							default_enable_unified_search: false,
-							setup_project_folder: false,
+							setup_project_folder: null,
 							setup_app_password: false,
 							oidc_provider: null,
 							sso_provider_type: null,
@@ -305,54 +288,10 @@ describe('AdminSettings.vue', () => {
 						},
 					},
 				)
-				axios.put.mockReset()
-			})
-			it('should reset all settings on confirm along with app password when app password is set', async () => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OAUTH2,
-						openproject_client_id: 'some-client-id-for-op',
-						openproject_client_secret: 'some-client-secret-for-op',
-						nc_oauth_client: {
-							nextcloud_client_id: 'something',
-							nextcloud_client_secret: 'something-else',
-						},
-						app_password_set: true,
-					},
-					oPUserAppPassword: 'oPUserAppPassword',
-				})
-
-				const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-					.mockImplementationOnce(() => Promise.resolve({ data: true }))
-				await wrapper.vm.resetAllAppValues()
-
-				expect(saveOPOptionsSpy).toBeCalledWith(
-					'http://localhost/apps/integration_openproject/admin-config',
-					{
-						values: {
-							openproject_client_id: null,
-							openproject_client_secret: null,
-							openproject_instance_url: null,
-							authorization_method: null,
-							default_enable_navigation: false,
-							default_enable_unified_search: false,
-							setup_project_folder: false,
-							setup_app_password: false,
-							oidc_provider: null,
-							sso_provider_type: null,
-							targeted_audience_client_id: null,
-							token_exchange: null,
-						},
-					},
-				)
-				// no new app password is received on response
-				expect(wrapper.vm.oPUserAppPassword).toBe(null)
-				expect(wrapper.vm.oPUserAppPassword).not.toBe('oPUserAppPassword')
 				axios.put.mockReset()
 			})
 			it('should reload the window at the end', async () => {
-				await wrapper.vm.resetAllAppValues()
+				await wrapper.vm.confirmResetIntegrationSetup()
 				await wrapper.vm.$nextTick()
 				expect(window.location.reload).toBeCalledTimes(1)
 				window.location = location
@@ -364,8 +303,9 @@ describe('AdminSettings.vue', () => {
 		it('should be visible when the integration is complete', () => {
 			const wrapper = getMountedWrapper({
 				state: completeOAUTH2IntegrationState,
+				...commonState,
 			})
-			expect(wrapper.find(selectors.defaultUserConfigurationsForm)).toMatchSnapshot()
+			expect(wrapper.find(selectors.defaultUserConfigurationsForm).element).toMatchSnapshot()
 		})
 		it('should not be visible if the integration is not complete', () => {
 			const wrapper = getMountedWrapper({
@@ -375,6 +315,15 @@ describe('AdminSettings.vue', () => {
 					openproject_client_id: 'some-client-id-for-op',
 					openproject_client_secret: 'some-client-secret-for-op',
 					nc_oauth_client: null,
+					project_folder_enabled: true,
+					app_password_set: true,
+					project_folder_info: {
+						status: true,
+					},
+					encryption_info: {
+						server_side_encryption_enabled: false,
+						encryption_enabled_for_groupfolders: false,
+					},
 				},
 			})
 			expect(wrapper.find(selectors.defaultUserConfigurationsForm).exists()).toBeFalsy()
@@ -393,6 +342,15 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
+					},
+					project_folder_enabled: true,
+					app_password_set: true,
+					project_folder_info: {
+						status: true,
+					},
+					encryption_info: {
+						server_side_encryption_enabled: false,
+						encryption_enabled_for_groupfolders: false,
 					},
 				},
 				...commonState,
@@ -435,6 +393,15 @@ describe('AdminSettings.vue', () => {
 					nc_oauth_client: {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
+					},
+					project_folder_enabled: true,
+					app_password_set: true,
+					project_folder_info: {
+						status: true,
+					},
+					encryption_info: {
+						server_side_encryption_enabled: false,
+						encryption_enabled_for_groupfolders: false,
 					},
 				},
 				...commonState,
