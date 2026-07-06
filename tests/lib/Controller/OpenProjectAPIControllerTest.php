@@ -61,18 +61,20 @@ class OpenProjectAPIControllerTest extends TestCase {
 		$configMock = $this->getMockBuilder(IConfig::class)->getMock();
 		$configMock
 			->method('getUserValue')
-			->withConsecutive(
-				['test','integration_openproject', 'token'],
-				['test','integration_openproject', 'refresh_token'],
-			)->willReturnOnConsecutiveCalls($token, 'refreshToken');
+			->willReturnMap(
+				[
+					['test', 'integration_openproject', 'token', '', $token],
+					['test', 'integration_openproject', 'refresh_token', '', 'refreshToken']
+				]
+			);
 
 		$opUrl = $opUrl ?? 'https://openproject.org';
 		$configMock
 			->method('getAppValue')
-			->withConsecutive(
-				['integration_openproject', 'openproject_instance_url'],
-				['integration_openproject', 'authorization_method'],
-			)->willReturnOnConsecutiveCalls($opUrl, $authorizationMethod);
+			->willReturnMap([
+				['integration_openproject', 'openproject_instance_url', '', $opUrl],
+				['integration_openproject', 'authorization_method', '', $authorizationMethod],
+			]);
 		return $configMock;
 	}
 
