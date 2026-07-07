@@ -82,7 +82,7 @@ const completeOAUTH2IntegrationState = {
 		nextcloud_client_id: 'something',
 		nextcloud_client_secret: 'something-else',
 	},
-	project_folder_enabled: true,
+	fresh_project_folder_setup: false,
 	app_password_set: true,
 	project_folder_info: {
 		status: true,
@@ -224,7 +224,7 @@ describe('AdminSettings.vue', () => {
 							nextcloud_client_id: 'something',
 							nextcloud_client_secret: 'something-else',
 						},
-						project_folder_enabled: true,
+						fresh_project_folder_setup: false,
 						app_password_set: true,
 						project_folder_info: {
 							status: true,
@@ -315,7 +315,7 @@ describe('AdminSettings.vue', () => {
 					openproject_client_id: 'some-client-id-for-op',
 					openproject_client_secret: 'some-client-secret-for-op',
 					nc_oauth_client: null,
-					project_folder_enabled: true,
+					fresh_project_folder_setup: false,
 					app_password_set: true,
 					project_folder_info: {
 						status: true,
@@ -343,7 +343,7 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
 					},
-					project_folder_enabled: true,
+					fresh_project_folder_setup: false,
 					app_password_set: true,
 					project_folder_info: {
 						status: true,
@@ -394,7 +394,7 @@ describe('AdminSettings.vue', () => {
 						nextcloud_client_id: 'something',
 						nextcloud_client_secret: 'something-else',
 					},
-					project_folder_enabled: true,
+					fresh_project_folder_setup: false,
 					app_password_set: true,
 					project_folder_info: {
 						status: true,

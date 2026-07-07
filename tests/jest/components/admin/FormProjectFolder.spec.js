@@ -75,7 +75,7 @@ const defaultProps = {
 	formState,
 	formOrder: 5,
 	projectFolderInfo: {
-		projectFolderEnabled: true,
+		freshSetup: true,
 		hasAppPassword: false,
 		app: {
 			enabled: true,
@@ -127,7 +127,7 @@ describe('Component: FormProjectFolder', () => {
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: true,
+						freshSetup: false,
 						hasAppPassword: true,
 						folderStatus: {
 							status: true,
@@ -167,12 +167,12 @@ describe('Component: FormProjectFolder', () => {
 
 					toMatchSerializedSnapshot(wrapper.html())
 				})
-				it('should show inactive if the project folder is disabled', () => {
+				it('should show inactive if the project folder is disabled', async () => {
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: false,
+						freshSetup: false,
 						hasAppPassword: false,
 					}
 					const wrapper = getWrapper({ props })
@@ -206,7 +206,7 @@ describe('Component: FormProjectFolder', () => {
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: false,
+						freshSetup: false,
 						hasAppPassword: false,
 					}
 					const wrapper = getWrapper({ props })
@@ -237,7 +237,7 @@ describe('Component: FormProjectFolder', () => {
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: false,
+						freshSetup: false,
 						hasAppPassword: false,
 						app: {
 							enabled: false,
@@ -269,7 +269,7 @@ describe('Component: FormProjectFolder', () => {
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: true,
+						freshSetup: false,
 						hasAppPassword: true,
 						app: {
 							enabled: false,
@@ -371,7 +371,9 @@ describe('Component: FormProjectFolder', () => {
 						expect(showSuccess).toHaveBeenCalledWith('OpenProject admin options saved')
 
 						expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
-						expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
+						const projectFolderFormHeading = wrapper.find(selectors.projectFolderFormHeading)
+						expect(projectFolderFormHeading.attributes().iscomplete).toBe(undefined)
+						expect(projectFolderFormHeading.attributes().issetupcompletewithoutprojectfolders).toBe('true')
 						expect(wrapper.find(selectors.projectFolderFormStatusLabel).text()).toContain(': Inactive')
 						expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe('Edit project folders')
 						expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
@@ -588,7 +590,7 @@ describe('Component: FormProjectFolder', () => {
 				beforeEach(async () => {
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
-					props.projectFolderInfo.projectFolderEnabled = true
+					props.projectFolderInfo.freshSetup = false
 					props.projectFolderInfo.hasAppPassword = true
 					props.projectFolderInfo.folderStatus.status = true
 					wrapper = getWrapper({ props })
@@ -630,6 +632,7 @@ describe('Component: FormProjectFolder', () => {
 
 					wrapper.find(selectors.projectFolderActionButton).vm.$emit('click')
 					await flushPromises()
+
 					expect(wrapper.vm.folderFormMode).toBe(F_MODES.VIEW)
 					expect(wrapper.vm.passwordFormMode).toBe(F_MODES.VIEW)
 					expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(true)
@@ -688,7 +691,7 @@ describe('Component: FormProjectFolder', () => {
 				beforeEach(async () => {
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
-					props.projectFolderInfo.projectFolderEnabled = false
+					props.projectFolderInfo.freshSetup = false
 					props.projectFolderInfo.hasAppPassword = false
 					props.projectFolderInfo.folderStatus.status = false
 					wrapper = getWrapper({ props })
@@ -740,7 +743,7 @@ describe('Component: FormProjectFolder', () => {
 
 					const props = structuredClone(defaultProps)
 					props.formState.projectFolder.complete = true
-					props.projectFolderInfo.projectFolderEnabled = false
+					props.projectFolderInfo.freshSetup = false
 					props.projectFolderInfo.hasAppPassword = false
 					props.projectFolderInfo.folderStatus.status = false
 					const wrapper = getWrapper({ props })
@@ -781,7 +784,7 @@ describe('Component: FormProjectFolder', () => {
 					props.formState.projectFolder.complete = true
 					props.projectFolderInfo = {
 						...defaultProps.projectFolderInfo,
-						projectFolderEnabled: true,
+						freshSetup: false,
 						hasAppPassword: true,
 						folderStatus: {
 							status: true,
@@ -837,7 +840,7 @@ describe('Component: FormProjectFolder', () => {
 		})
 	})
 
-	describe.only('Encryption warning after project folder setup', () => {
+	describe('Encryption warning after project folder setup', () => {
 		it.each([
 			[
 				'should show warning when server side encryption is enabled but encryption for groupfolders is not enabled',
@@ -868,7 +871,7 @@ describe('Component: FormProjectFolder', () => {
 			props.formState.projectFolder.complete = true
 			props.projectFolderInfo = {
 				...defaultProps.projectFolderInfo,
-				projectFolderEnabled: true,
+				freshSetup: false,
 				hasAppPassword: true,
 				folderStatus: {
 					status: true,
