@@ -188,11 +188,6 @@ class ConfigController extends Controller {
 
 		// creates or replace the app password
 		if (key_exists('setup_app_password', $values) && $values['setup_app_password'] === true) {
-			// enable project folder setting if app password is being created
-			// and project folder already exists.
-			if ($this->openprojectAPIService->isProjectFoldersSetupComplete()) {
-				$values['setup_project_folder'] = true;
-			}
 			$isAppPasswordBeingReplaced = $this->openprojectAPIService->hasAppPassword();
 			$this->openprojectAPIService->deleteAppPassword();
 			if (!$this->userManager->userExists(Application::OPEN_PROJECT_ENTITIES_NAME)) {
@@ -276,13 +271,7 @@ class ConfigController extends Controller {
 		}
 
 		foreach ($values as $key => $value) {
-			if ($key === 'setup_app_password') {
-				continue;
-			}
-			if ($key === 'setup_project_folder') {
-				// default value
-				$setupProjectFolder = $value ?? true;
-				$this->config->setAppValue(Application::APP_ID, $key, $setupProjectFolder);
+			if ($key === 'setup_app_password' || $key === 'setup_project_folder') {
 				continue;
 			}
 			$this->config->setAppValue(Application::APP_ID, $key, trim((string)$value));
