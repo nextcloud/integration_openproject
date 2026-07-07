@@ -131,7 +131,7 @@ exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setu
 exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon success should set app password form to view mode on "Done" action 1`] = `
 "<section>
   <div class="project-folder-setup">
-    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true"></formheading-stub>
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" iscomplete="true"></formheading-stub>
     <!---->
     <div class="project-folder-form-container">
       <div class="project-folder-status">
@@ -160,7 +160,7 @@ exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setu
 exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setup on save: enabled project folder upon success should set status as "Active" 1`] = `
 "<section>
   <div class="project-folder-setup">
-    <formheading-stub index="5" title="Project folders (recommended)" iscomplete="true" isprojectfoldersetupheading="true"></formheading-stub>
+    <formheading-stub index="5" title="Project folders (recommended)" isprojectfoldersetupheading="true" iscomplete="true"></formheading-stub>
     <!---->
     <div class="project-folder-form-container">
       <div class="project-folder-status">
