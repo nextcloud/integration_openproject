@@ -21,6 +21,7 @@ use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
 use OCA\OpenProject\Listener\TermsOfServiceEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
+use OCA\OpenProject\Listener\UserLoggedInEventListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
@@ -46,6 +47,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
+use OCP\User\Events\UserLoggedInEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -146,6 +148,7 @@ class Application extends App implements IBootstrap {
 		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
 		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
 		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
+		$dispatcher->addServiceListener(UserLoggedInEvent::class, UserLoggedInEventListener::class);
 		/** @psalm-suppress InvalidArgument AppEnableEvent event is not in stable25 so making psalm not complain*/
 		$dispatcher->addServiceListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
 		/** @psalm-suppress InvalidArgument TermsCreatedEvent event is not yet registered in terms_of_service app, so making psalm not complain */
