@@ -9,7 +9,7 @@
 			<FormHeading :index="projectFolderFormIndex"
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
-				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolder"
+				:is-setup-complete-without-project-folders="isProjectFolderFormInViewMode && isSetupCompleteWithoutProjectFolder"
 				:has-error="!!projectFolderSetupError || hasErrorAfterProjectFolderSetup || showGroupfoldersAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarning"
 				:is-complete="isProjectFolderFormComplete && enableProjectFolder"
@@ -206,7 +206,7 @@ export default {
 			folderFormMode: F_MODES.DISABLE,
 			passwordFormMode: F_MODES.DISABLE,
 			projectFolderSetupError: null,
-			enableProjectFolder: this.projectFolderInfo.projectFolderEnabled,
+			enableProjectFolder: true,
 			folderSetupButtonLabel: messages.projectFolderSetup.completeWithProjectFolderSetup,
 			appPassword: null,
 			messages,
@@ -246,12 +246,10 @@ export default {
 			return t('integration_openproject', 'Inactive')
 		},
 		unchangedProjectFolderForm() {
-			return this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled
-				&& this.folderSetupButtonLabel === messages.projectFolderSetup.keepCurrentChange
+			return this.folderSetupButtonLabel === messages.projectFolderSetup.keepCurrentChange
 		},
 		showAppPasswordForm() {
-			return this.isProjectFolderFormComplete
-				&& this.isSetupCompleteWithProjectFolder
+			return this.isProjectFolderFormComplete && this.isSetupCompleteWithProjectFolder && this.enableProjectFolder
 		},
 		hasAppPassword() {
 			return !!this.projectFolderInfo.hasAppPassword || !!this.appPassword
@@ -266,13 +264,14 @@ export default {
 			return this.passwordFormMode === F_MODES.EDIT
 		},
 		isSetupCompleteWithoutProjectFolder() {
-			if (this.isProjectFolderFormInEditMode || !this.isProjectFolderFormComplete) {
-				return false
-			}
-			return !this.enableProjectFolder && (!this.appPassword || !this.projectFolderInfo.hasAppPassword)
+			const alreadySetup = !this.projectFolderInfo.freshSetup && !this.projectFolderInfo.hasAppPassword
+			const recentSetup = !this.enableProjectFolder && !this.appPassword
+			return alreadySetup || recentSetup
 		},
 		isSetupCompleteWithProjectFolder() {
-			return this.enableProjectFolder && (this.appPassword || this.projectFolderInfo.hasAppPassword)
+			const alreadySetup = !this.projectFolderInfo.freshSetup && this.projectFolderInfo.hasAppPassword
+			const recentSetup = this.enableProjectFolder && this.appPassword
+			return alreadySetup || recentSetup
 		},
 		hasErrorAfterProjectFolderSetup() {
 			return (!!this.projectFolderInfo.hasAppPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
@@ -321,22 +320,20 @@ export default {
 		},
 	},
 	created() {
-		if ((this.projectFolderInfo.projectFolderEnabled && this.projectFolderInfo.hasAppPassword)
-			|| (!this.projectFolderInfo.projectFolderEnabled && !this.projectFolderInfo.hasAppPassword)
-		) {
+		if (!this.projectFolderInfo.freshSetup) {
 			this.setProjectFolderFormToViewMode()
 			this.$emit('formcomplete', this.markFormComplete)
-		}
 
-		if (this.projectFolderInfo.hasAppPassword) {
-			this.setAppPasswordFormToViewMode()
-		}
+			this.enableProjectFolder = this.isSetupCompleteWithProjectFolder
 
-		if (this.isAuthorizationSettingFormComplete && !this.isProjectFolderFormComplete) {
+			if (this.projectFolderInfo.hasAppPassword) {
+				this.setAppPasswordFormToViewMode()
+			}
+
+			this.updateProjectFolderButtonLabel()
+		} else if (this.isAuthorizationSettingFormComplete && !this.isProjectFolderFormComplete) {
 			this.setProjectFolderFormToEditMode()
 		}
-
-		this.updateProjectFolderButtonLabel()
 	},
 	methods: {
 		markFormComplete(formState) {
@@ -368,7 +365,7 @@ export default {
 		},
 		changeProjectFolderState() {
 			if (this.isProjectFolderFormComplete) {
-				if (this.enableProjectFolder === this.projectFolderInfo.projectFolderEnabled) {
+				if (this.enableProjectFolder === this.isSetupCompleteWithProjectFolder) {
 					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
 				} else {
 					this.updateProjectFolderButtonLabel()
