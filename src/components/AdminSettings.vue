@@ -125,7 +125,6 @@ export default {
 		return {
 			form: structuredClone(ADMIN_SETTINGS_FORM),
 			state: loadState('integration_openproject', 'admin-settings-config'),
-			isAdminConfigOk: loadState('integration_openproject', 'admin-config-status'),
 			isDarkTheme: null,
 			isAllTermsOfServiceSignedForUserOpenProject: true,
 			userSettingDescription: USER_SETTINGS,
@@ -268,13 +267,10 @@ export default {
 			}
 
 			try {
-				const response = await saveAdminConfig(data)
-				// after successfully saving the admin credentials, the admin config status needs to be updated
-				this.isAdminConfigOk = response?.data?.status === true
+				await saveAdminConfig(data)
 				showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 			} catch (error) {
 				console.error(error.message)
-				this.isAdminConfigOk = null
 				if (error.response?.data?.error) {
 					console.error(error.response?.data?.error)
 				}

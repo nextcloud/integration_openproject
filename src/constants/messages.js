@@ -25,10 +25,10 @@ export const messages = {
 	noMachingTypeFound: t(APP_ID, 'No matching type found'),
 	noMachingAssigneeFound: t(APP_ID, 'No matching assignee found'),
 	projectFolderSetup: {
-		keepCurrentChange: t('integration_openproject', 'Keep current setup'),
-		completeWithoutProjectFolderSetup: t('integration_openproject', 'Complete without project folders'),
-		completeWithProjectFolderSetup: t('integration_openproject', 'Setup OpenProject user, group and folder'),
-		retrySetupWithProjectFolder: t('integration_openproject', 'Retry setup OpenProject user, group and folder'),
+		keepCurrentChange: t(APP_ID, 'Keep current setup'),
+		completeWithoutProjectFolderSetup: t(APP_ID, 'Complete without project folders'),
+		completeWithProjectFolderSetup: t(APP_ID, 'Setup OpenProject user, group and folder'),
+		retrySetupWithProjectFolder: t(APP_ID, 'Retry setup OpenProject user, group and folder'),
 	},
 }
 
