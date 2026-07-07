@@ -95,7 +95,7 @@
 								@click="saveProjectFolder()">
 								<template #icon>
 									<NcLoadingIcon v-if="loading" class="loading-spinner" :size="20" />
-									<RestoreIcon v-else-if="projectFolderSetupError" fill-color="#FFFFFF" :size="20" />
+									<RestoreIcon v-else-if="retryProjectFolderSetup" fill-color="#FFFFFF" :size="20" />
 									<CheckBoldIcon v-else fill-color="#FFFFFF" :size="20" />
 								</template>
 								{{ folderSetupButtonLabel }}
@@ -157,6 +157,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
+import RestoreIcon from 'vue-material-design-icons/Restore.vue'
 import FieldValue from './FieldValue.vue'
 import FormHeading from './FormHeading.vue'
 import TextInput from './TextInput.vue'
@@ -176,6 +177,7 @@ export default {
 		AutoRenewIcon,
 		CheckBoldIcon,
 		PencilIcon,
+		RestoreIcon,
 		FieldValue,
 		FormHeading,
 		TextInput,
@@ -210,6 +212,7 @@ export default {
 			folderSetupButtonLabel: messages.projectFolderSetup.completeWithProjectFolderSetup,
 			appPassword: null,
 			appPasswordCreated: false,
+			retryProjectFolderSetup: false,
 			messages,
 			messagesFmt,
 			appLinks,
@@ -324,7 +327,7 @@ export default {
 			}
 			this.currentProjectFolderState = this.savedProjectFolderState
 
-			if (this.projectFolderInfo.folderStatus?.errorMessage) {
+			if (this.projectFolderInfo.folderStatus?.errorMessage && this.currentProjectFolderState) {
 				this.projectFolderSetupError = this.projectFolderInfo.folderStatus.errorMessage
 			}
 
@@ -359,12 +362,23 @@ export default {
 		},
 		updateProjectFolderButtonLabel() {
 			if (this.currentProjectFolderState) {
-				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
+				if (this.projectFolderSetupError && this.appPasswordCreated) {
+					this.folderSetupButtonLabel = messages.projectFolderSetup.retrySetupWithProjectFolder
+				} else {
+					this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithProjectFolderSetup
+				}
 			} else {
 				this.folderSetupButtonLabel = messages.projectFolderSetup.completeWithoutProjectFolderSetup
 			}
 		},
 		changeProjectFolderState() {
+			// update error message when user toggles the switch
+			if (!this.currentProjectFolderState) {
+				this.projectFolderSetupError = null
+			} else if (this.projectFolderInfo.folderStatus?.errorMessage) {
+				this.projectFolderSetupError = this.projectFolderInfo.folderStatus.errorMessage
+			}
+
 			if (this.isProjectFolderFormComplete) {
 				if (this.unchangedProjectFolderForm) {
 					this.folderSetupButtonLabel = messages.projectFolderSetup.keepCurrentChange
@@ -434,6 +448,10 @@ export default {
 				let errorMessage = error.message
 				if (error.response?.data?.error) {
 					this.projectFolderSetupError = error.response.data.error
+					if (this.currentProjectFolderState) {
+						this.retryProjectFolderSetup = true
+						this.folderSetupButtonLabel = messages.projectFolderSetup.retrySetupWithProjectFolder
+					}
 					errorMessage = error.response.data.error
 				}
 				const message = t('integration_openproject', 'Failed to save OpenProject admin options')
