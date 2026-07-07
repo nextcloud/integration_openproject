@@ -793,7 +793,7 @@ describe('Component: FormProjectFolder', () => {
 							expect(wrapper.find(selectors.projectFolderFormStatus).exists()).toBe(false)
 							expect(wrapper.find(selectors.projectFolderFormHeading).attributes().iscomplete).toBe(undefined)
 							expect(wrapper.find(selectors.projectFolderSetupSwitch).attributes().checked).toBe('true')
-							expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.completeWithProjectFolderSetup)
+							expect(wrapper.find(selectors.projectFolderActionButton).text()).toBe(messages.projectFolderSetup.retrySetupWithProjectFolder)
 							expect(wrapper.find(selectors.appPasswordFormContainer).exists()).toBe(false)
 							toMatchSerializedSnapshot(wrapper.html())
 						})

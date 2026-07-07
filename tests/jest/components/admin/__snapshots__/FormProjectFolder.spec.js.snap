@@ -53,7 +53,7 @@ exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setu
           </p>
           <div class="form-actions">
             <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
-              Setup OpenProject user, group and folder
+              Retry setup OpenProject user, group and folder
             </ncbutton-stub>
           </div>
         </div>
@@ -85,7 +85,7 @@ exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setu
           </p>
           <div class="form-actions">
             <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
-              Setup OpenProject user, group and folder
+              Retry setup OpenProject user, group and folder
             </ncbutton-stub>
           </div>
         </div>
@@ -117,7 +117,7 @@ exports[`Component: FormProjectFolder Project folder setup edit mode  fresh setu
           </p>
           <div class="form-actions">
             <ncbutton-stub alignment="center" size="normal" type="primary" nativetype="button" target="_self" variant="secondary" data-test-id="complete-with-project-folders-form-btn">
-              Setup OpenProject user, group and folder
+              Retry setup OpenProject user, group and folder
             </ncbutton-stub>
           </div>
         </div>
