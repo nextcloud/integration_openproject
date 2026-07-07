@@ -10,7 +10,7 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isProjectFolderFormInViewMode && isSetupCompleteWithoutProjectFolder"
-				:has-error="!!projectFolderSetupError || hasErrorAfterProjectFolderSetup || showTeamfolderAppError"
+				:has-error="!!projectFolderSetupError || showTeamfolderAppError"
 				:show-encryption-warning-for-group-folders="showEncryptionWarning"
 				:is-complete="isProjectFolderFormComplete && savedProjectFolderState"
 				:is-disabled="isProjectFolderFormInDisableMode"
@@ -20,10 +20,9 @@
 				:error-title="messagesFmt.appNotEnabledOrUnsupported(getTeamfolderAppName, getMinSupportedTeamfolderAppVersion)"
 				:error-link="appLinks.groupfolders.installLink"
 				:error-link-label="messages.installLatestVersionNow" />
-			<NcNoteCard v-else-if="projectFolderSetupError || hasErrorAfterProjectFolderSetup" class="note-card" type="error">
+			<NcNoteCard v-else-if="projectFolderSetupError" class="note-card" type="error">
 				<p class="note-card--title">
-					<b v-if="hasErrorAfterProjectFolderSetup">{{ getSetupErrorMessage }}</b>
-					<b v-else>{{ projectFolderSetupError }}</b>
+					<b>{{ projectFolderSetupError }}</b>
 				</p>
 				<p class="note-card--error-description" v-html="getProjectFolderSetupErrorDescription" /> <!-- eslint-disable-line vue/no-v-html -->
 			</NcNoteCard>
@@ -210,6 +209,7 @@ export default {
 			savedProjectFolderState: null,
 			folderSetupButtonLabel: messages.projectFolderSetup.completeWithProjectFolderSetup,
 			appPassword: null,
+			appPasswordCreated: false,
 			messages,
 			messagesFmt,
 			appLinks,
@@ -253,7 +253,7 @@ export default {
 			return this.isProjectFolderFormComplete && this.isSetupCompleteWithProjectFolder && this.currentProjectFolderState
 		},
 		hasAppPassword() {
-			return !!this.projectFolderInfo.hasAppPassword || !!this.appPassword
+			return this.appPasswordCreated
 		},
 		isAppPasswordFormInDisableMode() {
 			return this.passwordFormMode === F_MODES.DISABLE
@@ -265,22 +265,16 @@ export default {
 			return this.passwordFormMode === F_MODES.EDIT
 		},
 		isSetupCompleteWithoutProjectFolder() {
-			return !this.appPassword && !this.projectFolderInfo.hasAppPassword && this.savedProjectFolderState === false
+			return !this.appPasswordCreated && this.savedProjectFolderState === false
 		},
 		isSetupCompleteWithProjectFolder() {
-			return (this.appPassword || this.projectFolderInfo.hasAppPassword) && this.savedProjectFolderState === true
-		},
-		hasErrorAfterProjectFolderSetup() {
-			return (!!this.projectFolderInfo.hasAppPassword && !this.isProjectFolderFormInEditMode && !this.projectFolderInfo.folderStatus.status)
+			return this.appPasswordCreated && this.savedProjectFolderState === true
 		},
 		showTeamfolderAppError() {
 			return this.currentProjectFolderState && !this.hasEnabledSupportedTeamfolderApp && !this.isProjectFolderFormInDisableMode
 		},
-		getSetupErrorMessage() {
-			return this.projectFolderInfo.folderStatus?.errorMessage
-		},
 		showEncryptionWarning() {
-			if (!this.projectFolderInfo.folderStatus.status || !this.projectFolderInfo.hasAppPassword || this.isProjectFolderFormInEditMode) {
+			if (!this.projectFolderInfo.folderStatus.status || !this.appPasswordCreated || this.isProjectFolderFormInEditMode) {
 				return false
 			}
 			return this.projectFolderInfo.encryption.server_side_encryption_enabled
@@ -323,13 +317,15 @@ export default {
 
 			if (this.projectFolderInfo.hasAppPassword) {
 				this.savedProjectFolderState = true
+				this.appPasswordCreated = true
+				this.setAppPasswordFormToViewMode()
 			} else {
 				this.savedProjectFolderState = false
 			}
 			this.currentProjectFolderState = this.savedProjectFolderState
 
-			if (this.projectFolderInfo.hasAppPassword) {
-				this.setAppPasswordFormToViewMode()
+			if (this.projectFolderInfo.folderStatus?.errorMessage) {
+				this.projectFolderSetupError = this.projectFolderInfo.folderStatus.errorMessage
 			}
 
 			this.updateProjectFolderButtonLabel()
@@ -422,9 +418,11 @@ export default {
 
 				if (this.currentProjectFolderState) {
 					this.appPassword = response.data.oPUserAppPassword
+					this.appPasswordCreated = true
 					this.setAppPasswordFormToEditMode()
 				} else {
 					this.appPassword = null
+					this.appPasswordCreated = false
 					this.setAppPasswordFormToDisableMode()
 				}
 
