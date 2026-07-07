@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix: Handle invalid boolean auth-method value [#1074](https://github.com/nextcloud/integration_openproject/pull/1074)
 - Fix: Update OpenProject icon [#1078](https://github.com/nextcloud/integration_openproject/pull/1078)
 - Fix: False integration setup status even after complete oauth setup [#1086](https://github.com/nextcloud/integration_openproject/pull/1086)
+- Fix: Incompatible AMPF with the latest Nextcloud patch releases [#1097](https://github.com/nextcloud/integration_openproject/pull/1097)
 
 ## 2.11.3 - 2026-06-18
 
