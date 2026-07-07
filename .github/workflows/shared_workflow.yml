@@ -14,7 +14,7 @@ on:
       php_versions:
         required: false
         type: string
-        default: '8.2 8.3 8.4'
+        default: '8.3 8.4 8.5'
 
 name: CI
 
@@ -93,7 +93,7 @@ jobs:
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
           PHP_VERSIONS: ${{ inputs.php_versions }}
-          DEFAULT_PHP_VERSION: '8.3'
+          DEFAULT_PHP_VERSION: '8.4'
           DEFAULT_DATABASE: 'mysql'
           EXTRA_DATABASES: 'pgsql'
         run: |
