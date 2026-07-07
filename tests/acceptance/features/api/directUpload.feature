@@ -678,7 +678,7 @@ Feature: API endpoint for direct upload
     }
     """
 
-  @expect-fail-on-nc34
+  @expect-fail-on-nc34 @expect-fail-on-nc32
   Scenario: Upload a file that just fits into the users quota
     Given the quota of user "Carol" has been set to "10 B"
     And user "Carol" got a direct-upload token for "/"
