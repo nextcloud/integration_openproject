@@ -43,7 +43,7 @@
 			:form-order="projectFolderFormOrder"
 			:form-state="form"
 			:project-folder-info="{
-				projectFolderEnabled: state.project_folder_enabled,
+				freshSetup: state.fresh_project_folder_setup,
 				hasAppPassword: state.app_password_set,
 				app: state.apps.groupfolders,
 				folderStatus: state.project_folder_info,
