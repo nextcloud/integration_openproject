@@ -17,16 +17,18 @@ use OCP\ISession;
 use OCP\User\Events\UserLoggedInEvent;
 
 /**
- * @template-implements IEventListener<Event>
+ * @template-implements IEventListener<UserLoggedInEvent>
  */
 class UserLoggedInEventListener implements IEventListener {
 	public function __construct(
 		private ISession $session,
 		private ITimeFactory $timeFactory,
-  ) {
+	) {
 	}
 
 	/**
+	 * @param UserLoggedInEvent $event
+	 *
 	 * @return void
 	 */
 	public function handle(Event $event): void {
@@ -34,8 +36,10 @@ class UserLoggedInEventListener implements IEventListener {
 			return;
 		}
 
-    if ($event->getUid() === Application::OPEN_PROJECT_ENTITIES_NAME && $event->isTokenLogin()) {
-      $this->session->set('last-password-confirm', $this->timeFactory->getTime());
-    }
+		if ($event->getUid() === Application::OPEN_PROJECT_ENTITIES_NAME && $event->isTokenLogin()) {
+			// set the last-password-confirm session variable to allow OpenProject user
+			// to perform actions using app-password without requiring password confirmation
+			$this->session->set('last-password-confirm', $this->timeFactory->getTime());
+		}
 	}
 }
