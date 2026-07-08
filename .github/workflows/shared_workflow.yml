@@ -129,14 +129,14 @@ jobs:
           - ${{ github.workspace }}:/var/www/html/apps-shared
 
       database-pgsql:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        image: ghcr.io/nextcloud/continuous-integration-postgres-18:latest
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: nextcloud
 
       database-mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-11.8:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'

@@ -65,7 +65,7 @@ jobs:
           - ${{ github.workspace }}/build-app:/var/www/html/build-app-shared
 
       database-mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-11.8:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
