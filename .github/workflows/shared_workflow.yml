@@ -217,7 +217,12 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('./composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install PHP dependencies
+      - name: Composer update
+        if: ${{ format('{0}.{1}', matrix.phpVersionMajor, matrix.phpVersionMinor) == '8.5' }}
+        run: composer update
+
+      - name: Composer install
+        if: ${{ format('{0}.{1}', matrix.phpVersionMajor, matrix.phpVersionMinor) != '8.5' }}
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Prepare Nextcloud server (for phpunit and psalm)
