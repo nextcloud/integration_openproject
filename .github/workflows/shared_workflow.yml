@@ -265,14 +265,14 @@ jobs:
           make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
 
       - name: Setup .NET Core # this is required to execute Convert PHP cobertura coverage to lcov step
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version && matrix.database == 'mysql' }}
         uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309
         with:
           dotnet-version: 6.0.101
           dotnet-quality: 'ga'
 
       - name: Convert PHP cobertura coverage to lcov
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version && matrix.database == 'mysql' }}
         uses: danielpalme/ReportGenerator-GitHub-Action@abaac9fef72e4116bfc69905d51062790bda0335
         with:
           reports: 'integration_openproject/server/apps/integration_openproject/coverage/php/cobertura.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
@@ -291,7 +291,7 @@ jobs:
           toolpath: 'reportgeneratortool' # Default directory for installing the dotnet tool.
 
       - name: PHP Code Coverage Summary Report
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version && matrix.database == 'mysql' }}
         uses: romeovs/lcov-reporter-action@dda1c9b1fa1622b225e9acd87a248751dbcc6ada
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -300,7 +300,7 @@ jobs:
           title: 'PHP Code Coverage'
 
       - name: PHP coverage check
-        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version }}
+        if: ${{ github.event_name == 'pull_request' && matrix.nextcloudVersion == 'stable34' && matrix.phpVersion == needs.create-matrix.outputs.default_php_version && matrix.database == 'mysql' }}
         uses: VeryGoodOpenSource/very_good_coverage@3b475421464c564c0714d92ce02742bd81fa9eda
         with:
           min_coverage: '56'
