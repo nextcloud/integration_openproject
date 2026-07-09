@@ -154,9 +154,10 @@ class FeatureContext implements Context {
 	 *
 	 */
 	private function createUserWithRetry(string $user, array $userAttributes): void {
-		$retryCreate = 1;
+		$retryCreate = 0;
+		$maxRetry = 1;
 		$isUserCreated = false;
-		while ($retryCreate <= 3) {
+		while ($retryCreate <= $maxRetry) {
 			$this->response = $this->sendOCSRequest(
 				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
 			);
@@ -166,11 +167,14 @@ class FeatureContext implements Context {
 				break;
 			}
 			
-			$message = json_decode($this->response->getBody()->getContents(), true)['ocs']['meta']['message']
-				?? 'Message not found in response';
-			echo("Creating user " . $user . " failed!\n");
+			$responseData = json_decode($this->response->getBody()->getContents(), true);
+			$message = 'Message not found in response';
+			if (isset($responseData['ocs']['meta']['message'])) {
+				$message = $responseData['ocs']['meta']['message'];
+			}
+			echo("Failed to create user: " . $user . "\n");
 
-			// In CI, delete user's data directory if it exists.
+			// In CI, delete user data directory if the error is related to it.
 			if ($statusCode === 400 &&
 				getenv('CI') &&
 				str_contains($message, 'files already exist for this user')) {
@@ -183,7 +187,7 @@ class FeatureContext implements Context {
 			sleep(2);
 			$retryCreate++;
 		}
-		Assert::assertTrue($isUserCreated, 'User ' . $user . ' could not be created.' . 'Expected status code 200 but got ' . $statusCode);
+		Assert::assertTrue($isUserCreated, 'Failed to create user "' . $user . '". Expected status code 200 but got ' . $statusCode);
 	}
 
 	/**
