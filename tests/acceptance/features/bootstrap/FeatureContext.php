@@ -153,10 +153,41 @@ class FeatureContext implements Context {
 	 * @param array<mixed> $userAttributes
 	 *
 	 */
-	private function createUser(string $user, array $userAttributes): void {
-		$this->response = $this->sendOCSRequest(
-			'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
-		);
+	private function createUserWithRetry(string $user, array $userAttributes): void {
+		$retryCreate = 0;
+		$maxRetry = 1;
+		$isUserCreated = false;
+		while ($retryCreate <= $maxRetry) {
+			$this->response = $this->sendOCSRequest(
+				'/cloud/users', 'POST', $this->getAdminUsername(), $userAttributes
+			);
+			$statusCode = $this->response->getStatusCode();
+			if ($statusCode === 200) {
+				$isUserCreated = true;
+				break;
+			}
+			
+			$responseData = json_decode($this->response->getBody()->getContents(), true);
+			$message = 'Message not found in response';
+			if (isset($responseData['ocs']['meta']['message'])) {
+				$message = $responseData['ocs']['meta']['message'];
+			}
+			echo("Failed to create user: " . $user . "\n");
+
+			// In CI, delete user data directory if the error is related to it.
+			if ($statusCode === 400 &&
+				getenv('CI') &&
+				str_contains($message, 'files already exist for this user')) {
+				$this->deleteUserDataFromDocker($user);
+			} else {
+				// in case of any other error just log the response
+				echo("Status Code: " . $statusCode . "\n");
+				echo("Error: " . $message . "\n");
+			}
+			sleep(2);
+			$retryCreate++;
+		}
+		Assert::assertTrue($isUserCreated, 'Failed to create user "' . $user . '". Expected status code 200 but got ' . $statusCode);
 	}
 
 	/**
@@ -168,7 +199,7 @@ class FeatureContext implements Context {
 		if ($displayName !== null) {
 			$userAttributes['displayName'] = $displayName;
 		}
-		$this->createUser($user, $userAttributes);
+		$this->createUserWithRetry($user, $userAttributes);
 		$this->theHTTPStatusCodeShouldBe(200);
 		$userid = \strtolower($user);
 		$this->createdUsers[$userid] = $userAttributes;
@@ -332,28 +363,35 @@ class FeatureContext implements Context {
 		// check data folders
 		$checkCmd = "docker exec nextcloud /bin/bash -c '[ -d $folder1 ] || [ -d $folder2 ]' 2>&1";
 		exec($checkCmd, $checkOutput, $checkCode);
-		if ($checkCode !== 0) {
-			if ($checkCode === 1) {
+		switch ($checkCode) {
+			case 0:
+				echo "User '$user' data directory exists, proceeding with deletion.\n";
+				break;
+
+			case 1:
 				echo "User '$user' data directory doesn't exist, skipping deletion.\n";
-			} else {
+				return;
+
+			default:
 				echo "Failed to check user data directory for '$user'.\n";
 				echo "Command: $checkCmd\n";
 				echo "Exit code: $checkCode\n";
-			}
-			if (count($checkOutput) > 0) {
-				echo "Command output: " . implode("\n", $checkOutput) . "\n";
-			}
-			return;
+				if ($checkOutput) {
+					echo "Command output:\n" . implode("\n", $checkOutput) . "\n";
+				}
+				return;
 		}
 
 		// delete user data directory
-		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -rf $dataDir/$userPattern' 2>&1";
+		$rmCmd = "docker exec nextcloud /bin/bash -c 'rm -r $dataDir/$userPattern' 2>&1";
 		exec($rmCmd, $output, $rmCode);
-		if ($rmCode !== 0) {
+		if ($rmCode === 0) {
+			echo "Successfully deleted data directory of user '$user'";
+		} else {
 			echo "Failed to delete data directory of user '$user'.\n";
 			echo "Command: $rmCmd\n";
 			echo "Exit code: $rmCode\n";
-			if (count($output) > 0) {
+			if ($output) {
 				echo "Command output: " . implode("\n", $output) . "\n";
 			}
 		}
@@ -1514,11 +1552,6 @@ class FeatureContext implements Context {
 					. "Status Code: " . $deleteStatusCode . "\n"
 					. "Error: \n" . $this->response->getBody()->getContents() . "\n";
 				throw new Exception($message);
-			}
-
-			// In CI, delete user's data directory if it exists.
-			if (getenv('CI')) {
-				$this->deleteUserDataFromDocker($user);
 			}
 		}
 
