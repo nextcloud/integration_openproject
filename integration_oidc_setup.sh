@@ -79,16 +79,15 @@ if [[ -z "$OP_ADMIN_USERNAME" || -z "$OP_ADMIN_PASSWORD" ]]; then
   exit 1
 fi
 
-if [[ $INTEGRATION_SETUP_TEMP_DIR == "" ]]; then
-  log_info "Using default temp dir: ${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}"
-  INTEGRATION_SETUP_TEMP_DIR=${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}
-  mkdir -p ${INTEGRATION_SETUP_TEMP_DIR}
+if [[ -z "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  INTEGRATION_SETUP_TEMP_DIR="$INTEGRATION_SETUP_DEFAULT_TEMP_DIR"
+  mkdir -p "$INTEGRATION_SETUP_TEMP_DIR"
+  log_info "Using default temp dir: $INTEGRATION_SETUP_TEMP_DIR"
+elif [[ ! -d "$INTEGRATION_SETUP_TEMP_DIR" ]]; then
+  log_error "Temporary directory '$INTEGRATION_SETUP_TEMP_DIR' does not exist"
+  exit 1
 else
-  log_info "Using ${INTEGRATION_SETUP_TEMP_DIR} as non-default temporary directory"
-  if [ ! -d "${INTEGRATION_SETUP_DEFAULT_TEMP_DIR}" ]; then
-    log_error "Temporary directory does not exist"
-    exit 1
-  fi
+  log_info "Using temp dir: $INTEGRATION_SETUP_TEMP_DIR"
 fi
 
 # Validate required configs for integration setup
@@ -149,6 +148,15 @@ MIN_SUPPORTED_USER_OIDC_APP_VERSION="7.1.0"
 MIN_SUPPORTED_OIDC_APP_VERSION="1.14.1"
 MIN_SUPPORTED_INTEGRATION_APP_VERSION="2.9.0"
 # These URLs are just to check if the Nextcloud instances have been started or not before running the script
+if ! curl -fsS "${NC_HOST}"  >/dev/null; then
+    log_error "Cannot reach Nextcloud at ${NC_HOST} (check URL, instance, SSL)"
+    exit 1
+fi
+
+if ! curl -fsS -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} "${OP_HOST}"  >/dev/null; then
+    log_error "Cannot reach OpenProject at ${OP_HOST} (check URL, instance, SSL)"
+    exit 1
+fi
 NC_HOST_STATUS=$(curl -s -X GET "${NC_HOST}/status.php")
 NC_HOST_INSTALLED=$(echo $NC_HOST_STATUS | jq -r ".installed")
 NC_HOST_MAINTENANCE=$(echo $NC_HOST_STATUS | jq -r ".maintenance")
@@ -523,13 +531,10 @@ nc_integration_setup_response=$(
 
 if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json; fi
 
-if [[ "$nc_integration_setup_response" != *"nextcloud_oauth_client_name"* ]] &&
-  [[ "$nc_integration_setup_response" != *"openproject_redirect_uri"* ]]; then
-
-  log_info "The response is missing nextcloud_oauth_client_name or openproject_redirect_uri"
+if [[ "$nc_integration_setup_response" != *'"status":true'* ]]; then
+  log_info "The response does not contain \"status\": true."
   log_error "Failed to setup OIDC from Nextcloud."
   opDeleteStorage "$nc_integration_setup_response"
-
   if [[ "$SETUP_PROJECT_FOLDER" == "true" && "$nc_integration_setup_response" != *"openproject_user_app_password"* ]]; then
     log_info "If the error response is related to project folder setup name 'OpenProject' (group, user, folder),"
     log_info "Then follow the link https://www.openproject.org/docs/system-admin-guide/integrations/nextcloud/#troubleshooting to resolve the error."
