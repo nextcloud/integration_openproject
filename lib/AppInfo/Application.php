@@ -21,6 +21,7 @@ use OCA\OpenProject\Listener\LoadSidebarScript;
 use OCA\OpenProject\Listener\OpenProjectReferenceListener;
 use OCA\OpenProject\Listener\TermsOfServiceEventListener;
 use OCA\OpenProject\Listener\UserChangedListener;
+use OCA\OpenProject\Listener\UserLoggedInEventListener;
 use OCA\OpenProject\Reference\WorkPackageReferenceProvider;
 use OCA\OpenProject\Search\OpenProjectSearchProvider;
 use OCA\TermsOfService\Events\SignaturesResetEvent;
@@ -32,7 +33,6 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\Group\Events\BeforeGroupDeletedEvent;
@@ -46,6 +46,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserChangedEvent;
+use OCP\User\Events\UserLoggedInEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -117,18 +118,26 @@ class Application extends App implements IBootstrap {
 		$context->registerSearchProvider(OpenProjectSearchProvider::class);
 
 		// register sidebar tab
-		$context->registerEventListener(
-			LoadSidebar::class,
-			LoadSidebarScript::class
-		);
+		$context->registerEventListener(LoadSidebar::class, LoadSidebarScript::class);
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalScriptsListener::class);
+		$context->registerEventListener(
+			BeforeNodeDeletedEvent::class,
+			BeforeNodeInsideOpenProjectGroupfilderChangedListener::class,
+		);
+		$context->registerEventListener(
+			BeforeNodeRenamedEvent::class,
+			BeforeNodeInsideOpenProjectGroupfilderChangedListener::class,
+		);
+		$context->registerEventListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
+		$context->registerEventListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
+		$context->registerEventListener(UserChangedEvent::class, UserChangedListener::class);
+		$context->registerEventListener(UserLoggedInEvent::class, UserLoggedInEventListener::class);
+		$context->registerEventListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
 
-		$context->registerEventListener(
-			BeforeNodeDeletedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
-		);
-		$context->registerEventListener(
-			BeforeNodeRenamedEvent::class, BeforeNodeInsideOpenProjectGroupfilderChangedListener::class
-		);
+		/** @psalm-suppress InvalidArgument */
+		$context->registerEventListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
+		/** @psalm-suppress InvalidArgument */
+		$context->registerEventListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
 
 		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '26.0.0', '>=')) {
 			$context->registerReferenceProvider(WorkPackageReferenceProvider::class);
@@ -141,17 +150,6 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$context->injectFn(Closure::fromCallable([$this, 'listenRemoveUserFromGroupRequest']));
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
-		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = $context->getAppContainer()->get(IEventDispatcher::class);
-		$dispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
-		$dispatcher->addServiceListener(BeforeGroupDeletedEvent::class, BeforeGroupDeletedListener::class);
-		$dispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
-		/** @psalm-suppress InvalidArgument AppEnableEvent event is not in stable25 so making psalm not complain*/
-		$dispatcher->addServiceListener(AppEnableEvent::class, TermsOfServiceEventListener::class);
-		/** @psalm-suppress InvalidArgument TermsCreatedEvent event is not yet registered in terms_of_service app, so making psalm not complain */
-		$dispatcher->addServiceListener(TermsCreatedEvent::class, TermsOfServiceEventListener::class);
-		/** @psalm-suppress InvalidArgument SignaturesResetEvent event is not yet registered in terms_of_service app, so making psalm not complain*/
-		$dispatcher->addServiceListener(SignaturesResetEvent::class, TermsOfServiceEventListener::class);
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {
