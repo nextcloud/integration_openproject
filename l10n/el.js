@@ -208,6 +208,7 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Εμφανίζει έναν σύνδεσμο προς την εγκατάσταση OpenProject σας στην κεφαλίδα του Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Σας επιτρέπει να αναζητάτε πακέτα εργασίας OpenProject μέσω της καθολικής γραμμής αναζήτησης στο Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Ροή κωδικού εξουσιοδότησης OAuth 2.0 αμφίδρομης κατεύθυνσης",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On μέσω Παρόχου Ταυτότητας OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On μέσω Παρόχου Ταυτότητας OpenID Connect",
+    "Active" : "Ενεργός"
 },
 "nplurals=2; plural=(n != 1);");

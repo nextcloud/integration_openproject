@@ -199,6 +199,8 @@ OC.L10N.register(
     "OAuth access token could not be obtained:" : "Não foi possível obter o token de acesso OAuth:",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Permite que você pesquise pacotes de trabalho OpenProject por meio da barra de pesquisa universal no Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Fluxo de código de autorização do OAuth 2.0 bidirecional",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Logon Único (Single Sign On) por meio do Provedor de Identidade OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Logon Único (Single Sign On) por meio do Provedor de Identidade OpenID Connect",
+    "Active" : "Ativo",
+    "Inactive" : "Inativo"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

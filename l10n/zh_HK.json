@@ -210,6 +210,8 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "在 Nextcloud 標頭中顯示指向 OpenProject 實例的連結。",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "允許您透過 Nextcloud 中的通用搜尋列搜尋 OpenProject 工作包。",
     "Two-way OAuth 2.0 authorization code flow" : "雙向 OAuth 2.0 授權碼流程",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "通過 OpenID Connect 身份提供者的單一登入"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "通過 OpenID Connect 身份提供者的單一登入",
+    "Active" : "活動的",
+    "Inactive" : "待用"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

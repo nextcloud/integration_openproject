@@ -12,6 +12,7 @@ OC.L10N.register(
     "Start typing to search" : "Començatz de picar per recercar",
     "Description" : "Descripcion",
     "Create" : "Crear",
-    "Mark as read" : "Marcar coma legit"
+    "Mark as read" : "Marcar coma legit",
+    "Active" : "Activa"
 },
 "nplurals=2; plural=(n > 1);");

@@ -119,6 +119,8 @@ OC.L10N.register(
     "OpenProject settings" : "Configuración de OpenProject",
     "Failed to link file to work package" : "Error al vincular archivo con el paquete de trabajo",
     "Successfully connected to OpenProject!" : "¡Conectado con éxito a OpenProject!",
-    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:"
+    "OAuth access token could not be obtained:" : "No se pudo obtener el token de acceso de OAuth:",
+    "Active" : "Activo",
+    "Inactive" : "Inactivo"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -13,6 +13,7 @@ OC.L10N.register(
     "Start typing to search" : "Nhập để tìm kiếm",
     "Description" : "Mô tả",
     "Create" : "‎Tạo‎",
-    "Mark as read" : "Đánh dấu đã đọc"
+    "Mark as read" : "Đánh dấu đã đọc",
+    "Active" : "Hoạt động"
 },
 "nplurals=1; plural=0;");

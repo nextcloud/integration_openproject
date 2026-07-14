@@ -21,6 +21,7 @@ OC.L10N.register(
     "Description" : "Kuvaus",
     "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
-    "Unlink" : "Poista linkitys"
+    "Unlink" : "Poista linkitys",
+    "Active" : "Aktiivinen"
 },
 "nplurals=2; plural=(n != 1);");

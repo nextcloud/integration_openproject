@@ -200,6 +200,7 @@ OC.L10N.register(
     "Link to work package" : "Link to work package",
     "Failed to link file to work package" : "Failed to link file to work package",
     "Successfully connected to OpenProject!" : "Successfully connected to OpenProject!",
-    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:"
+    "OAuth access token could not be obtained:" : "OAuth access token could not be obtained:",
+    "Active" : "Inayotumika"
 },
 "nplurals=2; plural=(n != 1);");

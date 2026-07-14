@@ -19,6 +19,7 @@ OC.L10N.register(
     "Mark as read" : "Marchează ca citit",
     "commented" : "comentat",
     "mentioned" : "menționat",
-    "Unlink" : "Deconectare"
+    "Unlink" : "Deconectare",
+    "Active" : "Activ"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

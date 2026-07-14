@@ -206,6 +206,7 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "ສະແດງລິ້ງໄປຍັງ instance ຂອງ OpenProject ຂອງທ່ານໃນສ່ວນຫົວຂອງ Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "ຊ່ວຍໃຫ້ທ່ານສາມາດຄົ້ນຫາແພັກເກດງານຂອງ OpenProject ຜ່ານແຖບຄົ້ນຫາລວມໃນ Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "ຂະບວນການ OAuth 2.0 authorization code flow ສອງທາງ",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "ການເຂົ້າສູ່ລະບົບຄັ້ງດຽວ (Single-Sign-On) ຜ່ານຜູ້ໃຫ້ບໍລິການຢືນຢັນຕົວຕົນ OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "ການເຂົ້າສູ່ລະບົບຄັ້ງດຽວ (Single-Sign-On) ຜ່ານຜູ້ໃຫ້ບໍລິການຢືນຢັນຕົວຕົນ OpenID Connect",
+    "Active" : "ກຳລັງໃຊ້ງານ"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

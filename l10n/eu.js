@@ -132,6 +132,8 @@ OC.L10N.register(
     "OpenProject settings" : "OpenProject ezarpenak",
     "Failed to link file to work package" : "Arazoa lan-paketea estekatzerakoan",
     "Successfully connected to OpenProject!" : "Behar bezala konektatuta OpenProject-era!",
-    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:"
+    "OAuth access token could not be obtained:" : "Ezin izan da OAuth sarbide tokena lortu:",
+    "Active" : "Aktibo",
+    "Inactive" : "Ez-aktibo"
 },
 "nplurals=2; plural=(n != 1);");
