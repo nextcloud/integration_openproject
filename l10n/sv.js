@@ -25,6 +25,8 @@ OC.L10N.register(
     "Create" : "Skapa",
     "Mark as read" : "Markera som läst",
     "Unlink" : "Unlink",
-    "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:"
+    "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:",
+    "Active" : "Aktiv",
+    "Inactive" : "Inaktiv"
 },
 "nplurals=2; plural=(n != 1);");

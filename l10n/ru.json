@@ -145,6 +145,7 @@
     "Successfully connected to OpenProject!" : "Успешное подключение к OpenProject!",
     "OAuth access token could not be obtained:" : "Токен доступа OAuth не может быть получен:",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Отображает ссылку на ваш экземпляр OpenProject в заголовке Nextcloud.",
-    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Позволяет искать рабочие пакеты OpenProject через универсальную строку поиска в Nextcloud."
+    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Позволяет искать рабочие пакеты OpenProject через универсальную строку поиска в Nextcloud.",
+    "Active" : "Активно"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

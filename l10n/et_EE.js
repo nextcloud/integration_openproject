@@ -167,6 +167,7 @@ OC.L10N.register(
     "Successfully connected to OpenProject!" : "OpenProjectiga ühendamine õnnestus!",
     "OAuth access token could not be obtained:" : "Päringu vastusest ei õnnestunud OAuthi tunnusluba tuvastada:",
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Näitab sinu OpenProjecti serveri linki Nextcloudi lehe päises.",
-    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Võimaldab otsida OpenProjecti tööpakette/teemasid Nextcloudi üldotsingust."
+    "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Võimaldab otsida OpenProjecti tööpakette/teemasid Nextcloudi üldotsingust.",
+    "Active" : "Aktiivne"
 },
 "nplurals=2; plural=(n != 1);");

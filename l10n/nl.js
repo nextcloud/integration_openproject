@@ -39,6 +39,8 @@ OC.L10N.register(
     "Mark as read" : "Markeren als gelezen",
     "Unlink" : "Ontkoppelen",
     "Existing relations:" : "Bestaande relaties:",
-    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
+    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
+    "Active" : "Actief",
+    "Inactive" : "Inactief"
 },
 "nplurals=2; plural=(n != 1);");

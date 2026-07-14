@@ -212,6 +212,8 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Zeigt einen Link zu Ihrer OpenProject-Instanz im Nextcloud-Header an.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Ermöglicht die Suche nach OpenProject-Arbeitspaketen über die universelle Suchleiste in Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Zwei-Wege OAuth 2.0-Autorisierungs-Code-flow",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On über OpenID Connect Identitätsanbieter"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Single-Sign-On über OpenID Connect Identitätsanbieter",
+    "Active" : "Aktiv",
+    "Inactive" : "Inaktiv"
 },
 "nplurals=2; plural=(n != 1);");

@@ -18,6 +18,7 @@ OC.L10N.register(
     "Select a user or group" : "נא לבחור משתמש או קבוצה",
     "Description" : "תיאור",
     "Create" : "יצירה",
-    "Mark as read" : "סימון כנקרא"
+    "Mark as read" : "סימון כנקרא",
+    "Active" : "פעיל"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");
