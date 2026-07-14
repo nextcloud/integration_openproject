@@ -8,6 +8,7 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
+import { toMatchSerializedSnapshot } from '../../utils.js'
 import { ADMIN_SETTINGS_FORM, F_MODES, SSO_PROVIDER_TYPE, SSO_PROVIDER_LABEL } from '../../../../src/utils.js'
 import { saveAdminConfig } from '../../../../src/api/settings.js'
 import FormSSOSettings from '../../../../src/components/admin/FormSSOSettings.vue'
@@ -1589,9 +1590,4 @@ function getWrapper({ data = {}, props = {} } = {}) {
 			return data
 		},
 	})
-}
-
-function toMatchSerializedSnapshot(element) {
-	element = element.replace(/ id="[^"]+"/g, ' id="__ID__"').replace(/ uid="[^"]+"/g, ' uid="__UID__"')
-	expect(element).toMatchSnapshot()
 }

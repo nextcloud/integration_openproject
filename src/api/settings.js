@@ -17,3 +17,7 @@ export function saveAdminConfig(configs) {
 export function createNextcloudOAuthClient() {
 	return axios.post(endpoints.nextcloudOAuth)
 }
+
+export function getProjectFolderStatus() {
+	return axios.get(endpoints.projectFolderStatus)
+}

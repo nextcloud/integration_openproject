@@ -24,6 +24,12 @@ export const messages = {
 	noMachingStausFound: t(APP_ID, 'No matching status found'),
 	noMachingTypeFound: t(APP_ID, 'No matching type found'),
 	noMachingAssigneeFound: t(APP_ID, 'No matching assignee found'),
+	projectFolderSetup: {
+		keepCurrentChange: t(APP_ID, 'Keep current setup'),
+		completeWithoutProjectFolderSetup: t(APP_ID, 'Complete without project folders'),
+		completeWithProjectFolderSetup: t(APP_ID, 'Setup OpenProject user, group and folder'),
+		retrySetupWithProjectFolder: t(APP_ID, 'Retry setup OpenProject user, group and folder'),
+	},
 }
 
 export const messagesFmt = {

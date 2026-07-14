@@ -132,6 +132,14 @@ export const ADMIN_SETTINGS_FORM = {
 	// order: 4 or 5 depending on auth method
 	projectFolder: {
 		id: 'project-folder',
+		// default order is 5 as OAuth is the default auth method.
+		order: 5,
+		[AUTH_METHOD.OAUTH2]: {
+			order: 5,
+		},
+		[AUTH_METHOD.OIDC]: {
+			order: 4,
+		},
 		complete: false,
 	},
 }
