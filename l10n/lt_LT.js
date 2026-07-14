@@ -212,6 +212,7 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Rodo nuorodą į jūsų „OpenProject“ egzempliorių „Nextcloud“ antraštėje.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Leidžia ieškoti „OpenProject“ darbo paketų naudojant universalią paieškos juostą „Nextcloud“.",
     "Two-way OAuth 2.0 authorization code flow" : "Dvipusis „OAuth 2.0“ autorizacijos kodo srautas",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Vienkartinis prisijungimas per „OpenID Connect“ tapatybės teikėją"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Vienkartinis prisijungimas per „OpenID Connect“ tapatybės teikėją",
+    "Active" : "Aktyvi"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

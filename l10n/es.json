@@ -210,6 +210,8 @@
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Muestra un enlace a su instancia de OpenProject en el encabezado de Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Le permite buscar paquetes de trabajo de OpenProject a través de la barra de búsqueda universal en Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Flujo de código de autorización OAuth 2.0 de dos vías",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Usar Single-Sign-On a través del Proveedor de Identidad de OpenID Connect",
+    "Active" : "Activo",
+    "Inactive" : "Inactivo"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

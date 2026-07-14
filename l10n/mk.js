@@ -19,6 +19,7 @@ OC.L10N.register(
     "Select a user or group" : "Избери корисник или група",
     "Description" : "Опис",
     "Create" : "Креирај",
-    "Mark as read" : "Означи како прочитано"
+    "Mark as read" : "Означи како прочитано",
+    "Active" : "Активно"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

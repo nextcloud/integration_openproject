@@ -22,6 +22,7 @@ OC.L10N.register(
     "Description" : "説明",
     "Create" : "作成",
     "Mark as read" : "既読にする",
-    "Unlink" : "アンリンク"
+    "Unlink" : "アンリンク",
+    "Active" : "有効"
 },
 "nplurals=1; plural=0;");

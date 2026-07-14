@@ -20,6 +20,7 @@ OC.L10N.register(
     "Description" : "Lýsing",
     "Create" : "Búa til",
     "Mark as read" : "Merkja sem lesið",
-    "Unlink" : "Aftengja"
+    "Unlink" : "Aftengja",
+    "Active" : "Virkur"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

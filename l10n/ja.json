@@ -20,6 +20,7 @@
     "Description" : "説明",
     "Create" : "作成",
     "Mark as read" : "既読にする",
-    "Unlink" : "アンリンク"
+    "Unlink" : "アンリンク",
+    "Active" : "有効"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
