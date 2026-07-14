@@ -10,6 +10,7 @@
     "Description" : "Description",
     "Create" : "Create",
     "Mark as read" : "Mark as read",
-    "Unlink" : "Unlink"
+    "Unlink" : "Unlink",
+    "Active" : "Active"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

@@ -211,6 +211,8 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Zobrazuje odkaz na vámi využívanou instanci OpenProject v záhlaví Nextcloud",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Umožňuje hledat v balíčcích práce v OpenProject a to prostřednictvím lišty univerzálního vyhledávání v Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Dvousměrný tok kódu OAuth 2.0 pověřování",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Sjednocené přihlášení prostřednictvím poskytovatele identity OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Sjednocené přihlášení prostřednictvím poskytovatele identity OpenID Connect",
+    "Active" : "Aktivní",
+    "Inactive" : "Neaktivní"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

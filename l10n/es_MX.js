@@ -12,6 +12,7 @@ OC.L10N.register(
     "Start typing to search" : "Empiece a escribir para buscar",
     "Select a user or group" : "Seleccionar un usuario o grupo",
     "Description" : "Descripción",
-    "Create" : "Crear"
+    "Create" : "Crear",
+    "Active" : "Activo"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

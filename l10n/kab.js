@@ -11,6 +11,7 @@ OC.L10N.register(
     "Description" : "Aglam",
     "Create" : "Snulfu-d",
     "Mark as read" : "Creḍ yettwaɣra",
-    "Unlink" : "Kkes aseɣwen"
+    "Unlink" : "Kkes aseɣwen",
+    "Active" : "Urmid"
 },
 "nplurals=2; plural=(n != 1);");

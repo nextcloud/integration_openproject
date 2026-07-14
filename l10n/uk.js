@@ -204,6 +204,7 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Відображає посилання на ваш екземпляр OpenProject у заголовку Nextcloud.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Дозволяє шукати робочі пакети OpenProject через універсальний рядок пошуку в Nextcloud.",
     "Two-way OAuth 2.0 authorization code flow" : "Двосторонній потік кодів авторизації OAuth 2.0",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "Єдиний вхід через постачальника ідентифікаційних даних OpenID Connect"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "Єдиний вхід через постачальника ідентифікаційних даних OpenID Connect",
+    "Active" : "Увімкнено"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

@@ -212,6 +212,7 @@ OC.L10N.register(
     "Displays a link to your OpenProject instance in the Nextcloud header." : "Nextcloud ماۋزۇسىدا OpenProject مىسالىڭىزغا ئۇلانمىنى كۆرسىتىدۇ.",
     "Allows you to search OpenProject work packages via the universal search bar in Nextcloud." : "Nextcloud دىكى ئۇنىۋېرسال ئىزدەش بالدىقى ئارقىلىق OpenProject خىزمەت بوغچىسىنى ئىزدەشىڭىزگە يول قويىدۇ.",
     "Two-way OAuth 2.0 authorization code flow" : "ئىككى تەرەپلىك OAuth 2.0 ئىجازەت كودى ئېقىمى",
-    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش"
+    "Single-Sign-On through OpenID Connect Identity Provider" : "OpenID Connect كىملىك تەمىنلىگۈچىسى ئارقىلىق يەككە كىرىش",
+    "Active" : "ئاكتىپ"
 },
 "nplurals=2; plural=(n != 1);");

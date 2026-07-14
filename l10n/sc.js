@@ -21,6 +21,7 @@ OC.L10N.register(
     "Description" : "Descritzione",
     "Create" : "Crea",
     "Mark as read" : "Marca comente lèghidu",
-    "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:"
+    "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
+    "Active" : "Ativu"
 },
 "nplurals=2; plural=(n != 1);");

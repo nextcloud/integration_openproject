@@ -125,6 +125,8 @@ OC.L10N.register(
     "Link to work package" : "Hivatkozás a munkacsomagra",
     "Failed to link file to work package" : "A fájl munkacsomaghoz kapcsolása sikertelen",
     "Successfully connected to OpenProject!" : "Sikeresen kapcsolódott az OpenProjecthez.",
-    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:"
+    "OAuth access token could not be obtained:" : "Az OAuth hozzáférési token megszerzése sikertelen:",
+    "Active" : "Aktív",
+    "Inactive" : "Inaktív"
 },
 "nplurals=2; plural=(n != 1);");

@@ -12,6 +12,7 @@ OC.L10N.register(
     "Description" : "Description",
     "Create" : "Create",
     "Mark as read" : "Mark as read",
-    "Unlink" : "Unlink"
+    "Unlink" : "Unlink",
+    "Active" : "Active"
 },
 "nplurals=2; plural=(n!=1);");
