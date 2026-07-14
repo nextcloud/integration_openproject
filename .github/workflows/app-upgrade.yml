@@ -12,11 +12,11 @@ on:
       nextcloud_versions:
         required: false
         type: string
-        default: "31 32"
+        default: 'master'
       php_versions:
         required: false
         type: string
-        default: "8.3"
+        default: '8.4'
 
 jobs:
   create-matrix:
@@ -24,14 +24,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Create matrix
         id: create-matrix
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
           PHP_VERSIONS: ${{ inputs.php_versions }}
-          DEFAULT_PHP_VERSION: "8.3"
-          DEFAULT_DATABASE: "mysql"
+          DEFAULT_PHP_VERSION: '8.4'
+          DEFAULT_DATABASE: 'mysql'
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
@@ -63,7 +65,7 @@ jobs:
           - ${{ github.workspace }}/build-app:/var/www/html/build-app-shared
 
       database-mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.5:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-11.8:latest
         env:
           MYSQL_ROOT_PASSWORD: 'nextcloud'
           MYSQL_PASSWORD: 'nextcloud'
@@ -79,6 +81,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: integration_openproject
+          ref: ${{ inputs.branch }}
       
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
@@ -171,5 +174,7 @@ jobs:
         working-directory: integration_openproject
         env:
           NEXTCLOUD_BASE_URL: http://localhost
+          NEXTCLOUD_VERSION: ${{ matrix.nextcloudVersion }}
+          BEHAT_FILTER_TAGS: '~@skip'
         run: |
           make api-test

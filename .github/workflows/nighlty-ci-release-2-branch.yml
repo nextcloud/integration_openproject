@@ -1,26 +1,28 @@
 # SPDX-FileCopyrightText: 2023-2025 Jankari Tech Pvt. Ltd.
 # SPDX-License-Identifier: AGPL-3.0-or-later
-name: Nightly CI (Master branch)
+name: Nightly CI (Release 2.11 branch)
 
 # workflow can be scheduled ONLY from DEFAULT branch
 # > This event will only trigger a workflow run if the workflow file is on the default branch.
 # See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
 on:
   schedule:
-    - cron: '0 22 * * *' # run at 10 PM UTC
+    - cron: '0 23 * * *' # run at 11 PM UTC
 
 jobs:
   builds:
     uses: ./.github/workflows/shared_workflow.yml
     secrets: inherit
     with:
-      branch: master
+      branch: release/2.11
+      nextcloud_versions: '31 32'
+      php_versions: '8.2 8.3 8.4'
 
   app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml
     with:
-      branch: master
-      nextcloud_versions: '33'
+      branch: release/2.11
+      nextcloud_versions: '31 32'
 
   notify-nightly-report:
     needs: [builds, app-upgrade-test]
@@ -29,13 +31,13 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-      
+
       - name: Notify Element (nightly builds)
         env:
           ELEMENT_CHAT_URL: ${{ secrets.ELEMENT_CHAT_URL }}
           ELEMENT_ROOM_ID: ${{ secrets.ELEMENT_ROOM_ID }}
           NIGHTLY_CI_USER_TOKEN: ${{ secrets.NIGHTLY_CI_USER_TOKEN }}
-          BRANCH_NAME: master
+          BRANCH_NAME: release/2.11
           NEEDS_JSON: ${{ toJson(needs) }}
         run: |
           ./.github/scripts/notify-to-element.sh
