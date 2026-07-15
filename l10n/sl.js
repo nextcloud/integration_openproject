@@ -15,6 +15,7 @@ OC.L10N.register(
     "Authentication method" : "Način overitve",
     "Save" : "Shrani",
     "Documentation" : "Dokumentacija",
+    "Active" : "Dejavno",
     "Copied!" : "Kopirano!",
     "Details" : "Podrobnosti",
     "Start typing to search" : "Vpišite niz za iskanje …",
@@ -23,7 +24,6 @@ OC.L10N.register(
     "Create" : "Ustvari",
     "Mark as read" : "Označi kot prebrano",
     "Unlink" : "Odstrani povezavo",
-    "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:",
-    "Active" : "Dejavno"
+    "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

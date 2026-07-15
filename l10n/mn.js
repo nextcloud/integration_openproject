@@ -8,6 +8,7 @@ OC.L10N.register(
     "Authentication method" : "Нэвтрэлтийн арга",
     "Save" : "Хадгалах",
     "Documentation" : "Баримт бичиг",
+    "Active" : "Идэвхтэй",
     "Copied!" : "Хуулсан!",
     "Copied to the clipboard" : "Санах ойд хуулагдсан",
     "Details" : "Дэлгэрэнгүй",
@@ -16,7 +17,6 @@ OC.L10N.register(
     "Description" : "Тодорхойлолт",
     "Create" : "үүсгэх",
     "Mark as read" : "Уншсан гэж тэмдэглэх",
-    "Unlink" : "Холбоос устгах",
-    "Active" : "Идэвхтэй"
+    "Unlink" : "Холбоос устгах"
 },
 "nplurals=2; plural=(n != 1);");

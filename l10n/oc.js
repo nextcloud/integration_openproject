@@ -7,12 +7,12 @@ OC.L10N.register(
     "Connected as {user}" : "Connectat coma {user}",
     "Save" : "Enregistrar",
     "Documentation" : "Documentacion",
+    "Active" : "Activa",
     "Copied!" : "Copiat !",
     "Details" : "Detalhs",
     "Start typing to search" : "Començatz de picar per recercar",
     "Description" : "Descripcion",
     "Create" : "Crear",
-    "Mark as read" : "Marcar coma legit",
-    "Active" : "Activa"
+    "Mark as read" : "Marcar coma legit"
 },
 "nplurals=2; plural=(n > 1);");
