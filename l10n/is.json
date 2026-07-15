@@ -10,6 +10,7 @@
     "Authentication method" : "Auðkenningarmáti",
     "Save" : "Vista",
     "Documentation" : "Hjálparskjöl",
+    "Active" : "Virkur",
     "Copied!" : "Afritað!",
     "Copied to the clipboard" : "Afritað á klippispjaldið",
     "Details" : "Details",
@@ -18,7 +19,6 @@
     "Description" : "Lýsing",
     "Create" : "Búa til",
     "Mark as read" : "Merkja sem lesið",
-    "Unlink" : "Aftengja",
-    "Active" : "Virkur"
+    "Unlink" : "Aftengja"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

@@ -12,6 +12,7 @@
     "Authentication method" : "Metode otentikasi",
     "Save" : "Simpan",
     "Documentation" : "Dokumentasi",
+    "Active" : "Aktif",
     "Copied!" : "Tersalin!",
     "Copied to the clipboard" : "Disalin ke papan klip",
     "Details" : "Detail",
@@ -20,7 +21,6 @@
     "Description" : "Deskrisi",
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
-    "Unlink" : "Putuskan tautan",
-    "Active" : "Aktif"
+    "Unlink" : "Putuskan tautan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

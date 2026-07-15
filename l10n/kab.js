@@ -6,12 +6,12 @@ OC.L10N.register(
     "Connected as {user}" : "D uqqin am {user}",
     "Save" : "Sekles",
     "Documentation" : "Tasemlit",
+    "Active" : "Urmid",
     "Copied!" : "Yenɣel!",
     "Details" : "Talqayt",
     "Description" : "Aglam",
     "Create" : "Snulfu-d",
     "Mark as read" : "Creḍ yettwaɣra",
-    "Unlink" : "Kkes aseɣwen",
-    "Active" : "Urmid"
+    "Unlink" : "Kkes aseɣwen"
 },
 "nplurals=2; plural=(n != 1);");
