@@ -14,6 +14,7 @@ OC.L10N.register(
     "Save" : "저장",
     "Server replied with an error message, please check the Nextcloud logs" : "서버가 오류 메시지로 응답했습니다. Nextcloud 로그를 참조하십시오.",
     "Documentation" : "문서",
+    "Active" : "활성화",
     "Copied!" : "복사 성공!",
     "Copied to the clipboard" : "클립보드로 복사됨",
     "Details" : "세부사항",
@@ -24,7 +25,6 @@ OC.L10N.register(
     "Create" : "생성",
     "Mark as read" : "읽은 것으로 표시",
     "Unlink" : "링크 해제",
-    "OAuth access token could not be obtained:" : "OAuth 접근 토큰을 얻을 수 없었습니다: ",
-    "Active" : "활성화"
+    "OAuth access token could not be obtained:" : "OAuth 접근 토큰을 얻을 수 없었습니다: "
 },
 "nplurals=1; plural=0;");

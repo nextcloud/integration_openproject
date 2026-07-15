@@ -14,6 +14,7 @@ OC.L10N.register(
     "Authentication method" : "認証方法",
     "Save" : "保存",
     "Documentation" : "ドキュメント",
+    "Active" : "有効",
     "Copied!" : "コピーしました！",
     "Copied to the clipboard" : "クリップボードにコピーされました",
     "Details" : "詳細",
@@ -22,7 +23,6 @@ OC.L10N.register(
     "Description" : "説明",
     "Create" : "作成",
     "Mark as read" : "既読にする",
-    "Unlink" : "アンリンク",
-    "Active" : "有効"
+    "Unlink" : "アンリンク"
 },
 "nplurals=1; plural=0;");

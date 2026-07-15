@@ -12,6 +12,7 @@ OC.L10N.register(
     "Authentication method" : "Начин на автентификација",
     "Save" : "Зачувај",
     "Documentation" : "Документација",
+    "Active" : "Активно",
     "Copied!" : "Копирано!",
     "Copied to the clipboard" : "Копирано во клипборд",
     "Details" : "Детали",
@@ -19,7 +20,6 @@ OC.L10N.register(
     "Select a user or group" : "Избери корисник или група",
     "Description" : "Опис",
     "Create" : "Креирај",
-    "Mark as read" : "Означи како прочитано",
-    "Active" : "Активно"
+    "Mark as read" : "Означи како прочитано"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

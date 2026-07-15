@@ -16,6 +16,8 @@ OC.L10N.register(
     "Authentication method" : "Autentiseringsmetod",
     "Save" : "Spara",
     "Documentation" : "Dokumentation",
+    "Active" : "Aktiv",
+    "Inactive" : "Inaktiv",
     "Copied!" : "Kopierad!",
     "Copied to the clipboard" : "Kopierat till urklipp",
     "Details" : "Detaljer",
@@ -25,8 +27,6 @@ OC.L10N.register(
     "Create" : "Skapa",
     "Mark as read" : "Markera som läst",
     "Unlink" : "Unlink",
-    "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:",
-    "Active" : "Aktiv",
-    "Inactive" : "Inaktiv"
+    "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:"
 },
 "nplurals=2; plural=(n != 1);");

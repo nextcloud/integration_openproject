@@ -6,6 +6,7 @@
     "Authentication method" : "Нэвтрэлтийн арга",
     "Save" : "Хадгалах",
     "Documentation" : "Баримт бичиг",
+    "Active" : "Идэвхтэй",
     "Copied!" : "Хуулсан!",
     "Copied to the clipboard" : "Санах ойд хуулагдсан",
     "Details" : "Дэлгэрэнгүй",
@@ -14,7 +15,6 @@
     "Description" : "Тодорхойлолт",
     "Create" : "үүсгэх",
     "Mark as read" : "Уншсан гэж тэмдэглэх",
-    "Unlink" : "Холбоос устгах",
-    "Active" : "Идэвхтэй"
+    "Unlink" : "Холбоос устгах"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
