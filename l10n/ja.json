@@ -12,6 +12,7 @@
     "Authentication method" : "認証方法",
     "Save" : "保存",
     "Documentation" : "ドキュメント",
+    "Active" : "有効",
     "Copied!" : "コピーしました！",
     "Copied to the clipboard" : "クリップボードにコピーされました",
     "Details" : "詳細",
@@ -20,7 +21,6 @@
     "Description" : "説明",
     "Create" : "作成",
     "Mark as read" : "既読にする",
-    "Unlink" : "アンリンク",
-    "Active" : "有効"
+    "Unlink" : "アンリンク"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

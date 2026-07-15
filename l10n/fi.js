@@ -13,6 +13,7 @@ OC.L10N.register(
     "Authentication method" : "Tunnistautumistapa",
     "Save" : "Tallenna",
     "Documentation" : "Dokumentaatio",
+    "Active" : "Aktiivinen",
     "Copied!" : "Kopioitu!",
     "Copied to the clipboard" : "Kopioitu leikepöydälle",
     "Details" : "Tiedot",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "Description" : "Kuvaus",
     "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
-    "Unlink" : "Poista linkitys",
-    "Active" : "Aktiivinen"
+    "Unlink" : "Poista linkitys"
 },
 "nplurals=2; plural=(n != 1);");

@@ -9,7 +9,6 @@ OC.L10N.register(
     "Bad HTTP method" : "Foute HTTP methode",
     "OAuth access token refused" : "OAuth toegangstoken geweigerd",
     "OpenProject Integration" : "OpenProject integratie",
-    "Administration > File storages" : "Beheer > Bestandsopslag",
     "Cancel" : "Annuleren",
     "Reset" : "Herstellen",
     "Enable navigation link" : "Inschakelen navigatielink",
@@ -19,6 +18,7 @@ OC.L10N.register(
     "Connected as {user}" : "Verbonden als {user}",
     "Authentication method" : "Authenticatiemethode",
     "Save" : "Opslaan",
+    "Administration > File storages" : "Beheer > Bestandsopslag",
     "Replace OpenProject OAuth values" : "Vervang de OpenProject OAuth waarden",
     "Replace Nextcloud OAuth values" : "Vervang de NextCloud OAuth waarden",
     "OpenProject OAuth settings" : "OpenProject OAuth instellingen",
@@ -28,6 +28,8 @@ OC.L10N.register(
     "OpenProject server" : "OpenProject server",
     "OpenProject host" : "OpenProject host",
     "Edit server information" : "server informatie aanpassen",
+    "Active" : "Actief",
+    "Inactive" : "Inactief",
     "Copied!" : "Gekopieerd!",
     "Copied to the clipboard" : "Gekopieerd naar het klembord",
     "Details" : "Details",
@@ -39,8 +41,6 @@ OC.L10N.register(
     "Mark as read" : "Markeren als gelezen",
     "Unlink" : "Ontkoppelen",
     "Existing relations:" : "Bestaande relaties:",
-    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:",
-    "Active" : "Actief",
-    "Inactive" : "Inactief"
+    "OAuth access token could not be obtained:" : "OAuth access token kon niet worden opgehaald:"
 },
 "nplurals=2; plural=(n != 1);");

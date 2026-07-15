@@ -8,12 +8,12 @@ OC.L10N.register(
     "Authentication method" : "Phương thức xác thực",
     "Save" : "Lưu",
     "Documentation" : "Tài liệu",
+    "Active" : "Hoạt động",
     "Copied!" : "Đã sao chép!",
     "Details" : "Chi tiết",
     "Start typing to search" : "Nhập để tìm kiếm",
     "Description" : "Mô tả",
     "Create" : "‎Tạo‎",
-    "Mark as read" : "Đánh dấu đã đọc",
-    "Active" : "Hoạt động"
+    "Mark as read" : "Đánh dấu đã đọc"
 },
 "nplurals=1; plural=0;");

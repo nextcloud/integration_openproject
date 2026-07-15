@@ -12,6 +12,7 @@ OC.L10N.register(
     "Authentication method" : "Auðkenningarmáti",
     "Save" : "Vista",
     "Documentation" : "Hjálparskjöl",
+    "Active" : "Virkur",
     "Copied!" : "Afritað!",
     "Copied to the clipboard" : "Afritað á klippispjaldið",
     "Details" : "Details",
@@ -20,7 +21,6 @@ OC.L10N.register(
     "Description" : "Lýsing",
     "Create" : "Búa til",
     "Mark as read" : "Merkja sem lesið",
-    "Unlink" : "Aftengja",
-    "Active" : "Virkur"
+    "Unlink" : "Aftengja"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

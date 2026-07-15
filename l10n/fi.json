@@ -11,6 +11,7 @@
     "Authentication method" : "Tunnistautumistapa",
     "Save" : "Tallenna",
     "Documentation" : "Dokumentaatio",
+    "Active" : "Aktiivinen",
     "Copied!" : "Kopioitu!",
     "Copied to the clipboard" : "Kopioitu leikepöydälle",
     "Details" : "Tiedot",
@@ -19,7 +20,6 @@
     "Description" : "Kuvaus",
     "Create" : "Luo",
     "Mark as read" : "Merkitse luetuksi",
-    "Unlink" : "Poista linkitys",
-    "Active" : "Aktiivinen"
+    "Unlink" : "Poista linkitys"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -5,6 +5,7 @@ OC.L10N.register(
     "Reset" : "Reset",
     "Save" : "Save",
     "Documentation" : "Documentation",
+    "Active" : "Active",
     "Copied!" : "Copied!",
     "Details" : "Details",
     "Start typing to search" : "Start typing to search",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Description" : "Description",
     "Create" : "Create",
     "Mark as read" : "Mark as read",
-    "Unlink" : "Unlink",
-    "Active" : "Active"
+    "Unlink" : "Unlink"
 },
 "nplurals=2; plural=(n!=1);");

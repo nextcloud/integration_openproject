@@ -14,6 +14,8 @@ OC.L10N.register(
     "Authentication method" : "Godkendelsesmetode",
     "Save" : "Gem",
     "Documentation" : "Dokumentation",
+    "Active" : "Aktiv",
+    "Inactive" : "Inaktiv",
     "Copied!" : "Kopieret!",
     "Copied to the clipboard" : "Kopieret til udklipsholderen",
     "Details" : "Detaljer",
@@ -24,8 +26,6 @@ OC.L10N.register(
     "Mark as read" : "Marker som læst",
     "mentioned" : "omtalt",
     "Download and enable it" : "Download og aktiver det",
-    "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:",
-    "Active" : "Aktiv",
-    "Inactive" : "Inaktiv"
+    "OAuth access token could not be obtained:" : "OAuth adgangsnøgle kunne ikke skaffes:"
 },
 "nplurals=2; plural=(n != 1);");

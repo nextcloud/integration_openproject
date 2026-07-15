@@ -14,6 +14,7 @@ OC.L10N.register(
     "Authentication method" : "Metode otentikasi",
     "Save" : "Simpan",
     "Documentation" : "Dokumentasi",
+    "Active" : "Aktif",
     "Copied!" : "Tersalin!",
     "Copied to the clipboard" : "Disalin ke papan klip",
     "Details" : "Detail",
@@ -22,7 +23,6 @@ OC.L10N.register(
     "Description" : "Deskrisi",
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
-    "Unlink" : "Putuskan tautan",
-    "Active" : "Aktif"
+    "Unlink" : "Putuskan tautan"
 },
 "nplurals=1; plural=0;");

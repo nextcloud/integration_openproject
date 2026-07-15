@@ -9,6 +9,7 @@ OC.L10N.register(
     "URL is invalid" : "La URL ye inválida",
     "Response:" : "Rempuesta:",
     "Documentation" : "Documentación",
+    "Active" : "Activa",
     "Copied!" : "¡Copióse!",
     "Copied to the clipboard" : "Copióse nel cartafueyu",
     "Details" : "Detalles",

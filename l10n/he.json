@@ -10,13 +10,13 @@
     "Authentication method" : "שיטת אימות",
     "Save" : "שמירה",
     "Documentation" : "תיעוד",
+    "Active" : "פעיל",
     "Copied!" : "הועתק!",
     "Details" : "פרטים",
     "Start typing to search" : "להתחלת החיפוש יש להקליד",
     "Select a user or group" : "נא לבחור משתמש או קבוצה",
     "Description" : "תיאור",
     "Create" : "יצירה",
-    "Mark as read" : "סימון כנקרא",
-    "Active" : "פעיל"
+    "Mark as read" : "סימון כנקרא"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"
 }

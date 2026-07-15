@@ -14,6 +14,7 @@ OC.L10N.register(
     "Authentication method" : "Mètodu de autenticatzione",
     "Save" : "Sarva",
     "Documentation" : "Documentatzione",
+    "Active" : "Ativu",
     "Copied!" : "Copiados!",
     "Details" : "Detàllios",
     "Start typing to search" : "Cumintza a iscrìere pro chircare",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "Description" : "Descritzione",
     "Create" : "Crea",
     "Mark as read" : "Marca comente lèghidu",
-    "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
-    "Active" : "Ativu"
+    "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:"
 },
 "nplurals=2; plural=(n != 1);");

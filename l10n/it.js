@@ -27,6 +27,7 @@ OC.L10N.register(
     "Save" : "Salva",
     "Response:" : "Risposta:",
     "Documentation" : "Documentazione",
+    "Active" : "Attivo",
     "Copied!" : "Copiato!",
     "Copied to the clipboard" : "Copiato negli appunti",
     "Details" : "Dettagli",
@@ -47,7 +48,6 @@ OC.L10N.register(
     "Unlink" : "Scollega",
     "Existing relations:" : "Relazioni esistenti:",
     "Successfully connected to OpenProject!" : "Connesso correttamente a OpenProject!",
-    "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:",
-    "Active" : "Attivo"
+    "OAuth access token could not be obtained:" : "Impossibile ottenere il token di accesso OAuth:"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
