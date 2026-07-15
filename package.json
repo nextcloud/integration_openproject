@@ -1,6 +1,6 @@
 {
   "name": "integration_openproject",
-  "version": "4.0.0-dev",
+  "version": "3.2.0-dev",
   "description": "OpenProject Integration",
   "main": "index.js",
   "directories": {
