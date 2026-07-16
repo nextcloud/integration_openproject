@@ -13,7 +13,6 @@ use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
-use Psr\Log\LoggerInterface;
 
 class SettingsService {
 	// <setting_name> => <data_type>
@@ -44,7 +43,6 @@ class SettingsService {
 		private OpenProjectAPIService $openprojectAPIService,
 		private ISecureRandom $secureRandom,
 		private ISubAdmin $subAdmin,
-		private LoggerInterface $logger,
 	) {
 	}
 
