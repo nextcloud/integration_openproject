@@ -81,6 +81,7 @@ export const workpackageHelper = {
 
 		return {
 			id: workPackage.id,
+			displayId: workPackage.displayId || workPackage.id.toString(),
 			subject: workPackage.subject,
 			project: workPackage._links.project.title,
 			projectId,
