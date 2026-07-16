@@ -198,7 +198,7 @@ class SettingsService {
 	 * @throws InvalidArgumentException
 	 */
 	public function validateAdminSettingsForm(?array $values, bool $fullSetup = false): void {
-		if ($values === null || !\is_array($values) || empty($values)) {
+		if (!$values) {
 			throw new InvalidArgumentException('The data is not a valid JSON.');
 		}
 
