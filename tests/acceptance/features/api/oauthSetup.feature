@@ -66,7 +66,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid data"}
+          "error": {"const": "<error>"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -74,17 +74,17 @@ Feature: setup the integration with OAuth method
       }
       """
     Examples:
-      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password |
-      | null                  | null                  | null                      | null              | null                  | null                 | null               |
-      | null                  | "id"                  | "secret"                  | false             | false                 | false                | false              |
-      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false                | false              |
-      | ""                    | "id"                  | "secret"                  | false             | false                 | false                | false              |
-      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false                | false              |
-      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false                | false              |
-      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"           | "a string"         |
-      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false                | false              |
-      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false                | false              |
+      | instance_url          | openproject_client_id | openproject_client_secret | enable_navigation | enable_unified_search | setup_project_folder | setup_app_password | error                                                |
+      | null                  | null                  | null                      | null              | null                  | null                 | null               | Invalid value for setting: openproject_instance_url  |
+      | null                  | "id"                  | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_instance_url  |
+      | "http://some-host.de" | null                  | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_client_id     |
+      | "http://some-host.de" | "id"                  | null                      | false             | false                 | false                | false              | Invalid value for setting: openproject_client_secret |
+      | ""                    | "id"                  | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_instance_url  |
+      | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_client_id     |
+      | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false                | false              | Invalid value for setting: openproject_client_secret |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"           | "a string"         | Invalid OpenProject URL: ftp://somehost.de           |
+      | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false                | false              | Invalid value for setting: openproject_client_id     |
+      | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false                | false              | Invalid value for setting: openproject_client_secret |
 
 
   Scenario: try to setup with invalid keys
@@ -104,7 +104,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid key"}
+          "error": {"const": "Unknown setting: instance_url"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -127,7 +127,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid key"}
+          "error": {"const": "<error>"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -135,11 +135,11 @@ Feature: setup the integration with OAuth method
       }
       """
     Examples:
-      | values                                                                                                                                                                                                                                           |
-      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                                                         |
-      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false }    |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false}            |
-      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_project_folder": false , "setup_app_password": false} |
+      | values                                                                                                                                                                                                                                           | error                                                 |
+      | {"openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false}                                                                         | Missing required field: openproject_instance_url      |
+      | {"openproject_instance_url": "http://some-host.de","openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false }    | Missing required field: openproject_client_id         |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "default_enable_navigation": false, "default_enable_unified_search": false, "setup_project_folder": false, "setup_app_password": false}            | Missing required field: openproject_client_secret     |
+      | {"openproject_instance_url": "http://some-host.de", "openproject_client_id": "the-client-id", "openproject_client_secret": "the-client-secret", "default_enable_navigation": false, "setup_project_folder": false , "setup_app_password": false} | Missing required field: default_enable_unified_search |
 
 
   Scenario Outline: try to setup with invalid json data
@@ -275,7 +275,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "<error-message>"}
+          "error": {"const": "<error>"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -283,12 +283,12 @@ Feature: setup the integration with OAuth method
       }
       """
     Examples:
-      | settings                                                                 | error-message |
-      | "openproject_instance_url":false                                         | invalid data  |
-      | "openproject_client_id":"clientid","default_enable_navigation": "string" | invalid data  |
-      | "openproject_client_secret":""                                           | invalid data  |
-      | "default_enable_navigation":false,"default_enable_unified_search":null   | invalid data  |
-      | "instance_url":"http://op.de"                                            | invalid key   |
+      | settings                                                                 | error                                                    |
+      | "openproject_instance_url":false                                         | Invalid value for setting: openproject_instance_url      |
+      | "openproject_client_id":"clientid","default_enable_navigation": "string" | Invalid value for setting: default_enable_navigation     |
+      | "openproject_client_secret":""                                           | Invalid value for setting: openproject_client_secret     |
+      | "default_enable_navigation":false,"default_enable_unified_search":null   | Invalid value for setting: default_enable_unified_search |
+      | "instance_url":"http://op.de"                                            | Unknown setting: instance_url                            |
 
 
   Scenario Outline: try to update settings with invalid json data
@@ -410,7 +410,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid data"}
+          "error": {"const": "Invalid team folder setup configuration:Both \"setup_project_folder\" and \"setup_app_password\" must be either true or false."}
         },
         "not": {
           "required": ["openproject_revocation_status"]
