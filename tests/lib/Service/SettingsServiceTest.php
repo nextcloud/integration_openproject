@@ -17,7 +17,6 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 class SettingsServiceTest extends TestCase {
 	/**
@@ -35,7 +34,6 @@ class SettingsServiceTest extends TestCase {
 			'openProjectAPIService' => $this->createMock(OpenProjectAPIService::class),
 			'secureRandom' => $this->createMock(ISecureRandom::class),
 			'subAdmin' => $this->createMock(ISubAdmin::class),
-			'logger' => $this->createMock(LoggerInterface::class),
 		];
 
 		// replace default mocks with manually passed in mocks
@@ -98,7 +96,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => true,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid authorization method",
+				"message" => "Invalid authorization method: 1",
 			],
 			"incomplete settings: oauth2" => [
 				"configs" => [
@@ -183,7 +181,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => 'Invalid team folder setup configuration:Both "setup_project_folder" and "setup_app_password" must be either true or false',
+				"message" => 'Invalid team folder setup configuration: Both "setup_project_folder" and "setup_app_password" must be either true or false.',
 			],
 			"invalid groupfolder settings: false & true" => [
 				"configs" => [
@@ -197,7 +195,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => true,
 				],
 				"completeSetup" => true,
-				"message" => 'Invalid team folder setup configuration:Both "setup_project_folder" and "setup_app_password" must be either true or false',
+				"message" => 'Invalid team folder setup configuration: Both "setup_project_folder" and "setup_app_password" must be either true or false.',
 			],
 			"invalid settings value: incorrect data type" => [
 				"configs" => [
@@ -289,7 +287,7 @@ class SettingsServiceTest extends TestCase {
 		$service = $this->getSettingsServiceMock();
 
 		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage($message);
+		$this->expectExceptionMessageMatches('/^' . preg_quote($message, '/') . '$/');
 		$service->validateAdminSettingsForm($configs, $completeSetup);
 	}
 
