@@ -68,7 +68,12 @@ class SettingsServiceTest extends TestCase {
 
 	public function invalidSettingsProvider(): array {
 		return [
-			"Random missing settings" => [
+			"invalid json data" => [
+				"configs" => [],
+				"completeSetup" => true,
+				"message" => "Invalid settings.",
+			],
+			"random missing settings" => [
 				"configs" => [
 					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 				],
@@ -88,7 +93,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => "test",
 				],
 				"completeSetup" => true,
-				"message" => "Invalid authorization method: test",
+				"message" => "Invalid authorization method.",
 			],
 			"invalid 'authorization_method' value - boolean true" => [
 				"configs" => [
@@ -96,7 +101,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => true,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid authorization method: 1",
+				"message" => "Invalid authorization method.",
 			],
 			"incomplete settings: oauth2" => [
 				"configs" => [
@@ -268,7 +273,7 @@ class SettingsServiceTest extends TestCase {
 					"openproject_instance_url" => "test", // invalid URL
 				],
 				"completeSetup" => false,
-				"message" => "Invalid OpenProject URL: test",
+				"message" => "Invalid OpenProject URL.",
 			],
 			"update action - invalid 'authorization_method' value - boolean true" => [
 				"configs" => [

@@ -82,7 +82,7 @@ Feature: setup the integration with OAuth method
       | ""                    | "id"                  | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_instance_url  |
       | "http://some-host.de" | ""                    | "secret"                  | false             | false                 | false                | false              | Invalid value for setting: openproject_client_id     |
       | "http://some-host.de" | "id"                  | ""                        | false             | false                 | false                | false              | Invalid value for setting: openproject_client_secret |
-      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"           | "a string"         | Invalid OpenProject URL: ftp://somehost.de           |
+      | "ftp://somehost.de"   | "the-id"              | "secret"                  | true              | false                 | "a string"           | "a string"         | Invalid OpenProject URL.                             |
       | "http://somehost.de"  | false                 | "secret"                  | true              | false                 | false                | false              | Invalid value for setting: openproject_client_id     |
       | "http://somehost.de"  | "id"                  | false                     | true              | false                 | false                | false              | Invalid value for setting: openproject_client_secret |
 
