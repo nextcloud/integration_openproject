@@ -410,7 +410,7 @@ Feature: setup the integration with OAuth method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "Invalid team folder setup configuration:Both \"setup_project_folder\" and \"setup_app_password\" must be either true or false."}
+          "error": {"const": "Invalid team folder setup configuration: Both \"setup_project_folder\" and \"setup_app_password\" must be either true or false."}
         },
         "not": {
           "required": ["openproject_revocation_status"]

@@ -218,7 +218,7 @@ class SettingsService {
 			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
 				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
 			) {
-				$errMessage = 'Invalid team folder setup configuration:'
+				$errMessage = 'Invalid team folder setup configuration: '
 					. 'Both "setup_project_folder" and "setup_app_password" must be either true or false.';
 				throw new InvalidArgumentException($errMessage);
 			}
