@@ -96,7 +96,7 @@ class SettingsService {
 		$allowedSettings = $this->getAllSettings();
 		foreach ($settingsToCheck as $key) {
 			if (!\in_array($key, $allowedSettings, true)) {
-				throw new InvalidArgumentException('Unknown setting: ' . $key);
+				throw new InvalidArgumentException('Unknown setting: ' . (string)$key);
 			}
 		}
 	}
@@ -155,7 +155,7 @@ class SettingsService {
 
 		$authMethod = $settings['authorization_method'];
 		if (!\in_array($authMethod, self::GENERAL_ADMIN_SETTINGS['authorization_method'], true)) {
-			throw new InvalidArgumentException('Invalid authorization method: ' . $authMethod);
+			throw new InvalidArgumentException('Invalid authorization method.');
 		}
 
 		// check settings based on authorization method
@@ -185,7 +185,7 @@ class SettingsService {
 				throw new InvalidArgumentException('Invalid value for setting: ' . $key);
 			}
 			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
-				throw new InvalidArgumentException('Invalid OpenProject URL: ' . $value);
+				throw new InvalidArgumentException('Invalid OpenProject URL.');
 			}
 		}
 	}
@@ -199,18 +199,10 @@ class SettingsService {
 	 */
 	public function validateAdminSettingsForm(?array $values, bool $fullSetup = false): void {
 		if (!$values) {
-			throw new InvalidArgumentException('The data is not a valid JSON.');
+			throw new InvalidArgumentException('Invalid settings.');
 		}
 
-		$allowedSettings = $this->getAllSettings();
-		$settingsToCheck = \array_keys($values);
-
-		// reject if there are more settings than allowed
-		if (\count($settingsToCheck) > \count($allowedSettings)) {
-			throw new InvalidArgumentException('More than allowed number of settings provided.');
-		}
-
-		$this->checkUnknownSettings($settingsToCheck);
+		$this->checkUnknownSettings(\array_keys($values));
 
 		if ($fullSetup) {
 			$this->checkRequiredSettings($values);

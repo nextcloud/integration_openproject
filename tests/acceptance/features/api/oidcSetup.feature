@@ -136,10 +136,10 @@ Feature: setup the integration with OIDC method
       """
     Examples:
       | auth_method | provider_type   | target_client_id | error                                                    |
-      | null        | "nextcloud_hub" | "client-id"      | "Invalid authorization method: "                         |
-      | ""          | "nextcloud_hub" | "client-id"      | "Invalid authorization method: "                         |
-      | true        | "nextcloud_hub" | "client-id"      | "Invalid authorization method: 1"                        |
-      | "unknown"   | "nextcloud_hub" | "client-id"      | "Invalid authorization method: unknown"                  |
+      | null        | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | ""          | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | true        | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | "unknown"   | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
       | "oidc"      | null            | "client-id"      | "Invalid value for setting: sso_provider_type"           |
       | "oidc"      | ""              | "client-id"      | "Invalid value for setting: sso_provider_type"           |
       | "oidc"      | true            | "client-id"      | "Invalid value for setting: sso_provider_type"           |
