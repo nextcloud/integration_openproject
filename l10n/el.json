@@ -79,6 +79,7 @@
     "Please introduce your OpenProject hostname" : "Παρακαλώ εισάγετε το όνομα κεντρικού υπολογιστή του OpenProject",
     "Edit server information" : "Επεξεργασία πληροφοριών διακομιστή",
     "Active" : "Ενεργός",
+    "Inactive" : "Ανενεργό",
     "troubleshooting guide" : "οδηγός αντιμετώπισης προβλημάτων",
     "Setting up the OpenProject user, group and team folder was not possible. Please check this {htmlLink} on how to resolve this situation." : "Η ρύθμιση του χρήστη, της ομάδας και του φακέλου ομάδας OpenProject δεν ήταν δυνατή. Παρακαλώ ελέγξτε αυτόν τον {htmlLink} για το πώς να επιλύσετε αυτήν την κατάσταση.",
     "Server-side encryption is active, but encryption for Team Folders is not yet enabled. To ensure secure storage of files in project folders, please follow the configuration steps in the {htmlLink}." : "Η κρυπτογράφηση από την πλευρά του διακομιστή είναι ενεργή, αλλά η κρυπτογράφηση για τους Φακέλους Ομάδας δεν έχει ακόμη ενεργοποιηθεί. Για να εξασφαλίσετε ασφαλή αποθήκευση αρχείων στους φακέλους έργου, παρακαλώ ακολουθήστε τα βήματα ρύθμισης στην {htmlLink}.",
