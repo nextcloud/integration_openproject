@@ -19,7 +19,7 @@ on:
         default: '8.4'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: upgrade-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
