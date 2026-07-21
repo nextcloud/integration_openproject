@@ -19,6 +19,7 @@ import workpackageCreatedResponse from '../fixtures/workPackageSuccessfulCreatio
 import requiredTypeResponse from '../fixtures/formValidationResponseRequiredType.json'
 import CreateWorkPackageModal from '../../../src/views/CreateWorkPackageModal.vue'
 import { messages } from '../../../src/constants/messages.js'
+import { toMatchSerializedSnapshot } from '../utils.js'
 
 const localVue = createLocalVue()
 jest.mock('@nextcloud/dialogs', () => ({
@@ -95,7 +96,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			expect(wrapper.find(createWorkPackageSelector).isVisible()).toBe(true)
 			expect(axiosSpy).toHaveBeenCalledWith(projectsUrl, {})
 			await wrapper.find(projectInputField).setValue(' ')
-			expect(wrapper.find(projectSelectSelector)).toMatchSnapshot()
+			toMatchSerializedSnapshot(wrapper.find(projectSelectSelector).html())
 		})
 
 		it('should display projects even when parent project is unknown', async () => {
@@ -308,13 +309,13 @@ describe('CreateWorkPackageModal.vue', () => {
 			await wrapper.vm.$nextTick()
 			await wrapper.find(typeInputFieldSelector).setValue(' ')
 			await wrapper.vm.$nextTick()
-			expect(wrapper.find(typeSelectSelector)).toMatchSnapshot()
+			toMatchSerializedSnapshot(wrapper.find(typeSelectSelector).html())
 			await wrapper.find(statusInputFieldSelector).setValue(' ')
 			await wrapper.vm.$nextTick()
-			expect(wrapper.find(statusSelectSelector)).toMatchSnapshot()
+			toMatchSerializedSnapshot(wrapper.find(statusSelectSelector).html())
 			await wrapper.find(assigneeInputFieldSelector).setValue(' ')
 			await wrapper.vm.$nextTick()
-			expect(wrapper.find(assigneesSelectSelector)).toMatchSnapshot()
+			toMatchSerializedSnapshot(wrapper.find(assigneesSelectSelector).html())
 			axiosSpy.mockRestore()
 			assigneeAxiosSpy.mockRestore()
 			jest.clearAllMocks()
@@ -449,7 +450,7 @@ describe('CreateWorkPackageModal.vue', () => {
 			expect(axiosSpy).toHaveBeenCalledWith(util.format(workPackageFormUrl, 2), formValidationBody)
 			// one thing to note is the statues in snapshot should not match the statuses defined in variable availableStatusBefore
 			await wrapper.find(statusInputFieldSelector).setValue(' ')
-			expect(wrapper.find(statusSelectSelector)).toMatchSnapshot()
+			toMatchSerializedSnapshot(wrapper.find(statusSelectSelector).html())
 		})
 
 		it.each([

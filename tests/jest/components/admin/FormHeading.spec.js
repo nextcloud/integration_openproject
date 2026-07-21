@@ -17,13 +17,13 @@ describe('FormHeading.vue', () => {
 			const wrapper = getWrapper({
 				isComplete: true,
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should hide the checkmark icon and show the index if not complete', () => {
 			const wrapper = getWrapper({
 				isComplete: false,
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 	describe('is disabled prop', () => {
@@ -31,7 +31,7 @@ describe('FormHeading.vue', () => {
 			const wrapper = getWrapper({
 				isDisabled: true,
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 })
