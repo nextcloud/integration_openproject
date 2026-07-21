@@ -1,21 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SearchInput.vue state messages any: should display the correct state message 1`] = `
-Wrapper {
-  "selector": ".stateMsg",
-}
+<div
+  class="stateMsg text-center"
+>
+  
+		
+	
+</div>
 `;
 
 exports[`SearchInput.vue state messages error: should display the correct state message 1`] = `
-Wrapper {
-  "selector": ".stateMsg",
-}
+<div
+  class="stateMsg text-center"
+>
+  
+		Error connecting to OpenProject
+	
+</div>
 `;
 
 exports[`SearchInput.vue state messages no-token: should display the correct state message 1`] = `
-Wrapper {
-  "selector": ".stateMsg",
-}
+<div
+  class="stateMsg text-center"
+>
+  
+		No OpenProject account connected
+	
+</div>
 `;
 
 exports[`SearchInput.vue work packages select search list should display correct options list of search results 1`] = `
@@ -38,11 +50,7 @@ exports[`SearchInput.vue work packages select search list should display correct
 }
 `;
 
-exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `
-Wrapper {
-  "selector": "[role="listbox"]",
-}
-`;
+exports[`SearchInput.vue work packages select search list should not be displayed if the search results is empty 1`] = `"<ul id="__ID__" role="listbox" aria-label="Options" style="display: none; visibility: hidden;"></ul>"`;
 
 exports[`SearchInput.vue work packages select search list should only use the options from the latest search response 1`] = `
 {

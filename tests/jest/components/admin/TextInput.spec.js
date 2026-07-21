@@ -39,21 +39,21 @@ describe('TextInput.vue', () => {
 				hintText: null,
 				errorMessage: 'some error message',
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should show hint text if provided', () => {
 			const wrapper = getWrapper({
 				hintText: 'some hint message',
 				errorMessage: null,
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should show error message if both error message and hint text are provided', () => {
 			const wrapper = getWrapper({
 				hintText: 'some hint message',
 				errorMessage: 'some error message',
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should show error message details if both error message and details are provided', () => {
 			// the content of the error message details is not tested because the popup is rendered
@@ -62,13 +62,13 @@ describe('TextInput.vue', () => {
 				errorMessage: 'some error message',
 				errorMessageDetails: 'here are some details',
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should not show error message details if not error message is provided', () => {
 			const wrapper = getWrapper({
 				errorMessageDetails: 'here are some details',
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 	describe('is required prop', () => {
@@ -76,13 +76,13 @@ describe('TextInput.vue', () => {
 			const wrapper = getWrapper({
 				isRequired: true,
 			})
-			expect(wrapper.find(selector.textInputLabel)).toMatchSnapshot()
+			expect(wrapper.find(selector.textInputLabel).element).toMatchSnapshot()
 		})
 		it('should not add asterik to the label text', () => {
 			const wrapper = getWrapper({
 				isRequired: false,
 			})
-			expect(wrapper.find(selector.textInputLabel)).toMatchSnapshot()
+			expect(wrapper.find(selector.textInputLabel).element).toMatchSnapshot()
 		})
 	})
 	describe('with copy button prop', () => {
@@ -93,7 +93,7 @@ describe('TextInput.vue', () => {
 			})
 		})
 		it('should render copy button if set', () => {
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should be disabled if the input value is empty', () => {
 			expect(wrapper.find(selector.copyButton).attributes().disabled).toBe('disabled')
@@ -140,7 +140,7 @@ describe('TextInput.vue', () => {
 			const wrapper = getWrapper({
 				readOnly: true,
 			})
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 	describe('disabled prop', () => {
