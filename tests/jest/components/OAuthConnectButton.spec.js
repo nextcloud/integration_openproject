@@ -58,14 +58,14 @@ describe('OAuthConnectButton.vue', () => {
 			const returnValue = { isAdmin: false }
 			getCurrentUser.mockReturnValue(returnValue)
 			wrapper = getWrapper({ isAdminConfigOk: false })
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 
 		it('should show message for admin user', async () => {
 			const returnValue = { isAdmin: true }
 			getCurrentUser.mockReturnValue(returnValue)
 			wrapper = getWrapper({ isAdminConfigOk: false })
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 	describe('when the admin config is ok', () => {

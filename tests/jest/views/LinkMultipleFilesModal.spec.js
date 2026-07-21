@@ -350,7 +350,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				})
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
-				expect(wrapper).toMatchSnapshot()
+				expect(wrapper.element).toMatchSnapshot()
 			})
 
 			it('sets the "error" state if the admin config is not okay', async () => {
@@ -364,7 +364,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				})
 				await wrapper.vm.setFileInfos(singleFileInfo)
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
-				expect(wrapper).toMatchSnapshot()
+				expect(wrapper.element).toMatchSnapshot()
 			})
 
 			it('should set workpackages to alreadylinked', async () => {
@@ -431,7 +431,7 @@ describe('LinkMultipleFilesModal.vue', () => {
 				})
 				await wrapper.vm.setFileInfos(multipleFileInfo)
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
-				expect(wrapper).toMatchSnapshot()
+				expect(wrapper.element).toMatchSnapshot()
 			})
 
 			it('should not fetch any workpackages', async () => {

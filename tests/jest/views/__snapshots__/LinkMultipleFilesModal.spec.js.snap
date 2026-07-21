@@ -1,25 +1,136 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages multiple files selected sets the "error" state if the admin config is not okay 1`] = `
-VueWrapper {
-  "_emitted": {},
-  "_emittedByOrder": [],
-  "isFunctionalComponent": undefined,
-}
+<div
+  class="multiple-link-modal-container"
+>
+  <ncmodal-stub
+    additionaltrapelements=""
+    canclose="true"
+    closebuttoncontained="true"
+    closeonclickoutside="true"
+    container="body"
+    enableswipe="true"
+    inlineactions="0"
+    labelid=""
+    name=""
+    size="normal"
+    slideshowdelay="5000"
+  >
+    <div
+      class="multiple-link-modal-content"
+    >
+      <div
+        class="multiple-link-modal-inside-content"
+      >
+        <h2>
+          
+					Link to work package
+				
+        </h2>
+         
+        <!---->
+         
+        <emptycontent-stub
+          authmethod="[object Object]"
+          errormessage=""
+          fileinfo="[object Object]"
+          id="openproject-empty-content"
+          ismultipleworkpackagelinking="true"
+          state="error"
+        />
+      </div>
+    </div>
+  </ncmodal-stub>
+</div>
 `;
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 1`] = `
-VueWrapper {
-  "_emitted": {},
-  "_emittedByOrder": [],
-  "isFunctionalComponent": undefined,
-}
+<div
+  class="multiple-link-modal-container"
+>
+  <ncmodal-stub
+    additionaltrapelements=""
+    canclose="true"
+    closebuttoncontained="true"
+    closeonclickoutside="true"
+    container="body"
+    enableswipe="true"
+    inlineactions="0"
+    labelid=""
+    name=""
+    size="normal"
+    slideshowdelay="5000"
+  >
+    <div
+      class="multiple-link-modal-content"
+    >
+      <div
+        class="multiple-link-modal-inside-content"
+      >
+        <h2>
+          
+					Link to work package
+				
+        </h2>
+         
+        <!---->
+         
+        <emptycontent-stub
+          authmethod="[object Object]"
+          errormessage=""
+          fileinfo="[object Object]"
+          id="openproject-empty-content"
+          ismultipleworkpackagelinking="true"
+          state="error"
+        />
+      </div>
+    </div>
+  </ncmodal-stub>
+</div>
 `;
 
 exports[`LinkMultipleFilesModal.vue fetch workpackages single file selected sets the "error" state if the admin config is not okay 2`] = `
-VueWrapper {
-  "_emitted": {},
-  "_emittedByOrder": [],
-  "isFunctionalComponent": undefined,
-}
+<div
+  class="multiple-link-modal-container"
+>
+  <ncmodal-stub
+    additionaltrapelements=""
+    canclose="true"
+    closebuttoncontained="true"
+    closeonclickoutside="true"
+    container="body"
+    enableswipe="true"
+    inlineactions="0"
+    labelid=""
+    name=""
+    size="normal"
+    slideshowdelay="5000"
+  >
+    <div
+      class="multiple-link-modal-content"
+    >
+      <div
+        class="multiple-link-modal-inside-content"
+      >
+        <h2>
+          
+					Link to work package
+				
+        </h2>
+         
+        <!---->
+         
+        <emptycontent-stub
+          authmethod="[object Object]"
+          errormessage=""
+          fileinfo="[object Object]"
+          id="openproject-empty-content"
+          ismultipleworkpackagelinking="true"
+          state="error"
+        />
+      </div>
+    </div>
+  </ncmodal-stub>
+</div>
 `;

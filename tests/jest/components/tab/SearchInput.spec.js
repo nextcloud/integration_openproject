@@ -18,6 +18,7 @@ import workPackageSearchReqResponse from '../../fixtures/workPackageSearchReqRes
 import workPackageObjectsInSearchResults from '../../fixtures/workPackageObjectsInSearchResults.json'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../../../src/utils.js'
 import { workpackageHelper } from '../../../../src/utils/workpackageHelper.js'
+import { toMatchSerializedSnapshot } from '../../utils.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -112,7 +113,7 @@ describe('SearchInput.vue', () => {
 		it.each([STATE.NO_TOKEN, STATE.ERROR, 'any'])('%s: should display the correct state message', async (state) => {
 			wrapper = mountSearchInput()
 			await wrapper.setData({ state })
-			expect(wrapper.find(stateSelector)).toMatchSnapshot()
+			expect(wrapper.find(stateSelector).element).toMatchSnapshot()
 		})
 	})
 
@@ -218,7 +219,7 @@ describe('SearchInput.vue', () => {
 					searchResults: [],
 				})
 				const ncSelectContent = wrapper.find(workpackagesListSelector)
-				expect(ncSelectContent).toMatchSnapshot()
+				toMatchSerializedSnapshot(ncSelectContent.html())
 			})
 			it('should display correct options list of search results', async () => {
 				jest.spyOn(axios, 'get')

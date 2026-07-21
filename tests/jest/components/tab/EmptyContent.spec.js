@@ -54,7 +54,7 @@ describe('EmptyContent.vue', () => {
 		])('shows the correct empty message depending on states if the admin config is okay', async (state) => {
 			wrapper = getWrapper({ state, adminConfigStatus: true })
 			expect(wrapper.find(emptyContentMessageSelector).exists()).toBeTruthy()
-			expect(wrapper.find(emptyContentMessageSelector)).toMatchSnapshot()
+			expect(wrapper.find(emptyContentMessageSelector).element).toMatchSnapshot()
 		})
 	})
 })

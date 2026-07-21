@@ -305,7 +305,7 @@ describe('ProjectsTab.vue', () => {
 			await wrapper.setProps({ node: fileTwo })
 			await flushPromises()
 			expect(wrapper.vm.state).toBe(STATE.ERROR)
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it.each([
 			{ statusColor: { color: '#A5D8FF' }, typeColor: { color: '#00B0F0' } },
@@ -373,7 +373,7 @@ describe('ProjectsTab.vue', () => {
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
-			expect(workPackages).toMatchSnapshot()
+			expect(workPackages.element).toMatchSnapshot()
 		})
 		it('adds every work-package only once', async () => {
 			// this can happen if multiple replies arrive at the same time
@@ -427,7 +427,7 @@ describe('ProjectsTab.vue', () => {
 			)
 			expect(wrapper.vm.state).toBe(STATE.OK)
 			const workPackages = wrapper.find(workPackagesSelector)
-			expect(workPackages).toMatchSnapshot()
+			expect(workPackages.element).toMatchSnapshot()
 		})
 		it('caches the results for status and type color', async () => {
 			axiosGetSpy = jest.spyOn(axios, 'get')
@@ -497,7 +497,7 @@ describe('ProjectsTab.vue', () => {
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
-			expect(workPackages).toMatchSnapshot()
+			expect(workPackages.element).toMatchSnapshot()
 			expect(scrollSpy).toBeCalledTimes(1)
 			expect(wrapper.find(linkedWorkpackageSelector).classes()).toContain('workpackage-transition')
 			jest.runAllTimers()

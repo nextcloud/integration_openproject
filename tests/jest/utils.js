@@ -4,6 +4,12 @@
  */
 
 export function toMatchSerializedSnapshot(element) {
-	element = element.replace(/ id="[^"]+"/g, ' id="__ID__"').replace(/ uid="[^"]+"/g, ' uid="__UID__"')
+	element = element
+		.replace(/ id="[^"]+"/g, ' id="__ID__"')
+		.replace(/ uid="[^"]+"/g, ' uid="__UID__"')
+		.replace(/ aria-controls="[^"]+"/g, ' aria-controls="__ID__"')
+		.replace(/ aria-labelledby="[^"]+"/g, ' aria-labelledby="__ID__"')
+		.replace(/ aria-activedescendant="[^"]+"/g, ' aria-activedescendant="__ID__"')
+		.replace(/ aria-owns="[^"]+"/g, ' aria-owns="__ID__"')
 	expect(element).toMatchSnapshot()
 }
