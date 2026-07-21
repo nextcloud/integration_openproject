@@ -19,11 +19,11 @@ describe('FieldValue.vue', () => {
 	describe('is required prop', () => {
 		it('should append asterik with the title if set', () => {
 			const wrapper = getWrapper({ isRequired: true })
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 		it('should not append asterik with the title if not set', () => {
 			const wrapper = getWrapper({ isRequired: false })
-			expect(wrapper).toMatchSnapshot()
+			expect(wrapper.element).toMatchSnapshot()
 		})
 	})
 	describe('encrypt value prop', () => {
@@ -32,7 +32,7 @@ describe('FieldValue.vue', () => {
 				const wrapper = getWrapper({
 					encryptValue: true,
 				})
-				expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
+				expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
 			})
 			describe('with inspection prop', () => {
 				it('should show the inspect button with the eye icon if set', () => {
@@ -41,7 +41,7 @@ describe('FieldValue.vue', () => {
 						withInspection: true,
 						inspect: true,
 					})
-					expect(wrapper).toMatchSnapshot()
+					expect(wrapper.element).toMatchSnapshot()
 				})
 				it('should toggle encrypted value when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
@@ -51,9 +51,9 @@ describe('FieldValue.vue', () => {
 					})
 					await wrapper.find(selectors.inspectButton).trigger('click')
 					await localVue.nextTick()
-					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
+					expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
 					await wrapper.find(selectors.inspectOffButton).trigger('click')
-					expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
+					expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
 				})
 				it('should toggle the inspect button icon when the inspect button is clicked', async () => {
 					const wrapper = getWrapper({
@@ -64,18 +64,18 @@ describe('FieldValue.vue', () => {
 					const inspect = wrapper.find(selectors.inspectButton)
 					await inspect.trigger('click')
 					await localVue.nextTick()
-					expect(wrapper.find(selectors.inspectOffButton)).toMatchSnapshot()
+					expect(wrapper.find(selectors.inspectOffButton).element).toMatchSnapshot()
 					const inspectOff = wrapper.find(selectors.inspectOffButton)
 					await inspectOff.trigger('click')
 					await localVue.nextTick()
-					expect(wrapper.find(selectors.inspectButton)).toMatchSnapshot()
+					expect(wrapper.find(selectors.inspectButton).element).toMatchSnapshot()
 
 				})
 			})
 		})
 		it('should render the actual value as it is if not set', () => {
 			const wrapper = getWrapper()
-			expect(wrapper.find(selectors.itemValue)).toMatchSnapshot()
+			expect(wrapper.find(selectors.itemValue).element).toMatchSnapshot()
 		})
 	})
 })
