@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Update npm dependencies [#1123](https://github.com/nextcloud/integration_openproject/pull/1123)
+
 ### Removed
 
 ## 3.1.1 - 2026-07-13
