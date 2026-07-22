@@ -11,13 +11,11 @@ on:
         required: true
         type: string
       nextcloud_versions:
-        required: false
+        required: true
         type: string
-        default: '33 34 master'
       php_versions:
-        required: false
+        required: true
         type: string
-        default: '8.3 8.4 8.5'
   push:
     branches:
       - 'master'
@@ -37,6 +35,13 @@ concurrency:
   group: php-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions || '33 34 master' }}
+  PHP_VERSIONS: ${{ inputs.php_versions || '8.3 8.4 8.5' }}
+  DEFAULT_PHP_VERSION: '8.4'
+  DEFAULT_DATABASE: 'mysql'
+  EXTRA_DATABASES: 'pgsql'
+
 jobs:
   create-matrix:
     runs-on: ubuntu-22.04
@@ -54,11 +59,11 @@ jobs:
       - name: Create matrix
         id: create-matrix
         env:
-          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
-          PHP_VERSIONS: ${{ inputs.php_versions }}
-          DEFAULT_PHP_VERSION: '8.4'
-          DEFAULT_DATABASE: 'mysql'
-          EXTRA_DATABASES: 'pgsql'
+          NEXTCLOUD_VERSIONS: ${{ env.NEXTCLOUD_VERSIONS }}
+          PHP_VERSIONS: ${{ env.PHP_VERSIONS }}
+          DEFAULT_PHP_VERSION: ${{ env.DEFAULT_PHP_VERSION }}
+          DEFAULT_DATABASE: ${{ env.DEFAULT_DATABASE }}
+          EXTRA_DATABASES: ${{ env.EXTRA_DATABASES }}
         run: |
           MATRIX=$(./.github/scripts/generate-matrix.sh)
           echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
