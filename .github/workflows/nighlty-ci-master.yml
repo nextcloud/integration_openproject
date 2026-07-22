@@ -16,4 +16,4 @@ jobs:
     secrets: inherit
     with:
       branch: master
-      app_upgrade_nc_versions: '33'
+      app_upgrade_nc_versions: '34'
