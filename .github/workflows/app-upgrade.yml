@@ -13,10 +13,10 @@ on:
         required: false
         type: string
         default: 'master'
-      php_versions:
-        required: false
-        type: string
-        default: '8.4'
+
+concurrency:
+  group: upgrade-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   create-matrix:
@@ -31,7 +31,7 @@ jobs:
         id: create-matrix
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
-          PHP_VERSIONS: ${{ inputs.php_versions }}
+          PHP_VERSIONS: '8.4'
           DEFAULT_PHP_VERSION: '8.4'
           DEFAULT_DATABASE: 'mysql'
         run: |
@@ -53,10 +53,10 @@ jobs:
         env:
           SQL: ${{ matrix.database }}
           SERVER_BRANCH: ${{ matrix.nextcloudVersion }}
-          NEXTCLOUD_AUTOINSTALL: "Yes"
+          NEXTCLOUD_AUTOINSTALL: 'Yes'
           NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders user_oidc integration_openproject
           NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
-          WITH_REDIS: "YES"
+          WITH_REDIS: 'YES'
         ports:
           - 80:80
         options: --name=nextcloud
@@ -82,14 +82,14 @@ jobs:
         with:
           path: integration_openproject
           ref: ${{ inputs.branch }}
-      
+
       - name: Setup PHP ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
         uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d
         with:
           php-version: ${{ format('{0}.{1}', matrix.phpVersionMajor,matrix.phpVersionMinor) }}
           tools: composer, phpunit
           extensions: intl, gd, sqlite3
-      
+
       - name: Wait for Nextcloud server to be ready
         run: |
           if ! timeout 5m bash -c '
@@ -151,17 +151,17 @@ jobs:
 
           # Clear appstore cache (force re-fetch)
           docker exec nextcloud /bin/bash -c "echo '' > /var/www/html/data/appdata_*/appstore/apps.json"
-          
+
           # Disable share rate limit protection
           docker exec nextcloud /bin/bash -c "php occ config:system:set ratelimit.protection.enabled --value false --type bool"
 
           # Configure local appstore server
           docker exec nextcloud /bin/bash -c "php occ config:system:set appstoreurl --value 'http://localhost:8080'"
           docker exec nextcloud /bin/bash -c "php occ config:system:set allow_local_remote_servers --value true"
-          
+
           # Update app
           docker exec nextcloud /bin/bash -c "php occ app:update --allow-unstable integration_openproject"
-          
+
           # Verify update
           if docker exec nextcloud /bin/bash -c "php occ app:list | grep -q 'integration_openproject.*$NEXT_APP_VERSION'"; then
             echo "App updated successfully to version $NEXT_APP_VERSION"
