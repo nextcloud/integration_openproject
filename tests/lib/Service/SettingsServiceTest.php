@@ -68,19 +68,24 @@ class SettingsServiceTest extends TestCase {
 
 	public function invalidSettingsProvider(): array {
 		return [
-			"Random missing settings" => [
+			"invalid json data" => [
+				"configs" => [],
+				"completeSetup" => true,
+				"message" => "Invalid settings.",
+			],
+			"random missing settings" => [
 				"configs" => [
 					"authorization_method" => Application::AUTH_METHOD_OAUTH,
 				],
 				"completeSetup" => true,
-				"message" => "invalid key",
+				"message" => "Missing required field: openproject_instance_url",
 			],
 			"missing 'authorization_method' setting" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
 				],
 				"completeSetup" => true,
-				"message" => "'authorization_method' setting is missing",
+				"message" => "Missing required field: authorization_method",
 			],
 			"invalid 'authorization_method' value - random string" => [
 				"configs" => [
@@ -88,7 +93,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => "test",
 				],
 				"completeSetup" => true,
-				"message" => "Invalid authorization method",
+				"message" => "Invalid authorization method.",
 			],
 			"invalid 'authorization_method' value - boolean true" => [
 				"configs" => [
@@ -96,7 +101,7 @@ class SettingsServiceTest extends TestCase {
 					"authorization_method" => true,
 				],
 				"completeSetup" => true,
-				"message" => "Invalid authorization method",
+				"message" => "Invalid authorization method.",
 			],
 			"incomplete settings: oauth2" => [
 				"configs" => [
@@ -109,7 +114,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "invalid key",
+				"message" => "Missing required field: openproject_client_secret",
 			],
 			"incomplete settings(oidc): missing 'sso_provider_type'" => [
 				"configs" => [
@@ -124,7 +129,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Incomplete settings: 'sso_provider_type' is required with 'oidc' method",
+				"message" => "Missing required field: sso_provider_type",
 			],
 			"incomplete settings (oidc): missing 'token_exchange' with external provider" => [
 				"configs" => [
@@ -138,9 +143,9 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "Incomplete settings: 'token_exchange' is required with external provider",
+				"message" => "Missing required field: token_exchange",
 			],
-			"invalid oidc provider type" => [
+			"invalid oidc provider type: random string" => [
 				"configs" => [
 					"openproject_instance_url" => "http://test.op.example",
 					"authorization_method" => Application::AUTH_METHOD_OIDC,
@@ -154,7 +159,20 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "invalid data",
+				"message" => "Invalid value for setting: sso_provider_type",
+			],
+			"invalid oidc provider type: null value" => [
+				"configs" => [
+					"openproject_instance_url" => "http://test.op.example",
+					"authorization_method" => Application::AUTH_METHOD_OIDC,
+					"default_enable_navigation" => false,
+					"default_enable_unified_search" => false,
+					'sso_provider_type' => null, // invalid provider type
+					"setup_project_folder" => false,
+					"setup_app_password" => false,
+				],
+				"completeSetup" => true,
+				"message" => "Invalid value for setting: sso_provider_type",
 			],
 			"invalid groupfolder settings: true & false" => [
 				"configs" => [
@@ -168,7 +186,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "invalid data",
+				"message" => 'Invalid team folder setup configuration: Both "setup_project_folder" and "setup_app_password" must be either true or false.',
 			],
 			"invalid groupfolder settings: false & true" => [
 				"configs" => [
@@ -182,7 +200,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => true,
 				],
 				"completeSetup" => true,
-				"message" => "invalid data",
+				"message" => 'Invalid team folder setup configuration: Both "setup_project_folder" and "setup_app_password" must be either true or false.',
 			],
 			"invalid settings value: incorrect data type" => [
 				"configs" => [
@@ -196,7 +214,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "invalid data",
+				"message" => "Invalid value for setting: default_enable_navigation",
 			],
 			"invalid settings value: empty string" => [
 				"configs" => [
@@ -210,7 +228,7 @@ class SettingsServiceTest extends TestCase {
 					"setup_app_password" => false,
 				],
 				"completeSetup" => true,
-				"message" => "invalid data",
+				"message" => "Invalid value for setting: openproject_instance_url",
 			],
 			"unknown settings" => [
 				"configs" => [
@@ -225,7 +243,7 @@ class SettingsServiceTest extends TestCase {
 					"test_setting" => 'test', // unknown setting
 				],
 				"completeSetup" => true,
-				"message" => "invalid key",
+				"message" => "Unknown setting: test_setting",
 			],
 			"unknown settings - boolean key" => [
 				"configs" => [
@@ -240,7 +258,7 @@ class SettingsServiceTest extends TestCase {
 					true => 'test', // unknown setting
 				],
 				"completeSetup" => true,
-				"message" => "invalid key",
+				"message" => "Unknown setting: 1",
 			],
 			"update action - unknown settings" => [
 				"configs" => [
@@ -248,23 +266,34 @@ class SettingsServiceTest extends TestCase {
 					"test_setting" => 'test', // unknown setting
 				],
 				"completeSetup" => false,
-				"message" => "invalid key",
+				"message" => "Unknown setting: test_setting",
 			],
 			"update action - invalid url" => [
 				"configs" => [
 					"openproject_instance_url" => "test", // invalid URL
 				],
 				"completeSetup" => false,
-				"message" => "invalid data",
+				"message" => "Invalid OpenProject URL.",
 			],
 			"update action - invalid 'authorization_method' value - boolean true" => [
 				"configs" => [
 					"authorization_method" => true,
 				],
 				"completeSetup" => false,
-				"message" => "invalid data",
+				"message" => "Invalid value for setting: authorization_method",
 			],
 		];
+	}
+
+	/**
+	 * @dataProvider invalidSettingsProvider
+	 */
+	public function testValidateAdminSettingsFormInvalid(array $configs, bool $completeSetup, string $message): void {
+		$service = $this->getSettingsServiceMock();
+
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessageMatches('/^' . preg_quote($message, '/') . '$/');
+		$service->validateAdminSettingsForm($configs, $completeSetup);
 	}
 
 	public function validSettingsProvider(): array {
@@ -333,17 +362,6 @@ class SettingsServiceTest extends TestCase {
 				"completeSetup" => false,
 			],
 		];
-	}
-
-	/**
-	 * @dataProvider invalidSettingsProvider
-	 */
-	public function testValidateAdminSettingsFormInvalid(array $configs, bool $completeSetup, string $message): void {
-		$service = $this->getSettingsServiceMock();
-
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage($message);
-		$service->validateAdminSettingsForm($configs, $completeSetup);
 	}
 
 	/**
