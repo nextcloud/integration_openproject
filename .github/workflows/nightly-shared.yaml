@@ -7,6 +7,12 @@ on:
       branch:
         required: true
         type: string
+      nextcloud_versions:
+        required: true
+        type: string
+      php_versions:
+        required: true
+        type: string
       app_upgrade_nc_versions:
         required: true
         type: string
@@ -27,6 +33,8 @@ jobs:
     secrets: inherit
     with:
       branch: ${{ inputs.branch }}
+      nextcloud_versions: ${{ inputs.nextcloud_versions }}
+      php_versions: ${{ inputs.php_versions }}
 
   app-upgrade-test:
     uses: ./.github/workflows/app-upgrade.yml

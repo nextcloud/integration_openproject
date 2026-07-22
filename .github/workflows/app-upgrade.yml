@@ -13,13 +13,9 @@ on:
         required: false
         type: string
         default: 'master'
-      php_versions:
-        required: false
-        type: string
-        default: '8.4'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: upgrade-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -35,7 +31,7 @@ jobs:
         id: create-matrix
         env:
           NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
-          PHP_VERSIONS: ${{ inputs.php_versions }}
+          PHP_VERSIONS: '8.4'
           DEFAULT_PHP_VERSION: '8.4'
           DEFAULT_DATABASE: 'mysql'
         run: |

@@ -10,6 +10,12 @@ on:
       branch:
         required: true
         type: string
+      nextcloud_versions:
+        required: true
+        type: string
+      php_versions:
+        required: true
+        type: string
   push:
     branches:
       - 'master'
@@ -30,9 +36,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NEXTCLOUD_VERSIONS: '31 32'
-  PHP_VERSIONS: '8.2 8.3 8.4'
-  DEFAULT_PHP_VERSION: '8.3'
+  NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions || '31 32' }}
+  PHP_VERSIONS: ${{ inputs.php_versions || '8.2 8.3 8.4' }}
+  DEFAULT_PHP_VERSION: '8.4'
   DEFAULT_DATABASE: 'mysql'
   EXTRA_DATABASES: 'pgsql'
 
