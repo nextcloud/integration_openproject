@@ -8,10 +8,10 @@ on:
         required: true
         type: string
       nextcloud_versions:
-        required: false
+        required: true
         type: string
       php_versions:
-        required: false
+        required: true
         type: string
       app_upgrade_nc_versions:
         required: true
@@ -22,13 +22,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  js-unit-tests:
+  js-unit-test:
     uses: ./.github/workflows/js-unit.yml
     secrets: inherit
     with:
       branch: ${{ inputs.branch }}
 
-  php-unit-api-tests:
+  php-unit-api-test:
     uses: ./.github/workflows/php-unit-api.yml
     secrets: inherit
     with:
@@ -43,7 +43,7 @@ jobs:
       nextcloud_versions: ${{ inputs.app_upgrade_nc_versions }}
 
   notify-nightly-report:
-    needs: [js-unit-tests, php-unit-api-tests, app-upgrade-test]
+    needs: [js-unit-test, php-unit-api-test, app-upgrade-test]
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     steps:
