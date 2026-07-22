@@ -11,6 +11,7 @@ module.exports = {
 		'\\.(scss)$': '<rootDir>/tests/jest/stubs/empty.js',
 		'@nextcloud/l10n/gettext': '<rootDir>/tests/jest/__mocks__/@nextcloud/l10n.js',
 		'@nextcloud/router': '<rootDir>/tests/jest/__mocks__/@nextcloud/router.js',
+		'@nextcloud/axios': '<rootDir>/node_modules/@nextcloud/axios/dist/index.js',
 	},
 	transform: {
 		// process *.vue files with vue-jest

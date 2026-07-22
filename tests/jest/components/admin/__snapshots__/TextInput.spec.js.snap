@@ -264,25 +264,25 @@ exports[`TextInput.vue with copy button prop should render copy button if set 1`
      
     <button
       class="text-input-copy-value button-vue button-vue--size-normal button-vue--icon-and-text button-vue--vue-secondary"
-      data-v-ce3a06f2=""
+      data-v-29ac0caf=""
       disabled="disabled"
       title="Copy value"
       type="button"
     >
       <span
         class="button-vue__wrapper"
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
       >
         <span
           aria-hidden="true"
           class="button-vue__icon"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             aria-label=""
             class="material-design-icon clippy-icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
             role="img"
           >
             <svg
@@ -303,7 +303,7 @@ exports[`TextInput.vue with copy button prop should render copy button if set 1`
         </span>
         <span
           class="button-vue__text"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           
 			Copy value
