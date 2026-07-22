@@ -98,24 +98,24 @@ exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`]
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
@@ -296,24 +296,24 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
@@ -426,24 +426,24 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
@@ -570,24 +570,24 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
@@ -699,24 +699,24 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
@@ -844,24 +844,24 @@ exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
       <button
         aria-label="Unlink Work Package"
         class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-9676f7ed=""
-        data-v-ce3a06f2=""
+        data-v-29ac0caf=""
+        data-v-38a26e61=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-ce3a06f2=""
+          data-v-29ac0caf=""
         >
           <span
             aria-hidden="true"
             class="button-vue__icon"
-            data-v-ce3a06f2=""
+            data-v-29ac0caf=""
           >
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-ce3a06f2=""
+              data-v-29ac0caf=""
               role="img"
             >
               <svg
