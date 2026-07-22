@@ -393,6 +393,7 @@ OP_ADMIN_USERNAME=admin \
 OP_ADMIN_PASSWORD=admin \
 OP_STORAGE_NAME=nextcloud \
 OP_STORAGE_AUDIENCE=nextcloud \
+OP_STORAGE_SCOPE=<scope_for_token_exchange> \
 bash integration_oidc_setup.sh
 ```
 
