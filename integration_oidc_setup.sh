@@ -43,7 +43,7 @@ help() {
 }
 
 log_error() {
-  echo -e "\e[31m$1\e[0m"
+  echo -e "\e[31m$1\e[0m" >&2
 }
 
 log_info() {
@@ -221,8 +221,8 @@ opDeleteStorage() {
 }
 
 # Helper function for nextcloud
-ncCheckIntegrationConfiguration() {
-  nc_integration_config_ok=
+getNcIntegrationConfigStatus () {
+  local nc_integration_config_ok=
   nc_integration_config_response=$(curl -s -X GET -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} \
     ${NC_INTEGRATION_BASE_URL}/check-admin-config
   )
@@ -239,6 +239,11 @@ ncCheckIntegrationConfiguration() {
   else
     nc_integration_config_ok=1
   fi
+  echo "${nc_integration_config_ok}"
+}
+
+ncCheckIntegrationConfiguration () {
+  local nc_integration_config_ok=$(getNcIntegrationConfigStatus)
   if [[ "$nc_integration_config_ok" -ne 0 ]]; then
     log_error "Some admin configuration is incomplete in Nextcloud '${NC_HOST}' for integration with OpenProject."
     if [[ ${SETUP_PROJECT_FOLDER} == 'true' ]]; then
@@ -380,13 +385,12 @@ if [[ "$openproject_version" < "$OP_MINIMUM_VERSION" ]]; then
   exit 1
 fi
 
-# API call to add storage
-cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
+get_op_storage_req_data() {
+cat <<EOF
 {
   "name": "${OP_STORAGE_NAME}",
   "storageAudience": "${OP_STORAGE_AUDIENCE}",
   "tokenExchangeScope": "${OP_STORAGE_SCOPE}",
-  "applicationPassword": "",
   "_links": {
     "origin": {
       "href": "${NC_HOST}"
@@ -400,29 +404,128 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
   }
 }
 EOF
+}
 
-create_storage_response=$(
-  curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-    ${OP_STORAGE_ENDPOINT} \
+setup_op_storage() {
+  local method=$1
+  local op_storage_id=$2
+  local op_storage_endpoint="${OP_STORAGE_ENDPOINT}"
+
+  if [[ -n "${op_storage_id}" ]]; then
+    op_storage_endpoint="${OP_STORAGE_ENDPOINT}/${op_storage_id}"
+  fi
+
+  curl -s -w "\n%{http_code}" -X "${method}" -u"${OP_ADMIN_USERNAME}":"${OP_ADMIN_PASSWORD}" \
+    "${op_storage_endpoint}" \
     -H 'accept: application/hal+json' \
     -H 'Content-Type: application/json' \
     -H 'X-Requested-With: XMLHttpRequest' \
-    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
-)
+    -d @"${INTEGRATION_SETUP_TEMP_DIR}/get_op_storage_req_data.json"
 
-if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
+  if [[ "${INTEGRATION_SETUP_DEBUG}" != "true" ]]; then rm "${INTEGRATION_SETUP_TEMP_DIR}/get_op_storage_req_data.json"; fi
+}
+
+get_nc_integration_update_data() {
+cat <<EOF
+{
+  "values": {
+    "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE",
+    "authorization_method": "oidc"
+  }
+}
+EOF
+}
+
+setup_nc_integration() {
+  local method=$1
+  local req_data=$2
+
+  curl -s -w "\n%{http_code}" -X "${method}" -u"${NC_ADMIN_USERNAME}":"${NC_ADMIN_PASSWORD}" "${NC_INTEGRATION_BASE_URL}/setup" \
+    -H 'Content-Type: application/json' \
+    -d @"${INTEGRATION_SETUP_TEMP_DIR}/${req_data}"
+
+  if [[ "${INTEGRATION_SETUP_DEBUG}" != "true" ]]; then rm "${INTEGRATION_SETUP_TEMP_DIR}/${req_data}"; fi
+}
+
+get_nextcloud_storage_id() {
+  local nextcloud_storage_id_response=$(curl -s -w "\n%{http_code}" -X GET -u"${OP_ADMIN_USERNAME}":"${OP_ADMIN_PASSWORD}" "${OP_STORAGE_ENDPOINT}")
+  local nextcloud_storage_id_status_code=$(echo "${nextcloud_storage_id_response}" | tail -n1)
+  if [[ "${nextcloud_storage_id_status_code}" == 200 ]]; then
+    echo "${nextcloud_storage_id_response}" | sed '$d' |
+    jq -r --arg op_storage_name "${OP_STORAGE_NAME}" '._embedded.elements[] | select((.name | ascii_downcase ) == $op_storage_name) | .id'
+  else
+  	log_error "Failed to get nextcloud storage ID."
+	local error_message=$(echo "${nextcloud_storage_id_response}" | sed '$d' | jq -r ".message")
+    log_error "Error message: ${error_message}"
+  	exit 1
+  fi
+}
+
+update_integration_setup() {
+  get_op_storage_req_data > "${INTEGRATION_SETUP_TEMP_DIR}/get_op_storage_req_data.json"
+  local update_storage_response=$(setup_op_storage "PATCH" "${OP_STORAGE_ID}")
+  local update_storage_status_code=$(echo "${update_storage_response}" | tail -n1)
+  if [[ "${update_storage_status_code}" != 200 ]]; then
+    log_error "Failed to update existing OpenProject storage."
+    local error_message=$(echo "${update_storage_response}" | sed '$d' | jq -r ".message")
+	log_error "Error message: ${error_message}"
+    exit 1
+  else
+    log_success "Successfully updated existing OpenProject storage"
+  fi
+
+  if [[ "${NC_INTEGRATION_PROVIDER_TYPE}" == "nextcloud_hub" ]]; then
+    createOidcClient
+    get_nc_integration_update_data |
+      jq --arg client_id "${NC_INTEGRATION_OP_CLIENT_ID}" \
+        '.values.targeted_audience_client_id = $client_id' \
+      > "${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_converting_existing_setup.json"
+
+    local nc_integration_update_response=$(setup_nc_integration "PATCH" request_body_for_converting_existing_setup.json | tail -n1)
+    if [[ "${nc_integration_update_response}" == 200 ]]; then
+      log_success "Successfully updated existing Nextcloud integration setup to Nextcloud hub OIDC provider setup"
+    else
+      log_error "Failed to update existing Nextcloud integration setup to Nextcloud hub OIDC provider setup"
+      exit 1
+    fi
+  elif [[ "${NC_INTEGRATION_PROVIDER_TYPE}" == "external" ]]; then
+    get_nc_integration_update_data |
+      jq --arg provider_name "${NC_INTEGRATION_PROVIDER_NAME}" \
+        '.values.oidc_provider = $provider_name' \
+      > "${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_converting_existing_setup.json"
+
+    local nc_integration_update_response=$(setup_nc_integration "PATCH" request_body_for_converting_existing_setup.json | tail -n1)
+    if [[ "${nc_integration_update_response}" == 200 ]]; then
+      log_success "Successfully updated existing Nextcloud integration setup to external OIDC provider setup"
+    else
+      log_error "Failed to update existing Nextcloud integration setup to external OIDC provider setup"
+    fi
+  fi
+}
+
+OP_STORAGE_ID=$(get_nextcloud_storage_id)
+NC_INTEGRATION_CONFIG_STATUS=$(getNcIntegrationConfigStatus)
+if [[ -n "${OP_STORAGE_ID}" ]] && [[ "${NC_INTEGRATION_CONFIG_STATUS}" == 0 ]]; then
+  update_integration_setup
+  exit 0
+fi
+
+# API call to add storage
+get_op_storage_req_data | jq '.applicationPassword = ""' > ${INTEGRATION_SETUP_TEMP_DIR}/get_op_storage_req_data.json
+op_storage_create_response=$(setup_op_storage "POST" | sed '$d')
+
 # check for errors
-response_type=$(echo $create_storage_response | jq -r "._type")
+response_type=$(echo $op_storage_create_response | jq -r "._type")
 if [[ ${response_type} == "Error" ]]; then
-  error_message=$(echo $create_storage_response | jq -r ".message")
-  error_id=$(echo $create_storage_response | jq -r ".errorIdentifier")
+  error_message=$(echo $op_storage_create_response | jq -r ".message")
+  error_id=$(echo $op_storage_create_response | jq -r ".errorIdentifier")
   if [[ ${error_id} == "urn:openproject-org:api:v3:errors:MultipleErrors" ]]; then
     # If the files storage is already created with the provided Nextcloud host and storage name.
     # We assume that the integration setup is already done in both applications.
     # To check that, we parse the error messages.
     # If there are only two error messages and those are about the Nextcloud host and name being taken.
     # We assume the setup was already completed.
-    error_messages_grep=$(echo $create_storage_response | jq -r '.["_embedded"]["errors"] | .[].message')
+    error_messages_grep=$(echo $op_storage_create_response | jq -r '.["_embedded"]["errors"] | .[].message')
     readarray -t error_messages <<<"$error_messages_grep"
     error_count=0
     host_already_taken=false
@@ -444,7 +547,7 @@ if [[ ${response_type} == "Error" ]]; then
     logAlreadyCompletedIntegrationConfiguration
   elif [[ ${error_id} == "urn:openproject-org:api:v3:errors:PropertyConstraintViolation" ]]; then
     # A PropertyConstraintViolation is always a single error
-    error_messages_grep=$(echo $create_storage_response | jq -r '.message')
+    error_messages_grep=$(echo $op_storage_create_response | jq -r '.message')
     if [[ "$error_messages_grep" == "Host has already been taken." || "$error_messages_grep" == "Name has already been taken." ]]; then
       opCheckIntegrationConfiguration
       ncCheckIntegrationConfiguration
@@ -464,12 +567,12 @@ if [[ ${response_type} == "Error" ]]; then
 fi
 
 # Required information from the above response
-OP_STORAGE_ID=$(echo $create_storage_response | jq -e '.id')
+OP_STORAGE_ID=$(echo $op_storage_create_response | jq -e '.id')
 
 if [[ ${OP_STORAGE_ID} == null ]]; then
-  echo "${create_storage_response}" | jq
   log_error "Response does not contain $OP_STORAGE_ID (id)."
   log_error "Setup of OpenProject and Nextcloud integration failed."
+  echo "${op_storage_create_response}" | jq
   exit 1
 fi
 
@@ -499,7 +602,7 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json <<EO
     "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE",
     "authorization_method": "oidc",
     "targeted_audience_client_id" : "$NC_INTEGRATION_OP_CLIENT_ID",
-    "default_enable_navigation": $NC_INTEGRATION_ENABLE_SEARCH,
+    "default_enable_navigation": $NC_INTEGRATION_ENABLE_NAVIGATION,
     "default_enable_unified_search": $NC_INTEGRATION_ENABLE_SEARCH,
     "setup_project_folder": $SETUP_PROJECT_FOLDER,
     "setup_app_password": $SETUP_APP_PASSWORD
@@ -523,13 +626,7 @@ if [[ $NC_INTEGRATION_PROVIDER_TYPE != "nextcloud_hub" ]]; then
 fi
 
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
-nc_integration_setup_response=$(
-  curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
-    -H 'Content-Type: application/json' \
-    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json
-)
-
-if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json; fi
+nc_integration_setup_response=$(setup_nc_integration "POST" request_body_4_nc_integration_setup.json | sed '$d')
 
 if [[ "$nc_integration_setup_response" != *'"status":true'* ]]; then
   log_info "The response does not contain \"status\": true."
