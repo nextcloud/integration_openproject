@@ -40,6 +40,8 @@ help() {
   echo -e "\t OP_USE_LOGIN_TOKEN \t Use first access token obtained by IDP (true/false). Default: false"
   echo -e "\t OP_STORAGE_AUDIENCE \t Name of the storage audience (Not required when using 'OP_USE_LOGIN_TOKEN=true')"
   echo -e "\t OP_STORAGE_SCOPE \t Scope for token exchange (Not required when using 'OP_USE_LOGIN_TOKEN=true')"
+  echo -e ""
+  echo -e "\t CONVERT_EXISTING_CONNECTION \t\t\t Convert existing connection between OpenProject and Nextcloud"
 }
 
 log_error() {
@@ -91,12 +93,18 @@ else
 fi
 
 # Validate required configs for integration setup
-if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]] ||
-  [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] ||
-  [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]]; then
-  log_error "Following configs are required for integration setup:\n  NC_INTEGRATION_ENABLE_NAVIGATION\n  NC_INTEGRATION_ENABLE_SEARCH\n  NC_INTEGRATION_PROVIDER_TYPE"
+if [[ -z $NC_INTEGRATION_PROVIDER_TYPE ]]; then
+  log_error "NC_INTEGRATION_PROVIDER_TYPE is required."
   help
   exit 1
+fi
+
+if [[ $CONVERT_EXISTING_CONNECTION != "true" ]]; then
+	if [[ -z $NC_INTEGRATION_ENABLE_NAVIGATION ]] || [[ -z $NC_INTEGRATION_ENABLE_SEARCH ]]; then
+	  log_error "Following configs are required for integration setup:\n  NC_INTEGRATION_ENABLE_NAVIGATION\n  NC_INTEGRATION_ENABLE_SEARCH"
+	  help
+	  exit 1
+	fi
 fi
 
 if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
@@ -380,13 +388,12 @@ if [[ "$openproject_version" < "$OP_MINIMUM_VERSION" ]]; then
   exit 1
 fi
 
-# API call to add storage
-cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
+request_body_for_op_storage() {
+cat <<EOF
 {
   "name": "${OP_STORAGE_NAME}",
   "storageAudience": "${OP_STORAGE_AUDIENCE}",
   "tokenExchangeScope": "${OP_STORAGE_SCOPE}",
-  "applicationPassword": "",
   "_links": {
     "origin": {
       "href": "${NC_HOST}"
@@ -400,17 +407,78 @@ cat >${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json <<EOF
   }
 }
 EOF
+}
 
-create_storage_response=$(
-  curl -s -X POST -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
-    ${OP_STORAGE_ENDPOINT} \
-    -H 'accept: application/hal+json' \
-    -H 'Content-Type: application/json' \
-    -H 'X-Requested-With: XMLHttpRequest' \
-    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json
-)
+api_request_for_op_storage() {
+      method=$1
+      op_storage_id=$2
+      if [[ -n "$op_storage_id" ]]; then
+      	OP_STORAGE_ENDPOINT="${OP_STORAGE_ENDPOINT}/${op_storage_id}"
+      fi
+	  curl -s -X "$method" -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+		${OP_STORAGE_ENDPOINT} \
+		-H 'accept: application/hal+json' \
+		-H 'Content-Type: application/json' \
+		-H 'X-Requested-With: XMLHttpRequest' \
+		-d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_op_storage.json
+}
 
-if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_op_create_storage.json; fi
+request_body_for_update_nc_integration_setup() {
+cat <<EOF
+{
+  "values": {
+    "sso_provider_type": "$NC_INTEGRATION_PROVIDER_TYPE",
+    "authorization_method": "oidc"
+  }
+}
+EOF
+}
+
+api_request_for_nc_integration_setup() {
+	method=$1
+	fileName=$2
+
+	curl -s -X "$method" -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
+	  -H 'Content-Type: application/json' \
+	  -d @${INTEGRATION_SETUP_TEMP_DIR}/"$fileName"
+}
+
+if [[ $CONVERT_EXISTING_CONNECTION == "true" ]]; then
+		OP_STORAGE_ID=$(curl -s -X GET -u${OP_ADMIN_USERNAME}:${OP_ADMIN_PASSWORD} \
+			${OP_STORAGE_ENDPOINT} | jq '._embedded.elements[].id')
+
+		request_body_for_op_storage > ${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_op_storage.json
+		update_storage_response=$(api_request_for_op_storage PATCH "$OP_STORAGE_ID")
+
+    if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_op_storage.json; fi
+
+	if [[ $NC_INTEGRATION_PROVIDER_TYPE == "nextcloud_hub" ]]; then
+		createOidcClient
+		request_body_for_update_nc_integration_setup |
+		jq --arg client_id "$NC_INTEGRATION_OP_CLIENT_ID" \
+		   '.values.targeted_audience_client_id = $client_id' \
+		> "${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_converting_existing_setup.json"
+
+		nc_integration_setup_update_response=$(api_request_for_nc_integration_setup PATCH request_body_for_converting_existing_setup.json)
+	fi
+
+	if [[ $NC_INTEGRATION_PROVIDER_TYPE == "external" ]]; then
+		request_body_for_update_nc_integration_setup |
+		jq --arg provider_name "$NC_INTEGRATION_PROVIDER_NAME" \
+		   '.values.oidc_provider = $provider_name' \
+		> "${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_converting_existing_setup.json"
+
+		nc_integration_setup_update_response=$(api_request_for_nc_integration_setup PATCH request_body_for_converting_existing_setup.json)
+	fi
+
+	if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_converting_existing_setup.json; fi
+fi
+
+# API call to add storage
+request_body_for_op_storage | jq '.applicationPassword = ""' > ${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_op_storage.json
+create_storage_response=$(api_request_for_op_storage POST)
+
+if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_for_op_storage.json; fi
 # check for errors
 response_type=$(echo $create_storage_response | jq -r "._type")
 if [[ ${response_type} == "Error" ]]; then
@@ -523,11 +591,7 @@ if [[ $NC_INTEGRATION_PROVIDER_TYPE != "nextcloud_hub" ]]; then
 fi
 
 # API call to set the  openproject_client_id and openproject_client_secret to Nextcloud [integration_openproject]
-nc_integration_setup_response=$(
-  curl -s -XPOST -u${NC_ADMIN_USERNAME}:${NC_ADMIN_PASSWORD} "${NC_INTEGRATION_BASE_URL}/setup" \
-    -H 'Content-Type: application/json' \
-    -d @${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json
-)
+nc_integration_setup_response=$(api_request_for_nc_integration_setup POST request_body_4_nc_integration_setup.json)
 
 if [[ $INTEGRATION_SETUP_DEBUG != "true" ]]; then rm ${INTEGRATION_SETUP_TEMP_DIR}/request_body_4_nc_integration_setup.json; fi
 
