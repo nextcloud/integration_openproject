@@ -26,9 +26,11 @@ on:
       - '**.md'
       - '**.txt'
       - '**.sh'
+      - '**.js'
       - 'dev/**'
       - 'l10n/**'
       - 'img/**'
+      - 'src/**'
       - 'package*.json'
 
 concurrency:
