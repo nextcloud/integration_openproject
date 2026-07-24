@@ -29,6 +29,7 @@ on:
       - 'dev/**'
       - 'l10n/**'
       - 'img/**'
+      - 'src/**'
       - 'package*.json'
 
 concurrency:
