@@ -52,7 +52,7 @@ jobs:
         uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4
         id: versions
         with:
-          fallbackNode: '^20'
+          fallbackNode: '^22'
           fallbackNpm: '^10'
 
       - name: Setup NodeJS ${{ steps.versions.outputs.nodeVersion }}
@@ -71,8 +71,7 @@ jobs:
         run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
       - name: Vue Unit tests
-        run: |
-          make jsunit
+        run: make jsunit
 
       - name: JS Code Coverage Summary Report
         if: ${{ github.event_name == 'pull_request' }}
