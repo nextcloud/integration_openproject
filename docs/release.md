@@ -80,6 +80,31 @@ On the current release branch:
 
 ## 3. After Release
 
-1. Add the release notes to the newly created [GitHub release](https://github.com/nextcloud/integration_openproject/releases).
-2. Merge the necessary commits from the release branch into the `master` branch.
-3. In the `master` branch, bump the app version to the next minor version (e.g.: `X.(Y+1).0-dev`).
+For each release:
+
+- Add the release notes to the newly created [GitHub release](https://github.com/nextcloud/integration_openproject/releases).
+
+For `>=3.x` release branch:
+
+- Merge the necessary commits from the release branch into the `master` branch.
+- In the `master` branch, bump the app version to the next minor version (e.g.: `X.(Y+1).0-dev`).
+  - `info.xml`
+  - `package.json`
+  - `package-lock.json` (use `npm install` command)
+
+For `2.x` release branch:
+
+- Create a new release branch for the next minor version (e.g.: `release/2.(Y+1)`).
+- Bump the app version in the new release branch to the next minor version (e.g.: `2.(Y+1).0-dev`).
+  - `info.xml`
+  - `package.json`
+  - `package-lock.json` (use `npm install` command)
+- In the `master` branch, add the translations backport branch to the new release branch.
+
+  ```diff
+  # .tx/backport
+
+    release/2.Y
+  + release/2.(Y+1)
+    release/3.0
+  ```
