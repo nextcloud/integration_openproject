@@ -29,7 +29,7 @@ on:
       - 'dev/**'
       - 'l10n/**'
       - 'img/**'
-      - 'package+'
+      - 'package*.json'
 
 concurrency:
   group: php-${{ github.workflow }}-${{ github.ref }}
