@@ -68,7 +68,7 @@ class SettingsServiceTest extends TestCase {
 
 	public function invalidSettingsProvider(): array {
 		return [
-			"invalid json data" => [
+			"empty settings" => [
 				"configs" => [],
 				"completeSetup" => true,
 				"message" => "Invalid settings.",
