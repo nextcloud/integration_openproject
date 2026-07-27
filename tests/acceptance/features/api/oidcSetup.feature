@@ -127,7 +127,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "<error>"}
+          "error": {"const": <error>}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -135,19 +135,19 @@ Feature: setup the integration with OIDC method
       }
       """
     Examples:
-      | auth_method | provider_type   | target_client_id | error                        |
-      | null        | "nextcloud_hub" | "client-id"      | Invalid authorization method |
-      | ""          | "nextcloud_hub" | "client-id"      | Invalid authorization method |
-      | true        | "nextcloud_hub" | "client-id"      | Invalid authorization method |
-      | "unknown"   | "nextcloud_hub" | "client-id"      | Invalid authorization method |
-      | "oidc"      | null            | "client-id"      | invalid key                  |
-      | "oidc"      | ""              | "client-id"      | invalid key                  |
-      | "oidc"      | true            | "client-id"      | invalid key                  |
-      | "oidc"      | "unknown"       | "client-id"      | invalid key                  |
-      | "oidc"      | "nextcloud_hub" | null             | invalid data                 |
-      | "oidc"      | "nextcloud_hub" | ""               | invalid data                 |
-      | "oidc"      | "nextcloud_hub" | false            | invalid data                 |
-      | "oidc"      | "nextcloud_hub" | []               | invalid data                 |
+      | auth_method | provider_type   | target_client_id | error                                                    |
+      | null        | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | ""          | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | true        | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | "unknown"   | "nextcloud_hub" | "client-id"      | "Invalid authorization method."                          |
+      | "oidc"      | null            | "client-id"      | "Invalid value for setting: sso_provider_type"           |
+      | "oidc"      | ""              | "client-id"      | "Invalid value for setting: sso_provider_type"           |
+      | "oidc"      | true            | "client-id"      | "Invalid value for setting: sso_provider_type"           |
+      | "oidc"      | "unknown"       | "client-id"      | "Invalid value for setting: sso_provider_type"           |
+      | "oidc"      | "nextcloud_hub" | null             | "Invalid value for setting: targeted_audience_client_id" |
+      | "oidc"      | "nextcloud_hub" | ""               | "Invalid value for setting: targeted_audience_client_id" |
+      | "oidc"      | "nextcloud_hub" | false            | "Invalid value for setting: targeted_audience_client_id" |
+      | "oidc"      | "nextcloud_hub" | []               | "Invalid value for setting: targeted_audience_client_id" |
 
 
   Scenario: try to setup with unknown key
@@ -172,7 +172,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid key"}
+          "error": {"const": "Unknown setting: unknown_key"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -203,7 +203,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "<error>"}
+          "error": {"const": "Missing required field: <field>"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -211,11 +211,11 @@ Feature: setup the integration with OIDC method
       }
       """
     Examples:
-      | settings                                                                      | error                                                                   |
-      | "targeted_audience_client_id":"client-id"                                     | Incomplete settings: 'sso_provider_type' is required with 'oidc' method |
-      | "sso_provider_type":"nextcloud_hub"                                           | invalid key                                                             |
-      | "sso_provider_type":"external", "token_exchange":false                        | invalid key                                                             |
-      | "sso_provider_type":"external", "oidc_provider":"test", "token_exchange":true | invalid key                                                             |
+      | settings                                                                      | field                       |
+      | "targeted_audience_client_id":"client-id"                                     | sso_provider_type           |
+      | "sso_provider_type":"nextcloud_hub"                                           | targeted_audience_client_id |
+      | "sso_provider_type":"external", "token_exchange":false                        | oidc_provider               |
+      | "sso_provider_type":"external", "oidc_provider":"test", "token_exchange":true | targeted_audience_client_id |
 
 
   Scenario: non-admin user tries to setup without team folder
@@ -333,7 +333,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid data"}
+          "error": {"const": "Invalid value for setting: <field>"}
         },
         "not": {
           "required": ["openproject_revocation_status"]
@@ -341,10 +341,10 @@ Feature: setup the integration with OIDC method
       }
       """
     Examples:
-      | settings                                                                                         |
-      | "sso_provider_type":"unknown"                                                                    |
-      | "sso_provider_type":"external","oidc_provider":false,"token_exchange":false                      |
-      | "sso_provider_type":"external","token_exchange":"true","targeted_audience_client_id":"client-id" |
+      | settings                                                                                         | field             |
+      | "sso_provider_type":"unknown"                                                                    | sso_provider_type |
+      | "sso_provider_type":"external","oidc_provider":false,"token_exchange":false                      | oidc_provider     |
+      | "sso_provider_type":"external","token_exchange":"true","targeted_audience_client_id":"client-id" | token_exchange    |
 
 
   Scenario Outline: try to update settings with invalid json data
@@ -502,7 +502,7 @@ Feature: setup the integration with OIDC method
         "type": "object",
         "required": ["error"],
         "properties": {
-          "error": {"const": "invalid data"}
+          "error": {"const": "Invalid team folder setup configuration: Both \"setup_project_folder\" and \"setup_app_password\" must be either true or false."}
         },
         "not": {
           "required": ["openproject_revocation_status"]
