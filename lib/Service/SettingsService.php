@@ -61,7 +61,7 @@ class SettingsService {
 	/**
 	 * @return array<string, string|array>
 	 */
-	private function getAllSettingsType(): array {
+	private function getAllSettingsSchema(): array {
 		return \array_merge(self::GENERAL_ADMIN_SETTINGS, self::OAUTH_ADMIN_SETTINGS, self::OIDC_ADMIN_SETTINGS);
 	}
 
@@ -83,120 +83,141 @@ class SettingsService {
 	 * @return array<string>
 	 */
 	public function getAllSettings(): array {
-		return \array_keys($this->getAllSettingsType());
+		return \array_keys($this->getAllSettingsSchema());
 	}
 
 	/**
-	 * @param array<string, string|null|bool> $values
-	 * @param bool $completeSetup
+	 * @param array<string> $settingsToCheck
 	 *
 	 * @return void
 	 * @throws InvalidArgumentException
 	 */
-	public function validateAdminSettingsForm(?array $values, bool $completeSetup = false): void {
-		if (!$values) {
-			throw new InvalidArgumentException('The data is not a valid JSON.');
+	private function checkUnknownSettings(array $settingsToCheck): void {
+		$allowedSettings = $this->getAllSettings();
+		foreach ($settingsToCheck as $key) {
+			if (!\in_array($key, $allowedSettings, true)) {
+				throw new InvalidArgumentException('Unknown setting: ' . (string)$key);
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, string|null|bool> $settings
+	 *
+	 * @return array<string>
+	 * @throws InvalidArgumentException
+	 */
+	private function getRequiredOIDCSettings(array $settings): array {
+		$allSettings = $this->getCompleteOIDCSettings();
+		$settingsToSkip = [];
+		if (!\array_key_exists('sso_provider_type', $settings)) {
+			throw new InvalidArgumentException('Missing required field: sso_provider_type');
 		}
 
-		$settingsToCheck = \array_keys($values);
-		$settingsToSkip = [];
+		$providerType = $settings['sso_provider_type'];
+		if ($providerType === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
+			// for 'nextcloud_hub' type
+			// 'oidc_provider' and 'token_exchange' settings are not required
+			$settingsToSkip[] = 'oidc_provider';
+			$settingsToSkip[] = 'token_exchange';
+		} elseif ($providerType === Application::EXTERNAL_OIDC_PROVIDER_TYPE) {
+			if (!\array_key_exists('token_exchange', $settings)) {
+				throw new InvalidArgumentException('Missing required field: token_exchange');
+			}
+			// for 'external' type and disabled 'token_exchange'
+			// 'targeted_audience_client_id' setting is not required
+			if ($settings['token_exchange'] === false) {
+				$settingsToSkip[] = 'targeted_audience_client_id';
+			}
+		} else {
+			// let the validator check for 'sso_provider_type' value
+			$settingsToSkip[] = 'oidc_provider';
+			$settingsToSkip[] = 'token_exchange';
+			$settingsToSkip[] = 'targeted_audience_client_id';
+		}
 
-		if ($completeSetup) {
-			if (!\in_array('authorization_method', $settingsToCheck, true)) {
-				throw new InvalidArgumentException("'authorization_method' setting is missing");
-			}
-			$authMethod = $values['authorization_method'];
-			// do strict comparison
-			if (!\in_array($authMethod, self::GENERAL_ADMIN_SETTINGS['authorization_method'], true)) {
-				throw new InvalidArgumentException('Invalid authorization method');
-			}
-			if ($authMethod === Application::AUTH_METHOD_OAUTH) {
-				$settings = $this->getCompleteOAuthSettings();
-			} else {
-				$settings = $this->getCompleteOIDCSettings();
-				if (!\array_key_exists('sso_provider_type', $values)) {
-					throw new InvalidArgumentException(
-						"Incomplete settings: 'sso_provider_type' is required with '"
-						. Application::AUTH_METHOD_OIDC
-						. "' method"
-					);
-				}
-				if ($values['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
-					// for 'nextcloud_hub' type
-					// 'oidc_provider' and 'token_exchange' settings are not required
-					$settingsToSkip[] = 'oidc_provider';
-					$settingsToSkip[] = 'token_exchange';
-				} elseif ($values['sso_provider_type'] === Application::EXTERNAL_OIDC_PROVIDER_TYPE) {
-					if (!\array_key_exists('token_exchange', $values)) {
-						throw new InvalidArgumentException(
-							"Incomplete settings: 'token_exchange' is required with external provider"
-						);
-					}
-					// for 'external' type and disabled 'token_exchange'
-					// 'targeted_audience_client_id' setting is not required
-					if ($values['token_exchange'] === false) {
-						$settingsToSkip[] = 'targeted_audience_client_id';
-					}
-				}
-			}
+		return \array_diff($allSettings, $settingsToSkip);
+	}
 
-			// check if all required settings are present
-			foreach ($settings as $key) {
-				if (\in_array($key, $settingsToSkip, true)) {
-					continue;
-				}
-				if (!\in_array($key, $settingsToCheck, true)) {
-					// throw new InvalidArgumentException('Incomplete settings');
-					// for error message compatibility
-					throw new InvalidArgumentException('invalid key');
-				}
+	/**
+	 * @param array<string, string|null|bool> $settings
+	 *
+	 * @return void
+	 * @throws InvalidArgumentException
+	 */
+	private function checkRequiredSettings(array $settings): void {
+		$requiredFields = ['openproject_instance_url', 'authorization_method'];
+		foreach ($requiredFields as $field) {
+			if (!\array_key_exists($field, $settings)) {
+				throw new InvalidArgumentException('Missing required field: ' . $field);
 			}
-			// check if there are no unknown settings
-			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings, true)) {
-					// throw new InvalidArgumentException("Unknown setting: $key");
-					// for error message compatibility
-					throw new InvalidArgumentException('invalid key');
-				}
+		}
+
+		$authMethod = $settings['authorization_method'];
+		if (!\in_array($authMethod, self::GENERAL_ADMIN_SETTINGS['authorization_method'], true)) {
+			throw new InvalidArgumentException('Invalid authorization method.');
+		}
+
+		// check settings based on authorization method
+		if ($authMethod === Application::AUTH_METHOD_OAUTH) {
+			$requiredFields = $this->getCompleteOAuthSettings();
+		} else {
+			$requiredFields = $this->getRequiredOIDCSettings($settings);
+		}
+		// check if all required settings are present
+		foreach ($requiredFields as $key) {
+			if (!\array_key_exists($key, $settings)) {
+				throw new InvalidArgumentException('Missing required field: ' . $key);
 			}
+		}
+	}
+
+	/**
+	 * @param array<string, string|null|bool> $settings
+	 *
+	 * @return void
+	 * @throws InvalidArgumentException
+	 */
+	private function validateSettingsDataType(array $settings): void {
+		$settingsSchema = $this->getAllSettingsSchema();
+		foreach ($settings as $key => $value) {
+			if (!$this->hasValidDataType($value, $settingsSchema[$key]) || $value === '') {
+				throw new InvalidArgumentException('Invalid value for setting: ' . $key);
+			}
+			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
+				throw new InvalidArgumentException('Invalid OpenProject URL.');
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, string|null|bool> $values
+	 * @param bool $fullSetup
+	 *
+	 * @return void
+	 * @throws InvalidArgumentException
+	 */
+	public function validateAdminSettingsForm(?array $values, bool $fullSetup = false): void {
+		if (!$values) {
+			throw new InvalidArgumentException('Invalid settings.');
+		}
+
+		$this->checkUnknownSettings(\array_keys($values));
+
+		if ($fullSetup) {
+			$this->checkRequiredSettings($values);
 
 			if (($values['setup_project_folder'] === true && $values['setup_app_password'] === false) ||
 				($values['setup_project_folder'] === false && $values['setup_app_password'] === true)
 			) {
-				// throw new InvalidArgumentException('Invalid project folder settings');
-				// for error message compatibility
-				throw new InvalidArgumentException('invalid data');
-			}
-		} else {
-			$settings = $this->getAllSettings();
-			foreach ($settingsToCheck as $key) {
-				if (!in_array($key, $settings, true)) {
-					// throw new InvalidArgumentException("Unknown setting: $key");
-					// for error message compatibility
-					throw new InvalidArgumentException('invalid key');
-				}
+				$errMessage = 'Invalid team folder setup configuration: '
+					. 'Both "setup_project_folder" and "setup_app_password" must be either true or false.';
+				throw new InvalidArgumentException($errMessage);
 			}
 		}
 
 		// validate datatype
-		$settingsType = $this->getAllSettingsType();
-		foreach ($values as $key => $value) {
-			if (!$this->hasValidType($value, $settingsType[$key])) {
-				// throw new InvalidArgumentException("Invalid data type: $key");
-				// for error message compatibility
-				throw new InvalidArgumentException('invalid data');
-			}
-			if ($value === '') {
-				// throw new InvalidArgumentException("Invalid setting value: $key");
-				// for error message compatibility
-				throw new InvalidArgumentException('invalid data');
-			}
-			if ($key === 'openproject_instance_url' && !$this->isValidURL((string)$value)) {
-				// throw new InvalidArgumentException('Invalid URL');
-				// for error message compatibility
-				throw new InvalidArgumentException('invalid data');
-			}
-		}
+		$this->validateSettingsDataType($values);
 	}
 
 	/**
@@ -205,7 +226,7 @@ class SettingsService {
 	 *
 	 * @return bool
 	 */
-	private function hasValidType(mixed $value, string|array $type): bool {
+	private function hasValidDataType(mixed $value, string|array $type): bool {
 		if (\is_array($type)) {
 			return \in_array($value, $type, true);
 		}
