@@ -1987,11 +1987,21 @@ class ConfigControllerTest extends TestCase {
 					'openproject_redirect_uri',
 				],
 			],
-			"oidc: provider type" => [
+			"oidc: external provider type" => [
 				"authMethod" => Application::AUTH_METHOD_OIDC,
 				"oauthClientId" => 0,
 				'settings' => [
 					'sso_provider_type' => Application::EXTERNAL_OIDC_PROVIDER_TYPE,
+				],
+				'responseProps' => [
+					'status',
+				],
+			],
+			"oidc: nextcloud hub provider type" => [
+				"authMethod" => Application::AUTH_METHOD_OIDC,
+				"oauthClientId" => 0,
+				'settings' => [
+					'sso_provider_type' => Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE,
 				],
 				'responseProps' => [
 					'status',
@@ -2083,8 +2093,14 @@ class ConfigControllerTest extends TestCase {
 
 		$openprojectAPIServiceMock = $this->createMock(OpenProjectAPIService::class);
 		$settingsServiceMock = $this->createMock(SettingsService::class);
+		$actualValues = null;
 		$settingsServiceMock->expects($this->once())
-			->method('validateAdminSettingsForm');
+			->method('validateAdminSettingsForm')->with(
+				$this->callback(function (array $values) use (&$actualValues) {
+					$actualValues = $values;
+					return true;
+				})
+			);
 
 		$constructArgs = [
 			'config' => $configMock,
@@ -2097,8 +2113,12 @@ class ConfigControllerTest extends TestCase {
 		$configController = new ConfigController(...$constructArgs);
 
 		$response = $configController->updateIntegration($settings);
-		$data = $response->getData();
+		if (isset($settings['sso_provider_type']) && $settings['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE) {
+			$this->assertArrayHasKey('oidc_provider', $actualValues);
+			$this->assertSame(Application::NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL, $actualValues['oidc_provider']);
+		}
 
+		$data = $response->getData();
 		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
 		$this->assertArrayHasKey('status', $data);
 
