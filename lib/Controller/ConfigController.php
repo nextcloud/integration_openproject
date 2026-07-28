@@ -698,6 +698,12 @@ class ConfigController extends Controller {
 	public function updateIntegration(?array $values): DataResponse {
 		try {
 			// individual settings can be updated
+			if (
+				isset($values['sso_provider_type']) && $values['sso_provider_type'] === Application::NEXTCLOUD_HUB_OIDC_PROVIDER_TYPE
+				&& (!\array_key_exists('oidc_provider', $values) || !$values['oidc_provider'])
+			) {
+				$values['oidc_provider'] = Application::NEXTCLOUD_HUB_OIDC_PROVIDER_LABEL;
+			}
 			$this->settingsService->validateAdminSettingsForm($values);
 			$setup = $this->setIntegrationConfig($values);
 			$response = ['status' => $setup['status']];

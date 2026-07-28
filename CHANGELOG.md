@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix: Default OIDC provider name not set while updating to Nextcloud Hub setup [#1126](https://github.com/nextcloud/integration_openproject/pull/1126)
+
 ### Changed
 
 - Update npm dependencies [#1123](https://github.com/nextcloud/integration_openproject/pull/1123)
