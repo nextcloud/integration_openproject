@@ -5,15 +5,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import './bootstrap.js'
 import AdminSettings from './components/AdminSettings.vue'
 
 // eslint-disable-next-line
 'use strict'
 
-// eslint-disable-next-line
-new Vue({
-	el: '#openproject_prefs',
-	render: h => h(AdminSettings),
-})
+createApp(AdminSettings).mount('#openproject_prefs')

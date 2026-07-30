@@ -7,7 +7,7 @@ import '../bootstrap.js'
 import { registerFileAction, Permission, getSidebar } from '@nextcloud/files'
 import OpenProjectIcon from '../../img/app-dark.svg'
 import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
-import Vue from 'vue'
+import { createApp } from 'vue'
 
 if (!OCA.OpenProject) {
 	/**
@@ -105,9 +105,5 @@ const modalElement = document.createElement('div')
 modalElement.id = modalId
 document.body.append(modalElement)
 
-OCA.OpenProject.LinkMultipleFilesModalVue = new Vue({
-	el: modalElement,
-	render: h => {
-		return h(LinkMultipleFilesModal)
-	},
-})
+const component = createApp(LinkMultipleFilesModal).mount(modalElement)
+OCA.OpenProject.LinkMultipleFilesModalVue = component

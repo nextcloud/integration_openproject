@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import { translate, translatePlural } from '@nextcloud/l10n'
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
+const app = createApp({})
+app.config.globalProperties.t = translate
+app.config.globalProperties.n = translatePlural
+app.config.globalProperties.OC = window.OC
+app.config.globalProperties.OCA = window.OCA

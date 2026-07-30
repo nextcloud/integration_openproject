@@ -5,15 +5,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import './bootstrap.js'
 import PersonalSettings from './components/PersonalSettings.vue'
 
 // eslint-disable-next-line
 'use strict'
 
-// eslint-disable-next-line
-new Vue({
-	el: '#openproject_prefs',
-	render: h => h(PersonalSettings),
-})
+createApp(PersonalSettings).mount('#openproject_prefs')

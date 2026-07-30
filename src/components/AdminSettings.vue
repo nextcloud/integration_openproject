@@ -181,8 +181,8 @@ export default {
 		isSetupComplete() {
 			return (this.isServerHostFormComplete
 				&& this.isAuthorizationMethodFormComplete
-				 && this.isAuthorizationSettingFormComplete
-				 && this.isProjectFolderFormComplete
+				&& this.isAuthorizationSettingFormComplete
+				&& this.isProjectFolderFormComplete
 			)
 		},
 		getAdminAuditAppName() {
