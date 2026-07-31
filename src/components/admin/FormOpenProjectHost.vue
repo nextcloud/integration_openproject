@@ -28,7 +28,7 @@
 				:hint-text="t('integration_openproject', 'Please introduce your OpenProject hostname')"
 				:error-message="errorMessage"
 				:error-message-details="errorDetails"
-				@input="onFormChanged" />
+				@update:modelValue="onFormChanged" />
 			<div class="form-actions">
 				<NcButton v-if="isViewMode"
 					data-test-id="edit-server-host"
@@ -91,6 +91,7 @@ export default {
 			default: null,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			formMode: F_MODES.EDIT,
@@ -122,7 +123,7 @@ export default {
 	},
 	created() {
 		if (this.openprojectUrl) {
-			this.setFromToViewMode()
+			this.setFormToViewMode()
 			this.serverUrl = this.openprojectUrl
 			this.savedOpenprojectUrl = this.openprojectUrl
 			this.$emit('formcomplete', this.markFormComplete)
@@ -131,25 +132,15 @@ export default {
 	methods: {
 		onFormChanged(value) {
 			if (this.isFormComplete) {
-				if (this.serverUrl === this.savedOpenprojectUrl || !this.serverUrl) {
-					this.formDirty = false
-					return
-				}
+				this.formDirty = value && this.savedOpenprojectUrl !== value
 			} else {
-				if (!value) {
-					this.formDirty = false
-					return
-				}
-			}
-
-			if (!this.formDirty) {
-				this.formDirty = true
+				this.formDirty = !!this.serverUrl
 			}
 		},
 		setFormMode(mode) {
 			this.formMode = mode
 		},
-		setFromToViewMode() {
+		setFormToViewMode() {
 			this.setFormMode(F_MODES.VIEW)
 		},
 		setFormToEditMode() {
@@ -180,7 +171,7 @@ export default {
 				try {
 					await saveAdminConfig({ openproject_instance_url: this.serverUrl })
 
-					this.setFromToViewMode()
+					this.setFormToViewMode()
 					showSuccess(t('integration_openproject', 'OpenProject admin options saved'))
 					this.$emit('formcomplete', this.markFormComplete)
 					this.formDirty = false

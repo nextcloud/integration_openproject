@@ -180,6 +180,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			openprojectFormMode: F_MODES.NEW,

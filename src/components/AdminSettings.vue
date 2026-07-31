@@ -65,18 +65,20 @@
 				{{ t('integration_openproject', 'A new user will receive these defaults and they will be applied to the integration app till the user changes them.') }}
 			</p>
 			<br>
-			<CheckBox v-model="state.default_enable_navigation"
+			<CheckBox
+				v-model="state.default_enable_navigation"
 				input-id="default-prefs--link"
 				:label="t('integration_openproject', 'Enable navigation link')"
-				@input="setDefaultConfig">
+				@update:modelValue="setDefaultConfig">
 				<template #hint>
 					<p class="user-setting-description" v-html="userSettingDescription.NAVIGATION_LINK_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
 				</template>
 			</CheckBox>
-			<CheckBox v-model="state.default_enable_unified_search"
+			<CheckBox
+				v-model="state.default_enable_unified_search"
 				input-id="default-prefs--u-search"
 				:label="t('integration_openproject', 'Enable unified search for tickets')"
-				@input="setDefaultConfig">
+				@update:modelValue="setDefaultConfig">
 				<template #hint>
 					<p class="user-setting-description" v-html="userSettingDescription.UNIFIED_SEARCH_DESCRIPTION" /> <!-- eslint-disable-line vue/no-v-html -->
 				</template>

@@ -6,10 +6,9 @@
  */
 
 import { createApp } from 'vue'
-import './bootstrap.js'
+import { setupGlobalProperties } from './setup.js'
 import AdminSettings from './components/AdminSettings.vue'
 
-// eslint-disable-next-line
-'use strict'
-
-createApp(AdminSettings).mount('#openproject_prefs')
+const app = createApp(AdminSettings)
+setupGlobalProperties(app)
+app.mount('#openproject_prefs')

@@ -29,16 +29,16 @@
 				<div class="auth-method--options">
 					<NcCheckboxRadioSwitch
 						id="oauth-auth-method"
+						v-model="selectedAuthMethod"
 						class="radio-check"
-						:checked.sync="selectedAuthMethod"
 						:value="authMethodType.OAUTH2"
 						type="radio">
 						{{ authMethodLabel.OAUTH2 }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						id="sso-auth-method"
+						v-model="selectedAuthMethod"
 						class="radio-check"
-						:checked.sync="selectedAuthMethod"
 						:value="authMethodType.OIDC"
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						type="radio">
@@ -131,6 +131,7 @@ export default {
 			default: null,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			formMode: F_MODES.EDIT,

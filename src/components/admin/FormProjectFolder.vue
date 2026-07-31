@@ -49,7 +49,10 @@
 					</div>
 				</div>
 				<div v-else class="project-folder-form">
-					<NcCheckboxRadioSwitch type="switch" :checked.sync="currentProjectFolderState" @update:checked="changeProjectFolderState">
+					<NcCheckboxRadioSwitch
+						v-model="currentProjectFolderState"
+						type="switch"
+						@update:modelValue="changeProjectFolderState">
 						<b>{{ t('integration_openproject', 'Automatically managed folders') }}</b>
 					</NcCheckboxRadioSwitch>
 					<div v-if="!currentProjectFolderState" class="complete-without-groupfolders">
@@ -201,6 +204,7 @@ export default {
 			required: true,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			loading: false,

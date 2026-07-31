@@ -34,7 +34,7 @@
 						{{ t('integration_openproject', 'OIDC Provider Type') }} *
 					</p>
 					<NcCheckboxRadioSwitch
-						:checked.sync="currentForm.sso_provider_type"
+						v-model="currentForm.sso_provider_type"
 						:disabled="!hasEnabledSupportedUserOidcApp || !hasEnabledSupportedOIDCApp"
 						:value="ssoProviderType.nextcloudHub"
 						type="radio">
@@ -47,7 +47,7 @@
 							:disabled="disableNCHubUnsupportedHint" />
 					</div>
 					<NcCheckboxRadioSwitch
-						:checked.sync="currentForm.sso_provider_type"
+						v-model="currentForm.sso_provider_type"
 						:disabled="!hasEnabledSupportedUserOidcApp"
 						:value="ssoProviderType.external"
 						type="radio">
@@ -90,8 +90,8 @@
 						{{ messages.tokenExchangeHintText }}
 					</p>
 					<NcCheckboxRadioSwitch
-						type="switch"
-						:checked.sync="currentForm.token_exchange">
+						v-model="currentForm.token_exchange"
+						type="switch">
 						<b>{{ messages.enableTokenExchange }}</b>
 					</NcCheckboxRadioSwitch>
 				</div>
@@ -204,6 +204,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['formcomplete'],
 	data() {
 		return {
 			formMode: F_MODES.NEW,

@@ -7,9 +7,12 @@
 // this requires @nextcloud/vue >= 7.9.0
 import { registerWidget, registerCustomPickerElement, NcCustomPickerRenderResult } from '@nextcloud/vue'
 
+import { setupGlobalProperties } from './setup.js'
+
 // this is required for lazy loading
-__webpack_nonce__ = btoa(OC.requestToken) // eslint-disable-line
-__webpack_public_path__ = OC.linkTo('integration_openproject', 'js/') // eslint-disable-line
+__webpack_nonce__ = btoa(OC.requestToken)
+/* eslint-disable-next-line no-undef */
+__webpack_public_path__ = OC.linkTo('integration_openproject', 'js/')
 
 // this is where we associate our widget component with the richobjects that we return in the reference provider
 registerWidget('integration_openproject_work_package', async (el, { richObjectType, richObject, accessible }) => {
@@ -22,6 +25,7 @@ registerWidget('integration_openproject_work_package', async (el, { richObjectTy
 		richObject,
 		accessible,
 	})
+	setupGlobalProperties(widget)
 	widget.mixin({ methods: { t, n } })
 	widget.mount(el)
 })
@@ -35,6 +39,7 @@ registerCustomPickerElement('openproject-work-package-ref', async (el, { provide
 		accessible,
 	})
 	app.mixin({ methods: { t, n } })
+	setupGlobalProperties(app)
 	const vueElement = app.mount(el)
 
 	return new NcCustomPickerRenderResult(vueElement.$el, vueElement)

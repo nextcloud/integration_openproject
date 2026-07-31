@@ -80,7 +80,6 @@ import { loadState } from '@nextcloud/initial-state'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import AutoRenewIcon from 'vue-material-design-icons/Autorenew.vue'
 import FileLinkIcon from 'vue-material-design-icons/FileLink.vue'
-import { translate as t } from '@nextcloud/l10n'
 
 import {
 	checkOauthConnectionResult,

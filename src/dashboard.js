@@ -4,15 +4,16 @@
  */
 
 import { createApp } from 'vue'
-import './bootstrap.js'
+import { setupGlobalProperties } from './setup.js'
 import Dashboard from './views/Dashboard.vue'
 
 document.addEventListener('DOMContentLoaded', function() {
-
 	OCA.Dashboard.register('openproject_notifications', (el, { widget }) => {
-		createApp(Dashboard, {
+		const app = createApp(Dashboard, {
 			title: widget.title,
-		}).mount(el)
+		})
+		setupGlobalProperties(app)
+		app.mount(el)
 	})
 
 })

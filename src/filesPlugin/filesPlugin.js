@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import '../bootstrap.js'
-import { registerFileAction, Permission, getSidebar } from '@nextcloud/files'
-import OpenProjectIcon from '../../img/app-dark.svg'
-import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
 import { createApp } from 'vue'
+import { registerFileAction, Permission, getSidebar } from '@nextcloud/files'
+import { translate as t } from '@nextcloud/l10n'
+
+import { setupGlobalProperties } from '../setup.js'
+import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
+import OpenProjectIcon from '../../img/app-dark.svg'
 
 if (!OCA.OpenProject) {
 	/**
@@ -20,6 +22,7 @@ if (!OCA.OpenProject) {
 		],
 	}
 }
+
 const compare = (files) => {
 	// store all the file-id in an array and set the file ids
 	const fileInfos = []
@@ -34,7 +37,7 @@ const compare = (files) => {
 	OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].showModal()
 }
 
-// registering file action for single file selection
+// registering file context menu (3 dots menu)
 const singleFileAction = {
 	id: 'integration_openproject-single',
 	displayName: () => t('integration_openproject', 'OpenProject'),
@@ -66,7 +69,8 @@ const singleFileAction = {
 }
 registerFileAction(singleFileAction)
 
-// registering file action for multiple file selection
+// registering file batch action for multiple file selection
+// this action will be registered for file context menu as well.
 const multipleFileAction = {
 	id: 'integration_openproject-multiple',
 	displayName: () => t('integration_openproject', 'Link to work package'),
@@ -81,6 +85,8 @@ const multipleFileAction = {
 	async exec({ nodes }) {
 		const node = nodes[0]
 		console.debug('in the single action handler')
+		console.info(OCA.OpenProject.LinkMultipleFilesModalVue.$children)
+		// problem is here
 		OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].setFileInfos([{
 			id: node.fileid,
 			name: node.basename,
@@ -105,5 +111,7 @@ const modalElement = document.createElement('div')
 modalElement.id = modalId
 document.body.append(modalElement)
 
-const component = createApp(LinkMultipleFilesModal).mount(modalElement)
-OCA.OpenProject.LinkMultipleFilesModalVue = component
+const modelApp = createApp(LinkMultipleFilesModal)
+setupGlobalProperties(modelApp)
+modelApp.mount(modalElement)
+OCA.OpenProject.LinkMultipleFilesModalVue = modelApp

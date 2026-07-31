@@ -65,7 +65,6 @@ import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { workpackageHelper } from '../../utils/workpackageHelper.js'
 import { NO_OPTION_TEXT_STATE, STATE, WORKPACKAGES_SEARCH_ORIGIN } from '../../utils.js'
-import { translate as t } from '@nextcloud/l10n'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import CreateWorkPackageModal from '../../views/CreateWorkPackageModal.vue'
 

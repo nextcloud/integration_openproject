@@ -12,7 +12,7 @@ const packageJson = require('./package.json')
 
 const buildMode = process.env.NODE_ENV
 const isDev = buildMode === 'development'
-webpackConfig.devtool = isDev ? 'cheap-source-map' : false
+webpackConfig.devtool = isDev ? 'source-map' : false
 
 webpackConfig.stats = {
 	colors: true,

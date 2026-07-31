@@ -57,7 +57,6 @@ import axios from '@nextcloud/axios'
 
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
 import { workpackageHelper } from '../utils/workpackageHelper.js'
 import { STATE, WORKPACKAGES_SEARCH_ORIGIN, AUTH_METHOD, checkOauthConnectionResult } from '../utils.js'

@@ -5,12 +5,12 @@
 <template>
 	<div class="form-check-input">
 		<input :id="inputId"
-			:value="value"
+			:value="modelValue"
 			type="checkbox"
 			class="checkbox"
-			:checked="value"
+			:checked="modelValue"
 			@click="$emit('click', $event)"
-			@input="$emit('input', $event.target.checked)"
+			@input="$emit('update:modelValue', $event.target.checked)"
 			@change="$emit('change', $event.target.checked)"
 			@focus="$emit('focus', $event)"
 			@blur="$emit('blur', $event)">
@@ -24,7 +24,7 @@
 export default {
 	name: 'CheckBox',
 	props: {
-		value: {
+		modelValue: {
 			default: false,
 			type: Boolean,
 		},
@@ -37,6 +37,7 @@ export default {
 			required: true,
 		},
 	},
+	emits: ['update:modelValue', 'click', 'change', 'focus', 'blur'],
 }
 </script>
 <style lang="scss" scoped>
