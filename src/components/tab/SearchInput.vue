@@ -174,6 +174,12 @@ export default {
 		},
 	},
 	methods: {
+		focusWorkPackageSearchInput() {
+			const workPackageSelect = this.$refs.workPackageSelect
+			if (workPackageSelect) {
+				document.getElementById(workPackageSelect.inputId).focus()
+			}
+		},
 		async onCreateWorkPackageEvent(data) {
 			this.isCreateWorkpackageModalVisible = false
 			if (

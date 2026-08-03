@@ -266,8 +266,9 @@ export default {
 					break
 				}
 				}
-				await this.$nextTick()
-				await this.$refs.urlInput?.$refs?.textInput?.focus()
+				await this.$nextTick(() => {
+					this.$refs.urlInput?.focusInputField()
+				})
 				return false
 			}
 		},

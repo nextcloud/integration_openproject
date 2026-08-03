@@ -148,6 +148,9 @@ export default {
 		},
 	},
 	methods: {
+		focusInputField() {
+			this.$refs.textInput?.focus()
+		},
 		copyValue() {
 			const that = this
 			navigator.clipboard.writeText(this.modelValue)

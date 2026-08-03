@@ -350,8 +350,9 @@ export default {
 			// when the modal opens the dropdown for selecting project gains focus automatically
 			// this is a workaround to prevent that by bluring the focus and the enabling the dropDown that was
 			// disabled initially in data
-			if (this.$refs?.createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
-				document.getElementById(`${this.$refs?.createWorkPackageProjectInput?.inputId}`).blur()
+			const createWorkPackageProjectInput = this.$refs?.createWorkPackageProjectInput
+			if (createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
+				document.getElementById(`${createWorkPackageProjectInput.inputId}`).blur()
 				this.noDropAvailableProjectDropDown = false
 			}
 			return mappedNodes

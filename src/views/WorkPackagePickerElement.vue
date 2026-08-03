@@ -99,11 +99,9 @@ export default {
 				response = await axios.get(configurationUrl)
 				if (response.data.ocs.data) {
 					this.state = STATE.OK
-					if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
-						this.$nextTick(() => {
-							document.getElementById(`${this.$refs.linkPicker?.$refs?.workPackageSelect?.inputId}`).focus()
-						})
-					}
+					this.$nextTick(() => {
+						this.$refs.linkPicker?.focusWorkPackageSearchInput()
+					})
 				} else {
 					this.state = STATE.ERROR
 				}
