@@ -23,7 +23,7 @@
 					<WorkPackage :id="'workpackage-'+ workpackage.id"
 						:workpackage="workpackage"
 						class="linked-workpackages--workpackage--item"
-						@click.native="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
+						@click="routeToTheWorkPackage(workpackage.id, workpackage.projectId)" />
 					<NcActions>
 						<NcActionButton class="linked-workpackages--workpackage--unlinkactionbutton"
 							@click="unlink(workpackage.id, fileInfo.id)">
