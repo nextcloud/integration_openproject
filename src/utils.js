@@ -7,6 +7,8 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 
+import APP_ID from './constants/appID.js'
+
 let mytimer = 0
 export function delay(callback, ms) {
 	return function() {
@@ -19,11 +21,11 @@ export function delay(callback, ms) {
 
 export function checkOauthConnectionResult(oauthConnectionResult, oauthConnectionErrorMessage) {
 	if (oauthConnectionResult === 'success') {
-		showSuccess(t('integration_openproject', 'Successfully connected to OpenProject!'))
+		showSuccess(t(APP_ID, 'Successfully connected to OpenProject!'))
 	} else if (oauthConnectionResult === 'error') {
 		showError(
 			t(
-				'integration_openproject',
+				APP_ID,
 				'OAuth access token could not be obtained:',
 			) + ' ' + oauthConnectionErrorMessage,
 		)
@@ -61,8 +63,8 @@ export const WORKPACKAGES_SEARCH_ORIGIN = {
 	LINK_MULTIPLE_FILES_MODAL: 'link-multiple-files-modal',
 }
 export const USER_SETTINGS = {
-	NAVIGATION_LINK_DESCRIPTION: t('integration_openproject', 'Displays a link to your OpenProject instance in the Nextcloud header.'),
-	UNIFIED_SEARCH_DESCRIPTION: t('integration_openproject', 'Allows you to search OpenProject work packages via the universal search bar in Nextcloud.'),
+	NAVIGATION_LINK_DESCRIPTION: t(APP_ID, 'Displays a link to your OpenProject instance in the Nextcloud header.'),
+	UNIFIED_SEARCH_DESCRIPTION: t(APP_ID, 'Allows you to search OpenProject work packages via the universal search bar in Nextcloud.'),
 }
 
 export const NO_OPTION_TEXT_STATE = {
@@ -77,8 +79,8 @@ export const AUTH_METHOD = {
 }
 
 export const AUTH_METHOD_LABEL = {
-	OAUTH2: t('integration_openproject', 'Two-way OAuth 2.0 authorization code flow'),
-	OIDC: t('integration_openproject', 'Single-Sign-On through OpenID Connect Identity Provider'),
+	OAUTH2: t(APP_ID, 'Two-way OAuth 2.0 authorization code flow'),
+	OIDC: t(APP_ID, 'Single-Sign-On through OpenID Connect Identity Provider'),
 }
 
 export const SSO_PROVIDER_TYPE = {

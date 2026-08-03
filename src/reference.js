@@ -8,14 +8,15 @@
 import { registerWidget, registerCustomPickerElement, NcCustomPickerRenderResult } from '@nextcloud/vue'
 
 import { setupGlobalProperties } from './setup.js'
+import APP_ID from './constants/appID.js'
 
 // this is required for lazy loading
 __webpack_nonce__ = btoa(OC.requestToken)
 /* eslint-disable-next-line no-undef */
-__webpack_public_path__ = OC.linkTo('integration_openproject', 'js/')
+__webpack_public_path__ = OC.linkTo(APP_ID, 'js/')
 
 // this is where we associate our widget component with the richobjects that we return in the reference provider
-registerWidget('integration_openproject_work_package', async (el, { richObjectType, richObject, accessible }) => {
+registerWidget(`${APP_ID}_work_package`, async (el, { richObjectType, richObject, accessible }) => {
 	// here we lazy load the components so it does not slow down the initial page load
 	const { createApp } = await import(/* webpackChunkName: "reference-wp-lazy" */'vue')
 	const { default: WorkPackageReferenceWidget } = await import(/* webpackChunkName: "reference-wp-lazy" */'./views/WorkPackageReferenceWidget.vue')

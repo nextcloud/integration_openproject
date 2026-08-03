@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-const APP_ID = 'integration_openproject'
+import { name as appName } from '../../package.json'
+
+const APP_ID = appName
 
 export default APP_ID

@@ -11,8 +11,9 @@ import { translate as t } from '@nextcloud/l10n'
 import { setupGlobalProperties } from './setup.js'
 import OpenProjectSvgIcon from '../img/app-dark.svg'
 import ProjectsTab from './views/ProjectsTab.vue'
+import APP_ID from './constants/appID.js'
 
-const tagName = 'integration_openproject-files-sidebar-tab'
+const tagName = `${APP_ID}-files-sidebar-tab`
 const SidebarTabElement = defineCustomElement(ProjectsTab, {
 	shadowRoot: false,
 	configureApp(app) {
@@ -21,9 +22,9 @@ const SidebarTabElement = defineCustomElement(ProjectsTab, {
 })
 
 registerSidebarTab({
-	id: 'integration_openproject',
+	id: APP_ID,
 	order: 50,
-	displayName: t('integration_openproject', 'OpenProject'),
+	displayName: t(APP_ID, 'OpenProject'),
 	iconSvgInline: OpenProjectSvgIcon,
 	enabled() {
 		return true

@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createApp } from 'vue'
+import { createApp, h } from 'vue'
 import { registerFileAction, Permission, getSidebar } from '@nextcloud/files'
 import { translate as t } from '@nextcloud/l10n'
 
 import { setupGlobalProperties } from '../setup.js'
 import LinkMultipleFilesModal from '../views/LinkMultipleFilesModal.vue'
 import OpenProjectIcon from '../../img/app-dark.svg'
+import APP_ID from '../constants/appID.js'
 
 if (!OCA.OpenProject) {
 	/**
@@ -23,7 +24,12 @@ if (!OCA.OpenProject) {
 	}
 }
 
-const compare = (files) => {
+const openLinkWorkPackageModal = (fileInfos) => {
+	OCA.OpenProject.LinkMultipleFilesModalVue.setFileInfos(fileInfos)
+	OCA.OpenProject.LinkMultipleFilesModalVue.showModal()
+}
+
+const getSelectedFilesInfo = (files) => {
 	// store all the file-id in an array and set the file ids
 	const fileInfos = []
 	for (const file of files) {
@@ -33,14 +39,13 @@ const compare = (files) => {
 		}
 		fileInfos.push(fileInfo)
 	}
-	OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].setFileInfos(fileInfos)
-	OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].showModal()
+	return fileInfos
 }
 
-// registering file context menu (3 dots menu)
+// registering file context menu to open OpenProject sidebar.
 const singleFileAction = {
-	id: 'integration_openproject-single',
-	displayName: () => t('integration_openproject', 'OpenProject'),
+	id: `${APP_ID}-single`,
+	displayName: () => t(APP_ID, 'OpenProject'),
 	order: 0,
 	enabled({ nodes, view }) {
 		// we don't want 'files.public' or any other view
@@ -49,6 +54,7 @@ const singleFileAction = {
 			&& !nodes.some(({ permissions }) => (permissions & Permission.READ) === 0)
 	},
 	iconSvgInline: () => OpenProjectIcon,
+	// register file context menu action
 	async exec({ nodes }) {
 		const sidebar = getSidebar()
 		const [node] = nodes
@@ -59,7 +65,7 @@ const singleFileAction = {
 				return null
 			}
 
-			sidebar.open(node, 'integration_openproject')
+			sidebar.open(node, APP_ID)
 			return null
 		} catch (error) {
 			console.error('Error while opening sidebar', { error })
@@ -69,11 +75,11 @@ const singleFileAction = {
 }
 registerFileAction(singleFileAction)
 
-// registering file batch action for multiple file selection
-// this action will be registered for file context menu as well.
+// registering file context menu and batch action
+// to open modal for linking OpenProject work package.
 const multipleFileAction = {
-	id: 'integration_openproject-multiple',
-	displayName: () => t('integration_openproject', 'Link to work package'),
+	id: `${APP_ID}-multiple`,
+	displayName: () => t(APP_ID, 'Link to work package'),
 	order: 0,
 	enabled({ nodes, view }) {
 		// we don't want 'files.public' or any other view
@@ -82,22 +88,22 @@ const multipleFileAction = {
 			&& !nodes.some(({ permissions }) => (permissions & Permission.READ) === 0)
 	},
 	iconSvgInline: () => OpenProjectIcon,
+	// register file context menu action
 	async exec({ nodes }) {
 		const node = nodes[0]
-		console.debug('in the single action handler')
-		console.info(OCA.OpenProject.LinkMultipleFilesModalVue.$children)
-		// problem is here
-		OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].setFileInfos([{
+		console.debug('single file action handler')
+		openLinkWorkPackageModal([{
 			id: node.fileid,
 			name: node.basename,
 		}])
-		OCA.OpenProject.LinkMultipleFilesModalVue.$children[0].showModal()
 		// to avoid the toast message
 		return null
 	},
+	// register batch action
 	async execBatch({ nodes }) {
-		console.debug('in the multi action handler')
-		compare(nodes)
+		console.debug('batch action handler')
+		const fileInfos = getSelectedFilesInfo(nodes)
+		openLinkWorkPackageModal(fileInfos)
 		// to avoid the toast message
 		return nodes.map(n => null)
 	},
@@ -106,12 +112,16 @@ registerFileAction(multipleFileAction)
 
 OC.Plugins.register('OCA.Files.FileList', OCA.OpenProject.FilesPlugin)
 
-const modalId = 'multipleFileLinkModal'
-const modalElement = document.createElement('div')
-modalElement.id = modalId
-document.body.append(modalElement)
-
-const modelApp = createApp(LinkMultipleFilesModal)
-setupGlobalProperties(modelApp)
-modelApp.mount(modalElement)
-OCA.OpenProject.LinkMultipleFilesModalVue = modelApp
+const modalContainer = document.createElement('div')
+modalContainer.id = 'multipleFileLinkModal'
+document.body.append(modalContainer)
+// mount modal component to the modal container
+const modalApp = createApp({
+	render: () => h(LinkMultipleFilesModal, {
+		ref: (instance) => {
+			OCA.OpenProject.LinkMultipleFilesModalVue = instance
+		},
+	}),
+})
+setupGlobalProperties(modalApp)
+modalApp.mount(modalContainer)
