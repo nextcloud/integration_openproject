@@ -488,7 +488,7 @@ describe('ProjectsTab.vue', () => {
 		})
 	})
 	describe('when the work package is clicked', () => {
-		it('opens work package in open project', async () => {
+		it('opens work package in OpenProject', async () => {
 			window.open = vi.fn()
 			wrapper = mountWrapper()
 			await wrapper.setData({

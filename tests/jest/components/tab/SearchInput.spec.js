@@ -104,7 +104,7 @@ describe('SearchInput.vue', () => {
 	const noOptionTextSelector = '[role="listbox"] .vs__no-options'
 
 	afterEach(() => {
-		wrapper.destroy()
+		wrapper.unmount()
 		jest.clearAllMocks()
 		jest.restoreAllMocks()
 	})
@@ -1040,7 +1040,7 @@ describe('SearchInput.vue', () => {
 			dialogs.showError.mockReset()
 		})
 		afterEach(async () => {
-			wrapper.destroy()
+			wrapper.unmount()
 		})
 		it('should show an error message if work package creation process gets canceled', () => {
 			dialogs.showError.mockImplementationOnce()
