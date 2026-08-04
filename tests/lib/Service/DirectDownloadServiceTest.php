@@ -13,6 +13,7 @@ use OCA\DAV\Db\DirectMapper;
 use OCA\OpenProject\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Share\IManager;
 use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -70,7 +71,8 @@ class DirectDownloadServiceTest extends TestCase {
 			$c->get(ISecureRandom::class),
 			$c->get(ITimeFactory::class),
 			$c->get(IURLGenerator::class),
-			$c->get(IEventDispatcher::class)
+			$c->get(IEventDispatcher::class),
+			$c->get(IManager::class)
 		);
 	}
 
