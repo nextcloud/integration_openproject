@@ -235,6 +235,7 @@ export default {
 		NcModal,
 		NcTextField,
 	},
+	emits: ['close-create-work-package-modal', 'create-work-package'],
 	data: () => ({
 		openProjectUrl: loadState('integration_openproject', 'openproject-url'),
 		availableProjects: [],
@@ -352,7 +353,7 @@ export default {
 			// disabled initially in data
 			const createWorkPackageProjectInput = this.$refs?.createWorkPackageProjectInput
 			if (createWorkPackageProjectInput && this.isFetchingProjectsFromOpenProjectWithQuery === false) {
-				document.getElementById(`${createWorkPackageProjectInput.inputId}`).blur()
+				document.getElementById(`${createWorkPackageProjectInput.inputId}`)?.blur()
 				this.noDropAvailableProjectDropDown = false
 			}
 			return mappedNodes

@@ -103,6 +103,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['submit', 'close'],
 	data: () => ({
 		state: STATE.OK,
 		searchResults: [],
