@@ -6,67 +6,47 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 import util from 'util'
-import flushPromises from 'flush-promises' // eslint-disable-line n/no-unpublished-import
+import flushPromises from 'flush-promises'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
+
 import ProjectsTab from '../../../src/views/ProjectsTab.vue'
 import { STATE, AUTH_METHOD } from '../../../src/utils.js'
 import workPackagesSearchResponse from '../fixtures/workPackagesSearchResponse.json'
 import { workpackageHelper } from '../../../src/utils/workpackageHelper.js'
 
-jest.mock('@nextcloud/axios', () => {
-	const originalModule = jest.requireActual('@nextcloud/axios')
+vi.mock(import('@nextcloud/axios'))
+vi.mock(import('@nextcloud/auth'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: {
-			get: jest.fn(),
-			put: jest.fn(),
-			post: jest.fn(),
-			delete: jest.fn(),
-		},
+		default: vi.fn(),
+		getCurrentUser: vi.fn().mockReturnValue({ uid: 1234 }),
 	}
 })
-jest.mock('@nextcloud/auth', () => {
-	const originalModule = jest.requireActual('@nextcloud/auth')
-
-	return {
-		__esModule: true,
-		...originalModule,
-		default: jest.fn(),
-		getCurrentUser: jest.fn().mockReturnValue({ uid: 1234 }),
-	}
-})
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
 
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
 		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => ({ version: '32' })),
+		default: vi.fn(),
+		loadState: vi.fn(() => ({ version: '32' })),
 	}
 })
 
-global.OC = {
-	dialogs: {
-		confirmDestructive: jest.fn(),
-		YES_NO_BUTTONS: 70,
-	},
-}
-
-window.HTMLElement.prototype.scrollIntoView = jest.fn()
-const scrollSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
-
-const localVue = createLocalVue()
+window.HTMLElement.prototype.scrollIntoView = vi.fn()
+const scrollSpy = vi.spyOn(window.HTMLElement.prototype, 'scrollIntoView')
 
 // url
 const wpFileIdUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=%s')
@@ -84,14 +64,13 @@ describe('ProjectsTab.vue', () => {
 	const emptyContentSelector = '#openproject-empty-content'
 	const workPackagesSelector = '#openproject-linked-workpackages'
 	const existingRelationSelector = '.existing-relations'
-	const searchInputStubSelector = 'searchinput-stub'
+	const searchInputStubSelector = 'search-input-stub'
 	const linkedWorkpackageSelector = '.workpackage'
 	const workPackageUnlinkSelector = '.linked-workpackages--workpackage--unlinkactionbutton'
 
 	beforeEach(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 		wrapper = shallowMount(ProjectsTab, {
-			localVue,
 			propsData: {
 				node: fileOne,
 			},
@@ -123,7 +102,6 @@ describe('ProjectsTab.vue', () => {
 			await wrapper.setData({
 				isAdminConfigOk: true,
 				state: STATE.OK,
-
 			})
 			expect(wrapper.find(searchInputStubSelector).exists()).toBeTruthy()
 		})
@@ -159,7 +137,7 @@ describe('ProjectsTab.vue', () => {
 		})
 	})
 	describe('fetchWorkpackages', () => {
-		let axiosGetSpy = jest.fn()
+		let axiosGetSpy = vi.fn()
 		beforeEach(() => {
 			axiosGetSpy.mockRestore()
 			workpackageHelper.clearCache()
@@ -313,7 +291,7 @@ describe('ProjectsTab.vue', () => {
 		])('shows the linked workpackages', async (testCase) => {
 			const wrapper = mountWrapper()
 			await flushPromises()
-			axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					id: 123,
 					subject: 'my task',
@@ -379,7 +357,7 @@ describe('ProjectsTab.vue', () => {
 			// this can happen if multiple replies arrive at the same time
 			// when the user switches between files while results still loading
 			wrapper = mountWrapper()
-			axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					id: 123,
 					subject: 'my task',
@@ -430,7 +408,7 @@ describe('ProjectsTab.vue', () => {
 			expect(workPackages.element).toMatchSnapshot()
 		})
 		it('caches the results for status and type color', async () => {
-			axiosGetSpy = jest.spyOn(axios, 'get')
+			axiosGetSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					id: 123,
 					subject: 'my task',
@@ -491,22 +469,27 @@ describe('ProjectsTab.vue', () => {
 			wrapper = mountWrapper()
 			await wrapper.setData({
 				fileInfo: { id: 1234 },
+				workpackages: workPackagesSearchResponse,
 			})
 			await flushPromises()
+
 			await wrapper.vm.onSaved(workPackagesSearchResponse[0])
+			await flushPromises()
+
 			const workPackages = wrapper.find(workPackagesSelector)
 			expect(wrapper.find(existingRelationSelector).exists()).toBeTruthy()
 			expect(workPackages.exists()).toBeTruthy()
 			expect(workPackages.element).toMatchSnapshot()
+
 			expect(scrollSpy).toBeCalledTimes(1)
 			expect(wrapper.find(linkedWorkpackageSelector).classes()).toContain('workpackage-transition')
-			jest.runAllTimers()
+			vi.runAllTimers()
 			expect(wrapper.find(linkedWorkpackageSelector).classes()).not.toContain('workpackage-transition')
 		})
 	})
 	describe('when the work package is clicked', () => {
 		it('opens work package in open project', async () => {
-			window.open = jest.fn()
+			window.open = vi.fn()
 			wrapper = mountWrapper()
 			await wrapper.setData({
 				workpackages: workPackagesSearchResponse,
@@ -547,7 +530,7 @@ describe('ProjectsTab.vue', () => {
 		it('should unlink the work package', async () => {
 			wrapper = mountWrapper()
 			await flushPromises()
-			const axiosGetSpy = jest.spyOn(axios, 'get')
+			const axiosGetSpy = vi.spyOn(axios, 'get')
 				.mockImplementationOnce(() => sendOCSResponse([{
 					_type: 'FileLink',
 					id: 66,
@@ -569,7 +552,7 @@ describe('ProjectsTab.vue', () => {
 						},
 					},
 				}]))
-			const axiosDeleteSpy = jest.spyOn(axios, 'delete').mockImplementationOnce(() => sendOCSResponse({}))
+			const axiosDeleteSpy = vi.spyOn(axios, 'delete').mockImplementationOnce(() => sendOCSResponse({}))
 			await wrapper.vm.unlinkWorkPackage(15, 6)
 			await flushPromises()
 			expect(axiosGetSpy).toBeCalledWith(util.format(wpFileLinksUrl, 15))
@@ -609,16 +592,17 @@ function sendOCSResponse(data, status = 200) {
 
 function mountWrapper({ data = {}, props = {} } = {}) {
 	return mount(ProjectsTab, {
-		localVue,
 		attachTo: document.body,
-		mocks: {
-			t: (app, msg) => msg,
+		global: {
+			mocks: {
+				t: (app, msg) => msg,
+			},
+			stubs: {
+				SearchInput: true,
+				NcAvatar: true,
+			},
 		},
-		stubs: {
-			SearchInput: true,
-			NcAvatar: true,
-		},
-		propsData: {
+		props: {
 			node: fileOne,
 			...props,
 		},

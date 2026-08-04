@@ -15,7 +15,13 @@ beforeAll(() => {
 })
 
 globalThis.OCA = {}
-globalThis.OC = {}
+global.OC = {
+  dialogs: {
+    confirmDestructive: vi.fn(),
+    YES_NO_BUTTONS: 70,
+  },
+}
+
 globalThis.appName = appName
 globalThis.appVersion = '0.0.0'
 // globalThis.structuredClone = v => JSON.parse(JSON.stringify(v))

@@ -1,121 +1,132 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`] = `
+exports[`ProjectsTab.vue > fetchWorkpackages > adds every work-package only once 1`] = `
 <div
+  data-v-e96d044d=""
   id="openproject-linked-workpackages"
 >
   <div
     class="existing-relations"
+    data-v-e96d044d=""
   >
-    
-			Existing relations:
-		
+    Existing relations:
   </div>
-   
+  
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-123"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: rgb(249, 150, 1); border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(255, 255, 255);"
             >
-              
-				open
-			
+              open
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			#123 - a big project
-		
+            #123 - a big project
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
+              data-v-95f0386b=""
+              style="-webkit-text-stroke: unset;"
             >
-              
-				Task
-			
+              Task
             </span>
-            
-			my task
-		
+             my task
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="Bal Bahadur Pun"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="Bal Bahadur Pun"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
-                url="http://localhost/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                url="http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				Bal Bahadur Pun
-			
+              Bal Bahadur Pun
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -128,41 +139,56 @@ exports[`ProjectsTab.vue fetchWorkpackages adds every work-package only once 1`]
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
       class=""
+      data-v-e96d044d=""
     />
   </div>
+  
 </div>
 `;
 
-exports[`ProjectsTab.vue fetchWorkpackages sets the "error" state if the admin config is not okay 1`] = `
+exports[`ProjectsTab.vue > fetchWorkpackages > sets the "error" state if the admin config is not okay 1`] = `
 <div
   class="projects projects--empty"
+  data-v-e96d044d=""
 >
-  <!---->
-   
+  <!--v-if-->
   <div
     class="empty-content"
+    data-v-e96d044d=""
+    data-v-f42315f7=""
     id="openproject-empty-content"
   >
     <div
       class="empty-content--wrapper"
+      data-v-f42315f7=""
     >
       <div
         class="empty-content--icon"
+        data-v-f42315f7=""
       >
         <span
           aria-hidden="true"
           class="material-design-icon link-off-icon"
+          data-v-f42315f7=""
           role="img"
         >
           <svg
@@ -175,145 +201,159 @@ exports[`ProjectsTab.vue fetchWorkpackages sets the "error" state if the admin c
             <path
               d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
             >
-              <!---->
+              <!--v-if-->
             </path>
           </svg>
         </span>
       </div>
-       
-      <!---->
-       
+      <!--v-if-->
       <div
         class="empty-content--connect-button"
+        data-v-f42315f7=""
       >
+        
         <div
           class="oauth-connect--message"
+          data-v-82450aba=""
+          data-v-f42315f7=""
         >
           Some OpenProject Integration application settings are not working. Please contact your Nextcloud administrator.
         </div>
+        <!-- eslint-disable-line vue/no-v-html -->
+        
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
+exports[`ProjectsTab.vue > fetchWorkpackages > shows the linked workpackages 1`] = `
 <div
+  data-v-e96d044d=""
   id="openproject-linked-workpackages"
 >
   <div
     class="existing-relations"
+    data-v-e96d044d=""
   >
-    
-			Existing relations:
-		
+    Existing relations:
   </div>
-   
+  
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-123"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: rgb(165, 216, 255); border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(0, 0, 0);"
             >
-              
-				open
-			
+              open
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			#123 - a big project
-		
+            #123 - a big project
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
-              style="color: rgb(0, 176, 240);"
+              data-v-95f0386b=""
+              style="color: rgb(0, 176, 240); -webkit-text-stroke: unset;"
             >
-              
-				Task
-			
+              Task
             </span>
-            
-			my task
-		
+             my task
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="Bal Bahadur Pun"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="Bal Bahadur Pun"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
-                url="http://localhost/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                url="http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				Bal Bahadur Pun
-			
+              Bal Bahadur Pun
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -326,124 +366,143 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
       class="workpackage-seperator"
+      data-v-e96d044d=""
     />
   </div>
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-589"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: rgb(165, 216, 255); border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(0, 0, 0);"
             >
-              
-				प्रगति हुदैछ
-			
+              प्रगति हुदैछ
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			#589 - नेपालको विकास गर्ने
-		
+            #589 - नेपालको विकास गर्ने
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
-              style="color: rgb(0, 176, 240);"
+              data-v-95f0386b=""
+              style="color: rgb(0, 176, 240); -webkit-text-stroke: unset;"
             >
-              
-				Epic
-			
+              Epic
             </span>
-            
-			नेपालमा IT उद्योग बनाउने
-		
+             नेपालमा IT उद्योग बनाउने
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="कुमारी नेपाली"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="कुमारी नेपाली"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
-                url="http://localhost/apps/integration_openproject/api/v1/avatar?userId=13&userName=%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%80%20%E0%A4%A8%E0%A5%87%E0%A4%AA%E0%A4%BE%E0%A4%B2%E0%A5%80"
+                url="http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=13&userName=%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%80%20%E0%A4%A8%E0%A5%87%E0%A4%AA%E0%A4%BE%E0%A4%B2%E0%A5%80"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				कुमारी नेपाली
-			
+              कुमारी नेपाली
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -456,138 +515,159 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 1`] = `
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
       class=""
+      data-v-e96d044d=""
     />
   </div>
+  
 </div>
 `;
 
-exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
+exports[`ProjectsTab.vue > fetchWorkpackages > shows the linked workpackages 2`] = `
 <div
+  data-v-e96d044d=""
   id="openproject-linked-workpackages"
 >
   <div
     class="existing-relations"
+    data-v-e96d044d=""
   >
-    
-			Existing relations:
-		
+    Existing relations:
   </div>
-   
+  
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-123"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: rgb(249, 150, 1); border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(255, 255, 255);"
             >
-              
-				open
-			
+              open
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			#123 - a big project
-		
+            #123 - a big project
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
+              data-v-95f0386b=""
+              style="-webkit-text-stroke: unset;"
             >
-              
-				Task
-			
+              Task
             </span>
-            
-			my task
-		
+             my task
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="Bal Bahadur Pun"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="Bal Bahadur Pun"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
-                url="http://localhost/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                url="http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=1&userName=Bal%20Bahadur%20Pun"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				Bal Bahadur Pun
-			
+              Bal Bahadur Pun
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -600,123 +680,143 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
       class="workpackage-seperator"
+      data-v-e96d044d=""
     />
   </div>
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-589"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: rgb(249, 150, 1); border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(255, 255, 255);"
             >
-              
-				प्रगति हुदैछ
-			
+              प्रगति हुदैछ
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			#589 - नेपालको विकास गर्ने
-		
+            #589 - नेपालको विकास गर्ने
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
+              data-v-95f0386b=""
+              style="-webkit-text-stroke: unset;"
             >
-              
-				Epic
-			
+              Epic
             </span>
-            
-			नेपालमा IT उद्योग बनाउने
-		
+             नेपालमा IT उद्योग बनाउने
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="कुमारी नेपाली"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="कुमारी नेपाली"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
-                url="http://localhost/apps/integration_openproject/api/v1/avatar?userId=13&userName=%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%80%20%E0%A4%A8%E0%A5%87%E0%A4%AA%E0%A4%BE%E0%A4%B2%E0%A5%80"
+                url="http://localhost:3000//ocs/v2.php/apps/integration_openproject/api/v1/avatar?userId=13&userName=%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%80%20%E0%A4%A8%E0%A5%87%E0%A4%AA%E0%A4%BE%E0%A4%B2%E0%A5%80"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				कुमारी नेपाली
-			
+              कुमारी नेपाली
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -729,139 +829,159 @@ exports[`ProjectsTab.vue fetchWorkpackages shows the linked workpackages 2`] = `
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
       class=""
+      data-v-e96d044d=""
     />
   </div>
+  
 </div>
 `;
 
-exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
+exports[`ProjectsTab.vue > onSave > shows the just linked workpackage 1`] = `
 <div
+  data-v-e96d044d=""
   id="openproject-linked-workpackages"
 >
   <div
     class="existing-relations"
+    data-v-e96d044d=""
   >
-    
-			Existing relations:
-		
+    Existing relations:
   </div>
-   
+  
   <div
     class="linked-workpackages"
+    data-v-e96d044d=""
   >
     <div
       class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
     >
       <div
         class="workpackage linked-workpackages--workpackage--item workpackage-transition"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
         id="workpackage-1"
       >
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__status"
+            data-v-95f0386b=""
             style="background-color: blue; border: 0px;"
           >
             <div
               class="row__status__title"
+              data-v-95f0386b=""
               style="color: rgb(255, 255, 255);"
             >
-              
-				in-progress
-			
+              in-progress
             </div>
           </div>
-           
           <div
             class="row__workpackage"
+            data-v-95f0386b=""
           >
-            
-			 - test
-		
+             - test
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__subject"
+            data-v-95f0386b=""
           >
             <span
               class="row__subject__type"
-              style="color: red;"
+              data-v-95f0386b=""
+              style="color: red; -webkit-text-stroke: unset;"
             >
-              
-				task
-			
+              task
             </span>
-            
-			Organize work-packages
-		
+             Organize work-packages
           </div>
         </div>
-         
         <div
           class="row"
+          data-v-95f0386b=""
         >
           <div
             class="row__assignee"
+            data-v-95f0386b=""
           >
             <div
               class="row__assignee__avatar"
+              data-v-95f0386b=""
             >
-              <ncavatar-stub
+              <nc-avatar-stub
                 class="item-avatar"
-                display-name="test"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="test"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
                 size="23"
                 url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+                verbosestatus="false"
               />
             </div>
-             
             <div
               class="row__assignee__assignee"
+              data-v-95f0386b=""
             >
-              
-				test
-			
+              test
             </div>
           </div>
         </div>
       </div>
-       
       <button
         aria-label="Unlink Work Package"
-        class="button-vue button-vue--size-normal button-vue--icon-only button-vue--vue-tertiary button-vue--tertiary action-item action-item--single linked-workpackages--workpackage--unlinkactionbutton"
-        data-v-29ac0caf=""
-        data-v-38a26e61=""
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
         title="Unlink Work Package"
         type="button"
       >
         <span
           class="button-vue__wrapper"
-          data-v-29ac0caf=""
+          data-v-00a99684=""
         >
           <span
-            aria-hidden="true"
             class="button-vue__icon"
-            data-v-29ac0caf=""
+            data-v-00a99684=""
           >
+            
             <span
               aria-hidden="true"
               class="material-design-icon link-off-icon"
-              data-v-29ac0caf=""
+              data-v-e96d044d=""
               role="img"
             >
               <svg
@@ -874,18 +994,177 @@ exports[`ProjectsTab.vue onSave shows the just linked workpackage 1`] = `
                 <path
                   d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
                 >
-                  <!---->
+                  <!--v-if-->
                 </path>
               </svg>
             </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
           </span>
         </span>
       </button>
     </div>
-     
     <div
-      class=""
+      class="workpackage-seperator"
+      data-v-e96d044d=""
     />
   </div>
+  <div
+    class="linked-workpackages"
+    data-v-e96d044d=""
+  >
+    <div
+      class="linked-workpackages--workpackage"
+      data-v-e96d044d=""
+    >
+      <div
+        class="workpackage linked-workpackages--workpackage--item"
+        data-v-95f0386b=""
+        data-v-e96d044d=""
+        id="workpackage-1"
+      >
+        <div
+          class="row"
+          data-v-95f0386b=""
+        >
+          <div
+            class="row__status"
+            data-v-95f0386b=""
+            style="background-color: blue; border: 0px;"
+          >
+            <div
+              class="row__status__title"
+              data-v-95f0386b=""
+              style="color: rgb(255, 255, 255);"
+            >
+              in-progress
+            </div>
+          </div>
+          <div
+            class="row__workpackage"
+            data-v-95f0386b=""
+          >
+             - test
+          </div>
+        </div>
+        <div
+          class="row"
+          data-v-95f0386b=""
+        >
+          <div
+            class="row__subject"
+            data-v-95f0386b=""
+          >
+            <span
+              class="row__subject__type"
+              data-v-95f0386b=""
+              style="color: red; -webkit-text-stroke: unset;"
+            >
+              task
+            </span>
+             Organize work-packages
+          </div>
+        </div>
+        <div
+          class="row"
+          data-v-95f0386b=""
+        >
+          <div
+            class="row__assignee"
+            data-v-95f0386b=""
+          >
+            <div
+              class="row__assignee__avatar"
+              data-v-95f0386b=""
+            >
+              <nc-avatar-stub
+                class="item-avatar"
+                data-v-95f0386b=""
+                disablemenu="false"
+                disabletooltip="false"
+                displayname="test"
+                hidestatus="false"
+                isguest="false"
+                isnouser="false"
+                menucontainer="body"
+                noplaceholder="false"
+                size="23"
+                url="/server/index.php/apps/integration_openproject/avatar?userId=1&userName=System"
+                verbosestatus="false"
+              />
+            </div>
+            <div
+              class="row__assignee__assignee"
+              data-v-95f0386b=""
+            >
+              test
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        aria-label="Unlink Work Package"
+        class="button-vue button-vue--size-normal button-vue--tertiary linked-workpackages--workpackage--unlinkactionbutton action-item action-item--single"
+        data-v-00a99684=""
+        data-v-23e5cae7=""
+        data-v-e96d044d=""
+        title="Unlink Work Package"
+        type="button"
+      >
+        <span
+          class="button-vue__wrapper"
+          data-v-00a99684=""
+        >
+          <span
+            class="button-vue__icon"
+            data-v-00a99684=""
+          >
+            
+            <span
+              aria-hidden="true"
+              class="material-design-icon link-off-icon"
+              data-v-e96d044d=""
+              role="img"
+            >
+              <svg
+                class="material-design-icon__svg"
+                fill="currentColor"
+                height="20"
+                viewBox="0 0 24 24"
+                width="20"
+              >
+                <path
+                  d="M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.43 19.12,14.63 17.79,15L19.25,16.44C20.88,15.61 22,13.95 22,12A5,5 0 0,0 17,7M16,11H13.81L15.81,13H16V11M2,4.27L5.11,7.38C3.29,8.12 2,9.91 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12C3.9,10.41 5.11,9.1 6.66,8.93L8.73,11H8V13H10.73L13,15.27V17H14.73L18.74,21L20,19.74L3.27,3L2,4.27Z"
+                >
+                  <!--v-if-->
+                </path>
+              </svg>
+            </span>
+            
+          </span>
+          <span
+            class="button-vue__text"
+            data-v-00a99684=""
+          >
+            
+            
+            
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      class=""
+      data-v-e96d044d=""
+    />
+  </div>
+  
 </div>
 `;

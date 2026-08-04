@@ -45,10 +45,11 @@ const opUrl = generateOcsUrl('/apps/integration_openproject/api/v1/url')
 const notificationUrl = generateOcsUrl('/apps/integration_openproject/api/v1/notifications')
 const wpNotificationsUrl = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages/%s/notifications')
 
-describe('Dashboard.vue', () => {
-	const errorLabelSelector = 'errorlabel-stub'
-	const emptyContentSelector = 'emptycontent-stub'
+const selectors = {
+	widgetStub: 'nc-dashboard-widget-stub',
+}
 
+describe('Dashboard.vue', () => {
 	const defaultState = {
 		authMethods: AUTH_METHOD,
 	}
@@ -61,6 +62,7 @@ describe('Dashboard.vue', () => {
 		spyLaunchLoop = vi.spyOn(Dashboard.methods, 'launchLoop')
 	})
 	afterEach(() => {
+		vi.clearAllMocks()
 		vi.restoreAllMocks()
 	})
 
@@ -80,19 +82,18 @@ describe('Dashboard.vue', () => {
 					...commonState,
 				})
 				await flushPromises()
+				console.log(wrapper.html())
 
 				expect(wrapper.vm.state).toBe(STATE.ERROR)
-				const emptyContent = wrapper.find(emptyContentSelector)
-				expect(emptyContent.exists()).toBe(true)
-				expect(emptyContent.attributes().state).toBe(STATE.ERROR)
-				expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OAUTH2)
-				expect(emptyContent.attributes().dashboard).toBe('true')
-				expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
+				expect(wrapper.vm.OIDCMethodHasError).toBe(false)
 
-				expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
 				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 				expect(spyAxiosGet).not.toBeCalled()
 				expect(checkOauthConnectionResult).not.toBeCalled()
+
+				const widget = wrapper.find(selectors.widgetStub)
+				expect(widget.attributes().items).toBe('')
+				expect(widget.attributes().showmoreurl).toBe('null/notifications')
 			})
 		})
 
@@ -103,7 +104,7 @@ describe('Dashboard.vue', () => {
 					spyAxiosGet = vi.spyOn(axios, 'get')
 						.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 				})
-				it.only('should show empty content', async () => {
+				it('should show empty content', async () => {
 					const wrapper = getWrapper({
 						oauthConnectionErrorMessage: '',
 						oauthConnectionResult: '',
@@ -113,18 +114,15 @@ describe('Dashboard.vue', () => {
 					await flushPromises()
 
 					expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
-					const emptyContent = wrapper.find(emptyContentSelector)
-					console.log(wrapper.html())
-					expect(emptyContent.exists()).toBe(true)
-					expect(emptyContent.attributes().state).toBe(STATE.NO_TOKEN)
-					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OAUTH2)
-					expect(emptyContent.attributes().dashboard).toBe('true')
-					expect(emptyContent.attributes().isadminconfigok).toBe('true')
+					expect(wrapper.vm.OIDCMethodHasError).toBe(false)
 
-					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
 					expect(spyAxiosGet).toBeCalledWith(opUrl)
 					expect(spyAxiosGet).toBeCalledWith(notificationUrl)
 					expect(checkOauthConnectionResult).toHaveBeenCalledTimes(1)
+
+					const widget = wrapper.find(selectors.widgetStub)
+					expect(widget.attributes().items).toBe('')
+					expect(widget.attributes().showmoreurl).toBe('http://openproject.org/notifications')
 				})
 			})
 
@@ -167,17 +165,15 @@ describe('Dashboard.vue', () => {
 					await flushPromises()
 
 					expect(wrapper.vm.state).toBe(STATE.ERROR)
-					const emptyContent = wrapper.find(emptyContentSelector)
-					expect(emptyContent.exists()).toBe(true)
-					expect(emptyContent.attributes().state).toBe(STATE.ERROR)
-					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OIDC)
-					expect(emptyContent.attributes().dashboard).toBe('true')
-					expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
+					expect(wrapper.vm.OIDCMethodHasError).toBe(false)
 
-					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
 					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 					expect(spyAxiosGet).not.toBeCalled()
 					expect(checkOauthConnectionResult).not.toBeCalled()
+
+					const widget = wrapper.find(selectors.widgetStub)
+					expect(widget.attributes().items).toBe('')
+					expect(widget.attributes().showmoreurl).toBe('null/notifications')
 				})
 			})
 
@@ -197,13 +193,15 @@ describe('Dashboard.vue', () => {
 						await flushPromises()
 
 						expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
-						expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.opConnectionUnauthorized)
+						expect(wrapper.vm.OIDCMethodHasError).toBe(true)
 
 						expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-						expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
 						expect(spyAxiosGet).toBeCalledWith(opUrl)
 						expect(spyAxiosGet).toBeCalledWith(notificationUrl)
 						expect(checkOauthConnectionResult).not.toBeCalled()
+
+						const widget = wrapper.find(selectors.widgetStub)
+						expect(widget.attributes().items).toBe('')
 					})
 				})
 
@@ -223,10 +221,8 @@ describe('Dashboard.vue', () => {
 							await flushPromises()
 
 							expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
-							expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.opConnectionUnauthorized)
+							expect(wrapper.vm.OIDCMethodHasError).toBe(true)
 
-							expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-							expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
 							expect(spyAxiosGet).toBeCalledWith(opUrl)
 							expect(spyAxiosGet).toBeCalledWith(notificationUrl)
 							expect(checkOauthConnectionResult).not.toBeCalled()
@@ -262,14 +258,7 @@ describe('Dashboard.vue', () => {
 					await flushPromises()
 
 					expect(wrapper.vm.state).toBe(STATE.ERROR)
-					const emptyContent = wrapper.find(emptyContentSelector)
-					expect(emptyContent.exists()).toBe(true)
-					expect(emptyContent.attributes().state).toBe(STATE.ERROR)
-					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OIDC)
-					expect(emptyContent.attributes().dashboard).toBe('true')
-					expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
-
-					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+					expect(wrapper.vm.OIDCMethodHasError).toBe(false)
 					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 					expect(spyAxiosGet).not.toBeCalled()
 					expect(checkOauthConnectionResult).not.toBeCalled()
@@ -284,10 +273,10 @@ describe('Dashboard.vue', () => {
 					})
 					await flushPromises()
 
-					expect(wrapper.find(errorLabelSelector).attributes().error).toBe(messages.featureNotAvailable)
+					expect(wrapper.vm.state).toBe(STATE.ERROR)
+					expect(wrapper.vm.OIDCMethodHasError).toBe(true)
 
 					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-					expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
 					expect(checkOauthConnectionResult).not.toBeCalled()
 					expect(spyAxiosGet).not.toBeCalled()
 				})
@@ -311,6 +300,7 @@ describe('Dashboard.vue', () => {
 			spyFetchNotifications = vi.spyOn(Dashboard.methods, 'fetchNotifications')
 		})
 		afterEach(() => {
+			vi.clearAllMocks()
 			vi.restoreAllMocks()
 		})
 
