@@ -59,6 +59,7 @@ OC.L10N.register(
     "Please introduce your OpenProject hostname" : "Пожалуйста, укажите ваше имя хоста OpenProject",
     "Edit server information" : "Изменить информацию о сервере",
     "Active" : "Активно",
+    "Inactive" : "Неактивно",
     "Project folders (recommended)" : "Папки проекта (рекомендуется)",
     "Automatically managed folders:" : "Автоматически управляемые папки:",
     "Automatically managed folders" : "Автоматически управляемые папки",
