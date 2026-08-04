@@ -42,9 +42,9 @@ class OauthServiceTest extends TestCase {
 	/**
 	 * @return Client
 	 */
-	protected function getClient(): Client {
+	protected function getClient(int $clientId): Client {
 		$client = new Client();
-		$client->setId(1);
+		$client->setId($clientId);
 		$client->setName('Test Client');
 		$client->setRedirectUri('https://example.com/callback');
 		$client->setClientIdentifier('randomString');
@@ -57,9 +57,10 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCreateNcOauthClient(): void {
-		$testClient = $this->getClient();
+		$clientId = 1;
+		$testClient = $this->getClient($clientId);
 		$expectedClient = [
-			'id' => 1,
+			'id' => $clientId,
 			'nextcloud_oauth_client_name' => $testClient->getName(),
 			'openproject_redirect_uri' => $testClient->getRedirectUri(),
 			'nextcloud_client_id' => $testClient->getClientIdentifier(),
@@ -69,8 +70,8 @@ class OauthServiceTest extends TestCase {
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('insert')
 			->with($this->isInstanceOf(Client::class))
-			->willReturnCallback(function ($client) {
-				$client->setId(1);
+			->willReturnCallback(function ($client) use ($clientId) {
+				$client->setId($clientId);
 				return $client;
 			});
 
@@ -84,9 +85,10 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetClientInfo(): void {
-		$client = $this->getClient();
+		$clientId = 1;
+		$client = $this->getClient($clientId);
 		$expectedClient = [
-			'id' => 1,
+			'id' => $clientId,
 			'nextcloud_oauth_client_name' => $client->getName(),
 			'openproject_redirect_uri' => $client->getRedirectUri(),
 			'nextcloud_client_id' => $client->getClientIdentifier(),
@@ -94,12 +96,12 @@ class OauthServiceTest extends TestCase {
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('getByUid')
-			->with(1)
+			->with($clientId)
 			->willReturn($client);
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$clientInfo = $oauthService->getClientInfo(1);
+		$clientInfo = $oauthService->getClientInfo($clientId);
 		$this->assertIsArray($clientInfo);
 		$this->assertSame($expectedClient, $clientInfo);
 	}
@@ -108,14 +110,15 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetClientInfoError(): void {
+		$clientId = 1;
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('getByUid')
-			->with(1)
+			->with($clientId)
 			->willThrowException(new ClientNotFoundException());
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$clientInfo = $oauthService->getClientInfo(1);
+		$clientInfo = $oauthService->getClientInfo($clientId);
 		$this->assertNull($clientInfo);
 	}
 
@@ -123,18 +126,19 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetClientRedirectUri(): void {
-		$client = $this->getClient();
+		$clientId = 1;
+		$client = $this->getClient($clientId);
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('getByUid')
-			->with(1)
+			->with($clientId)
 			->willReturn($client);
 		$clientMapperMock->expects($this->once())->method('update')
 			->with($client);
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$result = $oauthService->setClientRedirectUri(1, $client->getRedirectUri());
+		$result = $oauthService->setClientRedirectUri($clientId, $client->getRedirectUri());
 		$this->assertTrue($result);
 	}
 
@@ -142,17 +146,18 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetClientRedirectUriError(): void {
-		$client = $this->getClient();
+		$clientId = 1;
+		$client = $this->getClient($clientId);
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('getByUid')
-			->with(1)
+			->with($clientId)
 			->willThrowException(new ClientNotFoundException());
 		$clientMapperMock->expects($this->never())->method('update');
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$result = $oauthService->setClientRedirectUri(1, $client->getRedirectUri());
+		$result = $oauthService->setClientRedirectUri($clientId, $client->getRedirectUri());
 		$this->assertFalse($result);
 	}
 }
