@@ -57,24 +57,27 @@ class OauthServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCreateNcOauthClient(): void {
-		$client = $this->getClient();
+		$testClient = $this->getClient();
 		$expectedClient = [
 			'id' => 1,
-			'nextcloud_oauth_client_name' => $client->getName(),
-			'openproject_redirect_uri' => $client->getRedirectUri(),
-			'nextcloud_client_id' => $client->getClientIdentifier(),
-			'nextcloud_client_secret' => $client->getClientIdentifier(),
+			'nextcloud_oauth_client_name' => $testClient->getName(),
+			'openproject_redirect_uri' => $testClient->getRedirectUri(),
+			'nextcloud_client_id' => $testClient->getClientIdentifier(),
+			'nextcloud_client_secret' => $testClient->getSecret(),
 		];
 
 		$clientMapperMock = $this->createMock(ClientMapper::class);
 		$clientMapperMock->expects($this->once())->method('insert')
 			->with($this->isInstanceOf(Client::class))
-			->willReturn($client);
+			->willReturnCallback(function ($client) {
+				$client->setId(1);
+				return $client;
+			});
 
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
-		$clientInfo = $oauthService->createNcOauthClient($client->getName(), $client->getRedirectUri());
-		$this->assertEquals($expectedClient, $clientInfo);
+		$clientInfo = $oauthService->createNcOauthClient($testClient->getName(), $testClient->getRedirectUri());
+		$this->assertSame($expectedClient, $clientInfo);
 	}
 
 	/**
@@ -98,7 +101,7 @@ class OauthServiceTest extends TestCase {
 
 		$clientInfo = $oauthService->getClientInfo(1);
 		$this->assertIsArray($clientInfo);
-		$this->assertEquals($expectedClient, $clientInfo);
+		$this->assertSame($expectedClient, $clientInfo);
 	}
 
 	/**
@@ -132,7 +135,7 @@ class OauthServiceTest extends TestCase {
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
 		$result = $oauthService->setClientRedirectUri(1, $client->getRedirectUri());
-		$this->assertEquals(true, $result);
+		$this->assertTrue($result);
 	}
 
 	/**
@@ -150,6 +153,6 @@ class OauthServiceTest extends TestCase {
 		$oauthService = $this->getOauthServiceMock($clientMapperMock);
 
 		$result = $oauthService->setClientRedirectUri(1, $client->getRedirectUri());
-		$this->assertEquals(false, $result);
+		$this->assertFalse($result);
 	}
 }
