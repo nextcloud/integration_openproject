@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Dashboard.vue auth method: OAUTH2 admin config is ok connected to OP should show the notification items 1`] = `
 [

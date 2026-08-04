@@ -6,41 +6,39 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils'
-// eslint-disable-next-line n/no-unpublished-import
+import { shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 import util from 'util'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
+
 import Dashboard from '../../../src/views/Dashboard.vue'
 import { STATE, AUTH_METHOD, checkOauthConnectionResult } from '../../../src/utils.js'
 import notificationsResponse from '../fixtures/notificationsResponse.json'
 import { messages } from '../../../src/constants/messages.js'
 
-jest.mock('@nextcloud/axios')
-jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
-	showError: jest.fn(),
-	showSuccess: jest.fn(),
+vi.mock(import('@nextcloud/axios'))
+vi.mock(import('@nextcloud/dialogs'), () => ({
+	getLanguage: vi.fn(() => ''),
+	showError: vi.fn(),
+	showSuccess: vi.fn(),
 }))
-jest.mock('@nextcloud/initial-state', () => {
-	const originalModule = jest.requireActual('@nextcloud/initial-state')
+vi.mock(import('@nextcloud/initial-state'), async (importOriginal) => {
+	const originalModule = await importOriginal()
 	return {
-		__esModule: true,
 		...originalModule,
-		default: jest.fn(),
-		loadState: jest.fn(() => ({ version: '32' })),
+		loadState: vi.fn(() => ({ version: '32' })),
 	}
 })
-jest.mock('../../../src/utils.js', () => ({
-	...jest.requireActual('../../../src/utils.js'),
-	checkOauthConnectionResult: jest.fn(),
-}))
-
-global.OCA = {}
-global.OC = {}
-const localVue = createLocalVue()
+vi.mock(import('../../../src/utils.js'), async (importOriginal) => {
+	const originalModule = await importOriginal()
+	return {
+		...originalModule,
+		checkOauthConnectionResult: vi.fn(),
+	}
+})
 
 // url
 const opUrl = generateOcsUrl('/apps/integration_openproject/api/v1/url')
@@ -58,13 +56,12 @@ describe('Dashboard.vue', () => {
 	let spyAxiosGet, spyLaunchLoop
 
 	beforeEach(async () => {
-		spyAxiosGet = jest.spyOn(axios, 'get')
+		spyAxiosGet = vi.spyOn(axios, 'get')
 			.mockImplementation(getAxiosGetMockFn())
-		spyLaunchLoop = jest.spyOn(Dashboard.methods, 'launchLoop')
+		spyLaunchLoop = vi.spyOn(Dashboard.methods, 'launchLoop')
 	})
 	afterEach(() => {
-		jest.clearAllMocks()
-		jest.restoreAllMocks()
+		vi.restoreAllMocks()
 	})
 
 	describe('auth method: OAUTH2', () => {
@@ -103,11 +100,10 @@ describe('Dashboard.vue', () => {
 			describe('not connected to OP', () => {
 				beforeEach(async () => {
 					spyAxiosGet.mockRestore()
-					spyAxiosGet = jest.spyOn(axios, 'get')
-						// eslint-disable-next-line prefer-promise-reject-errors
+					spyAxiosGet = vi.spyOn(axios, 'get')
 						.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 				})
-				it('should show empty content', async () => {
+				it.only('should show empty content', async () => {
 					const wrapper = getWrapper({
 						oauthConnectionErrorMessage: '',
 						oauthConnectionResult: '',
@@ -118,6 +114,7 @@ describe('Dashboard.vue', () => {
 
 					expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
 					const emptyContent = wrapper.find(emptyContentSelector)
+					console.log(wrapper.html())
 					expect(emptyContent.exists()).toBe(true)
 					expect(emptyContent.attributes().state).toBe(STATE.NO_TOKEN)
 					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OAUTH2)
@@ -188,8 +185,7 @@ describe('Dashboard.vue', () => {
 				describe('not connected to OP', () => {
 					beforeEach(async () => {
 						spyAxiosGet.mockRestore()
-						spyAxiosGet = jest.spyOn(axios, 'get')
-							// eslint-disable-next-line prefer-promise-reject-errors
+						spyAxiosGet = vi.spyOn(axios, 'get')
 							.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 					})
 					it('should show unauthorized error', async () => {
@@ -215,8 +211,7 @@ describe('Dashboard.vue', () => {
 					describe('invalid token', () => {
 						beforeEach(async () => {
 							spyAxiosGet.mockRestore()
-							spyAxiosGet = jest.spyOn(axios, 'get')
-							// eslint-disable-next-line prefer-promise-reject-errors
+							spyAxiosGet = vi.spyOn(axios, 'get')
 								.mockImplementation(getAxiosGetMockFn(Promise.reject({ response: { status: 401 } })))
 						})
 						it('should show unauthorized error if token is not valid', async () => {
@@ -311,13 +306,12 @@ describe('Dashboard.vue', () => {
 
 		let spyAxiosDelete, spyFetchNotifications
 		beforeEach(async () => {
-			spyAxiosDelete = jest.spyOn(axios, 'delete')
+			spyAxiosDelete = vi.spyOn(axios, 'delete')
 				.mockImplementation(() => Promise.resolve({}))
-			spyFetchNotifications = jest.spyOn(Dashboard.methods, 'fetchNotifications')
+			spyFetchNotifications = vi.spyOn(Dashboard.methods, 'fetchNotifications')
 		})
 		afterEach(() => {
-			jest.clearAllMocks()
-			jest.restoreAllMocks()
+			vi.restoreAllMocks()
 		})
 
 		it('should re-fetch notifications on success', async () => {
@@ -337,8 +331,7 @@ describe('Dashboard.vue', () => {
 			expect(showError).toHaveBeenCalledTimes(0)
 		})
 		it('should show error toast message on failure', async () => {
-			spyAxiosDelete = jest.spyOn(axios, 'delete')
-			// eslint-disable-next-line prefer-promise-reject-errors
+			spyAxiosDelete = vi.spyOn(axios, 'delete')
 				.mockImplementation(() => Promise.reject('mark as read failed'))
 			const wrapper = getWrapper({
 				oauthConnectionErrorMessage: 'some-token',
@@ -378,11 +371,7 @@ function getWrapper(data = {}) {
 	return shallowMount(
 		Dashboard,
 		{
-			localVue,
-			mocks: {
-				t: (app, msg) => msg,
-			},
-			propsData: {
+			props: {
 				title: 'dashboard',
 			},
 			data: () => data,
